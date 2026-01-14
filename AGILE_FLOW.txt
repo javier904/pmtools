@@ -1,0 +1,341 @@
+# AGILE PROCESS MANAGER - Prompt Completo per Claude Code
+
+## CONTESTO GENERALE
+
+Creare una **sottopagina/sezione nella home page
+
+Questa pagina deve:
+1. **Guidare il PM nel processo Agile end-to-end**
+2. **Gestire user stories, sprint planning, backlog refinement, estimation**
+3. **Calcolare automaticamente metrics (velocity, burndown, team capacity)**
+4. **Integrare con Google Sheets per import/export dei dati**
+5. **Essere completamente funzionale e production-ready**
+
+---
+
+## SEZIONI RICHIESTE
+
+### 1. **PROJECT & TEAM SETUP**
+- Input: Nome progetto, descrizione, timeline, team size
+- Team member management (name, role, capacity hours/day, skills)
+- Sprint configuration (durata sprint, giorni lavorativi, team holidays)
+- Definisci Agile framework (Scrum, Kanban, Hybrid)
+- Store su Google Sheets (sheet: "Projects", "Team Members")
+
+### 2. **PRODUCT BACKLOG MANAGEMENT**
+- Crea/Edita/Elimina user stories con template standard:
+  - User Story ID
+  - Title
+  - Description (As a... I want... So that...)
+  - Business Value (1-10)
+  - Story Points (Fibonacci: 1,2,3,5,8,13,21)
+  - Priority (Must/Should/Could/Won't)
+  - Status (Backlog/Ready for Sprint/In Sprint/Done)
+  - Acceptance Criteria (checklist)
+  - Tags (backend, frontend, design, etc.)
+  - Dependencies (link a altre stories)
+  - Assignee
+  - Created Date / Last Updated
+- **Export to Google Sheets** (sheet: "Product Backlog")
+- **Import from Google Sheets** (read existing stories)
+- Bulk action: prioritize, reorder, change status
+- Search/filter by priority, tag, status, assignee
+- Sorting: drag-and-drop to reorder backlog
+- Visual: mostra priorità visivamente (colori)
+
+### 3. **ESTIMATION TOOLS (Multiple Methods)**
+
+#### 3a. **Planning Poker (Fibonacci)**
+- Seleziona user story da stimare
+- Mostra descrizione, acceptance criteria, dipendenze
+- Ogni team member vote silenziosamente (1,2,3,5,8,13,21,?)
+- Una volta tutti votato, reveal tutti i voti
+- Se tutti uguali → accept. Se diverse → discuss button (mostra outliers, chat per discussione)
+- Finalmente → accept & save estimate
+- Opzione "skip" se non si sa (?) → team deve ridefinire story
+
+#### 3b. **T-Shirt Sizing**
+- Seleziona mode: XS, S, M, L, XL
+- Same process: silent vote → reveal → discuss → accept
+- Poi convert a story points (XS=1, S=2, M=3, L=5, XL=8, XXL=13)
+
+#### 3c. **Three-Point Estimation (PERT)**
+- Per story, team vota:
+  - Optimistic (best case)
+  - Realistic (most likely)
+  - Pessimistic (worst case)
+- Auto-calculate: (O + 4*R + P) / 6
+- Mostra range: "Questo story è 3-8 punti, probabilmente 5"
+
+#### 3d. **Bucket System / Affinity**
+- Mostra numero ordine di stories (randomizzato)
+- Team drag-drop stories in buckets: 1pt, 2pt, 3pt, 5pt, 8pt, 13pt
+- Più veloce, meno discussione
+
+**Salvare tutte le stime su Google Sheets** (sheet: "Estimations", con history)
+
+### 4. **SPRINT PLANNING**
+- Crea/Edita/Elimina sprint (nome, start date, end date, sprint goal)
+- **Wizard guidato**:
+  1. Seleziona "Ready for Sprint" stories dal backlog
+  2. Mostra team velocity (media ultimi 3 sprint)
+  3. Calcola: "Capacity = team members × capacity hours/day × days disponibili"
+  4. Suggerisci stories fino a riempire capacity (auto-select basato su priority)
+  5. Drag-drop per aggiungere/rimuovere stories
+  6. Preview: "Sprint ha 45 story points, capacity è 50pt, OK"
+  7. Mostra risk: "Hai 3 stories con dipendenze esterne, rischio di blocker"
+  8. Aggiungi sprint goal (text field, max 200 char)
+  9. **Save to Google Sheets** (sheet: "Sprints")
+
+**Sprint Dashboard**:
+- Sprint goal, timeline, status (Planning/Active/Review/Closed)
+- Burndown chart real-time (asse X: giorni, asse Y: story points rimanenti)
+- Burnup chart (asse X: giorni, asse Y: story points completed)
+- Velocity trend (ultimi 5 sprint, chart)
+- Team capacity usage (%)
+- Risk register (blockers, dependencies, risks)
+- Daily standup notes (mini-form: "Ieri [cosa], Oggi [cosa], Blockers [cosa]")
+
+### 5. **BACKLOG REFINEMENT**
+- **Wizard guidato per refine stories**:
+  1. Seleziona story "To Refine" (status = Backlog, not estimated)
+  2. Mostra history (created when, last updated when)
+  3. Discuti criteri di accettazione (mostra existing, aggiungi/edita)
+  4. Definisci dipendenze (select da altre stories)
+  5. Aggiungi task tecnici (sub-tasks dentro la story)
+  6. Stima complexity (Low/Medium/High)
+  7. Assign team member preliminary (o leave unassigned)
+  8. Mark "Ready for Sprint" se refine è completo
+  9. **Save to Google Sheets**
+
+### 6. **KANBAN BOARD (Per Sprint In-Progress)**
+- Colonne: Backlog, Ready, In Progress, In Review, Done
+- Card per ogni user story (ID, title, assignee, points)
+- Drag-drop tra colonne (update status)
+- Click card → dettagli + subtask checklist + comments
+- Real-time estimate of completion (AI-powered): "Basato su velocity, sprint finisce il [date]"
+- **Per ogni story: track hours spent** (input field: actual hours today)
+- Burndown si aggiorna in real-time
+- Visual: color-coded per priority
+
+### 7. **TEAM & RESOURCE MANAGEMENT**
+- Mostra team members in sprint (name, role, capacity, hours used today)
+- Dashboard: chi è overallocated? Chi ha capacità libera?
+- Visualizza skill matrix (chi sa fare cosa)
+- Allocazione per story (team member → ore stimate)
+- Workload balance: "John 8/8 ore (100%), Sarah 6/8 ore (75%)"
+- Suggestion: "Sarah ha 2 ore libere, puoi assegnarle [task]"
+
+### 8. **RETROSPECTIVE & REVIEWS**
+- **Sprint Review Form** (post-sprint):
+  - Stories completed vs planned
+  - Velocity (punti completed)
+  - Cosa è andato bene (free text)
+  - Cosa è andato male (free text)
+  - Action items (next sprint)
+  - Demo notes (what we're showing)
+- **Sprint Retrospective Form** (post-sprint):
+  - Cosa è andato bene (team)
+  - Cosa è migliorato (vs sprint precedente)
+  - Cosa miglioriamo prossimo sprint (3-5 items)
+  - Gladness/Sad/Mad exercise (opzionale: mostra emotions)
+  - Velocity trend (compare con sprint precedenti)
+  - Team sentiment (1-5 scale)
+- **Save to Google Sheets** (sheet: "Retrospectives", "Reviews")
+
+### 9. **METRICS & REPORTS**
+- **Dashboard Metriche**:
+  - Velocity trend (5 sprint ultimi)
+  - Sprint completion rate (%)
+  - Story completion rate per team member
+  - Story points per priority (Must/Should/Could/Won't)
+  - Cycle time (da Backlog a Done, days)
+  - Lead time (da Created a Done, days)
+  - Cumulative Flow Diagram (Backlog, In Progress, Done over time)
+  - Team productivity (points per person)
+  - Blockers rate (per sprint)
+  - Estimation accuracy (estimated vs actual)
+
+- **Export Reports to Google Sheets**:
+  - Sprint summary report (sheet: "Sprint Reports")
+  - Team velocity report
+  - Risk register
+  - Burndown/Burnup data
+
+### 10. **GOOGLE SHEETS INTEGRATION**
+- **Export Features**:
+  - Export product backlog → Google Sheets
+  - Export sprint plan → Google Sheets
+  - Export burndown data → Google Sheets (importabile in Excel/Sheets)
+  - Export team capacity → Google Sheets
+  - Export retrospective notes → Google Sheets
+
+- **Import Features**:
+  - Import user stories from Google Sheets (template: ID, Title, Description, Value, Priority, Status)
+  - Import team members from Google Sheets (Name, Role, Capacity, Skills)
+  - Import project config from Google Sheets
+  - Auto-validate (controlla formato, duplicates, required fields)
+  - Preview before import
+
+- **Live Sync Option** (opzionale):
+  - Se user abilita, app legge Google Sheets ogni X minuti
+  - Update app automaticamente se dati sono changed in Sheets
+  - Se app è modificata, auto-scrive su Sheets (2-way sync)
+
+- **Authentication**:
+  - OAuth2 per Google (user fa login con Google)
+  - Salva access token securely
+  - Mostra quale Google account è connesso
+  - Button: "Disconnect" da Google
+
+---
+
+## REQUIREMENTS TECNICI
+
+### Tech Stack Preferito (scegli uno):
+- **Option A**: React/TypeScript + Supabase (database) + Google Sheets API
+- **Option B**: Flutter (web) + Firebase + Google Sheets API
+- **Option C**: Vanilla HTML/CSS/JS + IndexedDB (local) + Google Sheets API
+- **Option D**: Next.js + Prisma + PostgreSQL + Google Sheets API
+
+**Mia raccomandazione**: Next.js + Prisma (allineato con tua infra attuale)
+
+### Features Non-Negotiable:
+- ✅ Fully functional, no TODOs or placeholders
+- ✅ Responsive design (mobile, tablet, desktop)
+- ✅ Dark mode + Light mode support
+- ✅ Input validation (no empty fields, correct formats)
+- ✅ Error handling (network errors, Google API errors, validation errors)
+- ✅ Confirmation dialogs for destructive actions (delete story, close sprint)
+- ✅ Undo/Redo for non-critical actions (optional but nice)
+- ✅ Auto-save (5 second debounce) per user input
+- ✅ Loading states (spinners, skeletons)
+- ✅ Toast notifications per actions (success, error, info)
+- ✅ Print-friendly reports
+- ✅ Export to PDF (burndown chart, sprint report, team report)
+
+### Data Persistence:
+- Primary: Local state management (React Context / Zustand)
+- Secondary: Google Sheets (as backup/export destination)
+- Optional: Cloud database (if you want true multi-user collab)
+
+### Accessibility:
+- ✅ WCAG 2.1 AA compliant
+- ✅ Keyboard navigation
+- ✅ Screen reader friendly
+- ✅ Color contrast (4.5:1)
+- ✅ Focus management
+
+---
+
+## DELIVERABLES
+
+Per favore, genera:
+
+1. **Single-file HTML/React app** (o multi-file con file list) che sia:
+   - Fully functional (no TODOs)
+   - Production-ready (error handling, validation, etc.)
+   - Beautiful UI (modern design, not ugly)
+   - Complete (include ALL 10 sezioni sopra)
+
+2. **Google Sheets templates** (3-5 fogli per data):
+   - Product Backlog template
+   - Sprint Plan template
+   - Team Members template
+   - (Pre-populate con dati di esempio)
+
+3. **Documentation**:
+   - Setup instructions (come usare Google Sheets API)
+   - User guide (come usare ogni feature)
+   - Data format specification (schema for import/export)
+
+4. **Optional Enhancements** (se tempo permette):
+   - Estimation history tracking
+   - Team capacity forecasting (predict future velocity)
+   - Risk heatmap (visual representation di rischi)
+   - Integrazione con Slack (notifiche, standup)
+   - Mobile app version (React Native / Flutter Web)
+
+---
+
+## NOTES IMPORTANTI
+
+- **This is for a PM working in Fashion/Business Unit**, quindi context è realistico
+- **La app deve essere usabile in produzione**, non un prototipo
+- **Google Sheets integration è critica** - deve funzionare seamlessly
+- **Stile**: Professional, clean, NO bright colors. Usa color palette: grays, teals, accent colors
+- **User base**: PMs, Scrum Masters, Team Leads, Executives (viewing only)
+- **Language**: Default English, but support Italian (IT) as option
+
+---
+
+## EXAMPLE WORKFLOWS
+
+### Workflow 1: Setup + First Sprint Planning
+1. PM crea project (nome "Fashion PMO v2", team size 5)
+2. PM importa 3 team members da Google Sheets (John-BE, Sarah-FE, Marco-Design)
+3. PM importa 15 user stories da Google Sheets (pre-written backlog)
+4. PM stima stories usando Planning Poker (team vote)
+5. PM crea Sprint 1 (Jan 15-28), drag-drop stories fino a 40 points
+6. PM salva sprint plan to Google Sheets
+7. PM comunica sprint goal a team via email (copy-paste dall'app)
+
+### Workflow 2: Daily Sprint Execution
+1. Team member accede Kanban board
+2. Team member vede "In Progress" stories assigned a lui
+3. Team member drag-drop story to "In Review" quando completo
+4. Kanban update points remaining (burndown chart aggiorna)
+5. PM vede chart, capisce progression
+6. Se blocker, team member aggiunge commento su story
+7. PM vede risk, resolve
+
+### Workflow 3: Sprint Review + Retro
+1. Sprint finisce Friday
+2. PM apre "Sprint Review" form
+3. PM compila: 12/15 stories completed, velocity 38pt, went well [cosa], went bad [cosa]
+4. Team apre "Sprint Retro" form, ognuno compila sentiment
+5. PM genera PDF report + salva su Google Sheets
+6. PM usa reports per sprint planning successivo (adjust velocity, capacity, ecc)
+
+---
+
+## SUCCESS CRITERIA
+
+Quando finito, il tool deve permettere a te di:
+
+✅ Guidare un team di 5+ persone in Agile (Scrum)
+✅ Pianificare sprint in 30 minuti (invece di 2 ore, grazie automazione)
+✅ Avere visibility real-time su progress (burndown, velocity, risks)
+✅ Esportare tutti i dati a Google Sheets (backup + condivisione con stakeholder)
+✅ Stimare stories con 4 diversi metodi (Planning Poker, T-Shirt, PERT, Bucket)
+✅ Gestire team capacity e avoid overallocation
+✅ Tracciare retrospectives e metrics
+✅ Produrre report belli per stakeholder
+
+---
+
+## TONE & STYLE
+
+- Codice: Clean, well-commented, modular (easy to extend)
+- UI: Professional, minimalist, NOT colorful. Usa grayscale + 1-2 accent colors (teal, blue), in linea con lo stile del resto della webapp e delle altre pagine.
+- UX: Intuitive (PM di moda deve capire senza training)
+- Performance: Fast (< 1s load, < 100ms interactions)
+- Offline support: Funziona anche senza internet (local-first, sync when online)
+
+---
+
+## GO!
+
+Le note più importanti di tutte:
+- Gestione delle utenze tramite google, come per le altre pagine, e stessa gestione degli inviti per mail, permessi ecc..
+- La pagina agile o quello che è, è solo la pagina iniziale, poi da qui ci sono n-card che rappresentano i vari filoni agile.
+- Sistema di audit log, per tutte le operazioni in modifica/salvataggio.
+- Devi creare una checklist, da verificare ad ogni step, per capire se ci sono ancora punti da implementare o no, è impensabile che sia io a chiederti tutto passso
+- Devi generare la documentazione sia per te, in modo da comprendere e modificare facilmente in futuro, che per gli utenti che usano l'app
+
+Crea un Agile Process Manager completo, production-ready, beautiful, e fully integrated con Google Sheets.
+
+Non voglio placeholder, TODOs, o "implementa tu questa parte".
+Voglio un tool che posso usare domani mattina con il mio team.
+
+Grazie!

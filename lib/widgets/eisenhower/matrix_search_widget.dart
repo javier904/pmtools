@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import '../../models/eisenhower_matrix_model.dart';
+
+/// Widget per cercare e filtrare le matrici di Eisenhower
+class MatrixSearchWidget extends StatefulWidget {
+  final ValueChanged<String> onSearchChanged;
+
+  const MatrixSearchWidget({
+    super.key,
+    required this.onSearchChanged,
+  });
+
+  @override
+  State<MatrixSearchWidget> createState() => _MatrixSearchWidgetState();
+}
+
+class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Cerca matrici...',
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: _searchController.text.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _searchController.clear();
+                  widget.onSearchChanged('');
+                },
+              )
+            : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      onChanged: widget.onSearchChanged,
+    );
+  }
+}
+
+/// Extension per filtrare le matrici
+extension MatrixListFiltering on List<EisenhowerMatrixModel> {
+  /// Filtra le matrici per testo di ricerca
+  List<EisenhowerMatrixModel> searchByText(String query) {
+    if (query.isEmpty) return this;
+    final lowerQuery = query.toLowerCase();
+    return where((matrix) {
+      return matrix.title.toLowerCase().contains(lowerQuery) ||
+          matrix.description.toLowerCase().contains(lowerQuery) ||
+          (matrix.projectName?.toLowerCase().contains(lowerQuery) ?? false) ||
+          (matrix.projectCode?.toLowerCase().contains(lowerQuery) ?? false) ||
+          (matrix.teamName?.toLowerCase().contains(lowerQuery) ?? false) ||
+          matrix.participants.values.any((p) =>
+              p.name.toLowerCase().contains(lowerQuery) ||
+              p.email.toLowerCase().contains(lowerQuery));
+    }).toList();
+  }
+
+  /// Applica tutti i filtri
+  List<EisenhowerMatrixModel> applyFilters({
+    String? searchQuery,
+  }) {
+    var result = this;
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      result = result.searchByText(searchQuery);
+    }
+    return result;
+  }
+}
