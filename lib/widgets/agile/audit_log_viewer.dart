@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/audit_log_model.dart';
 import '../../models/agile_enums.dart';
 import '../../services/agile_audit_service.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Widget per visualizzare i log di audit del progetto
 class AuditLogViewer extends StatefulWidget {
@@ -82,40 +84,42 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
     return Column(
       children: [
         // Header
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+        Builder(
+          builder: (context) => Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: context.surfaceVariantColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.history, color: Colors.teal),
-              const SizedBox(width: 8),
-              const Text(
-                'Audit Log',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const Spacer(),
-              Text(
-                '${_logs.length} eventi',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: _loadLogs,
-                tooltip: 'Aggiorna',
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-                tooltip: 'Chiudi',
-              ),
-            ],
+            child: Row(
+              children: [
+                const Icon(Icons.history, color: Colors.teal),
+                const SizedBox(width: 8),
+                const Text(
+                  'Audit Log',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                Text(
+                  '${_logs.length} eventi',
+                  style: TextStyle(color: context.textSecondaryColor),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _loadLogs,
+                  tooltip: 'Aggiorna',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                  tooltip: 'Chiudi',
+                ),
+              ],
+            ),
           ),
         ),
         // Filtri
@@ -266,22 +270,24 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
             ),
           ],
         ),
-        subtitle: Row(
-          children: [
-            Icon(Icons.person_outline, size: 14, color: Colors.grey[600]),
-            const SizedBox(width: 4),
-            Text(
-              log.performedBy,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-            const SizedBox(width: 12),
-            Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-            const SizedBox(width: 4),
-            Text(
-              _formatTimestamp(log.timestamp),
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-          ],
+        subtitle: Builder(
+          builder: (context) => Row(
+            children: [
+              Icon(Icons.person_outline, size: 14, color: context.textSecondaryColor),
+              const SizedBox(width: 4),
+              Text(
+                log.performedBy,
+                style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+              ),
+              const SizedBox(width: 12),
+              Icon(Icons.access_time, size: 14, color: context.textSecondaryColor),
+              const SizedBox(width: 4),
+              Text(
+                _formatTimestamp(log.timestamp),
+                style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+              ),
+            ],
+          ),
         ),
         trailing: (log.previousValue?.isNotEmpty ?? false) || (log.newValue?.isNotEmpty ?? false)
             ? IconButton(
@@ -407,28 +413,30 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history, size: 64, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            'Nessun evento registrato',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
+    return Builder(
+      builder: (context) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.history, size: 64, color: context.textMutedColor),
+            const SizedBox(height: 16),
+            Text(
+              'Nessun evento registrato',
+              style: TextStyle(
+                fontSize: 16,
+                color: context.textSecondaryColor,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Le attività sul progetto verranno registrate qui',
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[500],
+            const SizedBox(height: 8),
+            Text(
+              'Le attività sul progetto verranno registrate qui',
+              style: TextStyle(
+                fontSize: 13,
+                color: context.textTertiaryColor,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -471,11 +479,13 @@ class RecentActivityWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             if (recentLogs.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  'Nessuna attività recente',
-                  style: TextStyle(color: Colors.grey),
+              Builder(
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Nessuna attività recente',
+                    style: TextStyle(color: context.textMutedColor),
+                  ),
                 ),
               )
             else
@@ -495,9 +505,11 @@ class RecentActivityWidget extends StatelessWidget {
                   style: const TextStyle(fontSize: 13),
                   overflow: TextOverflow.ellipsis,
                 ),
-                subtitle: Text(
-                  '${log.performedBy.split('@').first} - ${_formatTime(log.timestamp)}',
-                  style: const TextStyle(fontSize: 11),
+                subtitle: Builder(
+                  builder: (context) => Text(
+                    '${log.performedBy.split('@').first} - ${_formatTime(log.timestamp)}',
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  ),
                 ),
               )),
           ],

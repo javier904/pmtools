@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Widget che visualizza un grafico scatter plot della matrice di Eisenhower
 ///
@@ -31,7 +33,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -47,7 +49,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
           // Header
           Row(
             children: [
-              const Icon(Icons.scatter_plot, color: Colors.blue),
+              Icon(Icons.scatter_plot, color: AppColors.secondary),
               const SizedBox(width: 8),
               const Text(
                 'Distribuzione Attività',
@@ -115,16 +117,16 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.scatter_plot, size: 48, color: Colors.grey[300]),
+            Icon(Icons.scatter_plot, size: 48, color: context.borderColor),
             const SizedBox(height: 8),
             Text(
               'Nessuna attività votata',
-              style: TextStyle(color: Colors.grey[500]),
+              style: TextStyle(color: context.textTertiaryColor),
             ),
             const SizedBox(height: 4),
             Text(
               'Vota le attività per visualizzarle nel grafico',
-              style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+              style: TextStyle(fontSize: 12, color: context.textMutedColor),
             ),
           ],
         ),
@@ -219,24 +221,24 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                   getDrawingHorizontalLine: (value) {
                     if (value == widget.threshold) {
                       return FlLine(
-                        color: Colors.black87,
+                        color: context.textPrimaryColor.withOpacity(0.87),
                         strokeWidth: 2,
                       );
                     }
                     return FlLine(
-                      color: Colors.grey[300]!,
+                      color: context.borderColor,
                       strokeWidth: 0.5,
                     );
                   },
                   getDrawingVerticalLine: (value) {
                     if (value == widget.threshold) {
                       return FlLine(
-                        color: Colors.black87,
+                        color: context.textPrimaryColor.withOpacity(0.87),
                         strokeWidth: 2,
                       );
                     }
                     return FlLine(
-                      color: Colors.grey[300]!,
+                      color: context.borderColor,
                       strokeWidth: 0.5,
                     );
                   },
@@ -244,12 +246,12 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                 titlesData: FlTitlesData(
                   show: true,
                   leftTitles: AxisTitles(
-                    axisNameWidget: const Text(
+                    axisNameWidget: Text(
                       'IMPORTANZA',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: context.textSecondaryColor,
                       ),
                     ),
                     axisNameSize: 20,
@@ -261,18 +263,18 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                         if (value == 0 || value > 10) return const SizedBox.shrink();
                         return Text(
                           value.toInt().toString(),
-                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                          style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
                         );
                       },
                     ),
                   ),
                   bottomTitles: AxisTitles(
-                    axisNameWidget: const Text(
+                    axisNameWidget: Text(
                       'URGENZA',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: context.textSecondaryColor,
                       ),
                     ),
                     axisNameSize: 20,
@@ -284,7 +286,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                         if (value == 0 || value > 10) return const SizedBox.shrink();
                         return Text(
                           value.toInt().toString(),
-                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                          style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
                         );
                       },
                     ),
@@ -294,7 +296,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                 ),
                 borderData: FlBorderData(
                   show: true,
-                  border: Border.all(color: Colors.grey[400]!),
+                  border: Border.all(color: context.textMutedColor),
                 ),
                 scatterLabelSettings: ScatterLabelSettings(showLabel: false),
               ),
@@ -320,7 +322,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
           radius: isSelected ? 10 : 8,
           color: color,
           strokeWidth: isSelected ? 3 : 1,
-          strokeColor: isSelected ? Colors.white : color.withOpacity(0.5),
+          strokeColor: isSelected ? context.surfaceColor : color.withOpacity(0.5),
         ),
       );
     }).toList();
@@ -463,7 +465,7 @@ class EisenhowerScatterChartCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.scatter_plot, size: 18, color: Colors.blue),
+                  Icon(Icons.scatter_plot, size: 18, color: AppColors.secondary),
                   const SizedBox(width: 8),
                   const Text(
                     'Grafico Distribuzione',
@@ -471,7 +473,7 @@ class EisenhowerScatterChartCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   if (onExpandTap != null)
-                    const Icon(Icons.fullscreen, size: 18, color: Colors.grey),
+                    Icon(Icons.fullscreen, size: 18, color: context.textSecondaryColor),
                 ],
               ),
               const SizedBox(height: 12),

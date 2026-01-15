@@ -7,6 +7,8 @@ import '../../models/agile_invite_model.dart';
 import '../../models/agile_enums.dart';
 import '../../services/agile_invite_service.dart';
 import '../../services/auth_service.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Dialog per invitare partecipanti a un Progetto Agile
 ///
@@ -352,7 +354,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.person_add, color: Colors.purple),
+          Icon(Icons.person_add, color: AppColors.primary),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -363,7 +365,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                   widget.projectName,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: context.textSecondaryColor,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -385,12 +387,12 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'NUOVO INVITO',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: context.textMutedColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -475,12 +477,12 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                       decoration: BoxDecoration(
                         color: _sendEmailWithInvite
                             ? Colors.green.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.1),
+                            : context.textMutedColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _sendEmailWithInvite
                               ? Colors.green.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.3),
+                              : context.textMutedColor.withOpacity(0.3),
                         ),
                       ),
                       child: Row(
@@ -488,7 +490,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                           Icon(
                             _sendEmailWithInvite ? Icons.email : Icons.email_outlined,
                             size: 20,
-                            color: _sendEmailWithInvite ? Colors.green : Colors.grey,
+                            color: _sendEmailWithInvite ? Colors.green : context.textMutedColor,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -496,7 +498,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                               'Invia email di notifica',
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: _sendEmailWithInvite ? Colors.green[700] : Colors.grey[600],
+                                color: _sendEmailWithInvite ? Colors.green[700] : context.textSecondaryColor,
                               ),
                             ),
                           ),
@@ -524,7 +526,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                             : const Icon(Icons.send),
                         label: const Text('Invia Invito'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -574,7 +576,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                       const SizedBox(height: 4),
                       SelectableText(
                         _generatedLink!,
-                        style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+                        style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                       ),
                     ],
                   ),
@@ -586,12 +588,12 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                 const SizedBox(height: 24),
                 const Divider(),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'INVITI',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: context.textMutedColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -613,79 +615,81 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   Widget _buildInviteRow(AgileInviteModel invite) {
     final statusInfo = _getStatusInfo(invite.status);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          // Status icon
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: statusInfo.color.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(6),
+    return Builder(
+      builder: (context) => Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: context.surfaceVariantColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: context.borderColor),
+        ),
+        child: Row(
+          children: [
+            // Status icon
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: statusInfo.color.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(statusInfo.icon, size: 18, color: statusInfo.color),
             ),
-            child: Icon(statusInfo.icon, size: 18, color: statusInfo.color),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-          // Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  invite.email,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '${invite.participantRole.displayName} / ${invite.teamRole.displayName}',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                      decoration: BoxDecoration(
-                        color: statusInfo.color.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(8),
+            // Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    invite.email,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '${invite.participantRole.displayName} / ${invite.teamRole.displayName}',
+                        style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                       ),
-                      child: Text(
-                        statusInfo.label,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: statusInfo.color,
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: statusInfo.color.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          statusInfo.label,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: statusInfo.color,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          // Azioni
-          if (invite.isPending) ...[
-            IconButton(
-              icon: const Icon(Icons.refresh, size: 18),
-              onPressed: () => _resendInvite(invite.id),
-              tooltip: 'Reinvia',
-            ),
-            IconButton(
-              icon: const Icon(Icons.close, size: 18, color: Colors.red),
-              onPressed: () => _revokeInvite(invite.id),
-              tooltip: 'Revoca',
-            ),
+            // Azioni
+            if (invite.isPending) ...[
+              IconButton(
+                icon: const Icon(Icons.refresh, size: 18),
+                onPressed: () => _resendInvite(invite.id),
+                tooltip: 'Reinvia',
+              ),
+              IconButton(
+                icon: const Icon(Icons.close, size: 18, color: Colors.red),
+                onPressed: () => _revokeInvite(invite.id),
+                tooltip: 'Revoca',
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

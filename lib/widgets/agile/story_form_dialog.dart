@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Dialog per creare o modificare una User Story
 ///
@@ -204,7 +206,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
         children: [
           Icon(
             _isEditing ? Icons.edit : Icons.add_circle,
-            color: Colors.purple,
+            color: AppColors.primary,
           ),
           const SizedBox(width: 8),
           Text(_isEditing ? 'Modifica Story' : 'Nuova User Story'),
@@ -225,7 +227,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                     Tab(text: 'Acceptance Criteria'),
                     Tab(text: 'Altro'),
                   ],
-                  labelColor: Colors.purple,
+                  labelColor: AppColors.primary,
                 ),
                 Expanded(
                   child: TabBarView(
@@ -249,7 +251,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
         ElevatedButton(
           onPressed: _save,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
           child: Text(_isEditing ? 'Salva' : 'Crea'),
@@ -352,9 +354,9 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.05),
+              color: AppColors.primary.withOpacity(0.05),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.purple.withOpacity(0.2)),
+              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,7 +366,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple,
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -376,7 +378,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                     fontStyle: _buildDescription().isEmpty
                         ? FontStyle.italic
                         : FontStyle.normal,
-                    color: _buildDescription().isEmpty ? Colors.grey : null,
+                    color: _buildDescription().isEmpty ? context.textMutedColor : null,
                   ),
                 ),
               ],
@@ -400,7 +402,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           const SizedBox(height: 4),
           Text(
             'Definisci quando la story può considerarsi completata',
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
           ),
           const SizedBox(height: 12),
 
@@ -433,11 +435,11 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.checklist, size: 48, color: Colors.grey[400]),
+                        Icon(Icons.checklist, size: 48, color: context.textMutedColor),
                         const SizedBox(height: 8),
                         Text(
                           'Nessun criterio definito',
-                          style: TextStyle(color: Colors.grey[600]),
+                          style: TextStyle(color: context.textSecondaryColor),
                         ),
                       ],
                     ),
@@ -457,7 +459,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                         key: ValueKey('criterion_$index'),
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
-                          leading: const Icon(Icons.drag_handle, color: Colors.grey),
+                          leading: Icon(Icons.drag_handle, color: context.textMutedColor),
                           title: Text(criterion.text),
                           trailing: IconButton(
                             icon: const Icon(Icons.close, color: Colors.red),
@@ -557,7 +559,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           ),
           Text(
             _getBusinessValueLabel(),
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
           ),
           const SizedBox(height: 16),
 

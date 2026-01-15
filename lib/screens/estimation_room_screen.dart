@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../themes/app_theme.dart';
 import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_story_model.dart';
 import '../models/planning_poker_participant_model.dart';
@@ -114,9 +115,16 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: _selectedSession != null
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => setState(() => _selectedSession = null),
+                tooltip: 'Torna alle sessioni',
+              )
+            : null,
         title: Row(
           children: [
-            const Icon(Icons.meeting_room),
+            Icon(_selectedSession != null ? Icons.analytics : Icons.casino_rounded),
             const SizedBox(width: 8),
             Text(_selectedSession?.name ?? 'Estimation Room'),
           ],
@@ -299,11 +307,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.search_off, size: 48, color: Colors.grey[400]),
+                            Icon(Icons.search_off, size: 48, color: context.textMutedColor),
                             const SizedBox(height: 16),
                             Text(
                               'Nessuna sessione trovata',
-                              style: TextStyle(color: Colors.grey[600]),
+                              style: TextStyle(color: context.textSecondaryColor),
                             ),
                             const SizedBox(height: 8),
                             TextButton(
@@ -337,13 +345,13 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.style, size: 80, color: Colors.grey[300]),
+          Icon(Icons.style, size: 80, color: context.borderColor),
           const SizedBox(height: 16),
           Text(
             'Nessuna sessione creata',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.grey[600],
+              color: context.textSecondaryColor,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -351,7 +359,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           Text(
             'Crea la tua prima sessione di stima\nper stimare le attività con il team',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[500]),
+            style: TextStyle(color: context.textTertiaryColor),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
@@ -390,7 +398,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Icona con status
+              // Icona con status (dinamica in base al tipo di stima)
               Container(
                 width: 48,
                 height: 48,
@@ -400,7 +408,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 ),
                 child: Stack(
                   children: [
-                    const Center(child: Icon(Icons.style, color: Colors.green)),
+                    Center(child: Icon(_getEstimationModeIcon(session.estimationMode), color: Colors.green)),
                     Positioned(
                       right: 4,
                       bottom: 4,
@@ -410,7 +418,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                         decoration: BoxDecoration(
                           color: statusColor,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: context.surfaceColor, width: 2),
                         ),
                       ),
                     ),
@@ -437,7 +445,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                           session.description,
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[600],
+                            color: context.textSecondaryColor,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -584,21 +592,41 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     );
   }
 
+  /// Restituisce l'icona appropriata per la modalità di stima
+  IconData _getEstimationModeIcon(EstimationMode mode) {
+    switch (mode) {
+      case EstimationMode.fibonacci:
+        return Icons.style;
+      case EstimationMode.tshirt:
+        return Icons.checkroom;
+      case EstimationMode.decimal:
+        return Icons.calculate;
+      case EstimationMode.threePoint:
+        return Icons.analytics;
+      case EstimationMode.dotVoting:
+        return Icons.radio_button_checked;
+      case EstimationMode.bucketSystem:
+        return Icons.view_column;
+      case EstimationMode.fiveFingers:
+        return Icons.pan_tool;
+    }
+  }
+
   Widget _buildInfoChip(IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: context.surfaceVariantColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: Colors.grey[600]),
+          Icon(icon, size: 14, color: context.textSecondaryColor),
           const SizedBox(width: 4),
           Text(
             text,
-            style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+            style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
           ),
         ],
       ),
@@ -639,8 +667,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 Container(
                   width: 600,
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    border: Border(left: BorderSide(color: Colors.grey[300]!)),
+                    color: context.surfaceVariantColor,
+                    border: Border(left: BorderSide(color: context.borderColor)),
                   ),
                   child: _buildSidebar(stories),
                 ),
@@ -687,34 +715,42 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             children: [
               // Story corrente
               _buildCurrentStoryCard(story, session),
-              const SizedBox(height: 24),
-              // Tabellone voti
+              const SizedBox(height: 16),
+              // Layout bilanciato: votazioni sopra, carte sotto
               Expanded(
-                child: VotingBoardWidget(
-                  story: story,
-                  session: session,
-                  currentUserEmail: _currentUserEmail,
-                  isRevealed: story.isRevealed,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Tabellone voti (compatto)
+                      VotingBoardWidget(
+                        story: story,
+                        session: session,
+                        currentUserEmail: _currentUserEmail,
+                        isRevealed: story.isRevealed,
+                      ),
+                      const SizedBox(height: 16),
+                      // Input stima basato sulla modalita' (solo se non rivelato)
+                      if (!story.isRevealed)
+                        EstimationInputWrapper(
+                          mode: session.estimationMode,
+                          cardSet: session.cardSet,
+                          selectedValue: myVote,
+                          enabled: canUserVote,
+                          onVoteSubmitted: (vote) => _submitVoteModel(story.id, vote),
+                        ),
+                      // Pannello risultati (solo se rivelato)
+                      if (story.isRevealed)
+                        ResultsPanelWidget(
+                          story: story,
+                          onSetEstimate: (estimate) => _setFinalEstimate(story.id, estimate),
+                          onRevote: () => _resetVoting(story.id),
+                          isFacilitator: session.isFacilitator(_currentUserEmail),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              // Input stima basato sulla modalita' (solo se non rivelato)
-              if (!story.isRevealed)
-                EstimationInputWrapper(
-                  mode: session.estimationMode,
-                  cardSet: session.cardSet,
-                  selectedValue: myVote,
-                  enabled: canUserVote,
-                  onVoteSubmitted: (vote) => _submitVoteModel(story.id, vote),
-                ),
-              // Pannello risultati (solo se rivelato)
-              if (story.isRevealed)
-                ResultsPanelWidget(
-                  story: story,
-                  onSetEstimate: (estimate) => _setFinalEstimate(story.id, estimate),
-                  onRevote: () => _resetVoting(story.id),
-                  isFacilitator: session.isFacilitator(_currentUserEmail),
-                ),
             ],
           ),
         );
@@ -738,7 +774,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             size: 64,
             color: completedCount == stories.length && stories.isNotEmpty
                 ? Colors.amber
-                : Colors.grey[300],
+                : context.borderColor,
           ),
           const SizedBox(height: 16),
           Text(
@@ -748,14 +784,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              color: context.textSecondaryColor,
             ),
           ),
           const SizedBox(height: 8),
           if (completedCount > 0)
             Text(
               'Completate: $completedCount/${stories.length} | Stima totale: $totalEstimate pt',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: context.textSecondaryColor),
             ),
           const SizedBox(height: 24),
           if (pendingStories.isNotEmpty &&
@@ -771,7 +807,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           if (stories.isEmpty)
             Text(
               'Aggiungi delle stories per iniziare',
-              style: TextStyle(color: Colors.grey[500]),
+              style: TextStyle(color: context.textTertiaryColor),
             ),
         ],
       ),
@@ -782,7 +818,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -842,7 +878,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       story.description,
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: TextStyle(color: context.textSecondaryColor),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -963,6 +999,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
     final card = Card(
       margin: const EdgeInsets.only(bottom: 8),
+      color: context.surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: context.borderColor),
+      ),
       child: InkWell(
         onTap: canStartOrRevote ? () => _startVoting(story.id) : null,
         borderRadius: BorderRadius.circular(8),
@@ -1019,7 +1060,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 ),
               // Menu azioni
               PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert, size: 18, color: Colors.grey[400]),
+                icon: Icon(Icons.more_vert, size: 18, color: context.textMutedColor),
                 onSelected: (value) async {
                   switch (value) {
                     case 'vote':
@@ -1821,7 +1862,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                         const SizedBox(width: 12),
                         Text(
                           'punti / giorni',
-                          style: TextStyle(color: Colors.grey[600]),
+                          style: TextStyle(color: context.textSecondaryColor),
                         ),
                       ],
                     ),
@@ -1899,7 +1940,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+          Text(label, style: TextStyle(color: context.textSecondaryColor, fontSize: 13)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
         ],
       ),
@@ -2250,7 +2291,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                   const Spacer(),
                   Text(
                     '${session.voterCount} votanti, ${session.observerCount} osservatori',
-                    style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
                 ],
               ),
@@ -2306,7 +2347,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                       ),
                       subtitle: Text(
                         email,
-                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                        style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -2341,7 +2382,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                           // Menu azioni (solo facilitator, non può modificare se stesso)
                           if (widget.isFacilitator && !isCurrentUser && !isCreator)
                             PopupMenuButton<String>(
-                              icon: Icon(Icons.more_vert, size: 18, color: Colors.grey[400]),
+                              icon: Icon(Icons.more_vert, size: 18, color: context.textMutedColor),
                               onSelected: (value) async {
                                 switch (value) {
                                   case 'voter':
@@ -2537,11 +2578,11 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.mail_outline, size: 48, color: Colors.grey[300]),
+                      Icon(Icons.mail_outline, size: 48, color: context.borderColor),
                       const SizedBox(height: 8),
                       Text(
                         'Nessun invito inviato',
-                        style: TextStyle(color: Colors.grey[500]),
+                        style: TextStyle(color: context.textTertiaryColor),
                       ),
                     ],
                   ),
@@ -2633,7 +2674,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                             fontSize: 10,
                             color: invite.daysUntilExpiration <= 2
                                 ? Colors.orange
-                                : Colors.grey[500],
+                                : context.textTertiaryColor,
                           ),
                         ),
                     ],

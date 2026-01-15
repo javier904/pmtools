@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 import 'story_card_widget.dart';
 
 /// Dialog per visualizzare i dettagli completi di una User Story
@@ -44,7 +46,7 @@ class StoryDetailDialog extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: context.surfaceVariantColor,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -180,6 +182,7 @@ class StoryDetailDialog extends StatelessWidget {
 
               // Description
               _buildSection(
+                context,
                 'Descrizione',
                 Icons.description,
                 child: Text(
@@ -189,7 +192,7 @@ class StoryDetailDialog extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15,
                     fontStyle: story.description.isEmpty ? FontStyle.italic : null,
-                    color: story.description.isEmpty ? Colors.grey : null,
+                    color: story.description.isEmpty ? context.textMutedColor : null,
                   ),
                 ),
               ),
@@ -197,6 +200,7 @@ class StoryDetailDialog extends StatelessWidget {
 
               // Acceptance Criteria
               _buildSection(
+                context,
                 'Acceptance Criteria (${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length})',
                 Icons.checklist,
                 child: story.acceptanceCriteria.isEmpty
@@ -204,7 +208,7 @@ class StoryDetailDialog extends StatelessWidget {
                         'Nessun criterio definito',
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
-                          color: Colors.grey[600],
+                          color: context.textSecondaryColor,
                         ),
                       )
                     : Column(
@@ -215,7 +219,7 @@ class StoryDetailDialog extends StatelessWidget {
                             contentPadding: EdgeInsets.zero,
                             leading: Icon(
                               Icons.check_circle_outline,
-                              color: Colors.grey[400],
+                              color: context.textMutedColor,
                             ),
                             title: Text(criterion),
                           );
@@ -227,6 +231,7 @@ class StoryDetailDialog extends StatelessWidget {
               // Tags
               if (story.tags.isNotEmpty) ...[
                 _buildSection(
+                  context,
                   'Tags',
                   Icons.label,
                   child: Wrap(
@@ -244,6 +249,7 @@ class StoryDetailDialog extends StatelessWidget {
               // Estimation info
               if (story.isEstimated) ...[
                 _buildSection(
+                  context,
                   'Stima',
                   Icons.calculate,
                   child: Column(
@@ -262,7 +268,7 @@ class StoryDetailDialog extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           '${story.estimates.length} stime ricevute',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                          style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                         ),
                       ],
                     ],
@@ -273,21 +279,22 @@ class StoryDetailDialog extends StatelessWidget {
 
               // Metadata
               _buildSection(
+                context,
                 'Informazioni',
                 Icons.info_outline,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInfoRow('Business Value', '${story.businessValue}/10'),
+                    _buildInfoRow(context, 'Business Value', '${story.businessValue}/10'),
                     if (story.assigneeEmail != null)
-                      _buildInfoRow('Assegnato a', story.assigneeEmail!),
+                      _buildInfoRow(context, 'Assegnato a', story.assigneeEmail!),
                     if (story.sprintId != null)
-                      _buildInfoRow('Sprint', story.sprintId!),
-                    _buildInfoRow('Creato il', _formatDate(story.createdAt)),
+                      _buildInfoRow(context, 'Sprint', story.sprintId!),
+                    _buildInfoRow(context, 'Creato il', _formatDate(story.createdAt)),
                     if (story.startedAt != null)
-                      _buildInfoRow('Iniziato il', _formatDate(story.startedAt!)),
+                      _buildInfoRow(context, 'Iniziato il', _formatDate(story.startedAt!)),
                     if (story.completedAt != null)
-                      _buildInfoRow('Completato il', _formatDate(story.completedAt!)),
+                      _buildInfoRow(context, 'Completato il', _formatDate(story.completedAt!)),
                   ],
                 ),
               ),
@@ -304,13 +311,13 @@ class StoryDetailDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, IconData icon, {required Widget child}) {
+  Widget _buildSection(BuildContext context, String title, IconData icon, {required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: Colors.purple),
+            Icon(icon, size: 18, color: AppColors.primary),
             const SizedBox(width: 8),
             Text(
               title,
@@ -330,14 +337,14 @@ class StoryDetailDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
           Text(
             '$label: ',
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(color: context.textSecondaryColor),
           ),
           Text(
             value,

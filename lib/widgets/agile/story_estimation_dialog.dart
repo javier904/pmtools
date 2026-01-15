@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Dialog per stimare una User Story
 ///
@@ -96,10 +98,11 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
     }
 
     final estimate = StoryEstimate(
-      participantEmail: widget.currentUserEmail,
-      estimationType: _selectedMethod,
+      voterEmail: widget.currentUserEmail,
+      voterName: widget.currentUserEmail.split('@').first,
       value: finalValue!,
-      timestamp: DateTime.now(),
+      votedAt: DateTime.now(),
+      type: _selectedMethod,
     );
 
     Navigator.pop(context, estimate);
@@ -110,7 +113,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.calculate, color: Colors.purple),
+          const Icon(Icons.calculate, color: AppColors.primary),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -121,7 +124,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
                   widget.story.title,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: context.textSecondaryColor,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -173,15 +176,15 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(
                     radius: 16,
-                    backgroundColor: Colors.purple.withOpacity(0.2),
+                    backgroundColor: AppColors.primary.withOpacity(0.2),
                     child: Text(
                       entry.key[0].toUpperCase(),
-                      style: const TextStyle(fontSize: 12, color: Colors.purple),
+                      style: const TextStyle(fontSize: 12, color: AppColors.primary),
                     ),
                   ),
                   title: Text(entry.key),
                   subtitle: Text(
-                    '${entry.value.estimationType.displayName}: ${entry.value.value}',
+                    '${entry.value.type.displayName}: ${entry.value.value}',
                   ),
                   trailing: entry.key == widget.currentUserEmail
                       ? const Chip(
@@ -203,7 +206,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
         ElevatedButton(
           onPressed: _submit,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
           child: const Text('Conferma Stima'),
@@ -226,25 +229,27 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
   }
 
   Widget _buildPlanningPokerInterface() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Planning Poker (Fibonacci)',
-          style: TextStyle(fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Seleziona la complessità della story in story points',
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: fibonacciValues.map((value) => _buildPokerCard(value)).toList(),
-        ),
-      ],
+    return Builder(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Planning Poker (Fibonacci)',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Seleziona la complessità della story in story points',
+            style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: fibonacciValues.map((value) => _buildPokerCard(value)).toList(),
+          ),
+        ],
+      ),
     );
   }
 

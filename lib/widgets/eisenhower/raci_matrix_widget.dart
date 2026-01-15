@@ -3,6 +3,8 @@ import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/raci_models.dart';
 import '../../services/eisenhower_firestore_service.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Widget per la gestione della Matrice RACI
 class RaciMatrixWidget extends StatefulWidget {
@@ -122,7 +124,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
       floatingActionButton: _dirtyActivityIds.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: _isSaving ? null : _saveChanges,
-              backgroundColor: Colors.blue,
+              backgroundColor: AppColors.primary,
               icon: _isSaving
                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                   : const Icon(Icons.save),
@@ -135,14 +137,14 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
   Widget _buildToolbar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Colors.grey[100],
+      color: context.surfaceVariantColor,
       child: Row(
         children: [
-          const Icon(Icons.table_chart, size: 20, color: Colors.blueGrey),
+          Icon(Icons.table_chart, size: 20, color: context.textSecondaryColor),
           const SizedBox(width: 8),
-          const Text(
+          Text(
             'Matrice RACI',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: context.textPrimaryColor),
           ),
           const Spacer(),
           if (widget.onAddActivity != null)
@@ -153,7 +155,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Aggiungi Attività'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   elevation: 0,
                 ),
@@ -164,10 +166,10 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
             icon: const Icon(Icons.add_circle_outline, size: 18),
             label: const Text('Aggiungi Colonna'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.blue,
+              backgroundColor: context.surfaceColor,
+              foregroundColor: AppColors.primary,
               elevation: 0,
-              side: const BorderSide(color: Colors.blue),
+              side: BorderSide(color: AppColors.primary),
             ),
           ),
         ],
@@ -178,8 +180,8 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
   Widget _buildHeaderRow() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue[50],
-        border: Border(bottom: BorderSide(color: Colors.blue[100]!)),
+        color: AppColors.primary.withOpacity(0.1),
+        border: Border(bottom: BorderSide(color: context.borderColor)),
       ),
       child: Row(
         children: [
@@ -187,7 +189,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
             width: 300,
             padding: const EdgeInsets.all(12),
             alignment: Alignment.centerLeft,
-            child: const Text('ATTIVITÀ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+            child: Text('ATTIVITÀ', style: TextStyle(fontWeight: FontWeight.bold, color: context.textSecondaryColor)),
           ),
           ...widget.matrix.raciColumns.map((col) => _buildColumnHeader(col)),
         ],
@@ -200,7 +202,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
       width: 150,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: Colors.blue[100]!)),
+        border: Border(left: BorderSide(color: context.borderColor)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,13 +214,13 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
               children: [
                 Text(
                   col.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textPrimaryColor),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   col.type.name.toUpperCase(),
-                  style: TextStyle(fontSize: 9, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 9, color: context.textSecondaryColor),
                 ),
               ],
             ),
@@ -228,7 +230,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
             borderRadius: BorderRadius.circular(12),
             child: const Padding(
               padding: EdgeInsets.all(4.0),
-              child: Icon(Icons.close, size: 14, color: Colors.red),
+              child: Icon(Icons.close, size: 14, color: AppColors.error),
             ),
           ),
         ],
@@ -240,17 +242,17 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
     final validationErrors = _validateRow(activity);
     final hasErrors = validationErrors.isNotEmpty;
 
-    Color rowColor = Colors.white;
+    Color rowColor = context.surfaceColor;
     if (hasErrors) {
-      rowColor = Colors.red.withOpacity(0.05);
+      rowColor = AppColors.error.withOpacity(0.05);
     } else {
-      rowColor = Colors.green.withOpacity(0.05);
+      rowColor = AppColors.success.withOpacity(0.05);
     }
 
     return Container(
       decoration: BoxDecoration(
         color: rowColor,
-        border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+        border: Border(bottom: BorderSide(color: context.borderColor)),
       ),
       child: Row(
         children: [
@@ -264,25 +266,25 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
                      message: validationErrors.join('\n'),
                      child: const Padding(
                        padding: EdgeInsets.only(right: 8),
-                       child: Icon(Icons.warning_amber, color: Colors.redAccent, size: 18),
+                       child: Icon(Icons.warning_amber, color: AppColors.error, size: 18),
                      ),
                    )
                 else
                    const Padding(
                        padding: EdgeInsets.only(right: 8),
-                       child: Icon(Icons.check_circle_outline, color: Colors.green, size: 18),
+                       child: Icon(Icons.check_circle_outline, color: AppColors.success, size: 18),
                    ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(activity.title, style: const TextStyle(fontWeight: FontWeight.w500)),
+                      Text(activity.title, style: TextStyle(fontWeight: FontWeight.w500, color: context.textPrimaryColor)),
                       if (activity.description.isNotEmpty)
                         Text(
                           activity.description,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                          style: TextStyle(fontSize: 11, color: context.textTertiaryColor),
                         ),
                     ],
                   ),
@@ -303,7 +305,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
       width: 150,
       height: 60,
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: Colors.grey[200]!)),
+        border: Border(left: BorderSide(color: context.borderColor)),
       ),
       alignment: Alignment.center,
       child: _buildRoleDropdown(activity, col, currentRole),
@@ -314,10 +316,10 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
       return PopupMenuButton<RaciRole?>(
         tooltip: 'Assegna ruolo',
         onSelected: (role) => _updateAssignment(activity, col.id, role),
-        itemBuilder: (context) => [
-          const PopupMenuItem(
+        itemBuilder: (ctx) => [
+          PopupMenuItem(
             value: null,
-            child: Text('Nessuno', style: TextStyle(color: Colors.grey)),
+            child: Text('Nessuno', style: TextStyle(color: ctx.textMutedColor)),
           ),
           ...RaciRole.values.map((r) => PopupMenuItem(
             value: r,
@@ -348,7 +350,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
            ),
            child: currentRole != null
                ? Text(currentRole.label, style: TextStyle(color: currentRole.color, fontWeight: FontWeight.bold))
-               : const Icon(Icons.add, size: 16, color: Colors.grey),
+               : Icon(Icons.add, size: 16, color: context.textMutedColor),
         ),
       );
   }
@@ -393,7 +395,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Modifiche salvate correttamente"), backgroundColor: Colors.green),
+          const SnackBar(content: Text("Modifiche salvate correttamente"), backgroundColor: AppColors.success),
         );
       }
 
@@ -403,7 +405,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
       setState(() => _isSaving = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Errore salvataggio: $e"), backgroundColor: Colors.red),
+          SnackBar(content: Text("Errore salvataggio: $e"), backgroundColor: AppColors.error),
         );
       }
     }
@@ -452,7 +454,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
         content: Text("Vuoi eliminare la colonna '${col.name}'? Le assegnazioni relative verranno perse."),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annulla")),
-          ElevatedButton(onPressed: () => Navigator.pop(context, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("Elimina")),
+          ElevatedButton(onPressed: () => Navigator.pop(context, true), style: ElevatedButton.styleFrom(backgroundColor: AppColors.error), child: const Text("Elimina")),
         ],
       )
     );
@@ -481,7 +483,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
   Widget _buildLegend() {
     return Container(
       padding: const EdgeInsets.all(12),
-      color: Colors.white,
+      color: context.surfaceColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: RaciRole.values.map((role) {
@@ -498,7 +500,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
                     child: Text(role.label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: role.color)),
                   ),
                   const SizedBox(width: 4),
-                  Text(role.fullName, style: const TextStyle(fontSize: 12)),
+                  Text(role.fullName, style: TextStyle(fontSize: 12, color: context.textPrimaryColor)),
                 ],
               ),
             ),

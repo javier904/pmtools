@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Card per visualizzare una User Story
 ///
@@ -49,13 +51,13 @@ class StoryCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: EdgeInsets.all(compact ? 8 : 12),
-          child: compact ? _buildCompactContent() : _buildFullContent(context),
+          child: compact ? _buildCompactContent(context) : _buildFullContent(context),
         ),
       ),
     );
   }
 
-  Widget _buildCompactContent() {
+  Widget _buildCompactContent(BuildContext context) {
     return Row(
       children: [
         // Priority indicator
@@ -83,7 +85,7 @@ class StoryCardWidget extends StatelessWidget {
                 children: [
                   Text(
                     story.storyId,
-                    style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
                   if (story.storyPoints != null) ...[
                     const SizedBox(width: 8),
@@ -111,16 +113,16 @@ class StoryCardWidget extends StatelessWidget {
             if (showDragHandle)
               ReorderableDragStartListener(
                 index: 0,
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: Icon(Icons.drag_handle, color: Colors.grey),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Icon(Icons.drag_handle, color: context.textMutedColor),
                 ),
               ),
             // Story ID
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: context.surfaceVariantColor,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -191,7 +193,7 @@ class StoryCardWidget extends StatelessWidget {
             story.description,
             style: TextStyle(
               fontSize: 13,
-              color: Colors.grey[600],
+              color: context.textSecondaryColor,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -230,11 +232,11 @@ class StoryCardWidget extends StatelessWidget {
             const Spacer(),
             // Acceptance criteria indicator
             if (story.acceptanceCriteria.isNotEmpty) ...[
-              Icon(Icons.checklist, size: 14, color: Colors.grey[600]),
+              Icon(Icons.checklist, size: 14, color: context.textSecondaryColor),
               const SizedBox(width: 4),
               Text(
                 '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
-                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
               ),
               const SizedBox(width: 12),
             ],
@@ -242,14 +244,14 @@ class StoryCardWidget extends StatelessWidget {
             Icon(
               story.isEstimated ? Icons.calculate : Icons.calculate_outlined,
               size: 14,
-              color: story.isEstimated ? Colors.green : Colors.grey,
+              color: story.isEstimated ? Colors.green : context.textMutedColor,
             ),
             const SizedBox(width: 4),
             Text(
               story.isEstimated ? 'Stimata' : 'Da stimare',
               style: TextStyle(
                 fontSize: 11,
-                color: story.isEstimated ? Colors.green : Colors.grey,
+                color: story.isEstimated ? Colors.green : context.textMutedColor,
               ),
             ),
             // Assignee
@@ -257,10 +259,10 @@ class StoryCardWidget extends StatelessWidget {
               const SizedBox(width: 12),
               CircleAvatar(
                 radius: 10,
-                backgroundColor: Colors.purple.withOpacity(0.2),
+                backgroundColor: AppColors.primary.withOpacity(0.2),
                 child: Text(
                   story.assigneeEmail![0].toUpperCase(),
-                  style: const TextStyle(fontSize: 10, color: Colors.purple),
+                  style: const TextStyle(fontSize: 10, color: AppColors.primary),
                 ),
               ),
             ],
@@ -274,7 +276,7 @@ class StoryCardWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: _calculateProgress(),
-              backgroundColor: Colors.grey[200],
+              backgroundColor: context.surfaceVariantColor,
               valueColor: AlwaysStoppedAnimation(story.status.color),
               minHeight: 4,
             ),

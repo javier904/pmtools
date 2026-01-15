@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 import 'story_card_widget.dart';
 import 'story_form_dialog.dart';
 import 'story_detail_dialog.dart';
@@ -116,27 +118,24 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: context.surfaceColor,
+        border: Border(
+          bottom: BorderSide(color: context.borderColor),
+        ),
       ),
       child: Column(
         children: [
           // Riga superiore: titolo e pulsanti
           Row(
             children: [
-              const Icon(Icons.list_alt, color: Colors.purple),
+              Icon(Icons.list_alt, color: AppColors.primary),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Product Backlog',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: context.textPrimaryColor,
                 ),
               ),
               const Spacer(),
@@ -151,7 +150,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               IconButton(
                 icon: Icon(
                   _showFilters ? Icons.filter_list_off : Icons.filter_list,
-                  color: _hasActiveFilters ? Colors.purple : Colors.grey,
+                  color: _hasActiveFilters ? AppColors.primary : context.textMutedColor,
                 ),
                 onPressed: () => setState(() => _showFilters = !_showFilters),
                 tooltip: 'Filtri',
@@ -163,7 +162,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text('Nuova Story'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                   ),
                 ),
@@ -172,17 +171,30 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           const SizedBox(height: 12),
           // Riga ricerca
           TextField(
+            style: TextStyle(color: context.textPrimaryColor),
             decoration: InputDecoration(
               hintText: 'Cerca per titolo, descrizione o ID...',
-              prefixIcon: const Icon(Icons.search),
+              hintStyle: TextStyle(color: context.textMutedColor),
+              prefixIcon: Icon(Icons.search, color: context.textMutedColor),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon: Icon(Icons.clear, color: context.textMutedColor),
                       onPressed: () => setState(() => _searchQuery = ''),
                     )
                   : null,
+              filled: true,
+              fillColor: context.surfaceVariantColor,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: context.borderColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: context.borderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.primary),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
             ),
@@ -218,9 +230,9 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: context.surfaceVariantColor,
         border: Border(
-          bottom: BorderSide(color: Colors.grey[200]!),
+          bottom: BorderSide(color: context.borderColor),
         ),
       ),
       child: Column(
@@ -229,7 +241,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           // Status filter
           Row(
             children: [
-              const Text('Status: ', style: TextStyle(fontWeight: FontWeight.w500)),
+              Text('Status: ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
               const SizedBox(width: 8),
               FilterChip(
                 label: const Text('Tutti'),
@@ -252,7 +264,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           // Priority filter
           Row(
             children: [
-              const Text('Priorità: ', style: TextStyle(fontWeight: FontWeight.w500)),
+              Text('Priorità: ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
               const SizedBox(width: 8),
               FilterChip(
                 label: const Text('Tutte'),
@@ -276,7 +288,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Text('Tag: ', style: TextStyle(fontWeight: FontWeight.w500)),
+                Text('Tag: ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
                 const SizedBox(width: 8),
                 FilterChip(
                   label: const Text('Tutti'),
@@ -326,11 +338,11 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+            Icon(Icons.search_off, size: 64, color: context.textMutedColor),
             const SizedBox(height: 16),
             Text(
               'Nessuna story trovata',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
             ),
             const SizedBox(height: 8),
             TextButton(
@@ -351,16 +363,16 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.note_add, size: 64, color: Colors.grey[400]),
+          Icon(Icons.note_add, size: 64, color: context.textMutedColor),
           const SizedBox(height: 16),
           Text(
             'Backlog vuoto',
-            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
           ),
           const SizedBox(height: 8),
           Text(
             'Aggiungi la prima User Story',
-            style: TextStyle(color: Colors.grey[500]),
+            style: TextStyle(color: context.textTertiaryColor),
           ),
           if (widget.canEdit && widget.onAddStory != null) ...[
             const SizedBox(height: 16),
@@ -369,7 +381,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               icon: const Icon(Icons.add),
               label: const Text('Nuova Story'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
+                backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
               ),
             ),

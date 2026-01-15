@@ -4,6 +4,7 @@ import '../models/agile_enums.dart';
 import '../services/agile_firestore_service.dart';
 import '../services/agile_audit_service.dart';
 import '../services/auth_service.dart';
+import '../themes/app_theme.dart';
 import '../widgets/agile/methodology_guide_dialog.dart';
 import 'agile_project_detail_screen.dart';
 
@@ -61,9 +62,9 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        foregroundColor: Colors.grey.shade800,
+        backgroundColor: context.surfaceColor,
+        surfaceTintColor: context.surfaceColor,
+        foregroundColor: context.textPrimaryColor,
         elevation: 0,
         title: Row(
           children: [
@@ -186,9 +187,18 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: context.borderColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: context.borderColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey[100],
+        fillColor: context.surfaceVariantColor,
       ),
       onChanged: (value) => setState(() => _searchQuery = value),
     );
@@ -315,7 +325,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                   project.description,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.grey[600],
+                    color: context.textSecondaryColor,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -353,11 +363,11 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
               Row(
                 children: [
                   if (project.averageVelocity != null) ...[
-                    Icon(Icons.speed, size: 14, color: Colors.grey[600]),
+                    Icon(Icons.speed, size: 14, color: context.textSecondaryColor),
                     const SizedBox(width: 4),
                     Text(
                       'Velocity: ${project.averageVelocity!.toStringAsFixed(1)}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
                     ),
                   ],
                   const Spacer(),
@@ -390,20 +400,20 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: context.surfaceVariantColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: Colors.grey[600]),
+          Icon(icon, size: 14, color: context.textSecondaryColor),
           const SizedBox(width: 4),
           Text(
             value,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
+              color: context.textPrimaryColor,
             ),
           ),
         ],
@@ -442,14 +452,14 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
+              color: context.textPrimaryColor,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Crea il tuo primo progetto per iniziare\na gestire sprint, backlog e team.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15, color: Colors.grey.shade600, height: 1.5),
+            style: TextStyle(fontSize: 15, color: context.textSecondaryColor, height: 1.5),
           ),
           const SizedBox(height: 32),
           ElevatedButton.icon(
@@ -549,11 +559,11 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
+          Icon(Icons.search_off, size: 64, color: context.textMutedColor),
           const SizedBox(height: 16),
           Text(
             'Nessun risultato per "$_searchQuery"',
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(color: context.textSecondaryColor),
           ),
         ],
       ),
@@ -841,7 +851,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                       'Framework Agile',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
+                        color: context.textSecondaryColor,
                       ),
                     ),
                     const Spacer(),
@@ -864,7 +874,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                   'Configurazione Sprint',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
+                    color: context.textSecondaryColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -911,78 +921,82 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
   }
 
   Widget _buildFrameworkSelector() {
-    return Row(
-      children: AgileFramework.values.map((framework) {
-        final isSelected = _framework == framework;
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Tooltip(
-              message: framework.detailedDescription,
-              textStyle: const TextStyle(
-                fontSize: 12,
-                color: Colors.white,
-                height: 1.4,
-              ),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[850],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              waitDuration: const Duration(milliseconds: 500),
-              child: InkWell(
-                onTap: () => setState(() => _framework = framework),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? _getFrameworkColor(framework).withValues(alpha: 0.1)
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: AgileFramework.values.map((framework) {
+          final isSelected = _framework == framework;
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Tooltip(
+                message: framework.detailedDescription,
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                  height: 1.4,
+                ),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode ? context.surfaceColor : Colors.grey[850],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                waitDuration: const Duration(milliseconds: 500),
+                child: InkWell(
+                  onTap: () => setState(() => _framework = framework),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? _getFrameworkColor(framework)
-                          : Colors.grey[300]!,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        framework.icon,
+                          ? _getFrameworkColor(framework).withValues(alpha: 0.1)
+                          : context.surfaceVariantColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
                         color: isSelected
                             ? _getFrameworkColor(framework)
-                            : Colors.grey[600],
+                            : context.borderColor,
+                        width: isSelected ? 2 : 1,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        framework.displayName,
-                        style: TextStyle(
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          framework.icon,
                           color: isSelected
                               ? _getFrameworkColor(framework)
-                              : Colors.grey[700],
+                              : context.textSecondaryColor,
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        framework.description,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey[500],
+                        const SizedBox(height: 4),
+                        Text(
+                          framework.displayName,
+                          style: TextStyle(
+                            fontWeight:
+                                isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected
+                                ? _getFrameworkColor(framework)
+                                : context.textSecondaryColor,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                        const SizedBox(height: 2),
+                        Text(
+                          framework.description,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: context.textTertiaryColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -998,12 +1012,12 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
         ),
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: context.borderColor),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

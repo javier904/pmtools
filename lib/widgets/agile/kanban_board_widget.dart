@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../models/framework_features.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Kanban Board con drag & drop tra colonne e supporto WIP limits
 ///
@@ -173,14 +175,14 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                 ? primaryStatus.color.withValues(alpha: 0.1)
                 : isWipExceeded
                     ? Colors.red.withValues(alpha: 0.05)
-                    : Colors.grey[100],
+                    : context.surfaceVariantColor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isHighlighted
                   ? primaryStatus.color
                   : isWipExceeded
                       ? Colors.red
-                      : Colors.grey[300]!,
+                      : context.borderColor,
               width: isHighlighted || isWipExceeded ? 2 : 1,
             ),
           ),
@@ -263,11 +265,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.settings, size: 12, color: Colors.grey[600]),
+                    Icon(Icons.settings, size: 12, color: context.textSecondaryColor),
                     const SizedBox(width: 4),
                     Text(
                       'Configura WIP',
-                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
                     ),
                   ],
                 ),
@@ -290,8 +292,8 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     Color textColor;
 
     if (!hasWipLimit) {
-      bgColor = Colors.white;
-      textColor = Colors.grey[700]!;
+      bgColor = context.surfaceColor;
+      textColor = context.textSecondaryColor;
     } else if (isWipExceeded) {
       bgColor = Colors.red;
       textColor = Colors.white;
@@ -312,7 +314,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(12),
-          border: hasWipLimit ? null : Border.all(color: Colors.grey[300]!),
+          border: hasWipLimit ? null : Border.all(color: context.borderColor),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -358,11 +360,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             ),
           ] else ...[
             // Per Kanban mostra conteggio
-            Icon(Icons.assignment, size: 12, color: Colors.grey[600]),
+            Icon(Icons.assignment, size: 12, color: context.textSecondaryColor),
             const SizedBox(width: 4),
             Text(
               '${stories.length} items',
-              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
             ),
           ],
         ],
@@ -375,12 +377,12 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inbox_outlined, size: 32, color: Colors.grey[300]),
+          Icon(Icons.inbox_outlined, size: 32, color: context.textMutedColor),
           const SizedBox(height: 8),
           Text(
             'Vuoto',
             style: TextStyle(
-              color: Colors.grey[400],
+              color: context.textMutedColor,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -433,7 +435,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: context.surfaceVariantColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                     child: Text(
@@ -529,11 +531,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   ],
                   // Acceptance criteria
                   if (story.acceptanceCriteria.isNotEmpty) ...[
-                    Icon(Icons.checklist, size: 12, color: Colors.grey[600]),
+                    Icon(Icons.checklist, size: 12, color: context.textSecondaryColor),
                     const SizedBox(width: 2),
                     Text(
                       '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
-                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
                     ),
                   ],
                   const Spacer(),
@@ -541,10 +543,10 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   if (story.assigneeEmail != null)
                     CircleAvatar(
                       radius: 10,
-                      backgroundColor: Colors.purple.withValues(alpha: 0.2),
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.2),
                       child: Text(
                         story.assigneeEmail![0].toUpperCase(),
-                        style: const TextStyle(fontSize: 8, color: Colors.purple),
+                        style: const TextStyle(fontSize: 8, color: AppColors.primary),
                       ),
                     ),
                 ],
@@ -575,9 +577,9 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Imposta il numero massimo di item che possono essere in questa colonna contemporaneamente.',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: context.textMutedColor),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -593,7 +595,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             const SizedBox(height: 8),
             Text(
               'Suggerimento: inizia con ${(column.statuses.length * 2).clamp(2, 5)} e aggiusta in base al team.',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
             ),
           ],
         ),
@@ -653,10 +655,10 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text('• Riducono il multitasking e aumentano il focus'),
-              Text('• Evidenziano i colli di bottiglia'),
-              Text('• Migliorano il flusso di lavoro'),
-              Text('• Accelerano il completamento degli item'),
+              Text('- Riducono il multitasking e aumentano il focus'),
+              Text('- Evidenziano i colli di bottiglia'),
+              Text('- Migliorano il flusso di lavoro'),
+              Text('- Accelerano il completamento degli item'),
               SizedBox(height: 16),
               Text(
                 'Cosa fare se un limite è superato?',
@@ -779,7 +781,7 @@ class KanbanSummaryWidget extends StatelessWidget {
                             _getShortName(column.name),
                             style: TextStyle(
                               fontSize: 9,
-                              color: isExceeded ? Colors.red : Colors.grey[600],
+                              color: isExceeded ? Colors.red : context.textSecondaryColor,
                             ),
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,

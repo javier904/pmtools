@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/team_member_model.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Widget per visualizzare la matrice competenze del team
 class SkillMatrixWidget extends StatelessWidget {
@@ -36,9 +38,9 @@ class SkillMatrixWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            const Row(
+            Row(
               children: [
-                Icon(Icons.grid_view, color: Colors.purple),
+                Icon(Icons.grid_view, color: AppColors.primary),
                 SizedBox(width: 8),
                 Text(
                   'Matrice Competenze',
@@ -51,8 +53,9 @@ class SkillMatrixWidget extends StatelessWidget {
             // Matrix
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingRowColor: WidgetStateProperty.all(Colors.grey[100]),
+              child: Builder(
+                builder: (context) => DataTable(
+                  headingRowColor: WidgetStateProperty.all(context.surfaceVariantColor),
                 columnSpacing: 16,
                 columns: [
                   const DataColumn(
@@ -113,7 +116,7 @@ class SkillMatrixWidget extends StatelessWidget {
                                 )
                               : Icon(
                                   Icons.circle_outlined,
-                                  color: Colors.grey[300],
+                                  color: context.borderColor,
                                   size: 20,
                                 ),
                         ),
@@ -121,6 +124,7 @@ class SkillMatrixWidget extends StatelessWidget {
                     )),
                   ],
                 )).toList(),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -137,16 +141,18 @@ class SkillMatrixWidget extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.group, size: 48, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Nessun membro nel team',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ],
+        child: Builder(
+          builder: (context) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.group, size: 48, color: context.textMutedColor),
+              const SizedBox(height: 16),
+              Text(
+                'Nessun membro nel team',
+                style: TextStyle(color: context.textSecondaryColor),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -156,21 +162,23 @@ class SkillMatrixWidget extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.school, size: 48, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Nessuna competenza definita',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Aggiungi competenze ai membri del team',
-              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-            ),
-          ],
+        child: Builder(
+          builder: (context) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.school, size: 48, color: context.textMutedColor),
+              const SizedBox(height: 16),
+              Text(
+                'Nessuna competenza definita',
+                style: TextStyle(color: context.textSecondaryColor),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Aggiungi competenze ai membri del team',
+                style: TextStyle(fontSize: 12, color: context.textTertiaryColor),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -212,16 +220,18 @@ class SkillMatrixWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              label: Text(
-                skill,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isCritical ? Colors.red : null,
+              label: Builder(
+                builder: (context) => Text(
+                  skill,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isCritical ? Colors.red : null,
+                  ),
                 ),
               ),
               backgroundColor: isCritical
                   ? Colors.red.withOpacity(0.1)
-                  : Colors.grey[100],
+                  : null,
             );
           }).toList(),
         ),
@@ -285,23 +295,24 @@ class MemberSkillsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Competenze',
-          style: TextStyle(fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 8),
-        if (member.skills.isEmpty)
-          Text(
-            'Nessuna competenza',
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey[600],
-            ),
-          )
-        else
+    return Builder(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Competenze',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          if (member.skills.isEmpty)
+            Text(
+              'Nessuna competenza',
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                color: context.textSecondaryColor,
+              ),
+            )
+          else
           Wrap(
             spacing: 8,
             runSpacing: 4,
@@ -313,14 +324,15 @@ class MemberSkillsWidget extends StatelessWidget {
               onDeleted: onRemoveSkill != null
                   ? () => onRemoveSkill!(skill)
                   : null,
-              backgroundColor: Colors.purple.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withOpacity(0.1),
             )).toList(),
           ),
-        if (onAddSkill != null && allTeamSkills != null) ...[
-          const SizedBox(height: 8),
-          _buildAddSkillButton(context),
+          if (onAddSkill != null && allTeamSkills != null) ...[
+            const SizedBox(height: 8),
+            _buildAddSkillButton(context),
+          ],
         ],
-      ],
+      ),
     );
   }
 
@@ -333,17 +345,17 @@ class MemberSkillsWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.purple.withOpacity(0.3)),
+          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add, size: 16, color: Colors.purple),
-            SizedBox(width: 4),
+            Icon(Icons.add, size: 16, color: AppColors.primary),
+            const SizedBox(width: 4),
             Text(
               'Aggiungi competenza',
-              style: TextStyle(fontSize: 12, color: Colors.purple),
+              style: TextStyle(fontSize: 12, color: AppColors.primary),
             ),
           ],
         ),
@@ -454,9 +466,9 @@ class SkillRadarWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.radar, color: Colors.purple),
+                Icon(Icons.radar, color: AppColors.primary),
                 SizedBox(width: 8),
                 Text(
                   'Copertura Competenze',
@@ -473,42 +485,44 @@ class SkillRadarWidget extends StatelessWidget {
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          skill,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: isCritical ? FontWeight.bold : null,
-                            color: isCritical ? Colors.red : null,
+                child: Builder(
+                  builder: (context) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            skill,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: isCritical ? FontWeight.bold : null,
+                              color: isCritical ? Colors.red : null,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '$coverage/$teamSize',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isCritical ? Colors.red : Colors.grey[600],
+                          Text(
+                            '$coverage/$teamSize',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isCritical ? Colors.red : context.textSecondaryColor,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: percent,
-                        backgroundColor: Colors.grey[200],
-                        valueColor: AlwaysStoppedAnimation(
-                          isCritical ? Colors.red : Colors.purple,
-                        ),
-                        minHeight: 8,
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: percent,
+                          backgroundColor: context.borderColor,
+                          valueColor: AlwaysStoppedAnimation(
+                            isCritical ? Colors.red : AppColors.primary,
+                          ),
+                          minHeight: 8,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }),

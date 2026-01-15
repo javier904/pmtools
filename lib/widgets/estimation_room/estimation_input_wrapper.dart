@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/estimation_mode.dart';
 import '../../models/planning_poker_story_model.dart';
+import '../../themes/app_theme.dart';
 import 'decimal_input_widget.dart';
 import 'three_point_input_widget.dart';
 import 'poker_card_widget.dart';
@@ -307,11 +308,14 @@ class ModeAwareStatisticsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: context.isDarkMode
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
             blurRadius: 10,
           ),
         ],
@@ -405,7 +409,7 @@ class ModeAwareStatisticsWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: context.surfaceVariantColor,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -413,15 +417,15 @@ class ModeAwareStatisticsWidget extends StatelessWidget {
                 children: [
                   Text(
                     'Range:',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: context.textSecondaryColor),
                   ),
                   Text(
                     '${statistics.minValue!.toStringAsFixed(1)} - ${statistics.maxValue!.toStringAsFixed(1)}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontWeight: FontWeight.w600, color: context.textPrimaryColor),
                   ),
                   Text(
                     '(Δ ${statistics.range?.toStringAsFixed(1) ?? '-'})',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: context.textSecondaryColor),
                   ),
                 ],
               ),

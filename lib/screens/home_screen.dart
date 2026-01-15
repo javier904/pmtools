@@ -28,10 +28,10 @@ class HomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
+                color: AppColors.primary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.rocket_launch, color: Colors.white, size: 18),
+              child: const Icon(Icons.hub_rounded, color: AppColors.primary, size: 20),
             ),
             const SizedBox(width: 10),
             Text(
@@ -164,7 +164,7 @@ class HomeScreen extends StatelessWidget {
                             Expanded(child: _ToolCard(
                               title: 'Matrice Eisenhower',
                               description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
-                              icon: Icons.apps_rounded,
+                              icon: Icons.grid_view_rounded,
                               color: AppColors.success,
                               features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
                               onTap: () => Navigator.pushNamed(context, '/eisenhower'),
@@ -174,7 +174,7 @@ class HomeScreen extends StatelessWidget {
                             Expanded(child: _ToolCard(
                               title: 'Estimation Room',
                               description: 'Sessioni di stima collaborative per il team. Planning Poker, T-Shirt sizing e altri metodi per stimare user stories.',
-                              icon: Icons.style_rounded,
+                              icon: Icons.casino_rounded,
                               color: AppColors.secondary,
                               features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
                               onTap: () => Navigator.pushNamed(context, '/estimation-room'),
@@ -191,7 +191,7 @@ class HomeScreen extends StatelessWidget {
                             Expanded(child: _ToolCard(
                               title: 'Agile Process Manager',
                               description: 'Gestisci progetti agili completi con backlog, sprint planning, kanban board, metriche e retrospettive.',
-                              icon: Icons.speed_rounded,
+                              icon: Icons.rocket_launch_rounded,
                               color: AppColors.primary,
                               features: const ['Scrum', 'Kanban', 'Hybrid'],
                               onTap: () => Navigator.pushNamed(context, '/agile-process'),
@@ -221,7 +221,7 @@ class HomeScreen extends StatelessWidget {
                     _ToolCard(
                       title: 'Matrice Eisenhower',
                       description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
-                      icon: Icons.apps_rounded,
+                      icon: Icons.grid_view_rounded,
                       color: AppColors.success,
                       features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
                       onTap: () => Navigator.pushNamed(context, '/eisenhower'),
@@ -231,7 +231,7 @@ class HomeScreen extends StatelessWidget {
                     _ToolCard(
                       title: 'Estimation Room',
                       description: 'Sessioni di stima collaborative per il team. Planning Poker, T-Shirt sizing e altri metodi.',
-                      icon: Icons.style_rounded,
+                      icon: Icons.casino_rounded,
                       color: AppColors.secondary,
                       features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
                       onTap: () => Navigator.pushNamed(context, '/estimation-room'),
@@ -241,7 +241,7 @@ class HomeScreen extends StatelessWidget {
                     _ToolCard(
                       title: 'Agile Process Manager',
                       description: 'Gestisci progetti agili con backlog, sprint, kanban e metriche.',
-                      icon: Icons.speed_rounded,
+                      icon: Icons.rocket_launch_rounded,
                       color: AppColors.primary,
                       features: const ['Scrum', 'Kanban', 'Hybrid'],
                       onTap: () => Navigator.pushNamed(context, '/agile-process'),
@@ -356,12 +356,12 @@ class _ToolCardState extends State<_ToolCard> {
                     // Icon
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: effectiveColor.withValues(alpha: _isHovered ? 0.2 : 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(widget.icon, color: effectiveColor, size: 26),
+                      child: Icon(widget.icon, color: effectiveColor, size: 28),
                     ),
                     const Spacer(),
                     if (widget.isComingSoon)

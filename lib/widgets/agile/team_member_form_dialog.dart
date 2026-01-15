@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/team_member_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Dialog per modificare un membro del team
 ///
@@ -115,21 +117,23 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Email (non modificabile)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.email, size: 18, color: Colors.grey),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.member.email,
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ],
+                Builder(
+                  builder: (context) => Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: context.surfaceVariantColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.email, size: 18, color: context.textMutedColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          widget.member.email,
+                          style: TextStyle(color: context.textSecondaryColor),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -227,9 +231,11 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  _getCapacityHint(),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                Builder(
+                  builder: (context) => Text(
+                    _getCapacityHint(),
+                    style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -271,9 +277,11 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
                     )).toList(),
                   )
                 else
-                  Text(
-                    'Nessuna skill aggiunta',
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                  Builder(
+                    builder: (context) => Text(
+                      'Nessuna skill aggiunta',
+                      style: TextStyle(color: context.textTertiaryColor, fontSize: 12),
+                    ),
                   ),
 
                 // Suggerimenti skills
@@ -305,7 +313,7 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
         ElevatedButton(
           onPressed: _save,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
           child: const Text('Salva'),
@@ -507,7 +515,7 @@ class _AddTeamMemberDialogState extends State<AddTeamMemberDialog> {
         ElevatedButton(
           onPressed: _save,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
           child: const Text('Aggiungi'),

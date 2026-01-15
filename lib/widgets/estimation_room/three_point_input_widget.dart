@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/estimation_mode.dart';
+import '../../themes/app_theme.dart';
 
 /// Widget per Three-Point Estimation (PERT)
 /// Formula: (O + 4M + P) / 6
@@ -119,11 +120,14 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: context.isDarkMode
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -267,7 +271,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: context.surfaceVariantColor,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -275,13 +279,13 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.info_outline, size: 16, color: Colors.grey[600]),
+                    Icon(Icons.info_outline, size: 16, color: context.textSecondaryColor),
                     const SizedBox(width: 6),
                     Text(
                       'Guida:',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
+                        color: context.textSecondaryColor,
                         fontSize: 12,
                       ),
                     ),
@@ -294,7 +298,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
                   'P: Stima nel caso peggiore (imprevisti)',
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.grey[600],
+                    color: context.textTertiaryColor,
                     height: 1.4,
                   ),
                 ),
@@ -312,43 +316,51 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
     required String hint,
     required Color color,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
-            color: color,
-          ),
-        ),
-        const SizedBox(height: 4),
-        TextField(
-          controller: controller,
-          enabled: widget.enabled,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
-          ],
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(fontSize: 12, color: Colors.grey[400]),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: color.withOpacity(0.5)),
+    return Builder(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              color: color,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: color, width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            suffixText: 'gg',
-            suffixStyle: TextStyle(fontSize: 11, color: Colors.grey[500]),
           ),
-          onChanged: (_) => _calculatePert(),
-        ),
-      ],
+          const SizedBox(height: 4),
+          TextField(
+            controller: controller,
+            enabled: widget.enabled,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
+            ],
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(fontSize: 12, color: context.textMutedColor),
+              fillColor: context.surfaceVariantColor,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: color.withOpacity(0.5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: context.borderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: color, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              suffixText: 'gg',
+              suffixStyle: TextStyle(fontSize: 11, color: context.textTertiaryColor),
+            ),
+            onChanged: (_) => _calculatePert(),
+          ),
+        ],
+      ),
     );
   }
 

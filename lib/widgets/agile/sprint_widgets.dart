@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 // =============================================================================
 // SPRINT LIST WIDGET
@@ -41,7 +43,7 @@ class SprintListWidget extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(Icons.timeline, color: Colors.purple),
+              const Icon(Icons.timeline, color: AppColors.primary),
               const SizedBox(width: 8),
               Text(
                 'Sprint (${sprints.length})',
@@ -54,7 +56,7 @@ class SprintListWidget extends StatelessWidget {
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text('Nuovo Sprint'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                   ),
                 ),
@@ -66,33 +68,33 @@ class SprintListWidget extends StatelessWidget {
         // Lista sprint
         Expanded(
           child: sprints.isEmpty
-              ? _buildEmptyState()
+              ? _buildEmptyState(context)
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: sprints.length,
-                  itemBuilder: (context, index) => _buildSprintCard(sprints[index]),
+                  itemBuilder: (context, index) => _buildSprintCard(context, sprints[index]),
                 ),
         ),
       ],
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.timeline, size: 64, color: Colors.grey[400]),
+          Icon(Icons.timeline, size: 64, color: context.textMutedColor),
           const SizedBox(height: 16),
-          Text('Nessuno sprint', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
+          Text('Nessuno sprint', style: TextStyle(fontSize: 18, color: context.textSecondaryColor)),
           const SizedBox(height: 8),
-          Text('Crea il primo sprint per iniziare', style: TextStyle(color: Colors.grey[500])),
+          Text('Crea il primo sprint per iniziare', style: TextStyle(color: context.textTertiaryColor)),
         ],
       ),
     );
   }
 
-  Widget _buildSprintCard(SprintModel sprint) {
+  Widget _buildSprintCard(BuildContext context, SprintModel sprint) {
     final isActive = sprint.status == SprintStatus.active;
     final isCompleted = sprint.status == SprintStatus.completed;
 
@@ -101,7 +103,7 @@ class SprintListWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isActive ? Colors.green : Colors.grey[300]!,
+          color: isActive ? Colors.green : context.borderColor,
           width: isActive ? 2 : 1,
         ),
       ),
@@ -141,10 +143,10 @@ class SprintListWidget extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'Sprint ${sprint.number}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey,
+                      color: context.textMutedColor,
                     ),
                   ),
                   const Spacer(),
@@ -196,7 +198,7 @@ class SprintListWidget extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   sprint.goal,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: context.textSecondaryColor),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -206,18 +208,18 @@ class SprintListWidget extends StatelessWidget {
               // Date range
               Row(
                 children: [
-                  Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
+                  Icon(Icons.calendar_today, size: 14, color: context.textSecondaryColor),
                   const SizedBox(width: 4),
                   Text(
                     '${_formatDate(sprint.startDate)} - ${_formatDate(sprint.endDate)}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
                   ),
                   const SizedBox(width: 16),
-                  Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
+                  Icon(Icons.access_time, size: 14, color: context.textSecondaryColor),
                   const SizedBox(width: 4),
                   Text(
                     '${sprint.durationDays} giorni',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
                   ),
                 ],
               ),
@@ -227,12 +229,14 @@ class SprintListWidget extends StatelessWidget {
               Row(
                 children: [
                   _buildStat(
+                    context,
                     '${sprint.storyIds.length}',
                     'stories',
                     Colors.blue,
                   ),
                   const SizedBox(width: 16),
                   _buildStat(
+                    context,
                     '${sprint.plannedPoints}',
                     'pts pianificati',
                     Colors.orange,
@@ -240,15 +244,17 @@ class SprintListWidget extends StatelessWidget {
                   if (isCompleted) ...[
                     const SizedBox(width: 16),
                     _buildStat(
+                      context,
                       '${sprint.completedPoints}',
                       'pts completati',
                       Colors.green,
                     ),
                     const SizedBox(width: 16),
                     _buildStat(
+                      context,
                       sprint.velocity?.toStringAsFixed(1) ?? '-',
                       'velocity',
-                      Colors.purple,
+                      AppColors.primary,
                     ),
                   ],
                 ],
@@ -264,7 +270,7 @@ class SprintListWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: sprint.progress,
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: context.surfaceVariantColor,
                           valueColor: const AlwaysStoppedAnimation(Colors.green),
                           minHeight: 6,
                         ),
@@ -283,7 +289,7 @@ class SprintListWidget extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${sprint.daysRemaining} giorni rimanenti',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                 ),
               ],
             ],
@@ -293,7 +299,7 @@ class SprintListWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(String value, String label, Color color) {
+  Widget _buildStat(BuildContext context, String value, String label, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -304,7 +310,7 @@ class SprintListWidget extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
         ),
       ],
     );
@@ -441,7 +447,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
         children: [
           Icon(
             _isEditing ? Icons.edit : Icons.add_circle,
-            color: Colors.purple,
+            color: AppColors.primary,
           ),
           const SizedBox(width: 8),
           Text(_isEditing ? 'Modifica Sprint' : 'Nuovo Sprint'),
@@ -530,7 +536,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                 const SizedBox(height: 8),
                 Text(
                   'Durata: $duration giorni',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                 ),
                 const SizedBox(height: 16),
 
@@ -585,7 +591,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
         ElevatedButton(
           onPressed: _save,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
           child: Text(_isEditing ? 'Salva' : 'Crea'),
@@ -668,7 +674,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
     return AlertDialog(
       title: const Row(
         children: [
-          Icon(Icons.assignment, color: Colors.purple),
+          Icon(Icons.assignment, color: AppColors.primary),
           SizedBox(width: 8),
           Text('Sprint Planning'),
         ],
@@ -682,7 +688,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.05),
+                color: AppColors.primary.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -692,7 +698,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                     'Selezionati',
                     '$_selectedPoints pts',
                     _selectedStoryIds.length.toString(),
-                    Colors.purple,
+                    AppColors.primary,
                   ),
                   _buildStatColumn(
                     'Suggeriti',
@@ -719,7 +725,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: _suggestedPoints > 0 ? _selectedPoints / _suggestedPoints : 0,
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: context.surfaceVariantColor,
                       valueColor: AlwaysStoppedAnimation(
                         _selectedPoints > _suggestedPoints ? Colors.orange : Colors.green,
                       ),
@@ -753,7 +759,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                   ? Center(
                       child: Text(
                         'Nessuna story disponibile nel backlog',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(color: context.textSecondaryColor),
                       ),
                     )
                   : ListView.builder(
@@ -764,7 +770,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
 
                         return Card(
                           margin: const EdgeInsets.only(bottom: 8),
-                          color: isSelected ? Colors.purple.withOpacity(0.05) : null,
+                          color: isSelected ? AppColors.primary.withOpacity(0.05) : null,
                           child: CheckboxListTile(
                             value: isSelected,
                             onChanged: (value) {
@@ -810,7 +816,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                                     'Non stimata',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey[600],
+                                      color: context.textSecondaryColor,
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
@@ -851,7 +857,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
         ElevatedButton(
           onPressed: () => Navigator.pop(context, _selectedStoryIds),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
           child: Text('Conferma (${_selectedStoryIds.length} stories)'),
@@ -863,13 +869,13 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
   Widget _buildStatColumn(String label, String value, String subValue, Color color) {
     return Column(
       children: [
-        Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+        Text(label, style: TextStyle(fontSize: 11, color: context.textSecondaryColor)),
         const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
         ),
-        Text(subValue, style: TextStyle(fontSize: 10, color: Colors.grey[500])),
+        Text(subValue, style: TextStyle(fontSize: 10, color: context.textTertiaryColor)),
       ],
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/methodology_guide.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Dialog per visualizzare la guida completa di una metodologia
 class MethodologyGuideDialog extends StatefulWidget {
@@ -69,25 +71,27 @@ class _MethodologyGuideDialogState extends State<MethodologyGuideDialog>
                 children: [
                   const Icon(Icons.menu_book, color: Colors.teal),
                   const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Guida alle Metodologie Agile',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Builder(
+                      builder: (context) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Guida alle Metodologie Agile',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Scegli la metodologia più adatta al tuo progetto',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                          Text(
+                            'Scegli la metodologia più adatta al tuo progetto',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: context.textMutedColor,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   IconButton(
@@ -230,11 +234,13 @@ class _MethodologyGuideContent extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
-                section.content,
-                style: TextStyle(
-                  height: 1.5,
-                  color: Colors.grey[800],
+              Builder(
+                builder: (context) => Text(
+                  section.content,
+                  style: TextStyle(
+                    height: 1.5,
+                    color: context.textPrimaryColor,
+                  ),
                 ),
               ),
               if (section.bulletPoints != null) ...[
@@ -247,11 +253,13 @@ class _MethodologyGuideContent extends StatelessWidget {
                       Icon(Icons.arrow_right, color: guide.color, size: 20),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          point,
-                          style: TextStyle(
-                            height: 1.4,
-                            color: Colors.grey[700],
+                        child: Builder(
+                          builder: (context) => Text(
+                            point,
+                            style: TextStyle(
+                              height: 1.4,
+                              color: context.textSecondaryColor,
+                            ),
                           ),
                         ),
                       ),
@@ -296,11 +304,13 @@ class _MethodologyGuideContent extends StatelessWidget {
                   Icon(icon, color: color.withOpacity(0.7), size: 16),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      item,
-                      style: TextStyle(
-                        height: 1.4,
-                        color: Colors.grey[700],
+                    child: Builder(
+                      builder: (context) => Text(
+                        item,
+                        style: TextStyle(
+                          height: 1.4,
+                          color: context.textSecondaryColor,
+                        ),
                       ),
                     ),
                   ),
@@ -366,11 +376,13 @@ class _MethodologyGuideContent extends StatelessWidget {
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.only(left: 26),
-            child: Text(
-              faq.answer,
-              style: TextStyle(
-                height: 1.4,
-                color: Colors.grey[700],
+            child: Builder(
+              builder: (context) => Text(
+                faq.answer,
+                style: TextStyle(
+                  height: 1.4,
+                  color: context.textSecondaryColor,
+                ),
               ),
             ),
           ),
@@ -424,11 +436,13 @@ class MethodologyQuickInfo extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              _getShortDescription(framework),
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[700],
+            Builder(
+              builder: (context) => Text(
+                _getShortDescription(framework),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.textSecondaryColor,
+                ),
               ),
             ),
           ],

@@ -4,6 +4,8 @@ import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../models/framework_features.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 
 /// Checklist di setup per un nuovo progetto Agile
 ///
@@ -67,11 +69,13 @@ class SetupChecklistWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        '$completedCount di $totalCount passi completati',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
+                      Builder(
+                        builder: (context) => Text(
+                          '$completedCount di $totalCount passi completati',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: context.textSecondaryColor,
+                          ),
                         ),
                       ),
                     ],
@@ -83,11 +87,13 @@ class SetupChecklistWidget extends StatelessWidget {
                   height: 50,
                   child: Stack(
                     children: [
-                      CircularProgressIndicator(
-                        value: progress,
-                        strokeWidth: 4,
-                        backgroundColor: Colors.grey[200],
-                        valueColor: AlwaysStoppedAnimation(_features.primaryColor),
+                      Builder(
+                        builder: (context) => CircularProgressIndicator(
+                          value: progress,
+                          strokeWidth: 4,
+                          backgroundColor: context.borderColor,
+                          valueColor: AlwaysStoppedAnimation(_features.primaryColor),
+                        ),
                       ),
                       Center(
                         child: Text(
@@ -156,54 +162,58 @@ class SetupChecklistWidget extends StatelessWidget {
       child: Row(
         children: [
           // Checkbox icon
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: item.isCompleted
-                  ? Colors.green.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: item.isCompleted ? Colors.green : Colors.grey[400]!,
+          Builder(
+            builder: (context) => Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: item.isCompleted
+                    ? Colors.green.withOpacity(0.1)
+                    : context.textMutedColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: item.isCompleted ? Colors.green : context.textMutedColor,
+                ),
               ),
-            ),
-            child: item.isCompleted
-                ? const Icon(Icons.check, color: Colors.green, size: 16)
-                : Text(
-                    '${item.order}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+              child: item.isCompleted
+                  ? const Icon(Icons.check, color: Colors.green, size: 16)
+                  : Text(
+                      '${item.order}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.textSecondaryColor,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+            ),
           ),
           const SizedBox(width: 12),
           // Content
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    decoration: item.isCompleted
-                        ? TextDecoration.lineThrough
-                        : null,
-                    color: item.isCompleted ? Colors.grey : null,
-                  ),
-                ),
-                if (item.description != null)
+            child: Builder(
+              builder: (context) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    item.description!,
+                    item.title,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                      decoration: item.isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
+                      color: item.isCompleted ? context.textMutedColor : null,
                     ),
                   ),
-              ],
+                  if (item.description != null)
+                    Text(
+                      item.description!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.textSecondaryColor,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
           // Action button
@@ -366,11 +376,13 @@ class _ContextualTipBannerState extends State<ContextualTipBanner> {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    widget.message,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[700],
+                  Builder(
+                    builder: (context) => Text(
+                      widget.message,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: context.textSecondaryColor,
+                      ),
                     ),
                   ),
                 ],
