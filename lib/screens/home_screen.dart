@@ -25,13 +25,13 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/icons/app_logo.png',
+                width: 32,
+                height: 32,
               ),
-              child: const Icon(Icons.hub_rounded, color: AppColors.primary, size: 20),
             ),
             const SizedBox(width: 10),
             Text(
@@ -162,6 +162,16 @@ class HomeScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(child: _ToolCard(
+                              title: 'Smart Todo',
+                              description: 'Liste intelligenti e collaborative. Importa da CSV/testo, invita partecipanti e gestisci task con filtri avanzati.',
+                              icon: Icons.check_circle_outline_rounded,
+                              color: Colors.blue,
+                              features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                              onTap: () => Navigator.pushNamed(context, '/smart-todo'),
+                              isDark: isDark,
+                            )),
+                            const SizedBox(width: 20),
+                            Expanded(child: _ToolCard(
                               title: 'Matrice Eisenhower',
                               description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
                               icon: Icons.grid_view_rounded,
@@ -218,6 +228,16 @@ class HomeScreen extends StatelessWidget {
                 // Mobile - single column
                 return Column(
                   children: [
+                    _ToolCard(
+                      title: 'Smart Todo',
+                      description: 'Liste intelligenti e collaborative. Importa da CSV, invita e gestisci.',
+                      icon: Icons.check_circle_outline_rounded,
+                      color: Colors.blue,
+                      features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                      onTap: () => Navigator.pushNamed(context, '/smart-todo'),
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 16),
                     _ToolCard(
                       title: 'Matrice Eisenhower',
                       description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
@@ -415,15 +435,20 @@ class _ToolCardState extends State<_ToolCard> {
                 ),
                 const SizedBox(height: 8),
 
-                // Description
-                Text(
-                  widget.description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: widget.isComingSoon
-                        ? context.textMutedColor.withValues(alpha: 0.6)
-                        : context.textSecondaryColor,
-                    height: 1.5,
+                // Description - fixed min height for consistent card sizes
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 65),
+                  child: Text(
+                    widget.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: widget.isComingSoon
+                          ? context.textMutedColor.withValues(alpha: 0.6)
+                          : context.textSecondaryColor,
+                      height: 1.5,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(height: 16),

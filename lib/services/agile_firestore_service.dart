@@ -44,6 +44,8 @@ class AgileFirestoreService {
     AgileFramework framework = AgileFramework.scrum,
     int sprintDurationDays = 14,
     int workingHoursPerDay = 8,
+    String? productOwnerEmail,
+    String? scrumMasterEmail,
   }) async {
     final now = DateTime.now();
 
@@ -72,6 +74,8 @@ class AgileFirestoreService {
       sprintDurationDays: sprintDurationDays,
       workingHoursPerDay: workingHoursPerDay,
       participants: {createdBy: owner},
+      productOwnerEmail: productOwnerEmail,
+      scrumMasterEmail: scrumMasterEmail,
     );
 
     await docRef.set(project.toFirestore());

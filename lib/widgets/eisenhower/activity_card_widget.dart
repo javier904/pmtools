@@ -55,8 +55,9 @@ class ActivityCardWidget extends StatelessWidget {
   }
 
   Widget _buildCompactCard(BuildContext context, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
-      color: Colors.white,
+      color: isDark ? const Color(0xFF2D3748) : Colors.white,
       borderRadius: BorderRadius.circular(8),
       elevation: 1,
       child: InkWell(
@@ -66,7 +67,7 @@ class ActivityCardWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: color.withOpacity(0.2)),
+            border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : color.withOpacity(0.2)),
           ),
           child: Row(
             children: [
@@ -84,9 +85,10 @@ class ActivityCardWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   activity.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : null,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -104,7 +106,7 @@ class ActivityCardWidget extends StatelessWidget {
                     icon: Icon(
                       activity.hasVotes ? Icons.edit : Icons.how_to_vote,
                       size: 16,
-                      color: Colors.grey[600],
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
                     onPressed: onVoteTap,
                     padding: EdgeInsets.zero,
@@ -119,7 +121,7 @@ class ActivityCardWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.close,
                       size: 16,
-                      color: Colors.grey[400],
+                      color: isDark ? Colors.grey[500] : Colors.grey[400],
                     ),
                     onPressed: onDeleteTap,
                     padding: EdgeInsets.zero,
@@ -590,30 +592,37 @@ class UnvotedActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+      color: isDark ? const Color(0xFF2D3748) : null,
       child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200],
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             Icons.help_outline,
-            color: Colors.grey[500],
+            color: isDark ? Colors.grey[400] : Colors.grey[500],
           ),
         ),
         title: Text(
           activity.title,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : null,
+          ),
         ),
         subtitle: activity.description.isNotEmpty
             ? Text(
                 activity.description,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: isDark ? Colors.grey[400] : null),
               )
             : null,
         trailing: Row(

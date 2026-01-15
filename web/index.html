@@ -1,41 +1,276 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Agile Tools - Strumenti collaborativi per team agili">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags -->
+  <title>Agile Tools - Strumenti Collaborativi per Team Agili</title>
+  <meta name="description" content="Agile Tools: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
+  <meta name="keywords" content="agile tools, planning poker, eisenhower matrix, scrum, kanban, sprint planning, backlog, team collaboration, estimation, todo list">
+  <meta name="author" content="Agile Tools">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pm-agile-tools-app.web.app/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pm-agile-tools-app.web.app/">
+  <meta property="og:title" content="Agile Tools - Strumenti Collaborativi per Team Agili">
+  <meta property="og:description" content="Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning. Collabora in tempo reale con il tuo team.">
+  <meta property="og:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:site_name" content="Agile Tools">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://pm-agile-tools-app.web.app/">
+  <meta name="twitter:title" content="Agile Tools - Strumenti per Team Agili">
+  <meta name="twitter:description" content="Smart Todo, Planning Poker, Matrice Eisenhower e Sprint Planning. Collabora in tempo reale.">
+  <meta name="twitter:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
 
   <!-- Google Sign-In Client ID -->
   <meta name="google-signin-client_id" content="1869753247-v367eltmlo66cat4cug513qk4esou5hu.apps.googleusercontent.com">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="agile_tools">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Agile Tools">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
 
-  <title>Agile Tools</title>
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="msapplication-navbutton-color" content="#1a1a2e">
+
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Loading Screen Styles */
+    :root {
+      --bg-dark: #1a1a2e;
+      --bg-light: #f8fafc;
+      --text-dark: #e2e8f0;
+      --text-light: #1e293b;
+      --primary: #3b82f6;
+      --success: #22c55e;
+      --secondary: #f59e0b;
+      --purple: #8b5cf6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    @media (prefers-color-scheme: light) {
+      body {
+        background: var(--bg-light);
+        color: var(--text-light);
+      }
+    }
+
+    .loading-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .logo-container {
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    .app-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .app-subtitle {
+      font-size: 16px;
+      opacity: 0.7;
+      margin-bottom: 40px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .tool-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    @media (prefers-color-scheme: light) {
+      .tool-card {
+        background: white;
+        border-color: #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .tool-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    .tool-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .tool-icon.green { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .tool-icon.orange { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .tool-icon.purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+
+    .tool-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .tool-desc {
+      font-size: 13px;
+      opacity: 0.6;
+      line-height: 1.4;
+    }
+
+    .loading-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      opacity: 0.6;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @media (prefers-color-scheme: light) {
+      .spinner {
+        border-color: rgba(0, 0, 0, 0.1);
+        border-top-color: var(--primary);
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Hide loading screen once Flutter is ready */
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+  </style>
 </head>
 <body>
+  <!-- Loading Screen with Tool Preview -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="logo-container">
+      <img src="icons/Icon-192.png" alt="Agile Tools Logo" class="logo">
+    </div>
+
+    <h1 class="app-title">Agile Tools</h1>
+    <p class="app-subtitle">Strumenti collaborativi per team agili</p>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon blue">&#10003;</div>
+        <div class="tool-name">Smart Todo</div>
+        <div class="tool-desc">Liste intelligenti e collaborative. Importa da CSV e gestisci task.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-icon green">&#9638;</div>
+        <div class="tool-name">Matrice Eisenhower</div>
+        <div class="tool-desc">Prioritizza le attivita distinguendo tra urgente e importante.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-icon orange">&#127922;</div>
+        <div class="tool-name">Estimation Room</div>
+        <div class="tool-desc">Sessioni di stima collaborative con Planning Poker e altri metodi.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-icon purple">&#128640;</div>
+        <div class="tool-name">Agile Process</div>
+        <div class="tool-desc">Gestisci backlog, sprint e kanban board. Metriche incluse.</div>
+      </div>
+    </div>
+
+    <div class="loading-indicator">
+      <div class="spinner"></div>
+      <span>Caricamento in corso...</span>
+    </div>
+  </div>
+
   <script src="flutter_bootstrap.js" async></script>
+
+  <script>
+    // Hide loading screen when Flutter is ready
+    window.addEventListener('flutter-first-frame', function() {
+      var loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        setTimeout(function() {
+          loadingScreen.style.display = 'none';
+        }, 300);
+      }
+    });
+  </script>
 </body>
 </html>

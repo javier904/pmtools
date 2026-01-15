@@ -58,6 +58,10 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
   late List<AcceptanceCriterion> _acceptanceCriteria;
   String? _assigneeEmail;
   bool _useTemplate = true;
+  int? _storyPoints;
+
+  // Fibonacci values for Story Points
+  static const fibonacciValues = [1, 2, 3, 5, 8, 13, 21];
 
   bool get _isEditing => widget.story != null;
 
@@ -89,6 +93,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             .toList() ??
         []);
     _assigneeEmail = widget.story?.assigneeEmail;
+    _storyPoints = widget.story?.storyPoints;
   }
 
   Map<String, dynamic> _parseDescription(String description) {
@@ -181,7 +186,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       description: _buildDescription(),
       priority: _priority,
       businessValue: _businessValue,
-      storyPoints: widget.story?.storyPoints,
+      storyPoints: _storyPoints,
       status: widget.story?.status ?? StoryStatus.backlog,
       tags: _tags,
       acceptanceCriteria: _acceptanceCriteria.map((c) => c.text).toList(),
@@ -561,7 +566,51 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             _getBusinessValueLabel(),
             style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
+
+          // Story Points Estimation
+          Row(
+            children: [
+              const Text('Stimata in Story Points', style: TextStyle(fontWeight: FontWeight.w500)),
+              const SizedBox(width: 8),
+              Tooltip(
+                message: 'Gli Story Points rappresentano la complessità relativa del lavoro.\n'
+                    'Usa la sequenza di Fibonacci: 1 (semplice) -> 21 (molto complessa).',
+                child: Icon(Icons.info_outline, size: 16, color: context.textSecondaryColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ChoiceChip(
+                label: const Text('Nessuna'),
+                selected: _storyPoints == null,
+                onSelected: (selected) {
+                  if (selected) setState(() => _storyPoints = null);
+                },
+              ),
+              ...fibonacciValues.map((points) => ChoiceChip(
+                    label: Text('$points'),
+                    selected: _storyPoints == points,
+                    onSelected: (selected) {
+                      if (selected) setState(() => _storyPoints = points);
+                    },
+                    selectedColor: AppColors.primary.withOpacity(0.2),
+                    backgroundColor: context.surfaceVariantColor,
+                  )),
+            ],
+          ),
+          if (_storyPoints != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              _getStoryPointsDescription(_storyPoints!),
+              style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+            ),
+          ],
+          const SizedBox(height: 24),
 
           // Tags
           const Text('Tags', style: TextStyle(fontWeight: FontWeight.w500)),
@@ -654,6 +703,13 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
     if (_businessValue >= 8) return 'Alto valore di business';
     if (_businessValue >= 5) return 'Valore medio';
     return 'Basso valore di business';
+  }
+
+  String _getStoryPointsDescription(int points) {
+    if (points <= 2) return 'Compito rapido e semplice';
+    if (points <= 5) return 'Compito di media complessità';
+    if (points <= 13) return 'Compito complesso, richiede analisi';
+    return 'Molto complesso, considera di spezzare la story';
   }
 }
 

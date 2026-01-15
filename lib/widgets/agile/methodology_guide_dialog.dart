@@ -179,6 +179,10 @@ class _MethodologyGuideContent extends StatelessWidget {
         ),
         const SizedBox(height: 24),
 
+        // Process Flow Diagram
+        _ProcessFlowDiagram(guide: guide),
+        const SizedBox(height: 24),
+
         // Sections
         ...guide.sections.map((section) => _buildSection(section)),
 
@@ -488,6 +492,450 @@ class MethodologyGuideButton extends StatelessWidget {
       onPressed: () => MethodologyGuideDialog.show(context, framework: framework),
       icon: const Icon(Icons.menu_book),
       label: const Text('Guida Metodologie'),
+    );
+  }
+}
+
+/// Diagramma del flusso del processo
+class _ProcessFlowDiagram extends StatelessWidget {
+  final MethodologyGuide guide;
+
+  const _ProcessFlowDiagram({required this.guide});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.account_tree, color: guide.color, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'Flusso del Processo',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: guide.color,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Roles Section
+            _buildRolesSection(context),
+            const SizedBox(height: 20),
+
+            // Process Flow
+            _buildProcessFlow(context),
+            const SizedBox(height: 20),
+
+            // Artifacts Section
+            _buildArtifactsSection(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRolesSection(BuildContext context) {
+    final roles = _getRolesForFramework();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Builder(
+          builder: (context) => Text(
+            'RUOLI',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: context.textMutedColor,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          children: roles.map((role) => _RoleChip(
+            icon: role.icon,
+            label: role.label,
+            color: role.color,
+            description: role.description,
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProcessFlow(BuildContext context) {
+    final steps = _getProcessSteps();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Builder(
+          builder: (context) => Text(
+            'FLUSSO',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: context.textMutedColor,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (int i = 0; i < steps.length; i++) ...[
+                _ProcessStep(
+                  step: steps[i],
+                  color: guide.color,
+                ),
+                if (i < steps.length - 1)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: guide.color.withOpacity(0.5),
+                      size: 20,
+                    ),
+                  ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildArtifactsSection(BuildContext context) {
+    final artifacts = _getArtifacts();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Builder(
+          builder: (context) => Text(
+            'ARTEFATTI',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: context.textMutedColor,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          children: artifacts.map((artifact) => _ArtifactChip(
+            icon: artifact.icon,
+            label: artifact.label,
+            color: guide.color,
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  List<_RoleData> _getRolesForFramework() {
+    switch (guide.framework) {
+      case AgileFramework.scrum:
+        return [
+          _RoleData(
+            icon: Icons.account_circle,
+            label: 'Product Owner',
+            color: const Color(0xFF7B1FA2),
+            description: 'Gestisce il backlog e le priorita',
+          ),
+          _RoleData(
+            icon: Icons.supervised_user_circle,
+            label: 'Scrum Master',
+            color: const Color(0xFF1976D2),
+            description: 'Facilita il processo e rimuove ostacoli',
+          ),
+          _RoleData(
+            icon: Icons.groups,
+            label: 'Development Team',
+            color: const Color(0xFF388E3C),
+            description: 'Realizza gli incrementi di prodotto',
+          ),
+          _RoleData(
+            icon: Icons.business,
+            label: 'Stakeholders',
+            color: const Color(0xFF5D4037),
+            description: 'Forniscono feedback e requisiti',
+          ),
+        ];
+      case AgileFramework.kanban:
+        return [
+          _RoleData(
+            icon: Icons.account_circle,
+            label: 'Service Request Manager',
+            color: const Color(0xFF7B1FA2),
+            description: 'Gestisce le richieste in ingresso',
+          ),
+          _RoleData(
+            icon: Icons.engineering,
+            label: 'Service Delivery Manager',
+            color: const Color(0xFF1976D2),
+            description: 'Ottimizza il flusso di lavoro',
+          ),
+          _RoleData(
+            icon: Icons.groups,
+            label: 'Team',
+            color: const Color(0xFF388E3C),
+            description: 'Esegue il lavoro rispettando i WIP',
+          ),
+        ];
+      case AgileFramework.hybrid:
+        return [
+          _RoleData(
+            icon: Icons.account_circle,
+            label: 'Product Owner',
+            color: const Color(0xFF7B1FA2),
+            description: 'Gestisce priorita e backlog',
+          ),
+          _RoleData(
+            icon: Icons.supervised_user_circle,
+            label: 'Flow Master',
+            color: const Color(0xFF1976D2),
+            description: 'Ottimizza il flusso e facilita',
+          ),
+          _RoleData(
+            icon: Icons.groups,
+            label: 'Team',
+            color: const Color(0xFF388E3C),
+            description: 'Cross-funzionale, autoorganizzato',
+          ),
+        ];
+    }
+  }
+
+  List<_ProcessStepData> _getProcessSteps() {
+    switch (guide.framework) {
+      case AgileFramework.scrum:
+        return [
+          _ProcessStepData('Backlog\nGrooming', Icons.list_alt),
+          _ProcessStepData('Sprint\nPlanning', Icons.event),
+          _ProcessStepData('Daily\nStandup', Icons.wb_sunny),
+          _ProcessStepData('Sprint\nExecution', Icons.code),
+          _ProcessStepData('Sprint\nReview', Icons.rate_review),
+          _ProcessStepData('Retro-\nspettiva', Icons.psychology),
+        ];
+      case AgileFramework.kanban:
+        return [
+          _ProcessStepData('Richiesta\nIn Arrivo', Icons.inbox),
+          _ProcessStepData('To Do\n(WIP)', Icons.playlist_add),
+          _ProcessStepData('In Progress\n(WIP)', Icons.pending),
+          _ProcessStepData('Review\n(WIP)', Icons.rate_review),
+          _ProcessStepData('Done\n', Icons.check_circle),
+          _ProcessStepData('Metriche\n& Improve', Icons.analytics),
+        ];
+      case AgileFramework.hybrid:
+        return [
+          _ProcessStepData('Backlog\nPrioritization', Icons.list_alt),
+          _ProcessStepData('Sprint\nCommitment', Icons.event),
+          _ProcessStepData('Kanban\nBoard', Icons.view_column),
+          _ProcessStepData('Daily\nSync', Icons.wb_sunny),
+          _ProcessStepData('Review &\nRetro', Icons.rate_review),
+        ];
+    }
+  }
+
+  List<_ArtifactData> _getArtifacts() {
+    switch (guide.framework) {
+      case AgileFramework.scrum:
+        return [
+          _ArtifactData('Product Backlog', Icons.list_alt),
+          _ArtifactData('Sprint Backlog', Icons.assignment),
+          _ArtifactData('Incremento', Icons.add_box),
+          _ArtifactData('Burndown Chart', Icons.trending_down),
+          _ArtifactData('Velocity', Icons.speed),
+        ];
+      case AgileFramework.kanban:
+        return [
+          _ArtifactData('Kanban Board', Icons.view_column),
+          _ArtifactData('WIP Limits', Icons.block),
+          _ArtifactData('CFD', Icons.area_chart),
+          _ArtifactData('Lead Time', Icons.timer),
+          _ArtifactData('Cycle Time', Icons.loop),
+        ];
+      case AgileFramework.hybrid:
+        return [
+          _ArtifactData('Product Backlog', Icons.list_alt),
+          _ArtifactData('Kanban Board', Icons.view_column),
+          _ArtifactData('WIP Limits', Icons.block),
+          _ArtifactData('Velocity', Icons.speed),
+          _ArtifactData('Flow Metrics', Icons.analytics),
+        ];
+    }
+  }
+}
+
+class _RoleData {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final String description;
+
+  const _RoleData({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.description,
+  });
+}
+
+class _ProcessStepData {
+  final String label;
+  final IconData icon;
+
+  const _ProcessStepData(this.label, this.icon);
+}
+
+class _ArtifactData {
+  final String label;
+  final IconData icon;
+
+  const _ArtifactData(this.label, this.icon);
+}
+
+class _RoleChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final String description;
+
+  const _RoleChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: description,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProcessStep extends StatelessWidget {
+  final _ProcessStepData step;
+  final Color color;
+
+  const _ProcessStep({
+    required this.step,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(step.icon, size: 20, color: color),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            step.label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: color,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ArtifactChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _ArtifactChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.textSecondaryColor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

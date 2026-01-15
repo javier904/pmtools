@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
+import '../common/avatar_widget.dart';
 import '../../themes/app_colors.dart';
+import '../common/avatar_widget.dart';
 
 /// Card per visualizzare una User Story
 ///
@@ -20,6 +22,8 @@ class StoryCardWidget extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final void Function(StoryStatus)? onStatusChange;
+  final VoidCallback? onEstimate;
+  final VoidCallback? onAddToSprint;
   final bool showDragHandle;
   final bool compact;
 
@@ -30,6 +34,8 @@ class StoryCardWidget extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.onStatusChange,
+    this.onEstimate,
+    this.onAddToSprint,
     this.showDragHandle = false,
     this.compact = false,
   });
@@ -141,10 +147,21 @@ class StoryCardWidget extends StatelessWidget {
             // Points badge
             if (story.storyPoints != null) _buildPointsBadge(),
             // Actions
-            if (onEdit != null || onDelete != null)
+            if (onEdit != null || onDelete != null || onAddToSprint != null)
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, size: 20),
                 itemBuilder: (context) => [
+                  if (onAddToSprint != null)
+                    const PopupMenuItem(
+                      value: 'sprint',
+                      child: Row(
+                        children: [
+                          Icon(Icons.flag, size: 18, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Aggiungi a Sprint'),
+                        ],
+                      ),
+                    ),
                   if (onEdit != null)
                     const PopupMenuItem(
                       value: 'edit',
@@ -169,6 +186,7 @@ class StoryCardWidget extends StatelessWidget {
                     ),
                 ],
                 onSelected: (value) {
+                  if (value == 'sprint') onAddToSprint?.call();
                   if (value == 'edit') onEdit?.call();
                   if (value == 'delete') onDelete?.call();
                 },
@@ -241,28 +259,72 @@ class StoryCardWidget extends StatelessWidget {
               const SizedBox(width: 12),
             ],
             // Estimated indicator
-            Icon(
-              story.isEstimated ? Icons.calculate : Icons.calculate_outlined,
-              size: 14,
-              color: story.isEstimated ? Colors.green : context.textMutedColor,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              story.isEstimated ? 'Stimata' : 'Da stimare',
-              style: TextStyle(
-                fontSize: 11,
-                color: story.isEstimated ? Colors.green : context.textMutedColor,
+            // Estimated indicator / Action button
+            if (onEstimate != null && !story.isEstimated)
+              InkWell(
+                onTap: onEstimate,
+                borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.1),
+                    border: Border.all(color: Colors.orange.withOpacity(0.5)),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.calculate, size: 14, color: Colors.orange),
+                      const SizedBox(width: 4),
+                      Text(
+                        'STIMA',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              InkWell(
+                onTap: onEstimate, // Permetti di cambiare stima anche se già fatta
+                borderRadius: BorderRadius.circular(4),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        story.isEstimated ? Icons.check_circle_outline : Icons.calculate_outlined,
+                        size: 14,
+                        color: story.isEstimated ? Colors.green : context.textMutedColor,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        story.isEstimated 
+                          ? (story.storyPoints != null ? '${story.storyPoints} pts' : 'Stimata')
+                          : 'Stima richiesta (click per stimare)',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: story.isEstimated ? Colors.green : context.textMutedColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
             // Assignee
             if (story.assigneeEmail != null) ...[
               const SizedBox(width: 12),
-              CircleAvatar(
-                radius: 10,
-                backgroundColor: AppColors.primary.withOpacity(0.2),
-                child: Text(
-                  story.assigneeEmail![0].toUpperCase(),
-                  style: const TextStyle(fontSize: 10, color: AppColors.primary),
+              Tooltip(
+                message: story.assigneeEmail!,
+                child: AvatarWidget(
+                  name: story.assigneeEmail,
+                  email: story.assigneeEmail,
+                  radius: 10,
                 ),
               ),
             ],

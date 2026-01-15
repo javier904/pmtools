@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/team_member_model.dart';
 import '../../models/agile_enums.dart';
+import '../common/avatar_widget.dart';
 
 /// Widget per visualizzare la lista dei membri del team
 ///
@@ -105,15 +106,11 @@ class TeamListWidget extends StatelessWidget {
       child: ListTile(
         leading: Stack(
           children: [
-            CircleAvatar(
-              backgroundColor: member.teamRole.color.withOpacity(0.2),
-              child: Text(
-                member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
-                style: TextStyle(
-                  color: member.teamRole.color,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            AvatarWidget(
+              imageUrl: null,
+              name: member.name,
+              email: member.email,
+              radius: 20,
             ),
             // Online indicator
             if (member.isOnline)
@@ -333,16 +330,11 @@ class TeamSummaryCard extends StatelessWidget {
                       for (int i = 0; i < members.take(5).length; i++)
                         Positioned(
                           left: i * 24.0,
-                          child: CircleAvatar(
+                          child: AvatarWidget(
+                            imageUrl: null,
+                            name: members[i].name,
+                            email: members[i].email,
                             radius: 16,
-                            backgroundColor: members[i].teamRole.color.withOpacity(0.2),
-                            child: Text(
-                              members[i].name.isNotEmpty ? members[i].name[0].toUpperCase() : '?',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: members[i].teamRole.color,
-                              ),
-                            ),
                           ),
                         ),
                       if (members.length > 5)

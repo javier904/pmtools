@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/agile_project_model.dart';
 import '../models/agile_enums.dart';
+import '../models/team_member_model.dart';
 import '../services/agile_firestore_service.dart';
 import '../services/agile_audit_service.dart';
 import '../services/auth_service.dart';
@@ -215,12 +216,25 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                     ? 2
                     : 1;
 
+        // Card molto più compatte - circa 50% della dimensione originale
+        final compactCrossAxisCount = constraints.maxWidth > 1400
+            ? 6
+            : constraints.maxWidth > 1100
+                ? 5
+                : constraints.maxWidth > 800
+                    ? 4
+                    : constraints.maxWidth > 550
+                        ? 3
+                        : constraints.maxWidth > 350
+                            ? 2
+                            : 1;
+
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: 1.3,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
+            crossAxisCount: compactCrossAxisCount,
+            childAspectRatio: 1.4, // Card più larghe che alte = più compatte
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
           ),
           itemCount: projects.length,
           itemBuilder: (context, index) => _buildProjectCard(projects[index]),
@@ -232,161 +246,184 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   Widget _buildProjectCard(AgileProjectModel project) {
     final isOwner = project.isOwner(_currentUserEmail);
     final canManage = project.canManage(_currentUserEmail);
+    final frameworkColor = _getFrameworkColor(project.framework);
+
+    // Calcola progress (completedSprintCount / sprintCount o 0)
+    final progressPercent = project.sprintCount > 0
+        ? (project.completedSprintCount / project.sprintCount * 100).round()
+        : 0;
 
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: () => setState(() => _selectedProject = project),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header con framework e menu
+              // Header: Framework badge + menu
               Row(
                 children: [
-                  // Badge framework
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _getFrameworkColor(project.framework).withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          project.framework.icon,
-                          size: 14,
-                          color: _getFrameworkColor(project.framework),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          project.framework.displayName,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: _getFrameworkColor(project.framework),
+                  // Badge framework compatto
+                  Tooltip(
+                    message: 'Metodologia: ${project.framework.displayName}',
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: frameworkColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(project.framework.icon, size: 12, color: frameworkColor),
+                          const SizedBox(width: 3),
+                          Text(
+                            project.framework.displayName,
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: frameworkColor),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const Spacer(),
+                  // Sprint attivo badge
+                  if (project.hasActiveSprint)
+                    Tooltip(
+                      message: 'Sprint in corso',
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            const Text(
+                              'ATTIVO',
+                              style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   // Menu opzioni
                   if (canManage)
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, size: 20),
+                      icon: Icon(Icons.more_vert, size: 18, color: context.textSecondaryColor),
+                      padding: EdgeInsets.zero,
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'edit',
-                          child: ListTile(
-                            leading: Icon(Icons.edit),
-                            title: Text('Modifica'),
-                            dense: true,
-                          ),
-                        ),
-                        if (isOwner)
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: Icon(Icons.delete, color: Colors.red),
-                              title: Text('Elimina', style: TextStyle(color: Colors.red)),
-                              dense: true,
-                            ),
-                          ),
+                        const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit, size: 18), SizedBox(width: 8), Text('Modifica')])),
+                        const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings, size: 18), SizedBox(width: 8), Text('Impostazioni')])),
+                        if (isOwner) const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, size: 18, color: Colors.red), SizedBox(width: 8), Text('Elimina', style: TextStyle(color: Colors.red))])),
                       ],
                       onSelected: (value) {
-                        if (value == 'edit') {
-                          _showEditProjectDialog(project);
-                        } else if (value == 'delete') {
-                          _confirmDeleteProject(project);
-                        }
+                        if (value == 'edit') _showEditProjectDialog(project);
+                        else if (value == 'settings') _showProjectSettingsDialog(project);
+                        else if (value == 'delete') _confirmDeleteProject(project);
                       },
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
-              // Titolo
+              const SizedBox(height: 6),
+
+              // Titolo progetto
               Text(
                 project.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 2,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+
+              // Descrizione (se presente)
               if (project.description.isNotEmpty) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   project.description,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: context.textSecondaryColor,
-                  ),
-                  maxLines: 2,
+                  style: TextStyle(fontSize: 10, color: context.textMutedColor),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-              const Spacer(),
-              // Stats
-              Row(
-                children: [
-                  // Partecipanti
-                  _buildStatChip(
-                    Icons.people,
-                    '${project.participantCount}',
-                    'Membri',
-                  ),
-                  const SizedBox(width: 8),
-                  // Backlog
-                  _buildStatChip(
-                    Icons.list_alt,
-                    '${project.backlogCount}',
-                    'Stories',
-                  ),
-                  const SizedBox(width: 8),
-                  // Sprint
-                  if (project.sprintCount > 0)
-                    _buildStatChip(
-                      Icons.loop,
-                      '${project.sprintCount}',
-                      'Sprint',
-                    ),
-                ],
-              ),
+
               const SizedBox(height: 8),
-              // Velocity e stato sprint
-              Row(
-                children: [
-                  if (project.averageVelocity != null) ...[
-                    Icon(Icons.speed, size: 14, color: context.textSecondaryColor),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Velocity: ${project.averageVelocity!.toStringAsFixed(1)}',
-                      style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
-                    ),
-                  ],
-                  const Spacer(),
-                  if (project.hasActiveSprint)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.green[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text(
-                        'Sprint Attivo',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.green,
+
+              // Key Roles Row con colori distintivi
+              _buildCompactRolesRow(project),
+
+              const Spacer(),
+
+              // Progress bar (se ci sono sprint)
+              if (project.sprintCount > 0) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: Tooltip(
+                        message: 'Avanzamento: ${project.completedSprintCount}/${project.sprintCount} sprint completati',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: project.sprintCount > 0 ? project.completedSprintCount / project.sprintCount : 0,
+                            backgroundColor: context.surfaceVariantColor,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              progressPercent >= 80 ? Colors.green : progressPercent >= 50 ? Colors.orange : Colors.blue,
+                            ),
+                            minHeight: 4,
+                          ),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$progressPercent%',
+                      style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: context.textSecondaryColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+              ],
+
+              // Stats row compatto con tooltip
+              Row(
+                children: [
+                  _buildCompactStat(Icons.people_outline, '${project.participantCount}', 'Membri del team'),
+                  const SizedBox(width: 6),
+                  _buildCompactStat(Icons.assignment_outlined, '${project.backlogCount}', 'User Stories nel backlog'),
+                  if (project.sprintCount > 0) ...[
+                    const SizedBox(width: 6),
+                    _buildCompactStat(Icons.replay, '${project.sprintCount}', 'Sprint totali'),
+                  ],
+                  if (project.averageVelocity != null) ...[
+                    const SizedBox(width: 6),
+                    _buildCompactStat(Icons.speed, project.averageVelocity!.toStringAsFixed(0), 'Velocity media'),
+                  ],
+                ],
+              ),
+
+              const SizedBox(height: 4),
+
+              // Data ultimo aggiornamento
+              Row(
+                children: [
+                  Icon(Icons.update, size: 10, color: context.textMutedColor),
+                  const SizedBox(width: 3),
+                  Text(
+                    _formatTimeAgo(project.updatedAt),
+                    style: TextStyle(fontSize: 9, color: context.textMutedColor),
+                  ),
                 ],
               ),
             ],
@@ -396,27 +433,173 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     );
   }
 
-  Widget _buildStatChip(IconData icon, String value, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: context.surfaceVariantColor,
-        borderRadius: BorderRadius.circular(8),
+  Widget _buildCompactStat(IconData icon, String value, String tooltip) {
+    return Tooltip(
+      message: tooltip,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+        decoration: BoxDecoration(
+          color: context.surfaceVariantColor,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 11, color: context.textSecondaryColor),
+            const SizedBox(width: 2),
+            Text(
+              value,
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: context.textPrimaryColor),
+            ),
+          ],
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    );
+  }
+
+  Widget _buildCompactRolesRow(AgileProjectModel project) {
+    final hasAnyRole = project.productOwnerEmail != null ||
+                       project.scrumMasterEmail != null ||
+                       project.developmentTeamEmails.isNotEmpty;
+
+    if (!hasAnyRole) {
+      return Row(
         children: [
-          Icon(icon, size: 14, color: context.textSecondaryColor),
+          Icon(Icons.person_add_outlined, size: 12, color: context.textMutedColor),
           const SizedBox(width: 4),
           Text(
-            value,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: context.textPrimaryColor,
-            ),
+            'Assegna ruoli',
+            style: TextStyle(fontSize: 10, color: context.textMutedColor, fontStyle: FontStyle.italic),
           ),
         ],
+      );
+    }
+
+    return Row(
+      children: [
+        // Product Owner - Teal/Blu intenso
+        if (project.productOwnerEmail != null)
+          _buildCompactRoleChip(
+            icon: Icons.star_rounded,
+            label: 'PO',
+            color: const Color(0xFF0097A7), // Teal/Cyan scuro
+            name: project.productOwner?.name ?? project.productOwnerEmail!,
+            description: 'Product Owner - Gestisce priorità e backlog',
+          ),
+
+        // Scrum Master - Arancione
+        if (project.scrumMasterEmail != null) ...[
+          if (project.productOwnerEmail != null) const SizedBox(width: 6),
+          _buildCompactRoleChip(
+            icon: Icons.shield_rounded,
+            label: 'SM',
+            color: const Color(0xFFFF6D00), // Arancione vivo
+            name: project.scrumMaster?.name ?? project.scrumMasterEmail!,
+            description: 'Scrum Master - Facilita il processo',
+          ),
+        ],
+
+        // Dev Team - Verde
+        if (project.developmentTeamEmails.isNotEmpty) ...[
+          if (project.productOwnerEmail != null || project.scrumMasterEmail != null) const SizedBox(width: 6),
+          _buildCompactRoleChip(
+            icon: Icons.groups_rounded,
+            label: '${project.developmentTeamEmails.length}',
+            color: const Color(0xFF43A047), // Verde
+            name: project.developmentTeam.map((m) => m.name).join(', '),
+            description: 'Development Team - ${project.developmentTeamEmails.length} sviluppatori',
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCompactRoleChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required String name,
+    required String description,
+  }) {
+    return Tooltip(
+      richMessage: TextSpan(
+        children: [
+          TextSpan(
+            text: '$description\n',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          TextSpan(
+            text: name,
+            style: const TextStyle(fontSize: 11),
+          ),
+        ],
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: color.withOpacity(0.4), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatTimeAgo(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inMinutes < 1) return 'Ora';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m fa';
+    if (diff.inHours < 24) return '${diff.inHours}h fa';
+    if (diff.inDays < 7) return '${diff.inDays}g fa';
+    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w fa';
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  Widget _buildRoleAvatar({
+    required IconData icon,
+    required Color color,
+    required String name,
+    required String tooltip,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 4),
+            Text(
+              name.isNotEmpty && name.length > 10
+                  ? '${name.substring(0, 10)}...'
+                  : (name.isNotEmpty ? name.split(' ').first : '?'),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: color,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -603,7 +786,10 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   Future<void> _showCreateProjectDialog() async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => _ProjectFormDialog(),
+      builder: (context) => _ProjectFormDialog(
+        creatorEmail: _currentUserEmail,
+        creatorName: _currentUserName,
+      ),
     );
 
     if (result != null && mounted) {
@@ -616,6 +802,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           framework: result['framework'] ?? AgileFramework.scrum,
           sprintDurationDays: result['sprintDurationDays'] ?? 14,
           workingHoursPerDay: result['workingHoursPerDay'] ?? 8,
+          productOwnerEmail: result['productOwnerEmail'],
+          scrumMasterEmail: result['scrumMasterEmail'],
         );
 
         // Log audit
@@ -650,6 +838,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           framework: result['framework'],
           sprintDurationDays: result['sprintDurationDays'],
           workingHoursPerDay: result['workingHoursPerDay'],
+          productOwnerEmail: result['productOwnerEmail'],
+          scrumMasterEmail: result['scrumMasterEmail'],
           updatedAt: DateTime.now(),
         );
 
@@ -743,6 +933,43 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     }
   }
 
+  Future<void> _showProjectSettingsDialog(AgileProjectModel project) async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => _ProjectSettingsDialog(project: project),
+    );
+
+    if (result != null && mounted) {
+      try {
+        final updatedProject = project.copyWith(
+          productOwnerEmail: result['productOwnerEmail'],
+          scrumMasterEmail: result['scrumMasterEmail'],
+          developmentTeamEmails: result['developmentTeamEmails'] != null
+              ? List<String>.from(result['developmentTeamEmails'])
+              : project.developmentTeamEmails,
+          updatedAt: DateTime.now(),
+        );
+
+        await _firestoreService.updateProject(updatedProject);
+
+        // Log audit
+        await _auditService.logUpdate(
+          projectId: project.id,
+          entityType: AuditEntityType.project,
+          entityId: project.id,
+          entityName: project.name,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserName,
+          description: 'Aggiornati ruoli chiave del progetto',
+        );
+
+        _showSuccess('Impostazioni salvate con successo!');
+      } catch (e) {
+        _showError('Errore salvataggio impostazioni: $e');
+      }
+    }
+  }
+
   // ══════════════════════════════════════════════════════════════════════════
   // UTILITY
   // ══════════════════════════════════════════════════════════════════════════
@@ -765,8 +992,14 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
 
 class _ProjectFormDialog extends StatefulWidget {
   final AgileProjectModel? project;
+  final String? creatorEmail;
+  final String? creatorName;
 
-  const _ProjectFormDialog({this.project});
+  const _ProjectFormDialog({
+    this.project,
+    this.creatorEmail,
+    this.creatorName,
+  });
 
   @override
   State<_ProjectFormDialog> createState() => _ProjectFormDialogState();
@@ -780,6 +1013,10 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
   late int _sprintDurationDays;
   late int _workingHoursPerDay;
 
+  // Key Roles
+  String? _productOwnerEmail;
+  String? _scrumMasterEmail;
+
   bool get isEditing => widget.project != null;
 
   @override
@@ -791,6 +1028,8 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
     _framework = widget.project?.framework ?? AgileFramework.scrum;
     _sprintDurationDays = widget.project?.sprintDurationDays ?? 14;
     _workingHoursPerDay = widget.project?.workingHoursPerDay ?? 8;
+    _productOwnerEmail = widget.project?.productOwnerEmail;
+    _scrumMasterEmail = widget.project?.scrumMasterEmail;
   }
 
   @override
@@ -901,6 +1140,10 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 24),
+
+                // Key Roles Section
+                _buildKeyRolesSection(),
               ],
             ),
           ),
@@ -1049,6 +1292,221 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
     );
   }
 
+  Widget _buildKeyRolesSection() {
+    // Get participants for dropdown
+    List<TeamMemberModel> participants;
+
+    if (widget.project != null) {
+      // Editing existing project - use actual participants
+      participants = widget.project!.participants.values.toList();
+    } else if (widget.creatorEmail != null && widget.creatorName != null) {
+      // Creating new project - allow creator to assign themselves
+      participants = [
+        TeamMemberModel(
+          email: widget.creatorEmail!,
+          name: widget.creatorName!,
+          participantRole: AgileParticipantRole.owner,
+          teamRole: TeamRole.productOwner,
+          joinedAt: DateTime.now(),
+        ),
+      ];
+    } else {
+      participants = [];
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'Ruoli Chiave',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: context.textSecondaryColor,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Tooltip(
+              message: 'Assegna i ruoli principali del team.\nPotrai modificarli anche dalle impostazioni del progetto.',
+              child: Icon(
+                Icons.info_outline,
+                size: 16,
+                color: context.textMutedColor,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Product Owner
+        _buildRoleSelector(
+          icon: Icons.account_circle,
+          label: 'Product Owner',
+          color: const Color(0xFF7B1FA2),
+          description: 'Gestisce il backlog e le priorita',
+          selectedEmail: _productOwnerEmail,
+          participants: participants,
+          onChanged: (email) => setState(() => _productOwnerEmail = email),
+        ),
+        const SizedBox(height: 12),
+
+        // Scrum Master
+        _buildRoleSelector(
+          icon: Icons.supervised_user_circle,
+          label: 'Scrum Master',
+          color: const Color(0xFF1976D2),
+          description: 'Facilita il processo e rimuove ostacoli',
+          selectedEmail: _scrumMasterEmail,
+          participants: participants,
+          onChanged: (email) => setState(() => _scrumMasterEmail = email),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoleSelector({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required String description,
+    required String? selectedEmail,
+    required List<TeamMemberModel> participants,
+    required ValueChanged<String?> onChanged,
+  }) {
+    final selectedMember = selectedEmail != null
+        ? participants.where((p) => p.email == selectedEmail).firstOrNull
+        : null;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          // Role Icon
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 12),
+
+          // Role Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: context.textMutedColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Selector
+          if (participants.isNotEmpty)
+            // Dropdown for existing project
+            DropdownButton<String?>(
+              value: selectedEmail,
+              hint: Text(
+                'Seleziona',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.textMutedColor,
+                ),
+              ),
+              underline: const SizedBox(),
+              icon: Icon(Icons.arrow_drop_down, color: color),
+              items: [
+                DropdownMenuItem<String?>(
+                  value: null,
+                  child: Text(
+                    'Non assegnato',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: context.textMutedColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+                ...participants.map((p) => DropdownMenuItem<String?>(
+                  value: p.email,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 12,
+                        backgroundColor: color.withOpacity(0.2),
+                        child: Text(
+                          p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        p.name,
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+              onChanged: onChanged,
+            )
+          else
+            // Info for new project
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: context.surfaceVariantColor,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: context.textMutedColor,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Assegnabile dopo la creazione',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.textMutedColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Color _getFrameworkColor(AgileFramework framework) {
     switch (framework) {
       case AgileFramework.scrum:
@@ -1068,7 +1526,519 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
         'framework': _framework,
         'sprintDurationDays': _sprintDurationDays,
         'workingHoursPerDay': _workingHoursPerDay,
+        'productOwnerEmail': _productOwnerEmail,
+        'scrumMasterEmail': _scrumMasterEmail,
       });
     }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DIALOG IMPOSTAZIONI PROGETTO (Gestione Ruoli)
+// ══════════════════════════════════════════════════════════════════════════════
+
+class _ProjectSettingsDialog extends StatefulWidget {
+  final AgileProjectModel project;
+
+  const _ProjectSettingsDialog({required this.project});
+
+  @override
+  State<_ProjectSettingsDialog> createState() => _ProjectSettingsDialogState();
+}
+
+class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
+  String? _productOwnerEmail;
+  String? _scrumMasterEmail;
+  List<String> _developmentTeamEmails = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _productOwnerEmail = widget.project.productOwnerEmail;
+    _scrumMasterEmail = widget.project.scrumMasterEmail;
+    _developmentTeamEmails = List.from(widget.project.developmentTeamEmails);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final participants = widget.project.participants.values.toList();
+
+    return AlertDialog(
+      title: Row(
+        children: [
+          Icon(Icons.settings, color: Theme.of(context).primaryColor),
+          const SizedBox(width: 12),
+          const Text('Impostazioni Progetto'),
+        ],
+      ),
+      content: SizedBox(
+        width: 500,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Sezione Ruoli Chiave
+              _buildSectionHeader(
+                icon: Icons.people_alt,
+                title: 'Ruoli Chiave',
+                subtitle: 'Assegna i ruoli principali del team Scrum',
+              ),
+              const SizedBox(height: 16),
+
+              // Product Owner
+              _buildRoleCard(
+                icon: Icons.account_circle,
+                label: 'Product Owner',
+                color: const Color(0xFF7B1FA2),
+                description: 'Gestisce il backlog e definisce le priorità del prodotto',
+                selectedEmail: _productOwnerEmail,
+                participants: participants,
+                onChanged: (email) => setState(() => _productOwnerEmail = email),
+              ),
+              const SizedBox(height: 12),
+
+              // Scrum Master
+              _buildRoleCard(
+                icon: Icons.supervised_user_circle,
+                label: 'Scrum Master',
+                color: const Color(0xFF1976D2),
+                description: 'Facilita il processo Scrum e rimuove gli ostacoli',
+                selectedEmail: _scrumMasterEmail,
+                participants: participants,
+                onChanged: (email) => setState(() => _scrumMasterEmail = email),
+              ),
+              const SizedBox(height: 12),
+
+              // Development Team
+              _buildDevelopmentTeamCard(participants),
+
+              const SizedBox(height: 24),
+
+              // Info box
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'I ruoli verranno mostrati con icone dedicate nella lista progetti. '
+                        'Puoi aggiungere altri partecipanti dal Team del progetto.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: context.textSecondaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Annulla'),
+        ),
+        ElevatedButton.icon(
+          onPressed: _submit,
+          icon: const Icon(Icons.save, size: 18),
+          label: const Text('Salva'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: Theme.of(context).primaryColor, size: 20),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: context.textMutedColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoleCard({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required String description,
+    required String? selectedEmail,
+    required List<TeamMemberModel> participants,
+    required ValueChanged<String?> onChanged,
+  }) {
+    final selectedMember = selectedEmail != null
+        ? participants.where((p) => p.email == selectedEmail).firstOrNull
+        : null;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.textMutedColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Selector
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: context.surfaceColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: color.withOpacity(0.3)),
+            ),
+            child: DropdownButton<String?>(
+              value: selectedEmail,
+              isExpanded: true,
+              underline: const SizedBox(),
+              hint: Text(
+                'Seleziona partecipante',
+                style: TextStyle(color: context.textMutedColor),
+              ),
+              items: [
+                DropdownMenuItem<String?>(
+                  value: null,
+                  child: Row(
+                    children: [
+                      Icon(Icons.person_off, color: context.textMutedColor, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Non assegnato',
+                        style: TextStyle(
+                          color: context.textMutedColor,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ...participants.map((p) => DropdownMenuItem<String?>(
+                  value: p.email,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 14,
+                        backgroundColor: color.withOpacity(0.2),
+                        child: Text(
+                          p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              p.name,
+                              style: const TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            Text(
+                              p.email,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: context.textMutedColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+              onChanged: onChanged,
+            ),
+          ),
+          if (selectedMember != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 14),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Assegnato a ${selectedMember.name}',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.green,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDevelopmentTeamCard(List<TeamMemberModel> participants) {
+    final teamMembers = _developmentTeamEmails
+        .map((email) => participants.where((p) => p.email == email).firstOrNull)
+        .whereType<TeamMemberModel>()
+        .toList();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF388E3C).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF388E3C).withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF388E3C).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.groups, color: Color(0xFF388E3C), size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Development Team',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF388E3C),
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      'I membri che sviluppano il prodotto',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.textMutedColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Add member button
+              IconButton(
+                icon: const Icon(Icons.person_add, color: Color(0xFF388E3C)),
+                tooltip: 'Aggiungi membro al team',
+                onPressed: () => _showAddTeamMemberDialog(participants),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Team members list
+          if (teamMembers.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.surfaceVariantColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.group_add, color: context.textMutedColor, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Nessun membro nel team. Clicca + per aggiungere.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textMutedColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: teamMembers.map((member) => Chip(
+                avatar: CircleAvatar(
+                  backgroundColor: const Color(0xFF388E3C).withOpacity(0.2),
+                  child: Text(
+                    member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF388E3C),
+                    ),
+                  ),
+                ),
+                label: Text(member.name),
+                deleteIcon: const Icon(Icons.close, size: 16),
+                onDeleted: () {
+                  setState(() {
+                    _developmentTeamEmails.remove(member.email);
+                  });
+                },
+              )).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddTeamMemberDialog(List<TeamMemberModel> participants) {
+    // Filter out already selected members and PO/SM
+    final availableParticipants = participants.where((p) {
+      return !_developmentTeamEmails.contains(p.email) &&
+          p.email != _productOwnerEmail &&
+          p.email != _scrumMasterEmail;
+    }).toList();
+
+    if (availableParticipants.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tutti i partecipanti sono già assegnati a un ruolo.'),
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Aggiungi al Team'),
+        content: SizedBox(
+          width: 300,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: availableParticipants.length,
+            itemBuilder: (context, index) {
+              final participant = availableParticipants[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF388E3C).withOpacity(0.2),
+                  child: Text(
+                    participant.name.isNotEmpty
+                        ? participant.name[0].toUpperCase()
+                        : '?',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF388E3C),
+                    ),
+                  ),
+                ),
+                title: Text(participant.name),
+                subtitle: Text(
+                  participant.email,
+                  style: TextStyle(fontSize: 12, color: context.textMutedColor),
+                ),
+                onTap: () {
+                  setState(() {
+                    _developmentTeamEmails.add(participant.email);
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Chiudi'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submit() {
+    Navigator.of(context).pop({
+      'productOwnerEmail': _productOwnerEmail,
+      'scrumMasterEmail': _scrumMasterEmail,
+      'developmentTeamEmails': _developmentTeamEmails,
+    });
   }
 }

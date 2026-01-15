@@ -36,6 +36,11 @@ class AgileProjectModel {
   // Kanban configuration (per Kanban e Hybrid)
   final List<KanbanColumnConfig> kanbanColumns;
 
+  // Key Roles (riferimenti email ai membri con ruoli chiave)
+  final String? productOwnerEmail;
+  final String? scrumMasterEmail;
+  final List<String> developmentTeamEmails;
+
   const AgileProjectModel({
     required this.id,
     required this.name,
@@ -54,6 +59,9 @@ class AgileProjectModel {
     this.averageVelocity,
     this.activeSprintId,
     this.kanbanColumns = const [],
+    this.productOwnerEmail,
+    this.scrumMasterEmail,
+    this.developmentTeamEmails = const [],
   });
 
   /// Crea da documento Firestore
@@ -106,6 +114,9 @@ class AgileProjectModel {
       averageVelocity: (data['averageVelocity'] as num?)?.toDouble(),
       activeSprintId: data['activeSprintId'],
       kanbanColumns: kanbanColumns,
+      productOwnerEmail: data['productOwnerEmail'],
+      scrumMasterEmail: data['scrumMasterEmail'],
+      developmentTeamEmails: List<String>.from(data['developmentTeamEmails'] ?? []),
     );
   }
 
@@ -133,6 +144,10 @@ class AgileProjectModel {
       if (averageVelocity != null) 'averageVelocity': averageVelocity,
       if (activeSprintId != null) 'activeSprintId': activeSprintId,
       'kanbanColumns': kanbanColumns.map((c) => c.toFirestore()).toList(),
+      // Key Roles
+      if (productOwnerEmail != null) 'productOwnerEmail': productOwnerEmail,
+      if (scrumMasterEmail != null) 'scrumMasterEmail': scrumMasterEmail,
+      'developmentTeamEmails': developmentTeamEmails,
       // Per query
       'participantEmails': participants.keys.toList(),
     };
@@ -166,6 +181,9 @@ class AgileProjectModel {
     double? averageVelocity,
     String? activeSprintId,
     List<KanbanColumnConfig>? kanbanColumns,
+    String? productOwnerEmail,
+    String? scrumMasterEmail,
+    List<String>? developmentTeamEmails,
   }) {
     return AgileProjectModel(
       id: id ?? this.id,
@@ -185,8 +203,34 @@ class AgileProjectModel {
       averageVelocity: averageVelocity ?? this.averageVelocity,
       activeSprintId: activeSprintId ?? this.activeSprintId,
       kanbanColumns: kanbanColumns ?? this.kanbanColumns,
+      productOwnerEmail: productOwnerEmail ?? this.productOwnerEmail,
+      scrumMasterEmail: scrumMasterEmail ?? this.scrumMasterEmail,
+      developmentTeamEmails: developmentTeamEmails ?? this.developmentTeamEmails,
     );
   }
+
+  // =========================================================================
+  // Helper per Key Roles
+  // =========================================================================
+
+  /// Ottiene il Product Owner
+  TeamMemberModel? get productOwner =>
+      productOwnerEmail != null ? participants[productOwnerEmail] : null;
+
+  /// Ottiene lo Scrum Master
+  TeamMemberModel? get scrumMaster =>
+      scrumMasterEmail != null ? participants[scrumMasterEmail] : null;
+
+  /// Ottiene il Development Team
+  List<TeamMemberModel> get developmentTeam =>
+      developmentTeamEmails
+          .where((email) => participants.containsKey(email))
+          .map((email) => participants[email]!)
+          .toList();
+
+  /// Verifica se ha tutti i ruoli chiave assegnati (per Scrum)
+  bool get hasKeyRolesAssigned =>
+      productOwnerEmail != null && scrumMasterEmail != null;
 
   // =========================================================================
   // Helper per participants

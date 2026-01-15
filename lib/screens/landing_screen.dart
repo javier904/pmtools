@@ -300,37 +300,64 @@ class _LandingScreenState extends State<LandingScreen> {
           LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth > 900) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                return Column(
                   children: [
-                    Expanded(child: _buildFeatureCard(
-                      icon: Icons.apps_rounded,
-                      title: 'Matrice Eisenhower',
-                      description: 'Prioritizza le attivita distinguendo tra urgente e importante. Organizza il lavoro con chiarezza.',
-                      color: AppColors.success,
-                      isDark: isDark,
-                    )),
-                    const SizedBox(width: 24),
-                    Expanded(child: _buildFeatureCard(
-                      icon: Icons.style_rounded,
-                      title: 'Estimation Room',
-                      description: 'Sessioni di stima collaborative con Planning Poker, T-Shirt sizing e altri metodi.',
-                      color: AppColors.secondary,
-                      isDark: isDark,
-                    )),
-                    const SizedBox(width: 24),
-                    Expanded(child: _buildFeatureCard(
-                      icon: Icons.speed_rounded,
-                      title: 'Agile Process',
-                      description: 'Gestisci backlog, sprint e kanban board. Metriche e retrospettive incluse.',
-                      color: AppColors.primary,
-                      isDark: isDark,
-                    )),
+                    // Prima riga: Smart Todo + Matrice Eisenhower
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: _buildFeatureCard(
+                          icon: Icons.check_circle_outline_rounded,
+                          title: 'Smart Todo',
+                          description: 'Liste intelligenti e collaborative. Importa da CSV/testo, invita partecipanti e gestisci task.',
+                          color: Colors.blue,
+                          isDark: isDark,
+                        )),
+                        const SizedBox(width: 24),
+                        Expanded(child: _buildFeatureCard(
+                          icon: Icons.apps_rounded,
+                          title: 'Matrice Eisenhower',
+                          description: 'Prioritizza le attivita distinguendo tra urgente e importante. Organizza il lavoro con chiarezza.',
+                          color: AppColors.success,
+                          isDark: isDark,
+                        )),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    // Seconda riga: Estimation Room + Agile Process
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: _buildFeatureCard(
+                          icon: Icons.style_rounded,
+                          title: 'Estimation Room',
+                          description: 'Sessioni di stima collaborative con Planning Poker, T-Shirt sizing e altri metodi.',
+                          color: AppColors.secondary,
+                          isDark: isDark,
+                        )),
+                        const SizedBox(width: 24),
+                        Expanded(child: _buildFeatureCard(
+                          icon: Icons.speed_rounded,
+                          title: 'Agile Process',
+                          description: 'Gestisci backlog, sprint e kanban board. Metriche e retrospettive incluse.',
+                          color: AppColors.primary,
+                          isDark: isDark,
+                        )),
+                      ],
+                    ),
                   ],
                 );
               } else {
                 return Column(
                   children: [
+                    _buildFeatureCard(
+                      icon: Icons.check_circle_outline_rounded,
+                      title: 'Smart Todo',
+                      description: 'Liste intelligenti e collaborative. Importa da CSV/testo e gestisci task.',
+                      color: Colors.blue,
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 16),
                     _buildFeatureCard(
                       icon: Icons.apps_rounded,
                       title: 'Matrice Eisenhower',

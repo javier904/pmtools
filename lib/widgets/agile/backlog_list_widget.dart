@@ -23,6 +23,8 @@ class BacklogListWidget extends StatefulWidget {
   final void Function(String storyId)? onStoryDelete;
   final void Function(List<String> newOrder)? onReorder;
   final void Function(String storyId, StoryStatus newStatus)? onStatusChange;
+  final void Function(UserStoryModel story)? onStoryEstimate;
+  final void Function(UserStoryModel story)? onAddToSprint;
   final VoidCallback? onAddStory;
 
   const BacklogListWidget({
@@ -35,6 +37,8 @@ class BacklogListWidget extends StatefulWidget {
     this.onStoryDelete,
     this.onReorder,
     this.onStatusChange,
+    this.onStoryEstimate,
+    this.onAddToSprint,
     this.onAddStory,
   });
 
@@ -432,6 +436,12 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
             : null,
         onStatusChange: widget.canEdit && widget.onStatusChange != null
             ? (status) => widget.onStatusChange!(story.id, status)
+            : null,
+        onEstimate: widget.canEdit && widget.onStoryEstimate != null
+            ? () => widget.onStoryEstimate!(story)
+            : null,
+        onAddToSprint: widget.canEdit && widget.onAddToSprint != null
+            ? () => widget.onAddToSprint!(story)
             : null,
         showDragHandle: widget.canEdit && widget.onReorder != null,
       ),

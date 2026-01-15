@@ -37,6 +37,7 @@ class SprintListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Header
         Padding(
@@ -65,16 +66,36 @@ class SprintListWidget extends StatelessWidget {
         ),
         const Divider(height: 0),
 
-        // Lista sprint
-        Expanded(
-          child: sprints.isEmpty
-              ? _buildEmptyState(context)
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: sprints.length,
-                  itemBuilder: (context, index) => _buildSprintCard(context, sprints[index]),
-                ),
-        ),
+        // Lista sprint - Layout orizzontale
+        if (sprints.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(32),
+            child: _buildEmptyState(context),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final hasActiveSprint = sprints.any((s) => s.status == SprintStatus.active);
+                // Calcola quante card per riga in base alla larghezza
+                final cardWidth = constraints.maxWidth > 900
+                    ? (constraints.maxWidth - 24) / 3 // 3 card
+                    : constraints.maxWidth > 600
+                        ? (constraints.maxWidth - 12) / 2 // 2 card
+                        : constraints.maxWidth; // 1 card
+
+                return Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: sprints.map((sprint) => SizedBox(
+                    width: cardWidth,
+                    child: _buildSprintCard(context, sprint, hasActiveSprint: hasActiveSprint),
+                  )).toList(),
+                );
+              },
+            ),
+          ),
       ],
     );
   }
@@ -94,14 +115,14 @@ class SprintListWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSprintCard(BuildContext context, SprintModel sprint) {
+  Widget _buildSprintCard(BuildContext context, SprintModel sprint, {bool hasActiveSprint = false}) {
     final isActive = sprint.status == SprintStatus.active;
     final isCompleted = sprint.status == SprintStatus.completed;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         side: BorderSide(
           color: isActive ? Colors.green : context.borderColor,
           width: isActive ? 2 : 1,
@@ -109,9 +130,9 @@ class SprintListWidget extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onSprintTap != null ? () => onSprintTap!(sprint) : null,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -185,111 +206,121 @@ class SprintListWidget extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Name
               Text(
                 sprint.name,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
 
               // Goal
               if (sprint.goal.isNotEmpty) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   sprint.goal,
-                  style: TextStyle(color: context.textSecondaryColor),
-                  maxLines: 2,
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
-              // Date range
+              // Date range compatto
               Row(
                 children: [
-                  Icon(Icons.calendar_today, size: 14, color: context.textSecondaryColor),
+                  Icon(Icons.calendar_today, size: 12, color: context.textSecondaryColor),
                   const SizedBox(width: 4),
                   Text(
                     '${_formatDate(sprint.startDate)} - ${_formatDate(sprint.endDate)}',
-                    style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
-                  const SizedBox(width: 16),
-                  Icon(Icons.access_time, size: 14, color: context.textSecondaryColor),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 8),
+                  Icon(Icons.access_time, size: 12, color: context.textSecondaryColor),
+                  const SizedBox(width: 2),
                   Text(
-                    '${sprint.durationDays} giorni',
-                    style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+                    '${sprint.durationDays}g',
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
-              // Stats
-              Row(
+              // Stats compatte in Wrap
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
                 children: [
-                  _buildStat(
-                    context,
-                    '${sprint.storyIds.length}',
-                    'stories',
-                    Colors.blue,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildStat(
-                    context,
-                    '${sprint.plannedPoints}',
-                    'pts pianificati',
-                    Colors.orange,
-                  ),
+                  _buildCompactStat(context, '${sprint.storyIds.length}', 'stories', Colors.blue),
+                  _buildCompactStat(context, '${sprint.plannedPoints}', 'pts', Colors.orange),
                   if (isCompleted) ...[
-                    const SizedBox(width: 16),
-                    _buildStat(
-                      context,
-                      '${sprint.completedPoints}',
-                      'pts completati',
-                      Colors.green,
-                    ),
-                    const SizedBox(width: 16),
-                    _buildStat(
-                      context,
-                      sprint.velocity?.toStringAsFixed(1) ?? '-',
-                      'velocity',
-                      AppColors.primary,
-                    ),
+                    _buildCompactStat(context, '${sprint.completedPoints}', 'completati', Colors.green),
+                    _buildCompactStat(context, sprint.velocity?.toStringAsFixed(1) ?? '-', 'velocity', AppColors.primary),
                   ],
                 ],
               ),
 
               // Progress bar for active sprint
               if (isActive) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(3),
                         child: LinearProgressIndicator(
                           value: sprint.progress,
                           backgroundColor: context.surfaceVariantColor,
                           valueColor: const AlwaysStoppedAnimation(Colors.green),
-                          minHeight: 6,
+                          minHeight: 4,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Text(
                       '${(sprint.progress * 100).toInt()}%',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
-                  '${sprint.daysRemaining} giorni rimanenti',
-                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  '${sprint.daysRemaining}g rimanenti',
+                  style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
+                ),
+              ],
+
+              // Action Button row
+              if (sprint.status == SprintStatus.planning && onSprintStart != null && canEdit) ...[
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: hasActiveSprint
+                      ? Tooltip(
+                          message: 'Completa lo sprint attivo prima di avviarne un altro',
+                          child: OutlinedButton.icon(
+                            onPressed: null,
+                            icon: const Icon(Icons.play_arrow, size: 14),
+                            label: const Text('Avvia', style: TextStyle(fontSize: 11)),
+                            style: OutlinedButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            ),
+                          ),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: () => onSprintStart?.call(sprint.id),
+                          icon: const Icon(Icons.play_arrow, size: 14),
+                          label: const Text('Avvia', style: TextStyle(fontSize: 11)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                          ),
+                        ),
                 ),
               ],
             ],
@@ -311,6 +342,23 @@ class SprintListWidget extends StatelessWidget {
         Text(
           label,
           style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactStat(BuildContext context, String value, String label, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+        ),
+        const SizedBox(width: 2),
+        Text(
+          label,
+          style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
         ),
       ],
     );
@@ -672,11 +720,20 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Row(
+      title: Row(
         children: [
-          Icon(Icons.assignment, color: AppColors.primary),
-          SizedBox(width: 8),
-          Text('Sprint Planning'),
+          const Icon(Icons.assignment, color: AppColors.primary),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Sprint Planning'),
+              Text(
+                'Seleziona le storie da completare in questo sprint',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.normal),
+              ),
+            ],
+          ),
         ],
       ),
       content: SizedBox(
@@ -703,7 +760,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                   _buildStatColumn(
                     'Suggeriti',
                     '$_suggestedPoints pts',
-                    'basato su velocity',
+                    'basato su velocity media',
                     Colors.blue,
                   ),
                   _buildStatColumn(
@@ -735,7 +792,9 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${((_selectedPoints / _suggestedPoints) * 100).toInt()}%',
+                  _suggestedPoints > 0 
+                      ? '${((_selectedPoints / _suggestedPoints) * 100).toInt()}%'
+                      : '0%',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: _selectedPoints > _suggestedPoints ? Colors.orange : Colors.green,

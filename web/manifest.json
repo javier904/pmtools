@@ -1,13 +1,16 @@
 {
-    "name": "agile_tools",
-    "short_name": "agile_tools",
+    "name": "Agile Tools - Strumenti Collaborativi per Team Agili",
+    "short_name": "Agile Tools",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#1a1a2e",
+    "theme_color": "#1a1a2e",
+    "description": "Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning e Kanban Board. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.",
+    "orientation": "any",
     "prefer_related_applications": false,
+    "categories": ["productivity", "business", "utilities"],
+    "lang": "it",
+    "scope": "/",
     "icons": [
         {
             "src": "icons/Icon-192.png",
@@ -30,6 +33,37 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
+        }
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Smart Todo",
+            "short_name": "Todo",
+            "description": "Liste intelligenti e collaborative",
+            "url": "/smart-todo",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Matrice Eisenhower",
+            "short_name": "Eisenhower",
+            "description": "Prioritizza per urgenza e importanza",
+            "url": "/eisenhower",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Estimation Room",
+            "short_name": "Estimation",
+            "description": "Planning Poker e stime collaborative",
+            "url": "/estimation-room",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Agile Process Manager",
+            "short_name": "Agile PM",
+            "description": "Backlog, Sprint e Kanban",
+            "url": "/agile-process",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
         }
     ]
 }

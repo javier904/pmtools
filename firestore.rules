@@ -1,0 +1,267 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // HELPER FUNCTIONS
+    // ════════════════════════════════════════════════════════════════════════════
+
+    /// Verifica che l'utente sia autenticato
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    /// Ottiene l'email dell'utente autenticato (lowercase)
+    function userEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    /// Verifica che l'utente sia il proprietario (campo createdBy)
+    function isOwner(resource) {
+      return userEmail() == resource.data.createdBy.lower();
+    }
+
+    /// Verifica che l'utente sia il proprietario tramite ownerEmail
+    function isOwnerByEmail(resource) {
+      return userEmail() == resource.data.ownerEmail.lower();
+    }
+
+    /// Verifica che l'utente sia nell'array participantEmails
+    function isParticipantByArray(resource) {
+      return userEmail() in resource.data.participantEmails;
+    }
+
+    /// Verifica owner o partecipante (via participantEmails array)
+    function canAccessByParticipantEmails(resource) {
+      return isOwner(resource) || isParticipantByArray(resource);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // PLANNING POKER SESSIONS
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /planning_poker_sessions/{sessionId} {
+      // Lettura: creatore o partecipanti
+      allow read: if isAuthenticated() && canAccessByParticipantEmails(resource);
+
+      // Creazione: qualsiasi utente autenticato (deve essere il creatore)
+      allow create: if isAuthenticated() &&
+                      request.resource.data.createdBy.lower() == userEmail();
+
+      // Aggiornamento: creatore o partecipanti (per votare)
+      allow update: if isAuthenticated() && canAccessByParticipantEmails(resource);
+
+      // Cancellazione: solo creatore
+      allow delete: if isAuthenticated() && isOwner(resource);
+
+      // Subcollection: stories
+      match /stories/{storyId} {
+        allow read: if isAuthenticated() &&
+                      canAccessByParticipantEmails(
+                        get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))
+                      );
+        allow write: if isAuthenticated() &&
+                       canAccessByParticipantEmails(
+                         get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))
+                       );
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // PLANNING POKER INVITES
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /planning_poker_invites/{inviteId} {
+      // Lettura pubblica per validazione token (necessario per accettare inviti)
+      allow read: if true;
+
+      // Creazione: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Aggiornamento/Cancellazione: solo chi ha invitato
+      allow update, delete: if isAuthenticated() &&
+                              resource.data.invitedBy.lower() == userEmail();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // EISENHOWER MATRICES
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /eisenhower_matrices/{matrixId} {
+      // Lettura: creatore o partecipanti
+      allow read: if isAuthenticated() &&
+                    (isOwner(resource) || isParticipantByArray(resource));
+
+      // Creazione: qualsiasi utente autenticato (deve essere il creatore)
+      allow create: if isAuthenticated() &&
+                      request.resource.data.createdBy.lower() == userEmail();
+
+      // Aggiornamento: creatore o partecipanti
+      allow update: if isAuthenticated() &&
+                      (isOwner(resource) || isParticipantByArray(resource));
+
+      // Cancellazione: solo creatore
+      allow delete: if isAuthenticated() && isOwner(resource);
+
+      // Subcollection: activities
+      match /activities/{activityId} {
+        allow read, write: if isAuthenticated() &&
+                             (isOwner(get(/databases/$(database)/documents/eisenhower_matrices/$(matrixId))) ||
+                              isParticipantByArray(get(/databases/$(database)/documents/eisenhower_matrices/$(matrixId))));
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // EISENHOWER INVITES
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /eisenhower_invites/{inviteId} {
+      // Lettura pubblica per validazione token
+      allow read: if true;
+
+      // Creazione: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Aggiornamento/Cancellazione: solo chi ha invitato
+      allow update, delete: if isAuthenticated() &&
+                              resource.data.invitedBy.lower() == userEmail();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // AGILE PROJECTS
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /agile_projects/{projectId} {
+      // Lettura: creatore o partecipanti (via participantEmails)
+      allow read: if isAuthenticated() && canAccessByParticipantEmails(resource);
+
+      // Creazione: qualsiasi utente autenticato (deve essere il creatore)
+      allow create: if isAuthenticated() &&
+                      request.resource.data.createdBy.lower() == userEmail();
+
+      // Aggiornamento: creatore o partecipanti
+      allow update: if isAuthenticated() && canAccessByParticipantEmails(resource);
+
+      // Cancellazione: solo creatore
+      allow delete: if isAuthenticated() && isOwner(resource);
+
+      // Subcollections: stories, sprints, retrospectives, audit_logs
+      match /stories/{storyId} {
+        allow read, write: if isAuthenticated() &&
+                             canAccessByParticipantEmails(
+                               get(/databases/$(database)/documents/agile_projects/$(projectId))
+                             );
+      }
+
+      match /sprints/{sprintId} {
+        allow read, write: if isAuthenticated() &&
+                             canAccessByParticipantEmails(
+                               get(/databases/$(database)/documents/agile_projects/$(projectId))
+                             );
+      }
+
+      match /retrospectives/{retroId} {
+        allow read, write: if isAuthenticated() &&
+                             canAccessByParticipantEmails(
+                               get(/databases/$(database)/documents/agile_projects/$(projectId))
+                             );
+      }
+
+      match /audit_logs/{logId} {
+        // Audit logs: solo lettura per partecipanti, scrittura solo dal sistema
+        allow read: if isAuthenticated() &&
+                      canAccessByParticipantEmails(
+                        get(/databases/$(database)/documents/agile_projects/$(projectId))
+                      );
+        // Scrittura consentita ai partecipanti (il service scrive gli audit)
+        allow write: if isAuthenticated() &&
+                       canAccessByParticipantEmails(
+                         get(/databases/$(database)/documents/agile_projects/$(projectId))
+                       );
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // AGILE INVITES
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /agile_invites/{inviteId} {
+      // Lettura pubblica per validazione token
+      allow read: if true;
+
+      // Creazione: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Aggiornamento/Cancellazione: solo chi ha invitato
+      allow update, delete: if isAuthenticated() &&
+                              resource.data.invitedBy.lower() == userEmail();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // SMART TODO LISTS
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /smart_todo_lists/{listId} {
+      // Lettura: owner o partecipanti (via participantEmails)
+      allow read: if isAuthenticated() &&
+                    (resource.data.ownerEmail.lower() == userEmail() ||
+                     userEmail() in resource.data.participantEmails);
+
+      // Creazione: qualsiasi utente autenticato (deve essere l'owner)
+      allow create: if isAuthenticated() &&
+                      request.resource.data.ownerEmail.lower() == userEmail();
+
+      // Aggiornamento: owner o partecipanti
+      allow update: if isAuthenticated() &&
+                      (resource.data.ownerEmail.lower() == userEmail() ||
+                       userEmail() in resource.data.participantEmails);
+
+      // Cancellazione: solo owner
+      allow delete: if isAuthenticated() &&
+                      resource.data.ownerEmail.lower() == userEmail();
+
+      // Subcollection: tasks
+      match /smart_todo_tasks/{taskId} {
+        allow read, write: if isAuthenticated() &&
+                             (get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.ownerEmail.lower() == userEmail() ||
+                              userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.participantEmails);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // SMART TODO INVITES
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /smart_todo_invites/{inviteId} {
+      // Lettura pubblica per validazione token
+      allow read: if true;
+
+      // Creazione: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Aggiornamento/Cancellazione: solo chi ha invitato
+      allow update, delete: if isAuthenticated() &&
+                              resource.data.invitedBy.lower() == userEmail();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // USER PROFILES (se necessario in futuro)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /users/{userId} {
+      // Gli utenti possono solo leggere/scrivere il proprio profilo
+      allow read: if isAuthenticated() && userEmail() == userId.lower();
+      allow create: if isAuthenticated() && userEmail() == userId.lower();
+      allow update: if isAuthenticated() && userEmail() == userId.lower();
+      allow delete: if isAuthenticated() && userEmail() == userId.lower();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // DENY ALL OTHER COLLECTIONS (default deny)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    // Qualsiasi altra collection non esplicitamente definita sara' negata
+    // poiche' Firestore nega l'accesso per default se non ci sono regole match
+
+  }
+}

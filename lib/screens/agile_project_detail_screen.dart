@@ -13,7 +13,7 @@ import '../services/auth_service.dart';
 import '../widgets/agile/backlog_list_widget.dart';
 import '../widgets/agile/story_form_dialog.dart';
 import '../widgets/agile/story_detail_dialog.dart';
-// story_estimation_dialog usato nel dettaglio story (futuro)
+import '../widgets/agile/story_estimation_dialog.dart';
 import '../widgets/agile/sprint_widgets.dart';
 import '../widgets/agile/kanban_board_widget.dart';
 import '../widgets/agile/team_list_widget.dart';
@@ -58,6 +58,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   final AgileAuditService _auditService = AgileAuditService();
   final AgileSheetsService _sheetsService = AgileSheetsService();
   final AuthService _authService = AuthService();
+  bool _filterByActiveSprint = true;
 
   late TabController _tabController;
   late FrameworkFeatures _features;
@@ -194,7 +195,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           );
         },
       ),
-      floatingActionButton: _buildFAB(),
+      // floatingActionButton: _buildFAB(), // Nascondi FAB come richiesto
     );
   }
 
@@ -228,64 +229,81 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     final hasActiveSprint = _sprints.any((s) => s.status == SprintStatus.active);
     final hasWipLimits = widget.project.kanbanColumns.any((c) => c.wipLimit != null);
 
-    return Column(
-      children: [
-        // Setup checklist per progetti nuovi
-        if (!isSetupComplete) ...[
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SetupChecklistWidget(
-              project: widget.project,
-              stories: _stories,
-              sprints: _sprints,
-              onAddTeamMember: _showInviteDialog,
-              onAddStory: _showCreateStoryDialog,
-              onStartSprint: _features.showSprintTab ? _showCreateSprintDialog : null,
-              onConfigureWip: _features.hasWipLimits ? () => _tabController.animateTo(
-                _features.visibleTabs.indexOf(AgileTab.kanban),
-              ) : null,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calcola l'altezza disponibile per il backlog
+        // Assumiamo che i widget superiori occupino circa 350-400px
+        final backlogMinHeight = (constraints.maxHeight - 400).clamp(300.0, constraints.maxHeight * 0.6);
+        
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Setup checklist per progetti nuovi
+                if (!isSetupComplete) ...[
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SetupChecklistWidget(
+                      project: widget.project,
+                      stories: _stories,
+                      sprints: _sprints,
+                      onAddTeamMember: _showInviteDialog,
+                      onAddStory: _showCreateStoryDialog,
+                      onStartSprint: _features.showSprintTab ? _showCreateSprintDialog : null,
+                      onConfigureWip: _features.hasWipLimits ? () => _tabController.animateTo(
+                        _features.visibleTabs.indexOf(AgileTab.kanban),
+                      ) : null,
+                    ),
+                  ),
+                ] else ...[
+                  // Suggerimento prossimo passo per progetti attivi
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: NextStepWidget(
+                      framework: widget.project.framework,
+                      project: widget.project,
+                      stories: _stories,
+                      sprints: _sprints,
+                      onAction: () {
+                        // Azione contestuale
+                      },
+                    ),
+                  ),
+                ],
+
+                // Tips framework-specific
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: FrameworkTipsWidget(
+                    framework: widget.project.framework,
+                    storiesCount: _stories.length,
+                    completedStoriesCount: _stories.where((s) => s.status == StoryStatus.done).length,
+                    hasActiveSprint: hasActiveSprint,
+                    hasWipLimits: hasWipLimits,
+                  ),
+                ),
+
+                // Backlog list con altezza minima garantita
+                SizedBox(
+                  height: backlogMinHeight,
+                  child: BacklogListWidget(
+                    stories: _stories,
+                    projectId: widget.project.id,
+                    onStoryTap: (story) => _showStoryDetail(story),
+                    onReorder: (newOrder) => _reorderStories(newOrder),
+                    onStoryEstimate: _showEstimateStoryDialog,
+                    onAddToSprint: _addToSprint,
+                    onAddStory: _showCreateStoryDialog,
+                    canEdit: widget.project.canManage(_currentUserEmail),
+                  ),
+                ),
+              ],
             ),
           ),
-        ] else ...[
-          // Suggerimento prossimo passo per progetti attivi
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: NextStepWidget(
-              framework: widget.project.framework,
-              project: widget.project,
-              stories: _stories,
-              sprints: _sprints,
-              onAction: () {
-                // Azione contestuale
-              },
-            ),
-          ),
-        ],
-
-        // Tips framework-specific
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: FrameworkTipsWidget(
-            framework: widget.project.framework,
-            storiesCount: _stories.length,
-            completedStoriesCount: _stories.where((s) => s.status == StoryStatus.done).length,
-            hasActiveSprint: hasActiveSprint,
-            hasWipLimits: hasWipLimits,
-          ),
-        ),
-
-        // Backlog list
-        Expanded(
-          child: BacklogListWidget(
-            stories: _stories,
-            projectId: widget.project.id,
-            onStoryTap: (story) => _showStoryDetail(story),
-            onReorder: (newOrder) => _reorderStories(newOrder),
-            onAddStory: _showCreateStoryDialog,
-            canEdit: widget.project.canManage(_currentUserEmail),
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -371,6 +389,54 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
+  Future<void> _showEstimateStoryDialog(UserStoryModel story) async {
+    final result = await StoryEstimationDialog.show(
+      context: context,
+      story: story,
+      currentUserEmail: _currentUserEmail,
+    );
+
+    if (result != null && mounted) {
+      try {
+        // Aggiungi stima alla story
+        final updatedEstimates = Map<String, StoryEstimate>.from(story.estimates);
+        updatedEstimates[_currentUserEmail] = result;
+        
+        // Calcola stima finale se siamo in Planning Poker e tutti hanno votato
+        // O semplicemente aggiorna la stima personale per ora
+        // Se l'utente è scrum master/owner potrebbe finalizzare la stima
+        // Per ora salviamo solo il voto e se è numerico aggiorniamo i punti (semplificazione)
+        
+        int? newPoints;
+        if (int.tryParse(result.value) != null) {
+          newPoints = int.parse(result.value);
+        }
+
+        final updated = story.copyWith(
+          estimates: updatedEstimates,
+          storyPoints: newPoints ?? story.storyPoints, // Aggiorna punti se è un numero
+        );
+
+        await _firestoreService.updateStory(widget.project.id, updated);
+        
+        // Audit log
+        await _auditService.logEstimate(
+          projectId: widget.project.id,
+          entityId: story.id, // Usa ID interno
+          entityName: story.title,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserName,
+          estimationType: 'Story Points',
+          newEstimate: result.value,
+        );
+        
+        _showSuccess('Stima registrata!');
+      } catch (e) {
+        _showError('Errore salvataggio stima: $e');
+      }
+    }
+  }
+
   Future<void> _updateStoryStatus(UserStoryModel story, StoryStatus status) async {
     try {
       final updated = story.copyWith(
@@ -398,6 +464,160 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // ══════════════════════════════════════════════════════════════════════════
   // TAB 2: SPRINT
   // ══════════════════════════════════════════════════════════════════════════
+
+  Future<void> _startSprint(String sprintId) async {
+    final sprint = _sprints.firstWhere((s) => s.id == sprintId);
+    final stories = _stories.where((s) => s.status == StoryStatus.ready || s.status == StoryStatus.backlog).toList();
+    
+    // Mostra il wizard di pianificazione
+    final selectedStoryIds = await SprintPlanningWizard.show(
+      context: context,
+      sprint: sprint,
+      backlogStories: stories,
+      averageVelocity: _calculateAverageVelocity(),
+      totalCapacityHours: sprint.totalCapacityHours,
+    );
+
+    if (selectedStoryIds != null && mounted) {
+      try {
+        final now = DateTime.now();
+        
+        // Crea una copia aggiornata dello sprint
+        final updatedSprint = sprint.copyWith(
+          status: SprintStatus.active,
+          storyIds: selectedStoryIds,
+          startDate: now,
+          endDate: now.add(Duration(days: sprint.durationDays)),
+        );
+        
+        // Aggiorna lo sprint
+        await _firestoreService.updateSprint(widget.project.id, updatedSprint);
+
+        // Aggiorna le stories selezionate (spostale in sprint)
+        for (final storyId in selectedStoryIds) {
+           await _firestoreService.updateStoryStatus(
+             widget.project.id, 
+             storyId, 
+             StoryStatus.inSprint, // Reset status to In Sprint (Todo) for new sprint
+             sprintId: sprint.id
+           );
+        }
+        
+        // Log audit
+        await _auditService.logSprintStart(
+          projectId: widget.project.id,
+          sprintId: sprint.id,
+          sprintName: sprint.name,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserEmail.split('@')[0], // Nome semplificato
+          storyCount: selectedStoryIds.length,
+          plannedPoints: sprint.plannedPoints, // Potrebbe dover essere ricalcolato
+        );
+
+        _showSuccess('Sprint avviato con ${selectedStoryIds.length} stories');
+      } catch (e) {
+        _showError('Errore avvio sprint: $e');
+      }
+    }
+  }
+
+  Future<void> _completeSprint(String sprintId) async {
+    final sprint = _sprints.firstWhere((s) => s.id == sprintId);
+    await _completeSprintConfirm(sprint);
+  }
+
+  Future<void> _addToSprint(UserStoryModel story) async {
+    // Trova sprint pianificati o attivi
+    final availableSprints = _sprints.where((s) => 
+      s.status == SprintStatus.planning || s.status == SprintStatus.active
+    ).toList();
+
+    if (availableSprints.isEmpty) {
+      _showError('Nessuno sprint attivo o in planning disponibile');
+      return;
+    }
+
+    // Mostra dialog scelta sprint
+    final selectedSprint = await showDialog<SprintModel>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Aggiungi allo Sprint'),
+        children: availableSprints.map((sprint) {
+          final isActive = sprint.status == SprintStatus.active;
+          return SimpleDialogOption(
+            onPressed: () => Navigator.pop(context, sprint),
+            child: Row(
+              children: [
+                Icon(
+                  isActive ? Icons.directions_run : Icons.date_range,
+                  color: isActive ? Colors.green : Colors.blue,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    sprint.name,
+                    style: TextStyle(
+                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ),
+                if (isActive)
+                  const Chip(
+                    label: Text('ATTIVO', style: TextStyle(fontSize: 10)),
+                    visualDensity: VisualDensity.compact,
+                    backgroundColor: Colors.green,
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+
+    if (selectedSprint != null && mounted) {
+      if (selectedSprint.storyIds.contains(story.id)) {
+        _showError('La storia è già in questo sprint');
+        return;
+      }
+
+      try {
+        final updatedStoryIds = List<String>.from(selectedSprint.storyIds)..add(story.id);
+        
+        // Aggiorna lo sprint con la nuova lista di storie
+        final updatedSprint = selectedSprint.copyWith(
+          storyIds: updatedStoryIds,
+        );
+        
+        await _firestoreService.updateSprint(widget.project.id, updatedSprint);
+        
+        // Aggiorna anche la story per puntare allo sprint
+        await _firestoreService.updateStoryStatus(
+          widget.project.id, 
+          story.id, 
+          story.status, // Mantiene lo status attuale
+          sprintId: selectedSprint.id,
+        );
+        
+        // Log
+        await _auditService.logMove(
+          projectId: widget.project.id,
+          entityId: story.id,
+          entityName: story.title,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserEmail.split('@')[0],
+          fromStatus: story.status.name,
+          toStatus: story.status.name,
+          toSprintId: selectedSprint.id,
+        );
+
+        _showSuccess('Aggiunta a ${selectedSprint.name}');
+      } catch (e) {
+        _showError('Errore aggiunta a sprint: $e');
+      }
+    }
+  }
 
   Widget _buildSprintTab() {
     final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
@@ -437,6 +657,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             sprints: _sprints,
             onSprintTap: (sprint) => _showSprintDetail(sprint),
             onAddSprint: _showCreateSprintDialog,
+            onSprintStart: _startSprint,
+            onSprintComplete: _completeSprint,
             canEdit: widget.project.canManage(_currentUserEmail),
           ),
 
@@ -846,15 +1068,63 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // ══════════════════════════════════════════════════════════════════════════
 
   Widget _buildKanbanTab() {
-    return KanbanBoardWidget(
-      stories: _stories,
-      columns: widget.project.effectiveKanbanColumns,
-      framework: widget.project.framework,
-      onStatusChange: (storyId, newStatus) => _updateStoryStatusById(storyId, newStatus),
-      onStoryTap: (story) => _showStoryDetail(story),
-      onWipLimitChange: _features.hasWipLimits ? _updateWipLimit : null,
-      canEdit: widget.project.canManage(_currentUserEmail),
-      showWipConfig: _features.hasWipLimits && widget.project.canManage(_currentUserEmail),
+    final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+    var storiesToShow = _stories;
+    
+    if (_filterByActiveSprint && activeSprint != null) {
+      // Robust filter: include stories in sprint.storyIds OR stories pointing to this sprint
+      storiesToShow = _stories.where((s) => 
+        activeSprint.storyIds.contains(s.id) || s.sprintId == activeSprint.id
+      ).toList();
+    }
+
+    return Column(
+      children: [
+        // Kanban Header con filtro sprint
+        if (activeSprint != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: const Color(0xFF1E1E1E), // Match app background or slightly lighter
+            child: Row(
+              children: [
+                const Icon(Icons.filter_list, size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  'Filtro Sprint Attivo: ',
+                  style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                ),
+                Text(
+                  activeSprint.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                const Spacer(),
+                Switch(
+                  value: _filterByActiveSprint, 
+                  onChanged: (val) => setState(() => _filterByActiveSprint = val),
+                  activeColor: Colors.blue,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                 _filterByActiveSprint ? 'Attivo' : 'Tutto',
+                 style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+
+        Expanded(
+          child: KanbanBoardWidget(
+            stories: storiesToShow,
+            columns: widget.project.effectiveKanbanColumns,
+            framework: widget.project.framework,
+            onStatusChange: (storyId, newStatus) => _updateStoryStatusById(storyId, newStatus),
+            onStoryTap: (story) => _showStoryDetail(story),
+            onWipLimitChange: _features.hasWipLimits ? _updateWipLimit : null,
+            canEdit: widget.project.canManage(_currentUserEmail),
+            showWipConfig: _features.hasWipLimits && widget.project.canManage(_currentUserEmail),
+          ),
+        ),
+      ],
     );
   }
 
