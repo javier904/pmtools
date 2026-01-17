@@ -325,11 +325,31 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                           ],
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: filteredSessions.length,
-                        itemBuilder: (context, index) {
-                          final session = filteredSessions[index];
-                          return _buildSessionCard(session);
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Calcola quante card per riga - card molto compatte
+                          final cardWidth = constraints.maxWidth > 1400
+                              ? (constraints.maxWidth - 30) / 6 // 6 card
+                              : constraints.maxWidth > 1100
+                                  ? (constraints.maxWidth - 25) / 5 // 5 card
+                                  : constraints.maxWidth > 800
+                                      ? (constraints.maxWidth - 18) / 4 // 4 card
+                                      : constraints.maxWidth > 550
+                                          ? (constraints.maxWidth - 12) / 3 // 3 card
+                                          : constraints.maxWidth > 350
+                                              ? (constraints.maxWidth - 6) / 2 // 2 card
+                                              : constraints.maxWidth; // 1 card
+
+                          return SingleChildScrollView(
+                            child: Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: filteredSessions.map((session) => SizedBox(
+                                width: cardWidth,
+                                child: _buildSessionCard(session),
+                              )).toList(),
+                            ),
+                          );
                         },
                       ),
               ),
@@ -377,185 +397,200 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
   Widget _buildSessionCard(PlanningPokerSessionModel session) {
     Color statusColor;
+    String statusLabel;
     switch (session.status) {
       case PlanningPokerSessionStatus.draft:
         statusColor = Colors.grey;
+        statusLabel = 'Bozza';
         break;
       case PlanningPokerSessionStatus.active:
         statusColor = Colors.green;
+        statusLabel = 'Attiva';
         break;
       case PlanningPokerSessionStatus.completed:
         statusColor = Colors.blue;
+        statusLabel = 'Completata';
         break;
     }
 
+    // Calcola percentuale completamento
+    final completionPercent = session.storyCount > 0
+        ? session.completedStoryCount / session.storyCount
+        : 0.0;
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.zero,
       child: InkWell(
         onTap: () => _selectSession(session),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(6),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Icona con status (dinamica in base al tipo di stima)
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Stack(
-                  children: [
-                    Center(child: Icon(_getEstimationModeIcon(session.estimationMode), color: Colors.green)),
-                    Positioned(
-                      right: 4,
-                      bottom: 4,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: statusColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: context.surfaceColor, width: 2),
-                        ),
+              // Header: Icona + Titolo + Menu
+              Row(
+                children: [
+                  // Icona verde con status indicator
+                  Tooltip(
+                    message: '${_getEstimationModeName(session.estimationMode)} - $statusLabel\nClicca per aprire',
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      session.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (session.description.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          session.description,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: context.textSecondaryColor,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Icon(
+                              _getEstimationModeIcon(session.estimationMode),
+                              color: Colors.green,
+                              size: 14,
+                            ),
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    const SizedBox(height: 8),
-                    // Badge integrazioni
-                    if (session.hasProject || session.hasTeam)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Wrap(
-                          spacing: 6,
-                          children: [
-                            if (session.hasProject)
-                              _buildIntegrationBadge(
-                                Icons.folder_open,
-                                session.projectCode ?? 'Progetto',
-                                Colors.purple,
+                          Positioned(
+                            right: 1,
+                            bottom: 1,
+                            child: Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                color: statusColor,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: context.surfaceColor, width: 1),
                               ),
-                            if (session.hasTeam)
-                              _buildIntegrationBadge(
-                                Icons.groups,
-                                session.teamName ?? 'Team',
-                                Colors.teal,
-                              ),
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    // Stats
-                    Row(
-                      children: [
-                        _buildInfoChip(
-                          Icons.list_alt,
-                          '${session.storyCount} stories',
-                        ),
-                        const SizedBox(width: 12),
-                        _buildInfoChip(
-                          Icons.check_circle_outline,
-                          '${session.completedStoryCount} completate',
-                        ),
-                        const SizedBox(width: 12),
-                        _buildInfoChip(
-                          Icons.people,
-                          '${session.participantCount}',
-                        ),
-                      ],
                     ),
-                  ],
-                ),
-              ),
-              // Menu azioni
-              PopupMenuButton<String>(
-                onSelected: (value) async {
-                  switch (value) {
-                    case 'edit':
-                      _showEditSessionDialog(session);
-                      break;
-                    case 'start':
-                      await _startSession(session);
-                      break;
-                    case 'complete':
-                      await _completeSession(session);
-                      break;
-                    case 'delete':
-                      _confirmDeleteSession(session);
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit, size: 18),
-                        SizedBox(width: 8),
-                        Text('Modifica'),
+                  ),
+                  const SizedBox(width: 6),
+                  // Titolo con tooltip
+                  Expanded(
+                    child: Tooltip(
+                      message: '${session.name}${session.description.isNotEmpty ? '\n${session.description}' : ''}',
+                      child: Text(
+                        session.name,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  // Menu compatto
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: PopupMenuButton<String>(
+                      padding: EdgeInsets.zero,
+                      iconSize: 16,
+                      onSelected: (value) async {
+                        switch (value) {
+                          case 'edit':
+                            _showEditSessionDialog(session);
+                            break;
+                          case 'start':
+                            await _startSession(session);
+                            break;
+                          case 'complete':
+                            await _completeSession(session);
+                            break;
+                          case 'delete':
+                            _confirmDeleteSession(session);
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, size: 16),
+                              SizedBox(width: 8),
+                              Text('Modifica', style: TextStyle(fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                        if (session.isDraft)
+                          const PopupMenuItem(
+                            value: 'start',
+                            child: Row(
+                              children: [
+                                Icon(Icons.play_arrow, size: 16, color: Colors.green),
+                                SizedBox(width: 8),
+                                Text('Avvia', style: TextStyle(fontSize: 13, color: Colors.green)),
+                              ],
+                            ),
+                          ),
+                        if (session.isActive)
+                          const PopupMenuItem(
+                            value: 'complete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.check, size: 16, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text('Completa', style: TextStyle(fontSize: 13, color: Colors.blue)),
+                              ],
+                            ),
+                          ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, size: 16, color: Colors.red),
+                              SizedBox(width: 8),
+                              Text('Elimina', style: TextStyle(fontSize: 13, color: Colors.red)),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  if (session.isDraft)
-                    const PopupMenuItem(
-                      value: 'start',
-                      child: Row(
-                        children: [
-                          Icon(Icons.play_arrow, size: 18, color: Colors.green),
-                          SizedBox(width: 8),
-                          Text('Avvia', style: TextStyle(color: Colors.green)),
-                        ],
-                      ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              // Progress bar
+              Tooltip(
+                message: 'Avanzamento: ${session.completedStoryCount}/${session.storyCount} stories (${(completionPercent * 100).toStringAsFixed(0)}%)',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    value: completionPercent,
+                    backgroundColor: context.borderColor.withOpacity(0.3),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      completionPercent == 1.0 ? Colors.green : Colors.blue,
                     ),
-                  if (session.isActive)
-                    const PopupMenuItem(
-                      value: 'complete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.check, size: 18, color: Colors.blue),
-                          SizedBox(width: 8),
-                          Text('Completa', style: TextStyle(color: Colors.blue)),
-                        ],
-                      ),
-                    ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete, size: 18, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Elimina', style: TextStyle(color: Colors.red)),
-                      ],
-                    ),
+                    minHeight: 2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              // Stats compatte su una riga
+              Row(
+                children: [
+                  _buildCompactSessionStat(
+                    Icons.list_alt,
+                    '${session.storyCount}',
+                    'Stories totali',
+                  ),
+                  const SizedBox(width: 6),
+                  _buildCompactSessionStat(
+                    Icons.check_circle_outline,
+                    '${session.completedStoryCount}',
+                    'Stories completate',
+                  ),
+                  const SizedBox(width: 6),
+                  _buildCompactSessionStat(
+                    Icons.people,
+                    '${session.participantCount}',
+                    'Partecipanti attivi',
                   ),
                 ],
               ),
@@ -566,23 +601,44 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     );
   }
 
-  Widget _buildIntegrationBadge(IconData icon, String text, Color color) {
+  Widget _buildCompactSessionStat(IconData icon, String value, String tooltip) {
+    return Tooltip(
+      message: tooltip,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 10, color: context.textMutedColor),
+          const SizedBox(width: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 10,
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactIntegrationBadge(IconData icon, String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 4),
+          Icon(icon, size: 10, color: color),
+          const SizedBox(width: 3),
           Text(
             text,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 9,
               color: color,
               fontWeight: FontWeight.w500,
             ),
@@ -590,6 +646,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         ],
       ),
     );
+  }
+
+  String _getEstimationModeName(EstimationMode mode) {
+    return mode.displayName;
   }
 
   /// Restituisce l'icona appropriata per la modalità di stima
@@ -610,27 +670,6 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       case EstimationMode.fiveFingers:
         return Icons.pan_tool;
     }
-  }
-
-  Widget _buildInfoChip(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: context.surfaceVariantColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: context.textSecondaryColor),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-          ),
-        ],
-      ),
-    );
   }
 
   // ══════════════════════════════════════════════════════════════════════════

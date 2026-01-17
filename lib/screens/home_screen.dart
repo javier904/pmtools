@@ -3,6 +3,8 @@ import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../main.dart';
+import 'retrospective/retro_global_dashboard.dart';
+import '../widgets/profile_menu_widget.dart';
 
 /// Home Screen - Dashboard stile Appwrite con supporto Dark/Light Theme
 class HomeScreen extends StatelessWidget {
@@ -45,40 +47,6 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          if (user != null) ...[
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: context.surfaceColor,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: context.borderColor),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (user.photoURL != null)
-                    CircleAvatar(radius: 12, backgroundImage: NetworkImage(user.photoURL!))
-                  else
-                    CircleAvatar(
-                      radius: 12,
-                      backgroundColor: AppColors.primary,
-                      child: Text(
-                        (user.displayName ?? user.email ?? '?')[0].toUpperCase(),
-                        style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  if (!isMobile) ...[
-                    const SizedBox(width: 8),
-                    Text(
-                      user.displayName ?? user.email ?? '',
-                      style: TextStyle(fontSize: 13, color: context.textSecondaryColor),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
           // Theme Toggle Button
           if (themeController != null)
             _HoverIconButton(
@@ -86,11 +54,14 @@ class HomeScreen extends StatelessWidget {
               tooltip: isDark ? 'Light Mode' : 'Dark Mode',
               onTap: () => themeController.toggleTheme(),
             ),
-          _HoverIconButton(
-            icon: Icons.logout_rounded,
-            tooltip: 'Logout',
-            onTap: () => authService.signOut(),
-          ),
+          // Profile Menu con avatar, info utente e logout
+          if (user != null)
+            ProfileMenuWidget(
+              onProfileTap: () => Navigator.pushNamed(context, '/profile'),
+              onLogout: () => authService.signOut(),
+              showSubscriptionBadge: true,
+              avatarSize: 32,
+            ),
           const SizedBox(width: 8),
         ],
       ),
@@ -214,8 +185,13 @@ class HomeScreen extends StatelessWidget {
                               icon: Icons.psychology_rounded,
                               color: AppColors.pink,
                               features: const ['Went Well', 'To Improve', 'Actions'],
-                              isComingSoon: true,
-                              onTap: () => _showComingSoon(context),
+                              isComingSoon: false,
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RetroGlobalDashboard(),
+                                ),
+                              ),
                               isDark: isDark,
                             )),
                           ],
@@ -274,8 +250,12 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.psychology_rounded,
                       color: AppColors.pink,
                       features: const ['Went Well', 'To Improve', 'Actions'],
-                      isComingSoon: true,
-                      onTap: () => _showComingSoon(context),
+                      isComingSoon: false,
+                      onTap: () => Navigator.pushNamed(
+                        context, 
+                        '/agile-process',
+                        arguments: {'initialAction': 'retro'},
+                      ),
                       isDark: isDark,
                     ),
                   ],

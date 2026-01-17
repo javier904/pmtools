@@ -111,7 +111,7 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
       // 2. Send Email if requested
       if (_sendEmail) {
         // Use GoogleSignIn account to get headers
-        final googleUser = _authService.googleSignInAccount;
+        final googleUser = _authService.googleSignIn.currentUser;
         if (googleUser == null) {
           throw Exception('Necessario login Google per inviare email');
         }

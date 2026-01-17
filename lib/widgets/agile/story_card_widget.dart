@@ -26,6 +26,10 @@ class StoryCardWidget extends StatelessWidget {
   final VoidCallback? onAddToSprint;
   final bool showDragHandle;
   final bool compact;
+  /// Nome dello sprint a cui appartiene la story (opzionale)
+  final String? sprintName;
+  /// Indica se lo sprint è completato
+  final bool isSprintCompleted;
 
   const StoryCardWidget({
     super.key,
@@ -38,6 +42,8 @@ class StoryCardWidget extends StatelessWidget {
     this.onAddToSprint,
     this.showDragHandle = false,
     this.compact = false,
+    this.sprintName,
+    this.isSprintCompleted = false,
   });
 
   @override
@@ -140,6 +146,43 @@ class StoryCardWidget extends StatelessWidget {
                 ),
               ),
             ),
+            // Sprint badge (mostra nome sprint se appartiene a uno sprint)
+            if (sprintName != null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isSprintCompleted
+                      ? Colors.green.withOpacity(0.15)
+                      : Colors.blue.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: isSprintCompleted
+                        ? Colors.green.withOpacity(0.3)
+                        : Colors.blue.withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isSprintCompleted ? Icons.check_circle : Icons.flag,
+                      size: 12,
+                      color: isSprintCompleted ? Colors.green : Colors.blue,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      sprintName!,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: isSprintCompleted ? Colors.green : Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const Spacer(),
             // Priority badge
             _buildPriorityBadge(),

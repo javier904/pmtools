@@ -85,12 +85,18 @@ class SprintListWidget extends StatelessWidget {
                         ? (constraints.maxWidth - 12) / 2 // 2 card
                         : constraints.maxWidth; // 1 card
 
+                // Altezza minima uniforme per tutte le card (accomoda il contenuto più grande)
+                const double minCardHeight = 200;
+
                 return Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children: sprints.map((sprint) => SizedBox(
                     width: cardWidth,
-                    child: _buildSprintCard(context, sprint, hasActiveSprint: hasActiveSprint),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: minCardHeight),
+                      child: _buildSprintCard(context, sprint, hasActiveSprint: hasActiveSprint),
+                    ),
                   )).toList(),
                 );
               },
@@ -248,16 +254,40 @@ class SprintListWidget extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // Stats compatte in Wrap
+              // Stats compatte in Wrap con tooltip descrittivi
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
                 children: [
-                  _buildCompactStat(context, '${sprint.storyIds.length}', 'stories', Colors.blue),
-                  _buildCompactStat(context, '${sprint.plannedPoints}', 'pts', Colors.orange),
+                  _buildCompactStat(
+                    context,
+                    '${sprint.storyIds.length}',
+                    'stories',
+                    Colors.blue,
+                    tooltip: 'Numero di User Stories assegnate a questo sprint',
+                  ),
+                  _buildCompactStat(
+                    context,
+                    '${sprint.plannedPoints}',
+                    'pts',
+                    Colors.orange,
+                    tooltip: 'Story Points pianificati: somma dei punti delle stories selezionate',
+                  ),
                   if (isCompleted) ...[
-                    _buildCompactStat(context, '${sprint.completedPoints}', 'completati', Colors.green),
-                    _buildCompactStat(context, sprint.velocity?.toStringAsFixed(1) ?? '-', 'velocity', AppColors.primary),
+                    _buildCompactStat(
+                      context,
+                      '${sprint.completedPoints}',
+                      'completati',
+                      Colors.green,
+                      tooltip: 'Story Points completati: somma dei punti delle stories in stato Done alla chiusura dello sprint',
+                    ),
+                    _buildCompactStat(
+                      context,
+                      sprint.velocity?.toStringAsFixed(1) ?? '-',
+                      'velocity',
+                      AppColors.primary,
+                      tooltip: 'Velocity: Story Points completati diviso durata in settimane.\nIndica la capacità del team di completare lavoro.',
+                    ),
                   ],
                 ],
               ),
@@ -347,8 +377,8 @@ class SprintListWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCompactStat(BuildContext context, String value, String label, Color color) {
-    return Row(
+  Widget _buildCompactStat(BuildContext context, String value, String label, Color color, {String? tooltip}) {
+    final widget = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
@@ -362,6 +392,14 @@ class SprintListWidget extends StatelessWidget {
         ),
       ],
     );
+
+    if (tooltip != null) {
+      return Tooltip(
+        message: tooltip,
+        child: widget,
+      );
+    }
+    return widget;
   }
 
   String _formatDate(DateTime date) {

@@ -197,6 +197,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       sprintId: widget.story?.sprintId,
       estimates: widget.story?.estimates ?? {},
       finalEstimate: widget.story?.finalEstimate,
+      isEstimated: _storyPoints != null, // Imposta true se ha story points
       startedAt: widget.story?.startedAt,
       completedAt: widget.story?.completedAt,
     );

@@ -354,6 +354,12 @@ class KanbanColumnConfig {
     return currentCount == wipLimit;
   }
 
+  /// Verifica se aggiungere un item supererebbe il WIP limit
+  bool wouldExceedWip(int currentCount) {
+    if (wipLimit == null) return false;
+    return (currentCount + 1) > wipLimit!;
+  }
+
   /// Restituisce il colore in base allo stato WIP
   Color getWipStatusColor(int currentCount) {
     if (wipLimit == null) return Colors.grey;

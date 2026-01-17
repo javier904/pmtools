@@ -65,6 +65,36 @@
 - [x] flutter build web --release
 - [x] firebase deploy --only hosting
 
+### 8. Sistema Gestione Utente (Profilo, Abbonamenti, Impostazioni)
+- [x] Creare UserProfileModel (dati anagrafici, stato account, auth provider)
+- [x] Creare SubscriptionModel (piani, stati, billing cycle, storico)
+- [x] Creare UserSettingsModel (tema, notifiche, feature flags)
+- [x] Creare UserProfileService (CRUD Firestore, cache, helper methods)
+- [x] Creare ProfileScreen (profilo, abbonamento, impostazioni, danger zone)
+- [x] Creare ProfileMenuWidget (dropdown menu per AppBar)
+- [x] Integrare ProfileMenuWidget in HomeScreen
+- [x] Aggiungere route /profile in main.dart
+
+### 9. Agile Process Manager
+- [x] Creare modelli (AgileProjectModel, UserStoryModel, SprintModel, etc.)
+- [x] Creare AgileFirestoreService
+- [x] Creare AgileProcessScreen (lista progetti)
+- [x] Creare AgileProjectDetailScreen (tabs: backlog, sprint, kanban, etc.)
+- [x] Implementare Product Backlog con drag & drop
+- [x] Implementare Sprint Planning
+- [x] Implementare Kanban Board
+- [x] Implementare Retrospective Board
+- [x] Implementare Metriche e Grafici (Velocity, Burndown)
+
+### 10. Smart Todo
+- [x] Creare SmartTodoDashboard
+- [x] Implementare liste collaborative
+- [x] Implementare filtri avanzati
+
+### 11. Retrospective Board (Standalone)
+- [x] Creare RetroGlobalDashboard
+- [x] Implementare board con colonne (Went Well, To Improve, Actions)
+
 ---
 
 ## URL Produzione

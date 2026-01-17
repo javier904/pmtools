@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
+import '../../models/sprint_model.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
@@ -14,8 +15,10 @@ import 'story_detail_dialog.dart';
 /// - Filtri per status, priority, tag, assignee
 /// - Ricerca
 /// - Azioni bulk (prioritize, change status)
+/// - Archivio stories completate (separato dal backlog attivo)
 class BacklogListWidget extends StatefulWidget {
   final List<UserStoryModel> stories;
+  final List<SprintModel> sprints;
   final String projectId;
   final bool canEdit;
   final void Function(UserStoryModel story)? onStoryTap;
@@ -30,6 +33,7 @@ class BacklogListWidget extends StatefulWidget {
   const BacklogListWidget({
     super.key,
     required this.stories,
+    this.sprints = const [],
     required this.projectId,
     this.canEdit = true,
     this.onStoryTap,
@@ -52,9 +56,53 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
   StoryPriority? _priorityFilter;
   String? _tagFilter;
   bool _showFilters = false;
+  bool _showArchive = false; // Toggle per mostrare archivio completate
+
+  /// Helper per trovare lo sprint di una story
+  SprintModel? _getSprintForStory(UserStoryModel story) {
+    if (story.sprintId == null) return null;
+    return widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
+  }
+
+  /// Stories attive (non completate o in sprint non completati)
+  List<UserStoryModel> get _activeStories {
+    return widget.stories.where((story) {
+      // Stories completate (Done) vanno nell'archivio
+      if (story.status == StoryStatus.done) return false;
+
+      // Stories in sprint completati vanno nell'archivio
+      if (story.sprintId != null) {
+        final sprint = _getSprintForStory(story);
+        if (sprint != null && sprint.status == SprintStatus.completed) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
+  /// Stories archiviate (completate o in sprint completati)
+  List<UserStoryModel> get _archivedStories {
+    return widget.stories.where((story) {
+      // Stories completate (Done) sono archiviate
+      if (story.status == StoryStatus.done) return true;
+
+      // Stories in sprint completati sono archiviate
+      if (story.sprintId != null) {
+        final sprint = _getSprintForStory(story);
+        if (sprint != null && sprint.status == SprintStatus.completed) {
+          return true;
+        }
+      }
+
+      return false;
+    }).toList();
+  }
 
   List<UserStoryModel> get _filteredStories {
-    var filtered = widget.stories;
+    // Scegli la lista base in base al toggle archivio
+    var filtered = _showArchive ? _archivedStories : _activeStories;
 
     // Filtra per ricerca
     if (_searchQuery.isNotEmpty) {
@@ -98,7 +146,8 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
 
     // Stats
     final totalPoints = stories.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
-    final estimatedCount = stories.where((s) => s.isEstimated).length;
+    // Considera stimata sia se isEstimated=true, sia se ha storyPoints (retrocompatibilità)
+    final estimatedCount = stories.where((s) => s.isEstimated || s.storyPoints != null).length;
 
     return Column(
       children: [
@@ -119,6 +168,8 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
   }
 
   Widget _buildHeader(int count, int totalPoints, int estimatedCount) {
+    final archivedCount = _archivedStories.length;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -132,10 +183,13 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           // Riga superiore: titolo e pulsanti
           Row(
             children: [
-              Icon(Icons.list_alt, color: AppColors.primary),
+              Icon(
+                _showArchive ? Icons.archive : Icons.list_alt,
+                color: _showArchive ? Colors.grey : AppColors.primary,
+              ),
               const SizedBox(width: 8),
               Text(
-                'Product Backlog',
+                _showArchive ? 'Archivio Completate' : 'Product Backlog',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -150,6 +204,50 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               const SizedBox(width: 8),
               _buildStatBadge('$estimatedCount stimate', Colors.orange),
               const SizedBox(width: 16),
+              // Toggle Archivio
+              Tooltip(
+                message: _showArchive
+                    ? 'Mostra Backlog attivo'
+                    : 'Mostra Archivio ($archivedCount completate)',
+                child: InkWell(
+                  onTap: () => setState(() => _showArchive = !_showArchive),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _showArchive
+                          ? Colors.grey.withOpacity(0.2)
+                          : Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: _showArchive
+                            ? Colors.grey.withOpacity(0.3)
+                            : Colors.green.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _showArchive ? Icons.list_alt : Icons.archive,
+                          size: 16,
+                          color: _showArchive ? Colors.grey : Colors.green,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _showArchive ? 'Backlog' : 'Archivio ($archivedCount)',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _showArchive ? Colors.grey : Colors.green,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
               // Bottone filtri
               IconButton(
                 icon: Icon(
@@ -159,8 +257,8 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                 onPressed: () => setState(() => _showFilters = !_showFilters),
                 tooltip: 'Filtri',
               ),
-              // Bottone aggiungi
-              if (widget.canEdit && widget.onAddStory != null)
+              // Bottone aggiungi (solo nel backlog attivo)
+              if (widget.canEdit && widget.onAddStory != null && !_showArchive)
                 ElevatedButton.icon(
                   onPressed: widget.onAddStory,
                   icon: const Icon(Icons.add, size: 18),
@@ -422,11 +520,18 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
   }
 
   Widget _buildStoryItem(UserStoryModel story, {Key? key}) {
+    // Trova lo sprint associato alla story (se presente)
+    final sprint = _getSprintForStory(story);
+    final sprintName = sprint?.name;
+    final isSprintCompleted = sprint?.status == SprintStatus.completed;
+
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: 8),
       child: StoryCardWidget(
         story: story,
+        sprintName: sprintName,
+        isSprintCompleted: isSprintCompleted,
         onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
         onEdit: widget.canEdit && widget.onStoryEdit != null
             ? () => widget.onStoryEdit!(story)
@@ -440,10 +545,11 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         onEstimate: widget.canEdit && widget.onStoryEstimate != null
             ? () => widget.onStoryEstimate!(story)
             : null,
-        onAddToSprint: widget.canEdit && widget.onAddToSprint != null
+        // Non permettere di aggiungere a sprint se già in un altro sprint o se nell'archivio
+        onAddToSprint: widget.canEdit && widget.onAddToSprint != null && story.sprintId == null && !_showArchive
             ? () => widget.onAddToSprint!(story)
             : null,
-        showDragHandle: widget.canEdit && widget.onReorder != null,
+        showDragHandle: widget.canEdit && widget.onReorder != null && !_showArchive,
       ),
     );
   }

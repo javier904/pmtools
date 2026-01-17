@@ -281,11 +281,31 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                           ],
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: filteredMatrices.length,
-                        itemBuilder: (context, index) {
-                          final matrix = filteredMatrices[index];
-                          return _buildMatrixCard(matrix);
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Card compatte - molte per riga
+                          final cardWidth = constraints.maxWidth > 1400
+                              ? (constraints.maxWidth - 30) / 6 // 6 card
+                              : constraints.maxWidth > 1100
+                                  ? (constraints.maxWidth - 25) / 5 // 5 card
+                                  : constraints.maxWidth > 800
+                                      ? (constraints.maxWidth - 18) / 4 // 4 card
+                                      : constraints.maxWidth > 550
+                                          ? (constraints.maxWidth - 12) / 3 // 3 card
+                                          : constraints.maxWidth > 350
+                                              ? (constraints.maxWidth - 6) / 2 // 2 card
+                                              : constraints.maxWidth; // 1 card
+
+                          return SingleChildScrollView(
+                            child: Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: filteredMatrices.map((matrix) => SizedBox(
+                                width: cardWidth,
+                                child: _buildMatrixCard(matrix),
+                              )).toList(),
+                            ),
+                          );
                         },
                       ),
               ),
@@ -332,107 +352,136 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Widget _buildMatrixCard(EisenhowerMatrixModel matrix) {
+    final activityCount = matrix.activityCount;
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.zero,
       child: InkWell(
         onTap: () => _selectMatrix(matrix),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(6),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Icona
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.grid_4x4, color: AppColors.secondary),
-              ),
-              const SizedBox(width: 16),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      matrix.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: context.textPrimaryColor,
+              // Header: Icona + Titolo + Menu
+              Row(
+                children: [
+                  // Icona matrice
+                  Tooltip(
+                    message: 'Matrice Eisenhower\nClicca per aprire',
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(Icons.grid_4x4, color: AppColors.secondary, size: 14),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  // Titolo con tooltip
+                  Expanded(
+                    child: Tooltip(
+                      message: '${matrix.title}${matrix.description.isNotEmpty ? '\n${matrix.description}' : ''}',
+                      child: Text(
+                        matrix.title,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: context.textPrimaryColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (matrix.description.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          matrix.description,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: context.textSecondaryColor,
+                  ),
+                  // Menu compatto
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: PopupMenuButton<String>(
+                      padding: EdgeInsets.zero,
+                      iconSize: 16,
+                      onSelected: (value) async {
+                        switch (value) {
+                          case 'edit':
+                            _showEditMatrixDialog(matrix);
+                            break;
+                          case 'delete':
+                            _confirmDeleteMatrix(matrix);
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
+                              const SizedBox(width: 8),
+                              const Text('Modifica', style: TextStyle(fontSize: 13)),
+                            ],
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _buildInfoChip(
-                          Icons.task_alt,
-                          '${matrix.activityCount} attività',
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, size: 16, color: AppColors.error),
+                              SizedBox(width: 8),
+                              Text('Elimina', style: TextStyle(fontSize: 13, color: AppColors.error)),
+                            ],
+                          ),
                         ),
-                        const SizedBox(width: 12),
-                        _buildInfoChip(
-                          Icons.people,
-                          '${matrix.participants.length} partecipanti',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              // Azioni
-              PopupMenuButton<String>(
-                onSelected: (value) async {
-                  switch (value) {
-                    case 'edit':
-                      _showEditMatrixDialog(matrix);
-                      break;
-                    case 'delete':
-                      _confirmDeleteMatrix(matrix);
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit, size: 18, color: context.textSecondaryColor),
-                        const SizedBox(width: 8),
-                        const Text('Modifica'),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete, size: 18, color: AppColors.error),
-                        SizedBox(width: 8),
-                        Text('Elimina', style: TextStyle(color: AppColors.error)),
-                      ],
-                    ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              // Stats compatte
+              Row(
+                children: [
+                  _buildCompactMatrixStat(
+                    Icons.task_alt,
+                    '$activityCount',
+                    'Attività totali nella matrice',
+                  ),
+                  const SizedBox(width: 8),
+                  _buildCompactMatrixStat(
+                    Icons.people,
+                    '${matrix.participants.length}',
+                    'Partecipanti',
                   ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCompactMatrixStat(IconData icon, String value, String tooltip) {
+    return Tooltip(
+      message: tooltip,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 10, color: context.textMutedColor),
+          const SizedBox(width: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 10,
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

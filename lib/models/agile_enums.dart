@@ -176,7 +176,7 @@ enum StoryStatus {
       case StoryStatus.ready:
         return const Color(0xFF2196F3); // Blue
       case StoryStatus.inSprint:
-        return const Color(0xFF7B1FA2); // Purple
+        return const Color(0xFF5C6BC0); // Indigo (più leggibile)
       case StoryStatus.inProgress:
         return const Color(0xFFFB8C00); // Orange
       case StoryStatus.inReview:

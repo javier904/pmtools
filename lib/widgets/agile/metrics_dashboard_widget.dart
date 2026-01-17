@@ -226,6 +226,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             '${sprints.length} totali',
             Icons.flag,
             Colors.blue,
+            tooltip: 'Numero di sprint con status "Completato".\n'
+                'Clicca "Completa Sprint" per finalizzare uno sprint attivo.',
           ),
         ),
         const SizedBox(width: 16),
@@ -236,6 +238,9 @@ class MetricsDashboardWidget extends StatelessWidget {
             'pts/sprint',
             Icons.speed,
             Colors.purple,
+            tooltip: 'Media degli Story Points completati per sprint.\n'
+                'Calcolata dagli sprint completati che hanno stories in stato "Done".\n'
+                'Più alta = team più produttivo.',
           ),
         ),
         const SizedBox(width: 16),
@@ -246,6 +251,9 @@ class MetricsDashboardWidget extends StatelessWidget {
             '$totalStories totali',
             Icons.check_circle,
             Colors.green,
+            tooltip: 'Numero di User Stories con status "Done".\n'
+                'Per incrementare questo valore, sposta le stories '
+                'nella colonna "Done" della Kanban Board.',
           ),
         ),
         const SizedBox(width: 16),
@@ -256,6 +264,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             '${_getTotalPlannedPoints()} pianificati',
             Icons.stars,
             Colors.orange,
+            tooltip: 'Somma degli Story Points delle stories completate.\n'
+                '"Pianificati" include tutte le stories stimate nel backlog.',
           ),
         ),
       ],
@@ -267,7 +277,6 @@ class MetricsDashboardWidget extends StatelessWidget {
     final completedItems = stories.where((s) => s.status == StoryStatus.done).length;
     final inProgressItems = stories.where((s) => s.status == StoryStatus.inProgress).length;
     final avgCycleTime = _calculateAverageCycleTime();
-    final avgLeadTime = _calculateAverageLeadTime();
     final throughput = _calculateWeeklyThroughput();
 
     return Row(
@@ -279,6 +288,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             '$totalItems totali',
             Icons.done_all,
             Colors.green,
+            tooltip: 'Numero di Work Items con status "Done".\n'
+                'Sposta gli items nella colonna "Done" per completarli.',
           ),
         ),
         const SizedBox(width: 16),
@@ -289,6 +300,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             'work in progress',
             Icons.engineering,
             Colors.orange,
+            tooltip: 'Items attualmente in lavorazione (WIP).\n'
+                'Tieni questo numero basso per migliorare il flusso.',
           ),
         ),
         const SizedBox(width: 16),
@@ -299,6 +312,9 @@ class MetricsDashboardWidget extends StatelessWidget {
             'giorni',
             Icons.timer,
             Colors.blue,
+            tooltip: 'Tempo medio dall\'inizio lavoro al completamento.\n'
+                'Richiede items con date "Iniziato" e "Completato" valorizzate.\n'
+                'Più basso = team più efficiente.',
           ),
         ),
         const SizedBox(width: 16),
@@ -309,6 +325,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             'items/settimana',
             Icons.trending_up,
             Colors.teal,
+            tooltip: 'Media items completati per settimana (ultime 4 settimane).\n'
+                'Indica la produttività del team nel tempo.',
           ),
         ),
       ],
@@ -330,6 +348,7 @@ class MetricsDashboardWidget extends StatelessWidget {
             '${sprints.length} totali',
             Icons.flag,
             Colors.purple,
+            tooltip: 'Sprint completati rispetto al totale.',
           ),
         ),
         const SizedBox(width: 16),
@@ -340,6 +359,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             'pts/sprint',
             Icons.speed,
             Colors.blue,
+            tooltip: 'Media Story Points completati per sprint.\n'
+                'Calcolata da sprint con stories in stato "Done".',
           ),
         ),
         const SizedBox(width: 16),
@@ -350,6 +371,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             'giorni',
             Icons.timer,
             Colors.green,
+            tooltip: 'Tempo medio dall\'inizio lavoro al completamento.\n'
+                'Richiede date "Iniziato" e "Completato" valorizzate.',
           ),
         ),
         const SizedBox(width: 16),
@@ -360,6 +383,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             '${stories.length} totali',
             Icons.check_circle,
             Colors.orange,
+            tooltip: 'Items con status "Done" rispetto al totale.\n'
+                'Sposta items nella colonna "Done" per completarli.',
           ),
         ),
       ],
@@ -439,9 +464,10 @@ class MetricsDashboardWidget extends StatelessWidget {
     String value,
     String subtitle,
     IconData icon,
-    Color color,
-  ) {
-    return Card(
+    Color color, {
+    String? tooltip,
+  }) {
+    final card = Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -461,6 +487,10 @@ class MetricsDashboardWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (tooltip != null) ...[
+                  const SizedBox(width: 4),
+                  Icon(Icons.info_outline, size: 14, color: Colors.grey[400]),
+                ],
               ],
             ),
             const SizedBox(height: 8),
@@ -483,6 +513,14 @@ class MetricsDashboardWidget extends StatelessWidget {
         ),
       ),
     );
+
+    if (tooltip != null) {
+      return Tooltip(
+        message: tooltip,
+        child: card,
+      );
+    }
+    return card;
   }
 
   double _calculateAverageVelocity() {

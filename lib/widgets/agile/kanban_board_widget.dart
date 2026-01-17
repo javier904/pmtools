@@ -156,12 +156,20 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         if (!widget.canEdit) return false;
         // Non accettare se non è un cambio di stato
         if (column.statuses.contains(details.data.status)) return false;
-        // Warn ma permetti se WIP exceeded
         return true;
       },
       onAcceptWithDetails: (details) {
-        // Cambia allo status primario della colonna
-        widget.onStatusChange?.call(details.data.id, primaryStatus);
+        // Enforce WIP limit: check if adding would exceed
+        final currentCount = stories.length;
+        final wouldExceed = column.wouldExceedWip(currentCount) && _features.hasWipLimits;
+
+        if (wouldExceed) {
+          // Show confirmation dialog for WIP limit override
+          _showWipLimitWarningDialog(column, details.data, primaryStatus, currentCount);
+        } else {
+          // Cambia allo status primario della colonna
+          widget.onStatusChange?.call(details.data.id, primaryStatus);
+        }
       },
       builder: (context, candidateData, rejectedData) {
         final isHighlighted = candidateData.isNotEmpty;
@@ -618,6 +626,125 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               Navigator.pop(context);
             },
             child: const Text('Salva'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dialog di conferma quando si supera il WIP limit
+  void _showWipLimitWarningDialog(
+    KanbanColumnConfig column,
+    UserStoryModel story,
+    StoryStatus targetStatus,
+    int currentCount,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber, color: Colors.orange, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'WIP Limit Superato',
+                style: TextStyle(color: Colors.orange[800]),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(color: context.textPrimaryColor, fontSize: 14),
+                children: [
+                  const TextSpan(text: 'Spostando '),
+                  TextSpan(
+                    text: '"${story.title}"',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(text: ' in '),
+                  TextSpan(
+                    text: column.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(text: ' supererai il limite WIP.'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Colonna: ${column.name}',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Attuale: $currentCount | Limite: ${column.wipLimit}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: context.textSecondaryColor,
+                          ),
+                        ),
+                        Text(
+                          'Dopo lo spostamento: ${currentCount + 1}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.',
+              style: TextStyle(
+                fontSize: 12,
+                color: context.textSecondaryColor,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Annulla'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              // Procedi comunque con lo spostamento
+              widget.onStatusChange?.call(story.id, targetStatus);
+            },
+            child: const Text('Sposta Comunque'),
           ),
         ],
       ),

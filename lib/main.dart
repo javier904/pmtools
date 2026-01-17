@@ -11,6 +11,7 @@ import 'screens/eisenhower_screen.dart';
 import 'screens/estimation_room_screen.dart';
 import 'screens/agile_process_screen.dart';
 import 'screens/smart_todo/smart_todo_dashboard.dart';
+import 'screens/profile_screen.dart';
 import 'themes/app_theme.dart';
 
 void main() async {
@@ -135,6 +136,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
             routes: {
               '/login': (context) => const LoginScreen(),
               '/home': (context) => const HomeScreen(),
+              '/profile': (context) => const ProfileScreen(),
               '/eisenhower': (context) => const EisenhowerScreen(),
               '/estimation-room': (context) => const EstimationRoomScreen(),
               '/agile-process': (context) => const AgileProcessScreen(),

@@ -345,6 +345,22 @@ class _LandingScreenState extends State<LandingScreen> {
                         )),
                       ],
                     ),
+                    const SizedBox(height: 24),
+                    // Terza riga: Retrospective (con Spacer per mantenere la griglia)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: _buildFeatureCard(
+                          icon: Icons.replay_rounded,
+                          title: 'Retrospective',
+                          description: 'Migliora il tuo team con retrospettive strutturate. Template, voto anonimo e action items.',
+                          color: Colors.orange,
+                          isDark: isDark,
+                        )),
+                        const SizedBox(width: 24),
+                        const Spacer(),
+                      ],
+                    ),
                   ],
                 );
               } else {
@@ -379,6 +395,14 @@ class _LandingScreenState extends State<LandingScreen> {
                       title: 'Agile Process',
                       description: 'Gestisci backlog, sprint e kanban board con metriche.',
                       color: AppColors.primary,
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildFeatureCard(
+                      icon: Icons.replay_rounded,
+                      title: 'Retrospective',
+                      description: 'Migliora il team con retrospettive strutturate e action items.',
+                      color: Colors.orange,
                       isDark: isDark,
                     ),
                   ],

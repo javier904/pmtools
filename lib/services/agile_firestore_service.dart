@@ -342,6 +342,54 @@ class AgileFirestoreService {
     await _projectsRef.doc(projectId).update({
       'updatedAt': FieldValue.serverTimestamp(),
     });
+
+    // Auto-update burndown chart when story is completed
+    if (newStatus == StoryStatus.done) {
+      await _autoUpdateBurndownChart(projectId, sprintId);
+    }
+  }
+
+  /// Auto-aggiorna il burndown chart quando una story viene completata
+  Future<void> _autoUpdateBurndownChart(String projectId, String? sprintId) async {
+    if (sprintId == null) return;
+
+    try {
+      // Ottieni lo sprint
+      final sprintDoc = await _sprintsRef(projectId).doc(sprintId).get();
+      if (!sprintDoc.exists) return;
+      final sprint = SprintModel.fromFirestore(sprintDoc);
+
+      // Solo per sprint attivi
+      if (sprint.status != SprintStatus.active) return;
+
+      // Calcola i punti rimanenti
+      final storiesSnapshot = await _storiesRef(projectId)
+          .where('sprintId', isEqualTo: sprintId)
+          .get();
+
+      final stories = storiesSnapshot.docs
+          .map((doc) => UserStoryModel.fromFirestore(doc))
+          .toList();
+
+      final remainingPoints = stories
+          .where((s) => s.status != StoryStatus.done)
+          .fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+
+      final completedPoints = stories
+          .where((s) => s.status == StoryStatus.done)
+          .fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+
+      // Aggiungi il punto al burndown
+      final burndownPoint = BurndownPoint(
+        date: DateTime.now(),
+        remainingPoints: remainingPoints,
+        completedPoints: completedPoints,
+      );
+
+      await addBurndownPoint(projectId, sprintId, burndownPoint);
+    } catch (e) {
+      print('⚠️ Errore auto-update burndown: $e');
+    }
   }
 
   /// Aggiorna l'ordine delle stories (per drag & drop)
@@ -611,6 +659,7 @@ class AgileFirestoreService {
       sprintNumber: sprintNumber,
       createdAt: DateTime.now(),
       createdBy: createdBy,
+      timer: const RetroTimer(durationMinutes: 60),
     );
 
     await docRef.set(retro.toFirestore());

@@ -26,6 +26,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   final AgileFirestoreService _firestoreService = AgileFirestoreService();
   final AgileAuditService _auditService = AgileAuditService();
   final AuthService _authService = AuthService();
+  
+  bool _hasCheckedArgs = false;
 
   // Stato
   AgileProjectModel? _selectedProject;
@@ -50,6 +52,40 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasCheckedArgs) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null && args['initialAction'] == 'retro') {
+        // Schedule callback to show snackbar after build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showGuide('Seleziona un progetto per accedere alle sue Retrospettive 🚀');
+        });
+      }
+      _hasCheckedArgs = true;
+    }
+  }
+
+  void _showGuide(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.touch_app, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.purple.shade700,
+        duration: const Duration(seconds: 5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

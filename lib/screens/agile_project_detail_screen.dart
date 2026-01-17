@@ -6,7 +6,10 @@ import '../models/team_member_model.dart';
 import '../models/retrospective_model.dart';
 import '../models/agile_enums.dart';
 import '../models/framework_features.dart';
-import '../services/agile_firestore_service.dart';
+import 'package:agile_tools/models/team_member_model.dart';
+import 'package:agile_tools/screens/retrospective_board_screen.dart';
+import 'package:agile_tools/services/agile_firestore_service.dart';
+import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import '../services/agile_audit_service.dart';
 import '../services/agile_sheets_service.dart';
 import '../services/auth_service.dart';
@@ -14,6 +17,8 @@ import '../widgets/agile/backlog_list_widget.dart';
 import '../widgets/agile/story_form_dialog.dart';
 import '../widgets/agile/story_detail_dialog.dart';
 import '../widgets/agile/story_estimation_dialog.dart';
+import '../widgets/retrospective/retro_list_widget.dart';
+import '../widgets/retrospective/retro_board_widget.dart';
 import '../widgets/agile/sprint_widgets.dart';
 import '../widgets/agile/kanban_board_widget.dart';
 import '../widgets/agile/team_list_widget.dart';
@@ -23,7 +28,7 @@ import '../widgets/agile/participant_invite_dialog.dart' show AgileParticipantIn
 import '../widgets/agile/burndown_chart_widget.dart';
 import '../widgets/agile/capacity_chart_widget.dart';
 import '../widgets/agile/skill_matrix_widget.dart';
-import '../widgets/agile/retrospective_widgets.dart';
+
 import '../widgets/agile/metrics_dashboard_widget.dart';
 import '../widgets/agile/audit_log_viewer.dart';
 import '../widgets/agile/methodology_guide_dialog.dart';
@@ -55,6 +60,7 @@ class AgileProjectDetailScreen extends StatefulWidget {
 class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     with SingleTickerProviderStateMixin {
   final AgileFirestoreService _firestoreService = AgileFirestoreService();
+  final RetrospectiveFirestoreService _retroService = RetrospectiveFirestoreService();
   final AgileAuditService _auditService = AgileAuditService();
   final AgileSheetsService _sheetsService = AgileSheetsService();
   final AuthService _authService = AuthService();
@@ -290,6 +296,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                   height: backlogMinHeight,
                   child: BacklogListWidget(
                     stories: _stories,
+                    sprints: _sprints,
                     projectId: widget.project.id,
                     onStoryTap: (story) => _showStoryDetail(story),
                     onReorder: (newOrder) => _reorderStories(newOrder),
@@ -415,6 +422,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         final updated = story.copyWith(
           estimates: updatedEstimates,
           storyPoints: newPoints ?? story.storyPoints, // Aggiorna punti se è un numero
+          isEstimated: true, // Marca come stimata
         );
 
         await _firestoreService.updateStory(widget.project.id, updated);
@@ -1023,12 +1031,46 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   Future<void> _completeSprintConfirm(SprintModel sprint) async {
+    // Calcola completedPoints REALI dalle stories Done in questo sprint
+    final sprintStories = _stories.where((s) => s.sprintId == sprint.id).toList();
+    final completedStories = sprintStories.where((s) => s.status == StoryStatus.done).toList();
+    final actualCompletedPoints = completedStories.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+    final totalStories = sprintStories.length;
+    final completedCount = completedStories.length;
+    final incompleteCount = totalStories - completedCount;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Completa Sprint'),
-        content: Text('Sei sicuro di voler completare "${sprint.name}"?\n\n'
-            'Le stories non completate verranno riportate nel backlog.'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Sei sicuro di voler completare "${sprint.name}"?'),
+            const SizedBox(height: 16),
+            // Riepilogo sprint
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('📊 Riepilogo Sprint:', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text('• Stories totali: $totalStories'),
+                  Text('• Stories completate: $completedCount', style: TextStyle(color: Colors.green)),
+                  Text('• Story Points completati: $actualCompletedPoints pts', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                  if (incompleteCount > 0)
+                    Text('• Stories incomplete: $incompleteCount (torneranno nel backlog)', style: TextStyle(color: Colors.orange)),
+                ],
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -1047,16 +1089,26 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         // Calcola velocity = completedPoints / durata in settimane
         final durationWeeks = sprint.endDate.difference(sprint.startDate).inDays / 7;
         final velocity = durationWeeks > 0
-            ? sprint.completedPoints / durationWeeks
-            : sprint.completedPoints.toDouble();
+            ? actualCompletedPoints / durationWeeks
+            : actualCompletedPoints.toDouble();
 
         await _firestoreService.completeSprint(
           widget.project.id,
           sprint.id,
-          completedPoints: sprint.completedPoints,
+          completedPoints: actualCompletedPoints,
           velocity: velocity,
         );
-        _showSuccess('Sprint completato!');
+
+        // Riporta stories incomplete nel backlog
+        for (final story in sprintStories.where((s) => s.status != StoryStatus.done)) {
+          final updated = story.copyWith(
+            sprintId: null,
+            status: StoryStatus.backlog,
+          );
+          await _firestoreService.updateStory(widget.project.id, updated);
+        }
+
+        _showSuccess('Sprint completato! Velocity: ${velocity.toStringAsFixed(1)} pts/settimana');
       } catch (e) {
         _showError('Errore completamento sprint: $e');
       }
@@ -1070,10 +1122,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   Widget _buildKanbanTab() {
     final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
     var storiesToShow = _stories;
-    
+
     if (_filterByActiveSprint && activeSprint != null) {
       // Robust filter: include stories in sprint.storyIds OR stories pointing to this sprint
-      storiesToShow = _stories.where((s) => 
+      storiesToShow = _stories.where((s) =>
         activeSprint.storyIds.contains(s.id) || s.sprintId == activeSprint.id
       ).toList();
     }
@@ -1099,7 +1151,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 ),
                 const Spacer(),
                 Switch(
-                  value: _filterByActiveSprint, 
+                  value: _filterByActiveSprint,
                   onChanged: (val) => setState(() => _filterByActiveSprint = val),
                   activeColor: Colors.blue,
                 ),
@@ -1112,9 +1164,63 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             ),
           ),
 
+        // Messaggio esplicativo quando non c'è uno sprint attivo
+        if (activeSprint == null && _filterByActiveSprint)
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.blue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.info_outline, size: 48, color: Colors.blue),
+                const SizedBox(height: 12),
+                const Text(
+                  'Nessuno Sprint Attivo',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'La Kanban Board mostra le stories dello sprint attivo.\n'
+                  'Per visualizzare le stories:',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[400]),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildKanbanInfoChip(Icons.play_arrow, 'Avvia uno sprint dalla tab Sprint'),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildKanbanInfoChip(Icons.visibility, 'Oppure disattiva il filtro per vedere tutte le stories'),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () => setState(() => _filterByActiveSprint = false),
+                  icon: const Icon(Icons.visibility_off),
+                  label: const Text('Mostra tutte le stories'),
+                ),
+              ],
+            ),
+          ),
+
         Expanded(
           child: KanbanBoardWidget(
-            stories: storiesToShow,
+            stories: activeSprint == null && _filterByActiveSprint ? [] : storiesToShow,
             columns: widget.project.effectiveKanbanColumns,
             framework: widget.project.framework,
             onStatusChange: (storyId, newStatus) => _updateStoryStatusById(storyId, newStatus),
@@ -1125,6 +1231,27 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildKanbanInfoChip(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.blue.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.blue),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: TextStyle(fontSize: 12, color: Colors.grey[300]),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1209,13 +1336,50 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     );
   }
 
+  /// Calcola le ore assegnate a ciascun membro del team
+  /// Considera le stories nello sprint attivo (o in lavorazione se non c'è sprint)
+  /// Usa actualHours se disponibile, altrimenti storyPoints × 8
   Map<String, int> _calculateAssignedHours() {
     final hours = <String, int>{};
-    for (final story in _stories.where((s) =>
-        s.status != StoryStatus.done && s.assigneeEmail != null)) {
+
+    // Trova lo sprint attivo
+    final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+
+    // Filtra le stories
+    final relevantStories = _stories.where((story) {
+      // Deve avere un assegnatario
+      if (story.assigneeEmail == null) return false;
+
+      // Non contare le storie completate
+      if (story.status == StoryStatus.done) return false;
+
+      // Se c'è uno sprint attivo, considera solo le stories di quello sprint
+      if (activeSprint != null) {
+        return story.sprintId == activeSprint.id;
+      }
+
+      // Se non c'è sprint attivo, considera tutte le stories in lavorazione
+      return story.status == StoryStatus.inProgress ||
+             story.status == StoryStatus.inSprint ||
+             story.status == StoryStatus.inReview;
+    });
+
+    for (final story in relevantStories) {
       final email = story.assigneeEmail!;
-      hours[email] = (hours[email] ?? 0) + (story.storyPoints ?? 0) * 8; // Assume 8h per punto
+
+      // Usa actualHours se disponibile, altrimenti storyPoints × 8h
+      int storyHours;
+      if (story.actualHours != null && story.actualHours! > 0) {
+        storyHours = story.actualHours!;
+      } else if (story.storyPoints != null && story.storyPoints! > 0) {
+        storyHours = story.storyPoints! * 8; // 8h per punto come fallback
+      } else {
+        storyHours = 8; // Default minimo per story senza stime
+      }
+
+      hours[email] = (hours[email] ?? 0) + storyHours;
     }
+
     return hours;
   }
 
@@ -1269,34 +1433,77 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
     final latestSprint = lastCompletedSprint.isNotEmpty ? lastCompletedSprint.first : null;
 
-    // Per ora mostra un placeholder - i dati retrospective andrebbero caricati
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Lista retro esistenti
-          RetroListWidget(
-            retrospectives: _retrospectives,
-            onTap: (retro) => _showRetroDetail(retro),
-            onCreateNew: latestSprint != null ? () => _createNewRetro(latestSprint) : null,
-          ),
-          const SizedBox(height: 24),
+    // Stream delle retrospettive
+    return StreamBuilder<List<RetrospectiveModel>>(
+      stream: _retroService.streamProjectRetrospectives(widget.project.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          // Board ultima retro o nuova
-          if (_retrospectives.isNotEmpty)
-            RetroBoardWidget(
-              retrospective: _retrospectives.last,
-              sprint: latestSprint,
-              currentUserEmail: _currentUserEmail,
-              onAddItem: (item, category) {
-                // Implementa aggiunta item
-              },
-              onSentimentVote: (sentiment) {
-                // Implementa voto sentiment
-              },
-            )
-          else
-            _buildEmptyRetroState(),
+        final retrospectives = snapshot.data ?? [];
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Lista retro esistenti
+              RetroListWidget(
+                retrospectives: retrospectives,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                onTap: (retro) => _showRetroDetail(retro),
+                onCreateNew: latestSprint != null 
+                    ? () { _createNewRetro(latestSprint!); } 
+                    : () {}, 
+                currentUserEmail: _currentUserEmail,
+                onDelete: _confirmDeleteRetro,
+              ),
+              const SizedBox(height: 24),
+
+              // Board ultima retro o nuova (mostra ultima se esiste, altrimenti placeholder)
+              if (retrospectives.isNotEmpty)
+                RetroBoardWidget(
+                  retro: retrospectives.first, // Mostra la più recente (ordinata per data)
+                  currentUserEmail: _currentUserEmail,
+                  currentUserName: _currentUserEmail.split('@').first,
+                  isIncognito: false,
+                )
+              else
+                _buildEmptyRetroState(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _confirmDeleteRetro(RetrospectiveModel retro) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Elimina Retrospettiva'),
+        content: Text(
+            'Sei sicuro di voler eliminare definitivamente la retrospettiva "${retro.sprintName}"?\n\nQuesta azione è irreversibile e cancellerà tutti i dati associati.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annulla'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              Navigator.pop(context); // Close dialog
+              try {
+                await _retroService.deleteRetrospective(retro.id);
+                messenger.showSnackBar(const SnackBar(content: Text('Retrospettiva eliminata')));
+              } catch (e) {
+                messenger.showSnackBar(SnackBar(content: Text('Errore durante l\'eliminazione: $e')));
+              }
+            },
+            child: const Text('Elimina', style: TextStyle(color: Colors.white)),
+          ),
         ],
       ),
     );
@@ -1345,6 +1552,24 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 ],
               ),
             ),
+            if (!retro.isCompleted)
+              IconButton(
+                icon: const Icon(Icons.launch, color: Colors.blue),
+                tooltip: 'Apri Board Interattiva',
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RetroBoardScreen(
+                        retroId: retro.id,
+                        currentUserEmail: 'user@example.com', // TODO: Get real user
+                        currentUserName: 'User', // TODO: Get real user
+                      ),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
         content: SizedBox(
@@ -1597,46 +1822,58 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
     if (confirmed == true && mounted) {
       try {
-        // Crea la retrospettiva vuota
-        var retro = await _firestoreService.createRetrospective(
+        final now = DateTime.now();
+        
+        // Costruisci le colonne default
+        final columns = RetroTemplateExt(RetroTemplate.startStopContinue).defaultColumns;
+        final col1Id = columns.isNotEmpty ? columns[0].id : 'col_1';
+        final col2Id = columns.length > 1 ? columns[1].id : 'col_2';
+
+        // Costruisci gli items
+        final wentWellItems = wentWell.map((content) => RetroItem(
+          id: '${now.millisecondsSinceEpoch}_${content.hashCode}',
+          columnId: col1Id,
+          content: content,
+          authorEmail: _currentUserEmail,
+          authorName: _currentUserName,
+          createdAt: now,
+        )).toList();
+
+        final toImproveItems = toImprove.map((content) => RetroItem(
+          id: '${now.millisecondsSinceEpoch}_${content.hashCode}',
+          columnId: col2Id,
+          content: content,
+          authorEmail: _currentUserEmail,
+          authorName: _currentUserName,
+          createdAt: now,
+        )).toList();
+
+        final updatedActionItemsList = actionItems.map((description) => ActionItem(
+          id: '${now.millisecondsSinceEpoch}_${description.hashCode}',
+          description: description,
+          ownerEmail: _currentUserEmail, // Needs owner now
+          createdAt: now,
+        )).toList();
+
+        // Crea il modello completo
+        final retro = RetrospectiveModel(
+          id: '', // Verrà generato dal servizio
           projectId: widget.project.id,
           sprintId: sprint.id,
           sprintName: sprint.name,
           sprintNumber: _sprints.indexOf(sprint) + 1,
+          createdAt: now,
           createdBy: _currentUserEmail,
+          status: RetroStatus.draft,
+          currentPhase: RetroPhase.icebreaker,
+          columns: columns,
+          items: [...wentWellItems, ...toImproveItems],
+          actionItems: updatedActionItemsList,
+          timer: RetroTimer(durationMinutes: 60),
         );
 
-        // Aggiungi gli items
-        for (final content in wentWell) {
-          retro = retro.withWentWellItem(RetroItem(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            content: content,
-            authorEmail: _currentUserEmail,
-            authorName: _currentUserName,
-            createdAt: DateTime.now(),
-          ));
-        }
-
-        for (final content in toImprove) {
-          retro = retro.withToImproveItem(RetroItem(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            content: content,
-            authorEmail: _currentUserEmail,
-            authorName: _currentUserName,
-            createdAt: DateTime.now(),
-          ));
-        }
-
-        for (final description in actionItems) {
-          retro = retro.withActionItem(ActionItem(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            description: description,
-            createdAt: DateTime.now(),
-          ));
-        }
-
-        // Salva gli aggiornamenti
-        await _firestoreService.updateRetrospective(widget.project.id, retro);
+        // Salva usando il service corretto (Root Collection)
+        await _retroService.createRetrospective(retro);
 
         _showSuccess('Retrospettiva creata!');
       } catch (e) {
