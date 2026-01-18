@@ -86,77 +86,87 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.backgroundColor,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Icon(Icons.grid_4x4, color: context.textPrimaryColor),
-            const SizedBox(width: 8),
-            Text(_selectedMatrix?.title ?? 'Matrice di Eisenhower'),
+    return PopScope(
+      canPop: _selectedMatrix == null,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        setState(() {
+          _selectedMatrix = null;
+          _activities = [];
+        });
+      },
+      child: Scaffold(
+        backgroundColor: context.backgroundColor,
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Icon(Icons.grid_4x4, color: context.textPrimaryColor),
+              const SizedBox(width: 8),
+              Text(_selectedMatrix?.title ?? 'Matrice di Eisenhower'),
+            ],
+          ),
+          actions: [
+            if (_selectedMatrix != null) ...[
+              // Toggle viste (Griglia / Grafico / Lista)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: context.surfaceVariantColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildViewToggleButton(0, Icons.grid_view, 'Griglia'),
+                    _buildViewToggleButton(1, Icons.scatter_plot, 'Grafico'),
+                    _buildViewToggleButton(2, Icons.format_list_numbered, 'Lista'),
+                    _buildViewToggleButton(3, Icons.table_chart, 'RACI'),
+                  ],
+                ),
+              ),
+              // Export Google Sheets
+              IconButton(
+                icon: _isExporting
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: context.textPrimaryColor,
+                        ),
+                      )
+                    : const Icon(Icons.upload_file),
+                tooltip: 'Esporta su Google Sheets',
+                onPressed: _isExporting ? null : _exportToGoogleSheets,
+              ),
+              // Invita partecipanti
+              IconButton(
+                icon: const Icon(Icons.person_add),
+                tooltip: 'Invita Partecipanti',
+                onPressed: _showInviteDialog,
+              ),
+              // Impostazioni matrice
+              IconButton(
+                icon: const Icon(Icons.settings),
+                tooltip: 'Impostazioni Matrice',
+                onPressed: _showMatrixSettings,
+              ),
+              const SizedBox(width: 8),
+              // Torna alla lista
+              TextButton.icon(
+                icon: Icon(Icons.arrow_back, size: 18, color: context.textPrimaryColor),
+                label: Text('Lista', style: TextStyle(color: context.textPrimaryColor)),
+                onPressed: () => setState(() {
+                  _selectedMatrix = null;
+                  _activities = [];
+                }),
+              ),
+            ],
           ],
         ),
-        actions: [
-          if (_selectedMatrix != null) ...[
-            // Toggle viste (Griglia / Grafico / Lista)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: context.surfaceVariantColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildViewToggleButton(0, Icons.grid_view, 'Griglia'),
-                  _buildViewToggleButton(1, Icons.scatter_plot, 'Grafico'),
-                  _buildViewToggleButton(2, Icons.format_list_numbered, 'Lista'),
-                  _buildViewToggleButton(3, Icons.table_chart, 'RACI'),
-                ],
-              ),
-            ),
-            // Export Google Sheets
-            IconButton(
-              icon: _isExporting
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.textPrimaryColor,
-                      ),
-                    )
-                  : const Icon(Icons.upload_file),
-              tooltip: 'Esporta su Google Sheets',
-              onPressed: _isExporting ? null : _exportToGoogleSheets,
-            ),
-            // Invita partecipanti
-            IconButton(
-              icon: const Icon(Icons.person_add),
-              tooltip: 'Invita Partecipanti',
-              onPressed: _showInviteDialog,
-            ),
-            // Impostazioni matrice
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'Impostazioni Matrice',
-              onPressed: _showMatrixSettings,
-            ),
-            const SizedBox(width: 8),
-            // Torna alla lista
-            TextButton.icon(
-              icon: Icon(Icons.arrow_back, size: 18, color: context.textPrimaryColor),
-              label: Text('Lista', style: TextStyle(color: context.textPrimaryColor)),
-              onPressed: () => setState(() {
-                _selectedMatrix = null;
-                _activities = [];
-              }),
-            ),
-          ],
-        ],
+        body: _selectedMatrix == null ? _buildMatrixList() : _buildMatrixDetail(),
+        floatingActionButton: _buildFAB(),
       ),
-      body: _selectedMatrix == null ? _buildMatrixList() : _buildMatrixDetail(),
-      floatingActionButton: _buildFAB(),
     );
   }
 

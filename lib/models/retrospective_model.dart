@@ -557,12 +557,12 @@ extension RetroTemplateExt on RetroTemplate {
 
   IconData get icon {
     switch (this) {
-      case RetroTemplate.startStopContinue: return const IconData(0xe037, fontFamily: 'MaterialIcons'); // play_circle_filled
-      case RetroTemplate.sailboat: return const IconData(0xe58f, fontFamily: 'MaterialIcons'); // sailing
-      case RetroTemplate.fourLs: return const IconData(0xe8d0, fontFamily: 'MaterialIcons'); // highlight_off
-      case RetroTemplate.starfish: return const IconData(0xf02e, fontFamily: 'MaterialIcons'); // pentagon
-      case RetroTemplate.madSadGlad: return const IconData(0xe7f2, fontFamily: 'MaterialIcons'); // mood
-      case RetroTemplate.daki: return const IconData(0xf06c, fontFamily: 'MaterialIcons'); // fact_check
+      case RetroTemplate.startStopContinue: return Icons.play_circle_filled;
+      case RetroTemplate.sailboat: return Icons.sailing;
+      case RetroTemplate.fourLs: return Icons.grid_view;
+      case RetroTemplate.starfish: return Icons.stars;
+      case RetroTemplate.madSadGlad: return Icons.mood;
+      case RetroTemplate.daki: return Icons.delete_sweep;
     }
   }
 

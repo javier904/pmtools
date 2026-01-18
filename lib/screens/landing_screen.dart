@@ -306,108 +306,115 @@ Image.asset(
               if (constraints.maxWidth > 900) {
                 return Column(
                   children: [
-                    // Prima riga: Smart Todo + Matrice Eisenhower
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildFeatureCard(
-                          icon: Icons.check_circle_outline_rounded,
-                          title: 'Smart Todo',
-                          description: 'Liste intelligenti e collaborative. Importa da CSV/testo, invita partecipanti e gestisci task.',
-                          color: Colors.blue,
-                          isDark: isDark,
-                        )),
-                        const SizedBox(width: 24),
-                        Expanded(child: _buildFeatureCard(
-                          icon: Icons.apps_rounded,
-                          title: 'Matrice Eisenhower',
-                          description: 'Prioritizza le attivita distinguendo tra urgente e importante. Organizza il lavoro con chiarezza.',
-                          color: AppColors.success,
-                          isDark: isDark,
-                        )),
-                      ],
+                    // Prima riga: Smart Todo + Matrice Eisenhower + Estimation Room
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: _buildFeatureCard(
+                            icon: Icons.check_circle_outline_rounded,
+                            title: 'Smart Todo',
+                            description: 'Liste intelligenti e collaborative. Importa da CSV/testo, invita partecipanti e gestisci task con filtri avanzati.',
+                            color: Colors.blue,
+                            isDark: isDark,
+                            features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                          )),
+                          const SizedBox(width: 20),
+                          Expanded(child: _buildFeatureCard(
+                            icon: Icons.grid_view_rounded,
+                            title: 'Matrice Eisenhower',
+                            description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
+                            color: AppColors.success,
+                            isDark: isDark,
+                            features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
+                          )),
+                          const SizedBox(width: 20),
+                          Expanded(child: _buildFeatureCard(
+                            icon: Icons.casino_rounded,
+                            title: 'Estimation Room',
+                            description: 'Sessioni di stima collaborative per il team. Planning Poker, T-Shirt sizing e altri metodi per stimare user stories.',
+                            color: AppColors.secondary,
+                            isDark: isDark,
+                            features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
+                          )),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    // Seconda riga: Estimation Room + Agile Process
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildFeatureCard(
-                          icon: Icons.style_rounded,
-                          title: 'Estimation Room',
-                          description: 'Sessioni di stima collaborative con Planning Poker, T-Shirt sizing e altri metodi.',
-                          color: AppColors.secondary,
-                          isDark: isDark,
-                        )),
-                        const SizedBox(width: 24),
-                        Expanded(child: _buildFeatureCard(
-                          icon: Icons.speed_rounded,
-                          title: 'Agile Process',
-                          description: 'Gestisci backlog, sprint e kanban board. Metriche e retrospettive incluse.',
-                          color: AppColors.primary,
-                          isDark: isDark,
-                        )),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    // Terza riga: Retrospective (con Spacer per mantenere la griglia)
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildFeatureCard(
-                          icon: Icons.replay_rounded,
-                          title: 'Retrospective',
-                          description: 'Migliora il tuo team con retrospettive strutturate. Template, voto anonimo e action items.',
-                          color: Colors.orange,
-                          isDark: isDark,
-                        )),
-                        const SizedBox(width: 24),
-                        const Spacer(),
-                      ],
+                    const SizedBox(height: 20),
+                    // Seconda riga: Agile Process + Retrospective (2 cards full width)
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: _buildFeatureCard(
+                            icon: Icons.rocket_launch_rounded,
+                            title: 'Agile Process Manager',
+                            description: 'Gestisci progetti agili completi con backlog, sprint planning, kanban board, metriche e retrospettive.',
+                            color: AppColors.primary,
+                            isDark: isDark,
+                            features: const ['Scrum', 'Kanban', 'Hybrid'],
+                          )),
+                          const SizedBox(width: 20),
+                          Expanded(child: _buildFeatureCard(
+                            icon: Icons.psychology_rounded,
+                            title: 'Retrospective Board',
+                            description: 'Raccogli feedback dal team su cosa e andato bene, cosa migliorare e le azioni da intraprendere.',
+                            color: AppColors.pink,
+                            isDark: isDark,
+                            features: const ['Went Well', 'To Improve', 'Actions'],
+                          )),
+                        ],
+                      ),
                     ),
                   ],
                 );
               } else {
+                // Mobile - single column
                 return Column(
                   children: [
                     _buildFeatureCard(
                       icon: Icons.check_circle_outline_rounded,
                       title: 'Smart Todo',
-                      description: 'Liste intelligenti e collaborative. Importa da CSV/testo e gestisci task.',
+                      description: 'Liste intelligenti e collaborative. Importa da CSV, invita e gestisci task.',
                       color: Colors.blue,
                       isDark: isDark,
+                      features: const ['Smart Import', 'Collaborazione', 'Filtri'],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
-                      icon: Icons.apps_rounded,
+                      icon: Icons.grid_view_rounded,
                       title: 'Matrice Eisenhower',
-                      description: 'Prioritizza le attivita distinguendo tra urgente e importante.',
+                      description: 'Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
                       color: AppColors.success,
                       isDark: isDark,
+                      features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
-                      icon: Icons.style_rounded,
+                      icon: Icons.casino_rounded,
                       title: 'Estimation Room',
-                      description: 'Sessioni di stima collaborative con Planning Poker e altri metodi.',
+                      description: 'Planning Poker, T-Shirt sizing e altri metodi per stimare user stories.',
                       color: AppColors.secondary,
                       isDark: isDark,
+                      features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
-                      icon: Icons.speed_rounded,
-                      title: 'Agile Process',
-                      description: 'Gestisci backlog, sprint e kanban board con metriche.',
+                      icon: Icons.rocket_launch_rounded,
+                      title: 'Agile Process Manager',
+                      description: 'Gestisci progetti agili con backlog, sprint, kanban e metriche.',
                       color: AppColors.primary,
                       isDark: isDark,
+                      features: const ['Scrum', 'Kanban', 'Hybrid'],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
-                      icon: Icons.replay_rounded,
-                      title: 'Retrospective',
-                      description: 'Migliora il team con retrospettive strutturate e action items.',
-                      color: Colors.orange,
+                      icon: Icons.psychology_rounded,
+                      title: 'Retrospective Board',
+                      description: 'Raccogli feedback dal team su cosa e andato bene e cosa migliorare.',
+                      color: AppColors.pink,
                       isDark: isDark,
+                      features: const ['Went Well', 'To Improve', 'Actions'],
                     ),
                   ],
                 );
@@ -425,6 +432,7 @@ Image.asset(
     required String description,
     required Color color,
     required bool isDark,
+    List<String> features = const [],
   }) {
     return _HoverScaleCard(
       isDark: isDark,
@@ -464,6 +472,29 @@ Image.asset(
                 height: 1.5,
               ),
             ),
+            if (features.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: features.map((f) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: color.withValues(alpha: 0.15)),
+                  ),
+                  child: Text(
+                    f,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: color,
+                    ),
+                  ),
+                )).toList(),
+              ),
+            ],
           ],
         ),
       ),
