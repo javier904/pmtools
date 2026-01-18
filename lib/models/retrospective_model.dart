@@ -505,7 +505,14 @@ class SprintReviewData {
 
 enum RetroStatus { draft, active, completed }
 enum RetroPhase { setup, icebreaker, writing, voting, discuss, completed }
-enum RetroTemplate { startStopContinue, sailboat, fourLs, starfish, madSadGlad } 
+enum RetroTemplate {
+  startStopContinue,
+  sailboat,
+  fourLs,
+  starfish,
+  madSadGlad,
+  daki, // Drop, Add, Keep, Improve
+} 
 
 extension RetroTemplateExt on RetroTemplate {
   String get displayName {
@@ -514,8 +521,8 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.sailboat: return 'Sailboat';
       case RetroTemplate.fourLs: return '4 Ls';
       case RetroTemplate.starfish: return 'Starfish';
-      case RetroTemplate.madSadGlad: return 'Mad, Sad, Glad';
-      default: return 'Template';
+      case RetroTemplate.madSadGlad: return 'Mad Sad Glad';
+      case RetroTemplate.daki: return 'DAKI (Drop Add Keep Improve)';
     }
   }
 
@@ -526,6 +533,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.fourLs: return 'Liked, Learned, Lacked, Longed For.';
       case RetroTemplate.starfish: return 'Keep, Stop, Start, More, Less.';
       case RetroTemplate.madSadGlad: return 'Emotional: Mad, Sad, Glad.';
+      case RetroTemplate.daki: return 'Pragmatic: Drop, Add, Keep, Improve.';
     }
   }
 
@@ -537,59 +545,75 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.sailboat: 
         return 'Best for visualizing the team\'s journey, goals, and risks. Good for creative thinking.';
       case RetroTemplate.fourLs: 
-        return 'Best for gathering balanced feedback covering both positives and negatives.';
+        return 'Reflective: Best for learning from the past and highlighting emotional/learning aspects.';
       case RetroTemplate.starfish: 
-        return 'Best for scaling efforts: refining what to do more/less of, not just start/stop.';
+        return 'Calibration: Best for scaling efforts (doing more/less of something), not just binary stop/start.';
       case RetroTemplate.madSadGlad: 
         return 'Best for emotional check-ins, resolving conflicts, or after a stressful sprint.';
+      case RetroTemplate.daki:
+        return 'Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).';
     }
   }
 
   IconData get icon {
     switch (this) {
-      case RetroTemplate.startStopContinue: return Icons.traffic;
-      case RetroTemplate.sailboat: return Icons.sailing;
-      case RetroTemplate.fourLs: return Icons.grid_view;
-      case RetroTemplate.starfish: return Icons.stars;
-      case RetroTemplate.madSadGlad: return Icons.mood;
+      case RetroTemplate.startStopContinue: return const IconData(0xe037, fontFamily: 'MaterialIcons'); // play_circle_filled
+      case RetroTemplate.sailboat: return const IconData(0xe58f, fontFamily: 'MaterialIcons'); // sailing
+      case RetroTemplate.fourLs: return const IconData(0xe8d0, fontFamily: 'MaterialIcons'); // highlight_off
+      case RetroTemplate.starfish: return const IconData(0xf02e, fontFamily: 'MaterialIcons'); // pentagon
+      case RetroTemplate.madSadGlad: return const IconData(0xe7f2, fontFamily: 'MaterialIcons'); // mood
+      case RetroTemplate.daki: return const IconData(0xf06c, fontFamily: 'MaterialIcons'); // fact_check
     }
   }
 
   List<RetroColumn> get defaultColumns {
       switch (this) {
-          case RetroTemplate.sailboat:
+          case RetroTemplate.startStopContinue:
+          return [
+            RetroColumn(id: 'start', title: 'Start', description: 'Quali nuove attività o processi dovremmo iniziare per migliorare?', colorHex: '#BBDEFB', iconCode: 0xe037),
+            RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non sta portando valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: 0xe047),
+            RetroColumn(id: 'continue', title: 'Continue', description: 'Cosa sta funzionando bene e dobbiamo continuare a fare?', colorHex: '#C8E6C9', iconCode: 0xe038),
+          ];
+        case RetroTemplate.sailboat:
             return [
                 RetroColumn(id: 'wind', title: 'Wind (Spinge)', description: 'Cosa ci ha spinto in avanti? Punti di forza e aiuti.', colorHex: '#E8F5E9', iconCode: 0xe0c8), 
                 RetroColumn(id: 'anchor', title: 'Anchors (Frena)', description: 'Cosa ci ha rallentato? Ostacoli e blocchi.', colorHex: '#FFEBEE', iconCode: 0xf1cd), 
                 RetroColumn(id: 'rock', title: 'Rocks (Rischi)', description: 'Quali rischi futuri vediamo all\'orizzonte?', colorHex: '#FFF3E0', iconCode: 0xe6e1), 
                 RetroColumn(id: 'goal', title: 'Island (Obiettivi)', description: 'Qual è la nostra destinazione ideale?', colorHex: '#E3F2FD', iconCode: 0xe24e), 
             ]; 
-          case RetroTemplate.fourLs:
+        case RetroTemplate.fourLs:
+          return [
+              RetroColumn(id: 'liked', title: 'Liked', description: 'Cosa ti è piaciuto di questo sprint?', colorHex: '#C8E6C9', iconCode: 0xf1cc), 
+              RetroColumn(id: 'learned', title: 'Learned', description: 'Cosa hai imparato di nuovo?', colorHex: '#BBDEFB', iconCode: 0xe80c), 
+              RetroColumn(id: 'lacked', title: 'Lacked', description: 'Cosa è mancato in questo sprint?', colorHex: '#FFCCBC', iconCode: 0xe15b), 
+              RetroColumn(id: 'longed', title: 'Longed For', description: 'Cosa desidereresti avere nel prossimo futuro?', colorHex: '#E1BEE7', iconCode: 0xe8d0), 
+          ];
+        case RetroTemplate.starfish:
             return [
-                RetroColumn(id: 'liked', title: 'Liked', description: 'Cosa ti è piaciuto di questo sprint?', colorHex: '#C8E6C9', iconCode: 0xf1cc), 
-                RetroColumn(id: 'learned', title: 'Learned', description: 'Cosa hai imparato di nuovo?', colorHex: '#BBDEFB', iconCode: 0xe80c), 
-                RetroColumn(id: 'lacked', title: 'Lacked', description: 'Cosa è mancato in questo sprint?', colorHex: '#FFCCBC', iconCode: 0xe15b), 
-                RetroColumn(id: 'longed', title: 'Longed For', description: 'Cosa desidereresti avere nel prossimo futuro?', colorHex: '#E1BEE7', iconCode: 0xe8d0), 
+              RetroColumn(id: 'keep', title: 'Keep', description: 'Cosa stiamo facendo bene e dovremmo mantenere?', colorHex: '#C8E6C9', iconCode: 0xe86c),
+              RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non porta valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: 0xe047),
+              RetroColumn(id: 'start', title: 'Start', description: 'Cosa dovremmo iniziare a fare che non facciamo?', colorHex: '#BBDEFB', iconCode: 0xe037),
+              RetroColumn(id: 'more', title: 'More', description: 'Cosa dovremmo fare di più?', colorHex: '#FFF9C4', iconCode: 0xe5d8),
+              RetroColumn(id: 'less', title: 'Less', description: 'Cosa dovremmo fare di meno?', colorHex: '#F0F4C3', iconCode: 0xe5ce),
+          ];
+        case RetroTemplate.madSadGlad:
+            return [
+              RetroColumn(id: 'mad', title: 'Mad', description: 'Cosa ti ha fatto arrabbiare o frustrare?', colorHex: '#FFCDD2', iconCode: 0xe7f3), 
+              RetroColumn(id: 'sad', title: 'Sad', description: 'Cosa ti ha deluso o reso triste?', colorHex: '#CFD8DC', iconCode: 0xe7f2), 
+              RetroColumn(id: 'glad', title: 'Glad', description: 'Cosa ti ha reso felice o soddisfatto?', colorHex: '#C8E6C9', iconCode: 0xe7f0), 
+          ];
+        case RetroTemplate.daki:
+            return [
+              RetroColumn(id: 'drop', title: 'Drop (Elimina)', description: 'Cosa non porta valore e va eliminato immediatamente?', colorHex: '#FFCDD2', iconCode: 0xe92e), // remove_circle_outline
+              RetroColumn(id: 'add', title: 'Add (Aggiungi)', description: 'Quali nuove pratiche o strumenti dovremmo introdurre?', colorHex: '#BBDEFB', iconCode: 0xe148), // add_circle_outline
+              RetroColumn(id: 'keep', title: 'Keep (Mantieni)', description: 'Cosa funziona bene e va mantenuto?', colorHex: '#C8E6C9', iconCode: 0xe15a), // check_circle_outline
+              RetroColumn(id: 'improve', title: 'Improve (Migliora)', description: 'Cosa facciamo già ma possiamo fare meglio?', colorHex: '#FFE0B2', iconCode: 0xe6e3), // trending_up
+          ];
+        default:
+            return [
+                RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#C8E6C9', iconCode: 0xf1cc),
+                RetroColumn(id: 'improve', title: 'To Improve', description: 'Cosa può essere migliorato?', colorHex: '#FFCDD2', iconCode: 0xe813),
             ];
-          case RetroTemplate.starfish:
-             return [
-                RetroColumn(id: 'keep', title: 'Keep', description: 'Cosa stiamo facendo bene e dovremmo mantenere?', colorHex: '#C8E6C9', iconCode: 0xe86c),
-                RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non porta valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: 0xe047),
-                RetroColumn(id: 'start', title: 'Start', description: 'Cosa dovremmo iniziare a fare che non facciamo?', colorHex: '#BBDEFB', iconCode: 0xe037),
-                RetroColumn(id: 'more', title: 'More', description: 'Cosa dovremmo fare di più?', colorHex: '#FFF9C4', iconCode: 0xe5d8),
-                RetroColumn(id: 'less', title: 'Less', description: 'Cosa dovremmo fare di meno?', colorHex: '#F0F4C3', iconCode: 0xe5ce),
-            ];
-          case RetroTemplate.madSadGlad:
-             return [
-                RetroColumn(id: 'mad', title: 'Mad', description: 'Cosa ti ha fatto arrabbiare o frustrare?', colorHex: '#FFCDD2', iconCode: 0xe7f3), 
-                RetroColumn(id: 'sad', title: 'Sad', description: 'Cosa ti ha deluso o reso triste?', colorHex: '#CFD8DC', iconCode: 0xe7f2), 
-                RetroColumn(id: 'glad', title: 'Glad', description: 'Cosa ti ha reso felice o soddisfatto?', colorHex: '#C8E6C9', iconCode: 0xe7f0), 
-            ];
-          default:
-             return [
-                 RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#C8E6C9', iconCode: 0xf1cc),
-                 RetroColumn(id: 'improve', title: 'To Improve', description: 'Cosa può essere migliorato?', colorHex: '#FFCDD2', iconCode: 0xe813),
-             ];
       }
   }
 }

@@ -10,6 +10,7 @@ void main() {
       projectId: 'proj1',
       createdAt: now,
       createdBy: 'user@example.com',
+      timer: const RetroTimer(),
     );
 
     test('Initial state is draft and setup phase', () {
@@ -25,6 +26,7 @@ void main() {
         createdAt: now,
         createdBy: 'user@example.com',
         sprintName: 'Weekly Sync',
+        timer: const RetroTimer(),
       );
       
       expect(standalone.projectId, isNull);
@@ -45,28 +47,28 @@ void main() {
       expect(fromJson.status, RetroStatus.draft);
     });
 
-    test('Template Categories', () {
-      expect(RetroTemplate.startStopContinue.categories, 
-        containsAll([RetroCategory.wentWell, RetroCategory.toImprove]));
+    test('Template Columns', () {
+      expect(RetroTemplate.startStopContinue.defaultColumns.length, 2);
       
       // Future expansion verification
-      expect(RetroTemplate.fourLs.categories.isNotEmpty, true);
+      expect(RetroTemplate.fourLs.defaultColumns.isNotEmpty, true);
     });
 
     test('Item Management', () {
       final item = RetroItem(
         id: 'i1',
+        columnId: 'col_1',
         content: 'Good job',
         authorEmail: 'a@b.com',
         authorName: 'A',
         createdAt: now,
       );
 
-      final withItem = retro.withWentWellItem(item);
-      expect(withItem.wentWell.length, 1);
+      final withItem = retro.copyWith(items: [item]);
+      expect(withItem.items.length, 1);
       
-      final withoutItem = withItem.withoutWentWellItem('i1');
-      expect(withoutItem.wentWell.isEmpty, true);
+      final withoutItem = withItem.copyWith(items: []);
+      expect(withoutItem.items.isEmpty, true);
     });
   });
 }

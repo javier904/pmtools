@@ -423,14 +423,38 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 DropdownButtonFormField<RetroTemplate>(
                   value: selectedTemplate,
                   decoration: const InputDecoration(labelText: 'Template'),
+                  isExpanded: true, // Ensure proper layout for long text
                   items: RetroTemplate.values.map((t) {
                     return DropdownMenuItem(
                       value: t,
                       child: Row(
                         children: [
-                          Icon(t.icon, size: 20, color: Colors.grey[700]),
-                          const SizedBox(width: 10),
-                          Text(t.displayName),
+                          Icon(t.icon, size: 20), // Uses default theme color (visible in dark mode)
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  t.displayName, 
+                                  style: const TextStyle(fontWeight: FontWeight.w500),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  t.usageSuggestion,
+                                  style: TextStyle(
+                                    fontSize: 11, 
+                                    color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                                    fontStyle: FontStyle.italic
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     );

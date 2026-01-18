@@ -221,11 +221,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
       case EstimationMode.decimal:
         return Icons.calculate;
       case EstimationMode.threePoint:
-        return Icons.analytics;
+        return Icons.functions_rounded; // Sigma/PERT formula
       case EstimationMode.dotVoting:
         return Icons.radio_button_checked;
       case EstimationMode.bucketSystem:
-        return Icons.view_column;
+        return Icons.inventory_2_rounded; // Bucket/box icon
       case EstimationMode.fiveFingers:
         return Icons.pan_tool;
     }

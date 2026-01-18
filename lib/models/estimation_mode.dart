@@ -75,11 +75,11 @@ extension EstimationModeExtension on EstimationMode {
       case EstimationMode.decimal:
         return 'calculate';
       case EstimationMode.threePoint:
-        return 'analytics';
+        return 'functions_rounded'; // Sigma/PERT formula
       case EstimationMode.dotVoting:
         return 'radio_button_checked';
       case EstimationMode.bucketSystem:
-        return 'view_column';
+        return 'inventory_2_rounded'; // Bucket/box icon
       case EstimationMode.fiveFingers:
         return 'pan_tool';
     }
