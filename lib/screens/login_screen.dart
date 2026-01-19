@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
+import '../services/user_profile_service.dart';
 
 /// Login Screen - Autenticazione Google e Email/Password con tema
 class LoginScreen extends StatefulWidget {
@@ -36,10 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await _authService.signInWithGoogle();
+      final credential = await _authService.signInWithGoogle();
+      if (credential != null && credential.user != null) {
+        await UserProfileService().createOrUpdateProfileFromAuth();
+      }
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
-        _errorMessage = 'Errore login Google: $e';
+        _errorMessage = '${l10n.errorGeneric}: $e';
       });
     } finally {
       if (mounted) {
@@ -49,8 +55,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signInWithEmail() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      setState(() => _errorMessage = 'Compila tutti i campi');
+      setState(() => _errorMessage = l10n.formRequired);
       return;
     }
 
@@ -62,32 +70,38 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       if (_isRegisterMode) {
         if (_nameController.text.isEmpty) {
-          setState(() => _errorMessage = 'Inserisci il tuo nome');
+          setState(() => _errorMessage = l10n.formNameRequired);
           return;
         }
-        await _authService.registerWithEmail(
+        final credential = await _authService.registerWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
           _nameController.text.trim(),
         );
+        if (credential != null && credential.user != null) {
+          await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.email);
+        }
       } else {
-        await _authService.signInWithEmail(
+        final credential = await _authService.signInWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
         );
+        if (credential != null && credential.user != null) {
+          await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.email);
+        }
       }
     } catch (e) {
-      String message = 'Errore di autenticazione';
+      String message = l10n.authError;
       if (e.toString().contains('user-not-found')) {
-        message = 'Utente non trovato';
+        message = l10n.authUserNotFound;
       } else if (e.toString().contains('wrong-password')) {
-        message = 'Password errata';
+        message = l10n.authWrongPassword;
       } else if (e.toString().contains('email-already-in-use')) {
-        message = 'Email gia\' registrata';
+        message = l10n.authEmailInUse;
       } else if (e.toString().contains('weak-password')) {
-        message = 'Password troppo debole (min. 6 caratteri)';
+        message = l10n.authWeakPassword;
       } else if (e.toString().contains('invalid-email')) {
-        message = 'Email non valida';
+        message = l10n.authInvalidEmail;
       }
       setState(() => _errorMessage = message);
     } finally {
@@ -100,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
@@ -137,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Strumenti collaborativi per team agili',
+                  l10n.appSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: context.textSecondaryColor),
                 ),
@@ -172,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
 
                 // Google Sign In
-                _buildGoogleButton(context, isDark),
+                _buildGoogleButton(context, isDark, l10n),
                 const SizedBox(height: 24),
 
                 // Divider
@@ -181,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Expanded(child: Divider(color: context.borderColor)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('oppure', style: TextStyle(color: context.textTertiaryColor)),
+                      child: Text(l10n.authOr, style: TextStyle(color: context.textTertiaryColor)),
                     ),
                     Expanded(child: Divider(color: context.borderColor)),
                   ],
@@ -192,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (_isRegisterMode) ...[
                   _buildTextField(
                     controller: _nameController,
-                    label: 'Nome',
+                    label: l10n.formName,
                     icon: Icons.person,
                     context: context,
                   ),
@@ -200,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
                 _buildTextField(
                   controller: _emailController,
-                  label: 'Email',
+                  label: l10n.profileEmail,
                   icon: Icons.email,
                   keyboardType: TextInputType.emailAddress,
                   context: context,
@@ -208,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 _buildTextField(
                   controller: _passwordController,
-                  label: 'Password',
+                  label: l10n.authPassword,
                   icon: Icons.lock,
                   obscureText: true,
                   onSubmitted: (_) => _signInWithEmail(),
@@ -235,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         )
                       : Text(
-                          _isRegisterMode ? 'Registrati' : 'Accedi',
+                          _isRegisterMode ? l10n.authRegister : l10n.authLogin,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                 ),
@@ -254,8 +269,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Text(
                     _isRegisterMode
-                        ? 'Hai gia\' un account? Accedi'
-                        : 'Non hai un account? Registrati',
+                        ? l10n.authHaveAccount
+                        : l10n.authNoAccount,
                   ),
                 ),
               ],
@@ -266,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildGoogleButton(BuildContext context, bool isDark) {
+  Widget _buildGoogleButton(BuildContext context, bool isDark, AppLocalizations l10n) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -289,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Continua con Google',
+                l10n.authSignInGoogle,
                 style: TextStyle(
                   color: context.textPrimaryColor,
                   fontWeight: FontWeight.w500,

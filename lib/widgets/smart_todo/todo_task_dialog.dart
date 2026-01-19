@@ -7,6 +7,7 @@ import '../../models/smart_todo/todo_list_model.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'dart:convert';
 import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class TodoTaskDialog extends StatefulWidget {
   final String listId;
@@ -122,10 +123,13 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                     child: Icon(widget.task == null ? Icons.add_rounded : Icons.edit_rounded, color: Colors.blue),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    widget.task == null ? 'Nuova Attività' : 'Modifica',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogTextColor),
-                  ),
+                  Builder(builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return Text(
+                      widget.task == null ? l10n.smartTodoNewTask : l10n.smartTodoEditTask,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogTextColor),
+                    );
+                  }),
                   const Spacer(),
                   IconButton(
                     icon: Icon(Icons.close_rounded, color: dialogIsDark ? Colors.grey[400] : null),
@@ -147,15 +151,18 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                     child: ListView(
                       padding: const EdgeInsets.all(24),
                       children: [
-                         TextField(
-                           controller: _titleController,
-                           decoration: InputDecoration(
-                             hintText: 'Titolo attività',
-                             hintStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.grey[500] : Colors.grey[400]),
-                             border: InputBorder.none,
-                           ),
-                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: dialogTextColor),
-                         ),
+                         Builder(builder: (context) {
+                           final l10n = AppLocalizations.of(context)!;
+                           return TextField(
+                             controller: _titleController,
+                             decoration: InputDecoration(
+                               hintText: l10n.smartTodoTaskTitle,
+                               hintStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.grey[500] : Colors.grey[400]),
+                               border: InputBorder.none,
+                             ),
+                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: dialogTextColor),
+                           );
+                         }),
                          const SizedBox(height: 24),
                          
                          // Description
@@ -888,7 +895,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                 ));
               });
             }, 
-            child: const Text('Sì, aggiungi')
+            child: Text(AppLocalizations.of(context)!.smartTodoYesAdd)
           ),
         ],
       ),

@@ -114,6 +114,9 @@ class AgileInviteService {
         performedByName: inviterEmail.split('@').first,
       );
 
+      // Aggiungi ai pending participants del progetto
+      await _projectService.addPendingParticipant(projectId, email);
+
       return invite.copyWith(id: docRef.id);
     } catch (e) {
       print('❌ Errore createInvite: $e');
@@ -290,7 +293,7 @@ class AgileInviteService {
         isOnline: true,
       );
 
-      await _projectService.addParticipant(invite.projectId, participant);
+      await _projectService.promotePendingToActive(invite.projectId, participant);
 
       // Log audit
       await _auditService.logJoin(

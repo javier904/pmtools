@@ -3,6 +3,7 @@ import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/themes/app_theme.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ActionItemsTableWidget extends StatelessWidget {
@@ -27,6 +28,7 @@ class ActionItemsTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (actionItems.isEmpty) {
       return Center(
         child: Column(
@@ -35,7 +37,7 @@ class ActionItemsTableWidget extends StatelessWidget {
             const Icon(Icons.assignment_outlined, size: 48, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'Nessun Action Item ancora creato.',
+              l10n.retroNoActionItems,
               style: TextStyle(color: context.textMutedColor),
             ),
           ],
@@ -47,13 +49,13 @@ class ActionItemsTableWidget extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: DataTable(
         columnSpacing: 24,
-        columns: const [
-          DataColumn(label: Text('Rif.')), // Reference Column
-          DataColumn(label: Text('Descrizione')),
-          DataColumn(label: Text('Owner')),
-          DataColumn(label: Text('Priorità')),
-          DataColumn(label: Text('Scadenza')),
-          DataColumn(label: Text('Azioni')),
+        columns: [
+          DataColumn(label: Text(l10n.retroTableRef)),
+          DataColumn(label: Text(l10n.retroTableDescription)),
+          DataColumn(label: Text(l10n.retroTableOwner)),
+          DataColumn(label: Text(l10n.retroActionPriority)),
+          DataColumn(label: Text(l10n.retroActionDueDate)),
+          DataColumn(label: Text(l10n.retroTableActions)),
         ],
         rows: actionItems.map((item) {
           final String refText = item.sourceRefContent != null && item.sourceRefContent!.isNotEmpty
@@ -85,7 +87,7 @@ class ActionItemsTableWidget extends StatelessWidget {
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           child: Text(
-                            'Res: ${item.resources}',
+                            '${l10n.retroActionResourcesShort}: ${item.resources}',
                             style: TextStyle(
                                 fontSize: 10, color: context.textMutedColor),
                             maxLines: 1,
@@ -101,7 +103,7 @@ class ActionItemsTableWidget extends StatelessWidget {
                   children: [
                     const Icon(Icons.person, size: 16, color: Colors.grey),
                     const SizedBox(width: 4),
-                    Text(item.assigneeEmail?.split('@').first ?? 'Unassigned'),
+                    Text(item.assigneeEmail?.split('@').first ?? l10n.retroUnassigned),
                   ],
                 ),
               ),

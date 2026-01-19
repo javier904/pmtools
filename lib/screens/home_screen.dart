@@ -3,8 +3,11 @@ import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../main.dart';
+import '../controllers/locale_controller.dart';
+import '../l10n/app_localizations.dart';
 import 'retrospective/retro_global_dashboard.dart';
 import '../widgets/profile_menu_widget.dart';
+import '../widgets/language_selector_widget.dart';
 
 /// Home Screen - Dashboard stile Appwrite con supporto Dark/Light Theme
 class HomeScreen extends StatelessWidget {
@@ -18,6 +21,7 @@ class HomeScreen extends StatelessWidget {
     final isMobile = screenWidth < 600;
     final isDark = context.isDarkMode;
     final themeController = ThemeControllerProvider.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
@@ -37,7 +41,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(
-              'Agile Tools',
+              l10n.appTitle,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -47,11 +51,14 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
+          // Language Selector
+          const LanguageSelectorWidget(),
+          const SizedBox(width: 4),
           // Theme Toggle Button
           if (themeController != null)
             _HoverIconButton(
               icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              tooltip: isDark ? 'Light Mode' : 'Dark Mode',
+              tooltip: isDark ? l10n.themeLightMode : l10n.themeDarkMode,
               onTap: () => themeController.toggleTheme(),
             ),
           // Profile Menu con avatar, info utente e logout
@@ -74,7 +81,7 @@ class HomeScreen extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Utilities',
+                  l10n.homeUtilities,
                   style: TextStyle(
                     fontSize: isMobile ? 24 : 32,
                     fontWeight: FontWeight.bold,
@@ -90,10 +97,10 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                         height: 8,
                         child: DecoratedBox(
@@ -103,10 +110,10 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
-                        'Online',
-                        style: TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w500),
+                        l10n.statusOnline,
+                        style: const TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -115,7 +122,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Seleziona uno strumento per iniziare',
+              l10n.homeSelectTool,
               style: TextStyle(fontSize: 15, color: context.textTertiaryColor),
             ),
             const SizedBox(height: 32),
@@ -133,31 +140,31 @@ class HomeScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(child: _ToolCard(
-                              title: 'Smart Todo',
-                              description: 'Liste intelligenti e collaborative. Importa da CSV/testo, invita partecipanti e gestisci task con filtri avanzati.',
+                              title: l10n.toolSmartTodo,
+                              description: l10n.toolSmartTodoDesc,
                               icon: Icons.check_circle_outline_rounded,
                               color: Colors.blue,
-                              features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                              features: [l10n.featureSmartImport, l10n.featureCollaboration, l10n.featureFilters],
                               onTap: () => Navigator.pushNamed(context, '/smart-todo'),
                               isDark: isDark,
                             )),
                             const SizedBox(width: 20),
                             Expanded(child: _ToolCard(
-                              title: 'Matrice Eisenhower',
-                              description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
+                              title: l10n.toolEisenhower,
+                              description: l10n.toolEisenhowerDesc,
                               icon: Icons.grid_view_rounded,
                               color: AppColors.success,
-                              features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
+                              features: [l10n.feature4Quadrants, l10n.featureDragDrop, l10n.featureCollaborative],
                               onTap: () => Navigator.pushNamed(context, '/eisenhower'),
                               isDark: isDark,
                             )),
                             const SizedBox(width: 20),
                             Expanded(child: _ToolCard(
-                              title: 'Estimation Room',
-                              description: 'Sessioni di stima collaborative per il team. Planning Poker, T-Shirt sizing e altri metodi per stimare user stories.',
+                              title: l10n.toolEstimation,
+                              description: l10n.toolEstimationDesc,
                               icon: Icons.casino_rounded,
                               color: AppColors.secondary,
-                              features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
+                              features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
                               onTap: () => Navigator.pushNamed(context, '/estimation-room'),
                               isDark: isDark,
                             )),
@@ -170,21 +177,21 @@ class HomeScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(child: _ToolCard(
-                              title: 'Agile Process Manager',
-                              description: 'Gestisci progetti agili completi con backlog, sprint planning, kanban board, metriche e retrospettive.',
+                              title: l10n.toolAgileProcess,
+                              description: l10n.toolAgileProcessDesc,
                               icon: Icons.rocket_launch_rounded,
                               color: AppColors.primary,
-                              features: const ['Scrum', 'Kanban', 'Hybrid'],
+                              features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
                               onTap: () => Navigator.pushNamed(context, '/agile-process'),
                               isDark: isDark,
                             )),
                             const SizedBox(width: 20),
                             Expanded(child: _ToolCard(
-                              title: 'Retrospective Board',
-                              description: 'Raccogli feedback dal team su cosa e andato bene, cosa migliorare e le azioni da intraprendere.',
+                              title: l10n.toolRetro,
+                              description: l10n.toolRetroDesc,
                               icon: Icons.psychology_rounded,
                               color: AppColors.pink,
-                              features: const ['Went Well', 'To Improve', 'Actions'],
+                              features: [l10n.featureWentWell, l10n.featureToImprove, l10n.featureActions],
                               isComingSoon: false,
                               onTap: () => Navigator.push(
                                 context,
@@ -205,54 +212,54 @@ class HomeScreen extends StatelessWidget {
                 return Column(
                   children: [
                     _ToolCard(
-                      title: 'Smart Todo',
-                      description: 'Liste intelligenti e collaborative. Importa da CSV, invita e gestisci.',
+                      title: l10n.toolSmartTodo,
+                      description: l10n.toolSmartTodoDescShort,
                       icon: Icons.check_circle_outline_rounded,
                       color: Colors.blue,
-                      features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                      features: [l10n.featureSmartImport, l10n.featureCollaboration, l10n.featureFilters],
                       onTap: () => Navigator.pushNamed(context, '/smart-todo'),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _ToolCard(
-                      title: 'Matrice Eisenhower',
-                      description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
+                      title: l10n.toolEisenhower,
+                      description: l10n.toolEisenhowerDesc,
                       icon: Icons.grid_view_rounded,
                       color: AppColors.success,
-                      features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
+                      features: [l10n.feature4Quadrants, l10n.featureDragDrop, l10n.featureCollaborative],
                       onTap: () => Navigator.pushNamed(context, '/eisenhower'),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _ToolCard(
-                      title: 'Estimation Room',
-                      description: 'Sessioni di stima collaborative per il team. Planning Poker, T-Shirt sizing e altri metodi.',
+                      title: l10n.toolEstimation,
+                      description: l10n.toolEstimationDescShort,
                       icon: Icons.casino_rounded,
                       color: AppColors.secondary,
-                      features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
+                      features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
                       onTap: () => Navigator.pushNamed(context, '/estimation-room'),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _ToolCard(
-                      title: 'Agile Process Manager',
-                      description: 'Gestisci progetti agili con backlog, sprint, kanban e metriche.',
+                      title: l10n.toolAgileProcess,
+                      description: l10n.toolAgileProcessDescShort,
                       icon: Icons.rocket_launch_rounded,
                       color: AppColors.primary,
-                      features: const ['Scrum', 'Kanban', 'Hybrid'],
+                      features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
                       onTap: () => Navigator.pushNamed(context, '/agile-process'),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _ToolCard(
-                      title: 'Retrospective Board',
-                      description: 'Raccogli feedback dal team su cosa e andato bene e cosa migliorare.',
+                      title: l10n.toolRetro,
+                      description: l10n.toolRetroDescShort,
                       icon: Icons.psychology_rounded,
                       color: AppColors.pink,
-                      features: const ['Went Well', 'To Improve', 'Actions'],
+                      features: [l10n.featureWentWell, l10n.featureToImprove, l10n.featureActions],
                       isComingSoon: false,
                       onTap: () => Navigator.pushNamed(
-                        context, 
+                        context,
                         '/agile-process',
                         arguments: {'initialAction': 'retro'},
                       ),
@@ -271,9 +278,10 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _showComingSoon(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Questa funzionalita sara disponibile presto!'),
+        content: Text(l10n.featureComingSoon),
         behavior: SnackBarBehavior.floating,
         backgroundColor: context.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -372,7 +380,7 @@ class _ToolCardState extends State<_ToolCard> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'Coming Soon',
+                          AppLocalizations.of(context)!.comingSoon,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w500,

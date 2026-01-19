@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import 'todo_task_card.dart';
@@ -54,8 +55,9 @@ class TodoResourceView extends StatelessWidget {
       }
     }
 
+    final l10n = AppLocalizations.of(context)!;
     final columns = [
-      _buildColumn(context, 'unassigned', 'Non Assegnati', groupedTasks['unassigned']!),
+      _buildColumn(context, 'unassigned', l10n.smartTodoUnassigned, groupedTasks['unassigned']!),
       ...list.participants.entries.map((e) {
         return _buildColumn(context, e.key, e.value.displayName ?? e.key.split('@')[0], groupedTasks[e.key]!);
       }),
@@ -156,7 +158,7 @@ class TodoResourceView extends StatelessWidget {
                 child: columnTasks.isEmpty
                   ? Center(
                       child: Text(
-                        'Nessun task',
+                        AppLocalizations.of(context)!.smartTodoNoTasksInColumn,
                         style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[400], fontStyle: FontStyle.italic),
                       ),
                     )

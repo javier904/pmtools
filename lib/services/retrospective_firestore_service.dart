@@ -17,7 +17,7 @@ class RetrospectiveFirestoreService {
   
   // Reuse existing collection or generic path. Assuming standard Agile project structure.
   CollectionReference<Map<String, dynamic>> _getStoriesCollection(String projectId) =>
-      _db.collection('projects').doc(projectId).collection('stories');
+      _db.collection('agile_projects').doc(projectId).collection('stories');
 
   /// Crea una nuova retrospettiva
   Future<String> createRetrospective(RetrospectiveModel retro) async {
@@ -36,8 +36,8 @@ class RetrospectiveFirestoreService {
       timer: const RetroTimer(isRunning: false, durationMinutes: 0),
       // Ensure participants list contains creator
       participantEmails: [
-        ...retro.participantEmails,
-        if (!retro.participantEmails.contains(retro.createdBy)) retro.createdBy
+        ...retro.participantEmails.map((e) => e.toLowerCase()),
+        if (!retro.participantEmails.contains(retro.createdBy)) retro.createdBy.toLowerCase()
       ],
     );
     
@@ -92,6 +92,11 @@ class RetrospectiveFirestoreService {
   /// Stream di tutte le retrospettive visibili a un utente (Progetto + Standalone)
   /// Unisce i risultati di 'participantEmails' e 'createdBy' per supportare dati legacy.
   Stream<List<RetrospectiveModel>> streamUserRetrospectives(String userEmail) {
+    if (userEmail.isEmpty) {
+      return Stream.value([]);
+    }
+    
+    final lowerUserEmail = userEmail.toLowerCase();
     final controller = StreamController<List<RetrospectiveModel>>();
     List<RetrospectiveModel> list1 = []; // Participants
     List<RetrospectiveModel> list2 = []; // CreatedBy
@@ -116,7 +121,7 @@ class RetrospectiveFirestoreService {
     }
 
     final sub1 = _retrosCollection
-        .where('participantEmails', arrayContains: userEmail)
+        .where('participantEmails', arrayContains: lowerUserEmail)
         .snapshots()
         .listen((snapshot) {
       list1 = snapshot.docs
@@ -126,7 +131,7 @@ class RetrospectiveFirestoreService {
     });
 
     final sub2 = _retrosCollection
-        .where('createdBy', isEqualTo: userEmail)
+        .where('createdBy', isEqualTo: lowerUserEmail)
         .snapshots()
         .listen((snapshot) {
       list2 = snapshot.docs

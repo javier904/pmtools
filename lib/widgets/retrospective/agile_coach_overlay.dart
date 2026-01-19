@@ -1,6 +1,7 @@
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 class AgileCoachOverlay extends StatefulWidget {
   final RetroPhase phase;
@@ -17,7 +18,7 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
   @override
   Widget build(BuildContext context) {
     // Use primary color for the coach bubble to match the app theme
-    final bgColor = Theme.of(context).colorScheme.primary; 
+    final bgColor = Theme.of(context).colorScheme.primary;
     final fgColor = Theme.of(context).colorScheme.onPrimary;
 
     return AnimatedContainer(
@@ -25,7 +26,7 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
       width: _isExpanded ? 300 : 60,
       height: _isExpanded ? 160 : 60,
       decoration: BoxDecoration(
-        color: bgColor, 
+        color: bgColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -49,6 +50,8 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
   }
 
   Widget _buildExpandedContent(Color fgColor) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Stack(
       children: [
         Positioned(
@@ -69,7 +72,7 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
                   Icon(Icons.person_outline, color: fgColor),
                   const SizedBox(width: 8),
                   Text(
-                    'Agile Coach',
+                    l10n.retroAgileCoach,
                     style: TextStyle(color: fgColor, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -78,7 +81,7 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
               Expanded(
                 child: SingleChildScrollView(
                   child: Text(
-                    _getCoachMessage(),
+                    _getCoachMessage(l10n),
                     style: TextStyle(color: fgColor.withOpacity(0.9), fontSize: 13),
                   ),
                 ),
@@ -90,21 +93,20 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
     );
   }
 
-  String _getCoachMessage() {
+  String _getCoachMessage(AppLocalizations l10n) {
     switch (widget.phase) {
       case RetroPhase.setup:
-        return 'Scegliete un template. "Start/Stop/Continue" è ottimo per i nuovi team. Assicuratevi che tutti siano presenti.';
+        return l10n.retroCoachSetup;
       case RetroPhase.icebreaker:
-        return 'Rompete il ghiaccio! Fate un giro veloce chiedendo "Come state?" o usando una domanda divertente.';
+        return l10n.retroCoachIcebreaker;
       case RetroPhase.writing:
-        return 'Siamo in modalità INCOGNITO. Scrivete le card liberamente, nessuno vedrà cosa scrivete fino alla fine. Evitate bias!';
+        return l10n.retroCoachWriting;
       case RetroPhase.voting:
-        return 'Review Time! Tutte le card sono visibili. Leggetele e usate i vostri 3 voti per decidere di cosa discutere.';
+        return l10n.retroCoachVoting;
       case RetroPhase.discuss:
-        return 'Focus sulle card più votate. Definite Action Item chiari: Chi fa cosa entro quando?';
+        return l10n.retroCoachDiscuss;
       case RetroPhase.completed:
-        return 'Ottimo lavoro! La retrospettiva è conclusa. Gli Action Item sono stati inviati al Backlog.';
+        return l10n.retroCoachCompleted;
     }
   }
 }
-

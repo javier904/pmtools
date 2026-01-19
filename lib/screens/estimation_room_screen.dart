@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../themes/app_theme.dart';
+import '../l10n/app_localizations.dart';
 import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_story_model.dart';
 import '../models/planning_poker_participant_model.dart';
@@ -74,7 +75,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           await _loadStories(session.id);
         }
       } catch (e) {
-        _showError('Errore caricamento sessione: $e');
+        final l10n = AppLocalizations.of(context)!;
+        _showError('${l10n.errorLoadingSession}: $e');
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }
@@ -90,7 +92,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         await _loadStories(_selectedSession!.id);
       }
     } catch (e) {
-      _showError('Errore caricamento dati: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorLoading}: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -107,26 +110,28 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         });
       }
     } catch (e) {
-      _showError('Errore caricamento stories: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorLoadingStories}: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         leading: _selectedSession != null
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => setState(() => _selectedSession = null),
-                tooltip: 'Torna alle sessioni',
+                tooltip: l10n.estimationBackToSessions,
               )
             : null,
         title: Row(
           children: [
             Icon(_selectedSession != null ? Icons.analytics : Icons.casino_rounded),
             const SizedBox(width: 8),
-            Text(_selectedSession?.name ?? 'Estimation Room'),
+            Text(_selectedSession?.name ?? l10n.estimationTitle),
           ],
         ),
         actions: _buildAppBarActions(),
@@ -138,6 +143,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
   List<Widget> _buildAppBarActions() {
     if (_selectedSession == null) return [];
+    final l10n = AppLocalizations.of(context)!;
 
     return [
       // Status badge
@@ -149,20 +155,20 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           label: Text('${_selectedSession!.participantCount}'),
           child: const Icon(Icons.people),
         ),
-        tooltip: 'Partecipanti',
+        tooltip: l10n.participants,
         onPressed: _showParticipantsDialog,
       ),
       // Impostazioni
       IconButton(
         icon: const Icon(Icons.settings),
-        tooltip: 'Impostazioni Sessione',
+        tooltip: l10n.estimationSessionSettings,
         onPressed: _showSessionSettings,
       ),
       const SizedBox(width: 8),
       // Torna alla lista
       TextButton.icon(
         icon: const Icon(Icons.arrow_back, size: 18),
-        label: const Text('Lista'),
+        label: Text(l10n.estimationList),
         style: TextButton.styleFrom(foregroundColor: Colors.white),
         onPressed: () => setState(() {
           _selectedSession = null;
@@ -175,6 +181,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildStatusBadge() {
+    final l10n = AppLocalizations.of(context)!;
     final status = _selectedSession!.status;
     Color color;
     String label;
@@ -182,15 +189,15 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     switch (status) {
       case PlanningPokerSessionStatus.draft:
         color = Colors.grey;
-        label = 'Bozza';
+        label = l10n.sessionStatusDraft;
         break;
       case PlanningPokerSessionStatus.active:
         color = Colors.green;
-        label = 'Attiva';
+        label = l10n.sessionStatusActive;
         break;
       case PlanningPokerSessionStatus.completed:
         color = Colors.blue;
-        label = 'Completata';
+        label = l10n.sessionStatusCompleted;
         break;
     }
 
@@ -217,6 +224,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Widget _buildSessionList() {
+    final l10n = AppLocalizations.of(context)!;
     return StreamBuilder<List<PlanningPokerSessionModel>>(
       stream: _firestoreService.streamSessionsByUser(_currentUserEmail),
       builder: (context, snapshot) {
@@ -231,11 +239,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: Colors.red),
                 const SizedBox(height: 16),
-                Text('Errore: ${snapshot.error}'),
+                Text('${l10n.stateError}: ${snapshot.error}'),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _loadData,
-                  child: const Text('Riprova'),
+                  child: Text(l10n.actionRetry),
                 ),
               ],
             ),
@@ -266,7 +274,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   const Icon(Icons.folder_open, color: Colors.green),
                   const SizedBox(width: 8),
                   Text(
-                    'Le tue sessioni (${filteredSessions.length}/${sessions.length})',
+                    l10n.estimationSessionsCount(filteredSessions.length, sessions.length),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -310,7 +318,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                             Icon(Icons.search_off, size: 48, color: context.textMutedColor),
                             const SizedBox(height: 16),
                             Text(
-                              'Nessuna sessione trovata',
+                              l10n.estimationNoSessionFound,
                               style: TextStyle(color: context.textSecondaryColor),
                             ),
                             const SizedBox(height: 8),
@@ -320,7 +328,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                                 _statusFilter = null;
                                 _modeFilter = null;
                               }),
-                              child: const Text('Rimuovi filtri'),
+                              child: Text(l10n.filterRemove),
                             ),
                           ],
                         ),
@@ -361,6 +369,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -368,7 +377,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           Icon(Icons.style, size: 80, color: context.borderColor),
           const SizedBox(height: 16),
           Text(
-            'Nessuna sessione creata',
+            l10n.estimationNoSessions,
             style: TextStyle(
               fontSize: 18,
               color: context.textSecondaryColor,
@@ -377,7 +386,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Crea la tua prima sessione di stima\nper stimare le attività con il team',
+            l10n.estimationCreateFirstSession,
             textAlign: TextAlign.center,
             style: TextStyle(color: context.textTertiaryColor),
           ),
@@ -385,7 +394,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           ElevatedButton.icon(
             onPressed: _showCreateSessionDialog,
             icon: const Icon(Icons.add),
-            label: const Text('Nuova Sessione'),
+            label: Text(l10n.estimationNewSession),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
@@ -396,20 +405,21 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildSessionCard(PlanningPokerSessionModel session) {
+    final l10n = AppLocalizations.of(context)!;
     Color statusColor;
     String statusLabel;
     switch (session.status) {
       case PlanningPokerSessionStatus.draft:
         statusColor = Colors.grey;
-        statusLabel = 'Bozza';
+        statusLabel = l10n.sessionStatusDraft;
         break;
       case PlanningPokerSessionStatus.active:
         statusColor = Colors.green;
-        statusLabel = 'Attiva';
+        statusLabel = l10n.sessionStatusActive;
         break;
       case PlanningPokerSessionStatus.completed:
         statusColor = Colors.blue;
-        statusLabel = 'Completata';
+        statusLabel = l10n.sessionStatusCompleted;
         break;
     }
 
@@ -434,7 +444,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 children: [
                   // Icona verde con status indicator
                   Tooltip(
-                    message: '${_getEstimationModeName(session.estimationMode)} - $statusLabel\nClicca per aprire',
+                    message: '${_getEstimationModeName(session.estimationMode)} - $statusLabel',
                     child: Container(
                       width: 26,
                       height: 26,
@@ -508,45 +518,45 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'edit',
                           child: Row(
                             children: [
-                              Icon(Icons.edit, size: 16),
-                              SizedBox(width: 8),
-                              Text('Modifica', style: TextStyle(fontSize: 13)),
+                              const Icon(Icons.edit, size: 16),
+                              const SizedBox(width: 8),
+                              Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
                             ],
                           ),
                         ),
                         if (session.isDraft)
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'start',
                             child: Row(
                               children: [
-                                Icon(Icons.play_arrow, size: 16, color: Colors.green),
-                                SizedBox(width: 8),
-                                Text('Avvia', style: TextStyle(fontSize: 13, color: Colors.green)),
+                                const Icon(Icons.play_arrow, size: 16, color: Colors.green),
+                                const SizedBox(width: 8),
+                                Text(l10n.estimationStart, style: const TextStyle(fontSize: 13, color: Colors.green)),
                               ],
                             ),
                           ),
                         if (session.isActive)
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'complete',
                             child: Row(
                               children: [
-                                Icon(Icons.check, size: 16, color: Colors.blue),
-                                SizedBox(width: 8),
-                                Text('Completa', style: TextStyle(fontSize: 13, color: Colors.blue)),
+                                const Icon(Icons.check, size: 16, color: Colors.blue),
+                                const SizedBox(width: 8),
+                                Text(l10n.estimationComplete, style: const TextStyle(fontSize: 13, color: Colors.blue)),
                               ],
                             ),
                           ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete, size: 16, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Elimina', style: TextStyle(fontSize: 13, color: Colors.red)),
+                              const Icon(Icons.delete, size: 16, color: Colors.red),
+                              const SizedBox(width: 8),
+                              Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: Colors.red)),
                             ],
                           ),
                         ),
@@ -558,7 +568,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               const SizedBox(height: 4),
               // Progress bar
               Tooltip(
-                message: 'Avanzamento: ${session.completedStoryCount}/${session.storyCount} stories (${(completionPercent * 100).toStringAsFixed(0)}%)',
+                message: l10n.estimationProgress(session.completedStoryCount, session.storyCount, (completionPercent * 100).toStringAsFixed(0)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(2),
                   child: LinearProgressIndicator(
@@ -578,19 +588,19 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   _buildCompactSessionStat(
                     Icons.list_alt,
                     '${session.storyCount}',
-                    'Stories totali',
+                    l10n.estimationStoriesTotal,
                   ),
                   const SizedBox(width: 6),
                   _buildCompactSessionStat(
                     Icons.check_circle_outline,
                     '${session.completedStoryCount}',
-                    'Stories completate',
+                    l10n.estimationStoriesCompleted,
                   ),
                   const SizedBox(width: 6),
                   _buildCompactSessionStat(
                     Icons.people,
                     '${session.participantCount}',
-                    'Partecipanti attivi',
+                    l10n.estimationParticipantsActive,
                   ),
                 ],
               ),
@@ -798,6 +808,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildNoActiveStory(List<PlanningPokerStoryModel> stories) {
+    final l10n = AppLocalizations.of(context)!;
     final pendingStories = stories.pending;
     final completedCount = stories.completed.length;
     final totalEstimate = stories.totalEstimate;
@@ -818,8 +829,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           const SizedBox(height: 16),
           Text(
             completedCount == stories.length && stories.isNotEmpty
-                ? 'Tutte le stories sono state stimate!'
-                : 'Nessuna votazione in corso',
+                ? l10n.estimationAllStoriesEstimated
+                : l10n.estimationNoVotingInProgress,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -829,7 +840,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           const SizedBox(height: 8),
           if (completedCount > 0)
             Text(
-              'Completate: $completedCount/${stories.length} | Stima totale: $totalEstimate pt',
+              l10n.estimationCompletedLabel(completedCount, stories.length, totalEstimate.toString()),
               style: TextStyle(color: context.textSecondaryColor),
             ),
           const SizedBox(height: 24),
@@ -838,14 +849,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             ElevatedButton.icon(
               onPressed: () => _startVoting(pendingStories.first.id),
               icon: const Icon(Icons.play_arrow),
-              label: Text('Vota: ${pendingStories.first.title}'),
+              label: Text(l10n.estimationVoteStory(pendingStories.first.title)),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
             ),
           if (stories.isEmpty)
             Text(
-              'Aggiungi delle stories per iniziare',
+              l10n.estimationAddStoriesToStart,
               style: TextStyle(color: context.textTertiaryColor),
             ),
         ],
@@ -854,6 +865,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildCurrentStoryCard(PlanningPokerStoryModel story, PlanningPokerSessionModel session) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -893,9 +905,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                         color: Colors.orange,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Text(
-                        'IN VOTAZIONE',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.estimationInVoting,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -933,7 +945,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   ElevatedButton.icon(
                     onPressed: story.voteCount > 0 ? () => _revealVotes(story.id) : null,
                     icon: const Icon(Icons.visibility),
-                    label: const Text('Rivela'),
+                    label: Text(l10n.estimationReveal),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
                     ),
@@ -941,7 +953,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.skip_next),
-                  tooltip: 'Salta',
+                  tooltip: l10n.estimationSkip,
                   onPressed: () => _skipStory(story.id),
                 ),
               ],
@@ -976,6 +988,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildStoriesList(List<PlanningPokerStoryModel> stories) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
@@ -984,7 +997,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             const Icon(Icons.list_alt, size: 18, color: Colors.green),
             const SizedBox(width: 8),
             Text(
-              'Stories (${stories.length})',
+              '${l10n.estimationStories} (${stories.length})',
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             const Spacer(),
@@ -993,7 +1006,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               IconButton(
                 icon: const Icon(Icons.add, size: 20),
                 onPressed: _showAddStoryDialog,
-                tooltip: 'Aggiungi Story',
+                tooltip: l10n.estimationAddStory,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
@@ -1119,65 +1132,68 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       break;
                   }
                 },
-                itemBuilder: (context) => [
+                itemBuilder: (context) {
+                  final l10n = AppLocalizations.of(context)!;
+                  return [
                   if (story.isPending && _selectedSession!.isFacilitator(_currentUserEmail))
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'vote',
                       child: Row(
                         children: [
-                          Icon(Icons.play_arrow, size: 18, color: Colors.green),
-                          SizedBox(width: 8),
-                          Text('Inizia votazione'),
+                          const Icon(Icons.play_arrow, size: 18, color: Colors.green),
+                          const SizedBox(width: 8),
+                          Text(l10n.estimationStartVoting),
                         ],
                       ),
                     ),
                   // Vedi voti - disponibile per tutti per stories con voti
                   if ((story.isCompleted || story.isRevealed) && story.hasVotes)
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'view',
                       child: Row(
                         children: [
-                          Icon(Icons.visibility, size: 18, color: Colors.blue),
-                          SizedBox(width: 8),
-                          Text('Vedi voti'),
+                          const Icon(Icons.visibility, size: 18, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Text(l10n.estimationViewVotes),
                         ],
                       ),
                     ),
                   // Dettaglio story - disponibile sempre per vedere descrizione e motivazione
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'detail',
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, size: 18, color: Colors.purple),
-                        SizedBox(width: 8),
-                        Text('Vedi dettaglio'),
+                        const Icon(Icons.info_outline, size: 18, color: Colors.purple),
+                        const SizedBox(width: 8),
+                        Text(l10n.estimationViewDetail),
                       ],
                     ),
                   ),
                   // Ri-vota per stories completate o rivelate (solo facilitatori)
                   if ((story.isCompleted || story.isRevealed) && _selectedSession!.isFacilitator(_currentUserEmail))
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'revote',
                       child: Row(
                         children: [
-                          Icon(Icons.refresh, size: 18, color: Colors.orange),
-                          SizedBox(width: 8),
-                          Text('Ri-vota', style: TextStyle(color: Colors.orange)),
+                          const Icon(Icons.refresh, size: 18, color: Colors.orange),
+                          const SizedBox(width: 8),
+                          Text(l10n.voteRevote, style: const TextStyle(color: Colors.orange)),
                         ],
                       ),
                     ),
                   if (_selectedSession!.isFacilitator(_currentUserEmail))
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete, size: 18, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Elimina', style: TextStyle(color: Colors.red)),
+                          const Icon(Icons.delete, size: 18, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(l10n.actionDelete, style: const TextStyle(color: Colors.red)),
                         ],
                       ),
                     ),
-                ],
+                ];
+                },
               ),
             ],
           ),
@@ -1200,17 +1216,18 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   /// Costruisce il testo del tooltip con i voti degli utenti
   String _buildVotesTooltip(PlanningPokerStoryModel story) {
     if (!story.hasVotes) return '';
+    final l10n = AppLocalizations.of(context)!;
 
     final lines = <String>[];
 
     // Stima finale
     if (story.finalEstimate != null) {
-      lines.add('Stima finale: ${story.finalEstimate}');
+      lines.add('${l10n.estimationFinalEstimateLabel} ${story.finalEstimate}');
       lines.add('');
     }
 
     // Voti degli utenti
-    lines.add('Voti:');
+    lines.add('${l10n.voteVoters}:');
     for (final entry in story.votes.entries) {
       final email = entry.key;
       final vote = entry.value;
@@ -1227,18 +1244,19 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Widget? _buildFAB() {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedSession == null) {
       return FloatingActionButton.extended(
         onPressed: _showCreateSessionDialog,
         icon: const Icon(Icons.add),
-        label: const Text('Nuova Sessione'),
+        label: Text(l10n.estimationNewSession),
         backgroundColor: Colors.green,
       );
     } else if (_selectedSession!.isFacilitator(_currentUserEmail)) {
       return FloatingActionButton.extended(
         onPressed: _showAddStoryDialog,
         icon: const Icon(Icons.add_task),
-        label: const Text('Aggiungi Story'),
+        label: Text(l10n.estimationAddStory),
         backgroundColor: Colors.green,
       );
     }
@@ -1273,9 +1291,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           projectName: result['projectName'],
           projectCode: result['projectCode'],
         );
-        _showSuccess('Sessione creata con successo');
+        final l10n = AppLocalizations.of(context)!;
+        _showSuccess(l10n.sessionCreatedSuccess);
       } catch (e) {
-        _showError('Errore creazione sessione: $e');
+        final l10n = AppLocalizations.of(context)!;
+        _showError('${l10n.errorCreatingSession}: $e');
       }
     }
   }
@@ -1307,9 +1327,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           clearTeam: result['teamId'] == null && session.teamId != null,
           clearBusinessUnit: result['businessUnitId'] == null && session.businessUnitId != null,
         );
-        _showSuccess('Sessione aggiornata');
+        final l10n = AppLocalizations.of(context)!;
+        _showSuccess(l10n.sessionUpdated);
       } catch (e) {
-        _showError('Errore aggiornamento: $e');
+        final l10n = AppLocalizations.of(context)!;
+        _showError('${l10n.errorUpdatingSession}: $e');
       }
     }
   }
@@ -1334,9 +1356,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           description: result['description'] ?? '',
         );
         await _loadStories(_selectedSession!.id);
-        _showSuccess('Story aggiunta');
+        final l10n = AppLocalizations.of(context)!;
+        _showSuccess(l10n.storyAdded);
       } catch (e) {
-        _showError('Errore aggiunta story: $e');
+        final l10n = AppLocalizations.of(context)!;
+        _showError('${l10n.errorAddingStory}: $e');
       }
     }
   }
@@ -1357,23 +1381,21 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Future<void> _confirmDeleteSession(PlanningPokerSessionModel session) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Sessione'),
-        content: Text(
-          'Sei sicuro di voler eliminare "${session.name}"?\n'
-          'Verranno eliminate anche tutte le ${session.storyCount} stories.',
-        ),
+        title: Text(l10n.deleteSessionTitle),
+        content: Text(l10n.deleteSessionConfirm(session.name, session.storyCount)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Elimina'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -1382,28 +1404,29 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     if (confirmed == true) {
       try {
         await _firestoreService.deleteSession(session.id);
-        _showSuccess('Sessione eliminata');
+        _showSuccess(l10n.sessionDeleted);
       } catch (e) {
-        _showError('Errore eliminazione: $e');
+        _showError('${l10n.errorDeletingSession}: $e');
       }
     }
   }
 
   Future<void> _confirmDeleteStory(PlanningPokerStoryModel story) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Story'),
-        content: Text('Sei sicuro di voler eliminare "${story.title}"?'),
+        title: Text(l10n.deleteStoryTitle),
+        content: Text(l10n.deleteStoryConfirm(story.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Elimina'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -1416,9 +1439,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           storyId: story.id,
         );
         await _loadStories(_selectedSession!.id);
-        _showSuccess('Story eliminata');
+        _showSuccess(l10n.storyDeleted);
       } catch (e) {
-        _showError('Errore eliminazione: $e');
+        _showError('${l10n.errorDeletingSession}: $e');
       }
     }
   }
@@ -1437,20 +1460,22 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Future<void> _startSession(PlanningPokerSessionModel session) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       await _firestoreService.startSession(session.id);
-      _showSuccess('Sessione avviata');
+      _showSuccess(l10n.sessionStarted);
     } catch (e) {
-      _showError('Errore avvio sessione: $e');
+      _showError('${l10n.errorStartingSession}: $e');
     }
   }
 
   Future<void> _completeSession(PlanningPokerSessionModel session) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       await _firestoreService.completeSession(session.id);
-      _showSuccess('Sessione completata');
+      _showSuccess(l10n.sessionCompletedSuccess);
     } catch (e) {
-      _showError('Errore completamento sessione: $e');
+      _showError('${l10n.errorCompletingSession}: $e');
     }
   }
 
@@ -1462,12 +1487,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         storyId: storyId,
       );
     } catch (e) {
-      _showError('Errore avvio votazione: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorStartingVoting}: $e');
     }
   }
 
   /// Mostra un dialog con i voti della story (senza modificarli)
   void _viewStoryVotes(PlanningPokerStoryModel story) {
+    final l10n = AppLocalizations.of(context)!;
     final stats = story.statistics ?? story.calculateStatistics();
 
     showDialog(
@@ -1475,11 +1502,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.visibility, color: Colors.blue),
+            const Icon(Icons.visibility, color: Colors.blue),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Voti: ${story.title}',
+                l10n.estimationVotesOf(story.title),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -1508,7 +1535,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       children: [
                         const Icon(Icons.check_circle, color: Colors.green),
                         const SizedBox(width: 8),
-                        const Text('Stima finale:', style: TextStyle(fontWeight: FontWeight.w500)),
+                        Text(l10n.estimationFinalEstimateLabel, style: const TextStyle(fontWeight: FontWeight.w500)),
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -1531,17 +1558,17 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 // Statistiche
                 Row(
                   children: [
-                    _buildMiniStatCard('Media', stats.numericAverage?.toStringAsFixed(1) ?? '-', Colors.blue),
+                    _buildMiniStatCard(l10n.voteAverage, stats.numericAverage?.toStringAsFixed(1) ?? '-', Colors.blue),
                     const SizedBox(width: 8),
-                    _buildMiniStatCard('Mediana', stats.numericMedian?.toStringAsFixed(1) ?? '-', Colors.green),
+                    _buildMiniStatCard(l10n.voteMedian, stats.numericMedian?.toStringAsFixed(1) ?? '-', Colors.green),
                     const SizedBox(width: 8),
-                    _buildMiniStatCard('Moda', stats.mode ?? '-', Colors.orange),
+                    _buildMiniStatCard(l10n.voteMode, stats.mode ?? '-', Colors.orange),
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Voti dei partecipanti:',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                Text(
+                  l10n.estimationParticipantVotes,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
                 // Lista voti
@@ -1591,7 +1618,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Chiudi'),
+            child: Text(l10n.actionClose),
           ),
         ],
       ),
@@ -1643,7 +1670,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       );
       setState(() => _myVote = value);
     } catch (e) {
-      _showError('Errore invio voto: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorSubmittingVote}: $e');
     }
   }
 
@@ -1663,7 +1691,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       );
       setState(() => _myVote = vote.value);
     } catch (e) {
-      _showError('Errore invio voto: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorSubmittingVote}: $e');
     }
   }
 
@@ -1675,7 +1704,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         storyId: storyId,
       );
     } catch (e) {
-      _showError('Errore reveal: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorRevealingVotes}: $e');
     }
   }
 
@@ -1688,12 +1718,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       );
       setState(() => _myVote = null);
     } catch (e) {
-      _showError('Errore reset: $e');
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorResetVoting}: $e');
     }
   }
 
   Future<void> _setFinalEstimate(String storyId, String estimate) async {
     if (_selectedSession == null) return;
+    final l10n = AppLocalizations.of(context)!;
 
     // Mostra dialog per inserire dettaglio spiegazione
     final result = await _showEstimateExplanationDialog(estimate);
@@ -1706,25 +1738,26 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         estimate: result['estimate'],
         explanationDetail: result['explanationDetail'],
       );
-      _showSuccess('Stima salvata: ${result['estimate']}');
+      _showSuccess(l10n.estimateSaved(result['estimate']));
     } catch (e) {
-      _showError('Errore salvataggio stima: $e');
+      _showError('${l10n.errorSavingEstimate}: $e');
     }
   }
 
   /// Mostra dialog per confermare stima e aggiungere spiegazione
   Future<Map<String, dynamic>?> _showEstimateExplanationDialog(String suggestedEstimate) async {
+    final l10n = AppLocalizations.of(context)!;
     final estimateController = TextEditingController(text: suggestedEstimate);
     final explanationController = TextEditingController();
 
     return showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 8),
-            Text('Conferma Stima Finale'),
+            const Icon(Icons.check_circle, color: Colors.green),
+            const SizedBox(width: 8),
+            Text(l10n.estimationConfirmFinalEstimate),
           ],
         ),
         content: SizedBox(
@@ -1733,15 +1766,15 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Stima finale',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              Text(
+                l10n.voteFinalEstimate,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: estimateController,
                 decoration: InputDecoration(
-                  hintText: 'Es: 5, 8, 13...',
+                  hintText: l10n.estimationHintEstimate,
                   prefixIcon: const Icon(Icons.numbers),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -1750,16 +1783,16 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Motivazione della stima (opzionale)',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              Text(
+                l10n.estimationEstimateRationale,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: explanationController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Spiega il razionale della stima...\nEs: Complessita\' tecnica elevata, dipendenze esterne...',
+                  hintText: l10n.estimationExplainRationale,
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 40),
                     child: Icon(Icons.notes),
@@ -1780,10 +1813,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   children: [
                     Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'La motivazione aiuta il team a ricordare le decisioni prese durante la stima.',
-                        style: TextStyle(fontSize: 12, color: Colors.black87),
+                        l10n.estimationRationaleHelp,
+                        style: const TextStyle(fontSize: 12, color: Colors.black87),
                       ),
                     ),
                   ],
@@ -1795,13 +1828,13 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton.icon(
             onPressed: () {
               if (estimateController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Inserisci una stima valida')),
+                  SnackBar(content: Text(l10n.estimationEnterValidEstimate)),
                 );
                 return;
               }
@@ -1813,7 +1846,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               });
             },
             icon: const Icon(Icons.check),
-            label: const Text('Conferma'),
+            label: Text(l10n.actionConfirm),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
@@ -1826,6 +1859,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
   /// Mostra dialog con dettaglio completo della story
   void _showStoryDetailDialog(PlanningPokerStoryModel story) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1851,9 +1885,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               children: [
                 // Descrizione
                 if (story.description.isNotEmpty) ...[
-                  const Text(
-                    'Descrizione',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
+                  Text(
+                    l10n.formDescription,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -1869,9 +1903,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
                 // Stima finale
                 if (story.finalEstimate != null) ...[
-                  const Text(
-                    'Stima finale',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
+                  Text(
+                    l10n.voteFinalEstimate,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -1900,7 +1934,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'punti / giorni',
+                          l10n.estimationPointsOrDays,
                           style: TextStyle(color: context.textSecondaryColor),
                         ),
                       ],
@@ -1911,9 +1945,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
                 // Motivazione della stima
                 if (story.explanationDetail != null && story.explanationDetail!.isNotEmpty) ...[
-                  const Text(
-                    'Motivazione della stima',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
+                  Text(
+                    l10n.estimationEstimateRationale,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -1949,12 +1983,12 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildDetailInfoRow('Stato', _getStatusLabel(story.status)),
-                      _buildDetailInfoRow('Ordine', '#${story.order + 1}'),
-                      _buildDetailInfoRow('Voti ricevuti', '${story.votes.length}'),
+                      _buildDetailInfoRow(l10n.estimationStatus, _getStatusLabel(context, story.status)),
+                      _buildDetailInfoRow(l10n.estimationOrder, '#${story.order + 1}'),
+                      _buildDetailInfoRow(l10n.estimationVotesReceived, '${story.votes.length}'),
                       if (story.hasVotes) ...[
-                        _buildDetailInfoRow('Media voti', story.statistics?.numericAverage?.toStringAsFixed(1) ?? '-'),
-                        _buildDetailInfoRow('Consenso', (story.statistics?.consensus ?? false) ? 'Si\'' : 'No'),
+                        _buildDetailInfoRow(l10n.estimationAverageVotes, story.statistics?.numericAverage?.toStringAsFixed(1) ?? '-'),
+                        _buildDetailInfoRow(l10n.estimationConsensus, (story.statistics?.consensus ?? false) ? l10n.yes : l10n.no),
                       ],
                     ],
                   ),
@@ -1966,7 +2000,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Chiudi'),
+            child: Text(l10n.actionClose),
           ),
         ],
       ),
@@ -1986,28 +2020,30 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     );
   }
 
-  String _getStatusLabel(StoryStatus status) {
+  String _getStatusLabel(BuildContext context, StoryStatus status) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case StoryStatus.pending:
-        return 'In attesa';
+        return l10n.storyStatusPending;
       case StoryStatus.voting:
-        return 'In votazione';
+        return l10n.storyStatusVoting;
       case StoryStatus.revealed:
-        return 'Voti rivelati';
+        return l10n.storyStatusRevealed;
       case StoryStatus.completed:
-        return 'Completata';
+        return l10n.sessionStatusCompleted;
     }
   }
 
   Future<void> _skipStory(String storyId) async {
     if (_selectedSession == null) return;
+    final l10n = AppLocalizations.of(context)!;
     try {
       await _firestoreService.skipStory(
         sessionId: _selectedSession!.id,
         storyId: storyId,
       );
     } catch (e) {
-      _showError('Errore skip: $e');
+      _showError('${l10n.errorSkipping}: $e');
     }
   }
 
@@ -2093,16 +2129,17 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Row(
         children: [
           const Icon(Icons.people, color: Colors.green),
           const SizedBox(width: 8),
-          const Expanded(child: Text('Gestione Partecipanti')),
+          Expanded(child: Text(l10n.participantManagement)),
           // Copia link
           IconButton(
             icon: const Icon(Icons.link, size: 20),
-            tooltip: 'Copia link sessione',
+            tooltip: l10n.participantCopySessionLink,
             onPressed: _copyShareableLink,
           ),
         ],
@@ -2119,14 +2156,14 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                 labelColor: Colors.green,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
-                tabs: const [
+                tabs: [
                   Tab(
-                    icon: Icon(Icons.people, size: 18),
-                    text: 'Partecipanti',
+                    icon: const Icon(Icons.people, size: 18),
+                    text: l10n.participants,
                   ),
                   Tab(
-                    icon: Icon(Icons.mail_outline, size: 18),
-                    text: 'Inviti',
+                    icon: const Icon(Icons.mail_outline, size: 18),
+                    text: l10n.participantInvitesTab,
                   ),
                 ],
               ),
@@ -2149,7 +2186,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Chiudi'),
+          child: Text(l10n.actionClose),
         ),
       ],
     );
@@ -2160,6 +2197,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   // ══════════════════════════════════════════════════════════════════════════════
 
   Widget _buildParticipantsTab() {
+    final l10n = AppLocalizations.of(context)!;
     return StreamBuilder<PlanningPokerSessionModel?>(
       stream: widget.firestoreService.streamSession(widget.sessionId),
       builder: (context, snapshot) {
@@ -2169,7 +2207,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
 
         final session = snapshot.data;
         if (session == null) {
-          return const Center(child: Text('Sessione non trovata'));
+          return Center(child: Text(l10n.sessionNotFound));
         }
 
         final participants = session.participants.entries.toList()
@@ -2200,9 +2238,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Link Sessione (condividi con i partecipanti)',
-                          style: TextStyle(
+                        Text(
+                          l10n.participantSessionLink,
+                          style: const TextStyle(
                             fontSize: 11,
                             color: Colors.blue,
                             fontWeight: FontWeight.w500,
@@ -2221,7 +2259,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                   IconButton(
                     icon: const Icon(Icons.copy, size: 18),
                     onPressed: _copyShareableLink,
-                    tooltip: 'Copia link',
+                    tooltip: l10n.copyLink,
                   ),
                 ],
               ),
@@ -2230,9 +2268,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
 
             // Aggiungi partecipante (solo facilitator)
             if (widget.isFacilitator) ...[
-              const Text(
-                'Aggiungi Partecipante Diretto',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              Text(
+                l10n.participantAddDirect,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
               const SizedBox(height: 8),
               Row(
@@ -2241,12 +2279,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                     flex: 2,
                     child: TextField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email *',
-                        hintText: 'email@esempio.com',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.participantEmailRequired,
+                        hintText: l10n.participantEmailHint,
+                        border: const OutlineInputBorder(),
                         isDense: true,
-                        prefixIcon: Icon(Icons.email, size: 18),
+                        prefixIcon: const Icon(Icons.email, size: 18),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -2256,12 +2294,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                     flex: 2,
                     child: TextField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nome',
-                        hintText: 'Nome visualizzato',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.formName,
+                        hintText: l10n.participantNameHint,
+                        border: const OutlineInputBorder(),
                         isDense: true,
-                        prefixIcon: Icon(Icons.person, size: 18),
+                        prefixIcon: const Icon(Icons.person, size: 18),
                       ),
                     ),
                   ),
@@ -2270,15 +2308,15 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                   DropdownButton<ParticipantRole>(
                     value: _selectedRole,
                     underline: Container(),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
                         value: ParticipantRole.voter,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.how_to_vote, size: 16, color: Colors.green),
-                            SizedBox(width: 4),
-                            Text('Votante'),
+                            const Icon(Icons.how_to_vote, size: 16, color: Colors.green),
+                            const SizedBox(width: 4),
+                            Text(l10n.participantVoter),
                           ],
                         ),
                       ),
@@ -2287,9 +2325,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.visibility, size: 16, color: Colors.blue),
-                            SizedBox(width: 4),
-                            Text('Osservatore'),
+                            const Icon(Icons.visibility, size: 16, color: Colors.blue),
+                            const SizedBox(width: 4),
+                            Text(l10n.participantObserver),
                           ],
                         ),
                       ),
@@ -2310,7 +2348,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.add),
-                    tooltip: 'Aggiungi',
+                    tooltip: l10n.actionAdd,
                   ),
                 ],
               ),
@@ -2324,12 +2362,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
               child: Row(
                 children: [
                   Text(
-                    'Partecipanti (${participants.length})',
+                    '${l10n.participants} (${participants.length})',
                     style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                   ),
                   const Spacer(),
                   Text(
-                    '${session.voterCount} votanti, ${session.observerCount} osservatori',
+                    l10n.participantVotersAndObservers(session.voterCount, session.observerCount),
                     style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
                 ],
@@ -2377,9 +2415,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                                 color: Colors.green.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'Tu',
-                                style: TextStyle(fontSize: 10, color: Colors.green),
+                              child: Text(
+                                l10n.participantYou,
+                                style: const TextStyle(fontSize: 10, color: Colors.green),
                               ),
                             ),
                         ],
@@ -2408,7 +2446,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _getRoleName(participant.role),
+                                  _getRoleName(context, participant.role),
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: _getRoleColor(participant.role),
@@ -2437,34 +2475,34 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                               },
                               itemBuilder: (context) => [
                                 if (participant.role != ParticipantRole.voter)
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                     value: 'voter',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.how_to_vote, size: 18, color: Colors.green),
-                                        SizedBox(width: 8),
-                                        Text('Rendi Votante'),
+                                        const Icon(Icons.how_to_vote, size: 18, color: Colors.green),
+                                        const SizedBox(width: 8),
+                                        Text(l10n.participantMakeVoter),
                                       ],
                                     ),
                                   ),
                                 if (participant.role != ParticipantRole.observer)
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                     value: 'observer',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.visibility, size: 18, color: Colors.blue),
-                                        SizedBox(width: 8),
-                                        Text('Rendi Osservatore'),
+                                        const Icon(Icons.visibility, size: 18, color: Colors.blue),
+                                        const SizedBox(width: 8),
+                                        Text(l10n.participantMakeObserver),
                                       ],
                                     ),
                                   ),
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'remove',
                                   child: Row(
                                     children: [
-                                      Icon(Icons.person_remove, size: 18, color: Colors.red),
-                                      SizedBox(width: 8),
-                                      Text('Rimuovi', style: TextStyle(color: Colors.red)),
+                                      const Icon(Icons.person_remove, size: 18, color: Colors.red),
+                                      const SizedBox(width: 8),
+                                      Text(l10n.removeParticipant, style: const TextStyle(color: Colors.red)),
                                     ],
                                   ),
                                 ),
@@ -2488,6 +2526,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   // ══════════════════════════════════════════════════════════════════════════════
 
   Widget _buildInvitesTab() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2502,13 +2541,13 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.send, size: 18, color: Colors.purple),
-                  SizedBox(width: 8),
+                  const Icon(Icons.send, size: 18, color: Colors.purple),
+                  const SizedBox(width: 8),
                   Text(
-                    'Invia Nuovo Invito',
-                    style: TextStyle(
+                    l10n.inviteSendNew,
+                    style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: Colors.purple,
@@ -2523,12 +2562,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                     flex: 3,
                     child: TextField(
                       controller: _inviteEmailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email destinatario *',
-                        hintText: 'email@esempio.com',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.inviteRecipientEmail,
+                        hintText: l10n.participantEmailHint,
+                        border: const OutlineInputBorder(),
                         isDense: true,
-                        prefixIcon: Icon(Icons.email, size: 18),
+                        prefixIcon: const Icon(Icons.email, size: 18),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -2538,15 +2577,15 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                   DropdownButton<ParticipantRole>(
                     value: _inviteRole,
                     underline: Container(),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
                         value: ParticipantRole.voter,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.how_to_vote, size: 16, color: Colors.green),
-                            SizedBox(width: 4),
-                            Text('Votante'),
+                            const Icon(Icons.how_to_vote, size: 16, color: Colors.green),
+                            const SizedBox(width: 4),
+                            Text(l10n.participantVoter),
                           ],
                         ),
                       ),
@@ -2555,9 +2594,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.visibility, size: 16, color: Colors.blue),
-                            SizedBox(width: 4),
-                            Text('Osservatore'),
+                            const Icon(Icons.visibility, size: 16, color: Colors.blue),
+                            const SizedBox(width: 4),
+                            Text(l10n.participantObserver),
                           ],
                         ),
                       ),
@@ -2583,7 +2622,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.send, size: 18),
-                    label: const Text('Crea Invito'),
+                    label: Text(l10n.inviteCreate),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
@@ -2597,9 +2636,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         const SizedBox(height: 16),
 
         // Lista inviti
-        const Text(
-          'Inviti Inviati',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        Text(
+          l10n.invitesSent,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
         const SizedBox(height: 8),
         Expanded(
@@ -2620,7 +2659,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                       Icon(Icons.mail_outline, size: 48, color: context.borderColor),
                       const SizedBox(height: 8),
                       Text(
-                        'Nessun invito inviato',
+                        l10n.inviteNoInvites,
                         style: TextStyle(color: context.textTertiaryColor),
                       ),
                     ],
@@ -2643,6 +2682,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   }
 
   Widget _buildInviteCard(PlanningPokerInviteModel invite) {
+    final l10n = AppLocalizations.of(context)!;
     final statusColor = _getInviteStatusColor(invite.status);
     final statusIcon = _getInviteStatusIcon(invite.status);
 
@@ -2679,7 +2719,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          _getRoleName(invite.role),
+                          _getRoleName(context, invite.role),
                           style: TextStyle(
                             fontSize: 10,
                             color: _getRoleColor(invite.role),
@@ -2708,7 +2748,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                       // Data scadenza
                       if (invite.isPending)
                         Text(
-                          'Scade tra ${invite.daysUntilExpiration}g',
+                          l10n.inviteExpiresIn(invite.daysUntilExpiration),
                           style: TextStyle(
                             fontSize: 10,
                             color: invite.daysUntilExpiration <= 2
@@ -2726,20 +2766,20 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
               // Copia link
               IconButton(
                 icon: const Icon(Icons.link, size: 18),
-                tooltip: 'Copia link invito',
+                tooltip: l10n.inviteCopyLink,
                 onPressed: () => _copyInviteLink(invite),
               ),
               // Revoca
               IconButton(
                 icon: const Icon(Icons.cancel, size: 18, color: Colors.red),
-                tooltip: 'Revoca invito',
+                tooltip: l10n.inviteRevokeAction,
                 onPressed: () => _revokeInvite(invite),
               ),
             ] else ...[
               // Elimina invito (per inviti non pending)
               IconButton(
                 icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                tooltip: 'Elimina invito',
+                tooltip: l10n.inviteDeleteAction,
                 onPressed: () => _deleteInvite(invite),
               ),
             ],
@@ -2780,12 +2820,13 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   }
 
   Future<void> _sendInvite() async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _inviteEmailController.text.trim().toLowerCase();
 
     if (email.isEmpty || !email.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Inserisci un indirizzo email valido'),
+        SnackBar(
+          content: Text(l10n.enterValidEmail),
           backgroundColor: Colors.red,
         ),
       );
@@ -2809,7 +2850,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Invito creato per $email'),
+            content: Text(l10n.inviteCreatedFor(email)),
             backgroundColor: Colors.green,
           ),
         );
@@ -2818,7 +2859,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text('${l10n.stateError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -2831,33 +2872,35 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   }
 
   void _copyInviteLink(PlanningPokerInviteModel invite) {
+    final l10n = AppLocalizations.of(context)!;
     final baseUrl = Uri.base.origin;
     final link = invite.generateInviteLink(baseUrl);
     Clipboard.setData(ClipboardData(text: link));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Link invito copiato negli appunti'),
+      SnackBar(
+        content: Text(l10n.inviteLinkCopied),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
   Future<void> _revokeInvite(PlanningPokerInviteModel invite) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Revoca Invito'),
-        content: Text('Sei sicuro di voler revocare l\'invito per ${invite.email}?'),
+        title: Text(l10n.inviteRevokeTitle),
+        content: Text(l10n.inviteRevokeConfirm(invite.email)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Revoca'),
+            child: Text(l10n.inviteRevoke),
           ),
         ],
       ),
@@ -2869,7 +2912,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Invito revocato per ${invite.email}'),
+              content: Text(l10n.inviteRevokedFor(invite.email)),
               backgroundColor: Colors.orange,
             ),
           );
@@ -2878,7 +2921,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Errore: $e'),
+              content: Text('${l10n.stateError}: $e'),
               backgroundColor: Colors.red,
             ),
           );
@@ -2888,20 +2931,21 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   }
 
   Future<void> _deleteInvite(PlanningPokerInviteModel invite) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Invito'),
-        content: Text('Sei sicuro di voler eliminare l\'invito per ${invite.email}?\n\nQuesta azione è irreversibile.'),
+        title: Text(l10n.inviteDeleteTitle),
+        content: Text(l10n.inviteDeleteConfirm(invite.email)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Elimina'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -2913,7 +2957,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Invito eliminato per ${invite.email}'),
+              content: Text(l10n.inviteDeletedFor(invite.email)),
               backgroundColor: Colors.green,
             ),
           );
@@ -2922,7 +2966,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Errore: $e'),
+              content: Text('${l10n.stateError}: $e'),
               backgroundColor: Colors.red,
             ),
           );
@@ -2953,36 +2997,39 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     }
   }
 
-  String _getRoleName(ParticipantRole role) {
+  String _getRoleName(BuildContext context, ParticipantRole role) {
+    final l10n = AppLocalizations.of(context)!;
     switch (role) {
       case ParticipantRole.facilitator:
-        return 'Facilitatore';
+        return l10n.participantFacilitator;
       case ParticipantRole.voter:
-        return 'Votante';
+        return l10n.participantVoter;
       case ParticipantRole.observer:
-        return 'Osservatore';
+        return l10n.participantObserver;
     }
   }
 
   void _copyShareableLink() {
+    final l10n = AppLocalizations.of(context)!;
     Clipboard.setData(ClipboardData(text: _shareableLink));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Link copiato negli appunti'),
+      SnackBar(
+        content: Text(l10n.linkCopied),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
   Future<void> _addParticipant() async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim().toLowerCase();
     final name = _nameController.text.trim();
 
     if (email.isEmpty || !email.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Inserisci un indirizzo email valido'),
+        SnackBar(
+          content: Text(l10n.enterValidEmail),
           backgroundColor: Colors.red,
         ),
       );
@@ -3005,7 +3052,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$email aggiunto alla sessione'),
+            content: Text(l10n.participantAddedToSession(email)),
             backgroundColor: Colors.green,
           ),
         );
@@ -3014,7 +3061,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text('${l10n.stateError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -3027,6 +3074,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   }
 
   Future<void> _changeRole(String email, ParticipantRole role) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       await widget.firestoreService.updateParticipantRole(
         sessionId: widget.sessionId,
@@ -3037,7 +3085,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ruolo aggiornato per $email'),
+            content: Text(l10n.participantRoleUpdated(email)),
             backgroundColor: Colors.green,
           ),
         );
@@ -3046,7 +3094,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text('${l10n.stateError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -3055,20 +3103,21 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   }
 
   Future<void> _removeParticipant(String email, String name) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rimuovi Partecipante'),
-        content: Text('Sei sicuro di voler rimuovere "$name" dalla sessione?'),
+        title: Text(l10n.participantRemoveTitle),
+        content: Text(l10n.participantRemoveConfirm(name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Rimuovi'),
+            child: Text(l10n.removeParticipant),
           ),
         ],
       ),
@@ -3085,7 +3134,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$name rimosso dalla sessione'),
+            content: Text(l10n.participantRemovedFromSession(name)),
             backgroundColor: Colors.green,
           ),
         );
@@ -3094,7 +3143,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text('${l10n.stateError}: $e'),
             backgroundColor: Colors.red,
           ),
         );

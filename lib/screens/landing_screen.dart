@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../main.dart';
+import '../services/user_profile_service.dart';
+import 'legal/privacy_policy_screen.dart';
+import 'legal/terms_of_service_screen.dart';
+import 'legal/cookie_policy_screen.dart';
+import 'legal/gdpr_screen.dart';
+import '../widgets/language_selector_widget.dart';
 
 /// Landing Page moderna stile Appwrite - Supporta Dark/Light Theme
 /// SEO-optimized con sezioni dettagliate per metodologie Agile
@@ -20,7 +27,11 @@ class _LandingScreenState extends State<LandingScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
     try {
-      await _authService.signInWithGoogle();
+      final credential = await _authService.signInWithGoogle();
+      if (credential != null && credential.user != null) {
+        // Crea/Aggiorna profilo utente su Firestore
+        await UserProfileService().createOrUpdateProfileFromAuth();
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,6 +73,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
   Widget _buildHeader(bool isMobile, bool isDark) {
     final themeController = ThemeControllerProvider.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -79,11 +91,17 @@ class _LandingScreenState extends State<LandingScreen> {
           // Logo
           Row(
             children: [
-Image.asset(
-                  'assets/icons/app_logo.png',
-                  width: 36,
-                  height: 36,
+              _PulseLogo(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/icons/landing_logo_hq.png',
+                    width: 36,
+                    height: 36,
+                    filterQuality: FilterQuality.medium,
+                  ),
                 ),
+              ),
               const SizedBox(width: 12),
               Text(
                 'Agile Tools',
@@ -97,6 +115,10 @@ Image.asset(
             ],
           ),
           const Spacer(),
+
+          // Language Selector
+          const LanguageSelectorWidget(),
+          const SizedBox(width: 12),
 
           // Theme Toggle Button
           if (themeController != null) ...[
@@ -136,6 +158,7 @@ Image.asset(
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
                       borderRadius: BorderRadius.circular(8),
+                      // ... rest of the button style
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -143,7 +166,7 @@ Image.asset(
                         const Icon(Icons.login, color: Colors.white, size: 18),
                         const SizedBox(width: 8),
                         Text(
-                          isMobile ? 'Login' : 'Accedi con Google',
+                          isMobile ? l10n.authLogin : l10n.authSignInGoogle,
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -159,6 +182,7 @@ Image.asset(
   }
 
   Widget _buildHeroSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -174,13 +198,13 @@ Image.asset(
               borderRadius: BorderRadius.circular(30),
               border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.auto_awesome, size: 16, color: AppColors.primaryLight),
                 SizedBox(width: 8),
                 Text(
-                  'Strumenti per team agili',
+                  l10n.landingBadge, // 'Strumenti per team agili'
                   style: TextStyle(
                     color: AppColors.primaryLight,
                     fontWeight: FontWeight.w500,
@@ -194,7 +218,7 @@ Image.asset(
 
           // Main Headline
           Text(
-            'Build better products\nwith Agile Tools',
+            l10n.landingHeroTitle, // 'Build better products\nwith Agile Tools'
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isMobile ? 36 : 56,
@@ -210,7 +234,7 @@ Image.asset(
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Text(
-              'Prioritizza, stima e gestisci i tuoi progetti con strumenti collaborativi. Tutto in un unico posto, gratis.',
+              l10n.landingHeroSubtitle, // 'Prioritizza, stima e gestisci...'
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: isMobile ? 16 : 18,
@@ -242,11 +266,11 @@ Image.asset(
                       ),
                     ],
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Inizia Gratis',
+                        l10n.landingStartFree, // 'Inizia Gratis'
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -267,6 +291,7 @@ Image.asset(
   }
 
   Widget _buildFeaturesSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -282,7 +307,7 @@ Image.asset(
         children: [
           // Section Title
           Text(
-            'Everything you need',
+            l10n.landingEverythingNeed, // 'Everything you need'
             style: TextStyle(
               fontSize: isMobile ? 28 : 40,
               fontWeight: FontWeight.bold,
@@ -290,9 +315,10 @@ Image.asset(
               letterSpacing: -1,
             ),
           ),
+
           const SizedBox(height: 12),
           Text(
-            'Strumenti progettati per team moderni',
+            l10n.landingModernTools, // 'Strumenti progettati per team moderni'
             style: TextStyle(
               fontSize: 16,
               color: context.textTertiaryColor,
@@ -313,29 +339,29 @@ Image.asset(
                         children: [
                           Expanded(child: _buildFeatureCard(
                             icon: Icons.check_circle_outline_rounded,
-                            title: 'Smart Todo',
-                            description: 'Liste intelligenti e collaborative. Importa da CSV/testo, invita partecipanti e gestisci task con filtri avanzati.',
+                            title: l10n.toolSmartTodo, // 'Smart Todo List'
+                            description: l10n.toolSmartTodoDescShort, // 'Liste intelligenti...'
                             color: Colors.blue,
                             isDark: isDark,
-                            features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                            features: [l10n.featureSmartImport, l10n.featureCollaboration, l10n.featureFilters],
                           )),
                           const SizedBox(width: 20),
                           Expanded(child: _buildFeatureCard(
                             icon: Icons.grid_view_rounded,
-                            title: 'Matrice Eisenhower',
-                            description: 'Organizza le attivita in base a urgenza e importanza. Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
+                            title: l10n.toolEisenhower, // 'Matrice Eisenhower'
+                            description: l10n.landingEisenhowerSubtitle, // 'Organizza le attivita...'
                             color: AppColors.success,
                             isDark: isDark,
-                            features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
+                            features: [l10n.feature4Quadrants, l10n.featureDragDrop, l10n.featureCollaborative],
                           )),
                           const SizedBox(width: 20),
                           Expanded(child: _buildFeatureCard(
                             icon: Icons.casino_rounded,
-                            title: 'Estimation Room',
-                            description: 'Sessioni di stima collaborative per il team. Planning Poker, T-Shirt sizing e altri metodi per stimare user stories.',
+                            title: l10n.toolEstimation, // 'Estimation Room'
+                            description: l10n.landingEstimationSubtitle, // 'Sessioni di stima...'
                             color: AppColors.secondary,
                             isDark: isDark,
-                            features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
+                            features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
                           )),
                         ],
                       ),
@@ -348,20 +374,20 @@ Image.asset(
                         children: [
                           Expanded(child: _buildFeatureCard(
                             icon: Icons.rocket_launch_rounded,
-                            title: 'Agile Process Manager',
-                            description: 'Gestisci progetti agili completi con backlog, sprint planning, kanban board, metriche e retrospettive.',
+                            title: l10n.landingAgileTitle, // 'Agile Process Manager'
+                            description: l10n.landingAgileSubtitle, // 'Gestisci progetti...'
                             color: AppColors.primary,
                             isDark: isDark,
-                            features: const ['Scrum', 'Kanban', 'Hybrid'],
+                            features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
                           )),
                           const SizedBox(width: 20),
                           Expanded(child: _buildFeatureCard(
                             icon: Icons.psychology_rounded,
-                            title: 'Retrospective Board',
-                            description: 'Raccogli feedback dal team su cosa e andato bene, cosa migliorare e le azioni da intraprendere.',
+                            title: l10n.landingRetroTitle, // 'Retrospective Board'
+                            description: l10n.landingRetroSubtitle, // 'Raccogli feedback...'
                             color: AppColors.pink,
                             isDark: isDark,
-                            features: const ['Went Well', 'To Improve', 'Actions'],
+                            features: [l10n.featureWentWell, l10n.featureToImprove, l10n.featureActions],
                           )),
                         ],
                       ),
@@ -374,47 +400,47 @@ Image.asset(
                   children: [
                     _buildFeatureCard(
                       icon: Icons.check_circle_outline_rounded,
-                      title: 'Smart Todo',
-                      description: 'Liste intelligenti e collaborative. Importa da CSV, invita e gestisci task.',
+                      title: l10n.toolSmartTodo,
+                      description: l10n.toolSmartTodoDescShort,
                       color: Colors.blue,
                       isDark: isDark,
-                      features: const ['Smart Import', 'Collaborazione', 'Filtri'],
+                      features: [l10n.featureSmartImport, l10n.featureCollaboration, l10n.featureFilters],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
                       icon: Icons.grid_view_rounded,
-                      title: 'Matrice Eisenhower',
-                      description: 'Quadranti per decidere cosa fare subito, pianificare, delegare o eliminare.',
+                      title: l10n.toolEisenhower,
+                      description: l10n.landingEisenhowerSubtitle,
                       color: AppColors.success,
                       isDark: isDark,
-                      features: const ['4 Quadranti', 'Drag & Drop', 'Collaborativo'],
+                      features: [l10n.feature4Quadrants, l10n.featureDragDrop, l10n.featureCollaborative],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
                       icon: Icons.casino_rounded,
-                      title: 'Estimation Room',
-                      description: 'Planning Poker, T-Shirt sizing e altri metodi per stimare user stories.',
+                      title: l10n.toolEstimation,
+                      description: l10n.landingEstimationSubtitle,
                       color: AppColors.secondary,
                       isDark: isDark,
-                      features: const ['Planning Poker', 'T-Shirt Size', 'Real-time'],
+                      features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
                       icon: Icons.rocket_launch_rounded,
-                      title: 'Agile Process Manager',
-                      description: 'Gestisci progetti agili con backlog, sprint, kanban e metriche.',
+                      title: l10n.landingAgileTitle,
+                      description: l10n.landingAgileSubtitle,
                       color: AppColors.primary,
                       isDark: isDark,
-                      features: const ['Scrum', 'Kanban', 'Hybrid'],
+                      features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
                       icon: Icons.psychology_rounded,
-                      title: 'Retrospective Board',
-                      description: 'Raccogli feedback dal team su cosa e andato bene e cosa migliorare.',
+                      title: l10n.landingRetroTitle,
+                      description: l10n.landingRetroSubtitle,
                       color: AppColors.pink,
                       isDark: isDark,
-                      features: const ['Went Well', 'To Improve', 'Actions'],
+                      features: [l10n.featureWentWell, l10n.featureToImprove, l10n.featureActions],
                     ),
                   ],
                 );
@@ -506,6 +532,7 @@ Image.asset(
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildSmartTodoSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -524,9 +551,9 @@ Image.asset(
       child: Column(
         children: [
           _buildSectionHeader(
-            badge: 'Produttivita',
-            title: 'Smart Todo List',
-            subtitle: 'Gestione task intelligente e collaborativa per team moderni',
+            badge: l10n.landingSmartTodoBadge,
+            title: l10n.landingSmartTodoTitle,
+            subtitle: l10n.landingSmartTodoSubtitle,
             isMobile: isMobile,
           ),
           const SizedBox(height: 60),
@@ -538,16 +565,9 @@ Image.asset(
             imageOnLeft: true,
             icon: Icons.check_circle_outline_rounded,
             iconColor: Colors.blue,
-            title: 'Liste Task Collaborative',
-            description: '''Smart Todo trasforma la gestione delle attivita quotidiane in un processo fluido e collaborativo. Crea liste, assegna task ai membri del team e monitora il progresso in tempo reale.
-
-Ideale per team distribuiti che necessitano di sincronizzazione continua sulle attivita da completare.''',
-            features: [
-              'Creazione rapida task con descrizione',
-              'Assegnazione a membri del team',
-              'Priorita e deadline configurabili',
-              'Notifiche di completamento',
-            ],
+            title: l10n.landingSmartTodoCollabTitle,
+            description: l10n.landingSmartTodoCollabDesc,
+            features: l10n.landingSmartTodoCollabFeatures.split('\n'),
           ),
 
           const SizedBox(height: 60),
@@ -558,16 +578,9 @@ Ideale per team distribuiti che necessitano di sincronizzazione continua sulle a
             imageOnLeft: false,
             icon: Icons.upload_file_rounded,
             iconColor: Colors.teal,
-            title: 'Import Flessibile',
-            description: '''Importa le tue attivita da fonti esterne in pochi click. Supporto per file CSV, copia/incolla da Excel o testo libero. Il sistema riconosce automaticamente la struttura dei dati.
-
-Migra facilmente da altri tool senza perdere informazioni o dover reinserire manualmente ogni task.''',
-            features: [
-              'Import da file CSV',
-              'Copia/incolla da Excel',
-              'Parsing testo intelligente',
-              'Mapping campi automatico',
-            ],
+            title: l10n.landingSmartTodoImportTitle,
+            description: l10n.landingSmartTodoImportDesc,
+            features: l10n.landingSmartTodoImportFeatures.split('\n'),
           ),
 
           const SizedBox(height: 60),
@@ -578,16 +591,9 @@ Migra facilmente da altri tool senza perdere informazioni o dover reinserire man
             imageOnLeft: true,
             icon: Icons.people_outline_rounded,
             iconColor: Colors.purple,
-            title: 'Condivisione e Inviti',
-            description: '''Invita colleghi e collaboratori alle tue liste tramite email. Ogni partecipante puo visualizzare, commentare e aggiornare lo stato dei task assegnati.
-
-Perfetto per gestire progetti trasversali con stakeholder esterni o team cross-funzionali.''',
-            features: [
-              'Inviti via email',
-              'Permessi configurabili',
-              'Commenti sui task',
-              'Storico modifiche',
-            ],
+            title: l10n.landingSmartTodoSharingTitle,
+            description: l10n.landingSmartTodoSharingDesc,
+            features: l10n.landingSmartTodoSharingFeatures.split('\n'),
           ),
 
           const SizedBox(height: 48),
@@ -605,7 +611,7 @@ Perfetto per gestire progetti trasversali con stakeholder esterni o team cross-f
                 Icon(Icons.tips_and_updates_rounded, color: Colors.blue, size: 32),
                 const SizedBox(height: 16),
                 Text(
-                  'Funzionalita Smart Todo',
+                  l10n.landingSmartTodoFeaturesTitle,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -618,12 +624,12 @@ Perfetto per gestire progetti trasversali con stakeholder esterni o team cross-f
                   runSpacing: 12,
                   alignment: WrapAlignment.center,
                   children: [
-                    _buildFeatureChip(Icons.filter_list, 'Filtri avanzati'),
-                    _buildFeatureChip(Icons.search, 'Ricerca full-text'),
-                    _buildFeatureChip(Icons.sort, 'Ordinamento'),
-                    _buildFeatureChip(Icons.label_outline, 'Tag e categorie'),
-                    _buildFeatureChip(Icons.archive_outlined, 'Archiviazione'),
-                    _buildFeatureChip(Icons.download, 'Export dati'),
+                    _buildFeatureChip(Icons.filter_list, l10n.landingSmartTodoChipFilters),
+                    _buildFeatureChip(Icons.search, l10n.landingSmartTodoChipSearch),
+                    _buildFeatureChip(Icons.sort, l10n.landingSmartTodoChipSort),
+                    _buildFeatureChip(Icons.label_outline, l10n.landingSmartTodoChipTags),
+                    _buildFeatureChip(Icons.archive_outlined, l10n.landingSmartTodoChipArchive),
+                    _buildFeatureChip(Icons.download, l10n.landingSmartTodoChipExport),
                   ],
                 ),
               ],
@@ -639,6 +645,7 @@ Perfetto per gestire progetti trasversali con stakeholder esterni o team cross-f
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildEisenhowerSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -653,9 +660,9 @@ Perfetto per gestire progetti trasversali con stakeholder esterni o team cross-f
       child: Column(
         children: [
           _buildSectionHeader(
-            badge: 'Prioritizzazione',
-            title: 'Matrice di Eisenhower',
-            subtitle: 'Il metodo decisionale usato dai leader per gestire il tempo',
+            badge: l10n.landingEisenhowerBadge,
+            title: l10n.landingEisenhowerTitle,
+            subtitle: l10n.landingEisenhowerSubtitle,
             isMobile: isMobile,
           ),
           const SizedBox(height: 60),
@@ -667,16 +674,9 @@ Perfetto per gestire progetti trasversali con stakeholder esterni o team cross-f
             imageOnLeft: false,
             icon: Icons.apps_rounded,
             iconColor: AppColors.success,
-            title: 'Urgente vs Importante',
-            description: '''La Matrice di Eisenhower, ideata dal 34° Presidente degli Stati Uniti Dwight D. Eisenhower, divide le attivita in quattro quadranti basati su due criteri: urgenza e importanza.
-
-Questo framework decisionale aiuta a distinguere cio che richiede attenzione immediata da cio che contribuisce agli obiettivi a lungo termine.''',
-            features: [
-              'Quadrante 1: Urgente + Importante → Fai subito',
-              'Quadrante 2: Non urgente + Importante → Pianifica',
-              'Quadrante 3: Urgente + Non importante → Delega',
-              'Quadrante 4: Non urgente + Non importante → Elimina',
-            ],
+            title: l10n.landingEisenhowerUrgentTitle,
+            description: l10n.landingEisenhowerUrgentDesc,
+            features: l10n.landingEisenhowerUrgentFeatures.split('\n'),
           ),
 
           const SizedBox(height: 60),
@@ -692,16 +692,9 @@ Questo framework decisionale aiuta a distinguere cio che richiede attenzione imm
             imageOnLeft: true,
             icon: Icons.psychology_rounded,
             iconColor: Colors.deepPurple,
-            title: 'Decisioni Migliori',
-            description: '''Applicando costantemente la matrice, sviluppi un mindset orientato ai risultati. Impari a dire "no" alle distrazioni e a concentrarti su cio che genera valore reale.
-
-Il nostro strumento digitale rende questo processo immediato: trascina le attivita nel quadrante corretto e ottieni una visione chiara delle tue priorita.''',
-            features: [
-              'Drag & drop intuitivo',
-              'Collaborazione team in tempo reale',
-              'Statistiche di distribuzione',
-              'Export per reportistica',
-            ],
+            title: l10n.landingEisenhowerDecisionsTitle,
+            description: l10n.landingEisenhowerDecisionsDesc,
+            features: l10n.landingEisenhowerDecisionsFeatures.split('\n'),
           ),
 
           const SizedBox(height: 48),
@@ -722,8 +715,8 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Perche usare la Matrice di Eisenhower?',
+                        Text(
+                        l10n.landingEisenhowerBenefitsTitle,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -732,7 +725,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Studi dimostrano che il 80% delle attivita quotidiane ricade nei quadranti 3 e 4 (non importanti). La matrice ti aiuta a identificarle e liberare tempo per cio che conta davvero.',
+                        l10n.landingEisenhowerBenefitsDesc,
                         style: TextStyle(
                           fontSize: 13,
                           color: context.textSecondaryColor,
@@ -750,6 +743,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
   }
 
   Widget _buildEisenhowerMatrix(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     const double labelWidth = 32;
     const double gap = 8;
 
@@ -765,7 +759,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                 Expanded(
                   child: Center(
                     child: Text(
-                      'URGENTE',
+                      l10n.landingEisenhowerUrgentLabel,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -779,7 +773,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                 Expanded(
                   child: Center(
                     child: Text(
-                      'NON URGENTE',
+                      l10n.landingEisenhowerNotUrgentLabel,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -809,7 +803,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                           child: RotatedBox(
                             quarterTurns: 3,
                             child: Text(
-                              'IMPORTANTE',
+                              l10n.landingEisenhowerImportantLabel,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -827,7 +821,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                           child: RotatedBox(
                             quarterTurns: 3,
                             child: Text(
-                              'NON IMPORTANTE',
+                              l10n.landingEisenhowerNotImportantLabel,
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -850,15 +844,15 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                       Row(
                         children: [
                           Expanded(child: _buildQuadrant(
-                            title: 'FAI',
-                            subtitle: 'Crisi, deadline, emergenze',
+                            title: l10n.landingEisenhowerDoLabel,
+                            subtitle: l10n.landingEisenhowerDoDesc,
                             color: Colors.red,
                             icon: Icons.bolt,
                           )),
                           const SizedBox(width: gap),
                           Expanded(child: _buildQuadrant(
-                            title: 'PIANIFICA',
-                            subtitle: 'Strategia, crescita, relazioni',
+                            title: l10n.landingEisenhowerPlanLabel,
+                            subtitle: l10n.landingEisenhowerPlanDesc,
                             color: Colors.green,
                             icon: Icons.calendar_today,
                           )),
@@ -869,15 +863,15 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
                       Row(
                         children: [
                           Expanded(child: _buildQuadrant(
-                            title: 'DELEGA',
-                            subtitle: 'Interruzioni, meeting, email',
+                            title: l10n.landingEisenhowerDelegateLabel,
+                            subtitle: l10n.landingEisenhowerDelegateDesc,
                             color: Colors.orange,
                             icon: Icons.person_add,
                           )),
                           const SizedBox(width: gap),
                           Expanded(child: _buildQuadrant(
-                            title: 'ELIMINA',
-                            subtitle: 'Distrazioni, perdite di tempo',
+                            title: l10n.landingEisenhowerEliminateLabel,
+                            subtitle: l10n.landingEisenhowerEliminateDesc,
                             color: Colors.grey,
                             icon: Icons.delete_outline,
                           )),
@@ -938,6 +932,7 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildAgileMethodologySection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -956,9 +951,9 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
       child: Column(
         children: [
           _buildSectionHeader(
-            badge: 'Metodologie',
-            title: 'Agile & Scrum Framework',
-            subtitle: 'Implementa le migliori pratiche di sviluppo software iterativo',
+            badge: l10n.landingAgileSectionBadge,
+            title: l10n.landingAgileSectionTitle,
+            subtitle: l10n.landingAgileSectionSubtitle,
             isMobile: isMobile,
           ),
           const SizedBox(height: 60),
@@ -970,16 +965,9 @@ Il nostro strumento digitale rende questo processo immediato: trascina le attivi
             imageOnLeft: true,
             icon: Icons.loop_rounded,
             iconColor: AppColors.primary,
-            title: 'Sviluppo Iterativo e Incrementale',
-            description: '''L'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.
-
-Con Agile Tools puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.''',
-            features: [
-              'Sprint Planning con capacita team',
-              'Backlog prioritizzato con drag & drop',
-              'Velocity tracking e burndown chart',
-              'Daily standup facilitato',
-            ],
+            title: l10n.landingAgileIterativeTitle,
+            description: l10n.landingAgileIterativeDesc,
+            features: l10n.landingIntroFeatures.split('\n'),
           ),
 
           const SizedBox(height: 60),
@@ -991,16 +979,9 @@ Con Agile Tools puoi gestire il tuo backlog, pianificare sprint e monitorare la 
             imageOnLeft: false,
             icon: Icons.groups_rounded,
             iconColor: AppColors.secondary,
-            title: 'Framework Scrum',
-            description: '''Scrum e il framework Agile piu diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).
-
-Agile Tools supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.''',
-            features: [
-              'Product Backlog con story points',
-              'Sprint Backlog con task breakdown',
-              'Retrospective board integrata',
-              'Metriche Scrum automatiche',
-            ],
+            title: l10n.landingAgileScrumTitle,
+            description: l10n.landingAgileScrumDesc,
+            features: l10n.landingAgileScrumFeatures.split('\n'),
           ),
 
           const SizedBox(height: 60),
@@ -1012,16 +993,9 @@ Agile Tools supporta tutti gli eventi Scrum con strumenti dedicati per ogni ceri
             imageOnLeft: true,
             icon: Icons.view_kanban_rounded,
             iconColor: Colors.orange,
-            title: 'Kanban Board',
-            description: '''Il metodo Kanban visualizza il flusso di lavoro attraverso colonne che rappresentano gli stati del processo. Limita il Work In Progress (WIP) per massimizzare il throughput.
-
-La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e metriche di flusso.''',
-            features: [
-              'Colonne personalizzabili',
-              'WIP limits per colonna',
-              'Drag & drop intuitivo',
-              'Lead time e cycle time',
-            ],
+            title: l10n.landingAgileKanbanTitle,
+            description: l10n.landingAgileKanbanDesc,
+            features: l10n.landingAgileKanbanFeatures.split('\n'),
           ),
         ],
       ),
@@ -1033,6 +1007,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildEstimationMethodsSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -1047,9 +1022,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
       child: Column(
         children: [
           _buildSectionHeader(
-            badge: 'Estimation',
-            title: 'Tecniche di Stima Collaborative',
-            subtitle: 'Scegli il metodo piu adatto al tuo team per stime accurate',
+            badge: l10n.landingEstimationBadge, // 'Estimation'
+            title: l10n.landingEstimationTitle, // 'Tecniche di Stima Collaborative'
+            subtitle: l10n.landingEstimationSubtitle, // 'Scegli il metodo...'
             isMobile: isMobile,
           ),
           const SizedBox(height: 60),
@@ -1065,9 +1040,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                 children: [
                   _buildEstimationCard(
                     icon: Icons.style_rounded,
-                    title: 'Planning Poker',
-                    subtitle: 'Sequenza Fibonacci',
-                    description: 'Il metodo classico: ogni membro sceglie una carta (1, 2, 3, 5, 8, 13, 21...). Le stime sono rivelate simultaneamente per evitare bias.',
+                    title: l10n.estimationModeFibonacci,
+                    subtitle: l10n.cardSetFibonacci, // 'Fibonacci (0, 1...)'
+                    description: l10n.landingEstimationPokerDesc,
                     values: ['1', '2', '3', '5', '8', '13', '21', '?'],
                     color: AppColors.secondary,
                     isDark: isDark,
@@ -1075,9 +1050,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   ),
                   _buildEstimationCard(
                     icon: Icons.checkroom_rounded,
-                    title: 'T-Shirt Sizing',
-                    subtitle: 'Taglie relative',
-                    description: 'Stima rapida usando taglie: XS, S, M, L, XL, XXL. Ideale per backlog grooming iniziale o quando serve una stima approssimativa.',
+                    title: l10n.landingEstimationTShirtTitle,
+                    subtitle: l10n.landingEstimationTShirtSubtitle,
+                    description: l10n.landingEstimationTShirtDesc,
                     values: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
                     color: Colors.purple,
                     isDark: isDark,
@@ -1085,9 +1060,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   ),
                   _buildEstimationCard(
                     icon: Icons.functions_rounded,
-                    title: 'Three-Point (PERT)',
-                    subtitle: 'Ottimista / Probabile / Pessimista',
-                    description: 'Tecnica statistica: ogni membro fornisce 3 stime (O, M, P). La formula PERT calcola la stima ponderata: (O + 4M + P) / 6.',
+                    title: l10n.landingEstimationPertTitle,
+                    subtitle: l10n.landingEstimationPertSubtitle,
+                    description: l10n.landingEstimationPertDesc,
                     values: ['O', 'M', 'P', '=', 'PERT'],
                     color: Colors.teal,
                     isDark: isDark,
@@ -1095,9 +1070,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   ),
                   _buildEstimationCard(
                     icon: Icons.inventory_2_rounded,
-                    title: 'Bucket System',
-                    subtitle: 'Categorizzazione rapida',
-                    description: 'Le user stories vengono assegnate a "bucket" predefiniti. Ottimo per stimare grandi quantita di item velocemente in sessioni di refinement.',
+                    title: l10n.landingEstimationBucketTitle,
+                    subtitle: l10n.landingEstimationBucketSubtitle,
+                    description: l10n.landingEstimationBucketDesc,
                     values: ['0', '1', '2', '3', '4', '5', '8', '13+'],
                     color: Colors.indigo,
                     isDark: isDark,
@@ -1127,7 +1102,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Estimation Room Features',
+                  l10n.landingEstimationFeaturesTitle,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -1140,12 +1115,12 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   runSpacing: 16,
                   alignment: WrapAlignment.center,
                   children: [
-                    _buildFeatureChip(Icons.visibility_off, 'Voto nascosto'),
-                    _buildFeatureChip(Icons.timer, 'Timer configurabile'),
-                    _buildFeatureChip(Icons.bar_chart, 'Statistiche real-time'),
-                    _buildFeatureChip(Icons.people, 'Fino a 20 partecipanti'),
-                    _buildFeatureChip(Icons.history, 'Storico stime'),
-                    _buildFeatureChip(Icons.download, 'Export risultati'),
+                    _buildFeatureChip(Icons.visibility_off, l10n.landingEstimationChipHiddenVote),
+                    _buildFeatureChip(Icons.timer, l10n.landingEstimationChipTimer),
+                    _buildFeatureChip(Icons.bar_chart, l10n.landingEstimationChipStats),
+                    _buildFeatureChip(Icons.people, l10n.landingEstimationChipParticipants),
+                    _buildFeatureChip(Icons.history, l10n.landingEstimationChipHistory),
+                    _buildFeatureChip(Icons.download, l10n.landingEstimationChipExport),
                   ],
                 ),
               ],
@@ -1252,6 +1227,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildRetrospectiveTypesSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -1270,9 +1246,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
       child: Column(
         children: [
           _buildSectionHeader(
-            badge: 'Retrospective',
-            title: 'Template per Retrospettive',
-            subtitle: 'Formati collaudati per sessioni di miglioramento continuo',
+            badge: l10n.landingRetroBadge, // 'Retrospective'
+            title: l10n.landingRetroTitle, // 'Retrospettive Interattive'
+            subtitle: l10n.landingRetroSubtitle, // 'Strumenti collaborativi...'
             isMobile: isMobile,
           ),
           const SizedBox(height: 60),
@@ -1289,18 +1265,18 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(child: _buildRetroCard(
-                          title: 'Start / Stop / Continue',
+                          title: l10n.landingRetroTemplateStartStopTitle,
                           emoji: '🚦',
-                          description: 'Il formato classico: cosa iniziare a fare, cosa smettere di fare, cosa continuare a fare.',
+                          description: l10n.landingRetroTemplateStartStopDesc,
                           columns: ['Start', 'Stop', 'Continue'],
                           columnColors: [Colors.green, Colors.red, Colors.blue],
                           isDark: isDark,
                         )),
                         const SizedBox(width: 24),
                         Expanded(child: _buildRetroCard(
-                          title: 'Mad / Sad / Glad',
+                          title: l10n.landingRetroTemplateMadSadTitle,
                           emoji: '😊',
-                          description: 'Retrospettiva emotiva: cosa ci ha fatto arrabbiare, rattristare o rallegrare.',
+                          description: l10n.landingRetroTemplateMadSadDesc,
                           columns: ['Mad', 'Sad', 'Glad'],
                           columnColors: [Colors.red, Colors.blue, Colors.green],
                           isDark: isDark,
@@ -1312,18 +1288,18 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(child: _buildRetroCard(
-                          title: '4L\'s',
+                          title: l10n.landingRetroTemplate4LsTitle,
                           emoji: '📝',
-                          description: 'Liked, Learned, Lacked, Longed For - analisi completa dello sprint.',
+                          description: l10n.landingRetroTemplate4LsDesc,
                           columns: ['Liked', 'Learned', 'Lacked', 'Longed'],
                           columnColors: [Colors.green, Colors.blue, Colors.orange, Colors.purple],
                           isDark: isDark,
                         )),
                         const SizedBox(width: 24),
                         Expanded(child: _buildRetroCard(
-                          title: 'Sailboat',
+                          title: l10n.landingRetroTemplateSailboatTitle,
                           emoji: '⛵',
-                          description: 'Metafora visuale: vento (aiuti), ancora (ostacoli), rocce (rischi), isola (obiettivi).',
+                          description: l10n.landingRetroTemplateSailboatDesc,
                           columns: ['Wind', 'Anchor', 'Rocks', 'Island'],
                           columnColors: [Colors.teal, Colors.grey, Colors.red, Colors.amber],
                           isDark: isDark,
@@ -1335,18 +1311,18 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(child: _buildRetroCard(
-                          title: 'Went Well / To Improve',
+                          title: l10n.landingRetroTemplateWentWellTitle,
                           emoji: '✨',
-                          description: 'Formato semplice e diretto: cosa e andato bene e cosa migliorare.',
+                          description: l10n.landingRetroTemplateWentWellDesc,
                           columns: ['Went Well', 'To Improve'],
                           columnColors: [Colors.green, Colors.orange],
                           isDark: isDark,
                         )),
                         const SizedBox(width: 24),
                         Expanded(child: _buildRetroCard(
-                          title: 'DAKI',
+                          title: l10n.landingRetroTemplateDakiTitle,
                           emoji: '🎯',
-                          description: 'Drop, Add, Keep, Improve - decisioni concrete per il prossimo sprint.',
+                          description: l10n.landingRetroTemplateDakiDesc,
                           columns: ['Drop', 'Add', 'Keep', 'Improve'],
                           columnColors: [Colors.red, Colors.green, Colors.blue, Colors.purple],
                           isDark: isDark,
@@ -1359,36 +1335,36 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                 return Column(
                   children: [
                     _buildRetroCard(
-                      title: 'Start / Stop / Continue',
+                      title: l10n.landingRetroTemplateStartStopTitle,
                       emoji: '🚦',
-                      description: 'Il formato classico per retrospettive efficaci.',
+                      description: l10n.landingRetroTemplateStartStopDesc,
                       columns: ['Start', 'Stop', 'Continue'],
                       columnColors: [Colors.green, Colors.red, Colors.blue],
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _buildRetroCard(
-                      title: 'Mad / Sad / Glad',
+                      title: l10n.landingRetroTemplateMadSadTitle,
                       emoji: '😊',
-                      description: 'Retrospettiva emotiva per il team.',
+                      description: l10n.landingRetroTemplateMadSadDesc,
                       columns: ['Mad', 'Sad', 'Glad'],
                       columnColors: [Colors.red, Colors.blue, Colors.green],
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _buildRetroCard(
-                      title: '4L\'s',
+                      title: l10n.landingRetroTemplate4LsTitle,
                       emoji: '📝',
-                      description: 'Analisi completa dello sprint passato.',
+                      description: l10n.landingRetroTemplate4LsDesc,
                       columns: ['Liked', 'Learned', 'Lacked', 'Longed'],
                       columnColors: [Colors.green, Colors.blue, Colors.orange, Colors.purple],
                       isDark: isDark,
                     ),
                     const SizedBox(height: 16),
                     _buildRetroCard(
-                      title: 'Sailboat',
+                      title: l10n.landingRetroTemplateSailboatTitle,
                       emoji: '⛵',
-                      description: 'Metafora visuale per analisi team.',
+                      description: l10n.landingRetroTemplateSailboatDesc,
                       columns: ['Wind', 'Anchor', 'Rocks', 'Island'],
                       columnColors: [Colors.teal, Colors.grey, Colors.red, Colors.amber],
                       isDark: isDark,
@@ -1418,7 +1394,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Action Items Tracking',
+                        l10n.landingRetroFeatureTrackingTitle,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1427,7 +1403,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Ogni retrospettiva genera action items tracciabili con owner, deadline e stato. Monitora il follow-up nel tempo.',
+                        l10n.landingRetroFeatureTrackingDesc,
                         style: TextStyle(
                           fontSize: 13,
                           color: context.textSecondaryColor,
@@ -1518,6 +1494,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildWorkflowSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -1532,9 +1509,9 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
       child: Column(
         children: [
           _buildSectionHeader(
-            badge: 'Workflow',
-            title: 'Come funziona',
-            subtitle: 'Inizia in 3 semplici passi',
+            badge: l10n.landingWorkflowBadge, // 'Workflow'
+            title: l10n.landingWorkflowTitle, // 'Come funziona'
+            subtitle: l10n.landingWorkflowSubtitle, // 'Inizia in 3 semplici passi'
             isMobile: isMobile,
           ),
           const SizedBox(height: 60),
@@ -1549,8 +1526,8 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   children: [
                     Expanded(child: _buildStepCard(
                       step: '1',
-                      title: 'Crea un progetto',
-                      description: 'Crea il tuo progetto Agile e invita il team. Configura sprint, backlog e board.',
+                      title: l10n.landingStep1Title, // 'Crea un progetto'
+                      description: l10n.landingStep1Desc, // 'Crea il tuo progetto...'
                       icon: Icons.add_circle_outline,
                       color: AppColors.primary,
                       isDark: isDark,
@@ -1558,8 +1535,8 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     _buildStepConnector(isDark),
                     Expanded(child: _buildStepCard(
                       step: '2',
-                      title: 'Collabora',
-                      description: 'Stima le user stories insieme, organizza sprint e traccia il progresso in real-time.',
+                      title: l10n.landingStep2Title, // 'Collabora'
+                      description: l10n.landingStep2Desc, // 'Stima le user stories...'
                       icon: Icons.people_outline,
                       color: AppColors.secondary,
                       isDark: isDark,
@@ -1567,8 +1544,8 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     _buildStepConnector(isDark),
                     Expanded(child: _buildStepCard(
                       step: '3',
-                      title: 'Migliora',
-                      description: 'Analizza le metriche, conduci retrospettive e migliora continuamente il processo.',
+                      title: l10n.landingStep3Title, // 'Migliora'
+                      description: l10n.landingStep3Desc, // 'Analizza le metriche...'
                       icon: Icons.trending_up,
                       color: AppColors.success,
                       isDark: isDark,
@@ -1580,8 +1557,8 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   children: [
                     _buildStepCard(
                       step: '1',
-                      title: 'Crea un progetto',
-                      description: 'Crea il tuo progetto Agile e invita il team.',
+                      title: l10n.landingStep1Title,
+                      description: l10n.landingStep1Desc,
                       icon: Icons.add_circle_outline,
                       color: AppColors.primary,
                       isDark: isDark,
@@ -1589,8 +1566,8 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     const SizedBox(height: 16),
                     _buildStepCard(
                       step: '2',
-                      title: 'Collabora',
-                      description: 'Stima le user stories insieme e traccia il progresso.',
+                      title: l10n.landingStep2Title,
+                      description: l10n.landingStep2Desc,
                       icon: Icons.people_outline,
                       color: AppColors.secondary,
                       isDark: isDark,
@@ -1598,8 +1575,8 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     const SizedBox(height: 16),
                     _buildStepCard(
                       step: '3',
-                      title: 'Migliora',
-                      description: 'Analizza metriche e conduci retrospettive.',
+                      title: l10n.landingStep3Title,
+                      description: l10n.landingStep3Desc,
                       icon: Icons.trending_up,
                       color: AppColors.success,
                       isDark: isDark,
@@ -1712,6 +1689,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildCTASection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: EdgeInsets.all(isMobile ? 24 : 80),
       padding: EdgeInsets.all(isMobile ? 32 : 56),
@@ -1730,7 +1708,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
       child: Column(
         children: [
           Text(
-            'Ready to start?',
+            l10n.landingCtaTitle, // 'Ready to start?'
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isMobile ? 28 : 36,
@@ -1741,7 +1719,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
           ),
           const SizedBox(height: 12),
           Text(
-            'Accedi gratuitamente e inizia a collaborare con il tuo team.',
+            l10n.landingCtaDesc, // 'Accedi gratuitamente...'
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
@@ -1767,7 +1745,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Accedi con Google',
+                    l10n.authSignInGoogle, // 'Accedi con Google' - REUSED
                     style: TextStyle(
                       color: isDark ? AppColors.primary : Colors.white,
                       fontSize: 16,
@@ -1788,6 +1766,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildFullFooter(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
@@ -1817,29 +1796,29 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     ),
                     const SizedBox(width: 48),
                     // Links columns
-                    Expanded(child: _buildFooterColumn('Prodotto', [
-                      'Funzionalita',
-                      'Pricing',
-                      'Changelog',
-                      'Roadmap',
+                    Expanded(child: _buildFooterColumn(l10n.landingFooterProduct, [
+                      l10n.landingFooterFeatures,
+                      l10n.landingFooterPricing,
+                      l10n.landingFooterChangelog,
+                      l10n.landingFooterRoadmap,
                     ])),
-                    Expanded(child: _buildFooterColumn('Risorse', [
-                      'Documentazione',
-                      'Guide Agile',
-                      'Blog',
-                      'Community',
+                    Expanded(child: _buildFooterColumn(l10n.landingFooterResources, [
+                      l10n.landingFooterDocs,
+                      l10n.landingFooterAgileGuides,
+                      l10n.landingFooterBlog,
+                      l10n.landingFooterCommunity,
                     ])),
-                    Expanded(child: _buildFooterColumn('Azienda', [
-                      'Chi siamo',
-                      'Contatti',
-                      'Lavora con noi',
-                      'Press Kit',
+                    Expanded(child: _buildFooterColumn(l10n.landingFooterCompany, [
+                      l10n.landingFooterAbout,
+                      l10n.landingFooterContact,
+                      l10n.landingFooterJobs,
+                      l10n.landingFooterPress,
                     ])),
-                    Expanded(child: _buildFooterColumn('Legale', [
-                      'Privacy Policy',
-                      'Termini di Servizio',
-                      'Cookie Policy',
-                      'GDPR',
+                    Expanded(child: _buildFooterColumn(l10n.landingFooterLegal, [
+                      l10n.landingFooterPrivacy,
+                      l10n.landingFooterTerms,
+                      l10n.landingFooterCookies,
+                      l10n.landingFooterGdpr,
                     ])),
                   ],
                 );
@@ -1851,13 +1830,13 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(child: _buildFooterColumn('Prodotto', [
-                          'Funzionalita',
-                          'Pricing',
+                        Expanded(child: _buildFooterColumn(l10n.landingFooterProduct, [
+                          l10n.landingFooterFeatures,
+                          l10n.landingFooterPricing,
                         ])),
-                        Expanded(child: _buildFooterColumn('Legale', [
-                          'Privacy Policy',
-                          'Termini',
+                        Expanded(child: _buildFooterColumn(l10n.landingFooterLegal, [
+                          l10n.landingFooterPrivacy,
+                          l10n.landingFooterTerms,
                         ])),
                       ],
                     ),
@@ -1886,7 +1865,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                 return Row(
                   children: [
                     Text(
-                      '© 2025 Agile Tools. Tutti i diritti riservati.',
+                      l10n.landingCopyright, // '© 2025 Agile Tools...'
                       style: TextStyle(
                         color: context.textMutedColor,
                         fontSize: 13,
@@ -1902,7 +1881,7 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
                     _buildSocialLinks(),
                     const SizedBox(height: 16),
                     Text(
-                      '© 2025 Agile Tools. Tutti i diritti riservati.',
+                      l10n.landingCopyright,
                       style: TextStyle(
                         color: context.textMutedColor,
                         fontSize: 13,
@@ -1919,15 +1898,20 @@ La nostra Kanban board supporta personalizzazione delle colonne, WIP limits e me
   }
 
   Widget _buildFooterBrand() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-Image.asset(
-              'assets/icons/app_logo.png',
-              width: 36,
-              height: 36,
+ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/icons/landing_logo_hq.png',
+                width: 36,
+                height: 36,
+                filterQuality: FilterQuality.medium,
+              ),
             ),
             const SizedBox(width: 12),
             Text(
@@ -1941,8 +1925,9 @@ Image.asset(
           ],
         ),
         const SizedBox(height: 16),
+        const SizedBox(height: 16),
         Text(
-          'Strumenti collaborativi per team agili.\nPianifica, stima e migliora insieme.',
+          l10n.landingFooterBrandDesc, // 'Strumenti collaborativi...'
           style: TextStyle(
             fontSize: 13,
             color: context.textSecondaryColor,
@@ -1984,9 +1969,7 @@ Image.asset(
         ...links.map((link) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: _HoverButton(
-            onTap: () {
-              // TODO: Navigate to link
-            },
+            onTap: () => _onFooterLinkTap(link),
             child: Text(
               link,
               style: TextStyle(
@@ -1998,6 +1981,30 @@ Image.asset(
         )),
       ],
     );
+  }
+
+  void _onFooterLinkTap(String link) {
+    final l10n = AppLocalizations.of(context)!;
+    Widget? screen;
+    
+    if (link == l10n.landingFooterPrivacy) {
+      screen = PrivacyPolicyScreen();
+    } else if (link == l10n.landingFooterTerms) {
+      screen = TermsOfServiceScreen();
+    }
+    else if (link == l10n.landingFooterCookies) {
+      screen = CookiePolicyScreen();
+    } else if (link == l10n.landingFooterGdpr) {
+      screen = GdprScreen();
+    } else {
+      return;
+    }
+
+    if (screen != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => screen!),
+      );
+    }
   }
 
   Widget _buildSocialLinks() {
@@ -2355,6 +2362,63 @@ class _HoverButtonState extends State<_HoverButton> {
           child: widget.child,
         ),
       ),
+    );
+  }
+}
+
+/// Pulse Animation for Logo
+class _PulseLogo extends StatefulWidget {
+  final Widget child;
+
+  const _PulseLogo({required this.child});
+
+  @override
+  State<_PulseLogo> createState() => _PulseLogoState();
+}
+
+class _PulseLogoState extends State<_PulseLogo> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true); 
+
+    // Scale: 1.0 -> 1.05
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    // Opacity: 1.0 -> 0.8
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.8).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(
+            opacity: _opacityAnimation.value,
+            child: widget.child,
+          ),
+        );
+      },
     );
   }
 }

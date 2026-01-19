@@ -40,6 +40,7 @@ class AgileProjectModel {
   final String? productOwnerEmail;
   final String? scrumMasterEmail;
   final List<String> developmentTeamEmails;
+  final List<String> pendingEmails; // Inviti in attesa
 
   const AgileProjectModel({
     required this.id,
@@ -62,6 +63,7 @@ class AgileProjectModel {
     this.productOwnerEmail,
     this.scrumMasterEmail,
     this.developmentTeamEmails = const [],
+    this.pendingEmails = const [],
   });
 
   /// Crea da documento Firestore
@@ -117,6 +119,7 @@ class AgileProjectModel {
       productOwnerEmail: data['productOwnerEmail'],
       scrumMasterEmail: data['scrumMasterEmail'],
       developmentTeamEmails: List<String>.from(data['developmentTeamEmails'] ?? []),
+      pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
     );
   }
 
@@ -148,6 +151,7 @@ class AgileProjectModel {
       if (productOwnerEmail != null) 'productOwnerEmail': productOwnerEmail,
       if (scrumMasterEmail != null) 'scrumMasterEmail': scrumMasterEmail,
       'developmentTeamEmails': developmentTeamEmails,
+      'pendingEmails': pendingEmails,
       // Per query
       'participantEmails': participants.keys.toList(),
     };
@@ -184,6 +188,7 @@ class AgileProjectModel {
     String? productOwnerEmail,
     String? scrumMasterEmail,
     List<String>? developmentTeamEmails,
+    List<String>? pendingEmails,
   }) {
     return AgileProjectModel(
       id: id ?? this.id,
@@ -206,6 +211,7 @@ class AgileProjectModel {
       productOwnerEmail: productOwnerEmail ?? this.productOwnerEmail,
       scrumMasterEmail: scrumMasterEmail ?? this.scrumMasterEmail,
       developmentTeamEmails: developmentTeamEmails ?? this.developmentTeamEmails,
+      pendingEmails: pendingEmails ?? this.pendingEmails,
     );
   }
 

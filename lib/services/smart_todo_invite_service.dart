@@ -62,7 +62,17 @@ class SmartTodoInviteService {
       token: token,
     );
 
-    await docRef.set(invite.toFirestore());
+    // Use batch for atomic creation (Invite + Pending List)
+    final batch = _firestore.batch();
+    batch.set(docRef, invite.toFirestore());
+    
+    // Update pendingEmails on List
+    final listRef = _firestore.collection(_listsCollection).doc(listId);
+    batch.update(listRef, {
+      'pendingEmails': FieldValue.arrayUnion([email.toLowerCase()]),
+    });
+
+    await batch.commit();
     return invite;
   }
 
@@ -94,14 +104,13 @@ class SmartTodoInviteService {
   Future<void> acceptInvite({
     required String listId,
     required String token,
-    required String userId,
+    required String userId, // Kept for interface compatibility, but logic uses Email
     required String userEmail,
     required String? userDisplayName,
   }) async {
     final listRef = _firestore.collection(_listsCollection).doc(listId);
     
     // 1. Query for the invite (Outside Transaction)
-    // We must find the document ID first.
     final inviteQuery = await listRef
         .collection(_invitesSubcollection)
         .where('token', isEqualTo: token)
@@ -116,44 +125,59 @@ class SmartTodoInviteService {
     final inviteDocRef = inviteQuery.docs.first.reference;
 
     await _firestore.runTransaction((transaction) async {
-      // 2. Verify Invite (Inside Transaction)
+      // 2. Read Documents (List + Invite)
+      final listSnapshot = await transaction.get(listRef);
       final inviteSnapshot = await transaction.get(inviteDocRef);
-      if (!inviteSnapshot.exists) {
-        throw const FormatException('Invito non trovato');
-      }
+
+      if (!listSnapshot.exists) throw const FormatException('Lista non trovata');
+      if (!inviteSnapshot.exists) throw const FormatException('Invito non trovato');
 
       final inviteData = TodoInviteModel.fromFirestore(inviteSnapshot);
 
+      // Validation
       if (inviteData.status != TodoInviteStatus.pending) {
          throw const FormatException('Invito già accettato o revocato');
       }
-
       if (DateTime.now().isAfter(inviteData.expiresAt)) {
         throw const FormatException('Invito scaduto');
       }
-
       if (inviteData.email.toLowerCase() != userEmail.toLowerCase()) {
         throw const FormatException('Questa email non corrisponde all\'invito');
       }
 
-      // 3. Update Invite Status
-      transaction.update(inviteDocRef, {'status': 'accepted'});
-
-      // 4. Add to List Participants
+      // 3. Prepare Updates
+      
+      // Update Participants Map
+      // FORCE KEY TO BE EMAIL for permission checks (isOwner)
+      final existingParticipants = Map<String, dynamic>.from(listSnapshot.data()?['participants'] ?? {});
+      
       final participant = TodoParticipant(
         email: userEmail,
         role: inviteData.role,
         displayName: userDisplayName,
         joinedAt: DateTime.now(),
       );
+      
+      existingParticipants[userEmail] = participant.toMap();
 
-      // Use dot notation to update specific helper map key
+      // Remove from Pending
+      final pending = List<String>.from(listSnapshot.data()?['pendingEmails'] ?? []);
+      pending.remove(userEmail.toLowerCase());
+
+      // Add to Participant Emails
+      final emails = List<String>.from(listSnapshot.data()?['participantEmails'] ?? []);
+      if (!emails.contains(userEmail)) emails.add(userEmail);
+
+      // 4. Commit Updates
+      transaction.update(inviteDocRef, {'status': 'accepted'});
       transaction.update(listRef, {
-        'participants.$userId': participant.toMap(),
+        'participants': existingParticipants,
+        'pendingEmails': pending,
+        'participantEmails': emails,
       });
     });
   }
-  
+
   // Implementation of email sending (Gmail API)
   Future<bool> sendInviteEmail({
     required TodoInviteModel invite,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../models/user_profile/user_profile_model.dart';
 import '../models/user_profile/subscription_model.dart';
 import '../models/user_profile/user_settings_model.dart';
@@ -27,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   SubscriptionModel? _subscription;
   UserSettingsModel? _settings;
   bool _isLoading = true;
+  bool _isSaving = false;
   String? _error;
 
   // Form controllers per modifica profilo
@@ -90,15 +92,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profilo'),
+        title: Text(l10n.profileTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadUserData,
-            tooltip: 'Ricarica',
+            tooltip: l10n.profileReload,
           ),
         ],
       ),
@@ -111,11 +114,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Icon(Icons.error_outline, size: 48, color: Colors.red[300]),
                       const SizedBox(height: 16),
-                      Text('Errore: $_error'),
+                      Text(l10n.profileErrorPrefix(_error!)),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _loadUserData,
-                        child: const Text('Riprova'),
+                        child: Text(l10n.actionRetry),
                       ),
                     ],
                   ),
@@ -164,6 +167,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileHeader(ThemeData theme, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -194,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _profile?.fullName ?? 'Utente',
+                    _profile?.fullName ?? l10n.profileUser,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -255,14 +260,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileSection(ThemeData theme, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+
     return _buildExpandableSection(
-      title: 'Informazioni Personali',
+      title: l10n.profilePersonalInfo,
       icon: Icons.person_outline,
       initiallyExpanded: true,
       children: [
         _buildTextField(
           controller: _displayNameController,
-          label: 'Nome visualizzato',
+          label: l10n.profileDisplayName,
           icon: Icons.badge_outlined,
         ),
         const SizedBox(height: 12),
@@ -271,7 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: _buildTextField(
                 controller: _firstNameController,
-                label: 'Nome',
+                label: l10n.formName,
                 icon: Icons.person_outline,
               ),
             ),
@@ -279,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: _buildTextField(
                 controller: _lastNameController,
-                label: 'Cognome',
+                label: l10n.profileLastName,
                 icon: Icons.person_outline,
               ),
             ),
@@ -291,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: _buildTextField(
                 controller: _companyController,
-                label: 'Azienda',
+                label: l10n.profileCompany,
                 icon: Icons.business_outlined,
               ),
             ),
@@ -299,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: _buildTextField(
                 controller: _jobTitleController,
-                label: 'Ruolo',
+                label: l10n.profileJobTitle,
                 icon: Icons.work_outline,
               ),
             ),
@@ -308,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 12),
         _buildTextField(
           controller: _bioController,
-          label: 'Bio',
+          label: l10n.profileBio,
           icon: Icons.description_outlined,
           maxLines: 3,
         ),
@@ -326,13 +333,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _jobTitleController.text = _profile?.jobTitle ?? '';
                 _bioController.text = _profile?.bio ?? '';
               },
-              child: const Text('Annulla'),
+              child: Text(l10n.actionCancel),
             ),
             const SizedBox(width: 8),
             FilledButton.icon(
-              onPressed: _saveProfile,
-              icon: const Icon(Icons.save, size: 18),
-              label: const Text('Salva'),
+              onPressed: _isSaving ? null : _saveProfile,
+              icon: _isSaving
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.save, size: 18),
+              label: Text(_isSaving ? l10n.stateSaving : l10n.actionSave),
             ),
           ],
         ),
@@ -343,8 +356,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildSubscriptionSection(ThemeData theme, bool isDark) {
     if (_subscription == null) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
+
     return _buildExpandableSection(
-      title: 'Abbonamento',
+      title: l10n.profileSubscription,
       icon: Icons.card_membership_outlined,
       trailing: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -364,33 +379,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         // Info abbonamento attuale
         _buildInfoRow(
-          'Piano',
+          l10n.profilePlan,
           _subscription!.plan.displayName,
           icon: _subscription!.plan.icon,
           iconColor: _subscription!.plan.color,
         ),
         _buildInfoRow(
-          'Ciclo di fatturazione',
+          l10n.profileBillingCycle,
           _subscription!.billingCycle.displayName,
         ),
         _buildInfoRow(
-          'Prezzo',
+          l10n.profilePrice,
           _subscription!.formattedPrice,
         ),
         _buildInfoRow(
-          'Data attivazione',
+          l10n.profileActivationDate,
           _formatDate(_subscription!.startDate),
         ),
         if (_subscription!.endDate != null)
           _buildInfoRow(
             _subscription!.status == SubscriptionStatus.trialing
-                ? 'Fine periodo di prova'
-                : 'Prossimo rinnovo',
+                ? l10n.profileTrialEnd
+                : l10n.profileNextRenewal,
             _formatDate(_subscription!.endDate!),
           ),
         if (_subscription!.daysRemaining != null && _subscription!.daysRemaining! > 0)
           _buildInfoRow(
-            'Giorni rimanenti',
+            l10n.profileDaysRemaining,
             '${_subscription!.daysRemaining}',
             valueColor: _subscription!.daysRemaining! <= 7 ? Colors.orange : null,
           ),
@@ -404,13 +419,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               TextButton.icon(
                 onPressed: _showUpgradeDialog,
                 icon: const Icon(Icons.upgrade),
-                label: const Text('Upgrade'),
+                label: Text(l10n.profileUpgrade),
               ),
             if (_subscription!.isActive && _subscription!.plan != SubscriptionPlan.free)
               TextButton.icon(
                 onPressed: _showCancelSubscriptionDialog,
                 icon: const Icon(Icons.cancel_outlined),
-                label: const Text('Annulla'),
+                label: Text(l10n.actionCancel),
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
               ),
           ],
@@ -422,8 +437,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildSettingsSection(ThemeData theme, bool isDark) {
     if (_settings == null) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
+
     return _buildExpandableSection(
-      title: 'Impostazioni Generali',
+      title: l10n.profileGeneralSettings,
       icon: Icons.settings_outlined,
       children: [
         // Tema
@@ -436,7 +453,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? Icons.light_mode
                     : Icons.brightness_auto,
           ),
-          title: const Text('Tema'),
+          title: Text(l10n.settingsTheme),
           subtitle: Text(_settings!.themeMode.displayName),
           trailing: SegmentedButton<ThemePreference>(
             segments: ThemePreference.values
@@ -464,7 +481,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.language),
-          title: const Text('Lingua'),
+          title: Text(l10n.settingsLanguage),
           subtitle: Text(_settings!.locale == 'it' ? 'Italiano' : 'English'),
           trailing: DropdownButton<String>(
             value: _settings!.locale,
@@ -484,8 +501,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.animation),
-          title: const Text('Animazioni'),
-          subtitle: const Text('Abilita animazioni UI'),
+          title: Text(l10n.profileAnimations),
+          subtitle: Text(l10n.profileAnimationsDesc),
           value: _settings!.enableAnimations,
           onChanged: _updateAnimations,
         ),
@@ -496,41 +513,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildFeatureFlagsSection(ThemeData theme, bool isDark) {
     if (_settings == null) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
     final flags = _settings!.featureFlags;
 
     return _buildExpandableSection(
-      title: 'Funzionalità',
+      title: l10n.profileFeatures,
       icon: Icons.extension_outlined,
       children: [
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.calendar_today),
-          title: const Text('Integrazione Calendario'),
-          subtitle: const Text('Sincronizza sprint e scadenze'),
+          title: Text(l10n.profileCalendarIntegration),
+          subtitle: Text(l10n.profileCalendarIntegrationDesc),
           value: flags.calendarIntegration,
           onChanged: (v) => _toggleFeatureFlag('calendarIntegration', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.table_chart),
-          title: const Text('Export Google Sheets'),
-          subtitle: const Text('Esporta dati in fogli di calcolo'),
+          title: Text(l10n.profileExportSheets),
+          subtitle: Text(l10n.profileExportSheetsDesc),
           value: flags.googleSheetsExport,
           onChanged: (v) => _toggleFeatureFlag('googleSheetsExport', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.science),
-          title: const Text('Funzionalità Beta'),
-          subtitle: const Text('Accesso anticipato a nuove funzionalità'),
+          title: Text(l10n.profileBetaFeatures),
+          subtitle: Text(l10n.profileBetaFeaturesDesc),
           value: flags.betaFeatures,
           onChanged: (v) => _toggleFeatureFlag('betaFeatures', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.analytics),
-          title: const Text('Metriche Avanzate'),
-          subtitle: const Text('Statistiche e report dettagliati'),
+          title: Text(l10n.profileAdvancedMetrics),
+          subtitle: Text(l10n.profileAdvancedMetricsDesc),
           value: flags.advancedMetrics,
           onChanged: (v) => _toggleFeatureFlag('advancedMetrics', v),
         ),
@@ -541,49 +559,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildNotificationsSection(ThemeData theme, bool isDark) {
     if (_settings == null) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
     final notifications = _settings!.notifications;
 
     return _buildExpandableSection(
-      title: 'Notifiche',
+      title: l10n.profileNotifications,
       icon: Icons.notifications_outlined,
       children: [
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.email_outlined),
-          title: const Text('Notifiche Email'),
-          subtitle: const Text('Ricevi aggiornamenti via email'),
+          title: Text(l10n.profileEmailNotifications),
+          subtitle: Text(l10n.profileEmailNotificationsDesc),
           value: notifications.emailNotifications,
           onChanged: (v) => _updateNotification('emailNotifications', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.notifications_active_outlined),
-          title: const Text('Notifiche Push'),
-          subtitle: const Text('Notifiche nel browser'),
+          title: Text(l10n.profilePushNotifications),
+          subtitle: Text(l10n.profilePushNotificationsDesc),
           value: notifications.pushNotifications,
           onChanged: (v) => _updateNotification('pushNotifications', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.alarm),
-          title: const Text('Promemoria Sprint'),
-          subtitle: const Text('Avvisi per scadenze sprint'),
+          title: Text(l10n.profileSprintReminders),
+          subtitle: Text(l10n.profileSprintRemindersDesc),
           value: notifications.sprintReminders,
           onChanged: (v) => _updateNotification('sprintReminders', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.group_add_outlined),
-          title: const Text('Inviti Sessioni'),
-          subtitle: const Text('Notifiche per nuove sessioni'),
+          title: Text(l10n.profileSessionInvites),
+          subtitle: Text(l10n.profileSessionInvitesDesc),
           value: notifications.sessionInvites,
           onChanged: (v) => _updateNotification('sessionInvites', v),
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.summarize_outlined),
-          title: const Text('Riepilogo Settimanale'),
-          subtitle: const Text('Report settimanale delle attività'),
+          title: Text(l10n.profileWeeklySummary),
+          subtitle: Text(l10n.profileWeeklySummaryDesc),
           value: notifications.weeklyDigest,
           onChanged: (v) => _updateNotification('weeklyDigest', v),
         ),
@@ -592,6 +611,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildDangerZoneSection(ThemeData theme, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       color: Colors.red.withOpacity(isDark ? 0.15 : 0.05),
       child: Padding(
@@ -604,7 +625,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(Icons.warning_amber_rounded, color: Colors.red[400]),
                 const SizedBox(width: 8),
                 Text(
-                  'Zona Pericolosa',
+                  l10n.profileDangerZone,
                   style: TextStyle(
                     color: Colors.red[400],
                     fontWeight: FontWeight.bold,
@@ -632,15 +653,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Cancellazione in corso',
-                            style: TextStyle(
+                          Text(
+                            l10n.profileDeletionInProgress,
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.orange,
                             ),
                           ),
                           Text(
-                            'Richiesta il ${_profile!.deletionRequestedAt}',
+                            l10n.profileDeletionRequestedAt('${_profile!.deletionRequestedAt}'),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
@@ -651,7 +672,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     TextButton(
                       onPressed: _cancelDeletionRequest,
-                      child: const Text('Annulla richiesta'),
+                      child: Text(l10n.profileCancelRequest),
                     ),
                   ],
                 ),
@@ -662,11 +683,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.delete_forever, color: Colors.red[400]),
                 title: Text(
-                  'Elimina Account',
+                  l10n.profileDeleteAccount,
                   style: TextStyle(color: Colors.red[400]),
                 ),
                 subtitle: Text(
-                  'Richiedi la cancellazione definitiva del tuo account e di tutti i dati associati',
+                  l10n.profileDeleteAccountDesc,
                   style: TextStyle(
                     color: isDark ? Colors.grey[500] : Colors.grey[600],
                     fontSize: 12,
@@ -678,7 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     foregroundColor: Colors.red,
                     side: const BorderSide(color: Colors.red),
                   ),
-                  child: const Text('Richiedi'),
+                  child: Text(l10n.profileDeleteAccountRequest),
                 ),
               ),
             ],
@@ -691,11 +712,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.logout),
-              title: const Text('Esci'),
-              subtitle: const Text('Disconnetti il tuo account da questo dispositivo'),
+              title: Text(l10n.profileLogout),
+              subtitle: Text(l10n.profileLogoutDesc),
               trailing: OutlinedButton(
                 onPressed: _logout,
-                child: const Text('Logout'),
+                child: Text(l10n.authSignOut),
               ),
             ),
           ],
@@ -794,6 +815,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveProfile() async {
     if (_profile == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isSaving = true);
+
     try {
       final updated = _profile!.copyWith(
         displayName: _displayNameController.text.trim().isEmpty
@@ -821,8 +845,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profilo aggiornato'),
+          SnackBar(
+            content: Text(l10n.profileUpdated),
             backgroundColor: Colors.green,
           ),
         );
@@ -831,16 +855,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text(l10n.profileErrorPrefix(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
   Future<void> _updateTheme(ThemePreference theme) async {
     if (_settings == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       await _profileService.updateTheme(theme);
@@ -850,7 +878,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -858,6 +886,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _updateLocale(String locale) async {
     if (_settings == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       await _profileService.updateSettings(_settings!.copyWith(locale: locale));
@@ -867,7 +897,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -875,6 +905,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _updateAnimations(bool enabled) async {
     if (_settings == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       await _profileService.updateSettings(
@@ -886,20 +918,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   Future<void> _toggleFeatureFlag(String flagName, bool enabled) async {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       await _profileService.toggleFeatureFlag(flagName, enabled);
       await _loadUserData(); // Ricarica per sincronizzare
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -907,6 +941,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _updateNotification(String key, bool enabled) async {
     if (_settings == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       final currentMap = _settings!.notifications.toMap();
@@ -920,17 +956,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   void _showUpgradeDialog() {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Upgrade Piano'),
+        title: Text(l10n.profileUpgradePlan),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -943,8 +981,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 subtitle: Text(plan.description),
                 trailing: Text(
                   plan.monthlyPrice > 0
-                      ? '${plan.monthlyPrice.toStringAsFixed(2)} EUR/mese'
-                      : 'Gratuito',
+                      ? '${plan.monthlyPrice.toStringAsFixed(2)} ${l10n.profileMonthly}'
+                      : l10n.profileFree,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
@@ -957,7 +995,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
         ],
       ),
@@ -965,28 +1003,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _activatePlan(SubscriptionPlan plan) async {
+    final l10n = AppLocalizations.of(context)!;
+
     // TODO: Integrare con sistema di pagamento
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Upgrade a ${plan.displayName} in arrivo...'),
+        content: Text(l10n.profileUpgradeComingSoon(plan.displayName)),
         backgroundColor: Colors.blue,
       ),
     );
   }
 
   void _showCancelSubscriptionDialog() {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Annulla Abbonamento'),
-        content: const Text(
-          'Sei sicuro di voler annullare il tuo abbonamento? '
-          'Potrai continuare a utilizzare le funzionalità premium fino alla scadenza del periodo corrente.',
-        ),
+        title: Text(l10n.profileCancelSubscription),
+        content: Text(l10n.profileCancelSubscriptionConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('No, mantieni'),
+            child: Text(l10n.profileKeepSubscription),
           ),
           TextButton(
             onPressed: () {
@@ -994,7 +1033,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _cancelSubscription();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Sì, annulla'),
+            child: Text(l10n.profileYesCancel),
           ),
         ],
       ),
@@ -1002,13 +1041,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _cancelSubscription() async {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       await _profileService.cancelSubscription(reason: 'Richiesta utente');
       await _loadUserData();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Abbonamento annullato'),
+          SnackBar(
+            content: Text(l10n.profileSubscriptionCancelled),
             backgroundColor: Colors.orange,
           ),
         );
@@ -1016,13 +1057,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   void _showDeleteAccountDialog() {
+    final l10n = AppLocalizations.of(context)!;
     final reasonController = TextEditingController();
 
     showDialog(
@@ -1032,25 +1074,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Icon(Icons.warning, color: Colors.red[400]),
             const SizedBox(width: 8),
-            const Text('Elimina Account'),
+            Text(l10n.profileDeleteAccount),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Questa azione è irreversibile. Tutti i tuoi dati verranno eliminati definitivamente.',
-              style: TextStyle(fontWeight: FontWeight.w500),
+            Text(
+              l10n.profileDeleteAccountIrreversible,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: reasonController,
               maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'Motivo (opzionale)',
-                hintText: 'Perché vuoi eliminare il tuo account?',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.profileDeleteAccountReason,
+                hintText: l10n.profileDeleteAccountReasonHint,
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
@@ -1058,7 +1100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           TextButton(
             onPressed: () {
@@ -1066,7 +1108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _requestAccountDeletion(reasonController.text);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Richiedi Eliminazione'),
+            child: Text(l10n.profileRequestDeletion),
           ),
         ],
       ),
@@ -1074,13 +1116,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _requestAccountDeletion(String reason) async {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       await _profileService.requestAccountDeletion(reason);
       await _loadUserData();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Richiesta di eliminazione inviata'),
+          SnackBar(
+            content: Text(l10n.profileDeletionRequestSent),
             backgroundColor: Colors.orange,
           ),
         );
@@ -1088,20 +1132,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   Future<void> _cancelDeletionRequest() async {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       await _profileService.cancelDeletionRequest();
       await _loadUserData();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Richiesta annullata'),
+          SnackBar(
+            content: Text(l10n.profileDeletionRequestCancelled),
             backgroundColor: Colors.green,
           ),
         );
@@ -1109,26 +1155,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.profileErrorPrefix(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   Future<void> _logout() async {
+    final l10n = AppLocalizations.of(context)!;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Sei sicuro di voler uscire?'),
+        title: Text(l10n.authSignOut),
+        content: Text(l10n.profileLogoutConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Esci'),
+            child: Text(l10n.profileLogout),
           ),
         ],
       ),

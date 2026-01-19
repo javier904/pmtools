@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'screens/home_screen.dart';
@@ -13,16 +15,21 @@ import 'screens/agile_process_screen.dart';
 import 'screens/smart_todo/smart_todo_dashboard.dart';
 import 'screens/profile_screen.dart';
 import 'themes/app_theme.dart';
+import 'controllers/locale_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Carica preferenza tema salvata
+  // Carica preferenze salvate
   final prefs = await SharedPreferences.getInstance();
   final savedThemeMode = prefs.getString('themeMode') ?? 'dark';
+  final savedLocale = prefs.getString('locale') ?? 'en';
 
-  runApp(AgileToolsApp(initialThemeMode: savedThemeMode));
+  runApp(AgileToolsApp(
+    initialThemeMode: savedThemeMode,
+    initialLocale: savedLocale,
+  ));
 }
 
 /// Controller globale per il tema
@@ -97,8 +104,13 @@ class ThemeControllerProvider extends InheritedNotifier<ThemeController> {
 
 class AgileToolsApp extends StatefulWidget {
   final String initialThemeMode;
+  final String initialLocale;
 
-  const AgileToolsApp({super.key, required this.initialThemeMode});
+  const AgileToolsApp({
+    super.key,
+    required this.initialThemeMode,
+    required this.initialLocale,
+  });
 
   @override
   State<AgileToolsApp> createState() => _AgileToolsAppState();
@@ -106,16 +118,19 @@ class AgileToolsApp extends StatefulWidget {
 
 class _AgileToolsAppState extends State<AgileToolsApp> {
   late final ThemeController _themeController;
+  late final LocaleController _localeController;
 
   @override
   void initState() {
     super.initState();
     _themeController = ThemeController(widget.initialThemeMode);
+    _localeController = LocaleController(widget.initialLocale);
   }
 
   @override
   void dispose() {
     _themeController.dispose();
+    _localeController.dispose();
     super.dispose();
   }
 
@@ -123,27 +138,39 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
   Widget build(BuildContext context) {
     return ThemeControllerProvider(
       controller: _themeController,
-      child: ListenableBuilder(
-        listenable: _themeController,
-        builder: (context, child) {
-          return MaterialApp(
-            title: 'Agile Tools',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: _themeController.themeMode,
-            home: const AuthWrapper(),
-            routes: {
-              '/login': (context) => const LoginScreen(),
-              '/home': (context) => const HomeScreen(),
-              '/profile': (context) => const ProfileScreen(),
-              '/eisenhower': (context) => const EisenhowerScreen(),
-              '/estimation-room': (context) => const EstimationRoomScreen(),
-              '/agile-process': (context) => const AgileProcessScreen(),
-              '/smart-todo': (context) => const SmartTodoDashboard(),
-            },
-          );
-        },
+      child: LocaleControllerProvider(
+        controller: _localeController,
+        child: ListenableBuilder(
+          listenable: Listenable.merge([_themeController, _localeController]),
+          builder: (context, child) {
+            return MaterialApp(
+              title: 'Agile Tools',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: _themeController.themeMode,
+              // Localizzazione
+              locale: _localeController.locale,
+              supportedLocales: LocaleController.supportedLocales,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              home: const AuthWrapper(),
+              routes: {
+                '/login': (context) => const LoginScreen(),
+                '/home': (context) => const HomeScreen(),
+                '/profile': (context) => const ProfileScreen(),
+                '/eisenhower': (context) => const EisenhowerScreen(),
+                '/estimation-room': (context) => const EstimationRoomScreen(),
+                '/agile-process': (context) => const AgileProcessScreen(),
+                '/smart-todo': (context) => const SmartTodoDashboard(),
+              },
+            );
+          },
+        ),
       ),
     );
   }

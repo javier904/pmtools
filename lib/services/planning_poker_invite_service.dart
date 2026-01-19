@@ -65,14 +65,26 @@ class PlanningPokerInviteService {
       token: token,
     );
 
-    await _firestore
+    final batch = _firestore.batch();
+    
+    // 1. Crea documento invito
+    final inviteRef = _firestore
         .collection(_sessionsCollection)
         .doc(sessionId)
         .collection(_invitesSubcollection)
-        .doc(inviteId)
-        .set(invite.toFirestore());
+        .doc(inviteId);
+    batch.set(inviteRef, invite.toFirestore());
 
-    print('✅ Invito creato: ${invite.email} -> sessione $sessionId');
+    // 2. Aggiungi a pendingEmails (Sessione)
+    final sessionRef = _firestore.collection(_sessionsCollection).doc(sessionId);
+    batch.update(sessionRef, {
+      'pendingEmails': FieldValue.arrayUnion([email.toLowerCase()]),
+      'updatedAt': Timestamp.fromDate(now),
+    });
+
+    await batch.commit();
+
+    print('✅ Invito creato con Pending: ${invite.email} -> sessione $sessionId');
     return invite;
   }
 
@@ -209,13 +221,14 @@ class PlanningPokerInviteService {
 
     final batch = _firestore.batch();
 
-    // Aggiorna la sessione con il nuovo partecipante
+    // Aggiorna la sessione con il nuovo partecipante e RIMUOVI da pending
     // Escape dei punti nell'email per usarla come chiave Firestore
     final escapedEmail = acceptingUserEmail.toLowerCase().replaceAll('.', '_DOT_');
     final sessionRef = _firestore.collection(_sessionsCollection).doc(invite.sessionId);
     batch.update(sessionRef, {
       'participants.$escapedEmail': participant.toMap(),
       'participantEmails': FieldValue.arrayUnion([acceptingUserEmail.toLowerCase()]),
+      'pendingEmails': FieldValue.arrayRemove([acceptingUserEmail.toLowerCase()]), // RIMOSSO DA PENDING
     });
 
     // Aggiorna lo stato dell'invito
@@ -226,7 +239,7 @@ class PlanningPokerInviteService {
     });
 
     await batch.commit();
-    print('✅ Invito accettato: ${invite.email} -> sessione ${invite.sessionId}');
+    print('✅ Invito accettato e promosso da Pending: ${invite.email} -> sessione ${invite.sessionId}');
   }
 
   /// Rifiuta un invito

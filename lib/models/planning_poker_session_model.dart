@@ -87,6 +87,7 @@ class PlanningPokerSessionModel {
 
   // Partecipanti (embedded per performance)
   final Map<String, PlanningPokerParticipantModel> participants;
+  final List<String> pendingEmails; // New: Pending invites
 
   // Integrazioni (opzionali)
   final String? teamId;
@@ -127,6 +128,7 @@ class PlanningPokerSessionModel {
     this.storyCount = 0,
     this.completedStoryCount = 0,
     this.currentStoryId,
+    this.pendingEmails = const [],
   });
 
   /// Crea da documento Firestore
@@ -167,6 +169,7 @@ class PlanningPokerSessionModel {
       storyCount: data['storyCount'] ?? 0,
       completedStoryCount: data['completedStoryCount'] ?? 0,
       currentStoryId: data['currentStoryId'],
+      pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
     );
   }
 
@@ -192,6 +195,7 @@ class PlanningPokerSessionModel {
       'storyCount': storyCount,
       'completedStoryCount': completedStoryCount,
       if (currentStoryId != null) 'currentStoryId': currentStoryId,
+      'pendingEmails': pendingEmails,
       // Integrazioni
       if (teamId != null) 'teamId': teamId,
       if (teamName != null) 'teamName': teamName,
@@ -226,7 +230,9 @@ class PlanningPokerSessionModel {
     String? projectCode,
     int? storyCount,
     int? completedStoryCount,
+
     String? currentStoryId,
+    List<String>? pendingEmails,
   }) {
     return PlanningPokerSessionModel(
       id: id ?? this.id,
@@ -251,6 +257,7 @@ class PlanningPokerSessionModel {
       storyCount: storyCount ?? this.storyCount,
       completedStoryCount: completedStoryCount ?? this.completedStoryCount,
       currentStoryId: currentStoryId ?? this.currentStoryId,
+      pendingEmails: pendingEmails ?? this.pendingEmails,
     );
   }
 

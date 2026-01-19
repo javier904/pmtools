@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
+import '../../l10n/app_localizations.dart';
 import 'todo_task_card.dart';
 
 class TodoKanbanView extends StatelessWidget {
@@ -117,10 +118,13 @@ class TodoKanbanView extends StatelessWidget {
                     PopupMenuButton<String>(
                       icon: Icon(Icons.more_horiz, color: Colors.grey[600]),
                       onSelected: (val) => onColumnAction(val, col.id),
-                      itemBuilder: (context) => [
-                         const PopupMenuItem(value: 'rename', child: Text('Rinomina')),
-                         const PopupMenuItem(value: 'delete', child: Text('Elimina', style: TextStyle(color: Colors.red))),
-                      ],
+                      itemBuilder: (context) {
+                        final l10n = AppLocalizations.of(context)!;
+                        return [
+                          PopupMenuItem(value: 'rename', child: Text(l10n.smartTodoRename)),
+                          PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete, style: const TextStyle(color: Colors.red))),
+                        ];
+                      },
                     ),
                   ],
                 ),
@@ -162,21 +166,26 @@ class TodoKanbanView extends StatelessWidget {
               ),
               
               // Add Button (Footer)
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: TextButton.icon(
-                   onPressed: () => onQuickAdd(col.id),
-                   icon: const Icon(Icons.add_rounded, size: 20),
-                   label: const Text("Aggiungi un'attività"),
-                   style: TextButton.styleFrom(
-                     foregroundColor: Colors.grey[600],
-                     alignment: Alignment.centerLeft,
-                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                     backgroundColor: Colors.transparent, // Ghost button
-                   ).copyWith(
-                     overlayColor: MaterialStateProperty.all(Colors.grey.withOpacity(0.1)),
-                   ),
-                ),
+              Builder(
+                builder: (context) {
+                  final l10n = AppLocalizations.of(context)!;
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TextButton.icon(
+                       onPressed: () => onQuickAdd(col.id),
+                       icon: const Icon(Icons.add_rounded, size: 20),
+                       label: Text(l10n.smartTodoAddActivity),
+                       style: TextButton.styleFrom(
+                         foregroundColor: Colors.grey[600],
+                         alignment: Alignment.centerLeft,
+                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                         backgroundColor: Colors.transparent, // Ghost button
+                       ).copyWith(
+                         overlayColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.1)),
+                       ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -187,6 +196,7 @@ class TodoKanbanView extends StatelessWidget {
 
   Widget _buildAddColumnButton(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     return InkWell(
       onTap: () => onColumnAction('add', ''), // Empty ID for add
       child: Container(
@@ -203,7 +213,7 @@ class TodoKanbanView extends StatelessWidget {
             children: [
               Icon(Icons.add, color: isDark ? Colors.grey[400] : Colors.grey),
               const SizedBox(width: 8),
-              Text('Aggiungi Colonna', style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey, fontWeight: FontWeight.bold)),
+              Text(l10n.smartTodoAddColumn, style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey, fontWeight: FontWeight.bold)),
             ],
           ),
         ),

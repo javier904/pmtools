@@ -54,7 +54,7 @@ class AgileFirestoreService {
 
     // Crea il partecipante owner
     final owner = TeamMemberModel(
-      email: createdBy,
+      email: createdBy.toLowerCase(),
       name: createdByName,
       participantRole: AgileParticipantRole.owner,
       teamRole: TeamRole.productOwner,
@@ -67,7 +67,7 @@ class AgileFirestoreService {
       id: docRef.id,
       name: name,
       description: description,
-      createdBy: createdBy,
+      createdBy: createdBy.toLowerCase(),
       createdAt: now,
       updatedAt: now,
       framework: framework,
@@ -100,7 +100,7 @@ class AgileFirestoreService {
   /// Lista progetti di un utente
   Future<List<AgileProjectModel>> getUserProjects(String userEmail) async {
     final query = await _projectsRef
-        .where('participantEmails', arrayContains: userEmail)
+        .where('participantEmails', arrayContains: userEmail.toLowerCase())
         .orderBy('updatedAt', descending: true)
         .get();
 
@@ -110,7 +110,7 @@ class AgileFirestoreService {
   /// Stream dei progetti di un utente
   Stream<List<AgileProjectModel>> streamUserProjects(String userEmail) {
     return _projectsRef
-        .where('participantEmails', arrayContains: userEmail)
+        .where('participantEmails', arrayContains: userEmail.toLowerCase())
         .orderBy('updatedAt', descending: true)
         .snapshots()
         .map((query) =>
@@ -157,20 +157,20 @@ class AgileFirestoreService {
     String projectId,
     TeamMemberModel participant,
   ) async {
-    final escapedEmail = _escapeEmail(participant.email);
+    final escapedEmail = _escapeEmail(participant.email.toLowerCase());
     await _projectsRef.doc(projectId).update({
-      'participants.$escapedEmail': participant.toFirestore(),
-      'participantEmails': FieldValue.arrayUnion([participant.email]),
+      'participants.$escapedEmail': participant.copyWith(email: participant.email.toLowerCase()).toFirestore(),
+      'participantEmails': FieldValue.arrayUnion([participant.email.toLowerCase()]),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 
   /// Rimuove un partecipante dal progetto
   Future<void> removeParticipant(String projectId, String email) async {
-    final escapedEmail = _escapeEmail(email);
+    final escapedEmail = _escapeEmail(email.toLowerCase());
     await _projectsRef.doc(projectId).update({
       'participants.$escapedEmail': FieldValue.delete(),
-      'participantEmails': FieldValue.arrayRemove([email]),
+      'participantEmails': FieldValue.arrayRemove([email.toLowerCase()]),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -180,9 +180,36 @@ class AgileFirestoreService {
     String projectId,
     TeamMemberModel participant,
   ) async {
-    final escapedEmail = _escapeEmail(participant.email);
+    final escapedEmail = _escapeEmail(participant.email.toLowerCase());
     await _projectsRef.doc(projectId).update({
-      'participants.$escapedEmail': participant.toFirestore(),
+      'participants.$escapedEmail': participant.copyWith(email: participant.email.toLowerCase()).toFirestore(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Aggiunge un partecipante alla lista pending
+  Future<void> addPendingParticipant(
+    String projectId,
+    String email,
+  ) async {
+    await _projectsRef.doc(projectId).update({
+      'pendingEmails': FieldValue.arrayUnion([email.toLowerCase()]),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Promuove un partecipante da pending ad attivo
+  Future<void> promotePendingToActive(
+    String projectId,
+    TeamMemberModel participant,
+  ) async {
+    final escapedEmail = _escapeEmail(participant.email.toLowerCase());
+    
+    // Batch update atomico
+    await _projectsRef.doc(projectId).update({
+      'pendingEmails': FieldValue.arrayRemove([participant.email.toLowerCase()]),
+      'participants.$escapedEmail': participant.copyWith(email: participant.email.toLowerCase()).toFirestore(),
+      'participantEmails': FieldValue.arrayUnion([participant.email.toLowerCase()]),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }

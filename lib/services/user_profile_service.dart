@@ -125,7 +125,10 @@ class UserProfileService {
     await _firestore
         .collection(_usersCollection)
         .doc(userProfile.id)
-        .update(userProfile.copyWith(updatedAt: DateTime.now()).toFirestore());
+        .set(
+          userProfile.copyWith(updatedAt: DateTime.now()).toFirestore(),
+          SetOptions(merge: true),
+        );
     _cachedProfile = userProfile;
   }
 

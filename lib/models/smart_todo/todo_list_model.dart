@@ -40,6 +40,7 @@ class TodoListModel {
   final Map<String, TodoParticipant> participants;
   final List<TodoColumn> columns;
   final List<TodoLabel> availableTags;
+  final List<String> pendingEmails; // New: Pending invites
 
   const TodoListModel({
     required this.id,
@@ -50,6 +51,7 @@ class TodoListModel {
     required this.participants,
     this.columns = const [],
     this.availableTags = const [],
+    this.pendingEmails = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -62,6 +64,7 @@ class TodoListModel {
       'participants': participants.map((key, value) => MapEntry(key, value.toMap())),
       'columns': columns.map((c) => c.toMap()).toList(),
       'availableTags': availableTags.map((t) => t.toMap()).toList(),
+      'pendingEmails': pendingEmails,
     };
   }
 
@@ -87,6 +90,7 @@ class TodoListModel {
       availableTags: (map['availableTags'] as List?)
           ?.map((item) => TodoLabel.fromMap(item))
           .toList() ?? [],
+      pendingEmails: List<String>.from(map['pendingEmails'] ?? []),
     );
   }
 
@@ -99,6 +103,7 @@ class TodoListModel {
     Map<String, TodoParticipant>? participants,
     List<TodoColumn>? columns,
     List<TodoLabel>? availableTags,
+    List<String>? pendingEmails,
   }) {
     return TodoListModel(
       id: id ?? this.id,
@@ -109,6 +114,7 @@ class TodoListModel {
       participants: participants ?? this.participants,
       columns: columns ?? this.columns,
       availableTags: availableTags ?? this.availableTags,
+      pendingEmails: pendingEmails ?? this.pendingEmails,
     );
   }
 

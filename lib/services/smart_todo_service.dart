@@ -21,7 +21,7 @@ class SmartTodoService {
   Stream<List<TodoListModel>> streamLists(String userEmail) {
     return _firestore
         .collection(_listsCollection)
-        .where('participantEmails', arrayContains: userEmail)
+        .where('participantEmails', arrayContains: userEmail.toLowerCase())
         .snapshots()
         .map((snapshot) {
           final lists = snapshot.docs
@@ -36,9 +36,12 @@ class SmartTodoService {
   Future<String> createList(TodoListModel list, String userEmail) async {
     final docRef = _firestore.collection(_listsCollection).doc();
     
-    // Add participantEmails for querying
+    // Add participantEmails for querying (lowercase)
     final data = list.toMap();
-    data['participantEmails'] = list.participants.keys.toList();
+    // Normalizza ownerEmail
+    data['ownerEmail'] = userEmail.toLowerCase();
+    // Normalizza keys partecipanti
+    data['participantEmails'] = list.participants.keys.map((e) => e.toLowerCase()).toList();
     
     await docRef.set(data);
     return docRef.id;
@@ -46,7 +49,7 @@ class SmartTodoService {
 
   Future<void> updateList(TodoListModel list) async {
     final data = list.toMap();
-    data['participantEmails'] = list.participants.keys.toList();
+    data['participantEmails'] = list.participants.keys.map((e) => e.toLowerCase()).toList();
     await _firestore.collection(_listsCollection).doc(list.id).update(data);
   }
 
@@ -58,6 +61,45 @@ class SmartTodoService {
     final doc = await _firestore.collection(_listsCollection).doc(listId).get();
     if (!doc.exists) return null;
     return TodoListModel.fromMap(doc.data()!, doc.id);
+  }
+
+  /// Add a user to pending invites
+  Future<void> addPendingParticipant(String listId, String email) async {
+    await _firestore.collection(_listsCollection).doc(listId).update({
+      'pendingEmails': FieldValue.arrayUnion([email]),
+    });
+  }
+
+  /// Promote pending user to active participant via Transaction
+  Future<void> promotePendingToActive(String listId, TodoParticipant participant) async {
+    final docRef = _firestore.collection(_listsCollection).doc(listId);
+    
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      if (!snapshot.exists) throw Exception("List not found");
+
+      final data = snapshot.data()!;
+      
+      // 1. Update Participants Map
+      final participants = Map<String, dynamic>.from(data['participants'] ?? {});
+      participants[participant.email] = participant.toMap();
+
+      // 2. Remove from Pending
+      final pending = List<String>.from(data['pendingEmails'] ?? []);
+      pending.remove(participant.email);
+
+      // 3. Add to Participant Emails (for security/queries)
+      final emails = List<String>.from(data['participantEmails'] ?? []);
+      if (!emails.contains(participant.email)) {
+        emails.add(participant.email);
+      }
+
+      transaction.update(docRef, {
+        'participants': participants,
+        'pendingEmails': pending,
+        'participantEmails': emails,
+      });
+    });
   }
 
   Stream<TodoListModel?> streamList(String listId) {

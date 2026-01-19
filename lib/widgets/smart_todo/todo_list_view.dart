@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import 'todo_task_row.dart'; // Import the new row widget
@@ -35,10 +36,11 @@ class TodoListView extends StatelessWidget {
     });
 
     if (sortedTasks.isEmpty) {
-      return const Center(
+      final l10n = AppLocalizations.of(context)!;
+      return Center(
         child: Padding(
-          padding: EdgeInsets.only(top: 100),
-          child: Text('Nessuna attività in questa lista'),
+          padding: const EdgeInsets.only(top: 100),
+          child: Text(l10n.smartTodoNoTasks),
         ),
       );
     }

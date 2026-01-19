@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class RetroTimerWidget extends StatefulWidget {
@@ -66,19 +67,20 @@ class _RetroTimerWidgetState extends State<RetroTimerWidget> {
     // Post-frame callback to avoid build conflicts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Text('⏰ Tempo Scaduto!', style: TextStyle(color: Colors.red)),
-            content: const Text('Il tempo per questa fase è terminato. Concludi la discussione o estendi il tempo.'),
+            title: Text('⏰ ${l10n.retroTimeUp}', style: const TextStyle(color: Colors.red)),
+            content: Text(l10n.retroTimeUpMessage),
             actions: [
               TextButton(
                 onPressed: () {
                    Navigator.pop(context);
                    // Optional: Extend time?
                 },
-                child: const Text('Ok, ho capito'),
+                child: Text(l10n.retroTimeUpOk),
               ),
             ],
           ),

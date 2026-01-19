@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart'; // For kIsWeb
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../services/smart_todo_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class SmartTaskImportDialog extends StatefulWidget {
   final String listId;
@@ -83,6 +84,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   }
 
   Widget _buildHeader(bool isDark, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Container(
@@ -95,9 +97,9 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Importa Attività', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
+            Text(l10n.smartTodoImportTasks, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
             Text(
-              _getStepTitle(), 
+              _getStepTitle(l10n),
               style: TextStyle(fontSize: 14, color: isDark ? Colors.grey[400] : Colors.grey[600])
             ),
           ],
@@ -108,16 +110,17 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
     );
   }
 
-  String _getStepTitle() {
+  String _getStepTitle(AppLocalizations l10n) {
     switch (_currentStep) {
-      case 0: return 'Step 1: Scegli la Sorgente';
-      case 1: return 'Step 2: Mappa le Colonne';
-      case 2: return 'Step 3: Revisione & Conferma';
+      case 0: return l10n.smartTodoImportStep1;
+      case 1: return l10n.smartTodoImportStep2;
+      case 2: return l10n.smartTodoImportStep3;
       default: return '';
     }
   }
 
   Widget _buildBody(bool isDark, Color? inputBg, Color borderColor, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -132,7 +135,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => setState(() => _error = null),
-              child: const Text('Riprova'),
+              child: Text(l10n.smartTodoImportRetry),
             )
           ],
         ),
@@ -148,6 +151,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   }
 
   Widget _buildInputStep(bool isDark, Color? inputBg, Color borderColor, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     return DefaultTabController(
       length: 2,
       child: Column(
@@ -155,9 +159,9 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
           TabBar(
             labelColor: Colors.blue,
             unselectedLabelColor: isDark ? Colors.grey[400] : Colors.grey,
-            tabs: const [
-              Tab(text: 'Incolla Testo (CSV/Txt)'),
-              Tab(text: 'Carica File (CSV)'),
+            tabs: [
+              Tab(text: l10n.smartTodoImportPasteText),
+              Tab(text: l10n.smartTodoImportUploadFile),
             ],
           ),
           Expanded(
@@ -169,7 +173,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
                   child: Column(
                     children: [
                       Text(
-                        'Incolla qui i tuoi task. Usa la virgola come separatore.',
+                        l10n.smartTodoImportPasteHint,
                         style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey),
                       ),
                       const SizedBox(height: 8),
@@ -183,7 +187,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
                             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
-                            hintText: 'Esempio:\nComprare il latte, High, @mario\nFare report, Medium, @luigi',
+                            hintText: l10n.smartTodoImportPasteExample,
                             hintStyle: TextStyle(color: isDark ? Colors.grey[500] : null),
                             filled: true,
                             fillColor: inputBg,
@@ -201,16 +205,16 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
                       Icon(Icons.description_outlined, size: 64, color: isDark ? Colors.grey[600] : Colors.grey[300]),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
-                        onPressed: _pickCsvFile, 
+                        onPressed: _pickCsvFile,
                         icon: const Icon(Icons.folder_open),
-                        label: const Text('Seleziona File CSV'),
+                        label: Text(l10n.smartTodoImportSelectFile),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                         ),
                       ),
                       if (_fileName != null) ...[
                         const SizedBox(height: 16),
-                        Text('File selezionato: $_fileName', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                        Text(l10n.smartTodoImportFileSelected(_fileName!), style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                       ]
                     ],
                   ),
@@ -249,13 +253,15 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         _textInputController.text = content;
       }
     } catch (e) {
-      setState(() => _error = 'Errore lettura file: $e');
+      final l10n = AppLocalizations.of(context)!;
+      setState(() => _error = l10n.smartTodoImportFileError(e.toString()));
     }
   }
 
   Widget _buildMappingStep(bool isDark, Color textColor) {
-    if (_rawRows.isEmpty) return Center(child: Text('Nessun dato trovato', style: TextStyle(color: textColor)));
-    
+    final l10n = AppLocalizations.of(context)!;
+    if (_rawRows.isEmpty) return Center(child: Text(l10n.smartTodoImportNoData, style: TextStyle(color: textColor)));
+
     // Header Row (First 5 items max)
     final headerRow = _rawRows.first;
     // Sample Row
@@ -267,7 +273,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
-            'Abbiamo rilevato queste colonne. Associa ogni colonna al campo corretto.',
+            l10n.smartTodoImportColumnMapping,
             style: TextStyle(fontSize: 14, color: isDark ? Colors.grey[400] : Colors.grey),
           ),
         ),
@@ -278,10 +284,10 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
             itemBuilder: (context, index) {
               final cellValue = headerRow[index].toString();
               final sampleValue = index < sampleRow.length ? sampleRow[index].toString() : '-';
-              
+
               return ListTile(
-                title: Text('Colonna ${index + 1}: "$cellValue"', style: TextStyle(color: textColor)),
-                subtitle: Text('Esempio valore: "$sampleValue"', style: TextStyle(color: isDark ? Colors.grey[400] : null)),
+                title: Text(l10n.smartTodoImportColumnLabel(index + 1, cellValue), style: TextStyle(color: textColor)),
+                subtitle: Text(l10n.smartTodoImportSampleValue(sampleValue), style: TextStyle(color: isDark ? Colors.grey[400] : null)),
                 trailing: DropdownButton<String>(
                   value: _columnMapping[index] ?? 'ignore',
                   dropdownColor: isDark ? const Color(0xFF2D3748) : null,
@@ -311,6 +317,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   }
 
   Widget _buildReviewStep(bool isDark, Color? inputBg, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     // Generate Preview Models
     final previewTasks = _generateTasksFromMapping();
 
@@ -320,7 +327,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
-            'Trovati ${previewTasks.length} task validi. Controlla prima di importare.',
+            l10n.smartTodoImportFoundTasks(previewTasks.length),
             style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
           ),
         ),
@@ -373,6 +380,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   }
 
   Widget _buildFooter() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -381,11 +389,11 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
           if (_currentStep > 0)
             TextButton(
               onPressed: () => setState(() => _currentStep--),
-              child: const Text('Indietro'),
+              child: Text(l10n.smartTodoImportBack),
             )
           else
             const SizedBox.shrink(),
-          
+
           ElevatedButton(
             onPressed: _onNextPressed,
             style: ElevatedButton.styleFrom(
@@ -393,7 +401,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: Text(_currentStep == 2 ? 'Importa ${ _rawRows.length - 1 } Task' : 'Avanti'),
+            child: Text(_currentStep == 2 ? l10n.smartTodoImportButton(_rawRows.length - 1) : l10n.smartTodoImportNext),
           ),
         ],
       ),
@@ -401,13 +409,14 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   }
 
   void _onNextPressed() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_currentStep == 0) {
       // Validate Input & Parse
       if (_textInputController.text.isEmpty) {
-        setState(() => _error = 'Inserisci del testo o carica un file.');
+        setState(() => _error = l10n.smartTodoImportEnterText);
         return;
       }
-      
+
       setState(() => _isLoading = true);
       // Simulate/Run parser
       await Future.delayed(const Duration(milliseconds: 500));
@@ -415,20 +424,20 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         // Use CsvToListConverter
         final converter = const CsvToListConverter(eol: '\n', fieldDelimiter: ',');
         List<List<dynamic>> rows = converter.convert(_textInputController.text);
-        
+
         // Remove empty rows
         rows = rows.where((r) => r.isNotEmpty && r.join('').trim().isNotEmpty).toList();
 
-        if (rows.isEmpty) throw 'Nessuna riga valida trovata.';
-        
+        if (rows.isEmpty) throw l10n.smartTodoImportNoValidRows;
+
         setState(() {
           _rawRows = rows;
           _isLoading = false;
           _currentStep = 1;
           _error = null;
-          
+
           // Auto-guess mapping?
-          // Simple heuristic: 
+          // Simple heuristic:
           // If 'title' in header -> map to title
           // If 'desc' in header -> map to description
           // etc.
@@ -447,13 +456,13 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         });
       } catch (e) {
         setState(() {
-          _isLoading = false; 
-          _error = 'Errore Parsing: $e';
+          _isLoading = false;
+          _error = l10n.smartTodoImportParsingError(e.toString());
         });
       }
     } else if (_currentStep == 1) {
       if (!_columnMapping.containsValue('title')) {
-        setState(() => _error = 'Devi mappare almeno il "Title".');
+        setState(() => _error = l10n.smartTodoImportMapTitle);
         return;
       }
       setState(() {
@@ -467,23 +476,24 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         final tasks = _generateTasksFromMapping();
         await widget.todoService.batchCreateTasks(widget.listId, tasks);
         if (mounted) Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Importati ${tasks.length} task!')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoImportSuccess(tasks.length))));
       } catch (e) {
         setState(() {
           _isLoading = false;
-          _error = 'Errore Impossibile: $e';
+          _error = l10n.smartTodoImportError(e.toString());
         });
       }
     }
   }
   
   List<TodoTaskModel> _generateTasksFromMapping() {
+    final l10n = AppLocalizations.of(context)!;
     // Skip header row
     final dataRows = _rawRows.skip(1);
     final List<TodoTaskModel> tasks = [];
-    
+
     for (var row in dataRows) {
-      String title = 'Nuovo Task';
+      String title = l10n.smartTodoNewTaskDefault;
       String desc = '';
       TodoTaskPriority priority = TodoTaskPriority.medium;
       String statusId = widget.availableColumns.first.id;

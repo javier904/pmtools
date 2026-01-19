@@ -1,6 +1,7 @@
 
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/themes/app_theme.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ActionItemDialog extends StatefulWidget {
@@ -60,8 +61,9 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(widget.item == null ? 'Nuovo Action Item' : 'Modifica Action Item'),
+      title: Text(widget.item == null ? l10n.retroNewActionItem : l10n.retroEditActionItem),
       content: SizedBox(
         width: MediaQuery.of(context).size.width > 650 ? 600 : double.maxFinite,
         child: SingleChildScrollView(
@@ -74,13 +76,13 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                 // Description
                 TextFormField(
                   controller: _descController,
-                  decoration: const InputDecoration(
-                    labelText: 'Cosa bisogna fare?',
-                    hintText: 'Descrivi l\'azione concreta...',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.retroActionWhatToDo,
+                    hintText: l10n.retroActionDescriptionHint,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLines: 2,
-                  validator: (val) => val == null || val.isEmpty ? 'Richiesto' : null,
+                  validator: (val) => val == null || val.isEmpty ? l10n.formRequired : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -88,14 +90,14 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                 DropdownButtonFormField<String>(
                   value: _selectedSourceRefId,
                   isExpanded: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Collegato a Retro Card (Opzionale)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.link),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  decoration: InputDecoration(
+                    labelText: l10n.retroActionLinkedCard,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.link),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   ),
                   items: [
-                    const DropdownMenuItem(value: null, child: Text('Nessuna')),
+                    DropdownMenuItem(value: null, child: Text(l10n.retroActionNone)),
                     ...widget.availableCards.where((c) => c.content.isNotEmpty).map((card) {
                       final shortText = card.content.length > 50 
                           ? '${card.content.substring(0, 50)}...' 
@@ -108,11 +110,12 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                   ],
                   onChanged: (val) => setState(() => _selectedSourceRefId = val),
                   selectedItemBuilder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
                     return [
-                       const Text('Nessuna'),
+                       Text(l10n.retroActionNone),
                        ...widget.availableCards.where((c) => c.content.isNotEmpty).map((card) {
-                         final shortText = card.content.length > 30 
-                             ? '${card.content.substring(0, 30)}...' 
+                         final shortText = card.content.length > 30
+                             ? '${card.content.substring(0, 30)}...'
                              : card.content;
                          return Text(shortText, overflow: TextOverflow.ellipsis);
                        })
@@ -120,7 +123,7 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 Row(
                   children: [
                     // Assignee Dropdown
@@ -129,14 +132,14 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                       child: DropdownButtonFormField<String>(
                         value: _assigneeEmail,
                         isExpanded: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Assegnatario',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person_outline),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        decoration: InputDecoration(
+                          labelText: l10n.retroActionAssignee,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.person_outline),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                         ),
                         items: [
-                          const DropdownMenuItem(value: null, child: Text('Nessuno')),
+                          DropdownMenuItem(value: null, child: Text(l10n.retroActionNoAssignee)),
                           ...widget.participants.map((email) => DropdownMenuItem(
                             value: email,
                             child: Text(email, overflow: TextOverflow.ellipsis), 
@@ -153,11 +156,11 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                       child: DropdownButtonFormField<ActionPriority>(
                         value: _priority,
                         isExpanded: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Priorità',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.flag_outlined),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        decoration: InputDecoration(
+                          labelText: l10n.retroActionPriority,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.flag_outlined),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                         ),
                         items: ActionPriority.values.map((p) => DropdownMenuItem(
                           value: p,
@@ -176,14 +179,14 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                 InkWell(
                   onTap: _pickDate,
                   child: InputDecorator(
-                    decoration: const InputDecoration(
-                      labelText: 'Scadenza (Deadline)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.calendar_today),
+                    decoration: InputDecoration(
+                      labelText: l10n.retroActionDueDate,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.calendar_today),
                     ),
                     child: Text(
                       _dueDate == null
-                          ? 'Seleziona data...'
+                          ? l10n.retroActionSelectDate
                           : '${_dueDate!.day}/${_dueDate!.month}/${_dueDate!.year}',
                       style: TextStyle(
                         color: _dueDate == null ? context.textMutedColor : context.textPrimaryColor,
@@ -196,11 +199,11 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                 // Resources
                 TextFormField(
                   controller: _resourcesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Risorse di Supporto',
-                    hintText: 'Tool, budget, persone extra necessarie...',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.build_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.retroActionSupportResources,
+                    hintText: l10n.retroActionResourcesHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.build_outlined),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -208,11 +211,11 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                 // Monitoring
                 TextFormField(
                   controller: _monitoringController,
-                  decoration: const InputDecoration(
-                    labelText: 'Modalità di Monitoraggio',
-                    hintText: 'Come verificheremo il progresso? (es. Daily, Review...)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.visibility_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.retroActionMonitoring,
+                    hintText: l10n.retroActionMonitoringHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.visibility_outlined),
                   ),
                 ),
               ],
@@ -223,11 +226,11 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton(
           onPressed: _save,
-          child: Text(widget.item == null ? 'Crea' : 'Salva'),
+          child: Text(widget.item == null ? l10n.actionCreate : l10n.actionSave),
         ),
       ],
     );

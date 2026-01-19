@@ -2,6 +2,7 @@ import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/widgets/retrospective/retro_column_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 class RetroWizardWidget extends StatelessWidget {
   final RetrospectiveModel retro;
@@ -28,7 +29,7 @@ class RetroWizardWidget extends StatelessWidget {
       children: [
         // Stepper Header
         _buildStepperHeader(context, currentStep),
-        
+
         // Active Column View
         Expanded(
           child: Padding(
@@ -46,69 +47,63 @@ class RetroWizardWidget extends StatelessWidget {
   }
 
   Widget _buildStepperHeader(BuildContext context, int currentStep) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Column(
         children: [
-            // Progress Indicators
+          // Progress Indicators
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(retro.columns.length, (index) {
+              final bool isActive = index == currentStep;
+              final bool isCompleted = index < currentStep;
+              return Container(
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive
+                      ? Theme.of(context).primaryColor
+                      : (isCompleted ? Theme.of(context).primaryColor.withOpacity(0.5) : Colors.grey.shade300),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 8),
+          // Navigation Controls (Facilitator only)
+          if (isFacilitator)
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(retro.columns.length, (index) {
-                    final bool isActive = index == currentStep;
-                    final bool isCompleted = index < currentStep;
-                    return Container(
-                        width: 12, height: 12,
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isActive 
-                                ? Theme.of(context).primaryColor 
-                                : (isCompleted ? Theme.of(context).primaryColor.withOpacity(0.5) : Colors.grey.shade300),
-                        ),
-                    );
-                }),
-            ),
-            const SizedBox(height: 8),
-            // Navigation Controls (Facilitator only)
-            if (isFacilitator)
-                Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                       IconButton(
-                           icon: const Icon(Icons.arrow_back),
-                           onPressed: currentStep > 0 
-                             ? () => _updateStep(currentStep - 1)
-                             : null,
-                       ),
-                       Text(
-                           "Step ${currentStep + 1}: ${retro.columns[currentStep].title}",
-                           style: const TextStyle(fontWeight: FontWeight.bold),
-                       ),
-                       IconButton(
-                           icon: const Icon(Icons.arrow_forward),
-                           onPressed: currentStep < retro.columns.length - 1
-                             ? () => _updateStep(currentStep + 1)
-                             : null,
-                       ),
-                   ],
-                )
-            else
-               Text(
-                   "Current Focus: ${retro.columns[currentStep].title}",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-               )
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: currentStep > 0 ? () => _updateStep(currentStep - 1) : null,
+                ),
+                Text(
+                  l10n.retroStep(currentStep + 1, retro.columns[currentStep].title),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: currentStep < retro.columns.length - 1 ? () => _updateStep(currentStep + 1) : null,
+                ),
+              ],
+            )
+          else
+            Text(
+              l10n.retroCurrentFocus(retro.columns[currentStep].title),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            )
         ],
       ),
     );
   }
 
   void _updateStep(int step) {
-      RetrospectiveFirestoreService().updateWizardStep(
-          retro.id, 
-          step, 
-          currentUserEmail, 
-          currentUserName
-      );
+    RetrospectiveFirestoreService().updateWizardStep(retro.id, step, currentUserEmail, currentUserName);
   }
 }

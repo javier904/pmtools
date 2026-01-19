@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <base href="$FLUTTER_BASE_HREF">
 
@@ -9,8 +10,10 @@
 
   <!-- SEO Meta Tags -->
   <title>Agile Tools - Strumenti Collaborativi per Team Agili</title>
-  <meta name="description" content="Agile Tools: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
-  <meta name="keywords" content="agile tools, planning poker, eisenhower matrix, scrum, kanban, sprint planning, backlog, team collaboration, estimation, todo list">
+  <meta name="description"
+    content="Agile Tools: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
+  <meta name="keywords"
+    content="agile tools, planning poker, eisenhower matrix, scrum, kanban, sprint planning, backlog, team collaboration, estimation, todo list">
   <meta name="author" content="Agile Tools">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://pm-agile-tools-app.web.app/">
@@ -19,7 +22,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pm-agile-tools-app.web.app/">
   <meta property="og:title" content="Agile Tools - Strumenti Collaborativi per Team Agili">
-  <meta property="og:description" content="Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning. Collabora in tempo reale con il tuo team.">
+  <meta property="og:description"
+    content="Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning. Collabora in tempo reale con il tuo team.">
   <meta property="og:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -31,7 +35,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://pm-agile-tools-app.web.app/">
   <meta name="twitter:title" content="Agile Tools - Strumenti per Team Agili">
-  <meta name="twitter:description" content="Smart Todo, Planning Poker, Matrice Eisenhower e Sprint Planning. Collabora in tempo reale.">
+  <meta name="twitter:description"
+    content="Smart Todo, Planning Poker, Matrice Eisenhower e Sprint Planning. Collabora in tempo reale.">
   <meta name="twitter:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
 
   <!-- Google Sign-In Client ID -->
@@ -109,8 +114,17 @@
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.8; }
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
     }
 
     .app-title {
@@ -163,10 +177,30 @@
       font-size: 20px;
     }
 
-    .tool-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-    .tool-icon.green { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-    .tool-icon.orange { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-    .tool-icon.purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+    .tool-icon.blue {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+
+    .tool-icon.green {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    .tool-icon.orange {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .tool-icon.purple {
+      background: rgba(139, 92, 246, 0.15);
+      color: #8b5cf6;
+    }
+
+    .tool-icon.pink {
+      background: rgba(236, 72, 153, 0.15);
+      color: #ec4899;
+    }
 
     .tool-name {
       font-size: 16px;
@@ -205,7 +239,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* Hide loading screen once Flutter is ready */
@@ -216,6 +252,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Loading Screen with Tool Preview -->
   <div id="loading-screen" class="loading-screen">
@@ -250,6 +287,12 @@
         <div class="tool-name">Agile Process</div>
         <div class="tool-desc">Gestisci backlog, sprint e kanban board. Metriche incluse.</div>
       </div>
+
+      <div class="tool-card">
+        <div class="tool-icon pink">&#129504;</div>
+        <div class="tool-name">Retrospective Board</div>
+        <div class="tool-desc">Raccogli feedback dal team su cosa e andato bene, cosa migliorare.</div>
+      </div>
     </div>
 
     <div class="loading-indicator">
@@ -262,15 +305,16 @@
 
   <script>
     // Hide loading screen when Flutter is ready
-    window.addEventListener('flutter-first-frame', function() {
+    window.addEventListener('flutter-first-frame', function () {
       var loadingScreen = document.getElementById('loading-screen');
       if (loadingScreen) {
         loadingScreen.classList.add('hidden');
-        setTimeout(function() {
+        setTimeout(function () {
           loadingScreen.style.display = 'none';
         }, 300);
       }
     });
   </script>
 </body>
+
 </html>

@@ -70,7 +70,7 @@ class PlanningPokerFirestoreService {
         'allowObservers': allowObservers,
         'autoReveal': autoReveal,
         'participants': {
-          _escapeEmailKey(createdBy): {
+          _escapeEmailKey(createdBy.toLowerCase()): {
             'name': createdBy.split('@').first,
             'role': 'facilitator',
             'joinedAt': Timestamp.fromDate(now),
@@ -433,6 +433,52 @@ class PlanningPokerFirestoreService {
     }
   }
 
+  /// Aggiunge un partecipante alla lista pending
+  Future<void> addPendingParticipant({
+    required String sessionId,
+    required String email,
+  }) async {
+    try {
+      print('⏳ [PlanningPoker] Aggiungendo pending: $email');
+      await _sessionsCollection.doc(sessionId).update({
+        'pendingEmails': FieldValue.arrayUnion([email.toLowerCase()]),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+    } catch (e) {
+      print('❌ [PlanningPoker] Errore aggiunta pending: $e');
+      rethrow;
+    }
+  }
+
+  /// Promuove un partecipante da pending ad attivo
+  Future<void> promotePendingToActive({
+    required String sessionId,
+    required String email,
+    required String name,
+    ParticipantRole role = ParticipantRole.voter,
+  }) async {
+    try {
+      print('✅ [PlanningPoker] Promuovendo pending -> active: $email');
+      final now = DateTime.now();
+      final escapedEmail = _escapeEmailKey(email.toLowerCase());
+
+      await _sessionsCollection.doc(sessionId).update({
+        'pendingEmails': FieldValue.arrayRemove([email.toLowerCase()]),
+        'participants.$escapedEmail': {
+          'name': name,
+          'role': role.name,
+          'joinedAt': Timestamp.fromDate(now),
+          'isOnline': true,
+        },
+        'participantEmails': FieldValue.arrayUnion([email.toLowerCase()]),
+        'updatedAt': Timestamp.fromDate(now),
+      });
+    } catch (e) {
+      print('❌ [PlanningPoker] Errore promozione pending: $e');
+      rethrow;
+    }
+  }
+
   // ══════════════════════════════════════════════════════════════════════════
   // STORIES - CRUD
   // ══════════════════════════════════════════════════════════════════════════
@@ -645,7 +691,7 @@ class PlanningPokerFirestoreService {
       // Controlla se l'utente aveva già votato (per non incrementare il contatore)
       final storyDoc = await storyRef.get();
       final existingVotes = (storyDoc.data()?['votes'] as Map<String, dynamic>?) ?? {};
-      final hadVoted = existingVotes.containsKey(voterEmail);
+      final hadVoted = existingVotes.containsKey(voterEmail.toLowerCase());
 
       // Usa set con merge per evitare problemi con i punti nell'email
       // (Firestore interpreta i punti come path separators in update())
@@ -669,7 +715,7 @@ class PlanningPokerFirestoreService {
         voteData['pessimisticValue'] = pessimisticValue;
       }
 
-      updatedVotes[voterEmail] = voteData;
+      updatedVotes[voterEmail.toLowerCase()] = voteData;
 
       await storyRef.update({
         'votes': updatedVotes,
@@ -697,9 +743,9 @@ class PlanningPokerFirestoreService {
       final storyDoc = await storyRef.get();
       final existingVotes = (storyDoc.data()?['votes'] as Map<String, dynamic>?) ?? {};
 
-      if (existingVotes.containsKey(voterEmail)) {
+      if (existingVotes.containsKey(voterEmail.toLowerCase())) {
         final updatedVotes = Map<String, dynamic>.from(existingVotes);
-        updatedVotes.remove(voterEmail);
+        updatedVotes.remove(voterEmail.toLowerCase());
 
         await storyRef.update({
           'votes': updatedVotes,

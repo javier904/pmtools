@@ -23,6 +23,7 @@ class EisenhowerMatrixModel {
   final Map<String, EisenhowerParticipantModel> participants;
 
   final int activityCount; // Contatore attività (denormalizzato per lista)
+  final List<String> pendingEmails; // New: Pending invites
 
   // Colonne RACI
   final List<RaciColumn> raciColumns;
@@ -46,6 +47,7 @@ class EisenhowerMatrixModel {
     this.participants = const {},
     this.activityCount = 0,
     this.raciColumns = const [],
+    this.pendingEmails = const [],
     this.teamId,
     this.teamName,
     this.businessUnitId,
@@ -108,6 +110,7 @@ class EisenhowerMatrixModel {
       participants: participantsMap,
       activityCount: data['activityCount'] ?? 0,
       raciColumns: raciColumnsList,
+      pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
       // 🆕 Integrazioni
       teamId: data['teamId'],
       teamName: data['teamName'],
@@ -140,6 +143,7 @@ class EisenhowerMatrixModel {
       'participants': participantsData,
       'activityCount': activityCount,
       'raciColumns': raciColumnsData,
+      'pendingEmails': pendingEmails,
       // 🆕 Integrazioni (solo se valorizzati)
       if (teamId != null) 'teamId': teamId,
       if (teamName != null) 'teamName': teamName,
@@ -162,6 +166,7 @@ class EisenhowerMatrixModel {
     Map<String, EisenhowerParticipantModel>? participants,
     int? activityCount,
     List<RaciColumn>? raciColumns,
+    List<String>? pendingEmails,
     String? teamId,
     String? teamName,
     String? businessUnitId,
@@ -180,6 +185,7 @@ class EisenhowerMatrixModel {
       participants: participants ?? this.participants,
       activityCount: activityCount ?? this.activityCount,
       raciColumns: raciColumns ?? this.raciColumns,
+      pendingEmails: pendingEmails ?? this.pendingEmails,
       teamId: teamId ?? this.teamId,
       teamName: teamName ?? this.teamName,
       businessUnitId: businessUnitId ?? this.businessUnitId,

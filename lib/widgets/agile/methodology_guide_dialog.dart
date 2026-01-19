@@ -3,6 +3,7 @@ import '../../models/methodology_guide.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Dialog per visualizzare la guida completa di una metodologia
 class MethodologyGuideDialog extends StatefulWidget {
@@ -73,25 +74,28 @@ class _MethodologyGuideDialogState extends State<MethodologyGuideDialog>
                   const SizedBox(width: 12),
                   Expanded(
                     child: Builder(
-                      builder: (context) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Guida alle Metodologie Agile',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      builder: (context) {
+                        final l10n = AppLocalizations.of(context)!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.agileMethodologyGuideTitle,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Scegli la metodologia più adatta al tuo progetto',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: context.textMutedColor,
+                            Text(
+                              l10n.agileMethodologyGuideSubtitle,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.textMutedColor,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                   IconButton(
@@ -435,14 +439,14 @@ class MethodologyQuickInfo extends StatelessWidget {
                   TextButton.icon(
                     onPressed: onLearnMore,
                     icon: const Icon(Icons.menu_book, size: 16),
-                    label: const Text('Guida'),
+                    label: Text(AppLocalizations.of(context)!.agileGuide),
                   ),
               ],
             ),
             const SizedBox(height: 8),
             Builder(
               builder: (context) => Text(
-                _getShortDescription(framework),
+                _getShortDescription(context, framework),
                 style: TextStyle(
                   fontSize: 13,
                   color: context.textSecondaryColor,
@@ -455,14 +459,15 @@ class MethodologyQuickInfo extends StatelessWidget {
     );
   }
 
-  String _getShortDescription(AgileFramework framework) {
+  String _getShortDescription(BuildContext context, AgileFramework framework) {
+    final l10n = AppLocalizations.of(context)!;
     switch (framework) {
       case AgileFramework.scrum:
-        return 'Sprint a tempo fisso, Velocity, Burndown. Ideale per prodotti con requisiti che evolvono.';
+        return l10n.agileScrumShortDesc;
       case AgileFramework.kanban:
-        return 'Flusso continuo, WIP Limits, Lead Time. Ideale per supporto e richieste continue.';
+        return l10n.agileKanbanShortDesc;
       case AgileFramework.hybrid:
-        return 'Mix di Sprint e flusso continuo. Ideale per team che vogliono flessibilità.';
+        return l10n.agileScrumbanShortDesc;
     }
   }
 }

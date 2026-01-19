@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../l10n/app_localizations.dart';
 import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
 import '../services/eisenhower_firestore_service.dart';
@@ -86,6 +87,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return PopScope(
       canPop: _selectedMatrix == null,
       onPopInvoked: (didPop) {
@@ -102,7 +105,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             children: [
               Icon(Icons.grid_4x4, color: context.textPrimaryColor),
               const SizedBox(width: 8),
-              Text(_selectedMatrix?.title ?? 'Matrice di Eisenhower'),
+              Text(_selectedMatrix?.title ?? l10n.eisenhowerTitle),
             ],
           ),
           actions: [
@@ -117,10 +120,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildViewToggleButton(0, Icons.grid_view, 'Griglia'),
-                    _buildViewToggleButton(1, Icons.scatter_plot, 'Grafico'),
-                    _buildViewToggleButton(2, Icons.format_list_numbered, 'Lista'),
-                    _buildViewToggleButton(3, Icons.table_chart, 'RACI'),
+                    _buildViewToggleButton(0, Icons.grid_view, l10n.eisenhowerViewGrid),
+                    _buildViewToggleButton(1, Icons.scatter_plot, l10n.eisenhowerViewChart),
+                    _buildViewToggleButton(2, Icons.format_list_numbered, l10n.eisenhowerViewList),
+                    _buildViewToggleButton(3, Icons.table_chart, l10n.eisenhowerViewRaci),
                   ],
                 ),
               ),
@@ -136,26 +139,26 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                         ),
                       )
                     : const Icon(Icons.upload_file),
-                tooltip: 'Esporta su Google Sheets',
+                tooltip: l10n.eisenhowerExportSheets,
                 onPressed: _isExporting ? null : _exportToGoogleSheets,
               ),
               // Invita partecipanti
               IconButton(
                 icon: const Icon(Icons.person_add),
-                tooltip: 'Invita Partecipanti',
+                tooltip: l10n.eisenhowerInviteParticipants,
                 onPressed: _showInviteDialog,
               ),
               // Impostazioni matrice
               IconButton(
                 icon: const Icon(Icons.settings),
-                tooltip: 'Impostazioni Matrice',
+                tooltip: l10n.eisenhowerMatrixSettings,
                 onPressed: _showMatrixSettings,
               ),
               const SizedBox(width: 8),
               // Torna alla lista
               TextButton.icon(
                 icon: Icon(Icons.arrow_back, size: 18, color: context.textPrimaryColor),
-                label: Text('Lista', style: TextStyle(color: context.textPrimaryColor)),
+                label: Text(l10n.eisenhowerBackToList, style: TextStyle(color: context.textPrimaryColor)),
                 onPressed: () => setState(() {
                   _selectedMatrix = null;
                   _activities = [];
@@ -175,6 +178,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Widget _buildMatrixList() {
+    final l10n = AppLocalizations.of(context)!;
+
     return StreamBuilder<List<EisenhowerMatrixModel>>(
       stream: _firestoreService.streamMatricesByUser(_currentUserEmail),
       builder: (context, snapshot) {
@@ -189,11 +194,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: AppColors.error),
                 const SizedBox(height: 16),
-                Text('Errore: ${snapshot.error}', style: TextStyle(color: context.textPrimaryColor)),
+                Text('${l10n.stateError}: ${snapshot.error}', style: TextStyle(color: context.textPrimaryColor)),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _loadData,
-                  child: const Text('Riprova'),
+                  child: Text(l10n.actionRetry),
                 ),
               ],
             ),
@@ -222,7 +227,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   const Icon(Icons.folder_open, color: AppColors.secondary),
                   const SizedBox(width: 8),
                   Text(
-                    'Le tue matrici (${filteredMatrices.length}/${matrices.length})',
+                    l10n.eisenhowerYourMatricesCount(filteredMatrices.length, matrices.length),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -249,9 +254,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                     children: [
                       const Icon(Icons.filter_alt, size: 16, color: AppColors.secondary),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Ricerca:',
-                        style: TextStyle(fontSize: 12, color: AppColors.secondary),
+                      Text(
+                        l10n.eisenhowerSearchLabel,
+                        style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                       ),
                       const SizedBox(width: 8),
                       Chip(
@@ -264,7 +269,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                       const Spacer(),
                       TextButton(
                         onPressed: () => setState(() => _searchQuery = ''),
-                        child: const Text('Rimuovi filtro', style: TextStyle(fontSize: 12)),
+                        child: Text(l10n.filterRemove, style: const TextStyle(fontSize: 12)),
                       ),
                     ],
                   ),
@@ -280,13 +285,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                             Icon(Icons.search_off, size: 48, color: context.textTertiaryColor),
                             const SizedBox(height: 16),
                             Text(
-                              'Nessuna matrice trovata',
+                              l10n.eisenhowerNoMatrixFound,
                               style: TextStyle(color: context.textSecondaryColor),
                             ),
                             const SizedBox(height: 8),
                             TextButton(
                               onPressed: () => setState(() => _searchQuery = ''),
-                              child: const Text('Rimuovi filtro'),
+                              child: Text(l10n.filterRemove),
                             ),
                           ],
                         ),
@@ -327,6 +332,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -334,7 +341,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           Icon(Icons.grid_4x4, size: 80, color: context.textMutedColor),
           const SizedBox(height: 16),
           Text(
-            'Nessuna matrice creata',
+            l10n.eisenhowerNoMatrices,
             style: TextStyle(
               fontSize: 18,
               color: context.textSecondaryColor,
@@ -343,7 +350,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Crea la tua prima Matrice di Eisenhower\nper organizzare le tue priorità',
+            l10n.eisenhowerCreateFirstMatrix,
             textAlign: TextAlign.center,
             style: TextStyle(color: context.textTertiaryColor),
           ),
@@ -351,7 +358,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           ElevatedButton.icon(
             onPressed: _showCreateMatrixDialog,
             icon: const Icon(Icons.add),
-            label: const Text('Crea Matrice'),
+            label: Text(l10n.eisenhowerCreateMatrix),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
@@ -362,6 +369,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Widget _buildMatrixCard(EisenhowerMatrixModel matrix) {
+    final l10n = AppLocalizations.of(context)!;
     final activityCount = matrix.activityCount;
 
     return Card(
@@ -380,7 +388,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 children: [
                   // Icona matrice
                   Tooltip(
-                    message: 'Matrice Eisenhower\nClicca per aprire',
+                    message: l10n.eisenhowerClickToOpen,
                     child: Container(
                       width: 26,
                       height: 26,
@@ -432,17 +440,17 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                             children: [
                               Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
                               const SizedBox(width: 8),
-                              const Text('Modifica', style: TextStyle(fontSize: 13)),
+                              Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
                             ],
                           ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete, size: 16, color: AppColors.error),
-                              SizedBox(width: 8),
-                              Text('Elimina', style: TextStyle(fontSize: 13, color: AppColors.error)),
+                              const Icon(Icons.delete, size: 16, color: AppColors.error),
+                              const SizedBox(width: 8),
+                              Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: AppColors.error)),
                             ],
                           ),
                         ),
@@ -458,13 +466,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   _buildCompactMatrixStat(
                     Icons.task_alt,
                     '$activityCount',
-                    'Attività totali nella matrice',
+                    l10n.eisenhowerTotalActivities,
                   ),
                   const SizedBox(width: 8),
                   _buildCompactMatrixStat(
                     Icons.people,
                     '${matrix.participants.length}',
-                    'Partecipanti',
+                    l10n.participants,
                   ),
                 ],
               ),
@@ -607,6 +615,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   /// Vista lista ordinata per priorità (Q1 → Q2 → Q3 → Q4 → Non votate)
   Widget _buildPriorityListView() {
+    final l10n = AppLocalizations.of(context)!;
+
     // Ordina le attività per priorità
     final sortedActivities = List<EisenhowerActivityModel>.from(_activities);
     sortedActivities.sort((a, b) {
@@ -647,7 +657,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               const Icon(Icons.format_list_numbered, color: AppColors.secondary),
               const SizedBox(width: 8),
               Text(
-                'Lista Priorità',
+                l10n.eisenhowerPriorityList,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -656,7 +666,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               ),
               const SizedBox(width: 16),
               Text(
-                '${_activities.length} attività',
+                l10n.eisenhowerActivityCountLabel(_activities.length),
                 style: TextStyle(color: context.textSecondaryColor),
               ),
               const Spacer(),
@@ -675,7 +685,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                         Icon(Icons.inbox, size: 64, color: context.textMutedColor),
                         const SizedBox(height: 16),
                         Text(
-                          'Nessuna attività',
+                          l10n.eisenhowerNoActivities,
                           style: TextStyle(color: context.textTertiaryColor, fontSize: 16),
                         ),
                       ],
@@ -725,6 +735,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Widget _buildPriorityListItem(EisenhowerActivityModel activity, int position) {
+    final l10n = AppLocalizations.of(context)!;
     final quadrant = activity.quadrant;
     final hasVotes = activity.hasVotes;
     final color = quadrant != null
@@ -809,7 +820,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${activity.voteCount} voti',
+                      l10n.eisenhowerVoteCountLabel(activity.voteCount),
                       style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
                     ),
                   ],
@@ -825,7 +836,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   border: Border.all(color: color.withOpacity(0.5)),
                 ),
                 child: Text(
-                  hasVotes ? (quadrant?.title ?? '-') : 'Da votare',
+                  hasVotes ? (quadrant?.title ?? '-') : l10n.eisenhowerToVote,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -852,19 +863,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                     value: 'vote',
                     child: Row(
                       children: [
-                        Icon(Icons.how_to_vote, size: 18, color: AppColors.secondary),
+                        const Icon(Icons.how_to_vote, size: 18, color: AppColors.secondary),
                         const SizedBox(width: 8),
-                        Text(hasVotes ? 'Modifica voti' : 'Vota'),
+                        Text(hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(Icons.delete, size: 18, color: AppColors.error),
-                        SizedBox(width: 8),
-                        Text('Elimina', style: TextStyle(color: AppColors.error)),
+                        const Icon(Icons.delete, size: 18, color: AppColors.error),
+                        const SizedBox(width: 8),
+                        Text(l10n.actionDelete, style: const TextStyle(color: AppColors.error)),
                       ],
                     ),
                   ),
@@ -891,6 +902,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Widget _buildSidePanel() {
+    final l10n = AppLocalizations.of(context)!;
     final unvotedActivities = _activities.unvoted;
     final votedCount = _activities.length - unvotedActivities.length;
 
@@ -909,7 +921,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   const Icon(Icons.people, size: 18, color: AppColors.secondary),
                   const SizedBox(width: 8),
                   Text(
-                    'Partecipanti (${_selectedMatrix!.participants.length})',
+                    '${l10n.participants} (${_selectedMatrix!.participants.length})',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: context.textPrimaryColor,
@@ -919,7 +931,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   IconButton(
                     icon: Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
                     onPressed: _showMatrixSettings,
-                    tooltip: 'Modifica partecipanti',
+                    tooltip: l10n.eisenhowerEditParticipants,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                   ),
@@ -955,11 +967,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           color: context.surfaceColor,
           child: Row(
             children: [
-              _buildStatBadge('Totali', _activities.length, context.textTertiaryColor),
+              _buildStatBadge(l10n.eisenhowerTotal, _activities.length, context.textTertiaryColor),
               const SizedBox(width: 8),
-              _buildStatBadge('Votate', votedCount, AppColors.success),
+              _buildStatBadge(l10n.eisenhowerVoted, votedCount, AppColors.success),
               const SizedBox(width: 8),
-              _buildStatBadge('Da votare', unvotedActivities.length, AppColors.warning),
+              _buildStatBadge(l10n.eisenhowerToVote, unvotedActivities.length, AppColors.warning),
             ],
           ),
         ),
@@ -973,11 +985,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               if (unvotedActivities.isNotEmpty) ...[
                 Row(
                   children: [
-                    Icon(Icons.pending_actions, size: 16, color: AppColors.warning),
+                    const Icon(Icons.pending_actions, size: 16, color: AppColors.warning),
                     const SizedBox(width: 6),
                     Text(
-                      'Da votare (${unvotedActivities.length})',
-                      style: TextStyle(
+                      '${l10n.eisenhowerToVote} (${unvotedActivities.length})',
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppColors.warning,
                         fontSize: 13,
@@ -1001,7 +1013,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   const Icon(Icons.list, size: 16, color: AppColors.secondary),
                   const SizedBox(width: 6),
                   Text(
-                    'Tutte le attività (${_activities.length})',
+                    '${l10n.eisenhowerAllActivities} (${_activities.length})',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -1073,17 +1085,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Widget? _buildFAB() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_selectedMatrix == null) {
       return FloatingActionButton.extended(
         onPressed: _showCreateMatrixDialog,
         icon: const Icon(Icons.add),
-        label: const Text('Nuova Matrice'),
+        label: Text(l10n.eisenhowerNewMatrix),
       );
     } else {
       return FloatingActionButton.extended(
         onPressed: _showAddActivityDialog,
         icon: const Icon(Icons.add_task),
-        label: const Text('Aggiungi Attività'),
+        label: Text(l10n.eisenhowerAddActivity),
       );
     }
   }
@@ -1093,6 +1107,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Future<void> _showCreateMatrixDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => _MatrixFormDialog(),
@@ -1107,14 +1123,16 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           createdBy: _currentUserEmail,
           creatorName: _currentUserEmail?.split('@').first,
         );
-        _showSuccess('Matrice creata con successo');
+        _showSuccess(l10n.eisenhowerMatrixCreated);
       } catch (e) {
-        _showError('Errore creazione matrice: $e');
+        _showError('${l10n.errorCreatingMatrix}: $e');
       }
     }
   }
 
   Future<void> _showEditMatrixDialog(EisenhowerMatrixModel matrix) async {
+    final l10n = AppLocalizations.of(context)!;
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => _MatrixFormDialog(matrix: matrix),
@@ -1137,9 +1155,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           }
         }
 
-        _showSuccess('Matrice aggiornata');
+        _showSuccess(l10n.eisenhowerMatrixUpdated);
       } catch (e) {
-        _showError('Errore aggiornamento: $e');
+        _showError('${l10n.errorUpdatingMatrix}: $e');
       }
     }
   }
@@ -1156,6 +1174,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   /// Esporta la matrice corrente su Google Sheets
   Future<void> _exportToGoogleSheets() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedMatrix == null) return;
 
     setState(() => _isExporting = true);
@@ -1167,23 +1186,23 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       );
 
       if (url != null) {
-        _showSuccess('Export completato!');
+        _showSuccess(l10n.eisenhowerExportCompleted);
 
         // Chiedi se aprire il foglio
         if (mounted) {
           final shouldOpen = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Export Completato'),
-              content: const Text('Il foglio Google Sheets è stato creato.\nVuoi aprirlo nel browser?'),
+              title: Text(l10n.eisenhowerExportCompletedDialog),
+              content: Text(l10n.eisenhowerExportDialogContent),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('No'),
+                  child: Text(l10n.no),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Apri'),
+                  child: Text(l10n.eisenhowerOpen),
                 ),
               ],
             ),
@@ -1197,10 +1216,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           }
         }
       } else {
-        _showError('Errore durante l\'export');
+        _showError(l10n.errorExport);
       }
     } catch (e) {
-      _showError('Errore export: $e');
+      _showError('${l10n.errorExport}: $e');
     } finally {
       if (mounted) {
         setState(() => _isExporting = false);
@@ -1238,32 +1257,29 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   /// Avvia una sessione di votazione indipendente su un'attivita'
   Future<void> _startIndependentVoting(EisenhowerActivityModel activity) async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedMatrix == null) return;
 
     // Verifica che ci siano partecipanti votanti
     if (_selectedMatrix!.voterCount < 2) {
-      _showError('Servono almeno 2 votanti per la votazione indipendente');
+      _showError(l10n.eisenhowerMinVotersRequired);
       return;
     }
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Avvia Votazione Indipendente'),
-        content: Text(
-          'Vuoi avviare una sessione di voto indipendente per "${activity.title}"?\n\n'
-          'Ogni partecipante votera\' senza vedere i voti degli altri, '
-          'fino a quando tutti avranno votato e i voti verranno rivelati.',
-        ),
+        title: Text(l10n.eisenhowerStartVoting),
+        content: Text(l10n.eisenhowerStartVotingDesc(activity.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton.icon(
             onPressed: () => Navigator.pop(context, true),
             icon: const Icon(Icons.how_to_vote),
-            label: const Text('Avvia'),
+            label: Text(l10n.eisenhowerStart),
           ),
         ],
       ),
@@ -1273,9 +1289,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       try {
         await _firestoreService.startVotingSession(_selectedMatrix!.id, activity.id);
         await _loadActivities(_selectedMatrix!.id);
-        _showSuccess('Votazione avviata');
+        _showSuccess(l10n.eisenhowerVotingStarted);
       } catch (e) {
-        _showError('Errore avvio votazione: $e');
+        _showError('${l10n.errorStartingVoting}: $e');
       }
     }
   }
@@ -1345,22 +1361,23 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   /// Resetta una sessione di votazione
   Future<void> _resetVotingSession(EisenhowerActivityModel activity) async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedMatrix == null) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Resettare Votazione?'),
-        content: const Text('Tutti i voti verranno cancellati.'),
+        title: Text(l10n.eisenhowerResetVoting),
+        content: Text(l10n.eisenhowerResetVotingDesc),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.warning),
-            child: const Text('Reset'),
+            child: Text(l10n.actionReset),
           ),
         ],
       ),
@@ -1370,9 +1387,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       try {
         await _firestoreService.resetVotingSession(_selectedMatrix!.id, activity.id);
         await _loadActivities(_selectedMatrix!.id);
-        _showSuccess('Votazione resettata');
+        _showSuccess(l10n.eisenhowerVotingReset);
       } catch (e) {
-        _showError('Errore reset: $e');
+        _showError('${l10n.errorResetVoting}: $e');
       }
     }
   }
@@ -1384,23 +1401,25 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Future<void> _confirmDeleteMatrix(EisenhowerMatrixModel matrix) async {
+    final l10n = AppLocalizations.of(context)!;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Matrice'),
+        title: Text(l10n.eisenhowerDeleteMatrix),
         content: Text(
-          'Sei sicuro di voler eliminare "${matrix.title}"?\n'
-          'Verranno eliminate anche tutte le ${matrix.activityCount} attività.',
+          '${l10n.eisenhowerDeleteActivityConfirm(matrix.title)}\n'
+          '${l10n.eisenhowerDeleteMatrixWithActivities(matrix.activityCount)}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Elimina'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -1415,14 +1434,16 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             _activities = [];
           });
         }
-        _showSuccess('Matrice eliminata');
+        _showSuccess(l10n.eisenhowerMatrixDeleted);
       } catch (e) {
-        _showError('Errore eliminazione: $e');
+        _showError('${l10n.errorDeletingMatrix}: $e');
       }
     }
   }
 
   Future<void> _showAddActivityDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => _ActivityFormDialog(),
@@ -1436,16 +1457,18 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           description: result['description'] ?? '',
         );
         await _loadActivities(_selectedMatrix!.id);
-        _showSuccess('Attività aggiunta');
+        _showSuccess(l10n.eisenhowerActivityAdded);
       } catch (e) {
-        _showError('Errore aggiunta attività: $e');
+        _showError('${l10n.errorAddingActivity}: $e');
       }
     }
   }
 
   Future<void> _showVoteDialog(EisenhowerActivityModel activity) async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_selectedMatrix == null || !_selectedMatrix!.hasParticipants) {
-      _showError('Aggiungi prima dei partecipanti alla matrice');
+      _showError(l10n.eisenhowerAddParticipantsFirst);
       return;
     }
 
@@ -1464,14 +1487,16 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           votes: votes,
         );
         await _loadActivities(_selectedMatrix!.id);
-        _showSuccess('Voti salvati');
+        _showSuccess(l10n.eisenhowerVotesSaved);
       } catch (e) {
-        _showError('Errore salvataggio voti: $e');
+        _showError('${l10n.errorSavingVotes}: $e');
       }
     }
   }
 
   Future<void> _showActivityDetail(EisenhowerActivityModel activity) async {
+    final l10n = AppLocalizations.of(context)!;
+
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1489,14 +1514,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 const Divider(),
                 const SizedBox(height: 8),
                 Text(
-                  'Quadrante: ${activity.quadrant?.name ?? "-"} - ${activity.quadrant?.title ?? "-"}',
+                  '${l10n.eisenhowerQuadrant}: ${activity.quadrant?.name ?? "-"} - ${activity.quadrant?.title ?? "-"}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Text('Urgenza media: ${activity.aggregatedUrgency.toStringAsFixed(1)}'),
-                Text('Importanza media: ${activity.aggregatedImportance.toStringAsFixed(1)}'),
+                Text('${l10n.eisenhowerUrgencyAvg}: ${activity.aggregatedUrgency.toStringAsFixed(1)}'),
+                Text('${l10n.eisenhowerImportanceAvg}: ${activity.aggregatedImportance.toStringAsFixed(1)}'),
                 const SizedBox(height: 12),
-                const Text('Voti:', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(l10n.eisenhowerVotesLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                 ...activity.votes.entries.map((e) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 4),
@@ -1507,21 +1532,21 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   );
                 }),
               ] else
-                const Text('Nessun voto ancora raccolto'),
+                Text(l10n.eisenhowerNoVotesYet),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Chiudi'),
+            child: Text(l10n.actionClose),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _showVoteDialog(activity);
             },
-            child: Text(activity.hasVotes ? 'Modifica Voti' : 'Vota'),
+            child: Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
           ),
         ],
       ),
@@ -1529,20 +1554,22 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Future<void> _confirmDeleteActivity(EisenhowerActivityModel activity) async {
+    final l10n = AppLocalizations.of(context)!;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Attività'),
-        content: Text('Sei sicuro di voler eliminare "${activity.title}"?'),
+        title: Text(l10n.eisenhowerDeleteActivity),
+        content: Text(l10n.eisenhowerDeleteActivityConfirm(activity.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Elimina'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -1555,9 +1582,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           activityId: activity.id,
         );
         await _loadActivities(_selectedMatrix!.id);
-        _showSuccess('Attività eliminata');
+        _showSuccess(l10n.eisenhowerActivityDeleted);
       } catch (e) {
-        _showError('Errore eliminazione: $e');
+        _showError('${l10n.errorDeletingMatrix}: $e');
       }
     }
   }
@@ -1643,10 +1670,11 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isEdit = widget.matrix != null;
 
     return AlertDialog(
-      title: Text(isEdit ? 'Modifica Matrice' : 'Nuova Matrice'),
+      title: Text(isEdit ? l10n.eisenhowerEditMatrix : l10n.eisenhowerNewMatrix),
       content: SizedBox(
         width: 500,
         child: SingleChildScrollView(
@@ -1656,26 +1684,26 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
             children: [
               TextField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Titolo *',
-                  hintText: 'Es: Priorità Q1 2025',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: '${l10n.formTitle} *',
+                  hintText: l10n.formTitleHint,
+                  border: const OutlineInputBorder(),
                 ),
                 autofocus: true,
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrizione',
-                  hintText: 'Descrizione opzionale',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.formDescription,
+                  hintText: l10n.formDescriptionHint,
+                  border: const OutlineInputBorder(),
                 ),
                 maxLines: 2,
               ),
               const SizedBox(height: 20),
               Text(
-                'Partecipanti',
+                l10n.participants,
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: context.textPrimaryColor,
@@ -1687,9 +1715,9 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
                   Expanded(
                     child: TextField(
                       controller: _participantController,
-                      decoration: const InputDecoration(
-                        hintText: 'Nome partecipante',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: l10n.formParticipantHint,
+                        border: const OutlineInputBorder(),
                         isDense: true,
                       ),
                       onSubmitted: (_) => _addParticipant(),
@@ -1719,7 +1747,7 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Aggiungi almeno un partecipante per poter votare',
+                    l10n.formAddParticipantHint,
                     style: TextStyle(
                       fontSize: 12,
                       color: context.textSecondaryColor,
@@ -1734,13 +1762,13 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton(
           onPressed: () {
             if (_titleController.text.trim().isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Inserisci un titolo')),
+                SnackBar(content: Text(l10n.formTitleRequired)),
               );
               return;
             }
@@ -1750,7 +1778,7 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
               'participants': _participants,
             });
           },
-          child: Text(isEdit ? 'Salva' : 'Crea'),
+          child: Text(isEdit ? l10n.actionSave : l10n.actionCreate),
         ),
       ],
     );
@@ -1775,8 +1803,9 @@ class _ActivityFormDialogState extends State<_ActivityFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Nuova Attività'),
+      title: Text(l10n.eisenhowerNewActivity),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -1784,20 +1813,20 @@ class _ActivityFormDialogState extends State<_ActivityFormDialog> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Titolo *',
-                hintText: 'Es: Completare documentazione API',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: '${l10n.formTitle} *',
+                hintText: l10n.formActivityTitleHint,
+                border: const OutlineInputBorder(),
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Descrizione',
-                hintText: 'Descrizione opzionale',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.formDescription,
+                hintText: l10n.formDescriptionHint,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 3,
             ),
@@ -1807,13 +1836,13 @@ class _ActivityFormDialogState extends State<_ActivityFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton(
           onPressed: () {
             if (_titleController.text.trim().isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Inserisci un titolo')),
+                SnackBar(content: Text(l10n.formTitleRequired)),
               );
               return;
             }
@@ -1822,7 +1851,7 @@ class _ActivityFormDialogState extends State<_ActivityFormDialog> {
               'description': _descriptionController.text.trim(),
             });
           },
-          child: const Text('Aggiungi'),
+          child: Text(l10n.actionAdd),
         ),
       ],
     );

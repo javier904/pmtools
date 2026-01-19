@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/planning_poker_session_model.dart';
 import '../../models/estimation_mode.dart';
 
@@ -55,10 +56,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isEdit = widget.session != null;
 
     return AlertDialog(
-      title: Text(isEdit ? 'Modifica Sessione' : 'Nuova Sessione'),
+      title: Text(isEdit ? l10n.estimationEditSession : l10n.estimationNewSession),
       content: SizedBox(
         width: 500,
         child: SingleChildScrollView(
@@ -69,10 +71,10 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
               // Nome
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome Sessione *',
-                  hintText: 'Es: Sprint 15 - Stima User Stories',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.sessionNameRequired,
+                  hintText: l10n.sessionNameHint,
+                  border: const OutlineInputBorder(),
                 ),
                 autofocus: true,
               ),
@@ -80,10 +82,10 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
               // Descrizione
               TextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrizione',
-                  hintText: 'Descrizione opzionale',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.sessionDescription,
+                  hintText: l10n.formDescriptionHint,
+                  border: const OutlineInputBorder(),
                 ),
                 maxLines: 2,
               ),
@@ -92,9 +94,9 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
               const SizedBox(height: 20),
               const Divider(),
               const SizedBox(height: 8),
-              const Text(
-                'Configurazione',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              Text(
+                l10n.sessionConfiguration,
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
 
@@ -102,7 +104,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
               DropdownButtonFormField<EstimationMode>(
                 value: _selectedEstimationMode,
                 decoration: InputDecoration(
-                  labelText: 'Modalita di Stima',
+                  labelText: l10n.sessionEstimationMode,
                   border: const OutlineInputBorder(),
                   isDense: true,
                   prefixIcon: Icon(_getEstimationModeIcon(_selectedEstimationMode), size: 20),
@@ -145,20 +147,20 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   _selectedEstimationMode == EstimationMode.fiveFingers) ...[
                 DropdownButtonFormField<String>(
                   value: _selectedCardSet,
-                  decoration: const InputDecoration(
-                    labelText: 'Set di Carte',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.sessionCardSet,
+                    border: const OutlineInputBorder(),
                     isDense: true,
-                    prefixIcon: Icon(Icons.style, size: 20),
+                    prefixIcon: const Icon(Icons.style, size: 20),
                   ),
-                  items: const [
+                  items: [
                     DropdownMenuItem(
                       value: 'fibonacci',
-                      child: Text('Fibonacci (0, 1, 2, 3, 5, 8, 13, 20, 40, 100, ?, ?)'),
+                      child: Text(l10n.cardSetFibonacci),
                     ),
                     DropdownMenuItem(
                       value: 'simplified',
-                      child: Text('Semplificato (1, 2, 3, 5, 8, 13, ?, ?)'),
+                      child: Text(l10n.cardSetSimplified),
                     ),
                   ],
                   onChanged: (value) => setState(() => _selectedCardSet = value!),
@@ -173,8 +175,8 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     child: CheckboxListTile(
                       value: _autoReveal,
                       onChanged: (value) => setState(() => _autoReveal = value!),
-                      title: const Text('Auto-reveal', style: TextStyle(fontSize: 14)),
-                      subtitle: const Text('Rivela quando tutti votano', style: TextStyle(fontSize: 11)),
+                      title: Text(l10n.sessionAutoReveal, style: const TextStyle(fontSize: 14)),
+                      subtitle: Text(l10n.sessionAutoRevealDesc, style: const TextStyle(fontSize: 11)),
                       controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                       dense: true,
@@ -184,8 +186,8 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     child: CheckboxListTile(
                       value: _allowObservers,
                       onChanged: (value) => setState(() => _allowObservers = value!),
-                      title: const Text('Osservatori', style: TextStyle(fontSize: 14)),
-                      subtitle: const Text('Permetti partecipanti non votanti', style: TextStyle(fontSize: 11)),
+                      title: Text(l10n.sessionAllowObservers, style: const TextStyle(fontSize: 14)),
+                      subtitle: Text(l10n.sessionAllowObserversDesc, style: const TextStyle(fontSize: 11)),
                       controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                       dense: true,
@@ -200,12 +202,12 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton(
           onPressed: _save,
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: Text(isEdit ? 'Salva' : 'Crea'),
+          child: Text(isEdit ? l10n.actionSave : l10n.actionCreate),
         ),
       ],
     );
@@ -232,9 +234,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
   }
 
   void _save() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inserisci un nome')),
+        SnackBar(content: Text(l10n.formTitleRequired)),
       );
       return;
     }

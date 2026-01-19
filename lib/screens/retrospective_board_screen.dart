@@ -68,6 +68,11 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                 tooltip: 'Invita',
                 onPressed: () => _showInviteDialog(retro),
               ),
+              IconButton(
+                icon: const Icon(Icons.people),
+                tooltip: 'Partecipanti',
+                onPressed: () => _showParticipantsDialog(retro),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: CircleAvatar(
@@ -458,6 +463,33 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   // But I will proceed with retroId and list, a common pattern.
   // Wait, if it takes named parameters.
   
+  void _showParticipantsDialog(RetrospectiveModel retro) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Partecipanti (${retro.participantEmails.length})'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: retro.participantEmails.length,
+            itemBuilder: (context, index) {
+              final email = retro.participantEmails[index];
+              return ListTile(
+                leading: CircleAvatar(child: Text(email[0].toUpperCase())),
+                title: Text(email.split('@').first),
+                subtitle: Text(email),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Chiudi')),
+        ],
+      ),
+    );
+  }
+
   Future<void> _regressPhase(RetrospectiveModel retro) async {
     final prevPhaseIndex = retro.currentPhase.index - 1;
     if (prevPhaseIndex >= 0) {

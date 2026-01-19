@@ -83,7 +83,7 @@ class EisenhowerInviteService {
       final token = _generateToken();
 
       final invite = EisenhowerInviteModel(
-        id: '', // Generato da Firestore
+        id: '', // Sarà l'ID del documento
         matrixId: matrixId,
         email: email.toLowerCase().trim(),
         role: role,
@@ -95,10 +95,25 @@ class EisenhowerInviteService {
         token: token,
       );
 
-      final docRef = await _invitesRef.add(invite.toFirestore());
-      print('✅ Invito creato: ${docRef.id} per $email');
+      final batch = _firestore.batch();
+      
+      // 1. Crea invito
+      final inviteRef = _invitesRef.doc();
+      batch.set(inviteRef, invite.toFirestore());
 
-      return invite.copyWith(id: docRef.id);
+      // 2. Aggiungi a pendingEmails nella matrice
+      final matrixDocRef = _firestore.collection('eisenhower_matrices').doc(matrixId);
+      
+      batch.update(matrixDocRef, {
+        'pendingEmails': FieldValue.arrayUnion([email.toLowerCase().trim()]),
+        'updatedAt': Timestamp.fromDate(now),
+      });
+
+      await batch.commit();
+
+      print('✅ Invito creato con Pending: ${inviteRef.id} per $email');
+
+      return invite.copyWith(id: inviteRef.id);
     } catch (e) {
       print('❌ Errore createInvite: $e');
       return null;
@@ -258,13 +273,15 @@ class EisenhowerInviteService {
         return false;
       }
 
-      // Aggiorna lo status dell'invito
-      await _invitesRef.doc(inviteId).update({
+      final batch = _firestore.batch();
+
+      // 1. Aggiorna lo status dell'invito
+      batch.update(_invitesRef.doc(inviteId), {
         'status': 'accepted',
         'acceptedAt': Timestamp.fromDate(DateTime.now()),
       });
 
-      // Aggiungi l'utente come partecipante alla matrice
+      // 2. Aggiungi l'utente come partecipante alla matrice e rimuovi da pending
       final participant = EisenhowerParticipantModel(
         email: userEmail,
         name: accepterName ?? userEmail.split('@').first,
@@ -273,9 +290,18 @@ class EisenhowerInviteService {
         isOnline: true,
       );
 
-      await _matrixService.addParticipantModel(invite.matrixId, participant);
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(userEmail);
+      final matrixRef = _firestore.collection('eisenhower_matrices').doc(invite.matrixId);
 
-      print('✅ Invito accettato: $inviteId');
+      batch.update(matrixRef, {
+        'participants.$escapedEmail': participant.toMap(),
+        'pendingEmails': FieldValue.arrayRemove([userEmail]), // Rimuovi da pending
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      await batch.commit();
+
+      print('✅ Invito accettato e promosso: $inviteId');
       return true;
     } catch (e) {
       print('❌ Errore acceptInvite: $e');

@@ -69,7 +69,7 @@ class EisenhowerFirestoreService {
 
     try {
       final snapshot = await _matricesRef
-          .where('createdBy', isEqualTo: userEmail)
+          .where('createdBy', isEqualTo: userEmail.toLowerCase())
           .orderBy('createdAt', descending: true)
           .get();
 
@@ -93,7 +93,7 @@ class EisenhowerFirestoreService {
     }
 
     return _matricesRef
-        .where('createdBy', isEqualTo: userEmail)
+        .where('createdBy', isEqualTo: userEmail.toLowerCase())
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -106,7 +106,7 @@ class EisenhowerFirestoreService {
   /// [userEmail] - Email dell'utente di cui ottenere le matrici
   Stream<List<EisenhowerMatrixModel>> streamMatricesByUser(String userEmail) {
     return _matricesRef
-        .where('createdBy', isEqualTo: userEmail)
+        .where('createdBy', isEqualTo: userEmail.toLowerCase())
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -150,7 +150,7 @@ class EisenhowerFirestoreService {
     String? createdBy,
     String? creatorName,
   }) async {
-    final userEmail = createdBy ?? _authService.currentUserEmail;
+    final userEmail = createdBy?.toLowerCase() ?? _authService.currentUserEmail?.toLowerCase();
     if (userEmail == null) {
       print('❌ createMatrix: Utente non autenticato');
       return null;
@@ -566,9 +566,9 @@ class EisenhowerFirestoreService {
   /// [participant] - Dati completi del partecipante
   Future<bool> addParticipantModel(String matrixId, EisenhowerParticipantModel participant) async {
     try {
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(participant.email);
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(participant.email.toLowerCase());
       await _matricesRef.doc(matrixId).update({
-        'participants.$escapedEmail': participant.toMap(),
+        'participants.$escapedEmail': participant.copyWith(email: participant.email.toLowerCase()).toMap(),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
       print('✅ Partecipante aggiunto: ${participant.email}');
@@ -584,7 +584,7 @@ class EisenhowerFirestoreService {
   /// Nota: I voti del partecipante nelle attivita' NON vengono rimossi automaticamente
   Future<bool> removeParticipantByEmail(String matrixId, String email) async {
     try {
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email);
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email.toLowerCase());
       await _matricesRef.doc(matrixId).update({
         'participants.$escapedEmail': FieldValue.delete(),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
@@ -600,7 +600,7 @@ class EisenhowerFirestoreService {
   /// Aggiorna lo stato online di un partecipante
   Future<bool> updateParticipantOnlineStatus(String matrixId, String email, bool isOnline) async {
     try {
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email);
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email.toLowerCase());
       await _matricesRef.doc(matrixId).update({
         'participants.$escapedEmail.isOnline': isOnline,
         'participants.$escapedEmail.lastActivity': Timestamp.fromDate(DateTime.now()),
@@ -616,7 +616,7 @@ class EisenhowerFirestoreService {
   /// Aggiorna il ruolo di un partecipante
   Future<bool> updateParticipantRole(String matrixId, String email, EisenhowerParticipantRole role) async {
     try {
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email);
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email.toLowerCase());
       await _matricesRef.doc(matrixId).update({
         'participants.$escapedEmail.role': role.name,
         'updatedAt': Timestamp.fromDate(DateTime.now()),
@@ -634,7 +634,7 @@ class EisenhowerFirestoreService {
     try {
       final participantsData = <String, dynamic>{};
       participants.forEach((email, participant) {
-        final escapedEmail = EisenhowerParticipantModel.escapeEmail(email);
+        final escapedEmail = EisenhowerParticipantModel.escapeEmail(email.toLowerCase());
         participantsData[escapedEmail] = participant.toMap();
       });
 
@@ -646,6 +646,39 @@ class EisenhowerFirestoreService {
       return true;
     } catch (e) {
       print('❌ Errore updateAllParticipants: $e');
+      return false;
+    }
+  }
+
+  /// Aggiunge un partecipante alla lista pending
+  Future<bool> addPendingParticipant(String matrixId, String email) async {
+    try {
+      await _matricesRef.doc(matrixId).update({
+        'pendingEmails': FieldValue.arrayUnion([email.toLowerCase()]),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('⏳ Pending aggiunto: $email');
+      return true;
+    } catch (e) {
+      print('❌ Errore addPendingParticipant: $e');
+      return false;
+    }
+  }
+
+  /// Promuove un partecipante da pending ad attivo
+  Future<bool> promotePendingToActive(String matrixId, EisenhowerParticipantModel participant) async {
+    try {
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(participant.email);
+       // Batch update atomico
+      await _matricesRef.doc(matrixId).update({
+        'pendingEmails': FieldValue.arrayRemove([participant.email.toLowerCase()]),
+        'participants.$escapedEmail': participant.copyWith(email: participant.email.toLowerCase()).toMap(),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('✅ Promosso da Pending ad Attivo: ${participant.email}');
+      return true;
+    } catch (e) {
+      print('❌ Errore promotePendingToActive: $e');
       return false;
     }
   }
