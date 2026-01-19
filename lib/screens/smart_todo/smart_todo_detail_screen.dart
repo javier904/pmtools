@@ -10,6 +10,7 @@ import '../../widgets/smart_todo/smart_todo_participants_dialog.dart';
 import '../../widgets/smart_todo/todo_resource_view.dart';
 import '../../widgets/smart_todo/smart_task_import_dialog.dart';
 import '../../services/smart_todo_sheets_export_service.dart';
+import '../../l10n/app_localizations.dart';
 
 enum TodoViewMode { kanban, list, resource }
 
@@ -74,7 +75,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 children: [
                   Text(currentList.title, style: const TextStyle(fontSize: 18)),
                   Text(
-                    '${currentList.participants.length} membri', 
+                    AppLocalizations.of(context)?.smartTodoMembersCount(currentList.participants.length) ?? '${currentList.participants.length} members',
                     style: const TextStyle(fontSize: 12, color: Colors.grey)
                   ),
                 ],
@@ -83,31 +84,31 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 // View Switcher
                 Row(
                   children: [
-                    _buildViewIcon(TodoViewMode.kanban, Icons.view_kanban, 'Kanban'),
-                    _buildViewIcon(TodoViewMode.list, Icons.list, 'Lista'),
-                    _buildViewIcon(TodoViewMode.resource, Icons.people_outline, 'Per Risorsa'),
+                    _buildViewIcon(TodoViewMode.kanban, Icons.view_kanban, AppLocalizations.of(context)?.smartTodoViewKanban ?? 'Kanban'),
+                    _buildViewIcon(TodoViewMode.list, Icons.list, AppLocalizations.of(context)?.smartTodoViewList ?? 'Lista'),
+                    _buildViewIcon(TodoViewMode.resource, Icons.people_outline, AppLocalizations.of(context)?.smartTodoViewResource ?? 'Per Risorsa'),
                   ],
                 ),
                 IconButton(
                   icon: const Icon(Icons.person_add),
-                  tooltip: 'Invita',
+                  tooltip: AppLocalizations.of(context)?.smartTodoInviteTooltip ?? 'Invita',
                   onPressed: () => _showInviteDialog(currentList),
                 ),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert),
-                  tooltip: 'Altre Opzioni',
+                  tooltip: AppLocalizations.of(context)?.smartTodoOptionsTooltip ?? 'Altre Opzioni',
                   onSelected: (val) {
                     if (val == 'import') _showImportDialog(currentList);
                     if (val == 'export') _exportToSheets(currentList);
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'import', 
-                      child: Row(children: [Icon(Icons.upload_file, size: 20), SizedBox(width: 12), Text('Importa Task')])
+                      child: Row(children: [Icon(Icons.upload_file, size: 20), SizedBox(width: 12), Text(AppLocalizations.of(context)?.smartTodoActionImport ?? 'Importa Task')])
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'export', 
-                      child: Row(children: [Icon(Icons.table_chart, size: 20), SizedBox(width: 12), Text('Esporta su Sheets')])
+                      child: Row(children: [Icon(Icons.table_chart, size: 20), SizedBox(width: 12), Text(AppLocalizations.of(context)?.smartTodoActionExportSheets ?? 'Esporta su Sheets')])
                     ),
                   ],
                 ),
@@ -129,7 +130,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 }
                 
                 if (snapshot.hasError) {
-                   return Center(child: Text('Errore: ${snapshot.error}'));
+                   return Center(child: Text(AppLocalizations.of(context)?.errorGeneric(snapshot.error.toString()) ?? 'Error: ${snapshot.error}'));
                 }
   
                 var tasks = snapshot.data ?? [];
@@ -268,7 +269,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Cerca...',
+                  hintText: AppLocalizations.of(context)?.smartTodoSearchTasksHint ?? 'Search...',
                   hintStyle: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[500], fontSize: 14),
                   prefixIcon: Icon(Icons.search, size: 20, color: isDark ? Colors.grey[400] : Colors.grey[500]),
                   border: InputBorder.none,
@@ -303,9 +304,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      ),
                      const SizedBox(width: 8),
                      Text(
-                       safeAssigneeFilters.isEmpty 
-                         ? "Tutte le persone" 
-                         : "${safeAssigneeFilters.length} persone",
+                       safeAssigneeFilters.isEmpty
+                         ? (AppLocalizations.of(context)?.smartTodoAllPeople ?? "All people")
+                         : (AppLocalizations.of(context)?.smartTodoPeopleCount(safeAssigneeFilters.length) ?? "${safeAssigneeFilters.length} people"),
                        style: TextStyle(
                          fontSize: 14,
                          color: safeAssigneeFilters.isEmpty ? (isDark ? Colors.grey[300] : Colors.black) : Colors.blue,
@@ -348,7 +349,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      ),
                      const SizedBox(width: 8),
                      Text(
-                       "Oggi",
+                       AppLocalizations.of(context)?.smartTodoFilterToday ?? "Today",
                        style: TextStyle(
                          fontSize: 14,
                          color: !_filterToday ? (isDark ? Colors.grey[300] : Colors.black) : Colors.orange[800],
@@ -385,14 +386,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Elimina Colonna'),
-          content: const Text('Sei sicuro? I task in questa colonna non saranno più visibili.'),
+          title: Text(AppLocalizations.of(context)?.smartTodoDeleteColumnTitle ?? 'Elimina Colonna'),
+          content: Text(AppLocalizations.of(context)?.smartTodoDeleteColumnContent ?? 'Sei sicuro? I task in questa colonna non saranno più visibili.'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annulla')),
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true), 
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-              child: const Text('Elimina')
+              child: Text(AppLocalizations.of(context)?.actionDelete ?? 'Elimina')
             ),
           ],
         ),
@@ -452,7 +453,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                         ),
                         const SizedBox(width: 16),
                         Text(
-                          column == null ? 'Nuova Colonna' : 'Modifica',
+                          column == null ? (AppLocalizations.of(context)?.smartTodoNewColumn ?? 'Nuova Colonna') : (AppLocalizations.of(context)?.actionEdit ?? 'Modifica'),
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.white : Colors.black87),
                         ),
                         const Spacer(),
@@ -475,7 +476,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          TextField(
                            controller: titleCtrl, 
                            decoration: InputDecoration(
-                             hintText: 'Nome Colonna',
+                             hintText: AppLocalizations.of(context)?.smartTodoColumnNameHint ?? 'Nome Colonna',
                              hintStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.grey[500] : Colors.grey[400]),
                              border: InputBorder.none,
                            ),
@@ -485,7 +486,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          const SizedBox(height: 24),
                          
                          // Color Picker Section
-                         Text('COLORE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: dialogIsDark ? Colors.grey[400] : Colors.grey)),
+                         Text((AppLocalizations.of(context)?.smartTodoColorLabel ?? 'COLORE'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: dialogIsDark ? Colors.grey[400] : Colors.grey)),
                          const SizedBox(height: 12),
                          Wrap(
                            spacing: 12,
@@ -527,10 +528,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                  child: Column(
                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Segna come completato', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: dialogIsDark ? Colors.white : Colors.black87)),
+                                      Text(AppLocalizations.of(context)?.smartTodoMarkAsDone ?? 'Segna come completato', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: dialogIsDark ? Colors.white : Colors.black87)),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'I task in questa colonna saranno considerati "Fatti" (barrati).',
+                                        AppLocalizations.of(context)?.smartTodoColumnDoneDescription ?? 'I task in questa colonna saranno considerati "Fatti" (barrati).',
                                         style: TextStyle(fontSize: 12, color: dialogIsDark ? Colors.grey[400] : Colors.grey[600]),
                                       ),
                                    ],
@@ -559,7 +560,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context), 
-                          child: const Text('Annulla'),
+                          child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla'),
                           style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
                         ),
                         const SizedBox(width: 12),
@@ -598,7 +599,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             elevation: 0,
                           ),
-                          child: const Text('Salva'),
+                          child: Text(AppLocalizations.of(context)?.actionSave ?? 'Salva'),
                         ),
                       ],
                     ),
@@ -616,13 +617,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Center(child: Text('Impostazioni Lista', style: TextStyle(fontWeight: FontWeight.bold))),
+        title: Center(child: Text(AppLocalizations.of(context)?.smartTodoListSettingsTitle ?? 'Impostazioni Lista', style: const TextStyle(fontWeight: FontWeight.bold))),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         contentPadding: const EdgeInsets.all(16),
         children: [
           ListTile(
             leading: const Icon(Icons.edit, color: Colors.grey),
-            title: const Text('Rinomina Lista'),
+            title: Text(AppLocalizations.of(context)?.smartTodoRenameList ?? 'Rinomina Lista'),
             onTap: () {
               Navigator.pop(context);
               _showRenameListDialog(currentList); 
@@ -630,7 +631,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.label_outline, color: Colors.grey),
-            title: const Text('Gestisci Tag'),
+            title: Text(AppLocalizations.of(context)?.smartTodoManageTags ?? 'Gestisci Tag'),
             onTap: () {
               Navigator.pop(context);
               _showTagsDialog(currentList);
@@ -639,7 +640,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           if (currentList.isOwner(_currentUserEmail))
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Elimina Lista', style: TextStyle(color: Colors.red)),
+              title: Text(AppLocalizations.of(context)?.smartTodoDeleteList ?? 'Elimina Lista', style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 _confirmDeleteList(currentList);
@@ -655,14 +656,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rinomina Lista'),
+        title: Text(AppLocalizations.of(context)?.smartTodoRenameList ?? 'Rinomina Lista'),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Nuovo Nome'),
+          decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoNewNameLabel ?? 'Nuovo Nome'),
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
@@ -670,7 +671,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Salva'),
+            child: Text(AppLocalizations.of(context)?.actionSave ?? 'Salva'),
           ),
         ],
       ),
@@ -681,10 +682,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Lista'),
-        content: const Text('Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione è irreversibile.'),
+        title: Text(AppLocalizations.of(context)?.smartTodoDeleteList ?? 'Elimina Lista'),
+        content: Text(AppLocalizations.of(context)?.smartTodoDeleteListConfirm ?? 'Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione è irreversibile.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             onPressed: () async {
@@ -692,7 +693,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               await _todoService.deleteList(currentList.id);
               if (mounted) Navigator.pop(context); // Go back to dashboard
             },
-            child: const Text('Elimina'),
+            child: Text(AppLocalizations.of(context)?.actionDelete ?? 'Elimina'),
           ),
         ],
       ),
@@ -703,7 +704,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     // Permission check for editing
     if (task != null && !_canEditTask(task, currentList)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Puoi modificare solo i task a te assegnati')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoEditPermissionError ?? 'Puoi modificare solo i task a te assegnati')),
       );
       return;
     }
@@ -763,9 +764,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                            child: const Icon(Icons.filter_list_rounded, color: Colors.blue, size: 20),
                          ),
                          const SizedBox(width: 16),
-                         const Text(
-                           'Filtra per Persona',
-                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                         Text(
+                           AppLocalizations.of(context)?.smartTodoFilterByPerson ?? 'Filter by Person',
+                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                          ),
                          const Spacer(),
                          IconButton(
@@ -785,7 +786,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          children: [
                             ListTile(
                               leading: const Icon(Icons.people_outline),
-                              title: const Text('Tutte le persone'),
+                              title: Text(AppLocalizations.of(context)?.smartTodoAllPeople ?? 'All people'),
                               trailing: safeAssigneeFilters.isEmpty ? const Icon(Icons.check, color: Colors.blue) : null,
                               onTap: () {
                                  this.setState(() => _assigneeFilters = []); 
@@ -837,8 +838,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                        children: [
                          TextButton(
                            onPressed: () => Navigator.pop(context),
-                           style: TextButton.styleFrom(foregroundColor: Colors.grey[600]), 
-                           child: const Text('Annulla')
+                           style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+                           child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')
                          ),
                          const SizedBox(width: 12),
                          ElevatedButton(
@@ -853,7 +854,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                              elevation: 0,
                            ),
-                           child: const Text('Applica Filtri'),
+                           child: Text(AppLocalizations.of(context)?.smartTodoApplyFilters ?? 'Apply Filters'),
                          ),
                        ],
                      ),

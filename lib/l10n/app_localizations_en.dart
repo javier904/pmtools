@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Agile Tools';
+  String get appTitle => 'Keisen';
 
   @override
   String get actionSave => 'Save';
@@ -72,6 +72,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stateSuccess => 'Success';
 
   @override
+  String get subscriptionCurrent => 'CURRENT';
+
+  @override
+  String get subscriptionRecommended => 'RECOMMENDED';
+
+  @override
+  String get subscriptionFree => 'Free';
+
+  @override
+  String get subscriptionPerMonth => '/month';
+
+  @override
+  String get subscriptionPerYear => '/year';
+
+  @override
+  String subscriptionSaveYearly(String amount) {
+    return 'Save €$amount/year';
+  }
+
+  @override
+  String subscriptionTrialDays(int days) {
+    return '$days days free trial';
+  }
+
+  @override
+  String get subscriptionUnlimitedProjects => 'Unlimited projects';
+
+  @override
+  String subscriptionProjectsActive(int count) {
+    return '$count active projects';
+  }
+
+  @override
+  String get subscriptionUnlimitedLists => 'Unlimited lists';
+
+  @override
+  String subscriptionSmartTodoLists(int count) {
+    return 'Smart Todo lists';
+  }
+
+  @override
+  String get subscriptionActiveProjectsLabel => 'Active projects';
+
+  @override
+  String get subscriptionSmartTodoListsLabel => 'Smart Todo Lists';
+
+  @override
+  String get subscriptionUnlimitedTasks => 'Unlimited tasks';
+
+  @override
+  String subscriptionTasksPerProject(int count) {
+    return '$count tasks per project';
+  }
+
+  @override
+  String get subscriptionUnlimitedInvites => 'Unlimited invites';
+
+  @override
+  String subscriptionInvitesPerProject(int count) {
+    return '$count invites per project';
+  }
+
+  @override
+  String get subscriptionWithAds => 'With ads';
+
+  @override
+  String get subscriptionWithoutAds => 'Without ads';
+
+  @override
   String get authSignInGoogle => 'Sign in with Google';
 
   @override
@@ -102,7 +171,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authInvalidEmail => 'Invalid email';
 
   @override
-  String get appSubtitle => 'Agile Tools for Teams';
+  String get appSubtitle => 'Keisen for Teams';
 
   @override
   String get authOr => 'or';
@@ -337,6 +406,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eisenhowerSearchLabel => 'Search:';
+
+  @override
+  String get eisenhowerSearchHint => 'Search matrices...';
 
   @override
   String get eisenhowerNoMatrixFound => 'No matrix found';
@@ -639,7 +711,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get formOptional => 'Optional';
 
   @override
-  String get errorGeneric => 'An error occurred';
+  String errorGeneric(String error) {
+    return 'Error: $error';
+  }
 
   @override
   String get errorLoading => 'Error loading data';
@@ -907,7 +981,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileDangerZone => 'Danger Zone';
 
   @override
-  String get profileDeleteAccount => 'Delete Account';
+  String get profileDeleteAccount => 'Delete account';
 
   @override
   String get profileDeleteAccountDesc =>
@@ -2066,6 +2140,121 @@ class AppLocalizationsEn extends AppLocalizations {
       'User already invited or invitation pending.';
 
   @override
+  String get smartTodoFilterToday => 'Today';
+
+  @override
+  String get smartTodoFilterMyTasks => 'My Tasks';
+
+  @override
+  String get smartTodoFilterOwner => 'Owner';
+
+  @override
+  String get smartTodoViewGlobalTasks => 'View Global Tasks';
+
+  @override
+  String get smartTodoViewLists => 'View Lists';
+
+  @override
+  String get smartTodoNewListDialogTitle => 'New List';
+
+  @override
+  String get smartTodoTitleLabel => 'Title *';
+
+  @override
+  String get smartTodoDescriptionLabel => 'Description';
+
+  @override
+  String get smartTodoCancel => 'Cancel';
+
+  @override
+  String get smartTodoCreate => 'Create';
+
+  @override
+  String get smartTodoSave => 'Save';
+
+  @override
+  String get smartTodoNoListsPresent => 'No lists available';
+
+  @override
+  String get smartTodoCreateFirstList =>
+      'Create your first list to get started';
+
+  @override
+  String smartTodoMembersCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get smartTodoRenameListTitle => 'Rename List';
+
+  @override
+  String get smartTodoNewNameLabel => 'New Name';
+
+  @override
+  String get smartTodoDeleteListTitle => 'Delete List';
+
+  @override
+  String get smartTodoDeleteListConfirm =>
+      'Are you sure you want to delete this list and all its tasks? This action is irreversible.';
+
+  @override
+  String get smartTodoDelete => 'Delete';
+
+  @override
+  String get smartTodoEdit => 'Edit';
+
+  @override
+  String get smartTodoSearchHint => 'Search lists...';
+
+  @override
+  String get smartTodoSearchTasksHint => 'Search...';
+
+  @override
+  String smartTodoNoSearchResults(String query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String get smartTodoColumnTodo => 'To Do';
+
+  @override
+  String get smartTodoColumnInProgress => 'In Progress';
+
+  @override
+  String get smartTodoColumnDone => 'Done';
+
+  @override
+  String get smartTodoAllPeople => 'All people';
+
+  @override
+  String smartTodoPeopleCount(int count) {
+    return '$count people';
+  }
+
+  @override
+  String get smartTodoFilterByPerson => 'Filter by Person';
+
+  @override
+  String get smartTodoApplyFilters => 'Apply Filters';
+
+  @override
+  String smartTodoError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get profileMenuTitle => 'Profile';
+
+  @override
+  String get profileMenuLogout => 'Logout';
+
+  @override
+  String get profileLogoutDialogTitle => 'Logout';
+
+  @override
+  String get profileLogoutDialogConfirm => 'Are you sure you want to logout?';
+
+  @override
   String get agileAddToSprint => 'Add to Sprint';
 
   @override
@@ -2636,7 +2825,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get landingBadge => 'Agile Team Tools';
 
   @override
-  String get landingHeroTitle => 'Build better products\nwith Agile Tools';
+  String get landingHeroTitle => 'Build better products\nwith Keisen';
 
   @override
   String get landingHeroSubtitle =>
@@ -2733,14 +2922,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get landingAgileIterativeDesc =>
-      'The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks. Each iteration produces a working product increment.\n\nWith Agile Tools you can manage your backlog, plan sprints and monitor team velocity in real time.';
+      'The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks. Each iteration produces a working product increment.\n\nWith Keisen you can manage your backlog, plan sprints and monitor team velocity in real time.';
 
   @override
   String get landingAgileScrumTitle => 'Scrum Framework';
 
   @override
   String get landingAgileScrumDesc =>
-      'Scrum is the most popular Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective) and artifacts (Product Backlog, Sprint Backlog).\n\nAgile Tools supports all Scrum events with dedicated tools for each ceremony.';
+      'Scrum is the most popular Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective) and artifacts (Product Backlog, Sprint Backlog).\n\nKeisen supports all Scrum events with dedicated tools for each ceremony.';
 
   @override
   String get landingAgileKanbanTitle => 'Kanban Board';
@@ -2833,7 +3022,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get landingFooterLegal => 'Legal';
 
   @override
-  String get landingCopyright => '© 2025 Agile Tools. All rights reserved.';
+  String get landingCopyright => '© 2025 Keisen. All rights reserved.';
 
   @override
   String get featureSmartImportDesc =>
@@ -3174,4 +3363,796 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get landingFooterGdpr => 'GDPR';
+
+  @override
+  String get legalCookieTitle => 'We use cookies';
+
+  @override
+  String get legalCookieMessage =>
+      'We use cookies to improve your experience and for analytical purposes. By continuing, you accept the use of cookies.';
+
+  @override
+  String get legalCookieAccept => 'Accept all';
+
+  @override
+  String get legalCookieRefuse => 'Necessary only';
+
+  @override
+  String get legalCookiePolicy => 'Cookie Policy';
+
+  @override
+  String get legalPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get legalTermsOfService => 'Terms of Service';
+
+  @override
+  String get legalGDPR => 'GDPR';
+
+  @override
+  String get legalAcceptTerms =>
+      'I accept the Terms of Service and Privacy Policy';
+
+  @override
+  String get legalMustAcceptTerms => 'You must accept the terms to continue';
+
+  @override
+  String get profilePrivacy => 'Privacy';
+
+  @override
+  String get profileExportData => 'Export my data';
+
+  @override
+  String get profileDeleteAccountConfirm =>
+      'Are you sure you want to permanently delete your account? This action is irreversible.';
+
+  @override
+  String get subscriptionTitle => 'Subscription';
+
+  @override
+  String get subscriptionTabPlans => 'Plans';
+
+  @override
+  String get subscriptionTabUsage => 'Usage';
+
+  @override
+  String get subscriptionTabBilling => 'Billing';
+
+  @override
+  String subscriptionActiveProjects(int count) {
+    return '$count active projects';
+  }
+
+  @override
+  String subscriptionActiveLists(int count) {
+    return '$count Smart Todo lists';
+  }
+
+  @override
+  String get subscriptionCurrentPlan => 'Current plan';
+
+  @override
+  String subscriptionUpgradeTo(String plan) {
+    return 'Upgrade to $plan';
+  }
+
+  @override
+  String subscriptionDowngradeTo(String plan) {
+    return 'Downgrade to $plan';
+  }
+
+  @override
+  String subscriptionChoose(String plan) {
+    return 'Choose $plan';
+  }
+
+  @override
+  String get subscriptionMonthly => 'Monthly';
+
+  @override
+  String get subscriptionYearly => 'Yearly (-17%)';
+
+  @override
+  String get subscriptionLimitReached => 'Limit reached';
+
+  @override
+  String get subscriptionLimitProjects =>
+      'You have reached the maximum number of projects for your plan. Upgrade to Premium to create more projects.';
+
+  @override
+  String get subscriptionLimitLists =>
+      'You have reached the maximum number of lists for your plan. Upgrade to Premium to create more lists.';
+
+  @override
+  String get subscriptionLimitTasks =>
+      'You have reached the maximum number of tasks for this project. Upgrade to Premium to add more tasks.';
+
+  @override
+  String get subscriptionLimitInvites =>
+      'You have reached the maximum number of invites for this project. Upgrade to Premium to invite more people.';
+
+  @override
+  String get subscriptionLimitEstimations =>
+      'You have reached the maximum number of estimation sessions. Upgrade to Premium to create more.';
+
+  @override
+  String get subscriptionLimitDefault =>
+      'You have reached the limit of your current plan.';
+
+  @override
+  String get subscriptionCurrentUsage => 'Current usage';
+
+  @override
+  String get subscriptionUpgradeToPremium => 'Upgrade to Premium';
+
+  @override
+  String get subscriptionBenefitProjects => '30 active projects';
+
+  @override
+  String get subscriptionBenefitLists => '30 Smart Todo lists';
+
+  @override
+  String get subscriptionBenefitTasks => '100 tasks per project';
+
+  @override
+  String get subscriptionBenefitNoAds => 'No ads';
+
+  @override
+  String get subscriptionStartingFrom => 'Starting from €4.99/month';
+
+  @override
+  String get subscriptionLater => 'Later';
+
+  @override
+  String get subscriptionViewPlans => 'View plans';
+
+  @override
+  String subscriptionCanCreateOne(String entity) {
+    return 'You can create 1 more $entity';
+  }
+
+  @override
+  String subscriptionCanCreateMany(int count, String entity) {
+    return 'You can create $count more $entity';
+  }
+
+  @override
+  String get subscriptionUpgrade => 'UPGRADE';
+
+  @override
+  String subscriptionUsed(int count) {
+    return 'Used: $count';
+  }
+
+  @override
+  String get subscriptionUnlimited => 'Unlimited';
+
+  @override
+  String subscriptionLimit(int count) {
+    return 'Limit: $count';
+  }
+
+  @override
+  String get subscriptionPlanUsage => 'Plan usage';
+
+  @override
+  String get subscriptionRefresh => 'Refresh';
+
+  @override
+  String get subscriptionAdsActive => 'Ads active';
+
+  @override
+  String get subscriptionRemoveAds => 'Upgrade to Premium to remove ads';
+
+  @override
+  String get subscriptionNoAds => 'No ads';
+
+  @override
+  String get subscriptionLoadError => 'Unable to load usage data';
+
+  @override
+  String get subscriptionAdLabel => 'AD';
+
+  @override
+  String get subscriptionAdPlaceholder => 'Ad Placeholder';
+
+  @override
+  String get subscriptionDevEnvironment => '(Development environment)';
+
+  @override
+  String get subscriptionRemoveAdsUnlock =>
+      'Remove ads and unlock advanced features';
+
+  @override
+  String get subscriptionUpgradeButton => 'Upgrade';
+
+  @override
+  String subscriptionLoadingError(String error) {
+    return 'Loading error: $error';
+  }
+
+  @override
+  String get subscriptionCompletePayment =>
+      'Complete the payment in the opened window';
+
+  @override
+  String subscriptionError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get subscriptionConfirmDowngrade => 'Confirm downgrade';
+
+  @override
+  String get subscriptionDowngradeMessage =>
+      'Are you sure you want to switch to the Free plan?\n\nYour subscription will remain active until the end of the current period, after which you will automatically switch to the Free plan.\n\nYou will not lose your data, but some features may be limited.';
+
+  @override
+  String get subscriptionCancel => 'Cancel';
+
+  @override
+  String get subscriptionConfirmDowngradeButton => 'Confirm downgrade';
+
+  @override
+  String get subscriptionCancelled =>
+      'Subscription cancelled. It will remain active until the end of the period.';
+
+  @override
+  String subscriptionPortalError(String error) {
+    return 'Portal opening error: $error';
+  }
+
+  @override
+  String get subscriptionRetry => 'Retry';
+
+  @override
+  String get subscriptionChooseRightPlan => 'Choose the right plan for you';
+
+  @override
+  String get subscriptionStartFree => 'Start free, upgrade when you want';
+
+  @override
+  String subscriptionPlan(String plan) {
+    return 'Plan $plan';
+  }
+
+  @override
+  String subscriptionTrialUntil(String date) {
+    return 'Trial until $date';
+  }
+
+  @override
+  String subscriptionRenewal(String date) {
+    return 'Renewal: $date';
+  }
+
+  @override
+  String get subscriptionManage => 'Manage';
+
+  @override
+  String get subscriptionLoginRequired => 'Please login to view usage';
+
+  @override
+  String get subscriptionSuggestion => 'Suggestion';
+
+  @override
+  String get subscriptionSuggestionText =>
+      'Upgrade to Premium to unlock more projects, remove ads and increase limits. Try free for 7 days!';
+
+  @override
+  String get subscriptionPaymentManagement => 'Payment management';
+
+  @override
+  String get subscriptionNoActiveSubscription => 'No active subscription';
+
+  @override
+  String get subscriptionUsingFreePlan => 'You are using the Free plan';
+
+  @override
+  String get subscriptionViewPaidPlans => 'View paid plans';
+
+  @override
+  String get subscriptionPaymentMethod => 'Payment method';
+
+  @override
+  String get subscriptionEditPaymentMethod => 'Edit card or payment method';
+
+  @override
+  String get subscriptionInvoices => 'Invoices';
+
+  @override
+  String get subscriptionViewInvoices => 'View and download invoices';
+
+  @override
+  String get subscriptionCancelSubscription => 'Cancel subscription';
+
+  @override
+  String get subscriptionAccessUntilEnd =>
+      'Access will remain active until the end of the period';
+
+  @override
+  String get subscriptionPaymentHistory => 'Payment history';
+
+  @override
+  String get subscriptionNoPayments => 'No payments recorded';
+
+  @override
+  String get subscriptionCompleted => 'Completed';
+
+  @override
+  String get subscriptionDateNotAvailable => 'Date not available';
+
+  @override
+  String get subscriptionFaq => 'Frequently asked questions';
+
+  @override
+  String get subscriptionFaqCancel => 'Can I cancel at any time?';
+
+  @override
+  String get subscriptionFaqCancelAnswer =>
+      'Yes, you can cancel your subscription at any time. Access will remain active until the end of the paid period.';
+
+  @override
+  String get subscriptionFaqTrial => 'How does the free trial work?';
+
+  @override
+  String get subscriptionFaqTrialAnswer =>
+      'With the free trial you have full access to all features of the chosen plan. At the end of the trial period, the paid subscription will start automatically.';
+
+  @override
+  String get subscriptionFaqChange => 'Can I change plans?';
+
+  @override
+  String get subscriptionFaqChangeAnswer =>
+      'You can upgrade or downgrade at any time. The amount will be calculated proportionally.';
+
+  @override
+  String get subscriptionFaqData => 'Is my data safe?';
+
+  @override
+  String get subscriptionFaqDataAnswer =>
+      'Absolutely yes. You will never lose your data, even if you switch to a lower plan. Some features may be limited, but the data remains always accessible.';
+
+  @override
+  String get subscriptionStatusActive => 'Active';
+
+  @override
+  String get subscriptionStatusTrialing => 'Trialing';
+
+  @override
+  String get subscriptionStatusPastDue => 'Past due';
+
+  @override
+  String get subscriptionStatusCancelled => 'Cancelled';
+
+  @override
+  String get subscriptionStatusExpired => 'Expired';
+
+  @override
+  String get subscriptionStatusPaused => 'Paused';
+
+  @override
+  String get subscriptionStatus => 'Status';
+
+  @override
+  String get subscriptionStarted => 'Started';
+
+  @override
+  String get subscriptionNextRenewal => 'Next renewal';
+
+  @override
+  String get subscriptionTrialEnd => 'Trial end';
+
+  @override
+  String get toolSectionTitle => 'Tools';
+
+  @override
+  String get deadlineTitle => 'Deadlines';
+
+  @override
+  String get deadlineNoUpcoming => 'No upcoming deadlines';
+
+  @override
+  String get deadlineToday => 'Today';
+
+  @override
+  String get deadlineTomorrow => 'Tomorrow';
+
+  @override
+  String get deadlineSprint => 'Sprint';
+
+  @override
+  String get deadlineTask => 'Task';
+
+  @override
+  String get favTitle => 'Favorites';
+
+  @override
+  String get favFilterAll => 'All';
+
+  @override
+  String get favFilterTodo => 'Todo Lists';
+
+  @override
+  String get favFilterMatrix => 'Matrices';
+
+  @override
+  String get favFilterProject => 'Projects';
+
+  @override
+  String get favFilterPoker => 'Estimation';
+
+  @override
+  String get actionRemoveFromFavorites => 'Remove from favorites';
+
+  @override
+  String get favFilterRetro => 'Retro';
+
+  @override
+  String get favNoFavorites => 'No favorites found';
+
+  @override
+  String get favTypeTodo => 'Todo List';
+
+  @override
+  String get favTypeMatrix => 'Eisenhower Matrix';
+
+  @override
+  String get favTypeProject => 'Agile Project';
+
+  @override
+  String get favTypeRetro => 'Retrospective';
+
+  @override
+  String get favTypePoker => 'Planning Poker';
+
+  @override
+  String get favTypeTool => 'Tool';
+
+  @override
+  String get deadline2Days => '2 Days';
+
+  @override
+  String get deadline3Days => '3 Days';
+
+  @override
+  String get deadline5Days => '5 Days';
+
+  @override
+  String get deadlineConfigTitle => 'Configure Shortcuts';
+
+  @override
+  String get deadlineConfigDesc =>
+      'Choose the timeframes to display in the header.';
+
+  @override
+  String get smartTodoClose => 'Close';
+
+  @override
+  String get smartTodoDone => 'Done';
+
+  @override
+  String get smartTodoAdd => 'Add';
+
+  @override
+  String get smartTodoEmailLabel => 'Email';
+
+  @override
+  String get exceptionLoginGoogleRequired =>
+      'Google login required to send emails';
+
+  @override
+  String get exceptionUserNotAuthenticated => 'User not authenticated';
+
+  @override
+  String errorLoginFailed(String error) {
+    return 'Login error: $error';
+  }
+
+  @override
+  String retroParticipantsTitle(int count) {
+    return 'Participants ($count)';
+  }
+
+  @override
+  String get actionReopen => 'Reopen';
+
+  @override
+  String get retroWaitingForFacilitator =>
+      'Waiting for facilitator to start the session...';
+
+  @override
+  String get retroGeneratingSheet => 'Generating Google Sheet...';
+
+  @override
+  String get retroExportSuccess => 'Export completed!';
+
+  @override
+  String get retroExportError => 'Error exporting to Sheets.';
+
+  @override
+  String get retroReportCopied =>
+      'Report copied to clipboard! Paste in Excel or Notes.';
+
+  @override
+  String get retroReopenTitle => 'Reopen Retrospective';
+
+  @override
+  String get retroReopenConfirm =>
+      'Are you sure you want to reopen the retrospective? It will go back to Discussion phase.';
+
+  @override
+  String get errorAuthRequired => 'Authentication required';
+
+  @override
+  String get errorRetroIdMissing => 'Retrospective ID missing';
+
+  @override
+  String get pokerInviteAccepted => 'Invite accepted! Redirecting to session.';
+
+  @override
+  String get pokerInviteRefused => 'Invite refused';
+
+  @override
+  String get pokerConfirmRefuseTitle => 'Refuse Invite';
+
+  @override
+  String get pokerConfirmRefuseContent =>
+      'Are you sure you want to refuse this invite?';
+
+  @override
+  String get pokerVerifyingInvite => 'Verifying invite...';
+
+  @override
+  String get actionBackHome => 'Back to Home';
+
+  @override
+  String get actionSignin => 'Sign In';
+
+  @override
+  String get exceptionStoryNotFound => 'Story not found';
+
+  @override
+  String get exceptionNoTasksInProject => 'No tasks found in project';
+
+  @override
+  String get exceptionInvitePending => 'Invite already pending for this email';
+
+  @override
+  String get exceptionAlreadyParticipant => 'User is already a participant';
+
+  @override
+  String get exceptionInviteInvalid => 'Invite not valid or expired';
+
+  @override
+  String get exceptionInviteCalculated => 'Invite expired';
+
+  @override
+  String get exceptionInviteWrongUser => 'Invite intended for another user';
+
+  @override
+  String get todoImportTasks => 'Import Tasks';
+
+  @override
+  String get todoExportSheets => 'Export to Sheets';
+
+  @override
+  String get todoDeleteColumnTitle => 'Delete Column';
+
+  @override
+  String get todoDeleteColumnConfirm =>
+      'Are you sure? Tasks in this column will be lost.';
+
+  @override
+  String get exceptionListNotFound => 'List not found';
+
+  @override
+  String get langItalian => 'Italian';
+
+  @override
+  String get langEnglish => 'English';
+
+  @override
+  String get jsonExportLabel => 'Download JSON copy of your data';
+
+  @override
+  String errorExporting(String error) {
+    return 'Error exporting: $error';
+  }
+
+  @override
+  String get smartTodoViewKanban => 'Kanban';
+
+  @override
+  String get smartTodoViewList => 'List';
+
+  @override
+  String get smartTodoViewResource => 'By Resource';
+
+  @override
+  String get smartTodoInviteTooltip => 'Invite';
+
+  @override
+  String get smartTodoOptionsTooltip => 'More Options';
+
+  @override
+  String get smartTodoActionImport => 'Import Tasks';
+
+  @override
+  String get smartTodoActionExportSheets => 'Export to Sheets';
+
+  @override
+  String get smartTodoDeleteColumnTitle => 'Delete Column';
+
+  @override
+  String get smartTodoDeleteColumnContent =>
+      'Are you sure? Tasks in this column will no longer be visible.';
+
+  @override
+  String get smartTodoNewColumn => 'New Column';
+
+  @override
+  String get smartTodoColumnNameHint => 'Column Name';
+
+  @override
+  String get smartTodoColorLabel => 'COLOR';
+
+  @override
+  String get smartTodoMarkAsDone => 'Mark as done';
+
+  @override
+  String get smartTodoColumnDoneDescription =>
+      'Tasks in this column will be considered \'Done\' (strikethrough).';
+
+  @override
+  String get smartTodoListSettingsTitle => 'List Settings';
+
+  @override
+  String get smartTodoRenameList => 'Rename List';
+
+  @override
+  String get smartTodoManageTags => 'Manage Tags';
+
+  @override
+  String get smartTodoDeleteList => 'Delete List';
+
+  @override
+  String get smartTodoEditPermissionError =>
+      'You can only edit tasks assigned to you';
+
+  @override
+  String errorDeletingAccount(String error) {
+    return 'Error deleting account: $error';
+  }
+
+  @override
+  String get errorRecentLoginRequired =>
+      'Recent login required. Please log out and log in again before deleting your account.';
+
+  @override
+  String actionGuide(String framework) {
+    return 'Guide $framework';
+  }
+
+  @override
+  String get actionExportSheets => 'Export to Google Sheets';
+
+  @override
+  String get actionAuditLog => 'Audit Log';
+
+  @override
+  String get actionInviteMember => 'Invite Member';
+
+  @override
+  String get actionSettings => 'Settings';
+
+  @override
+  String get retroTemplateStartStopContinue => 'Start, Stop, Continue';
+
+  @override
+  String get retroDescStartStopContinue =>
+      'Action oriented: Start doing, Stop doing, Continue doing.';
+
+  @override
+  String get retroUsageStartStopContinue =>
+      'Best for actionable feedback and focusing on behavioral changes.';
+
+  @override
+  String get retroTemplateSailboat => 'Sailboat';
+
+  @override
+  String get retroDescSailboat =>
+      'Visual: Wind (propels), Anchors (drags), Rocks (risks), Island (goals).';
+
+  @override
+  String get retroUsageSailboat =>
+      'Best for visualizing the team\'s journey, goals, and risks. Good for creative thinking.';
+
+  @override
+  String get retroTemplate4Ls => '4 Ls';
+
+  @override
+  String get retroDesc4Ls => 'Liked, Learned, Lacked, Longed For.';
+
+  @override
+  String get retroUsage4Ls =>
+      'Reflective: Best for learning from the past and highlighting emotional/learning aspects.';
+
+  @override
+  String get retroTemplateStarfish => 'Starfish';
+
+  @override
+  String get retroDescStarfish => 'Keep, Stop, Start, More, Less.';
+
+  @override
+  String get retroUsageStarfish =>
+      'Calibration: Best for scaling efforts (doing more/less of something), not just binary stop/start.';
+
+  @override
+  String get retroTemplateMadSadGlad => 'Mad Sad Glad';
+
+  @override
+  String get retroDescMadSadGlad => 'Emotional: Mad, Sad, Glad.';
+
+  @override
+  String get retroUsageMadSadGlad =>
+      'Best for emotional check-ins, resolving conflicts, or after a stressful sprint.';
+
+  @override
+  String get retroTemplateDAKI => 'DAKI (Drop Add Keep Improve)';
+
+  @override
+  String get retroDescDAKI => 'Pragmatic: Drop, Add, Keep, Improve.';
+
+  @override
+  String get retroUsageDAKI =>
+      'Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).';
+
+  @override
+  String get retroIcebreakerSentiment => 'Sentiment Voting';
+
+  @override
+  String get retroIcebreakerSentimentDesc =>
+      'Vote 1-5 on how you felt during the sprint.';
+
+  @override
+  String get retroIcebreakerOneWord => 'One Word';
+
+  @override
+  String get retroIcebreakerOneWordDesc =>
+      'Describe the sprint with just one word.';
+
+  @override
+  String get retroIcebreakerWeather => 'Weather Report';
+
+  @override
+  String get retroIcebreakerWeatherDesc =>
+      'Choose a weather icon that represents the sprint.';
+
+  @override
+  String get retroSelectIcebreakerTooltip => 'Select the icebreaker activity';
+
+  @override
+  String get retroIcebreakerLabel => 'Initial Activity';
+
+  @override
+  String get retroTimePhasesOptional => 'Phase Timers (Optional)';
+
+  @override
+  String get retroTimePhasesDesc => 'Set duration in minutes for each phase:';
+
+  @override
+  String get retroIcebreakerSectionTitle => 'Icebreaker';
+
+  @override
+  String get retroPhaseIcebreaker => 'ICEBREAKER';
+
+  @override
+  String get retroPhaseWriting => 'WRITING';
+
+  @override
+  String get retroPhaseVoting => 'VOTING';
+
+  @override
+  String get retroPhaseDiscuss => 'DISCUSS';
 }

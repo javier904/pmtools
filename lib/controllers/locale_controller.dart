@@ -15,10 +15,14 @@ class LocaleController extends ChangeNotifier {
 
   bool get isItalian => _locale.languageCode == 'it';
   bool get isEnglish => _locale.languageCode == 'en';
+  bool get isFrench => _locale.languageCode == 'fr';
+  bool get isSpanish => _locale.languageCode == 'es';
 
   static const supportedLocales = [
     Locale('it'),
     Locale('en'),
+    Locale('fr'),
+    Locale('es'),
   ];
 
   String getDisplayName(Locale locale) {
@@ -27,6 +31,10 @@ class LocaleController extends ChangeNotifier {
         return 'Italiano';
       case 'en':
         return 'English';
+      case 'fr':
+        return 'Français';
+      case 'es':
+        return 'Español';
       default:
         return locale.languageCode;
     }
@@ -38,6 +46,10 @@ class LocaleController extends ChangeNotifier {
         return '\u{1F1EE}\u{1F1F9}'; // Flag IT
       case 'en':
         return '\u{1F1EC}\u{1F1E7}'; // Flag GB
+      case 'fr':
+        return '\u{1F1EB}\u{1F1F7}'; // Flag FR
+      case 'es':
+        return '\u{1F1EA}\u{1F1F8}'; // Flag ES
       default:
         return '\u{1F310}'; // Globe
     }

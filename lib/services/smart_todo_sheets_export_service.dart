@@ -97,7 +97,7 @@ class SmartTodoSheetsExportService {
   Future<Spreadsheet> _createSpreadsheet(String title) async {
     final spreadsheet = Spreadsheet()
       ..properties = (SpreadsheetProperties()
-        ..title = 'Agile Tools - $title'
+        ..title = 'Keisen - $title'
         ..locale = 'it_IT')
       ..sheets = [
         Sheet()

@@ -1,5 +1,7 @@
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:flutter/material.dart';
+import '../home/favorite_star.dart';
+import '../../themes/app_colors.dart';
 
 class RetroListWidget extends StatelessWidget {
   final List<RetrospectiveModel> retrospectives;
@@ -118,10 +120,10 @@ class RetroListWidget extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        color: AppColors.pink.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(retro.template.icon, color: statusColor),
+                      child: Icon(retro.template.icon, color: AppColors.pink),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -160,6 +162,14 @@ class RetroListWidget extends StatelessWidget {
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(width: 4),
+                  FavoriteStar(
+                    resourceId: retro.id,
+                    type: 'retrospective',
+                    title: retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
+                    colorHex: '#E91E63', // Pink for Retros
+                    size: 20,
                   ),
                   // Delete Action (Only for Creator)
                   if (retro.createdBy == currentUserEmail && onDelete != null)

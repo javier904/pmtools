@@ -6,6 +6,7 @@ import '../../services/smart_todo_invite_service.dart';
 import '../../services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../l10n/app_localizations.dart';
 
 class SmartTodoInviteDialog extends StatefulWidget {
   final String listId;
@@ -32,31 +33,32 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Invita Collaboratore'),
+      title: Text(l10n?.smartTodoInviteCollaborator ?? 'Invite Collaborator'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              icon: Icon(Icons.email),
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n?.smartTodoEmailLabel ?? 'Email',
+              icon: const Icon(Icons.email),
+              border: const OutlineInputBorder(),
             ),
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<TodoParticipantRole>(
             value: _role,
-            decoration: const InputDecoration(
-              labelText: 'Ruolo',
-              icon: Icon(Icons.security),
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n?.smartTodoRole ?? 'Role',
+              icon: const Icon(Icons.security),
+              border: const OutlineInputBorder(),
             ),
-            items: const [
-              DropdownMenuItem(value: TodoParticipantRole.editor, child: Text('Editor (Può modificare)')),
-              DropdownMenuItem(value: TodoParticipantRole.viewer, child: Text('Viewer (Solo visualizzazione)')),
+            items: [
+              DropdownMenuItem(value: TodoParticipantRole.editor, child: Text(l10n?.smartTodoEditorRole ?? 'Editor (Can edit)')),
+              DropdownMenuItem(value: TodoParticipantRole.viewer, child: Text(l10n?.smartTodoViewerRole ?? 'Viewer (View only)')),
             ],
             onChanged: (v) => setState(() => _role = v!),
           ),
@@ -64,7 +66,7 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
           CheckboxListTile(
             value: _sendEmail,
             onChanged: (v) => setState(() => _sendEmail = v ?? true),
-            title: const Text('Invia notifica email'),
+            title: Text(l10n?.smartTodoSendEmailNotification ?? 'Send email notification'),
             contentPadding: EdgeInsets.zero,
           ),
         ],
@@ -72,23 +74,24 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n?.smartTodoCancel ?? 'Cancel'),
         ),
         ElevatedButton(
           onPressed: _isLoading ? null : _sendInvite,
-          child: _isLoading 
-            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) 
-            : const Text('Invia'),
+          child: _isLoading
+            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+            : Text(l10n?.smartTodoSend ?? 'Send'),
         ),
       ],
     );
   }
 
   Future<void> _sendInvite() async {
+    final l10n = AppLocalizations.of(context);
     final email = _emailController.text.trim();
     if (email.isEmpty || !email.contains('@')) {
        ScaffoldMessenger.of(context).showSnackBar(
-         const SnackBar(content: Text('Email non valida'), backgroundColor: Colors.red),
+         SnackBar(content: Text(l10n?.smartTodoInvalidEmail ?? 'Invalid email'), backgroundColor: Colors.red),
        );
        return;
     }
@@ -97,7 +100,7 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
 
     try {
       final currentUser = _authService.currentUser;
-      if (currentUser == null || currentUser.email == null) throw Exception('Utente non autenticato o email mancante');
+      if (currentUser == null || currentUser.email == null) throw Exception(l10n?.smartTodoUserNotAuthenticated ?? 'User not authenticated or email missing');
 
       // 1. Create Invite
       final invite = await _inviteService.createInvite(
@@ -105,7 +108,7 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
         email: email,
         role: _role,
         invitedBy: currentUser.email!,
-        invitedByName: currentUser.displayName ?? currentUser.email ?? 'Utente',
+        invitedByName: currentUser.displayName ?? currentUser.email ?? (l10n?.smartTodoUser ?? 'User'),
       );
 
       // 2. Send Email if requested
@@ -113,7 +116,7 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
         // Use GoogleSignIn account to get headers
         final googleUser = _authService.googleSignIn.currentUser;
         if (googleUser == null) {
-          throw Exception('Necessario login Google per inviare email');
+          throw Exception(l10n?.smartTodoGoogleLoginRequired ?? 'Google login required to send email');
         }
         
         final authHeaders = await googleUser.authHeaders;
@@ -131,14 +134,14 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invito inviato a $email')),
+          SnackBar(content: Text(l10n?.smartTodoInviteSent(email) ?? 'Invite sent to $email')),
         );
       }
     } catch (e) {
       if (mounted) {
-        String msg = 'Errore: $e';
+        String msg = l10n?.smartTodoError(e.toString()) ?? 'Error: $e';
         if (e.toString().contains('Esiste già') || e.toString().contains('already exists')) {
-          msg = 'Utente già invitato o invito in attesa.';
+          msg = l10n?.smartTodoUserAlreadyInvitedOrPending ?? 'User already invited or invite pending.';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(msg), backgroundColor: Colors.red),

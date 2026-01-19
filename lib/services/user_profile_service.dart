@@ -49,7 +49,7 @@ class UserProfileService {
   }) async {
     final user = _auth.currentUser;
     if (user == null) {
-      throw Exception('Utente non autenticato');
+      throw Exception('User not authenticated');
     }
 
     final docRef = _firestore.collection(_usersCollection).doc(user.uid);
@@ -135,7 +135,7 @@ class UserProfileService {
   /// Aggiorna campi specifici del profilo
   Future<void> updateProfileFields(Map<String, dynamic> fields) async {
     final userId = currentUserId;
-    if (userId == null) throw Exception('Utente non autenticato');
+    if (userId == null) throw Exception('User not authenticated');
 
     fields['updatedAt'] = Timestamp.fromDate(DateTime.now());
     await _firestore.collection(_usersCollection).doc(userId).update(fields);
@@ -145,7 +145,7 @@ class UserProfileService {
   /// Richiede cancellazione account
   Future<void> requestAccountDeletion(String reason) async {
     final userId = currentUserId;
-    if (userId == null) throw Exception('Utente non autenticato');
+    if (userId == null) throw Exception('User not authenticated');
 
     await _firestore.collection(_usersCollection).doc(userId).update({
       'status': profile_model.AccountStatus.pendingDeletion.name,
@@ -160,7 +160,7 @@ class UserProfileService {
   /// Annulla richiesta cancellazione account
   Future<void> cancelDeletionRequest() async {
     final userId = currentUserId;
-    if (userId == null) throw Exception('Utente non autenticato');
+    if (userId == null) throw Exception('User not authenticated');
 
     await _firestore.collection(_usersCollection).doc(userId).update({
       'status': profile_model.AccountStatus.active.name,
@@ -231,7 +231,7 @@ class UserProfileService {
     String? notes,
   }) async {
     final userId = currentUserId;
-    if (userId == null) throw Exception('Utente non autenticato');
+    if (userId == null) throw Exception('User not authenticated');
 
     // Salva abbonamento corrente
     await _firestore
@@ -263,7 +263,7 @@ class UserProfileService {
     bool startTrial = false,
   }) async {
     final userId = currentUserId;
-    if (userId == null) throw Exception('Utente non autenticato');
+    if (userId == null) throw Exception('User not authenticated');
 
     final now = DateTime.now();
     DateTime endDate;
@@ -311,7 +311,7 @@ class UserProfileService {
   }
 
   /// Annulla l'abbonamento
-  Future<void> cancelSubscription({String? reason}) async {
+  Future<void> cancelSubscription({String? reason = 'User Request'}) async {
     final current = await getCurrentSubscription();
     if (current == null) return;
 

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
-/// Servizio di autenticazione semplificato per Agile Tools
+/// Servizio di autenticazione semplificato per Keisen
 class AuthService {
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
@@ -64,10 +64,14 @@ class AuthService {
         final oauthCredential = userCredential.credential as OAuthCredential?;
         if (oauthCredential != null) {
           _webAccessToken = oauthCredential.accessToken;
-          print('✅ [AUTH] Access token OAuth memorizzato per le API');
-          print('✅ [AUTH] Token presente: ${_webAccessToken != null}');
+          // Log solo in debug - non esporre info token in produzione
+          if (kDebugMode) {
+            print('✅ [AUTH] Access token OAuth memorizzato per le API');
+          }
         } else {
-          print('⚠️ [AUTH] Nessun credential OAuth disponibile');
+          if (kDebugMode) {
+            print('⚠️ [AUTH] Nessun credential OAuth disponibile');
+          }
         }
 
         return userCredential;
@@ -85,7 +89,7 @@ class AuthService {
         return await _auth.signInWithCredential(credential);
       }
     } catch (e) {
-      print('❌ Errore login Google: $e');
+      if (kDebugMode) print('❌ Errore login Google: $e');
       rethrow;
     }
   }
@@ -109,12 +113,12 @@ class AuthService {
 
       if (oauthCredential != null) {
         _webAccessToken = oauthCredential.accessToken;
-        print('✅ [AUTH] Access token OAuth aggiornato');
+        if (kDebugMode) print('✅ [AUTH] Access token OAuth aggiornato');
         return _webAccessToken;
       }
       return null;
     } catch (e) {
-      print('❌ [AUTH] Errore refresh token: $e');
+      if (kDebugMode) print('❌ [AUTH] Errore refresh token: $e');
       return null;
     }
   }
@@ -127,7 +131,7 @@ class AuthService {
         password: password,
       );
     } catch (e) {
-      print('❌ Errore login email: $e');
+      if (kDebugMode) print('❌ Errore login email: $e');
       rethrow;
     }
   }
@@ -145,7 +149,7 @@ class AuthService {
 
       return credential;
     } catch (e) {
-      print('❌ Errore registrazione: $e');
+      if (kDebugMode) print('❌ Errore registrazione: $e');
       rethrow;
     }
   }
@@ -155,7 +159,7 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      print('❌ Errore reset password: $e');
+      if (kDebugMode) print('❌ Errore reset password: $e');
       rethrow;
     }
   }
@@ -166,7 +170,7 @@ class AuthService {
       await _googleSignIn.signOut();
       await _auth.signOut();
     } catch (e) {
-      print('❌ Errore logout: $e');
+      if (kDebugMode) print('❌ Errore logout: $e');
       rethrow;
     }
   }

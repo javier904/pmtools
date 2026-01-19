@@ -71,6 +71,13 @@
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "startDate", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "invites",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "token", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

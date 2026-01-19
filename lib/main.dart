@@ -12,10 +12,18 @@ import 'screens/landing_screen.dart';
 import 'screens/eisenhower_screen.dart';
 import 'screens/estimation_room_screen.dart';
 import 'screens/agile_process_screen.dart';
+import 'screens/agile_project_loader_screen.dart';
+import 'screens/retrospective/retro_global_dashboard.dart';
+import 'screens/retro_board_loader_screen.dart';
 import 'screens/smart_todo/smart_todo_dashboard.dart';
 import 'screens/profile_screen.dart';
 import 'themes/app_theme.dart';
 import 'controllers/locale_controller.dart';
+import 'screens/legal/privacy_policy_screen.dart';
+import 'screens/legal/terms_of_service_screen.dart';
+import 'screens/legal/cookie_policy_screen.dart';
+import 'screens/legal/gdpr_screen.dart';
+import 'widgets/legal/cookie_consent_banner.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -144,7 +152,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
           listenable: Listenable.merge([_themeController, _localeController]),
           builder: (context, child) {
             return MaterialApp(
-              title: 'Agile Tools',
+              title: 'Keisen',
               debugShowCheckedModeBanner: false,
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
@@ -166,7 +174,22 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 '/eisenhower': (context) => const EisenhowerScreen(),
                 '/estimation-room': (context) => const EstimationRoomScreen(),
                 '/agile-process': (context) => const AgileProcessScreen(),
+                '/agile-project': (context) => const AgileProjectLoaderScreen(),
+                '/retrospective-list': (context) => const RetroGlobalDashboard(),
+                '/retrospective-board': (context) => const RetroBoardLoaderScreen(),
                 '/smart-todo': (context) => const SmartTodoDashboard(),
+                '/privacy': (context) => const PrivacyPolicyScreen(),
+                '/terms': (context) => const TermsOfServiceScreen(),
+                '/cookies': (context) => const CookiePolicyScreen(),
+                '/gdpr': (context) => const GdprScreen(),
+              },
+              builder: (context, child) {
+                return Stack(
+                  children: [
+                    child!,
+                    const CookieConsentBanner(),
+                  ],
+                );
               },
             );
           },
@@ -187,10 +210,26 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         // Loading
         if (snapshot.connectionState == ConnectionState.waiting) {
+          final l10n = AppLocalizations.of(context);
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: const Center(
-              child: CircularProgressIndicator(),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  if (l10n != null) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.stateLoading,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           );
         }

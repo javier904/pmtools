@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../models/agile_project_model.dart';
 import '../models/user_story_model.dart';
 import '../models/sprint_model.dart';
@@ -107,6 +108,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -124,7 +126,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           // Guida metodologia
           IconButton(
             icon: const Icon(Icons.help_outline),
-            tooltip: 'Guida ${widget.project.framework.displayName}',
+            tooltip: l10n.actionGuide(widget.project.framework.displayName),
             onPressed: () => MethodologyGuideDialog.show(
               context,
               framework: widget.project.framework,
@@ -133,30 +135,30 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           // Export to Sheets
           IconButton(
             icon: const Icon(Icons.table_chart),
-            tooltip: 'Esporta su Google Sheets',
+            tooltip: l10n.actionExportSheets,
             onPressed: _exportToSheets,
           ),
           // Audit log
           IconButton(
             icon: const Icon(Icons.history),
-            tooltip: 'Audit Log',
+            tooltip: l10n.actionAuditLog,
             onPressed: () => AuditLogViewer.show(context, widget.project.id),
           ),
           // Settings
           PopupMenuButton<String>(
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'invite',
                 child: ListTile(
-                  leading: Icon(Icons.person_add),
-                  title: Text('Invita Membro'),
+                  leading: const Icon(Icons.person_add),
+                  title: Text(l10n.actionInviteMember),
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'settings',
                 child: ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Impostazioni'),
+                  leading: const Icon(Icons.settings),
+                  title: Text(l10n.actionSettings),
                 ),
               ),
             ],

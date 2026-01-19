@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Colori centralizzati per l'app Agile Tools
+/// Colori centralizzati per l'app Keisen
 /// Supporta Dark Mode e Light Mode
 class AppColors {
   // ══════════════════════════════════════════════════════════════════════════

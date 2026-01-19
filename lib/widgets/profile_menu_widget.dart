@@ -5,6 +5,7 @@ import '../models/user_profile/subscription_model.dart';
 import '../models/user_profile/user_settings_model.dart';
 import '../services/user_profile_service.dart';
 import '../services/auth_service.dart';
+import '../l10n/app_localizations.dart';
 
 /// Widget menu profilo per accesso rapido
 ///
@@ -206,7 +207,7 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
         // Profilo
         _buildMenuItem(
           icon: Icons.person_outline,
-          label: 'Profilo',
+          label: AppLocalizations.of(context)?.profileMenuTitle ?? 'Profile',
           value: 'profile',
         ),
 
@@ -215,7 +216,7 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
         // Logout
         _buildMenuItem(
           icon: Icons.logout,
-          label: 'Esci',
+          label: AppLocalizations.of(context)?.profileMenuLogout ?? 'Logout',
           value: 'logout',
           color: Colors.red,
         ),
@@ -307,19 +308,20 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
   }
 
   Future<void> _handleLogout() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Sei sicuro di voler uscire?'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n?.profileLogoutDialogTitle ?? 'Logout'),
+        content: Text(l10n?.profileLogoutDialogConfirm ?? 'Are you sure you want to logout?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l10n?.smartTodoCancel ?? 'Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Esci'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l10n?.profileMenuLogout ?? 'Logout'),
           ),
         ],
       ),

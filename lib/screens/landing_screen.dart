@@ -34,8 +34,9 @@ class _LandingScreenState extends State<LandingScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore login: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text(l10n?.errorLoginFailed(e.toString()) ?? 'Login error: $e'), backgroundColor: AppColors.error),
         );
       }
     } finally {
@@ -95,16 +96,15 @@ class _LandingScreenState extends State<LandingScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
-                    'assets/icons/landing_logo_hq.png',
-                    width: 36,
-                    height: 36,
+                    'assets/icons/app_icon.png',
+                    height: 40,
                     filterQuality: FilterQuality.medium,
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Text(
-                'Agile Tools',
+                l10n.appTitle,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -218,7 +218,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
           // Main Headline
           Text(
-            l10n.landingHeroTitle, // 'Build better products\nwith Agile Tools'
+            l10n.landingHeroTitle, // 'Build better products\nwith Keisen'
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isMobile ? 36 : 56,
@@ -359,7 +359,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             icon: Icons.casino_rounded,
                             title: l10n.toolEstimation, // 'Estimation Room'
                             description: l10n.landingEstimationSubtitle, // 'Sessioni di stima...'
-                            color: AppColors.secondary,
+                            color: Colors.amber,
                             isDark: isDark,
                             features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
                           )),
@@ -420,7 +420,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       icon: Icons.casino_rounded,
                       title: l10n.toolEstimation,
                       description: l10n.landingEstimationSubtitle,
-                      color: AppColors.secondary,
+                      color: Colors.amber,
                       isDark: isDark,
                       features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
                     ),
@@ -1865,7 +1865,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 return Row(
                   children: [
                     Text(
-                      l10n.landingCopyright, // '© 2025 Agile Tools...'
+                      l10n.landingCopyright, // '© 2025 Keisen...'
                       style: TextStyle(
                         color: context.textMutedColor,
                         fontSize: 13,
@@ -1907,15 +1907,14 @@ class _LandingScreenState extends State<LandingScreen> {
 ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
-                'assets/icons/landing_logo_hq.png',
-                width: 36,
-                height: 36,
+                'assets/icons/app_icon.png',
+                height: 32,
                 filterQuality: FilterQuality.medium,
               ),
             ),
             const SizedBox(width: 12),
             Text(
-              'Agile Tools',
+              'Keisen',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

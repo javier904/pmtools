@@ -3,7 +3,9 @@ import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
 import '../models/eisenhower_participant_model.dart';
 import '../models/raci_models.dart';
+import '../models/subscription/subscription_limits_model.dart';
 import 'auth_service.dart';
+import 'subscription/subscription_limits_service.dart';
 
 /// Servizio Firestore per la Matrice di Eisenhower
 ///
@@ -38,6 +40,7 @@ class EisenhowerFirestoreService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   /// Nome della collection principale
   static const String _matricesCollection = 'eisenhower_matrices';
@@ -144,6 +147,7 @@ class EisenhowerFirestoreService {
   /// Il creatore viene automaticamente aggiunto come facilitatore
   ///
   /// Ritorna l'ID della matrice creata o null in caso di errore
+  /// Lancia [LimitExceededException] se il limite progetti e' raggiunto
   Future<String?> createMatrix({
     required String title,
     String description = '',
@@ -155,6 +159,9 @@ class EisenhowerFirestoreService {
       print('❌ createMatrix: Utente non autenticato');
       return null;
     }
+
+    // 🔒 CHECK LIMITE SUBSCRIPTION
+    await _limitsService.enforceProjectLimit(userEmail);
 
     try {
       final now = DateTime.now();
@@ -305,12 +312,16 @@ class EisenhowerFirestoreService {
   ///
   /// Ritorna l'ID dell'attivita' creata o null in caso di errore
   /// Aggiorna automaticamente il contatore activityCount della matrice
+  /// Lancia [LimitExceededException] se il limite task per entita' e' raggiunto
   Future<String?> createActivity({
     required String matrixId,
     required String title,
     String description = '',
     List<String> tags = const [],
   }) async {
+    // 🔒 CHECK LIMITE TASK PER ENTITA'
+    await _limitsService.enforceTaskLimit(entityType: 'eisenhower', entityId: matrixId);
+
     try {
       final activity = EisenhowerActivityModel(
         id: '', // Verra' generato da Firestore

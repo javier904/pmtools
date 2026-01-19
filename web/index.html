@@ -9,19 +9,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO Meta Tags -->
-  <title>Agile Tools - Strumenti Collaborativi per Team Agili</title>
+  <title>Keisen - Strumenti Collaborativi per Team Agili</title>
   <meta name="description"
-    content="Agile Tools: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
+    content="Keisen: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
   <meta name="keywords"
     content="agile tools, planning poker, eisenhower matrix, scrum, kanban, sprint planning, backlog, team collaboration, estimation, todo list">
-  <meta name="author" content="Agile Tools">
+  <meta name="author" content="Keisen">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://pm-agile-tools-app.web.app/">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pm-agile-tools-app.web.app/">
-  <meta property="og:title" content="Agile Tools - Strumenti Collaborativi per Team Agili">
+  <meta property="og:title" content="Keisen - Strumenti Collaborativi per Team Agili">
   <meta property="og:description"
     content="Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning. Collabora in tempo reale con il tuo team.">
   <meta property="og:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
@@ -29,12 +29,12 @@
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="it_IT">
   <meta property="og:locale:alternate" content="en_US">
-  <meta property="og:site_name" content="Agile Tools">
+  <meta property="og:site_name" content="Keisen">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://pm-agile-tools-app.web.app/">
-  <meta name="twitter:title" content="Agile Tools - Strumenti per Team Agili">
+  <meta name="twitter:title" content="Keisen - Strumenti per Team Agili">
   <meta name="twitter:description"
     content="Smart Todo, Planning Poker, Matrice Eisenhower e Sprint Planning. Collabora in tempo reale.">
   <meta name="twitter:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
@@ -46,7 +46,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Agile Tools">
+  <meta name="apple-mobile-web-app-title" content="Keisen">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
@@ -257,48 +257,112 @@
   <!-- Loading Screen with Tool Preview -->
   <div id="loading-screen" class="loading-screen">
     <div class="logo-container">
-      <img src="icons/Icon-192.png" alt="Agile Tools Logo" class="logo">
+      <img src="icons/Icon-192.png" alt="Keisen Logo" class="logo">
     </div>
 
-    <h1 class="app-title">Agile Tools</h1>
-    <p class="app-subtitle">Strumenti collaborativi per team agili</p>
+    <h1 class="app-title">Keisen</h1>
+    <p id="app-subtitle" class="app-subtitle">Strumenti collaborativi per team agili</p>
 
     <div class="tools-grid">
       <div class="tool-card">
         <div class="tool-icon blue">&#10003;</div>
-        <div class="tool-name">Smart Todo</div>
-        <div class="tool-desc">Liste intelligenti e collaborative. Importa da CSV e gestisci task.</div>
+        <div id="tool-name-todo" class="tool-name">Smart Todo</div>
+        <div id="tool-desc-todo" class="tool-desc">Liste intelligenti e collaborative. Importa da CSV e gestisci task.
+        </div>
       </div>
 
       <div class="tool-card">
         <div class="tool-icon green">&#9638;</div>
-        <div class="tool-name">Matrice Eisenhower</div>
-        <div class="tool-desc">Prioritizza le attivita distinguendo tra urgente e importante.</div>
+        <div id="tool-name-eisenhower" class="tool-name">Matrice Eisenhower</div>
+        <div id="tool-desc-eisenhower" class="tool-desc">Prioritizza le attivita distinguendo tra urgente e importante.
+        </div>
       </div>
 
       <div class="tool-card">
         <div class="tool-icon orange">&#127922;</div>
-        <div class="tool-name">Estimation Room</div>
-        <div class="tool-desc">Sessioni di stima collaborative con Planning Poker e altri metodi.</div>
+        <div id="tool-name-estimation" class="tool-name">Estimation Room</div>
+        <div id="tool-desc-estimation" class="tool-desc">Sessioni di stima collaborative con Planning Poker e altri
+          metodi.</div>
       </div>
 
       <div class="tool-card">
         <div class="tool-icon purple">&#128640;</div>
-        <div class="tool-name">Agile Process</div>
-        <div class="tool-desc">Gestisci backlog, sprint e kanban board. Metriche incluse.</div>
+        <div id="tool-name-agile" class="tool-name">Agile Process</div>
+        <div id="tool-desc-agile" class="tool-desc">Gestisci backlog, sprint e kanban board. Metriche incluse.</div>
       </div>
 
       <div class="tool-card">
         <div class="tool-icon pink">&#129504;</div>
-        <div class="tool-name">Retrospective Board</div>
-        <div class="tool-desc">Raccogli feedback dal team su cosa e andato bene, cosa migliorare.</div>
+        <div id="tool-name-retro" class="tool-name">Retrospective Board</div>
+        <div id="tool-desc-retro" class="tool-desc">Raccogli feedback dal team su cosa e andato bene, cosa migliorare.
+        </div>
       </div>
     </div>
 
     <div class="loading-indicator">
       <div class="spinner"></div>
-      <span>Caricamento in corso...</span>
+      <span id="loading-text">Caricamento in corso...</span>
     </div>
+
+    <script>
+      const translations = {
+        en: {
+          title: "Keisen - Collaborative Tools for Agile Teams",
+          subtitle: "Collaborative tools for agile teams",
+          todoName: "Smart Todo",
+          todoDesc: "Smart and collaborative lists. Import from CSV and manage tasks.",
+          eisenhowerName: "Eisenhower Matrix",
+          eisenhowerDesc: "Prioritize activities by distinguishing between urgent and important.",
+          estimationName: "Estimation Room",
+          estimationDesc: "Collaborative estimation sessions with Planning Poker and other methods.",
+          agileName: "Agile Process",
+          agileDesc: "Manage backlog, sprints and kanban boards. Metrics included.",
+          retroName: "Retrospective Board",
+          retroDesc: "Collect team feedback on what went well and what to improve.",
+          loading: "Loading..."
+        },
+        it: {
+          title: "Keisen - Strumenti Collaborativi per Team Agili",
+          subtitle: "Strumenti collaborativi per team agili",
+          todoName: "Smart Todo",
+          todoDesc: "Liste intelligenti e collaborative. Importa da CSV e gestisci task.",
+          eisenhowerName: "Matrice Eisenhower",
+          eisenhowerDesc: "Prioritizza le attivita distinguendo tra urgente e importante.",
+          estimationName: "Estimation Room",
+          estimationDesc: "Sessioni di stima collaborative con Planning Poker e altri metodi.",
+          agileName: "Agile Process",
+          agileDesc: "Gestisci backlog, sprint e kanban board. Metriche incluse.",
+          retroName: "Retrospective Board",
+          retroDesc: "Raccogli feedback dal team su cosa e andato bene, cosa migliorare.",
+          loading: "Caricamento in corso..."
+        }
+      };
+
+      function getLanguage() {
+        const saved = localStorage.getItem('flutter.locale');
+        if (saved) return saved.includes('it') ? 'it' : 'en';
+        const lang = navigator.language || navigator.userLanguage;
+        if (lang.startsWith('it')) return 'it';
+        return 'en';
+      }
+
+      const lang = getLanguage();
+      const t = translations[lang] || translations.en;
+
+      document.title = t.title;
+      document.getElementById('app-subtitle').innerText = t.subtitle;
+      document.getElementById('tool-name-todo').innerText = t.todoName;
+      document.getElementById('tool-desc-todo').innerText = t.todoDesc;
+      document.getElementById('tool-name-eisenhower').innerText = t.eisenhowerName;
+      document.getElementById('tool-desc-eisenhower').innerText = t.eisenhowerDesc;
+      document.getElementById('tool-name-estimation').innerText = t.estimationName;
+      document.getElementById('tool-desc-estimation').innerText = t.estimationDesc;
+      document.getElementById('tool-name-agile').innerText = t.agileName;
+      document.getElementById('tool-desc-agile').innerText = t.agileDesc;
+      document.getElementById('tool-name-retro').innerText = t.retroName;
+      document.getElementById('tool-desc-retro').innerText = t.retroDesc;
+      document.getElementById('loading-text').innerText = t.loading;
+    </script>
   </div>
 
   <script src="flutter_bootstrap.js" async></script>

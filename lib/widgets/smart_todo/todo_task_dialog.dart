@@ -525,7 +525,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+                  TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')),
                   const SizedBox(width: 12),
                   ElevatedButton(
                     onPressed: _save,
@@ -533,7 +533,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('Salva'),
+                    child: Text(AppLocalizations.of(context)?.smartTodoSave ?? 'Save'),
                   ),
                 ],
               ),
@@ -618,7 +618,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
              ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Chiudi')),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoClose ?? 'Close')),
           ],
         );
       }
@@ -627,7 +627,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
 
   void _showTagSelectorDialog() async {
     if (widget.listAvailableTags.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nessun tag disponibile. Creane uno nelle impostazioni.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoNoTagsAvailable ?? 'No tags available. Create one in settings.')));
       return;
     }
 
@@ -636,7 +636,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Seleziona Tag'),
+            title: Text(AppLocalizations.of(context)?.smartTodoSelectTags ?? 'Select Tags'),
             content: SizedBox(
               width: 300,
               child: Wrap(
@@ -663,7 +663,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                 }).toList(),
               ),
             ),
-            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fatto'))],
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoDone ?? 'Done'))],
           );
         }
       )
@@ -737,17 +737,17 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Aggiungi Link'),
+        title: Text(AppLocalizations.of(context)?.smartTodoAddLinkTitle ?? 'Add Link'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Nome')),
-            TextField(controller: urlCtrl, decoration: const InputDecoration(labelText: 'URL (https://...)')),
+            TextField(controller: nameCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoLinkName ?? 'Name')),
+            TextField(controller: urlCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoLinkUrl ?? 'URL (https://...)')),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text('Aggiungi')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')),
+          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: Text(AppLocalizations.of(context)?.smartTodoAdd ?? 'Add')),
         ],
       ),
     ).then((confirmed) {
@@ -770,7 +770,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     final newComment = TodoComment(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       authorEmail: user?.email ?? 'anonymous',
-      authorName: user?.displayName ?? 'Utente',
+      authorName: user?.displayName ?? (AppLocalizations.of(context)?.smartTodoUser ?? 'User'),
       text: _commentController.text.trim(),
       timestamp: DateTime.now(),
     );
@@ -796,7 +796,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Impossibile aprire il link')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoCannotOpenLink ?? 'Cannot open link')));
     }
   }
 
@@ -907,13 +907,13 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Aggiungi Immagine'),
+        title: Text(AppLocalizations.of(context)?.smartTodoAddImage ?? 'Add Image'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Incolla l\'URL dell\'immagine (es. catturato con CleanShot/Gyazo)'),
+            Text(AppLocalizations.of(context)?.smartTodoImageUrlHint ?? 'Paste the image URL (e.g. captured with CleanShot/Gyazo)'),
             const SizedBox(height: 12),
-            TextField(controller: urlCtrl, decoration: const InputDecoration(labelText: 'URL Immagine'), autofocus: true),
+            TextField(controller: urlCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoImageUrl ?? 'Image URL'), autofocus: true),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () async {
@@ -921,15 +921,15 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                 if (data?.text != null) {
                   urlCtrl.text = data!.text!;
                 }
-              }, 
-              icon: const Icon(Icons.paste), 
-              label: const Text('Incolla da Appunti')
+              },
+              icon: const Icon(Icons.paste),
+              label: Text(AppLocalizations.of(context)?.smartTodoPasteFromClipboard ?? 'Paste from Clipboard')
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, urlCtrl.text), child: const Text('Aggiungi')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')),
+          ElevatedButton(onPressed: () => Navigator.pop(context, urlCtrl.text), child: Text(AppLocalizations.of(context)?.smartTodoAdd ?? 'Add')),
         ],
       ),
     ).then((url) {
@@ -938,8 +938,8 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
          final newComment = TodoComment(
            id: DateTime.now().millisecondsSinceEpoch.toString(),
            authorEmail: user?.email ?? 'anonymous',
-           authorName: user?.displayName ?? 'Utente',
-           text: '', 
+           authorName: user?.displayName ?? (AppLocalizations.of(context)?.smartTodoUser ?? 'User'),
+           text: '',
            imageUrl: url,
            timestamp: DateTime.now(),
          );
@@ -953,10 +953,10 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Modifica commento'),
+          title: Text(AppLocalizations.of(context)?.smartTodoEditComment ?? 'Edit comment'),
           content: TextField(controller: editCtrl, autofocus: true, maxLines: 3),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -966,12 +966,12 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                     authorName: c.authorName,
                     text: editCtrl.text.trim(),
                     imageUrl: c.imageUrl, // Preserve image
-                    timestamp: c.timestamp, 
+                    timestamp: c.timestamp,
                   );
                 });
                 Navigator.pop(context);
               },
-              child: const Text('Salva'),
+              child: Text(AppLocalizations.of(context)?.smartTodoSave ?? 'Save'),
             ),
           ],
         ),
@@ -980,7 +980,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
 
   void _save() {
     if (_titleController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Inserisci un titolo')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoEnterTitle ?? 'Enter a title')));
       return;
     }
 

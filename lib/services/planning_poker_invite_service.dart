@@ -5,10 +5,14 @@ import 'package:googleapis/gmail/v1.dart' as gmail;
 import '../models/planning_poker_invite_model.dart';
 import '../models/planning_poker_participant_model.dart';
 import '../models/planning_poker_session_model.dart';
+import '../models/subscription/subscription_limits_model.dart';
+import '../utils/validators.dart';
+import 'subscription/subscription_limits_service.dart';
 
 /// Servizio per la gestione degli inviti alle sessioni di Planning Poker
 class PlanningPokerInviteService {
   final FirebaseFirestore _firestore;
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   // Collection names
   static const String _sessionsCollection = 'planning_poker_sessions';
@@ -23,6 +27,7 @@ class PlanningPokerInviteService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// Crea un nuovo invito
+  /// Lancia [LimitExceededException] se il limite inviti per entita' e' raggiunto
   Future<PlanningPokerInviteModel> createInvite({
     required String sessionId,
     required String email,
@@ -31,6 +36,9 @@ class PlanningPokerInviteService {
     required String invitedByName,
     Duration expiration = const Duration(days: 7),
   }) async {
+    // 🔒 CHECK LIMITE INVITI PER ENTITA'
+    await _limitsService.enforceInviteLimit(entityType: 'estimation', entityId: sessionId);
+
     // Verifica se esiste già un invito pending per questa email
     final existingInvite = await getInviteByEmail(sessionId, email);
     if (existingInvite != null && existingInvite.isPending) {
@@ -117,8 +125,36 @@ class PlanningPokerInviteService {
   }
 
   /// Ottieni un invito per token
+  ///
+  /// OTTIMIZZATO: Usa collection group query invece di caricare tutte le sessioni.
+  /// Questo riduce drasticamente le letture Firestore (da N sessioni a 1 query).
   Future<PlanningPokerInviteModel?> getInviteByToken(String token) async {
-    // Query su tutte le sessioni per trovare l'invito con questo token
+    try {
+      // Collection group query: cerca in tutte le subcollection 'invites'
+      final inviteQuery = await _firestore
+          .collectionGroup(_invitesSubcollection)
+          .where('token', isEqualTo: token)
+          .limit(1)
+          .get();
+
+      if (inviteQuery.docs.isNotEmpty) {
+        return PlanningPokerInviteModel.fromFirestore(inviteQuery.docs.first);
+      }
+      return null;
+    } catch (e) {
+      // Fallback al metodo originale se collection group non funziona
+      // (es. indice mancante - verrà creato automaticamente alla prima esecuzione)
+      // Log solo in debug per non esporre dettagli in produzione
+      assert(() {
+        print('⚠️ Collection group query fallita, usando fallback: $e');
+        return true;
+      }());
+      return _getInviteByTokenFallback(token);
+    }
+  }
+
+  /// Fallback per getInviteByToken (metodo originale inefficiente)
+  Future<PlanningPokerInviteModel?> _getInviteByTokenFallback(String token) async {
     final sessionsQuery = await _firestore
         .collection(_sessionsCollection)
         .get();
@@ -338,6 +374,11 @@ class PlanningPokerInviteService {
       final expirationDate = _formatDate(invite.expiresAt);
       final roleName = _getRoleName(invite.role);
 
+      // 🔒 SICUREZZA: Sanitizza input utente per prevenire HTML injection
+      final safeInviterName = Validators.sanitizeHtml(invite.invitedByName);
+      final safeSessionName = Validators.sanitizeHtml(sessionName);
+      final safeProjectName = Validators.sanitizeHtml(projectName);
+
       // Costruisci il contenuto HTML dell'email
       final htmlBody = '''
 <!DOCTYPE html>
@@ -364,11 +405,11 @@ class PlanningPokerInviteService {
     </div>
     <div class="content">
       <p>Ciao!</p>
-      <p><strong>${invite.invitedByName}</strong> ti ha invitato a partecipare a una sessione di Planning Poker.</p>
+      <p><strong>$safeInviterName</strong> ti ha invitato a partecipare a una sessione di Planning Poker.</p>
 
       <div class="info-box">
-        <p><strong>📋 Sessione:</strong> $sessionName</p>
-        <p><strong>📁 Progetto:</strong> $projectName</p>
+        <p><strong>📋 Sessione:</strong> $safeSessionName</p>
+        <p><strong>📁 Progetto:</strong> $safeProjectName</p>
         <p><strong>👤 Ruolo:</strong> <span class="role-badge">$roleName</span></p>
         <p><strong>⏰ Scadenza invito:</strong> $expirationDate</p>
       </div>
@@ -390,10 +431,10 @@ class PlanningPokerInviteService {
 </html>
 ''';
 
-      // Costruisci email in formato MIME
+      // Costruisci email in formato MIME (Subject usa valore sanitizzato)
       final emailContent = '''From: $senderEmail
 To: ${invite.email}
-Subject: =?UTF-8?B?${base64Encode(utf8.encode('🎯 Invito Planning Poker: $sessionName'))}?=
+Subject: =?UTF-8?B?${base64Encode(utf8.encode('🎯 Invito Planning Poker: $safeSessionName'))}?=
 MIME-Version: 1.0
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: base64

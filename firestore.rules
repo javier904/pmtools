@@ -1,3 +1,7 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
     // ════════════════════════════════════════════════════════════════════════════
     // HELPER FUNCTIONS
     // ════════════════════════════════════════════════════════════════════════════
@@ -47,52 +51,6 @@
 
       // Creazione: qualsiasi utente autenticato (deve essere il creatore)
       allow create: if isAuthenticated() &&
-                      request.resource.data.get('createdBy', '').lower() == userEmail();
-
-      // Aggiornamento: 
-      // 1. Creatore/Partecipanti (standard logic)
-      // 2. Pending: Self-promotion (accetta invito)
-      allow update: if isAuthenticated() && (
-        canAccessByParticipantEmails(resource) || 
-        (isPending(resource) && 
-         request.resource.data.get('participantEmails', []).hasAll(resource.data.get('participantEmails', [])) &&
-         request.resource.data.get('participantEmails', []).hasAll([userEmail()]) &&
-         request.resource.data.get('pendingEmails', []).size() < resource.data.get('pendingEmails', []).size())
-      );
-
-      // Cancellazione: solo creatore
-      allow delete: if isAuthenticated() && isOwner(resource);
-      
-      match /stories/{storyId} {
-        allow read, write: if isAuthenticated() &&
-                      canAccessByParticipantEmails(
-                        get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))
-                      );
-      }
-    }
-    
-    // ... (Invites rules are fine, skipping for brevity in this replace call if possible, but replace_file needs contiguous block? No I will assume I can edit the top block and SmartTodo block separately or just edit the functions and Smart Todo)
-    // IMPORTANT: I must be careful with replace_file_content.
-    // I will replace the HELPER FUNCTIONS block first.
-    // Then I will replace the SMART TODO block.
-    
-    // Actually, I can do it in two chunks using multi_replace_file_content.
-    // But I don't have multi_replace.
-    // I have replace_file_content.
-    
-    // I will start with Helper Functions.
-
-
-    // ════════════════════════════════════════════════════════════════════════════
-    // PLANNING POKER SESSIONS
-    // ════════════════════════════════════════════════════════════════════════════
-
-    match /planning_poker_sessions/{sessionId} {
-      // Lettura: creatore, partecipanti, o invitati (pending)
-      allow read: if isAuthenticated() && (canAccessByParticipantEmails(resource) || isPending(resource));
-
-      // Creazione: qualsiasi utente autenticato (deve essere il creatore)
-      allow create: if isAuthenticated() &&
                       request.resource.data.createdBy.lower() == userEmail();
 
       // Aggiornamento: 
@@ -116,20 +74,49 @@
                         get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))
                       );
       }
+
+      // Subcollection: invites (USATA DAL CODICE - planning_poker_invite_service.dart)
+      match /invites/{inviteId} {
+        // Get: invitato, chi ha invitato, o partecipanti della sessione
+        allow get: if isAuthenticated() && (
+          resource.data.email.lower() == userEmail() ||
+          resource.data.invitedBy.lower() == userEmail() ||
+          canAccessByParticipantEmails(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId)))
+        );
+
+        // List: partecipanti della sessione
+        allow list: if isAuthenticated() &&
+          canAccessByParticipantEmails(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId)));
+
+        // Create: partecipanti della sessione
+        allow create: if isAuthenticated() &&
+          canAccessByParticipantEmails(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId)));
+
+        // Update: chi ha invitato o l'invitato che accetta
+        allow update: if isAuthenticated() && (
+          resource.data.invitedBy.lower() == userEmail() ||
+          (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+        );
+
+        // Delete: chi ha invitato
+        allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
+      }
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    // PLANNING POKER INVITES
+    // PLANNING POKER INVITES (TOP-LEVEL - DEPRECATA, mantenuta per backward compatibility)
     // ════════════════════════════════════════════════════════════════════════════
 
     match /planning_poker_invites/{inviteId} {
-      // Lettura pubblica per validazione token (necessario per accettare inviti)
-      // Get: Pubblico (se conosci ID)
-      allow get: if true;
-      
+      // Get: Solo invitato o chi ha invitato (richiede autenticazione)
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
       // List: Solo inviti propri (ricevuti o inviati)
       allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() || 
+        resource.data.email.lower() == userEmail() ||
         resource.data.invitedBy.lower() == userEmail()
       );
 
@@ -139,7 +126,7 @@
       // Aggiornamento/Cancellazione: solo chi ha invitato o chi accetta (aggiornamento status)
       allow update: if isAuthenticated() && (
         resource.data.invitedBy.lower() == userEmail() ||
-        (request.resource.data.status == 'accepted' && 
+        (request.resource.data.status == 'accepted' &&
          resource.data.email.lower() == userEmail())
       );
 
@@ -185,11 +172,15 @@
     // ════════════════════════════════════════════════════════════════════════════
 
     match /eisenhower_invites/{inviteId} {
-      allow get: if true;
-      
+      // Get: Solo invitato o chi ha invitato (richiede autenticazione)
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
       // List: Solo inviti propri (ricevuti o inviati)
       allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() || 
+        resource.data.email.lower() == userEmail() ||
         resource.data.invitedBy.lower() == userEmail()
       );
 
@@ -292,12 +283,15 @@
     // ════════════════════════════════════════════════════════════════════════════
 
     match /agile_invites/{inviteId} {
-      // Lettura pubblica per validazione token
-      allow get: if true;
-      
+      // Get: Solo invitato o chi ha invitato (richiede autenticazione)
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
       // List: Solo inviti propri (ricevuti o inviati)
       allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() || 
+        resource.data.email.lower() == userEmail() ||
         resource.data.invitedBy.lower() == userEmail()
       );
 
@@ -348,19 +342,54 @@
                              (get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
                               userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', []));
       }
+
+      // Subcollection: invites (USATA DAL CODICE - smart_todo_invite_service.dart)
+      match /invites/{inviteId} {
+        // Get: invitato, chi ha invitato, o owner/partecipanti della lista
+        allow get: if isAuthenticated() && (
+          resource.data.email.lower() == userEmail() ||
+          resource.data.invitedBy.lower() == userEmail() ||
+          get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+          userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', [])
+        );
+
+        // List: owner o partecipanti della lista
+        allow list: if isAuthenticated() && (
+          get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+          userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', [])
+        );
+
+        // Create: owner o partecipanti della lista
+        allow create: if isAuthenticated() && (
+          get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+          userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', [])
+        );
+
+        // Update: chi ha invitato o l'invitato che accetta
+        allow update: if isAuthenticated() && (
+          resource.data.invitedBy.lower() == userEmail() ||
+          (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+        );
+
+        // Delete: chi ha invitato
+        allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
+      }
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    // SMART TODO INVITES
+    // SMART TODO INVITES (TOP-LEVEL - DEPRECATA, mantenuta per backward compatibility)
     // ════════════════════════════════════════════════════════════════════════════
 
     match /smart_todo_invites/{inviteId} {
-      // Lettura pubblica per validazione token
-      allow get: if true;
-      
+      // Get: Solo invitato o chi ha invitato (richiede autenticazione)
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
       // List: Solo inviti propri (ricevuti o inviati)
       allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() || 
+        resource.data.email.lower() == userEmail() ||
         resource.data.invitedBy.lower() == userEmail()
       );
 
@@ -386,8 +415,10 @@
         userEmail() in resource.data.get('participantEmails', [])
       );
 
-      // Creazione: Qualsiasi utente autenticato
-      allow create: if isAuthenticated();
+      // Creazione: Utente autenticato che si imposta come creatore
+      // SICUREZZA: Impedisce spoofing del campo createdBy
+      allow create: if isAuthenticated() &&
+                      request.resource.data.get('createdBy', '').lower() == userEmail();
 
       // Aggiornamento: Owner o Partecipanti
       allow update: if isAuthenticated() && (
@@ -400,7 +431,10 @@
     }
 
     match /audit_logs/{logId} {
-      allow read: if isAuthenticated(); // TODO: Restrict by project participants if needed
+      // SICUREZZA: Niente lettura dalla collection top-level
+      // Gli audit logs dei progetti sono nelle subcollection /agile_projects/{id}/audit_logs
+      // Questa collection è solo per scrittura (tracking retrospettive standalone)
+      allow read: if false;
       allow create: if isAuthenticated();
     }
 

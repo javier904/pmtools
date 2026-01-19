@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/eisenhower_matrix_model.dart';
 
 /// Widget per cercare e filtrare le matrici di Eisenhower
@@ -25,10 +26,11 @@ class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return TextField(
       controller: _searchController,
       decoration: InputDecoration(
-        hintText: 'Cerca matrici...',
+        hintText: l10n.eisenhowerSearchHint,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(

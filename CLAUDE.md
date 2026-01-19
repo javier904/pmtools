@@ -228,6 +228,142 @@ themeController.toggleTheme();
 '/smart-todo'      → SmartTodoDashboard
 ```
 
+---
+
+## Sistema Abbonamenti (Stripe + AdSense)
+
+### Architettura
+
+Sistema modulare per gestione abbonamenti con 3 tier:
+
+| Tier | Prezzo | Trial | Progetti | Liste | Task/entity | Inviti/entity | Ads |
+|------|--------|-------|----------|-------|-------------|---------------|-----|
+| **Free** | €0 | - | 5 | 5 | 50 | 10 | Si |
+| **Premium** | €4.99/m o €39.99/y | 7gg | 30 | 30 | 100 | 15 | No |
+| **Elite** | €7.99/m o €69.99/y | 14gg | ∞ | ∞ | ∞ | ∞ | No |
+
+### Struttura File
+
+```
+lib/
+├── models/subscription/
+│   └── subscription_limits_model.dart    # SubscriptionLimits, LimitCheckResult, LimitExceededException
+│
+├── services/subscription/
+│   ├── subscription_limits_service.dart  # Controllo e enforcement limiti
+│   ├── stripe_payment_service.dart       # Integrazione Stripe checkout/portal
+│   └── ads_service.dart                  # Google AdSense per Web
+│
+├── widgets/subscription/
+│   ├── plan_card_widget.dart             # Card piano + PlansComparisonWidget
+│   ├── limit_reached_dialog.dart         # Dialog limite + LimitExceptionHandler
+│   ├── usage_meter_widget.dart           # Barre utilizzo + UsageSummaryWidget
+│   └── ad_banner_widget.dart             # Banner AdSense + ConditionalAdBanner
+│
+└── screens/subscription/
+    └── subscription_screen.dart          # Schermata gestione (3 tabs)
+
+functions/
+├── src/index.ts                          # Cloud Functions Stripe
+├── package.json                          # Dipendenze Node.js
+└── tsconfig.json                         # Config TypeScript
+```
+
+### Firestore Structure
+
+```
+stripe_customers/{userId}/
+├── stripeId: "cus_xxx"
+├── checkout_sessions/{sessionId}/
+│   ├── price: "price_xxx"
+│   └── url: "https://checkout.stripe.com/..."
+├── subscriptions/{subscriptionId}/
+│   ├── status: "active"
+│   └── current_period_end: timestamp
+└── payments/{paymentId}/
+    ├── amount: 499
+    └── status: "succeeded"
+
+users/{userId}/subscription/current/
+├── plan: "premium"
+├── status: "active"
+├── externalSubscriptionId: "sub_xxx"
+├── startDate, endDate, trialEndDate
+└── ...
+```
+
+### Servizi Modificati (Limit Checks)
+
+I seguenti servizi includono check limiti automatici:
+
+| Servizio | Metodi con limite |
+|----------|-------------------|
+| `eisenhower_firestore_service.dart` | `createMatrix()`, `createActivity()` |
+| `planning_poker_firestore_service.dart` | `createSession()`, `createStory()` |
+| `smart_todo_service.dart` | `createList()`, `createTask()` |
+| `eisenhower_invite_service.dart` | `createInvite()` |
+| `planning_poker_invite_service.dart` | `createInvite()` |
+| `smart_todo_invite_service.dart` | `createInvite()` |
+
+### Pattern di Utilizzo
+
+```dart
+// Verificare limite prima di creare
+final limitsService = SubscriptionLimitsService();
+final result = await limitsService.canCreateProject(userEmail);
+if (!result.allowed) {
+  // Mostra dialog upgrade
+  await LimitReachedDialog.show(context: context, limitResult: result, entityType: 'project');
+}
+
+// Enforcement automatico (lancia eccezione)
+try {
+  await limitsService.enforceProjectLimit(userEmail);
+  // Procedi con creazione
+} on LimitExceededException catch (e) {
+  // Gestisci limite raggiunto
+}
+
+// Mostrare banner ads condizionali
+ConditionalAdBanner(
+  position: AdBannerPosition.bottom,
+  child: YourScreenContent(),
+)
+
+// Usage summary
+final summary = await limitsService.getUsageSummary(userEmail);
+// summary.projectsUsed, summary.listsUsed, summary.limits
+```
+
+### Cloud Functions
+
+| Funzione | Tipo | Descrizione |
+|----------|------|-------------|
+| `stripeWebhook` | HTTP | Gestisce eventi subscription.*, invoice.*, trial_will_end |
+| `createPortalSession` | Callable | Crea sessione Stripe Billing Portal |
+| `syncSubscriptionStatus` | Callable | Sync manuale status subscription |
+| `checkTrialExpirations` | Scheduled | Check giornaliero trial in scadenza (9:00) |
+
+### Configurazione Richiesta
+
+Prima dell'attivazione, configurare:
+
+1. **Stripe Dashboard**: Creare prodotti/prezzi con IDs:
+   - `price_premium_monthly`, `price_premium_yearly`
+   - `price_elite_monthly`, `price_elite_yearly`
+
+2. **AdSense**: Aggiornare `AdsService.adClientId` con il proprio Client ID
+
+3. **Firebase Config**: Chiavi Stripe in environment variables
+
+4. **Routes**: Aggiungere `/subscription` in main.dart
+
+### Politica Rimborsi
+
+**No-Refund Policy**: Cancellazione possibile in qualsiasi momento, accesso attivo fino a fine periodo pagato.
+
+---
+
 ## Origine
 
 Spinoff standalone da: `/Users/leonardo.torella/Progetti/dashboard` (PMO Dashboard)

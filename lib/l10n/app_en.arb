@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appTitle": "Agile Tools",
+  "appTitle": "Keisen",
 
   "actionSave": "Save",
   "actionCancel": "Cancel",
@@ -25,6 +25,69 @@
   "stateError": "Error",
   "stateSuccess": "Success",
 
+  "subscriptionCurrent": "CURRENT",
+  "subscriptionRecommended": "RECOMMENDED",
+  "subscriptionFree": "Free",
+  "subscriptionPerMonth": "/month",
+  "subscriptionPerYear": "/year",
+  "subscriptionSaveYearly": "Save {amount} with yearly",
+  "@subscriptionSaveYearly": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionTrialDays": "{days} days free trial",
+  "@subscriptionTrialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionUnlimitedProjects": "Unlimited projects",
+  "subscriptionProjectsActive": "{count} active projects",
+  "@subscriptionProjectsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionUnlimitedLists": "Unlimited lists",
+  "subscriptionUnlimitedLists": "Unlimited lists",
+  "subscriptionSmartTodoLists": "{count} Smart Todo lists",
+  "@subscriptionSmartTodoLists": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionActiveProjectsLabel": "Active Projects",
+  "subscriptionSmartTodoListsLabel": "Smart Todo Lists",
+  "subscriptionUnlimitedTasks": "Unlimited tasks",
+  "subscriptionTasksPerProject": "{count} tasks per project",
+  "@subscriptionTasksPerProject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionUnlimitedInvites": "Unlimited invites",
+  "subscriptionInvitesPerProject": "{count} invites per project",
+  "@subscriptionInvitesPerProject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionWithAds": "With ads",
+  "subscriptionWithoutAds": "No ads",
+
   "authSignInGoogle": "Sign in with Google",
   "authSignOut": "Sign out",
   "authLogoutConfirm": "Are you sure you want to sign out?",
@@ -35,7 +98,7 @@
   "authEmailInUse": "Email already in use",
   "authWeakPassword": "Password too weak",
   "authInvalidEmail": "Invalid email",
-  "appSubtitle": "Agile Tools for Teams",
+  "appSubtitle": "Keisen for Teams",
   "authOr": "or",
   "authPassword": "Password",
   "authRegister": "Register",
@@ -134,6 +197,7 @@
   "eisenhowerOpen": "Open",
   "eisenhowerAddParticipantsFirst": "Add participants to the matrix first",
   "eisenhowerSearchLabel": "Search:",
+  "eisenhowerSearchHint": "Search matrices...",
   "eisenhowerNoMatrixFound": "No matrix found",
   "eisenhowerCreateFirstMatrix": "Create your first Eisenhower Matrix\nto organize your priorities",
   "eisenhowerCreateMatrix": "Create Matrix",
@@ -809,7 +873,7 @@
   },
 
   "landingBadge": "Agile Team Tools",
-  "landingHeroTitle": "Build better products\nwith Agile Tools",
+  "landingHeroTitle": "Build better products\nwith Keisen",
   "landingHeroSubtitle": "Prioritize, estimate, and manage your projects with collaborative tools. All in one place, for free.",
   "landingStartFree": "Start for Free",
   
@@ -841,9 +905,9 @@
   "landingAgileTitle": "Agile & Scrum Framework",
   "landingAgileSubtitle": "Implement best practices for iterative software development",
   "landingAgileIterativeTitle": "Iterative and Incremental Development",
-  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks long. Each iteration produces a working product increment.\n\nWith Agile Tools, you can manage your backlog, plan sprints, and monitor team velocity in real-time.",
+  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks long. Each iteration produces a working product increment.\n\nWith Keisen, you can manage your backlog, plan sprints, and monitor team velocity in real-time.",
   "landingAgileScrumTitle": "Scrum Framework",
-  "landingAgileScrumDesc": "Scrum is the most widespread Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective), and artifacts (Product Backlog, Sprint Backlog).\n\nAgile Tools supports all Scrum events with dedicated tools for each ceremony.",
+  "landingAgileScrumDesc": "Scrum is the most widespread Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective), and artifacts (Product Backlog, Sprint Backlog).\n\nKeisen supports all Scrum events with dedicated tools for each ceremony.",
   "landingAgileKanbanTitle": "Kanban Board",
   "landingAgileKanbanDesc": "The Kanban method visualizes the workflow through columns representing process states. It limits Work In Progress (WIP) to maximize throughput.\n\nOur Kanban board supports column customization, WIP limits, and flow metrics.",
 
@@ -876,7 +940,7 @@
   "landingFooterResources": "Resources",
   "landingFooterCompany": "Company",
   "landingFooterLegal": "Legal",
-  "landingCopyright": "© 2025 Agile Tools. All rights reserved.",
+  "landingCopyright": "© 2025 Keisen. All rights reserved.",
 
   "featureSmartImportDesc": "Quick task creation with description\nAssignment to team members\nConfigurable priority and deadlines\nCompletion notifications",
   "featureImportDesc": "Import from CSV file\nCopy/paste from Excel\nSmart text parsing\nAutomatic field mapping",
@@ -945,10 +1009,10 @@
   "landingAgileSectionTitle": "Agile & Scrum Framework",
   "landingAgileSectionSubtitle": "Implement best practices for iterative software development",
   "landingAgileIterativeTitle": "Iterative and Incremental Development",
-  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks. Each iteration produces a working product increment.\n\nWith Agile Tools you can manage your backlog, plan sprints and monitor team velocity in real time.",
+  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks. Each iteration produces a working product increment.\n\nWith Keisen you can manage your backlog, plan sprints and monitor team velocity in real time.",
 
   "landingAgileScrumTitle": "Scrum Framework",
-  "landingAgileScrumDesc": "Scrum is the most popular Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective) and artifacts (Product Backlog, Sprint Backlog).\n\nAgile Tools supports all Scrum events with dedicated tools for each ceremony.",
+  "landingAgileScrumDesc": "Scrum is the most popular Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective) and artifacts (Product Backlog, Sprint Backlog).\n\nKeisen supports all Scrum events with dedicated tools for each ceremony.",
 
   "landingAgileKanbanTitle": "Kanban Board",
   "landingAgileKanbanDesc": "The Kanban method visualizes workflow through columns representing process states. It limits Work In Progress (WIP) to maximize throughput.\n\nOur Kanban board supports column customization, WIP limits, and flow metrics.",
@@ -1579,5 +1643,486 @@
     }
   },
   "smartTodoUserAlreadyInvitedOrPending": "User already invited or invitation pending.",
-  "smartTodoWriteComment": "Write a comment..."
+  "smartTodoWriteComment": "Write a comment...",
+
+  "smartTodoFilterToday": "Today",
+  "smartTodoFilterMyTasks": "My Tasks",
+  "smartTodoFilterOwner": "Owner",
+  "smartTodoViewGlobalTasks": "View Global Tasks",
+  "smartTodoViewLists": "View Lists",
+
+  "smartTodoNewListDialogTitle": "New List",
+  "smartTodoTitleLabel": "Title *",
+  "smartTodoDescriptionLabel": "Description",
+  "smartTodoCancel": "Cancel",
+  "smartTodoCreate": "Create",
+  "smartTodoSave": "Save",
+
+  "smartTodoNoListsPresent": "No lists available",
+  "smartTodoCreateFirstList": "Create your first list to get started",
+  "smartTodoMembersCount": "{count} members",
+  "@smartTodoMembersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "smartTodoRenameListTitle": "Rename List",
+  "smartTodoNewNameLabel": "New Name",
+  "smartTodoDeleteListTitle": "Delete List",
+  "smartTodoDeleteListConfirm": "Are you sure you want to delete this list and all its tasks? This action cannot be undone.",
+  "smartTodoDelete": "Delete",
+  "smartTodoEdit": "Edit",
+  "smartTodoSearchHint": "Search lists...",
+  "smartTodoSearchTasksHint": "Search...",
+  "smartTodoNoSearchResults": "No results for \"{query}\"",
+
+  "smartTodoColumnTodo": "To Do",
+  "smartTodoColumnInProgress": "In Progress",
+  "smartTodoColumnDone": "Done",
+
+  "smartTodoAllPeople": "All people",
+  "smartTodoPeopleCount": "{count} people",
+  "@smartTodoPeopleCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "smartTodoFilterByPerson": "Filter by Person",
+  "smartTodoApplyFilters": "Apply Filters",
+  "@smartTodoNoSearchResults": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
+
+  "smartTodoError": "Error: {error}",
+  "@smartTodoError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "profileMenuTitle": "Profile",
+  "profileMenuLogout": "Logout",
+  "profileLogoutDialogTitle": "Logout",
+  "profileLogoutDialogConfirm": "Are you sure you want to logout?",
+
+  "legalCookieTitle": "We use cookies",
+  "legalCookieMessage": "We use cookies to improve your experience and for analytical purposes. By continuing, you accept the use of cookies.",
+  "legalCookieAccept": "Accept all",
+  "legalCookieRefuse": "Necessary only",
+  "legalCookiePolicy": "Cookie Policy",
+  "legalPrivacyPolicy": "Privacy Policy",
+  "legalTermsOfService": "Terms of Service",
+  "legalGDPR": "GDPR",
+  "legalAcceptTerms": "I accept the Terms of Service and Privacy Policy",
+  "legalMustAcceptTerms": "You must accept the terms to continue",
+  "profilePrivacy": "Privacy",
+  "profileExportData": "Export my data",
+  "profileDeleteAccount": "Delete account",
+  "profileDeleteAccountConfirm": "Are you sure you want to permanently delete your account? This action is irreversible.",
+
+  "subscriptionTitle": "Subscription",
+  "subscriptionTabPlans": "Plans",
+  "subscriptionTabUsage": "Usage",
+  "subscriptionTabBilling": "Billing",
+  "subscriptionPerMonth": "/month",
+  "subscriptionPerYear": "/year",
+  "subscriptionCurrent": "CURRENT",
+  "subscriptionRecommended": "RECOMMENDED",
+  "subscriptionFree": "Free",
+  "subscriptionSaveYearly": "Save €{amount}/year",
+  "@subscriptionSaveYearly": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "subscriptionTrialDays": "{days} days free trial",
+  "@subscriptionTrialDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedProjects": "Unlimited projects",
+  "subscriptionActiveProjects": "{count} active projects",
+  "@subscriptionActiveProjects": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedLists": "Unlimited lists",
+  "subscriptionActiveLists": "{count} Smart Todo lists",
+  "@subscriptionActiveLists": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedTasks": "Unlimited tasks",
+  "subscriptionTasksPerProject": "{count} tasks per project",
+  "@subscriptionTasksPerProject": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedInvites": "Unlimited invites",
+  "subscriptionInvitesPerProject": "{count} invites per project",
+  "@subscriptionInvitesPerProject": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionWithAds": "With ads",
+  "subscriptionWithoutAds": "Without ads",
+  "subscriptionCurrentPlan": "Current plan",
+  "subscriptionUpgradeTo": "Upgrade to {plan}",
+  "@subscriptionUpgradeTo": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionDowngradeTo": "Downgrade to {plan}",
+  "@subscriptionDowngradeTo": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionChoose": "Choose {plan}",
+  "@subscriptionChoose": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionMonthly": "Monthly",
+  "subscriptionYearly": "Yearly (-17%)",
+  "subscriptionLimitReached": "Limit reached",
+  "subscriptionLimitProjects": "You have reached the maximum number of projects for your plan. Upgrade to Premium to create more projects.",
+  "subscriptionLimitLists": "You have reached the maximum number of lists for your plan. Upgrade to Premium to create more lists.",
+  "subscriptionLimitTasks": "You have reached the maximum number of tasks for this project. Upgrade to Premium to add more tasks.",
+  "subscriptionLimitInvites": "You have reached the maximum number of invites for this project. Upgrade to Premium to invite more people.",
+  "subscriptionLimitEstimations": "You have reached the maximum number of estimation sessions. Upgrade to Premium to create more.",
+  "subscriptionLimitDefault": "You have reached the limit of your current plan.",
+  "subscriptionCurrentUsage": "Current usage",
+  "subscriptionUpgradeToPremium": "Upgrade to Premium",
+  "subscriptionBenefitProjects": "30 active projects",
+  "subscriptionBenefitLists": "30 Smart Todo lists",
+  "subscriptionBenefitTasks": "100 tasks per project",
+  "subscriptionBenefitNoAds": "No ads",
+  "subscriptionStartingFrom": "Starting from €4.99/month",
+  "subscriptionLater": "Later",
+  "subscriptionViewPlans": "View plans",
+  "subscriptionCanCreateOne": "You can create 1 more {entity}",
+  "@subscriptionCanCreateOne": {
+    "placeholders": {
+      "entity": {"type": "String"}
+    }
+  },
+  "subscriptionCanCreateMany": "You can create {count} more {entity}",
+  "@subscriptionCanCreateMany": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "entity": {"type": "String"}
+    }
+  },
+  "subscriptionUpgrade": "UPGRADE",
+  "subscriptionUsed": "Used: {count}",
+  "@subscriptionUsed": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimited": "Unlimited",
+  "subscriptionLimit": "Limit: {count}",
+  "@subscriptionLimit": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionPlanUsage": "Plan usage",
+  "subscriptionRefresh": "Refresh",
+  "subscriptionActiveProjectsLabel": "Active projects",
+  "subscriptionSmartTodoLists": "Smart Todo lists",
+  "subscriptionAdsActive": "Ads active",
+  "subscriptionRemoveAds": "Upgrade to Premium to remove ads",
+  "subscriptionNoAds": "No ads",
+  "subscriptionLoadError": "Unable to load usage data",
+  "subscriptionAdLabel": "AD",
+  "subscriptionAdPlaceholder": "Ad Placeholder",
+  "subscriptionDevEnvironment": "(Development environment)",
+  "subscriptionRemoveAdsUnlock": "Remove ads and unlock advanced features",
+  "subscriptionUpgradeButton": "Upgrade",
+  "subscriptionLoadingError": "Loading error: {error}",
+  "@subscriptionLoadingError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "subscriptionCompletePayment": "Complete the payment in the opened window",
+  "subscriptionError": "Error: {error}",
+  "@subscriptionError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "subscriptionConfirmDowngrade": "Confirm downgrade",
+  "subscriptionDowngradeMessage": "Are you sure you want to switch to the Free plan?\n\nYour subscription will remain active until the end of the current period, after which you will automatically switch to the Free plan.\n\nYou will not lose your data, but some features may be limited.",
+  "subscriptionCancel": "Cancel",
+  "subscriptionConfirmDowngradeButton": "Confirm downgrade",
+  "subscriptionCancelled": "Subscription cancelled. It will remain active until the end of the period.",
+  "subscriptionPortalError": "Portal opening error: {error}",
+  "@subscriptionPortalError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "subscriptionRetry": "Retry",
+  "subscriptionChooseRightPlan": "Choose the right plan for you",
+  "subscriptionStartFree": "Start free, upgrade when you want",
+  "subscriptionPlan": "Plan {plan}",
+  "@subscriptionPlan": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionTrialUntil": "Trial until {date}",
+  "@subscriptionTrialUntil": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "subscriptionRenewal": "Renewal: {date}",
+  "@subscriptionRenewal": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "subscriptionManage": "Manage",
+  "subscriptionLoginRequired": "Please login to view usage",
+  "subscriptionSuggestion": "Suggestion",
+  "subscriptionSuggestionText": "Upgrade to Premium to unlock more projects, remove ads and increase limits. Try free for 7 days!",
+  "subscriptionPaymentManagement": "Payment management",
+  "subscriptionNoActiveSubscription": "No active subscription",
+  "subscriptionUsingFreePlan": "You are using the Free plan",
+  "subscriptionViewPaidPlans": "View paid plans",
+  "subscriptionPaymentMethod": "Payment method",
+  "subscriptionEditPaymentMethod": "Edit card or payment method",
+  "subscriptionInvoices": "Invoices",
+  "subscriptionViewInvoices": "View and download invoices",
+  "subscriptionCancelSubscription": "Cancel subscription",
+  "subscriptionAccessUntilEnd": "Access will remain active until the end of the period",
+  "subscriptionPaymentHistory": "Payment history",
+  "subscriptionNoPayments": "No payments recorded",
+  "subscriptionCompleted": "Completed",
+  "subscriptionDateNotAvailable": "Date not available",
+  "subscriptionFaq": "Frequently asked questions",
+  "subscriptionFaqCancel": "Can I cancel at any time?",
+  "subscriptionFaqCancelAnswer": "Yes, you can cancel your subscription at any time. Access will remain active until the end of the paid period.",
+  "subscriptionFaqTrial": "How does the free trial work?",
+  "subscriptionFaqTrialAnswer": "With the free trial you have full access to all features of the chosen plan. At the end of the trial period, the paid subscription will start automatically.",
+  "subscriptionFaqChange": "Can I change plans?",
+  "subscriptionFaqChangeAnswer": "You can upgrade or downgrade at any time. The amount will be calculated proportionally.",
+  "subscriptionFaqData": "Is my data safe?",
+  "subscriptionFaqDataAnswer": "Absolutely yes. You will never lose your data, even if you switch to a lower plan. Some features may be limited, but the data remains always accessible.",
+  "subscriptionStatusActive": "Active",
+  "subscriptionStatusTrialing": "Trialing",
+  "subscriptionStatusPastDue": "Past due",
+  "subscriptionStatusCancelled": "Cancelled",
+  "subscriptionStatusExpired": "Expired",
+  "subscriptionStatusPaused": "Paused",
+  "subscriptionStatus": "Status",
+  "subscriptionStarted": "Started",
+  "subscriptionNextRenewal": "Next renewal",
+  "subscriptionTrialEnd": "Trial end",
+  "toolSectionTitle": "Tools",
+  "deadlineTitle": "Deadlines",
+  "deadlineNoUpcoming": "No upcoming deadlines",
+  "deadlineToday": "Today",
+  "deadlineTomorrow": "Tomorrow",
+  "deadlineSprint": "Sprint",
+  "deadlineTask": "Task",
+  "favTitle": "Favorites",
+  "favFilterAll": "All",
+  "favFilterTodo": "Todo Lists",
+  "favFilterMatrix": "Matrices",
+  "favFilterProject": "Projects",
+  "favFilterPoker": "Estimation",
+  "actionRemoveFromFavorites": "Remove from favorites",
+  "favFilterRetro": "Retro",
+  "favNoFavorites": "No favorites found",
+  "favTypeTodo": "Todo List",
+  "favTypeMatrix": "Eisenhower Matrix",
+  "favTypeProject": "Agile Project",
+  "favTypeRetro": "Retrospective",
+  "favTypePoker": "Planning Poker",
+  "favTypeTool": "Tool",
+  "deadline2Days": "2 Days",
+  "deadline3Days": "3 Days",
+  "deadline5Days": "5 Days",
+  "deadlineConfigTitle": "Configure Shortcuts",
+  "deadlineConfigDesc": "Choose the timeframes to display in the header.",
+  "smartTodoClose": "Close",
+  "smartTodoDone": "Done",
+  "smartTodoAdd": "Add",
+  "smartTodoEmailLabel": "Email",
+
+  "exceptionLoginGoogleRequired": "Google login required to send emails",
+  "exceptionUserNotAuthenticated": "User not authenticated",
+  "errorLoginFailed": "Login error: {error}",
+  "@errorLoginFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "retroParticipantsTitle": "Participants ({count})",
+  "@retroParticipantsTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "actionReopen": "Reopen",
+  "retroWaitingForFacilitator": "Waiting for facilitator to start the session...",
+  "retroGeneratingSheet": "Generating Google Sheet...",
+  "retroExportSuccess": "Export completed!",
+  "retroExportError": "Error exporting to Sheets.",
+  "retroReportCopied": "Report copied to clipboard! Paste in Excel or Notes.",
+  "retroReopenTitle": "Reopen Retrospective",
+  "retroReopenConfirm": "Are you sure you want to reopen the retrospective? It will go back to Discussion phase.",
+  "errorAuthRequired": "Authentication required",
+  "errorRetroIdMissing": "Retrospective ID missing",
+
+  "pokerInviteAccepted": "Invite accepted! Redirecting to session.",
+  "pokerInviteRefused": "Invite refused",
+  "pokerConfirmRefuseTitle": "Refuse Invite",
+  "pokerConfirmRefuseContent": "Are you sure you want to refuse this invite?",
+  "pokerVerifyingInvite": "Verifying invite...",
+  "actionBackHome": "Back to Home",
+  "actionSignin": "Sign In",
+  "exceptionStoryNotFound": "Story not found",
+  "exceptionNoTasksInProject": "No tasks found in project",
+  "exceptionInvitePending": "Invite already pending for this email",
+  "exceptionAlreadyParticipant": "User is already a participant",
+  "exceptionInviteInvalid": "Invite not valid or expired",
+  "exceptionInviteCalculated": "Invite expired",
+  "exceptionInviteWrongUser": "Invite intended for another user",
+
+  "todoImportTasks": "Import Tasks",
+  "todoExportSheets": "Export to Sheets",
+  "todoDeleteColumnTitle": "Delete Column",
+  "todoDeleteColumnConfirm": "Are you sure? Tasks in this column will be lost.",
+  "exceptionListNotFound": "List not found",
+
+  "langItalian": "Italian",
+  "langEnglish": "English",
+  "jsonExportLabel": "Download JSON copy of your data",
+  "errorExporting": "Error exporting: {error}",
+  "@errorExporting": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "retroCurrentFocus": "Current Focus: {title}",
+  "@retroCurrentFocus": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "smartTodoViewKanban": "Kanban",
+  "smartTodoViewList": "List",
+  "smartTodoViewResource": "By Resource",
+  "smartTodoMembersCount": "{count} members",
+  "@smartTodoMembersCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoSearchTasksHint": "Search...",
+  "smartTodoAllPeople": "All people",
+  "smartTodoPeopleCount": "{count} people",
+  "@smartTodoPeopleCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoFilterToday": "Today",
+  "smartTodoFilterByPerson": "Filter by Person",
+  "smartTodoInviteTooltip": "Invite",
+  "smartTodoOptionsTooltip": "More Options",
+  "smartTodoActionImport": "Import Tasks",
+  "smartTodoActionExportSheets": "Export to Sheets",
+  "smartTodoDeleteColumnTitle": "Delete Column",
+  "smartTodoDeleteColumnContent": "Are you sure? Tasks in this column will no longer be visible.",
+  "smartTodoNewColumn": "New Column",
+  "smartTodoColumnNameHint": "Column Name",
+  "smartTodoColorLabel": "COLOR",
+  "smartTodoMarkAsDone": "Mark as done",
+  "smartTodoColumnDoneDescription": "Tasks in this column will be considered 'Done' (strikethrough).",
+  "smartTodoListSettingsTitle": "List Settings",
+  "smartTodoRenameList": "Rename List",
+  "smartTodoManageTags": "Manage Tags",
+  "smartTodoDeleteList": "Delete List",
+  "smartTodoNewNameLabel": "New Name",
+  "smartTodoDeleteListConfirm": "Are you sure you want to delete this list and all its tasks? This action is irreversible.",
+  "smartTodoEditPermissionError": "You can only edit tasks assigned to you",
+  "actionEdit": "Edit",
+  "actionSave": "Save",
+  "errorDeletingAccount": "Error deleting account: {error}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "errorRecentLoginRequired": "Recent login required. Please log out and log in again before deleting your account.",
+  "errorGeneric": "Error: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "retroChooseMethodology": "Choose Methodology",
+  "actionConfirm": "Confirm",
+  "actionGuide": "Guide {framework}",
+  "@actionGuide": {
+    "placeholders": {
+      "framework": { "type": "String" }
+    }
+  },
+  "actionExportSheets": "Export to Google Sheets",
+  "actionAuditLog": "Audit Log",
+  "actionInviteMember": "Invite Member",
+  "actionSettings": "Settings",
+
+  "retroTemplateStartStopContinue": "Start, Stop, Continue",
+  "retroDescStartStopContinue": "Action oriented: Start doing, Stop doing, Continue doing.",
+  "retroUsageStartStopContinue": "Best for actionable feedback and focusing on behavioral changes.",
+  "retroTemplateSailboat": "Sailboat",
+  "retroDescSailboat": "Visual: Wind (propels), Anchors (drags), Rocks (risks), Island (goals).",
+  "retroUsageSailboat": "Best for visualizing the team's journey, goals, and risks. Good for creative thinking.",
+  "retroTemplate4Ls": "4 Ls",
+  "retroDesc4Ls": "Liked, Learned, Lacked, Longed For.",
+  "retroUsage4Ls": "Reflective: Best for learning from the past and highlighting emotional/learning aspects.",
+  "retroTemplateStarfish": "Starfish",
+  "retroDescStarfish": "Keep, Stop, Start, More, Less.",
+  "retroUsageStarfish": "Calibration: Best for scaling efforts (doing more/less of something), not just binary stop/start.",
+  "retroTemplateMadSadGlad": "Mad Sad Glad",
+  "retroDescMadSadGlad": "Emotional: Mad, Sad, Glad.",
+  "retroUsageMadSadGlad": "Best for emotional check-ins, resolving conflicts, or after a stressful sprint.",
+  "retroTemplateDAKI": "DAKI (Drop Add Keep Improve)",
+  "retroDescDAKI": "Pragmatic: Drop, Add, Keep, Improve.",
+  "retroUsageDAKI": "Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).",
+  "retroIcebreakerSentiment": "Sentiment Voting",
+  "retroIcebreakerSentimentDesc": "Vote 1-5 on how you felt during the sprint.",
+  "retroIcebreakerOneWord": "One Word",
+  "retroIcebreakerOneWordDesc": "Describe the sprint with just one word.",
+  "retroIcebreakerWeather": "Weather Report",
+  "retroIcebreakerWeatherDesc": "Choose a weather icon that represents the sprint.",
+  "retroSelectIcebreakerTooltip": "Select the icebreaker activity",
+  "retroIcebreakerLabel": "Initial Activity",
+  "retroTimePhasesOptional": "Phase Timers (Optional)",
+  "retroTimePhasesDesc": "Set duration in minutes for each phase:",
+  "retroIcebreakerSectionTitle": "Icebreaker",
+  "retroPhaseIcebreaker": "ICEBREAKER",
+  "retroPhaseWriting": "WRITING",
+  "retroPhaseVoting": "VOTING",
+  "retroPhaseDiscuss": "DISCUSS"
 }

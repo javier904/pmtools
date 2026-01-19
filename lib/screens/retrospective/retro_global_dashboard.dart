@@ -10,6 +10,8 @@ import '../../widgets/retrospective/retro_methodology_dialog.dart';
 import 'package:agile_tools/models/agile_project_model.dart';
 import 'package:agile_tools/models/sprint_model.dart';
 import 'package:agile_tools/services/agile_firestore_service.dart';
+import '../../themes/app_colors.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 class RetroGlobalDashboard extends StatefulWidget {
   const RetroGlobalDashboard({Key? key}) : super(key: key);
@@ -50,8 +52,13 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Le mie Retrospettive'),
-        centerTitle: true,
+        title: Row(
+          children: [
+            const Icon(Icons.psychology_rounded),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.retroTitle),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
@@ -100,7 +107,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.history_edu, size: 64, color: Colors.grey),
+                        const Icon(Icons.history_edu, size: 64, color: AppColors.pink),
                         const SizedBox(height: 16),
                         Text(
                           _searchController.text.isNotEmpty 
@@ -138,7 +145,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateStandaloneDialog,
-        child: const Icon(Icons.add),
+        backgroundColor: AppColors.pink,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -424,6 +432,15 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                   value: selectedTemplate,
                   decoration: const InputDecoration(labelText: 'Template'),
                   isExpanded: true, // Ensure proper layout for long text
+                  selectedItemBuilder: (BuildContext context) {
+                    return RetroTemplate.values.map<Widget>((RetroTemplate t) {
+                      return Text(
+                        t.displayName,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    }).toList();
+                  },
                   items: RetroTemplate.values.map((t) {
                     return DropdownMenuItem(
                       value: t,
@@ -503,17 +520,17 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                           children: [
                             const Icon(Icons.info_outline, size: 20, color: Colors.blue),
                             const SizedBox(width: 8),
-                            Text(selectedTemplate.displayName, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                            Text(_getTemplateName(selectedTemplate, AppLocalizations.of(context)!), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          selectedTemplate.description,
+                          _getTemplateDesc(selectedTemplate, AppLocalizations.of(context)!),
                           style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          selectedTemplate.usageSuggestion,
+                          _getUsageSuggestion(selectedTemplate, AppLocalizations.of(context)!),
                           style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.blue.shade800),
                         ),
                       ],
@@ -523,24 +540,24 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 const SizedBox(height: 16),
                 
                 // Icebreaker Configuration
-                const Text('Icebreaker', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(AppLocalizations.of(context)!.retroIcebreakerSectionTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
                       child: Tooltip(
-                        message: 'Seleziona l\'attività per rompere il ghiaccio',
+                        message: AppLocalizations.of(context)!.retroSelectIcebreakerTooltip,
                         child: DropdownButtonFormField<RetroIcebreaker>(
                           value: selectedIcebreaker,
-                          decoration: const InputDecoration(
-                            labelText: 'Attività iniziale',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.retroIcebreakerLabel,
+                            border: const OutlineInputBorder(),
                             isDense: true,
                           ),
                           items: RetroIcebreaker.values.map((i) {
                              return DropdownMenuItem(
                                 value: i,
-                                child: Text(i.displayName),
+                                child: Text(_getIcebreakerName(i, AppLocalizations.of(context)!)),
                              );
                           }).toList(),
                           onChanged: (val) {
@@ -555,17 +572,17 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                   selectedIcebreaker.description,
+                   _getIcebreakerDesc(selectedIcebreaker, AppLocalizations.of(context)!),
                    style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
                 ),
                 const SizedBox(height: 24),
                 
                 // Phase Timers Configuration
                 ExpansionTile(
-                  title: const Text('Timer Fasi (Opzionale)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  title: Text(AppLocalizations.of(context)!.retroTimePhasesOptional, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                   tilePadding: EdgeInsets.zero,
                   children: [
-                    const Text('Imposta la durata in minuti per ogni fase:', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(AppLocalizations.of(context)!.retroTimePhasesDesc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                     const SizedBox(height: 8),
                     ...[
                       RetroPhase.icebreaker,
@@ -579,7 +596,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                           children: [
                             SizedBox(
                               width: 100, 
-                              child: Text(phase.name.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
+                              child: Text(_getPhaseName(phase, AppLocalizations.of(context)!), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
                             ),
                             Expanded(
                               child: TextFormField(
@@ -655,5 +672,64 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         }
       ),
     );
+  }
+
+  String _getTemplateName(RetroTemplate template, AppLocalizations l10n) {
+    switch (template) {
+      case RetroTemplate.startStopContinue: return l10n.retroTemplateStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroTemplateSailboat;
+      case RetroTemplate.fourLs: return l10n.retroTemplate4Ls;
+      case RetroTemplate.starfish: return l10n.retroTemplateStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroTemplateMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroTemplateDAKI;
+    }
+  }
+
+  String _getTemplateDesc(RetroTemplate template, AppLocalizations l10n) {
+    switch (template) {
+      case RetroTemplate.startStopContinue: return l10n.retroDescStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroDescSailboat;
+      case RetroTemplate.fourLs: return l10n.retroDesc4Ls;
+      case RetroTemplate.starfish: return l10n.retroDescStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroDescMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroDescDAKI;
+    }
+  }
+
+  String _getUsageSuggestion(RetroTemplate template, AppLocalizations l10n) {
+    switch (template) {
+      case RetroTemplate.startStopContinue: return l10n.retroUsageStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroUsageSailboat;
+      case RetroTemplate.fourLs: return l10n.retroUsage4Ls;
+      case RetroTemplate.starfish: return l10n.retroUsageStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroUsageMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroUsageDAKI;
+    }
+  }
+
+  String _getIcebreakerName(RetroIcebreaker ib, AppLocalizations l10n) {
+    switch (ib) {
+      case RetroIcebreaker.sentiment: return l10n.retroIcebreakerSentiment;
+      case RetroIcebreaker.oneWord: return l10n.retroIcebreakerOneWord;
+      case RetroIcebreaker.weatherReport: return l10n.retroIcebreakerWeather;
+    }
+  }
+
+  String _getIcebreakerDesc(RetroIcebreaker ib, AppLocalizations l10n) {
+    switch (ib) {
+      case RetroIcebreaker.sentiment: return l10n.retroIcebreakerSentimentDesc;
+      case RetroIcebreaker.oneWord: return l10n.retroIcebreakerOneWordDesc;
+      case RetroIcebreaker.weatherReport: return l10n.retroIcebreakerWeatherDesc;
+    }
+  }
+
+  String _getPhaseName(RetroPhase phase, AppLocalizations l10n) {
+    switch (phase) {
+        case RetroPhase.icebreaker: return l10n.retroPhaseIcebreaker;
+        case RetroPhase.writing: return l10n.retroPhaseWriting;
+        case RetroPhase.voting: return l10n.retroPhaseVoting;
+        case RetroPhase.discuss: return l10n.retroPhaseDiscuss;
+        default: return phase.name.toUpperCase();
+    }
   }
 }

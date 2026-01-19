@@ -5,9 +5,13 @@ import 'package:googleapis/gmail/v1.dart' as gmail;
 import '../models/smart_todo/todo_invite_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
 import '../models/smart_todo/todo_list_model.dart';
+import '../models/subscription/subscription_limits_model.dart';
+import '../utils/validators.dart';
+import 'subscription/subscription_limits_service.dart';
 
 class SmartTodoInviteService {
   final FirebaseFirestore _firestore;
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   static const String _listsCollection = 'smart_todo_lists';
   static const String _invitesSubcollection = 'invites';
@@ -19,6 +23,8 @@ class SmartTodoInviteService {
   // CRUD INVITES
   // ══════════════════════════════════════════════════════════════════════════════
 
+  /// Crea un nuovo invito
+  /// Lancia [LimitExceededException] se il limite inviti per entita' e' raggiunto
   Future<TodoInviteModel> createInvite({
     required String listId,
     required String email,
@@ -27,9 +33,12 @@ class SmartTodoInviteService {
     required String invitedByName,
     Duration expiration = const Duration(days: 7),
   }) async {
+    // 🔒 CHECK LIMITE INVITI PER ENTITA'
+    await _limitsService.enforceInviteLimit(entityType: 'smart_todo', entityId: listId);
+
     final now = DateTime.now();
     final token = _generateToken();
-    
+
     // Check for existing pending invite
     final existingRef = _firestore
         .collection(_listsCollection)
@@ -187,19 +196,23 @@ class SmartTodoInviteService {
   }) async {
     try {
       // Logic identical to Planning Poker but with custom HTML
-      final inviteLink = 'https://dashboard-app/smart-todo/invite?token=${invite.token}&listId=${invite.listId}'; 
+      final inviteLink = 'https://dashboard-app/smart-todo/invite?token=${invite.token}&listId=${invite.listId}';
       // Note: improved deep link with listId
-      
+
+      // 🔒 SICUREZZA: Sanitizza input utente per prevenire HTML injection
+      final safeInviterName = Validators.sanitizeHtml(invite.invitedByName);
+      final safeListName = Validators.sanitizeHtml(listName);
+
       final htmlBody = '''
       <h3>Ciao!</h3>
-      <p><strong>${invite.invitedByName}</strong> ti ha invitato alla lista: <b>$listName</b></p>
+      <p><strong>$safeInviterName</strong> ti ha invitato alla lista: <b>$safeListName</b></p>
       <p>Ruolo: ${invite.role.name}</p>
       <a href="$inviteLink">Accetta Invito</a>
       ''';
 
       final emailContent = '''From: $senderEmail
 To: ${invite.email}
-Subject: =?UTF-8?B?${base64Encode(utf8.encode('Invito Smart To-Do: $listName'))}?=
+Subject: =?UTF-8?B?${base64Encode(utf8.encode('Invito Smart To-Do: $safeListName'))}?=
 MIME-Version: 1.0
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: base64

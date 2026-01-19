@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../models/planning_poker_invite_model.dart';
 import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_participant_model.dart';
@@ -39,10 +40,12 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
   @override
   void initState() {
     super.initState();
-    _loadInvite();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadInvite());
   }
 
   Future<void> _loadInvite() async {
+    // L10n requires context, ensured by addPostFrameCallback
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -52,7 +55,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       // Verifica autenticazione
       if (_authService.currentUser == null) {
         setState(() {
-          _errorMessage = 'Devi effettuare il login per accettare l\'invito';
+          _errorMessage = l10n?.exceptionUserNotAuthenticated ?? 'Devi effettuare il login per accettare l\'invito';
           _isLoading = false;
         });
         return;
@@ -63,7 +66,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
 
       if (invite == null) {
         setState(() {
-          _errorMessage = 'Invito non trovato o non valido';
+          _errorMessage = l10n?.exceptionInviteInvalid ?? 'Invito non trovato o non valido';
           _isLoading = false;
         });
         return;
@@ -72,7 +75,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       // Verifica stato invito
       if (invite.status != InviteStatus.pending) {
         setState(() {
-          _errorMessage = 'Questo invito ${_getStatusMessage(invite.status)}';
+          _errorMessage = 'Questo invito ${_getStatusMessage(invite.status)}'; // Keeping partial hardcode or need composite
           _isLoading = false;
         });
         return;
@@ -81,7 +84,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       // Verifica scadenza
       if (invite.isExpired) {
         setState(() {
-          _errorMessage = 'Questo invito è scaduto';
+          _errorMessage = l10n?.exceptionInviteCalculated ?? 'Questo invito è scaduto';
           _isLoading = false;
         });
         return;
@@ -91,7 +94,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       final currentEmail = _authService.currentUser?.email?.toLowerCase();
       if (currentEmail != invite.email.toLowerCase()) {
         setState(() {
-          _errorMessage = 'Questo invito è destinato a un altro utente (${invite.email}).\n\nSei loggato come: $currentEmail';
+          _errorMessage = l10n?.exceptionInviteWrongUser ?? 'Questo invito è destinato a un altro utente (${invite.email}).';
           _isLoading = false;
         });
         return;
@@ -107,7 +110,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Errore nel caricamento dell\'invito: $e';
+        _errorMessage = '${l10n?.errorLoading ?? "Errore"}: $e';
         _isLoading = false;
       });
     }
@@ -142,10 +145,11 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       );
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         // Mostra messaggio di successo
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invito accettato! Verrai reindirizzato alla sessione.'),
+          SnackBar(
+            content: Text(l10n?.pokerInviteAccepted ?? 'Invito accettato! Verrai reindirizzato alla sessione.'),
             backgroundColor: Colors.green,
           ),
         );
@@ -176,20 +180,22 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
     if (_invite == null) return;
 
     // Chiedi conferma
+    // Chiedi conferma (Dialog needs context, check async gap or just use context)
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rifiuta Invito'),
-        content: const Text('Sei sicuro di voler rifiutare questo invito?'),
+        title: Text(l10n?.pokerConfirmRefuseTitle ?? 'Rifiuta Invito'),
+        content: Text(l10n?.pokerConfirmRefuseContent ?? 'Sei sicuro di voler rifiutare questo invito?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n?.actionCancel ?? 'Annulla'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Rifiuta'),
+            child: Text(l10n?.actionDelete ?? 'Rifiuta'),
           ),
         ],
       ),
@@ -203,9 +209,10 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       await _inviteService.declineInvite(token: widget.token);
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invito rifiutato'),
+           SnackBar(
+            content: Text(l10n?.pokerInviteRefused ?? 'Invito rifiutato'),
             backgroundColor: Colors.orange,
           ),
         );
@@ -246,7 +253,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 16),
-          Text('Verifica invito in corso...'),
+          Text(AppLocalizations.of(context)?.pokerVerifyingInvite ?? 'Verifica invito in corso...'),
         ],
       );
     }
@@ -275,9 +282,9 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
               color: Colors.red,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Invito Non Valido',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)?.exceptionInviteInvalid ?? 'Invito Non Valido',
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -295,14 +302,14 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
                 TextButton.icon(
                   onPressed: () => Navigator.of(context).pushReplacementNamed('/'),
                   icon: const Icon(Icons.home),
-                  label: const Text('Torna alla Home'),
+                  label: Text(AppLocalizations.of(context)?.actionBackHome ?? 'Torna alla Home'),
                 ),
                 const SizedBox(width: 16),
                 if (_authService.currentUser == null)
                   ElevatedButton.icon(
                     onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
                     icon: const Icon(Icons.login),
-                    label: const Text('Accedi'),
+                    label: Text(AppLocalizations.of(context)?.actionSignin ?? 'Accedi'),
                   ),
               ],
             ),
@@ -492,13 +499,14 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
   }
 
   String _getRoleName(ParticipantRole role) {
+    final l10n = AppLocalizations.of(context);
     switch (role) {
       case ParticipantRole.facilitator:
-        return 'Facilitatore';
+        return l10n?.participantFacilitator ?? 'Facilitatore';
       case ParticipantRole.voter:
-        return 'Votante';
+        return l10n?.participantVoter ?? 'Votante';
       case ParticipantRole.observer:
-        return 'Osservatore';
+        return l10n?.participantObserver ?? 'Osservatore';
     }
   }
 }

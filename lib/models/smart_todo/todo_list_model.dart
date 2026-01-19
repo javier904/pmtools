@@ -83,9 +83,9 @@ class TodoListModel {
           ?.map((item) => TodoColumn.fromMap(item))
           .toList() ?? 
           [
-            const TodoColumn(id: 'todo', title: 'Da Fare', colorValue: 0xFF2196F3),
-            const TodoColumn(id: 'in_progress', title: 'In Corso', colorValue: 0xFFFF9800),
-            const TodoColumn(id: 'done', title: 'Fatto', colorValue: 0xFF4CAF50, isDone: true),
+            const TodoColumn(id: 'todo', title: 'To Do', colorValue: 0xFF2196F3),
+            const TodoColumn(id: 'in_progress', title: 'In Progress', colorValue: 0xFFFF9800),
+            const TodoColumn(id: 'done', title: 'Done', colorValue: 0xFF4CAF50, isDone: true),
           ],
       availableTags: (map['availableTags'] as List?)
           ?.map((item) => TodoLabel.fromMap(item))

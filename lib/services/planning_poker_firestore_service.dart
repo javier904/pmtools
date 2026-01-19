@@ -3,6 +3,8 @@ import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_story_model.dart';
 import '../models/planning_poker_participant_model.dart';
 import '../models/estimation_mode.dart';
+import '../models/subscription/subscription_limits_model.dart';
+import 'subscription/subscription_limits_service.dart';
 
 /// Service per la gestione Firestore del Planning Poker
 ///
@@ -24,6 +26,7 @@ class PlanningPokerFirestoreService {
   PlanningPokerFirestoreService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   /// Collection principale delle sessioni
   CollectionReference<Map<String, dynamic>> get _sessionsCollection =>
@@ -38,6 +41,7 @@ class PlanningPokerFirestoreService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// Crea una nuova sessione
+  /// Lancia [LimitExceededException] se il limite progetti e' raggiunto
   Future<String> createSession({
     required String name,
     String description = '',
@@ -54,6 +58,9 @@ class PlanningPokerFirestoreService {
     String? projectName,
     String? projectCode,
   }) async {
+    // 🔒 CHECK LIMITE SUBSCRIPTION
+    await _limitsService.enforceProjectLimit(createdBy.toLowerCase());
+
     try {
       print('🎯 [PlanningPoker] Creando sessione: $name (mode: ${estimationMode.name})');
 
@@ -484,6 +491,7 @@ class PlanningPokerFirestoreService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// Crea una nuova story
+  /// Lancia [LimitExceededException] se il limite task per entita' e' raggiunto
   Future<String> createStory({
     required String sessionId,
     required String title,
@@ -492,6 +500,9 @@ class PlanningPokerFirestoreService {
     String? linkedTaskId,
     String? linkedTaskTitle,
   }) async {
+    // 🔒 CHECK LIMITE TASK PER ENTITA'
+    await _limitsService.enforceTaskLimit(entityType: 'estimation', entityId: sessionId);
+
     try {
       print('📝 [PlanningPoker] Creando story: $title');
 

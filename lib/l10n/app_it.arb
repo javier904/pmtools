@@ -1,7 +1,7 @@
 {
   "@@locale": "it",
 
-  "appTitle": "Agile Tools",
+  "appTitle": "Keisen",
 
   "actionSave": "Salva",
   "actionCancel": "Annulla",
@@ -25,6 +25,68 @@
   "stateError": "Errore",
   "stateSuccess": "Successo",
 
+  "subscriptionCurrent": "ATTUALE",
+  "subscriptionRecommended": "CONSIGLIATO",
+  "subscriptionFree": "Gratis",
+  "subscriptionPerMonth": "/mese",
+  "subscriptionPerYear": "/anno",
+  "subscriptionSaveYearly": "Risparmia {amount} con l'annuale",
+  "@subscriptionSaveYearly": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionTrialDays": "{days} giorni di prova gratuita",
+  "@subscriptionTrialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionUnlimitedProjects": "Progetti illimitati",
+  "subscriptionProjectsActive": "{count} progetti attivi",
+  "@subscriptionProjectsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionUnlimitedLists": "Liste illimitate",
+  "subscriptionSmartTodoLists": "{count} liste Smart Todo",
+  "@subscriptionSmartTodoLists": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionActiveProjectsLabel": "Progetti Attivi",
+  "subscriptionSmartTodoListsLabel": "Liste Smart Todo",
+  "subscriptionUnlimitedTasks": "Task illimitati",
+  "subscriptionTasksPerProject": "{count} task per progetto",
+  "@subscriptionTasksPerProject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionUnlimitedInvites": "Inviti illimitati",
+  "subscriptionInvitesPerProject": "{count} inviti per progetto",
+  "@subscriptionInvitesPerProject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionWithAds": "Con pubblicità",
+  "subscriptionWithoutAds": "Senza pubblicità",
+
   "authSignInGoogle": "Accedi con Google",
   "authSignOut": "Esci",
   "authLogoutConfirm": "Sei sicuro di voler uscire?",
@@ -35,7 +97,7 @@
   "authEmailInUse": "Email già in uso",
   "authWeakPassword": "Password troppo debole",
   "authInvalidEmail": "Email non valida",
-  "appSubtitle": "Agile Tools per Team",
+  "appSubtitle": "Keisen per Team",
   "authOr": "oppure",
   "authPassword": "Password",
   "authRegister": "Registrati",
@@ -134,6 +196,7 @@
   "eisenhowerOpen": "Apri",
   "eisenhowerAddParticipantsFirst": "Aggiungi prima dei partecipanti alla matrice",
   "eisenhowerSearchLabel": "Ricerca:",
+  "eisenhowerSearchHint": "Cerca matrici...",
   "eisenhowerNoMatrixFound": "Nessuna matrice trovata",
   "eisenhowerCreateFirstMatrix": "Crea la tua prima Matrice di Eisenhower\nper organizzare le tue priorita",
   "eisenhowerCreateMatrix": "Crea Matrice",
@@ -992,6 +1055,69 @@
   },
   "smartTodoUserAlreadyInvitedOrPending": "Utente gia invitato o invito in attesa.",
 
+  "smartTodoFilterToday": "Oggi",
+  "smartTodoFilterMyTasks": "I Miei Task",
+  "smartTodoFilterOwner": "Owner",
+  "smartTodoViewGlobalTasks": "Vedi Task Globali",
+  "smartTodoViewLists": "Vedi Liste",
+
+  "smartTodoNewListDialogTitle": "Nuova Lista",
+  "smartTodoTitleLabel": "Titolo *",
+  "smartTodoDescriptionLabel": "Descrizione",
+  "smartTodoCancel": "Annulla",
+  "smartTodoCreate": "Crea",
+  "smartTodoSave": "Salva",
+
+  "smartTodoNoListsPresent": "Nessuna lista presente",
+  "smartTodoCreateFirstList": "Crea la tua prima lista per iniziare",
+  "smartTodoMembersCount": "{count} membri",
+  "@smartTodoMembersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "smartTodoRenameListTitle": "Rinomina Lista",
+  "smartTodoNewNameLabel": "Nuovo Nome",
+  "smartTodoDeleteListTitle": "Elimina Lista",
+  "smartTodoDeleteListConfirm": "Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione e irreversibile.",
+  "smartTodoDelete": "Elimina",
+  "smartTodoEdit": "Modifica",
+  "smartTodoSearchHint": "Cerca liste...",
+  "smartTodoSearchTasksHint": "Cerca...",
+  "smartTodoNoSearchResults": "Nessun risultato per \"{query}\"",
+
+  "smartTodoColumnTodo": "Da Fare",
+  "smartTodoColumnInProgress": "In Corso",
+  "smartTodoColumnDone": "Fatto",
+
+  "smartTodoAllPeople": "Tutte le persone",
+  "smartTodoPeopleCount": "{count} persone",
+  "@smartTodoPeopleCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "smartTodoFilterByPerson": "Filtra per Persona",
+  "smartTodoApplyFilters": "Applica Filtri",
+  "@smartTodoNoSearchResults": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
+
+  "smartTodoError": "Errore: {error}",
+  "@smartTodoError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "profileMenuTitle": "Profilo",
+  "profileMenuLogout": "Esci",
+  "profileLogoutDialogTitle": "Logout",
+  "profileLogoutDialogConfirm": "Sei sicuro di voler uscire?",
+
   "agileAddToSprint": "Aggiungi a Sprint",
   "agileEstimate": "STIMA",
   "agileEstimated": "Stimata",
@@ -1286,7 +1412,7 @@
   "storyDetailCompletedAt": "Completato il",
 
   "landingBadge": "Strumenti per team agili",
-  "landingHeroTitle": "Build better products\nwith Agile Tools",
+  "landingHeroTitle": "Build better products\nwith Keisen",
   "landingHeroSubtitle": "Prioritizza, stima e gestisci i tuoi progetti con strumenti collaborativi. Tutto in un unico posto, gratis.",
   "landingStartFree": "Inizia Gratis",
   
@@ -1318,9 +1444,9 @@
   "landingAgileTitle": "Agile & Scrum Framework",
   "landingAgileSubtitle": "Implementa le migliori pratiche di sviluppo software iterativo",
   "landingAgileIterativeTitle": "Sviluppo Iterativo e Incrementale",
-  "landingAgileIterativeDesc": "L'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.\n\nCon Agile Tools puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.",
+  "landingAgileIterativeDesc": "L'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.\n\nCon Keisen puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.",
   "landingAgileScrumTitle": "Framework Scrum",
-  "landingAgileScrumDesc": "Scrum è il framework Agile più diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).\n\nAgile Tools supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.",
+  "landingAgileScrumDesc": "Scrum è il framework Agile più diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).\n\nKeisen supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.",
   "landingAgileKanbanTitle": "Kanban Board",
   "landingAgileKanbanDesc": "Il metodo Kanban visualizza il flusso di lavoro attraverso colonne che rappresentano gli stati del processo. Limita il Work In Progress (WIP) per massimizzare il throughput.\n\nLa nostra Kanban board supporta personalizzazione delle colonne, WIP limits e metriche di flusso.",
 
@@ -1353,7 +1479,7 @@
   "landingFooterResources": "Risorse",
   "landingFooterCompany": "Azienda",
   "landingFooterLegal": "Legale",
-  "landingCopyright": "© 2025 Agile Tools. Tutti i diritti riservati.",
+  "landingCopyright": "© 2025 Keisen. Tutti i diritti riservati.",
 
   "featureSmartImportDesc": "Creazione rapida task con descrizione\nAssegnazione a membri del team\nPriorità e deadline configurabili\nNotifiche di completamento",
   "featureImportDesc": "Import da file CSV\nCopia/incolla da Excel\nParsing testo intelligente\nMapping campi automatico",
@@ -1425,10 +1551,10 @@
   "landingAgileSectionTitle": "Agile & Scrum Framework",
   "landingAgileSectionSubtitle": "Implementa le migliori pratiche di sviluppo software iterativo",
   "landingAgileIterativeTitle": "Sviluppo Iterativo e Incrementale",
-  "landingAgileIterativeDesc": "L'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.\n\nCon Agile Tools puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.",
+  "landingAgileIterativeDesc": "L'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.\n\nCon Keisen puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.",
 
   "landingAgileScrumTitle": "Framework Scrum",
-  "landingAgileScrumDesc": "Scrum è il framework Agile più diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).\n\nAgile Tools supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.",
+  "landingAgileScrumDesc": "Scrum è il framework Agile più diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).\n\nKeisen supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.",
 
   "landingAgileKanbanTitle": "Kanban Board",
   "landingAgileKanbanDesc": "Il metodo Kanban visualizza il flusso di lavoro attraverso colonne che rappresentano gli stati del processo. Limita il Work In Progress (WIP) per massimizzare il throughput.\n\nLa nostra Kanban board supporta personalizzazione delle colonne, WIP limits e metriche di flusso.",
@@ -1499,5 +1625,416 @@
   "landingFooterPrivacy": "Privacy Policy",
   "landingFooterTerms": "Termini di Servizio",
   "landingFooterCookies": "Cookie Policy",
-  "landingFooterGdpr": "GDPR"
+  "landingFooterGdpr": "GDPR",
+  "legalCookieTitle": "Utilizziamo i cookie",
+  "legalCookieMessage": "Utilizziamo i cookie per migliorare la tua esperienza e per fini analitici. Continuando, accetti l'uso dei cookie.",
+  "legalCookieAccept": "Accetta tutti",
+  "legalCookieRefuse": "Solo necessari",
+  "legalCookiePolicy": "Cookie Policy",
+  "legalPrivacyPolicy": "Privacy Policy",
+  "legalTermsOfService": "Termini di Servizio",
+  "legalGDPR": "GDPR",
+  "legalAcceptTerms": "Accetto i Termini di Servizio e la Privacy Policy",
+  "legalMustAcceptTerms": "Devi accettare i termini per continuare",
+  "profilePrivacy": "Privacy",
+  "profileExportData": "Esporta i miei dati",
+  "profileDeleteAccount": "Elimina account",
+  "profileDeleteAccountConfirm": "Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione è irreversibile.",
+
+  "subscriptionTitle": "Abbonamento",
+  "subscriptionTabPlans": "Piani",
+  "subscriptionTabUsage": "Utilizzo",
+  "subscriptionTabBilling": "Fatturazione",
+  "subscriptionPerMonth": "/mese",
+  "subscriptionPerYear": "/anno",
+  "subscriptionCurrent": "ATTUALE",
+  "subscriptionRecommended": "CONSIGLIATO",
+  "subscriptionFree": "Gratis",
+  "subscriptionSaveYearly": "Risparmi €{amount}/anno",
+  "@subscriptionSaveYearly": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "subscriptionTrialDays": "{days} giorni di prova gratuita",
+  "@subscriptionTrialDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedProjects": "Progetti illimitati",
+  "subscriptionActiveProjects": "{count} progetti attivi",
+  "@subscriptionActiveProjects": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedLists": "Liste illimitate",
+  "subscriptionActiveLists": "{count} liste Smart Todo",
+  "@subscriptionActiveLists": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedTasks": "Task illimitati",
+  "subscriptionTasksPerProject": "{count} task per progetto",
+  "@subscriptionTasksPerProject": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimitedInvites": "Inviti illimitati",
+  "subscriptionInvitesPerProject": "{count} inviti per progetto",
+  "@subscriptionInvitesPerProject": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionWithAds": "Con pubblicità",
+  "subscriptionWithoutAds": "Senza pubblicità",
+  "subscriptionCurrentPlan": "Piano attuale",
+  "subscriptionUpgradeTo": "Upgrade a {plan}",
+  "@subscriptionUpgradeTo": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionDowngradeTo": "Downgrade a {plan}",
+  "@subscriptionDowngradeTo": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionChoose": "Scegli {plan}",
+  "@subscriptionChoose": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionMonthly": "Mensile",
+  "subscriptionYearly": "Annuale (-17%)",
+  "subscriptionLimitReached": "Limite raggiunto",
+  "subscriptionLimitProjects": "Hai raggiunto il limite massimo di progetti per il tuo piano. Passa a Premium per creare più progetti.",
+  "subscriptionLimitLists": "Hai raggiunto il limite massimo di liste per il tuo piano. Passa a Premium per creare più liste.",
+  "subscriptionLimitTasks": "Hai raggiunto il limite massimo di task per questo progetto. Passa a Premium per aggiungere più task.",
+  "subscriptionLimitInvites": "Hai raggiunto il limite massimo di inviti per questo progetto. Passa a Premium per invitare più persone.",
+  "subscriptionLimitEstimations": "Hai raggiunto il limite massimo di sessioni di stima. Passa a Premium per crearne di più.",
+  "subscriptionLimitDefault": "Hai raggiunto il limite del tuo piano attuale.",
+  "subscriptionCurrentUsage": "Utilizzo attuale",
+  "subscriptionUpgradeToPremium": "Passa a Premium",
+  "subscriptionBenefitProjects": "30 progetti attivi",
+  "subscriptionBenefitLists": "30 liste Smart Todo",
+  "subscriptionBenefitTasks": "100 task per progetto",
+  "subscriptionBenefitNoAds": "Nessuna pubblicità",
+  "subscriptionStartingFrom": "A partire da €4.99/mese",
+  "subscriptionLater": "Più tardi",
+  "subscriptionViewPlans": "Vedi piani",
+  "subscriptionCanCreateOne": "Puoi creare ancora 1 {entity}",
+  "@subscriptionCanCreateOne": {
+    "placeholders": {
+      "entity": {"type": "String"}
+    }
+  },
+  "subscriptionCanCreateMany": "Puoi creare ancora {count} {entity}",
+  "@subscriptionCanCreateMany": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "entity": {"type": "String"}
+    }
+  },
+  "subscriptionUpgrade": "UPGRADE",
+  "subscriptionUsed": "Utilizzati: {count}",
+  "@subscriptionUsed": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionUnlimited": "Illimitati",
+  "subscriptionLimit": "Limite: {count}",
+  "@subscriptionLimit": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "subscriptionPlanUsage": "Utilizzo del piano",
+  "subscriptionRefresh": "Aggiorna",
+  "subscriptionActiveProjectsLabel": "Progetti attivi",
+  "subscriptionSmartTodoLists": "Liste Smart Todo",
+  "subscriptionAdsActive": "Pubblicità attive",
+  "subscriptionRemoveAds": "Passa a Premium per rimuovere le pubblicità",
+  "subscriptionNoAds": "Nessuna pubblicità",
+  "subscriptionLoadError": "Impossibile caricare i dati di utilizzo",
+  "subscriptionAdLabel": "AD",
+  "subscriptionAdPlaceholder": "Ad Placeholder",
+  "subscriptionDevEnvironment": "(Ambiente di sviluppo)",
+  "subscriptionRemoveAdsUnlock": "Rimuovi le pubblicità e sblocca funzionalità avanzate",
+  "subscriptionUpgradeButton": "Upgrade",
+  "subscriptionLoadingError": "Errore nel caricamento: {error}",
+  "@subscriptionLoadingError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "subscriptionCompletePayment": "Completa il pagamento nella finestra aperta",
+  "subscriptionError": "Errore: {error}",
+  "@subscriptionError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "subscriptionConfirmDowngrade": "Conferma downgrade",
+  "subscriptionDowngradeMessage": "Sei sicuro di voler passare al piano Free?\n\nIl tuo abbonamento rimarrà attivo fino alla fine del periodo corrente, dopodiché passerai automaticamente al piano Free.\n\nNon perderai i tuoi dati, ma alcune funzionalità potrebbero essere limitate.",
+  "subscriptionCancel": "Annulla",
+  "subscriptionConfirmDowngradeButton": "Conferma downgrade",
+  "subscriptionCancelled": "Abbonamento cancellato. Rimarrà attivo fino a fine periodo.",
+  "subscriptionPortalError": "Errore apertura portale: {error}",
+  "@subscriptionPortalError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "subscriptionRetry": "Riprova",
+  "subscriptionChooseRightPlan": "Scegli il piano giusto per te",
+  "subscriptionStartFree": "Inizia gratis, fai upgrade quando vuoi",
+  "subscriptionPlan": "Piano {plan}",
+  "@subscriptionPlan": {
+    "placeholders": {
+      "plan": {"type": "String"}
+    }
+  },
+  "subscriptionTrialUntil": "Trial fino al {date}",
+  "@subscriptionTrialUntil": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "subscriptionRenewal": "Rinnovo: {date}",
+  "@subscriptionRenewal": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "subscriptionManage": "Gestisci",
+  "subscriptionLoginRequired": "Effettua il login per vedere l'utilizzo",
+  "subscriptionSuggestion": "Suggerimento",
+  "subscriptionSuggestionText": "Passa a Premium per sbloccare più progetti, rimuovere le pubblicità e aumentare i limiti. Prova gratis per 7 giorni!",
+  "subscriptionPaymentManagement": "Gestione pagamenti",
+  "subscriptionNoActiveSubscription": "Nessun abbonamento attivo",
+  "subscriptionUsingFreePlan": "Stai usando il piano Free",
+  "subscriptionViewPaidPlans": "Vedi piani a pagamento",
+  "subscriptionPaymentMethod": "Metodo di pagamento",
+  "subscriptionEditPaymentMethod": "Modifica carta o metodo di pagamento",
+  "subscriptionInvoices": "Fatture",
+  "subscriptionViewInvoices": "Visualizza e scarica le fatture",
+  "subscriptionCancelSubscription": "Cancella abbonamento",
+  "subscriptionAccessUntilEnd": "L'accesso rimarrà attivo fino a fine periodo",
+  "subscriptionPaymentHistory": "Storico pagamenti",
+  "subscriptionNoPayments": "Nessun pagamento registrato",
+  "subscriptionCompleted": "Completato",
+  "subscriptionDateNotAvailable": "Data non disponibile",
+  "subscriptionFaq": "Domande frequenti",
+  "subscriptionFaqCancel": "Posso cancellare in qualsiasi momento?",
+  "subscriptionFaqCancelAnswer": "Sì, puoi cancellare il tuo abbonamento in qualsiasi momento. L'accesso rimarrà attivo fino alla fine del periodo pagato.",
+  "subscriptionFaqTrial": "Come funziona il trial gratuito?",
+  "subscriptionFaqTrialAnswer": "Con il trial gratuito hai accesso completo a tutte le funzionalità del piano scelto. Al termine del periodo di prova, inizierà automaticamente l'abbonamento a pagamento.",
+  "subscriptionFaqChange": "Posso cambiare piano?",
+  "subscriptionFaqChangeAnswer": "Puoi fare upgrade o downgrade in qualsiasi momento. L'importo verrà calcolato in modo proporzionale.",
+  "subscriptionFaqData": "I miei dati sono al sicuro?",
+  "subscriptionFaqDataAnswer": "Assolutamente sì. Non perderai mai i tuoi dati, anche se passi a un piano inferiore. Alcune funzionalità potrebbero essere limitate, ma i dati restano sempre accessibili.",
+  "subscriptionStatusActive": "Attivo",
+  "subscriptionStatusTrialing": "In prova",
+  "subscriptionStatusPastDue": "Pagamento in ritardo",
+  "subscriptionStatusCancelled": "Cancellato",
+  "subscriptionStatusExpired": "Scaduto",
+  "subscriptionStatusPaused": "In pausa",
+  "subscriptionStatus": "Stato",
+  "subscriptionStarted": "Iniziato",
+  "subscriptionNextRenewal": "Prossimo rinnovo",
+  "subscriptionTrialEnd": "Fine trial",
+  "toolSectionTitle": "Strumenti",
+  "deadlineTitle": "Scadenze",
+  "deadlineNoUpcoming": "Nessuna scadenza imminente",
+  "deadlineToday": "Oggi",
+  "deadlineTomorrow": "Domani",
+  "deadlineSprint": "Sprint",
+  "deadlineTask": "Task",
+  "favTitle": "Preferiti",
+  "favFilterAll": "Tutti",
+  "favFilterTodo": "Liste Todo",
+  "favFilterMatrix": "Matrici",
+  "favFilterProject": "Progetti",
+  "favFilterPoker": "Stime",
+  "actionRemoveFromFavorites": "Rimuovi dai preferiti",
+  "favFilterRetro": "Retro",
+  "favNoFavorites": "Nessun preferito trovato",
+  "favTypeTodo": "Lista Todo",
+  "favTypeMatrix": "Matrice Eisenhower",
+  "favTypeProject": "Progetto Agile",
+  "favTypeRetro": "Retrospective",
+  "favTypePoker": "Planning Poker",
+  "favTypeTool": "Strumento",
+  "deadline2Days": "2 Giorni",
+  "deadline3Days": "3 Giorni",
+  "deadline5Days": "5 Giorni",
+  "deadlineConfigTitle": "Configura Scorciatoie",
+  "deadlineConfigDesc": "Scegli gli intervalli di tempo da mostrare nell'intestazione.",
+  "smartTodoClose": "Chiudi",
+  "smartTodoDone": "Fatto",
+  "smartTodoAdd": "Aggiungi",
+  "smartTodoEmailLabel": "Email",
+
+  "exceptionLoginGoogleRequired": "Login Google necessario per inviare email",
+  "exceptionUserNotAuthenticated": "Utente non autenticato",
+  "errorLoginFailed": "Errore login: {error}",
+  "@errorLoginFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "retroParticipantsTitle": "Partecipanti ({count})",
+  "@retroParticipantsTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "actionReopen": "Riapri",
+  "retroWaitingForFacilitator": "In attesa che il facilitatore avvii la sessione...",
+  "retroGeneratingSheet": "Generazione Google Sheet in corso...",
+  "retroExportSuccess": "Export completato!",
+  "retroExportError": "Errore durante l'export su Sheets.",
+  "retroReportCopied": "Report copiato negli appunti! Incollalo in Excel o Note.",
+  "retroReopenTitle": "Riapri Retrospettiva",
+  "retroReopenConfirm": "Sei sicuro di voler riaprire la retrospettiva? Tornerà alla fase di Discussione.",
+  "errorAuthRequired": "Autenticazione richiesta",
+  "errorRetroIdMissing": "ID Retrospettiva mancante",
+
+  "pokerInviteAccepted": "Invito accettato! Verrai reindirizzato alla sessione.",
+  "pokerInviteRefused": "Invito rifiutato",
+  "pokerConfirmRefuseTitle": "Rifiuta Invito",
+  "pokerConfirmRefuseContent": "Sei sicuro di voler rifiutare questo invito?",
+  "pokerVerifyingInvite": "Verifica invito in corso...",
+  "actionBackHome": "Torna alla Home",
+  "actionSignin": "Accedi",
+  "exceptionStoryNotFound": "Story non trovata",
+  "exceptionNoTasksInProject": "Nessun task trovato nel progetto",
+  "exceptionInvitePending": "Esiste già un invito in attesa per questa email",
+  "exceptionAlreadyParticipant": "L'utente è già un partecipante",
+  "exceptionInviteInvalid": "Invito non valido o scaduto",
+  "exceptionInviteCalculated": "Invito scaduto",
+  "exceptionInviteWrongUser": "Invito destinato ad un altro utente",
+
+  "todoImportTasks": "Importa Task",
+  "todoExportSheets": "Esporta su Sheets",
+  "todoDeleteColumnTitle": "Elimina Colonna",
+  "todoDeleteColumnConfirm": "Sei sicuro? I task in questa colonna andranno persi.",
+  "exceptionListNotFound": "Lista non trovata",
+
+  "langItalian": "Italiano",
+  "langEnglish": "Inglese",
+  "jsonExportLabel": "Scarica una copia JSON dei tuoi dati",
+  "errorExporting": "Errore durante l'export: {error}",
+  "@errorExporting": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "smartTodoViewKanban": "Kanban",
+  "smartTodoViewList": "Lista",
+  "smartTodoViewResource": "Per Risorsa",
+  "smartTodoMembersCount": "{count} membri",
+  "@smartTodoMembersCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoSearchTasksHint": "Cerca...",
+  "smartTodoAllPeople": "Tutte le persone",
+  "smartTodoPeopleCount": "{count} persone",
+  "@smartTodoPeopleCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoFilterToday": "Oggi",
+  "smartTodoFilterByPerson": "Filtra per persona",
+  "smartTodoInviteTooltip": "Invita",
+  "smartTodoOptionsTooltip": "Altre Opzioni",
+  "smartTodoActionImport": "Importa Task",
+  "smartTodoActionExportSheets": "Esporta su Sheets",
+  "smartTodoDeleteColumnTitle": "Elimina Colonna",
+  "smartTodoDeleteColumnContent": "Sei sicuro? I task in questa colonna non saranno più visibili.",
+  "smartTodoNewColumn": "Nuova Colonna",
+  "smartTodoColumnNameHint": "Nome Colonna",
+  "smartTodoColorLabel": "COLORE",
+  "smartTodoMarkAsDone": "Segna come completato",
+  "smartTodoColumnDoneDescription": "I task in questa colonna saranno considerati 'Fatti' (barrati).",
+  "smartTodoListSettingsTitle": "Impostazioni Lista",
+  "smartTodoRenameList": "Rinomina Lista",
+  "smartTodoManageTags": "Gestisci Tag",
+  "smartTodoDeleteList": "Elimina Lista",
+  "smartTodoNewNameLabel": "Nuovo Nome",
+  "smartTodoDeleteListConfirm": "Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione è irreversibile.",
+  "smartTodoEditPermissionError": "Puoi modificare solo i task a te assegnati",
+  "actionEdit": "Modifica",
+  "actionSave": "Salva",
+  "errorDeletingAccount": "Errore durante l'eliminazione dell'account: {error}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "errorRecentLoginRequired": "È necessario aver effettuato l'accesso di recente. Per favore, esci e rientra prima di eliminare l'account.",
+  "errorGeneric": "Errore: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "retroChooseMethodology": "Scegli Metodologia",
+  "actionConfirm": "Conferma",
+  "actionGuide": "Guida {framework}",
+  "@actionGuide": {
+    "placeholders": {
+      "framework": { "type": "String" }
+    }
+  },
+  "actionExportSheets": "Esporta su Google Sheets",
+  "actionAuditLog": "Audit Log",
+  "actionInviteMember": "Invita Membro",
+  "actionSettings": "Impostazioni",
+
+  "retroTemplateStartStopContinue": "Start, Stop, Continue",
+  "retroDescStartStopContinue": "Orientata all'azione: Iniziare, Smettere, Continuare.",
+  "retroUsageStartStopContinue": "Ideale per feedback azionabili e focus sui cambiamenti comportamentali.",
+  "retroTemplateSailboat": "Barca a Vela",
+  "retroDescSailboat": "Visiva: Vento (spinge), Ancore (frena), Rocce (rischi), Isola (obiettivi).",
+  "retroUsageSailboat": "Ideale per visualizzare il viaggio del team, obiettivi e rischi. Ottima per il pensiero creativo.",
+  "retroTemplate4Ls": "4 Ls",
+  "retroDesc4Ls": "Liked (Piaciuto), Learned (Imparato), Lacked (Mancato), Longed For (Desiderato).",
+  "retroUsage4Ls": "Riflessiva: Ideale per imparare dal passato ed evidenziare aspetti emotivi e di apprendimento.",
+  "retroTemplateStarfish": "Stella Marina",
+  "retroDescStarfish": "Keep, Stop, Start, More, Less.",
+  "retroUsageStarfish": "Calibrazione: Ideale per scalare gli sforzi (fare di più/meno), non solo stop/start binari.",
+  "retroTemplateMadSadGlad": "Mad Sad Glad",
+  "retroDescMadSadGlad": "Emotiva: Arrabbiato, Triste, Felice.",
+  "retroUsageMadSadGlad": "Ideale per check-in emotivi, risolvere conflitti o dopo uno sprint stressante.",
+  "retroTemplateDAKI": "DAKI (Drop Add Keep Improve)",
+  "retroDescDAKI": "Pragmatica: Elimina, Aggiungi, Mantieni, Migliora.",
+  "retroUsageDAKI": "Decisiva: Ideale per fare pulizia. Focus su decisioni concrete di Eliminare o Aggiungere.",
+  "retroIcebreakerSentiment": "Voto Sentiment",
+  "retroIcebreakerSentimentDesc": "Vota da 1 a 5 come ti sei sentito durante lo sprint.",
+  "retroIcebreakerOneWord": "Una Parola",
+  "retroIcebreakerOneWordDesc": "Descrivi lo sprint con una sola parola.",
+  "retroIcebreakerWeather": "Meteo",
+  "retroIcebreakerWeatherDesc": "Scegli un'icona meteo che rappresenta lo sprint.",
+  "retroSelectIcebreakerTooltip": "Seleziona l'attività per rompere il ghiaccio",
+  "retroIcebreakerLabel": "Attività iniziale",
+  "retroTimePhasesOptional": "Timer Fasi (Opzionale)",
+  "retroTimePhasesDesc": "Imposta la durata in minuti per ogni fase:",
+  "retroIcebreakerSectionTitle": "Icebreaker",
+  "retroPhaseIcebreaker": "ICEBREAKER",
+  "retroPhaseWriting": "SCRITTURA",
+  "retroPhaseVoting": "VOTAZIONE",
+  "retroPhaseDiscuss": "DISCUSSIONE"
 }

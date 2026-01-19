@@ -17,6 +17,7 @@ import '../widgets/estimation_room/participant_list_widget.dart';
 import '../widgets/estimation_room/session_search_widget.dart';
 import '../widgets/estimation_room/estimation_input_wrapper.dart';
 import '../models/estimation_mode.dart';
+import '../widgets/home/favorite_star.dart';
 
 /// Screen principale per l'Estimation Room
 ///
@@ -59,29 +60,51 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeWithSession();
   }
 
-  /// Inizializza con una sessione specifica se passata come parametro
-  Future<void> _initializeWithSession() async {
-    if (widget.initialSessionId != null) {
-      setState(() => _isLoading = true);
-      try {
-        final session = await _firestoreService.getSession(widget.initialSessionId!);
-        if (session != null && mounted) {
-          setState(() {
-            _selectedSession = session;
-          });
-          await _loadStories(session.id);
-        }
-      } catch (e) {
-        final l10n = AppLocalizations.of(context)!;
-        _showError('${l10n.errorLoadingSession}: $e');
-      } finally {
-        if (mounted) setState(() => _isLoading = false);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkRouteArguments();
+  }
+
+  Future<void> _checkRouteArguments() async {
+    // If already initialized with a specific session, skip
+    if (_selectedSession != null || widget.initialSessionId != null) {
+      if (widget.initialSessionId != null && _selectedSession == null) {
+        // Handle constraint initialSessionId
+         await _initializeWithSession(widget.initialSessionId!);
       }
+      return;
+    }
+
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map<String, dynamic> && args.containsKey('id')) {
+      final sessionId = args['id'] as String;
+      await _initializeWithSession(sessionId);
     } else {
       _loadData();
+    }
+  }
+
+  /// Inizializza con una sessione specifica
+  Future<void> _initializeWithSession(String sessionId) async {
+    setState(() => _isLoading = true);
+    try {
+      final session = await _firestoreService.getSession(sessionId);
+      if (session != null && mounted) {
+        setState(() {
+          _selectedSession = session;
+        });
+        await _loadStories(session.id);
+      }
+    } catch (e) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        _showError('${l10n.errorLoadingSession}: $e');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -271,7 +294,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               // Header
               Row(
                 children: [
-                  const Icon(Icons.folder_open, color: Colors.green),
+                  const Icon(Icons.folder_open, color: Colors.amber),
                   const SizedBox(width: 8),
                   Text(
                     l10n.estimationSessionsCount(filteredSessions.length, sessions.length),
@@ -449,7 +472,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       width: 26,
                       height: 26,
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.15),
+                        color: Colors.amber.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Stack(
@@ -457,7 +480,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                           Center(
                             child: Icon(
                               _getEstimationModeIcon(session.estimationMode),
-                              color: Colors.green,
+                              color: Colors.amber,
                               size: 14,
                             ),
                           ),
@@ -494,6 +517,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       ),
                     ),
                   ),
+                  FavoriteStar(
+                    resourceId: session.id,
+                    type: 'planning_poker',
+                    title: session.name,
+                    colorHex: '#FFC107', // Amber for Planning Poker
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
                   // Menu compatto
                   SizedBox(
                     width: 24,
@@ -886,10 +917,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
+              color: Colors.amber.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.description, color: Colors.green),
+            child: const Icon(Icons.description, color: Colors.amber),
           ),
           const SizedBox(width: 16),
           // Info
@@ -1248,16 +1279,16 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     if (_selectedSession == null) {
       return FloatingActionButton.extended(
         onPressed: _showCreateSessionDialog,
-        icon: const Icon(Icons.add),
-        label: Text(l10n.estimationNewSession),
-        backgroundColor: Colors.green,
+        icon: const Icon(Icons.add, color: Colors.black),
+        label: Text(l10n.estimationNewSession, style: const TextStyle(color: Colors.black)),
+        backgroundColor: Colors.amber,
       );
     } else if (_selectedSession!.isFacilitator(_currentUserEmail)) {
       return FloatingActionButton.extended(
         onPressed: _showAddStoryDialog,
-        icon: const Icon(Icons.add_task),
-        label: Text(l10n.estimationAddStory),
-        backgroundColor: Colors.green,
+        icon: const Icon(Icons.add_task, color: Colors.black),
+        label: Text(l10n.estimationAddStory, style: const TextStyle(color: Colors.black)),
+        backgroundColor: Colors.amber,
       );
     }
     return null;

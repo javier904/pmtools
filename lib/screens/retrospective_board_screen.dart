@@ -10,6 +10,7 @@ import 'package:agile_tools/widgets/retrospective/action_items_table_widget.dart
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/services/retrospective_sheets_export_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 // ... existing imports ...
@@ -35,11 +36,12 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return StreamBuilder<RetrospectiveModel?>(
       stream: _service.streamRetrospective(widget.retroId),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Scaffold(appBar: AppBar(), body: Center(child: Text('Error: ${snapshot.error}')));
+          return Scaffold(appBar: AppBar(), body: Center(child: Text(l10n?.errorLoading ?? 'Error: ${snapshot.error}')));
         }
         if (!snapshot.hasData) {
           return Scaffold(appBar: AppBar(), body: const Center(child: CircularProgressIndicator()));
@@ -51,7 +53,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(retro.sprintName.isNotEmpty ? retro.sprintName : 'Retrospective'),
+            title: Text(retro.sprintName.isNotEmpty ? retro.sprintName : (l10n?.favTypeRetro ?? 'Retrospective')),
             centerTitle: false,
             elevation: 0,
             actions: [
@@ -65,12 +67,12 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
 
                 IconButton(
                 icon: const Icon(Icons.person_add),
-                tooltip: 'Invita',
+                tooltip: l10n?.inviteSendNew ?? 'Invite',
                 onPressed: () => _showInviteDialog(retro),
               ),
               IconButton(
                 icon: const Icon(Icons.people),
-                tooltip: 'Partecipanti',
+                tooltip: l10n?.participants ?? 'Participants',
                 onPressed: () => _showParticipantsDialog(retro),
               ),
               Padding(
@@ -102,6 +104,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
 
   Widget? _buildBottomControls(RetrospectiveModel retro, bool isFacilitator) {
     if (!isFacilitator) return null;
+    final l10n = AppLocalizations.of(context);
 
     final bool canGoBack = retro.currentPhase.index > 0;
     final bool canGoNext = retro.currentPhase != RetroPhase.completed;
@@ -140,7 +143,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                FilledButton.icon(
                  onPressed: () => _service.revealCards(retro.id),
                  icon: const Icon(Icons.visibility),
-                 label: const Text('Rivela'),
+                 label: Text(l10n?.voteReveal ?? 'Rivela'),
                  style: FilledButton.styleFrom(backgroundColor: Colors.orange),
                )
              else if (canGoNext)
@@ -289,6 +292,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   // ...
 
   Widget _buildActionItemsSection(RetrospectiveModel retro, bool isFacilitator) {
+    final l10n = AppLocalizations.of(context);
     return DragTarget<RetroItem>(
       onWillAccept: (data) => true,
       onAccept: (item) => _openCreateActionItemDialog(
@@ -330,7 +334,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                                 color: Theme.of(context).primaryColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Text('Drop to Create', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                              child: Text(l10n?.actionCreate ?? 'Drop to Create', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ],
@@ -338,7 +342,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                       ElevatedButton.icon(
                         onPressed: () => _openCreateActionItemDialog(retro),
                         icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Add Item'),
+                        label: Text(l10n?.actionAdd ?? 'Add Item'),
                         style: ElevatedButton.styleFrom(
                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         ),
@@ -464,10 +468,11 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   // Wait, if it takes named parameters.
   
   void _showParticipantsDialog(RetrospectiveModel retro) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Partecipanti (${retro.participantEmails.length})'),
+        title: Text(l10n?.retroParticipantsTitle(retro.participantEmails.length) ?? 'Participants (${retro.participantEmails.length})'),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -484,7 +489,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Chiudi')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n?.actionClose ?? 'Chiudi')),
         ],
       ),
     );
@@ -506,6 +511,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   // --- Restored Methods ---
 
   Widget _buildSetupView(RetrospectiveModel retro) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -526,13 +532,14 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
           const SizedBox(height: 30),
           const CircularProgressIndicator(),
           const SizedBox(height: 16),
-          const Text('In attesa che il facilitatore avvii la sessione...'),
+          Text(l10n?.retroWaitingForFacilitator ?? 'In attesa che il facilitatore avvii la sessione...'),
         ],
       ),
     );
   }
 
   Widget _buildCompletionDashboard(RetrospectiveModel retro, bool isFacilitator) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -540,35 +547,35 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '🎉 Retrospective Completed!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  if (isFacilitator)
-                    TextButton.icon(
-                      onPressed: () => _reopenRetro(retro),
-                      icon: const Icon(Icons.refresh, color: Colors.orange),
-                      label: const Text('Riapri', style: TextStyle(color: Colors.orange)),
+              children: [
+                Text(
+                  '🎉 ${l10n?.sessionCompletedSuccess ?? "Retrospective Completed!"}',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    if (isFacilitator)
+                      TextButton.icon(
+                        onPressed: () => _reopenRetro(retro),
+                        icon: const Icon(Icons.refresh, color: Colors.orange),
+                        label: Text(l10n?.actionReopen ?? 'Riapri', style: const TextStyle(color: Colors.orange)),
+                      ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () => _exportToGoogleSheets(retro),
+                      icon: const Icon(Icons.table_view, color: Colors.white),
+                      label: Text(l10n?.todoExportSheets ?? 'Export Sheets', style: const TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F9D58)),
                     ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: () => _exportToGoogleSheets(retro),
-                    icon: const Icon(Icons.table_view, color: Colors.white),
-                    label: const Text('Export Sheets', style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F9D58)),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: () => _exportData(retro),
-                    icon: const Icon(Icons.download),
-                    label: const Text('Export CSV'),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () => _exportData(retro),
+                      icon: const Icon(Icons.download),
+                      label: Text(l10n?.actionExport ?? 'Export CSV'),
+                    ),
+                  ],
+                ),
+              ],
           ),
           const SizedBox(height: 24),
           
@@ -623,8 +630,9 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   }
 
   Future<void> _exportToGoogleSheets(RetrospectiveModel retro) async {
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Generazione Google Sheet in corso...')),
+      SnackBar(content: Text(l10n?.retroGeneratingSheet ?? 'Generazione Google Sheet in corso...')),
     );
 
     final url = await RetrospectiveSheetsExportService().exportToGoogleSheets(retro);
@@ -634,9 +642,9 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
        if (url != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Export completato!'),
+              content: Text(l10n?.retroExportSuccess ?? 'Export completato!'),
               action: SnackBarAction(
-                label: 'APRI',
+                label: (l10n?.eisenhowerOpen ?? 'APRI').toUpperCase(),
                 onPressed: () => launchUrl(Uri.parse(url)),
                 textColor: Colors.white,
               ),
@@ -644,7 +652,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
           );
        } else {
          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Errore durante l\'export su Sheets.')),
+            SnackBar(content: Text(l10n?.retroExportError ?? 'Errore durante l\'export su Sheets.')),
          );
        }
     }
@@ -678,25 +686,30 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
        buffer.writeln('- ${item.content} (${item.votes} votes)');
     }
 
+    final l10n = AppLocalizations.of(context);
+    
+    // ... buffer writing logic (assuming l10n not used for buffer content yet to keep it simple or user didn't ask) 
+    
     await Clipboard.setData(ClipboardData(text: buffer.toString()));
     
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Report copiato negli appunti! Incollalo in Excel o Note.'),
+      SnackBar(
+        content: Text(l10n?.retroReportCopied ?? 'Report copiato negli appunti!'),
         backgroundColor: Colors.green,
       ),
     );
   }
 
   Future<void> _reopenRetro(RetrospectiveModel retro) async {
+    final l10n = AppLocalizations.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Riapri Retrospettiva'),
-        content: const Text('Sei sicuro di voler riaprire la retrospettiva? Tornerà alla fase di Discussione.'),
+        title: Text(l10n?.retroReopenTitle ?? 'Riapri Retrospettiva'),
+        content: Text(l10n?.retroReopenConfirm ?? 'Sei sicuro di voler riaprire la retrospettiva?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annulla')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text('Riapri')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n?.actionCancel ?? 'Annulla')),
+          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n?.actionReopen ?? 'Riapri')),
         ],
       ),
     );

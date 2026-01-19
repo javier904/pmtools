@@ -1,5 +1,6 @@
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class RetroMethodologyDialog extends StatefulWidget {
   final Function(RetroTemplate) onSelect;
@@ -16,7 +17,7 @@ class _RetroMethodologyDialogState extends State<RetroMethodologyDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Scegli Metodologia'),
+      title: Text(AppLocalizations.of(context)?.retroChooseMethodology ?? 'Scegli Metodologia'),
       content: SizedBox(
         width: 500,
         child: SingleChildScrollView(
@@ -27,13 +28,13 @@ class _RetroMethodologyDialogState extends State<RetroMethodologyDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
         ElevatedButton(
           onPressed: () {
             widget.onSelect(_selectedTemplate);
             Navigator.pop(context);
           },
-          child: const Text('Conferma'),
+          child: Text(AppLocalizations.of(context)?.actionConfirm ?? 'Conferma'),
         ),
       ],
     );
@@ -63,12 +64,12 @@ class _RetroMethodologyDialogState extends State<RetroMethodologyDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      template.displayName, 
+                      _getTemplateName(template, AppLocalizations.of(context)!), 
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
                   ),
                   const SizedBox(height: 4),
                   Text(
-                      template.description, 
+                      _getTemplateDesc(template, AppLocalizations.of(context)!), 
                       style: TextStyle(color: Colors.grey[600], fontSize: 13)
                   ),
                   const SizedBox(height: 8),
@@ -86,7 +87,7 @@ class _RetroMethodologyDialogState extends State<RetroMethodologyDialog> {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            template.usageSuggestion,
+                            _getUsageSuggestion(template, AppLocalizations.of(context)!),
                             style: const TextStyle(
                               color: Colors.blue, 
                               fontSize: 12, 
@@ -128,5 +129,38 @@ class _RetroMethodologyDialogState extends State<RetroMethodologyDialog> {
         ),
       ),
     );
+  }
+
+  String _getTemplateName(RetroTemplate template, AppLocalizations l10n) {
+    switch (template) {
+      case RetroTemplate.startStopContinue: return l10n.retroTemplateStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroTemplateSailboat;
+      case RetroTemplate.fourLs: return l10n.retroTemplate4Ls;
+      case RetroTemplate.starfish: return l10n.retroTemplateStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroTemplateMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroTemplateDAKI;
+    }
+  }
+
+  String _getTemplateDesc(RetroTemplate template, AppLocalizations l10n) {
+    switch (template) {
+      case RetroTemplate.startStopContinue: return l10n.retroDescStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroDescSailboat;
+      case RetroTemplate.fourLs: return l10n.retroDesc4Ls;
+      case RetroTemplate.starfish: return l10n.retroDescStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroDescMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroDescDAKI;
+    }
+  }
+
+  String _getUsageSuggestion(RetroTemplate template, AppLocalizations l10n) {
+    switch (template) {
+      case RetroTemplate.startStopContinue: return l10n.retroUsageStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroUsageSailboat;
+      case RetroTemplate.fourLs: return l10n.retroUsage4Ls;
+      case RetroTemplate.starfish: return l10n.retroUsageStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroUsageMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroUsageDAKI;
+    }
   }
 }

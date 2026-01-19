@@ -7,7 +7,9 @@ import '../services/agile_audit_service.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../widgets/agile/methodology_guide_dialog.dart';
+import '../themes/app_colors.dart';
 import 'agile_project_detail_screen.dart';
+import '../widgets/home/favorite_star.dart';
 
 /// Screen principale per la gestione dei Progetti Agile
 ///
@@ -268,7 +270,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: compactCrossAxisCount,
-            childAspectRatio: 1.4, // Card più larghe che alte = più compatte
+            childAspectRatio: 1.25, // Card più larghe che alte = più compatte
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -356,6 +358,14 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                         ),
                       ),
                     ),
+                  FavoriteStar(
+                    resourceId: project.id,
+                    type: 'agile_project',
+                    title: project.name,
+                    colorHex: '#9C27B0', // Purple for Agile
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
                   // Menu opzioni
                   if (canManage)
                     PopupMenuButton<String>(
@@ -810,8 +820,9 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     // FAB solo nella lista progetti (il dettaglio ha il suo FAB)
     return FloatingActionButton.extended(
       onPressed: _showCreateProjectDialog,
-      icon: const Icon(Icons.add),
-      label: const Text('Nuovo Progetto'),
+      icon: const Icon(Icons.add, color: Colors.white),
+      label: const Text('Nuovo Progetto', style: TextStyle(color: Colors.white)),
+      backgroundColor: AppColors.primary,
     );
   }
 

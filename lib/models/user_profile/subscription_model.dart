@@ -322,25 +322,24 @@ class SubscriptionHistoryModel {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /// Piani di abbonamento disponibili
+///
+/// Tier:
+/// - Free: Funzionalita base con limiti e ads
+/// - Premium: Per professionisti (4.99/mese, 39.99/anno)
+/// - Elite: Potenza illimitata (7.99/mese, 69.99/anno)
 enum SubscriptionPlan {
   free,
-  starter,
-  pro,
-  business,
-  enterprise;
+  premium,
+  elite;
 
   String get displayName {
     switch (this) {
       case SubscriptionPlan.free:
         return 'Free';
-      case SubscriptionPlan.starter:
-        return 'Starter';
-      case SubscriptionPlan.pro:
-        return 'Pro';
-      case SubscriptionPlan.business:
-        return 'Business';
-      case SubscriptionPlan.enterprise:
-        return 'Enterprise';
+      case SubscriptionPlan.premium:
+        return 'Premium';
+      case SubscriptionPlan.elite:
+        return 'Elite';
     }
   }
 
@@ -348,13 +347,9 @@ enum SubscriptionPlan {
     switch (this) {
       case SubscriptionPlan.free:
         return Colors.grey;
-      case SubscriptionPlan.starter:
-        return Colors.blue;
-      case SubscriptionPlan.pro:
+      case SubscriptionPlan.premium:
         return Colors.purple;
-      case SubscriptionPlan.business:
-        return Colors.orange;
-      case SubscriptionPlan.enterprise:
+      case SubscriptionPlan.elite:
         return Colors.amber;
     }
   }
@@ -363,14 +358,10 @@ enum SubscriptionPlan {
     switch (this) {
       case SubscriptionPlan.free:
         return Icons.person_outline;
-      case SubscriptionPlan.starter:
-        return Icons.rocket_launch_outlined;
-      case SubscriptionPlan.pro:
+      case SubscriptionPlan.premium:
         return Icons.star_outline;
-      case SubscriptionPlan.business:
-        return Icons.business_outlined;
-      case SubscriptionPlan.enterprise:
-        return Icons.corporate_fare;
+      case SubscriptionPlan.elite:
+        return Icons.diamond_outlined;
     }
   }
 
@@ -378,15 +369,11 @@ enum SubscriptionPlan {
   String get description {
     switch (this) {
       case SubscriptionPlan.free:
-        return 'Funzionalità base per iniziare';
-      case SubscriptionPlan.starter:
-        return 'Per piccoli team e progetti personali';
-      case SubscriptionPlan.pro:
-        return 'Per professionisti e team in crescita';
-      case SubscriptionPlan.business:
-        return 'Per aziende con esigenze avanzate';
-      case SubscriptionPlan.enterprise:
-        return 'Soluzione personalizzata per grandi organizzazioni';
+        return 'Inizia gratis con funzionalita base';
+      case SubscriptionPlan.premium:
+        return 'Per professionisti e piccoli team';
+      case SubscriptionPlan.elite:
+        return 'Potenza illimitata per team enterprise';
     }
   }
 
@@ -395,14 +382,22 @@ enum SubscriptionPlan {
     switch (this) {
       case SubscriptionPlan.free:
         return 0;
-      case SubscriptionPlan.starter:
-        return 9.99;
-      case SubscriptionPlan.pro:
-        return 19.99;
-      case SubscriptionPlan.business:
-        return 49.99;
-      case SubscriptionPlan.enterprise:
-        return 99.99;
+      case SubscriptionPlan.premium:
+        return 4.99;
+      case SubscriptionPlan.elite:
+        return 7.99;
+    }
+  }
+
+  /// Prezzo annuale in EUR (con sconto)
+  double get yearlyPrice {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return 0;
+      case SubscriptionPlan.premium:
+        return 39.99; // ~33% sconto
+      case SubscriptionPlan.elite:
+        return 69.99; // ~27% sconto
     }
   }
 
@@ -411,14 +406,65 @@ enum SubscriptionPlan {
     switch (this) {
       case SubscriptionPlan.free:
         return 0;
-      case SubscriptionPlan.starter:
+      case SubscriptionPlan.premium:
         return 7;
-      case SubscriptionPlan.pro:
+      case SubscriptionPlan.elite:
         return 14;
-      case SubscriptionPlan.business:
-        return 14;
-      case SubscriptionPlan.enterprise:
-        return 30;
+    }
+  }
+
+  /// Se il piano mostra pubblicita
+  bool get showsAds => this == SubscriptionPlan.free;
+
+  /// Se e un piano a pagamento
+  bool get isPaidPlan => this != SubscriptionPlan.free;
+
+  /// Risparmio annuale rispetto al mensile
+  double get yearlySavings {
+    if (this == SubscriptionPlan.free) return 0;
+    return (monthlyPrice * 12) - yearlyPrice;
+  }
+
+  /// Percentuale di sconto annuale
+  int get yearlyDiscountPercentage {
+    if (this == SubscriptionPlan.free) return 0;
+    final monthlyTotal = monthlyPrice * 12;
+    if (monthlyTotal == 0) return 0;
+    return ((1 - (yearlyPrice / monthlyTotal)) * 100).round();
+  }
+
+  /// Lista delle feature principali per questo piano
+  List<String> get features {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return [
+          '5 progetti attivi',
+          '5 liste Smart Todo',
+          '50 attivita per progetto',
+          '10 inviti per progetto',
+          'Supporto community',
+        ];
+      case SubscriptionPlan.premium:
+        return [
+          '30 progetti attivi',
+          '30 liste Smart Todo',
+          '100 attivita per progetto',
+          '15 inviti per progetto',
+          'Nessuna pubblicita',
+          'Export avanzato',
+          'Supporto email prioritario',
+        ];
+      case SubscriptionPlan.elite:
+        return [
+          'Progetti illimitati',
+          'Liste illimitate',
+          'Attivita illimitate',
+          'Inviti illimitati',
+          'Nessuna pubblicita',
+          'Export avanzato',
+          'Accesso API',
+          'Supporto prioritario 24/7',
+        ];
     }
   }
 }

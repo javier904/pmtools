@@ -4,8 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:googleapis/gmail/v1.dart' as gmail;
 import '../models/eisenhower_invite_model.dart';
 import '../models/eisenhower_participant_model.dart';
+import '../models/subscription/subscription_limits_model.dart';
+import '../utils/validators.dart';
 import 'auth_service.dart';
 import 'eisenhower_firestore_service.dart';
+import 'subscription/subscription_limits_service.dart';
 
 /// Servizio per la gestione degli inviti alla Matrice di Eisenhower
 ///
@@ -39,6 +42,7 @@ class EisenhowerInviteService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
   final EisenhowerFirestoreService _matrixService = EisenhowerFirestoreService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   /// Nome della collection
   static const String _invitesCollection = 'eisenhower_invites';
@@ -59,6 +63,7 @@ class EisenhowerInviteService {
   /// [expirationDays] - Giorni di validita' (default: 7)
   ///
   /// Ritorna l'invito creato o null in caso di errore
+  /// Lancia [LimitExceededException] se il limite inviti per entita' e' raggiunto
   Future<EisenhowerInviteModel?> createInvite({
     required String matrixId,
     required String email,
@@ -70,6 +75,9 @@ class EisenhowerInviteService {
       print('❌ createInvite: Utente non autenticato');
       return null;
     }
+
+    // 🔒 CHECK LIMITE INVITI PER ENTITA'
+    await _limitsService.enforceInviteLimit(entityType: 'eisenhower', entityId: matrixId);
 
     // Verifica che non esista già un invito pending per questa email
     final existingInvite = await getActiveInviteForEmail(matrixId, email);
@@ -482,6 +490,10 @@ class EisenhowerInviteService {
       final expirationDate = _formatDate(invite.expiresAt);
       final roleName = _getRoleName(invite.role);
 
+      // 🔒 SICUREZZA: Sanitizza input utente per prevenire HTML injection
+      final safeInviterName = Validators.sanitizeHtml(invite.invitedByName);
+      final safeMatrixTitle = Validators.sanitizeHtml(matrixTitle);
+
       print('📧 [SERVICE] Link invito: $inviteLink');
 
       // Costruisci il contenuto HTML dell'email
@@ -510,10 +522,10 @@ class EisenhowerInviteService {
     </div>
     <div class="content">
       <p>Ciao!</p>
-      <p><strong>${invite.invitedByName}</strong> ti ha invitato a partecipare a una sessione di prioritizzazione con la Matrice di Eisenhower.</p>
+      <p><strong>$safeInviterName</strong> ti ha invitato a partecipare a una sessione di prioritizzazione con la Matrice di Eisenhower.</p>
 
       <div class="info-box">
-        <p><strong>📋 Matrice:</strong> $matrixTitle</p>
+        <p><strong>📋 Matrice:</strong> $safeMatrixTitle</p>
         <p><strong>👤 Ruolo:</strong> <span class="role-badge">$roleName</span></p>
         <p><strong>⏰ Scadenza invito:</strong> $expirationDate</p>
       </div>
@@ -528,17 +540,17 @@ class EisenhowerInviteService {
       </p>
     </div>
     <div class="footer">
-      <p>Questa email è stata inviata automaticamente dal sistema Agile Tools.</p>
+      <p>Questa email è stata inviata automaticamente dal sistema Keisen.</p>
     </div>
   </div>
 </body>
 </html>
 ''';
 
-      // Costruisci email in formato MIME
+      // Costruisci email in formato MIME (Subject non richiede HTML escape, solo base64)
       final emailContent = '''From: $senderEmail
 To: ${invite.email}
-Subject: =?UTF-8?B?${base64Encode(utf8.encode('📊 Invito Matrice Eisenhower: $matrixTitle'))}?=
+Subject: =?UTF-8?B?${base64Encode(utf8.encode('📊 Invito Matrice Eisenhower: $safeMatrixTitle'))}?=
 MIME-Version: 1.0
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: base64

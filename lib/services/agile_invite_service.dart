@@ -5,6 +5,7 @@ import 'package:googleapis/gmail/v1.dart' as gmail;
 import '../models/agile_invite_model.dart';
 import '../models/agile_enums.dart';
 import '../models/team_member_model.dart';
+import '../utils/validators.dart';
 import 'auth_service.dart';
 import 'agile_firestore_service.dart';
 import 'agile_audit_service.dart';
@@ -485,6 +486,10 @@ class AgileInviteService {
       final participantRoleName = invite.participantRole.displayName;
       final teamRoleName = invite.teamRole.displayName;
 
+      // 🔒 SICUREZZA: Sanitizza input utente per prevenire HTML injection
+      final safeInviterName = Validators.sanitizeHtml(invite.invitedByName);
+      final safeProjectName = Validators.sanitizeHtml(projectName);
+
       print('📧 [SERVICE] Link invito: $inviteLink');
 
       // Costruisci il contenuto HTML dell'email
@@ -513,10 +518,10 @@ class AgileInviteService {
     </div>
     <div class="content">
       <p>Ciao!</p>
-      <p><strong>${invite.invitedByName}</strong> ti ha invitato a partecipare al progetto Agile.</p>
+      <p><strong>$safeInviterName</strong> ti ha invitato a partecipare al progetto Agile.</p>
 
       <div class="info-box">
-        <p><strong>📋 Progetto:</strong> $projectName</p>
+        <p><strong>📋 Progetto:</strong> $safeProjectName</p>
         <p><strong>👤 Ruolo Progetto:</strong> <span class="role-badge">$participantRoleName</span></p>
         <p><strong>🎯 Ruolo Team:</strong> <span class="role-badge">$teamRoleName</span></p>
         <p><strong>⏰ Scadenza invito:</strong> $expirationDate</p>
@@ -532,17 +537,17 @@ class AgileInviteService {
       </p>
     </div>
     <div class="footer">
-      <p>Questa email è stata inviata automaticamente dal sistema Agile Tools.</p>
+      <p>Questa email è stata inviata automaticamente dal sistema Keisen.</p>
     </div>
   </div>
 </body>
 </html>
 ''';
 
-      // Costruisci email in formato MIME
+      // Costruisci email in formato MIME (Subject usa valore sanitizzato)
       final emailContent = '''From: $senderEmail
 To: ${invite.email}
-Subject: =?UTF-8?B?${base64Encode(utf8.encode('🚀 Invito Progetto Agile: $projectName'))}?=
+Subject: =?UTF-8?B?${base64Encode(utf8.encode('🚀 Invito Progetto Agile: $safeProjectName'))}?=
 MIME-Version: 1.0
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: base64

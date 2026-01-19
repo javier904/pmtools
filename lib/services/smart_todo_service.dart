@@ -3,9 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
+import '../models/subscription/subscription_limits_model.dart';
+import 'subscription/subscription_limits_service.dart';
 
 class SmartTodoService {
   final FirebaseFirestore _firestore;
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   static const String _listsCollection = 'smart_todo_lists';
   static const String _tasksSubcollection = 'smart_todo_tasks';
@@ -19,6 +22,8 @@ class SmartTodoService {
 
   /// Get lists where user is owner or participant
   Stream<List<TodoListModel>> streamLists(String userEmail) {
+    if (userEmail.isEmpty) return Stream.value([]);
+    
     return _firestore
         .collection(_listsCollection)
         .where('participantEmails', arrayContains: userEmail.toLowerCase())
@@ -33,16 +38,21 @@ class SmartTodoService {
         });
   }
 
+  /// Crea una nuova lista
+  /// Lancia [LimitExceededException] se il limite liste e' raggiunto
   Future<String> createList(TodoListModel list, String userEmail) async {
+    // 🔒 CHECK LIMITE LISTE
+    await _limitsService.enforceListLimit(userEmail.toLowerCase());
+
     final docRef = _firestore.collection(_listsCollection).doc();
-    
+
     // Add participantEmails for querying (lowercase)
     final data = list.toMap();
     // Normalizza ownerEmail
     data['ownerEmail'] = userEmail.toLowerCase();
     // Normalizza keys partecipanti
     data['participantEmails'] = list.participants.keys.map((e) => e.toLowerCase()).toList();
-    
+
     await docRef.set(data);
     return docRef.id;
   }
@@ -131,13 +141,18 @@ class SmartTodoService {
         });
   }
 
+  /// Crea un nuovo task in una lista
+  /// Lancia [LimitExceededException] se il limite task per entita' e' raggiunto
   Future<String> createTask(String listId, TodoTaskModel task) async {
+    // 🔒 CHECK LIMITE TASK PER ENTITA'
+    await _limitsService.enforceTaskLimit(entityType: 'smart_todo', entityId: listId);
+
     final docRef = _firestore
         .collection(_listsCollection)
         .doc(listId)
         .collection(_tasksSubcollection)
         .doc();
-    
+
     await docRef.set(task.copyWith(id: docRef.id).toMap());
     return docRef.id;
   }

@@ -6,6 +6,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_it.dart';
 
 // ignore_for_file: type=lint
@@ -95,13 +97,15 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
     Locale('it'),
   ];
 
   /// No description provided for @appTitle.
   ///
   /// In it, this message translates to:
-  /// **'Agile Tools'**
+  /// **'Keisen'**
   String get appTitle;
 
   /// No description provided for @actionSave.
@@ -224,6 +228,120 @@ abstract class AppLocalizations {
   /// **'Successo'**
   String get stateSuccess;
 
+  /// No description provided for @subscriptionCurrent.
+  ///
+  /// In it, this message translates to:
+  /// **'ATTUALE'**
+  String get subscriptionCurrent;
+
+  /// No description provided for @subscriptionRecommended.
+  ///
+  /// In it, this message translates to:
+  /// **'CONSIGLIATO'**
+  String get subscriptionRecommended;
+
+  /// No description provided for @subscriptionFree.
+  ///
+  /// In it, this message translates to:
+  /// **'Gratis'**
+  String get subscriptionFree;
+
+  /// No description provided for @subscriptionPerMonth.
+  ///
+  /// In it, this message translates to:
+  /// **'/mese'**
+  String get subscriptionPerMonth;
+
+  /// No description provided for @subscriptionPerYear.
+  ///
+  /// In it, this message translates to:
+  /// **'/anno'**
+  String get subscriptionPerYear;
+
+  /// No description provided for @subscriptionSaveYearly.
+  ///
+  /// In it, this message translates to:
+  /// **'Risparmi €{amount}/anno'**
+  String subscriptionSaveYearly(String amount);
+
+  /// No description provided for @subscriptionTrialDays.
+  ///
+  /// In it, this message translates to:
+  /// **'{days} giorni di prova gratuita'**
+  String subscriptionTrialDays(int days);
+
+  /// No description provided for @subscriptionUnlimitedProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetti illimitati'**
+  String get subscriptionUnlimitedProjects;
+
+  /// No description provided for @subscriptionProjectsActive.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} progetti attivi'**
+  String subscriptionProjectsActive(int count);
+
+  /// No description provided for @subscriptionUnlimitedLists.
+  ///
+  /// In it, this message translates to:
+  /// **'Liste illimitate'**
+  String get subscriptionUnlimitedLists;
+
+  /// No description provided for @subscriptionSmartTodoLists.
+  ///
+  /// In it, this message translates to:
+  /// **'Liste Smart Todo'**
+  String subscriptionSmartTodoLists(int count);
+
+  /// No description provided for @subscriptionActiveProjectsLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetti attivi'**
+  String get subscriptionActiveProjectsLabel;
+
+  /// No description provided for @subscriptionSmartTodoListsLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Liste Smart Todo'**
+  String get subscriptionSmartTodoListsLabel;
+
+  /// No description provided for @subscriptionUnlimitedTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Task illimitati'**
+  String get subscriptionUnlimitedTasks;
+
+  /// No description provided for @subscriptionTasksPerProject.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} task per progetto'**
+  String subscriptionTasksPerProject(int count);
+
+  /// No description provided for @subscriptionUnlimitedInvites.
+  ///
+  /// In it, this message translates to:
+  /// **'Inviti illimitati'**
+  String get subscriptionUnlimitedInvites;
+
+  /// No description provided for @subscriptionInvitesPerProject.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} inviti per progetto'**
+  String subscriptionInvitesPerProject(int count);
+
+  /// No description provided for @subscriptionWithAds.
+  ///
+  /// In it, this message translates to:
+  /// **'Con pubblicità'**
+  String get subscriptionWithAds;
+
+  /// No description provided for @subscriptionWithoutAds.
+  ///
+  /// In it, this message translates to:
+  /// **'Senza pubblicità'**
+  String get subscriptionWithoutAds;
+
   /// No description provided for @authSignInGoogle.
   ///
   /// In it, this message translates to:
@@ -287,7 +405,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSubtitle.
   ///
   /// In it, this message translates to:
-  /// **'Agile Tools per Team'**
+  /// **'Keisen per Team'**
   String get appSubtitle;
 
   /// No description provided for @authOr.
@@ -739,6 +857,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Ricerca:'**
   String get eisenhowerSearchLabel;
+
+  /// No description provided for @eisenhowerSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca matrici...'**
+  String get eisenhowerSearchHint;
 
   /// No description provided for @eisenhowerNoMatrixFound.
   ///
@@ -1325,8 +1449,8 @@ abstract class AppLocalizations {
   /// No description provided for @errorGeneric.
   ///
   /// In it, this message translates to:
-  /// **'Si e verificato un errore'**
-  String get errorGeneric;
+  /// **'Errore: {error}'**
+  String errorGeneric(String error);
 
   /// No description provided for @errorLoading.
   ///
@@ -1841,7 +1965,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileDeleteAccount.
   ///
   /// In it, this message translates to:
-  /// **'Elimina Account'**
+  /// **'Elimina account'**
   String get profileDeleteAccount;
 
   /// No description provided for @profileDeleteAccountDesc.
@@ -3906,6 +4030,216 @@ abstract class AppLocalizations {
   /// **'Utente gia invitato o invito in attesa.'**
   String get smartTodoUserAlreadyInvitedOrPending;
 
+  /// No description provided for @smartTodoFilterToday.
+  ///
+  /// In it, this message translates to:
+  /// **'Oggi'**
+  String get smartTodoFilterToday;
+
+  /// No description provided for @smartTodoFilterMyTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'I Miei Task'**
+  String get smartTodoFilterMyTasks;
+
+  /// No description provided for @smartTodoFilterOwner.
+  ///
+  /// In it, this message translates to:
+  /// **'Owner'**
+  String get smartTodoFilterOwner;
+
+  /// No description provided for @smartTodoViewGlobalTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi Task Globali'**
+  String get smartTodoViewGlobalTasks;
+
+  /// No description provided for @smartTodoViewLists.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi Liste'**
+  String get smartTodoViewLists;
+
+  /// No description provided for @smartTodoNewListDialogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Lista'**
+  String get smartTodoNewListDialogTitle;
+
+  /// No description provided for @smartTodoTitleLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo *'**
+  String get smartTodoTitleLabel;
+
+  /// No description provided for @smartTodoDescriptionLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get smartTodoDescriptionLabel;
+
+  /// No description provided for @smartTodoCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get smartTodoCancel;
+
+  /// No description provided for @smartTodoCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea'**
+  String get smartTodoCreate;
+
+  /// No description provided for @smartTodoSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva'**
+  String get smartTodoSave;
+
+  /// No description provided for @smartTodoNoListsPresent.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna lista presente'**
+  String get smartTodoNoListsPresent;
+
+  /// No description provided for @smartTodoCreateFirstList.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea la tua prima lista per iniziare'**
+  String get smartTodoCreateFirstList;
+
+  /// No description provided for @smartTodoMembersCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} membri'**
+  String smartTodoMembersCount(int count);
+
+  /// No description provided for @smartTodoRenameListTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Rinomina Lista'**
+  String get smartTodoRenameListTitle;
+
+  /// No description provided for @smartTodoNewNameLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Nome'**
+  String get smartTodoNewNameLabel;
+
+  /// No description provided for @smartTodoDeleteListTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Lista'**
+  String get smartTodoDeleteListTitle;
+
+  /// No description provided for @smartTodoDeleteListConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione è irreversibile.'**
+  String get smartTodoDeleteListConfirm;
+
+  /// No description provided for @smartTodoDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get smartTodoDelete;
+
+  /// No description provided for @smartTodoEdit.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica'**
+  String get smartTodoEdit;
+
+  /// No description provided for @smartTodoSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca liste...'**
+  String get smartTodoSearchHint;
+
+  /// No description provided for @smartTodoSearchTasksHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca...'**
+  String get smartTodoSearchTasksHint;
+
+  /// No description provided for @smartTodoNoSearchResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato per \"{query}\"'**
+  String smartTodoNoSearchResults(String query);
+
+  /// No description provided for @smartTodoColumnTodo.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Fare'**
+  String get smartTodoColumnTodo;
+
+  /// No description provided for @smartTodoColumnInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso'**
+  String get smartTodoColumnInProgress;
+
+  /// No description provided for @smartTodoColumnDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatto'**
+  String get smartTodoColumnDone;
+
+  /// No description provided for @smartTodoAllPeople.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le persone'**
+  String get smartTodoAllPeople;
+
+  /// No description provided for @smartTodoPeopleCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} persone'**
+  String smartTodoPeopleCount(int count);
+
+  /// No description provided for @smartTodoFilterByPerson.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per persona'**
+  String get smartTodoFilterByPerson;
+
+  /// No description provided for @smartTodoApplyFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Applica Filtri'**
+  String get smartTodoApplyFilters;
+
+  /// No description provided for @smartTodoError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore: {error}'**
+  String smartTodoError(String error);
+
+  /// No description provided for @profileMenuTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Profilo'**
+  String get profileMenuTitle;
+
+  /// No description provided for @profileMenuLogout.
+  ///
+  /// In it, this message translates to:
+  /// **'Esci'**
+  String get profileMenuLogout;
+
+  /// No description provided for @profileLogoutDialogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Logout'**
+  String get profileLogoutDialogTitle;
+
+  /// No description provided for @profileLogoutDialogConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler uscire?'**
+  String get profileLogoutDialogConfirm;
+
   /// No description provided for @agileAddToSprint.
   ///
   /// In it, this message translates to:
@@ -4929,7 +5263,7 @@ abstract class AppLocalizations {
   /// No description provided for @landingHeroTitle.
   ///
   /// In it, this message translates to:
-  /// **'Build better products\nwith Agile Tools'**
+  /// **'Build better products\nwith Keisen'**
   String get landingHeroTitle;
 
   /// No description provided for @landingHeroSubtitle.
@@ -5097,7 +5431,7 @@ abstract class AppLocalizations {
   /// No description provided for @landingAgileIterativeDesc.
   ///
   /// In it, this message translates to:
-  /// **'L\'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.\n\nCon Agile Tools puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.'**
+  /// **'L\'approccio Agile divide il lavoro in cicli brevi chiamati Sprint, tipicamente di 1-4 settimane. Ogni iterazione produce un incremento funzionante del prodotto.\n\nCon Keisen puoi gestire il tuo backlog, pianificare sprint e monitorare la velocity del team in tempo reale.'**
   String get landingAgileIterativeDesc;
 
   /// No description provided for @landingAgileScrumTitle.
@@ -5109,7 +5443,7 @@ abstract class AppLocalizations {
   /// No description provided for @landingAgileScrumDesc.
   ///
   /// In it, this message translates to:
-  /// **'Scrum è il framework Agile più diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).\n\nAgile Tools supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.'**
+  /// **'Scrum è il framework Agile più diffuso. Definisce ruoli (Product Owner, Scrum Master, Team), eventi (Sprint Planning, Daily, Review, Retrospective) e artefatti (Product Backlog, Sprint Backlog).\n\nKeisen supporta tutti gli eventi Scrum con strumenti dedicati per ogni cerimonia.'**
   String get landingAgileScrumDesc;
 
   /// No description provided for @landingAgileKanbanTitle.
@@ -5277,7 +5611,7 @@ abstract class AppLocalizations {
   /// No description provided for @landingCopyright.
   ///
   /// In it, this message translates to:
-  /// **'© 2025 Agile Tools. Tutti i diritti riservati.'**
+  /// **'© 2025 Keisen. Tutti i diritti riservati.'**
   String get landingCopyright;
 
   /// No description provided for @featureSmartImportDesc.
@@ -5903,6 +6237,1428 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'GDPR'**
   String get landingFooterGdpr;
+
+  /// No description provided for @legalCookieTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizziamo i cookie'**
+  String get legalCookieTitle;
+
+  /// No description provided for @legalCookieMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizziamo i cookie per migliorare la tua esperienza e per fini analitici. Continuando, accetti l\'uso dei cookie.'**
+  String get legalCookieMessage;
+
+  /// No description provided for @legalCookieAccept.
+  ///
+  /// In it, this message translates to:
+  /// **'Accetta tutti'**
+  String get legalCookieAccept;
+
+  /// No description provided for @legalCookieRefuse.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo necessari'**
+  String get legalCookieRefuse;
+
+  /// No description provided for @legalCookiePolicy.
+  ///
+  /// In it, this message translates to:
+  /// **'Cookie Policy'**
+  String get legalCookiePolicy;
+
+  /// No description provided for @legalPrivacyPolicy.
+  ///
+  /// In it, this message translates to:
+  /// **'Privacy Policy'**
+  String get legalPrivacyPolicy;
+
+  /// No description provided for @legalTermsOfService.
+  ///
+  /// In it, this message translates to:
+  /// **'Termini di Servizio'**
+  String get legalTermsOfService;
+
+  /// No description provided for @legalGDPR.
+  ///
+  /// In it, this message translates to:
+  /// **'GDPR'**
+  String get legalGDPR;
+
+  /// No description provided for @legalAcceptTerms.
+  ///
+  /// In it, this message translates to:
+  /// **'Accetto i Termini di Servizio e la Privacy Policy'**
+  String get legalAcceptTerms;
+
+  /// No description provided for @legalMustAcceptTerms.
+  ///
+  /// In it, this message translates to:
+  /// **'Devi accettare i termini per continuare'**
+  String get legalMustAcceptTerms;
+
+  /// No description provided for @profilePrivacy.
+  ///
+  /// In it, this message translates to:
+  /// **'Privacy'**
+  String get profilePrivacy;
+
+  /// No description provided for @profileExportData.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta i miei dati'**
+  String get profileExportData;
+
+  /// No description provided for @profileDeleteAccountConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione è irreversibile.'**
+  String get profileDeleteAccountConfirm;
+
+  /// No description provided for @subscriptionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Abbonamento'**
+  String get subscriptionTitle;
+
+  /// No description provided for @subscriptionTabPlans.
+  ///
+  /// In it, this message translates to:
+  /// **'Piani'**
+  String get subscriptionTabPlans;
+
+  /// No description provided for @subscriptionTabUsage.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizzo'**
+  String get subscriptionTabUsage;
+
+  /// No description provided for @subscriptionTabBilling.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatturazione'**
+  String get subscriptionTabBilling;
+
+  /// No description provided for @subscriptionActiveProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} progetti attivi'**
+  String subscriptionActiveProjects(int count);
+
+  /// No description provided for @subscriptionActiveLists.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} liste Smart Todo'**
+  String subscriptionActiveLists(int count);
+
+  /// No description provided for @subscriptionCurrentPlan.
+  ///
+  /// In it, this message translates to:
+  /// **'Piano attuale'**
+  String get subscriptionCurrentPlan;
+
+  /// No description provided for @subscriptionUpgradeTo.
+  ///
+  /// In it, this message translates to:
+  /// **'Upgrade a {plan}'**
+  String subscriptionUpgradeTo(String plan);
+
+  /// No description provided for @subscriptionDowngradeTo.
+  ///
+  /// In it, this message translates to:
+  /// **'Downgrade a {plan}'**
+  String subscriptionDowngradeTo(String plan);
+
+  /// No description provided for @subscriptionChoose.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli {plan}'**
+  String subscriptionChoose(String plan);
+
+  /// No description provided for @subscriptionMonthly.
+  ///
+  /// In it, this message translates to:
+  /// **'Mensile'**
+  String get subscriptionMonthly;
+
+  /// No description provided for @subscriptionYearly.
+  ///
+  /// In it, this message translates to:
+  /// **'Annuale (-17%)'**
+  String get subscriptionYearly;
+
+  /// No description provided for @subscriptionLimitReached.
+  ///
+  /// In it, this message translates to:
+  /// **'Limite raggiunto'**
+  String get subscriptionLimitReached;
+
+  /// No description provided for @subscriptionLimitProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di progetti per il tuo piano. Passa a Premium per creare più progetti.'**
+  String get subscriptionLimitProjects;
+
+  /// No description provided for @subscriptionLimitLists.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di liste per il tuo piano. Passa a Premium per creare più liste.'**
+  String get subscriptionLimitLists;
+
+  /// No description provided for @subscriptionLimitTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di task per questo progetto. Passa a Premium per aggiungere più task.'**
+  String get subscriptionLimitTasks;
+
+  /// No description provided for @subscriptionLimitInvites.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di inviti per questo progetto. Passa a Premium per invitare più persone.'**
+  String get subscriptionLimitInvites;
+
+  /// No description provided for @subscriptionLimitEstimations.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di sessioni di stima. Passa a Premium per crearne di più.'**
+  String get subscriptionLimitEstimations;
+
+  /// No description provided for @subscriptionLimitDefault.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite del tuo piano attuale.'**
+  String get subscriptionLimitDefault;
+
+  /// No description provided for @subscriptionCurrentUsage.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizzo attuale'**
+  String get subscriptionCurrentUsage;
+
+  /// No description provided for @subscriptionUpgradeToPremium.
+  ///
+  /// In it, this message translates to:
+  /// **'Passa a Premium'**
+  String get subscriptionUpgradeToPremium;
+
+  /// No description provided for @subscriptionBenefitProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'30 progetti attivi'**
+  String get subscriptionBenefitProjects;
+
+  /// No description provided for @subscriptionBenefitLists.
+  ///
+  /// In it, this message translates to:
+  /// **'30 liste Smart Todo'**
+  String get subscriptionBenefitLists;
+
+  /// No description provided for @subscriptionBenefitTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'100 task per progetto'**
+  String get subscriptionBenefitTasks;
+
+  /// No description provided for @subscriptionBenefitNoAds.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna pubblicità'**
+  String get subscriptionBenefitNoAds;
+
+  /// No description provided for @subscriptionStartingFrom.
+  ///
+  /// In it, this message translates to:
+  /// **'A partire da €4.99/mese'**
+  String get subscriptionStartingFrom;
+
+  /// No description provided for @subscriptionLater.
+  ///
+  /// In it, this message translates to:
+  /// **'Più tardi'**
+  String get subscriptionLater;
+
+  /// No description provided for @subscriptionViewPlans.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi piani'**
+  String get subscriptionViewPlans;
+
+  /// No description provided for @subscriptionCanCreateOne.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi creare ancora 1 {entity}'**
+  String subscriptionCanCreateOne(String entity);
+
+  /// No description provided for @subscriptionCanCreateMany.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi creare ancora {count} {entity}'**
+  String subscriptionCanCreateMany(int count, String entity);
+
+  /// No description provided for @subscriptionUpgrade.
+  ///
+  /// In it, this message translates to:
+  /// **'UPGRADE'**
+  String get subscriptionUpgrade;
+
+  /// No description provided for @subscriptionUsed.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizzati: {count}'**
+  String subscriptionUsed(int count);
+
+  /// No description provided for @subscriptionUnlimited.
+  ///
+  /// In it, this message translates to:
+  /// **'Illimitati'**
+  String get subscriptionUnlimited;
+
+  /// No description provided for @subscriptionLimit.
+  ///
+  /// In it, this message translates to:
+  /// **'Limite: {count}'**
+  String subscriptionLimit(int count);
+
+  /// No description provided for @subscriptionPlanUsage.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizzo del piano'**
+  String get subscriptionPlanUsage;
+
+  /// No description provided for @subscriptionRefresh.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorna'**
+  String get subscriptionRefresh;
+
+  /// No description provided for @subscriptionAdsActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Pubblicità attive'**
+  String get subscriptionAdsActive;
+
+  /// No description provided for @subscriptionRemoveAds.
+  ///
+  /// In it, this message translates to:
+  /// **'Passa a Premium per rimuovere le pubblicità'**
+  String get subscriptionRemoveAds;
+
+  /// No description provided for @subscriptionNoAds.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna pubblicità'**
+  String get subscriptionNoAds;
+
+  /// No description provided for @subscriptionLoadError.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile caricare i dati di utilizzo'**
+  String get subscriptionLoadError;
+
+  /// No description provided for @subscriptionAdLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'AD'**
+  String get subscriptionAdLabel;
+
+  /// No description provided for @subscriptionAdPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Ad Placeholder'**
+  String get subscriptionAdPlaceholder;
+
+  /// No description provided for @subscriptionDevEnvironment.
+  ///
+  /// In it, this message translates to:
+  /// **'(Ambiente di sviluppo)'**
+  String get subscriptionDevEnvironment;
+
+  /// No description provided for @subscriptionRemoveAdsUnlock.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi le pubblicità e sblocca funzionalità avanzate'**
+  String get subscriptionRemoveAdsUnlock;
+
+  /// No description provided for @subscriptionUpgradeButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Upgrade'**
+  String get subscriptionUpgradeButton;
+
+  /// No description provided for @subscriptionLoadingError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento: {error}'**
+  String subscriptionLoadingError(String error);
+
+  /// No description provided for @subscriptionCompletePayment.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa il pagamento nella finestra aperta'**
+  String get subscriptionCompletePayment;
+
+  /// No description provided for @subscriptionError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore: {error}'**
+  String subscriptionError(String error);
+
+  /// No description provided for @subscriptionConfirmDowngrade.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma downgrade'**
+  String get subscriptionConfirmDowngrade;
+
+  /// No description provided for @subscriptionDowngradeMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler passare al piano Free?\n\nIl tuo abbonamento rimarrà attivo fino alla fine del periodo corrente, dopodiché passerai automaticamente al piano Free.\n\nNon perderai i tuoi dati, ma alcune funzionalità potrebbero essere limitate.'**
+  String get subscriptionDowngradeMessage;
+
+  /// No description provided for @subscriptionCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get subscriptionCancel;
+
+  /// No description provided for @subscriptionConfirmDowngradeButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma downgrade'**
+  String get subscriptionConfirmDowngradeButton;
+
+  /// No description provided for @subscriptionCancelled.
+  ///
+  /// In it, this message translates to:
+  /// **'Abbonamento cancellato. Rimarrà attivo fino a fine periodo.'**
+  String get subscriptionCancelled;
+
+  /// No description provided for @subscriptionPortalError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore apertura portale: {error}'**
+  String subscriptionPortalError(String error);
+
+  /// No description provided for @subscriptionRetry.
+  ///
+  /// In it, this message translates to:
+  /// **'Riprova'**
+  String get subscriptionRetry;
+
+  /// No description provided for @subscriptionChooseRightPlan.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli il piano giusto per te'**
+  String get subscriptionChooseRightPlan;
+
+  /// No description provided for @subscriptionStartFree.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia gratis, fai upgrade quando vuoi'**
+  String get subscriptionStartFree;
+
+  /// No description provided for @subscriptionPlan.
+  ///
+  /// In it, this message translates to:
+  /// **'Piano {plan}'**
+  String subscriptionPlan(String plan);
+
+  /// No description provided for @subscriptionTrialUntil.
+  ///
+  /// In it, this message translates to:
+  /// **'Trial fino al {date}'**
+  String subscriptionTrialUntil(String date);
+
+  /// No description provided for @subscriptionRenewal.
+  ///
+  /// In it, this message translates to:
+  /// **'Rinnovo: {date}'**
+  String subscriptionRenewal(String date);
+
+  /// No description provided for @subscriptionManage.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisci'**
+  String get subscriptionManage;
+
+  /// No description provided for @subscriptionLoginRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Effettua il login per vedere l\'utilizzo'**
+  String get subscriptionLoginRequired;
+
+  /// No description provided for @subscriptionSuggestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggerimento'**
+  String get subscriptionSuggestion;
+
+  /// No description provided for @subscriptionSuggestionText.
+  ///
+  /// In it, this message translates to:
+  /// **'Passa a Premium per sbloccare più progetti, rimuovere le pubblicità e aumentare i limiti. Prova gratis per 7 giorni!'**
+  String get subscriptionSuggestionText;
+
+  /// No description provided for @subscriptionPaymentManagement.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestione pagamenti'**
+  String get subscriptionPaymentManagement;
+
+  /// No description provided for @subscriptionNoActiveSubscription.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun abbonamento attivo'**
+  String get subscriptionNoActiveSubscription;
+
+  /// No description provided for @subscriptionUsingFreePlan.
+  ///
+  /// In it, this message translates to:
+  /// **'Stai usando il piano Free'**
+  String get subscriptionUsingFreePlan;
+
+  /// No description provided for @subscriptionViewPaidPlans.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi piani a pagamento'**
+  String get subscriptionViewPaidPlans;
+
+  /// No description provided for @subscriptionPaymentMethod.
+  ///
+  /// In it, this message translates to:
+  /// **'Metodo di pagamento'**
+  String get subscriptionPaymentMethod;
+
+  /// No description provided for @subscriptionEditPaymentMethod.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica carta o metodo di pagamento'**
+  String get subscriptionEditPaymentMethod;
+
+  /// No description provided for @subscriptionInvoices.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatture'**
+  String get subscriptionInvoices;
+
+  /// No description provided for @subscriptionViewInvoices.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizza e scarica le fatture'**
+  String get subscriptionViewInvoices;
+
+  /// No description provided for @subscriptionCancelSubscription.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancella abbonamento'**
+  String get subscriptionCancelSubscription;
+
+  /// No description provided for @subscriptionAccessUntilEnd.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'accesso rimarrà attivo fino a fine periodo'**
+  String get subscriptionAccessUntilEnd;
+
+  /// No description provided for @subscriptionPaymentHistory.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico pagamenti'**
+  String get subscriptionPaymentHistory;
+
+  /// No description provided for @subscriptionNoPayments.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun pagamento registrato'**
+  String get subscriptionNoPayments;
+
+  /// No description provided for @subscriptionCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato'**
+  String get subscriptionCompleted;
+
+  /// No description provided for @subscriptionDateNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Data non disponibile'**
+  String get subscriptionDateNotAvailable;
+
+  /// No description provided for @subscriptionFaq.
+  ///
+  /// In it, this message translates to:
+  /// **'Domande frequenti'**
+  String get subscriptionFaq;
+
+  /// No description provided for @subscriptionFaqCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Posso cancellare in qualsiasi momento?'**
+  String get subscriptionFaqCancel;
+
+  /// No description provided for @subscriptionFaqCancelAnswer.
+  ///
+  /// In it, this message translates to:
+  /// **'Sì, puoi cancellare il tuo abbonamento in qualsiasi momento. L\'accesso rimarrà attivo fino alla fine del periodo pagato.'**
+  String get subscriptionFaqCancelAnswer;
+
+  /// No description provided for @subscriptionFaqTrial.
+  ///
+  /// In it, this message translates to:
+  /// **'Come funziona il trial gratuito?'**
+  String get subscriptionFaqTrial;
+
+  /// No description provided for @subscriptionFaqTrialAnswer.
+  ///
+  /// In it, this message translates to:
+  /// **'Con il trial gratuito hai accesso completo a tutte le funzionalità del piano scelto. Al termine del periodo di prova, inizierà automaticamente l\'abbonamento a pagamento.'**
+  String get subscriptionFaqTrialAnswer;
+
+  /// No description provided for @subscriptionFaqChange.
+  ///
+  /// In it, this message translates to:
+  /// **'Posso cambiare piano?'**
+  String get subscriptionFaqChange;
+
+  /// No description provided for @subscriptionFaqChangeAnswer.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi fare upgrade o downgrade in qualsiasi momento. L\'importo verrà calcolato in modo proporzionale.'**
+  String get subscriptionFaqChangeAnswer;
+
+  /// No description provided for @subscriptionFaqData.
+  ///
+  /// In it, this message translates to:
+  /// **'I miei dati sono al sicuro?'**
+  String get subscriptionFaqData;
+
+  /// No description provided for @subscriptionFaqDataAnswer.
+  ///
+  /// In it, this message translates to:
+  /// **'Assolutamente sì. Non perderai mai i tuoi dati, anche se passi a un piano inferiore. Alcune funzionalità potrebbero essere limitate, ma i dati restano sempre accessibili.'**
+  String get subscriptionFaqDataAnswer;
+
+  /// No description provided for @subscriptionStatusActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivo'**
+  String get subscriptionStatusActive;
+
+  /// No description provided for @subscriptionStatusTrialing.
+  ///
+  /// In it, this message translates to:
+  /// **'In prova'**
+  String get subscriptionStatusTrialing;
+
+  /// No description provided for @subscriptionStatusPastDue.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagamento in ritardo'**
+  String get subscriptionStatusPastDue;
+
+  /// No description provided for @subscriptionStatusCancelled.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancellato'**
+  String get subscriptionStatusCancelled;
+
+  /// No description provided for @subscriptionStatusExpired.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaduto'**
+  String get subscriptionStatusExpired;
+
+  /// No description provided for @subscriptionStatusPaused.
+  ///
+  /// In it, this message translates to:
+  /// **'In pausa'**
+  String get subscriptionStatusPaused;
+
+  /// No description provided for @subscriptionStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato'**
+  String get subscriptionStatus;
+
+  /// No description provided for @subscriptionStarted.
+  ///
+  /// In it, this message translates to:
+  /// **'Iniziato'**
+  String get subscriptionStarted;
+
+  /// No description provided for @subscriptionNextRenewal.
+  ///
+  /// In it, this message translates to:
+  /// **'Prossimo rinnovo'**
+  String get subscriptionNextRenewal;
+
+  /// No description provided for @subscriptionTrialEnd.
+  ///
+  /// In it, this message translates to:
+  /// **'Fine trial'**
+  String get subscriptionTrialEnd;
+
+  /// No description provided for @toolSectionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Strumenti'**
+  String get toolSectionTitle;
+
+  /// No description provided for @deadlineTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Scadenze'**
+  String get deadlineTitle;
+
+  /// No description provided for @deadlineNoUpcoming.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna scadenza imminente'**
+  String get deadlineNoUpcoming;
+
+  /// No description provided for @deadlineToday.
+  ///
+  /// In it, this message translates to:
+  /// **'Oggi'**
+  String get deadlineToday;
+
+  /// No description provided for @deadlineTomorrow.
+  ///
+  /// In it, this message translates to:
+  /// **'Domani'**
+  String get deadlineTomorrow;
+
+  /// No description provided for @deadlineSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint'**
+  String get deadlineSprint;
+
+  /// No description provided for @deadlineTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Task'**
+  String get deadlineTask;
+
+  /// No description provided for @favTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Preferiti'**
+  String get favTitle;
+
+  /// No description provided for @favFilterAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get favFilterAll;
+
+  /// No description provided for @favFilterTodo.
+  ///
+  /// In it, this message translates to:
+  /// **'Liste Todo'**
+  String get favFilterTodo;
+
+  /// No description provided for @favFilterMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrici'**
+  String get favFilterMatrix;
+
+  /// No description provided for @favFilterProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetti'**
+  String get favFilterProject;
+
+  /// No description provided for @favFilterPoker.
+  ///
+  /// In it, this message translates to:
+  /// **'Stime'**
+  String get favFilterPoker;
+
+  /// No description provided for @actionRemoveFromFavorites.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi dai preferiti'**
+  String get actionRemoveFromFavorites;
+
+  /// No description provided for @favFilterRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Retro'**
+  String get favFilterRetro;
+
+  /// No description provided for @favNoFavorites.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun preferito trovato'**
+  String get favNoFavorites;
+
+  /// No description provided for @favTypeTodo.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista Todo'**
+  String get favTypeTodo;
+
+  /// No description provided for @favTypeMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice Eisenhower'**
+  String get favTypeMatrix;
+
+  /// No description provided for @favTypeProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetto Agile'**
+  String get favTypeProject;
+
+  /// No description provided for @favTypeRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospective'**
+  String get favTypeRetro;
+
+  /// No description provided for @favTypePoker.
+  ///
+  /// In it, this message translates to:
+  /// **'Planning Poker'**
+  String get favTypePoker;
+
+  /// No description provided for @favTypeTool.
+  ///
+  /// In it, this message translates to:
+  /// **'Strumento'**
+  String get favTypeTool;
+
+  /// No description provided for @deadline2Days.
+  ///
+  /// In it, this message translates to:
+  /// **'2 Giorni'**
+  String get deadline2Days;
+
+  /// No description provided for @deadline3Days.
+  ///
+  /// In it, this message translates to:
+  /// **'3 Giorni'**
+  String get deadline3Days;
+
+  /// No description provided for @deadline5Days.
+  ///
+  /// In it, this message translates to:
+  /// **'5 Giorni'**
+  String get deadline5Days;
+
+  /// No description provided for @deadlineConfigTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura Scorciatoie'**
+  String get deadlineConfigTitle;
+
+  /// No description provided for @deadlineConfigDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli gli intervalli di tempo da mostrare nell\'intestazione.'**
+  String get deadlineConfigDesc;
+
+  /// No description provided for @smartTodoClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get smartTodoClose;
+
+  /// No description provided for @smartTodoDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatto'**
+  String get smartTodoDone;
+
+  /// No description provided for @smartTodoAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get smartTodoAdd;
+
+  /// No description provided for @smartTodoEmailLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Email'**
+  String get smartTodoEmailLabel;
+
+  /// No description provided for @exceptionLoginGoogleRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Login Google necessario per inviare email'**
+  String get exceptionLoginGoogleRequired;
+
+  /// No description provided for @exceptionUserNotAuthenticated.
+  ///
+  /// In it, this message translates to:
+  /// **'Utente non autenticato'**
+  String get exceptionUserNotAuthenticated;
+
+  /// No description provided for @errorLoginFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore login: {error}'**
+  String errorLoginFailed(String error);
+
+  /// No description provided for @retroParticipantsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipanti ({count})'**
+  String retroParticipantsTitle(int count);
+
+  /// No description provided for @actionReopen.
+  ///
+  /// In it, this message translates to:
+  /// **'Riapri'**
+  String get actionReopen;
+
+  /// No description provided for @retroWaitingForFacilitator.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa che il facilitatore avvii la sessione...'**
+  String get retroWaitingForFacilitator;
+
+  /// No description provided for @retroGeneratingSheet.
+  ///
+  /// In it, this message translates to:
+  /// **'Generazione Google Sheet in corso...'**
+  String get retroGeneratingSheet;
+
+  /// No description provided for @retroExportSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Export completato!'**
+  String get retroExportSuccess;
+
+  /// No description provided for @retroExportError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'export su Sheets.'**
+  String get retroExportError;
+
+  /// No description provided for @retroReportCopied.
+  ///
+  /// In it, this message translates to:
+  /// **'Report copiato negli appunti! Incollalo in Excel o Note.'**
+  String get retroReportCopied;
+
+  /// No description provided for @retroReopenTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Riapri Retrospettiva'**
+  String get retroReopenTitle;
+
+  /// No description provided for @retroReopenConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler riaprire la retrospettiva? Tornerà alla fase di Discussione.'**
+  String get retroReopenConfirm;
+
+  /// No description provided for @errorAuthRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Autenticazione richiesta'**
+  String get errorAuthRequired;
+
+  /// No description provided for @errorRetroIdMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'ID Retrospettiva mancante'**
+  String get errorRetroIdMissing;
+
+  /// No description provided for @pokerInviteAccepted.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito accettato! Verrai reindirizzato alla sessione.'**
+  String get pokerInviteAccepted;
+
+  /// No description provided for @pokerInviteRefused.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito rifiutato'**
+  String get pokerInviteRefused;
+
+  /// No description provided for @pokerConfirmRefuseTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiuta Invito'**
+  String get pokerConfirmRefuseTitle;
+
+  /// No description provided for @pokerConfirmRefuseContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler rifiutare questo invito?'**
+  String get pokerConfirmRefuseContent;
+
+  /// No description provided for @pokerVerifyingInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica invito in corso...'**
+  String get pokerVerifyingInvite;
+
+  /// No description provided for @actionBackHome.
+  ///
+  /// In it, this message translates to:
+  /// **'Torna alla Home'**
+  String get actionBackHome;
+
+  /// No description provided for @actionSignin.
+  ///
+  /// In it, this message translates to:
+  /// **'Accedi'**
+  String get actionSignin;
+
+  /// No description provided for @exceptionStoryNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Story non trovata'**
+  String get exceptionStoryNotFound;
+
+  /// No description provided for @exceptionNoTasksInProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun task trovato nel progetto'**
+  String get exceptionNoTasksInProject;
+
+  /// No description provided for @exceptionInvitePending.
+  ///
+  /// In it, this message translates to:
+  /// **'Esiste già un invito in attesa per questa email'**
+  String get exceptionInvitePending;
+
+  /// No description provided for @exceptionAlreadyParticipant.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'utente è già un partecipante'**
+  String get exceptionAlreadyParticipant;
+
+  /// No description provided for @exceptionInviteInvalid.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito non valido o scaduto'**
+  String get exceptionInviteInvalid;
+
+  /// No description provided for @exceptionInviteCalculated.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito scaduto'**
+  String get exceptionInviteCalculated;
+
+  /// No description provided for @exceptionInviteWrongUser.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito destinato ad un altro utente'**
+  String get exceptionInviteWrongUser;
+
+  /// No description provided for @todoImportTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa Task'**
+  String get todoImportTasks;
+
+  /// No description provided for @todoExportSheets.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta su Sheets'**
+  String get todoExportSheets;
+
+  /// No description provided for @todoDeleteColumnTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Colonna'**
+  String get todoDeleteColumnTitle;
+
+  /// No description provided for @todoDeleteColumnConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro? I task in questa colonna andranno persi.'**
+  String get todoDeleteColumnConfirm;
+
+  /// No description provided for @exceptionListNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista non trovata'**
+  String get exceptionListNotFound;
+
+  /// No description provided for @langItalian.
+  ///
+  /// In it, this message translates to:
+  /// **'Italiano'**
+  String get langItalian;
+
+  /// No description provided for @langEnglish.
+  ///
+  /// In it, this message translates to:
+  /// **'Inglese'**
+  String get langEnglish;
+
+  /// No description provided for @jsonExportLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Scarica una copia JSON dei tuoi dati'**
+  String get jsonExportLabel;
+
+  /// No description provided for @errorExporting.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'export: {error}'**
+  String errorExporting(String error);
+
+  /// No description provided for @smartTodoViewKanban.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban'**
+  String get smartTodoViewKanban;
+
+  /// No description provided for @smartTodoViewList.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista'**
+  String get smartTodoViewList;
+
+  /// No description provided for @smartTodoViewResource.
+  ///
+  /// In it, this message translates to:
+  /// **'Per Risorsa'**
+  String get smartTodoViewResource;
+
+  /// No description provided for @smartTodoInviteTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Invita'**
+  String get smartTodoInviteTooltip;
+
+  /// No description provided for @smartTodoOptionsTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Altre Opzioni'**
+  String get smartTodoOptionsTooltip;
+
+  /// No description provided for @smartTodoActionImport.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa Task'**
+  String get smartTodoActionImport;
+
+  /// No description provided for @smartTodoActionExportSheets.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta su Sheets'**
+  String get smartTodoActionExportSheets;
+
+  /// No description provided for @smartTodoDeleteColumnTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Colonna'**
+  String get smartTodoDeleteColumnTitle;
+
+  /// No description provided for @smartTodoDeleteColumnContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro? I task in questa colonna non saranno più visibili.'**
+  String get smartTodoDeleteColumnContent;
+
+  /// No description provided for @smartTodoNewColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Colonna'**
+  String get smartTodoNewColumn;
+
+  /// No description provided for @smartTodoColumnNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Colonna'**
+  String get smartTodoColumnNameHint;
+
+  /// No description provided for @smartTodoColorLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'COLORE'**
+  String get smartTodoColorLabel;
+
+  /// No description provided for @smartTodoMarkAsDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Segna come completato'**
+  String get smartTodoMarkAsDone;
+
+  /// No description provided for @smartTodoColumnDoneDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'I task in questa colonna saranno considerati \'Fatti\' (barrati).'**
+  String get smartTodoColumnDoneDescription;
+
+  /// No description provided for @smartTodoListSettingsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni Lista'**
+  String get smartTodoListSettingsTitle;
+
+  /// No description provided for @smartTodoRenameList.
+  ///
+  /// In it, this message translates to:
+  /// **'Rinomina Lista'**
+  String get smartTodoRenameList;
+
+  /// No description provided for @smartTodoManageTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisci Tag'**
+  String get smartTodoManageTags;
+
+  /// No description provided for @smartTodoDeleteList.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Lista'**
+  String get smartTodoDeleteList;
+
+  /// No description provided for @smartTodoEditPermissionError.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi modificare solo i task a te assegnati'**
+  String get smartTodoEditPermissionError;
+
+  /// No description provided for @errorDeletingAccount.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'eliminazione dell\'account: {error}'**
+  String errorDeletingAccount(String error);
+
+  /// No description provided for @errorRecentLoginRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'È necessario aver effettuato l\'accesso di recente. Per favore, esci e rientra prima di eliminare l\'account.'**
+  String get errorRecentLoginRequired;
+
+  /// No description provided for @actionGuide.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida {framework}'**
+  String actionGuide(String framework);
+
+  /// No description provided for @actionExportSheets.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta su Google Sheets'**
+  String get actionExportSheets;
+
+  /// No description provided for @actionAuditLog.
+  ///
+  /// In it, this message translates to:
+  /// **'Audit Log'**
+  String get actionAuditLog;
+
+  /// No description provided for @actionInviteMember.
+  ///
+  /// In it, this message translates to:
+  /// **'Invita Membro'**
+  String get actionInviteMember;
+
+  /// No description provided for @actionSettings.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni'**
+  String get actionSettings;
+
+  /// No description provided for @retroTemplateStartStopContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Start, Stop, Continue'**
+  String get retroTemplateStartStopContinue;
+
+  /// No description provided for @retroDescStartStopContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Orientata all\'azione: Iniziare, Smettere, Continuare.'**
+  String get retroDescStartStopContinue;
+
+  /// No description provided for @retroUsageStartStopContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale per feedback azionabili e focus sui cambiamenti comportamentali.'**
+  String get retroUsageStartStopContinue;
+
+  /// No description provided for @retroTemplateSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Barca a Vela'**
+  String get retroTemplateSailboat;
+
+  /// No description provided for @retroDescSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Visiva: Vento (spinge), Ancore (frena), Rocce (rischi), Isola (obiettivi).'**
+  String get retroDescSailboat;
+
+  /// No description provided for @retroUsageSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale per visualizzare il viaggio del team, obiettivi e rischi. Ottima per il pensiero creativo.'**
+  String get retroUsageSailboat;
+
+  /// No description provided for @retroTemplate4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'4 Ls'**
+  String get retroTemplate4Ls;
+
+  /// No description provided for @retroDesc4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'Liked (Piaciuto), Learned (Imparato), Lacked (Mancato), Longed For (Desiderato).'**
+  String get retroDesc4Ls;
+
+  /// No description provided for @retroUsage4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'Riflessiva: Ideale per imparare dal passato ed evidenziare aspetti emotivi e di apprendimento.'**
+  String get retroUsage4Ls;
+
+  /// No description provided for @retroTemplateStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Stella Marina'**
+  String get retroTemplateStarfish;
+
+  /// No description provided for @retroDescStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Keep, Stop, Start, More, Less.'**
+  String get retroDescStarfish;
+
+  /// No description provided for @retroUsageStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Calibrazione: Ideale per scalare gli sforzi (fare di più/meno), non solo stop/start binari.'**
+  String get retroUsageStarfish;
+
+  /// No description provided for @retroTemplateMadSadGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Mad Sad Glad'**
+  String get retroTemplateMadSadGlad;
+
+  /// No description provided for @retroDescMadSadGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Emotiva: Arrabbiato, Triste, Felice.'**
+  String get retroDescMadSadGlad;
+
+  /// No description provided for @retroUsageMadSadGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale per check-in emotivi, risolvere conflitti o dopo uno sprint stressante.'**
+  String get retroUsageMadSadGlad;
+
+  /// No description provided for @retroTemplateDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'DAKI (Drop Add Keep Improve)'**
+  String get retroTemplateDAKI;
+
+  /// No description provided for @retroDescDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'Pragmatica: Elimina, Aggiungi, Mantieni, Migliora.'**
+  String get retroDescDAKI;
+
+  /// No description provided for @retroUsageDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'Decisiva: Ideale per fare pulizia. Focus su decisioni concrete di Eliminare o Aggiungere.'**
+  String get retroUsageDAKI;
+
+  /// No description provided for @retroIcebreakerSentiment.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto Sentiment'**
+  String get retroIcebreakerSentiment;
+
+  /// No description provided for @retroIcebreakerSentimentDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota da 1 a 5 come ti sei sentito durante lo sprint.'**
+  String get retroIcebreakerSentimentDesc;
+
+  /// No description provided for @retroIcebreakerOneWord.
+  ///
+  /// In it, this message translates to:
+  /// **'Una Parola'**
+  String get retroIcebreakerOneWord;
+
+  /// No description provided for @retroIcebreakerOneWordDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrivi lo sprint con una sola parola.'**
+  String get retroIcebreakerOneWordDesc;
+
+  /// No description provided for @retroIcebreakerWeather.
+  ///
+  /// In it, this message translates to:
+  /// **'Meteo'**
+  String get retroIcebreakerWeather;
+
+  /// No description provided for @retroIcebreakerWeatherDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli un\'icona meteo che rappresenta lo sprint.'**
+  String get retroIcebreakerWeatherDesc;
+
+  /// No description provided for @retroSelectIcebreakerTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona l\'attività per rompere il ghiaccio'**
+  String get retroSelectIcebreakerTooltip;
+
+  /// No description provided for @retroIcebreakerLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Attività iniziale'**
+  String get retroIcebreakerLabel;
+
+  /// No description provided for @retroTimePhasesOptional.
+  ///
+  /// In it, this message translates to:
+  /// **'Timer Fasi (Opzionale)'**
+  String get retroTimePhasesOptional;
+
+  /// No description provided for @retroTimePhasesDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Imposta la durata in minuti per ogni fase:'**
+  String get retroTimePhasesDesc;
+
+  /// No description provided for @retroIcebreakerSectionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Icebreaker'**
+  String get retroIcebreakerSectionTitle;
+
+  /// No description provided for @retroPhaseIcebreaker.
+  ///
+  /// In it, this message translates to:
+  /// **'ICEBREAKER'**
+  String get retroPhaseIcebreaker;
+
+  /// No description provided for @retroPhaseWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'SCRITTURA'**
+  String get retroPhaseWriting;
+
+  /// No description provided for @retroPhaseVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'VOTAZIONE'**
+  String get retroPhaseVoting;
+
+  /// No description provided for @retroPhaseDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'DISCUSSIONE'**
+  String get retroPhaseDiscuss;
 }
 
 class _AppLocalizationsDelegate
@@ -5916,7 +7672,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'it'].contains(locale.languageCode);
+      <String>['en', 'es', 'fr', 'it'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -5927,6 +7683,10 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'it':
       return AppLocalizationsIt();
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../services/smart_todo_service.dart';
-import '../../services/auth_service.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
+import '../../services/smart_todo_service.dart';
+import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 import 'smart_todo_detail_screen.dart';
 import 'smart_todo_global_view.dart';
+import '../../widgets/home/favorite_star.dart';
 
 class SmartTodoDashboard extends StatefulWidget {
   const SmartTodoDashboard({super.key});
@@ -20,33 +22,73 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String _viewMode = 'lists'; // 'lists', 'global'
   String? _filterMode; // Nullable to handle Hot Reload init issues
+  bool _initialNavigationChecked = false;
+  String _searchQuery = '';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialNavigationChecked) {
+      _initialNavigationChecked = true;
+      _checkInitialNavigation();
+    }
+  }
+
+  Future<void> _checkInitialNavigation() async {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('id')) {
+      final listId = args['id'] as String;
+      // Fetch list and navigate
+      try {
+        final lists = await _todoService.streamLists(_currentUserEmail).first;
+        final targetList = lists.cast<TodoListModel?>().firstWhere(
+          (l) => l?.id == listId,
+          orElse: () => null,
+        );
+        
+        if (targetList != null && mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SmartTodoDetailScreen(list: targetList),
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error navigating to list: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // Current filter or default
     final currentFilter = _filterMode ?? 'today';
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(Icons.check_circle_outline),
+            Icon(Icons.check_circle_outline, color: Colors.blue),
             SizedBox(width: 8),
             Text('To-Do'),
           ],
         ),
         actions: [
-          _buildFilterChip('Oggi', Icons.today, 'today', currentFilter),
+          _buildFilterChip(l10n?.smartTodoFilterToday ?? 'Today', Icons.today, 'today', currentFilter),
           const SizedBox(width: 8),
-          _buildFilterChip('I Miei Task', Icons.person_outline, 'all_my', currentFilter),
+          _buildFilterChip(l10n?.smartTodoFilterMyTasks ?? 'My Tasks', Icons.person_outline, 'all_my', currentFilter),
           const SizedBox(width: 8),
-          _buildFilterChip('Owner', Icons.folder_shared_outlined, 'owner', currentFilter),
+          _buildFilterChip(l10n?.smartTodoFilterOwner ?? 'Owner', Icons.folder_shared_outlined, 'owner', currentFilter),
           const SizedBox(width: 16),
           Container(width: 1, height: 24, color: Colors.grey[300]), // Divider
           const SizedBox(width: 16),
           IconButton(
             icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
-            tooltip: _viewMode == 'lists' ? 'Vedi Task Globali' : 'Vedi Liste',
+            tooltip: _viewMode == 'lists'
+                ? (l10n?.smartTodoViewGlobalTasks ?? 'View Global Tasks')
+                : (l10n?.smartTodoViewLists ?? 'View Lists'),
             onPressed: () => setState(() {
               if (_viewMode == 'lists') {
                 _viewMode = 'global';
@@ -68,7 +110,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Errore: ${snapshot.error}'));
+            return Center(child: Text(l10n?.smartTodoError(snapshot.error.toString()) ?? 'Error: ${snapshot.error}'));
           }
 
           var lists = snapshot.data ?? [];
@@ -86,48 +128,117 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             );
           }
 
+          // Filter by search query
+          if (_searchQuery.isNotEmpty) {
+            lists = lists.where((l) =>
+                l.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                l.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+          }
+
+          if (lists.isEmpty && _searchQuery.isNotEmpty) {
+             return Column(
+               children: [
+                 Padding(
+                   padding: const EdgeInsets.all(16.0),
+                   child: _buildSearchBar(),
+                 ),
+                 Expanded(child: _buildNoResultsState()),
+               ],
+             );
+          }
+
           if (lists.isEmpty) {
             return _buildEmptyState();
           }
 
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 240, // Reduced size (~30% less than 350)
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.3, // Adjusted for narrower width
-            ),
-            itemCount: lists.length,
-            itemBuilder: (context, index) {
-              return _buildListCard(lists[index]);
-            },
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: _buildSearchBar(),
+              ),
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 240, // Reduced size (~30% less than 350)
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 1.3, // Adjusted for narrower width
+                  ),
+                  itemCount: lists.length,
+                  itemBuilder: (context, index) {
+                    return _buildListCard(lists[index]);
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateListDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('Nuova Lista'),
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(l10n?.smartTodoNewListDialogTitle ?? 'New List', style: const TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    final l10n = AppLocalizations.of(context);
+    return TextField(
+      decoration: InputDecoration(
+        hintText: l10n?.smartTodoSearchHint ?? 'Search lists...',
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: _searchQuery.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () => setState(() => _searchQuery = ''),
+              )
+            : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      onChanged: (value) => setState(() => _searchQuery = value),
+    );
+  }
+
+  Widget _buildNoResultsState() {
+    final l10n = AppLocalizations.of(context);
+     return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            l10n?.smartTodoNoSearchResults(_searchQuery) ?? 'No results for "$_searchQuery"',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.checklist, size: 80, color: Colors.grey[300]),
+          Icon(Icons.checklist, size: 80, color: Colors.blue.withOpacity(0.5)),
           const SizedBox(height: 16),
           Text(
-            'Nessuna lista presente',
+            l10n?.smartTodoNoListsPresent ?? 'No lists available',
             style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Crea la tua prima lista per iniziare',
-            style: TextStyle(color: Colors.grey),
+          Text(
+            l10n?.smartTodoCreateFirstList ?? 'Create your first list to get started',
+            style: const TextStyle(color: Colors.grey),
           ),
         ],
       ),
@@ -136,7 +247,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
 
   Widget _buildListCard(TodoListModel list) {
     final isOwner = list.ownerId == _currentUserEmail;
-    
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -182,6 +293,14 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        FavoriteStar(
+                          resourceId: list.id,
+                          type: 'todo_list',
+                          title: list.title,
+                          colorHex: '#2196F3', // Default color for todo
+                          size: 20,
+                        ),
+                        const SizedBox(width: 4),
                         if (isOwner)
                           SizedBox(
                             height: 24,
@@ -189,14 +308,14 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                             child: PopupMenuButton<String>(
                               padding: EdgeInsets.zero,
                               icon: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
-                              itemBuilder: (context) => [
-                                const PopupMenuItem(
+                              itemBuilder: (ctx) => [
+                                PopupMenuItem(
                                   value: 'rename',
-                                  child: Row(children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Modifica')]),
+                                  child: Row(children: [const Icon(Icons.edit, size: 16), const SizedBox(width: 8), Text(l10n?.smartTodoEdit ?? 'Edit')]),
                                 ),
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'delete',
-                                  child: Row(children: [Icon(Icons.delete, size: 16, color: Colors.red), SizedBox(width: 8), Text('Elimina', style: TextStyle(color: Colors.red))]),
+                                  child: Row(children: [const Icon(Icons.delete, size: 16, color: Colors.red), const SizedBox(width: 8), Text(l10n?.smartTodoDelete ?? 'Delete', style: const TextStyle(color: Colors.red))]),
                                 ),
                               ],
                               onSelected: (value) {
@@ -259,7 +378,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                                borderRadius: BorderRadius.circular(10),
                              ),
                              child: Text(
-                               '${list.participants.length} membri',
+                               l10n?.smartTodoMembersCount(list.participants.length) ?? '${list.participants.length} members',
                                style: const TextStyle(fontSize: 10, color: Colors.blue),
                              ),
                            ),
@@ -282,31 +401,32 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   void _showCreateListDialog() {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Nuova Lista'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n?.smartTodoNewListDialogTitle ?? 'New List'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: titleController,
-              decoration: const InputDecoration(labelText: 'Titolo *'),
+              decoration: InputDecoration(labelText: l10n?.smartTodoTitleLabel ?? 'Title *'),
               textCapitalization: TextCapitalization.sentences,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Descrizione'),
+              decoration: InputDecoration(labelText: l10n?.smartTodoDescriptionLabel ?? 'Description'),
               maxLines: 3,
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n?.smartTodoCancel ?? 'Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -326,16 +446,16 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                   )
                 },
                 columns: [
-                  const TodoColumn(id: 'todo', title: 'Da Fare', colorValue: 0xFF2196F3),
-                  const TodoColumn(id: 'in_progress', title: 'In Corso', colorValue: 0xFFFF9800),
-                  const TodoColumn(id: 'done', title: 'Fatto', colorValue: 0xFF4CAF50, isDone: true),
+                  TodoColumn(id: 'todo', title: l10n?.smartTodoColumnTodo ?? 'To Do', colorValue: 0xFF2196F3),
+                  TodoColumn(id: 'in_progress', title: l10n?.smartTodoColumnInProgress ?? 'In Progress', colorValue: 0xFFFF9800),
+                  TodoColumn(id: 'done', title: l10n?.smartTodoColumnDone ?? 'Done', colorValue: 0xFF4CAF50, isDone: true),
                 ],
               );
 
               await _todoService.createList(newList, _currentUserEmail);
-              if (context.mounted) Navigator.pop(context);
+              if (dialogContext.mounted) Navigator.pop(dialogContext);
             },
-            child: const Text('Crea'),
+            child: Text(l10n?.smartTodoCreate ?? 'Create'),
           ),
         ],
       ),
@@ -343,25 +463,26 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   }
   void _showRenameListDialog(TodoListModel list) {
     final controller = TextEditingController(text: list.title);
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rinomina Lista'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n?.smartTodoRenameListTitle ?? 'Rename List'),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Nuovo Nome'),
+          decoration: InputDecoration(labelText: l10n?.smartTodoNewNameLabel ?? 'New Name'),
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n?.smartTodoCancel ?? 'Cancel')),
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
                 _todoService.updateList(list.copyWith(title: controller.text));
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               }
             },
-            child: const Text('Salva'),
+            child: Text(l10n?.smartTodoSave ?? 'Save'),
           ),
         ],
       ),
@@ -369,20 +490,21 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   }
 
   void _confirmDeleteList(TodoListModel list) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Elimina Lista'),
-        content: const Text('Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione è irreversibile.'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n?.smartTodoDeleteListTitle ?? 'Delete List'),
+        content: Text(l10n?.smartTodoDeleteListConfirm ?? 'Are you sure you want to delete this list and all its tasks? This action cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n?.smartTodoCancel ?? 'Cancel')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             onPressed: () async {
-              Navigator.pop(context); // Close dialog
+              Navigator.pop(dialogContext); // Close dialog
               await _todoService.deleteList(list.id);
             },
-            child: const Text('Elimina'),
+            child: Text(l10n?.smartTodoDelete ?? 'Delete'),
           ),
         ],
       ),

@@ -11,11 +11,11 @@ class GdprScreen extends StatelessWidget {
       lastUpdated: '18 Gennaio 2026',
       mdContent: '''
 ## Impegno per la Protezione dei Dati (GDPR)
-In conformità con il Regolamento Generale sulla Protezione dei Dati (GDPR) dell'Unione Europea, Agile Tools si impegna a proteggere i dati personali degli utenti e a garantire la trasparenza nel loro trattamento.
+In conformità con il Regolamento Generale sulla Protezione dei Dati (GDPR) dell'Unione Europea, Keisen si impegna a proteggere i dati personali degli utenti e a garantire la trasparenza nel loro trattamento.
 
 ## Titolare del Trattamento
 Il Titolare del Trattamento dei dati è:
-**Agile Tools Team**
+**Keisen Team**
 Email: support@agiletools.app
 
 ## Base Giuridica del Trattamento

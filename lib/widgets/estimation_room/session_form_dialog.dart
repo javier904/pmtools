@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/planning_poker_session_model.dart';
 import '../../models/estimation_mode.dart';
+import '../../utils/validators.dart';
 
 /// Dialog per creare/modificare una sessione di Planning Poker
 class SessionFormDialog extends StatefulWidget {
@@ -14,6 +15,7 @@ class SessionFormDialog extends StatefulWidget {
 }
 
 class _SessionFormDialogState extends State<SessionFormDialog> {
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
 
@@ -64,13 +66,17 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
       content: SizedBox(
         width: 500,
         child: SingleChildScrollView(
-          child: Column(
+          child: Form(
+            key: _formKey,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Nome
-              TextField(
+              // Nome (con validazione)
+              TextFormField(
                 controller: _nameController,
+                maxLength: Validators.maxTitleLength,
+                validator: (v) => Validators.title(v, fieldName: l10n.sessionNameRequired),
                 decoration: InputDecoration(
                   labelText: l10n.sessionNameRequired,
                   hintText: l10n.sessionNameHint,
@@ -79,9 +85,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                 autofocus: true,
               ),
               const SizedBox(height: 16),
-              // Descrizione
-              TextField(
+              // Descrizione (con validazione opzionale)
+              TextFormField(
                 controller: _descriptionController,
+                maxLength: Validators.maxDescriptionLength,
+                validator: Validators.description,
                 decoration: InputDecoration(
                   labelText: l10n.sessionDescription,
                   hintText: l10n.formDescriptionHint,
@@ -197,6 +205,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
               ),
             ],
           ),
+          ),
         ),
       ),
       actions: [
@@ -234,12 +243,8 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
   }
 
   void _save() {
-    final l10n = AppLocalizations.of(context)!;
-
-    if (_nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.formTitleRequired)),
-      );
+    // 🔒 SICUREZZA: Usa validazione Form invece di controllo manuale
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 

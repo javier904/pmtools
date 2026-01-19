@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../l10n/app_localizations.dart';
 import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
+import '../models/agile_enums.dart';
 import '../services/eisenhower_firestore_service.dart';
 import '../services/eisenhower_invite_service.dart';
 import '../services/eisenhower_sheets_export_service.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
+import '../l10n/app_localizations.dart';
 import '../themes/app_colors.dart';
-import '../widgets/eisenhower/matrix_grid_widget.dart';
-import '../widgets/eisenhower/activity_card_widget.dart';
-import '../widgets/eisenhower/vote_collection_dialog.dart';
-import '../widgets/eisenhower/scatter_chart_widget.dart';
 import '../widgets/eisenhower/matrix_search_widget.dart';
-import '../widgets/eisenhower/participant_invite_dialog.dart';
-import '../widgets/eisenhower/independent_vote_dialog.dart';
 import '../widgets/eisenhower/vote_reveal_widget.dart';
 import '../widgets/eisenhower/raci_matrix_widget.dart';
+import '../widgets/eisenhower/vote_collection_dialog.dart';
+import '../widgets/eisenhower/activity_card_widget.dart';
+import '../widgets/eisenhower/participant_invite_dialog.dart';
+import '../widgets/eisenhower/independent_vote_dialog.dart';
+import '../widgets/eisenhower/scatter_chart_widget.dart';
+import '../widgets/eisenhower/matrix_grid_widget.dart';
+import '../widgets/home/favorite_star.dart';
 
 /// Screen principale per la gestione delle Matrici di Eisenhower
 ///
@@ -45,6 +47,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   List<EisenhowerActivityModel> _activities = [];
   bool _isLoading = true;
   bool _isExporting = false;
+  bool _isInit = false;
 
   // Vista: 0 = Griglia, 1 = Grafico, 2 = Lista Priorità, 3 = RACI
   int _viewMode = 0;
@@ -57,7 +60,47 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // _loadData sarà chiamato in didChangeDependencies se non ci sono argomenti
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      _checkArguments();
+      _isInit = true;
+    }
+  }
+
+  Future<void> _checkArguments() async {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map<String, dynamic> && args.containsKey('id')) {
+      final matrixId = args['id'] as String;
+      await _loadMatrixById(matrixId);
+    } else {
+      _loadData();
+    }
+  }
+
+  Future<void> _loadMatrixById(String id) async {
+    setState(() => _isLoading = true);
+    try {
+      final matrix = await _firestoreService.getMatrix(id);
+      if (matrix != null && mounted) {
+        setState(() {
+          _selectedMatrix = matrix;
+        });
+        await _loadActivities(id);
+      } else {
+        // Fallback se non trovato
+        await _loadData();
+      }
+    } catch (e) {
+      _showError('Errore caricamento matrice: $e');
+      await _loadData();
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _loadData() async {
@@ -224,7 +267,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               // Header
               Row(
                 children: [
-                  const Icon(Icons.folder_open, color: AppColors.secondary),
+                  const Icon(Icons.folder_open, color: AppColors.success),
                   const SizedBox(width: 8),
                   Text(
                     l10n.eisenhowerYourMatricesCount(filteredMatrices.length, matrices.length),
@@ -393,10 +436,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                       width: 26,
                       height: 26,
                       decoration: BoxDecoration(
-                        color: AppColors.secondary.withOpacity(0.15),
+                        color: AppColors.success.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Icon(Icons.grid_4x4, color: AppColors.secondary, size: 14),
+                      child: const Icon(Icons.grid_4x4, color: AppColors.success, size: 14),
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -416,6 +459,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                       ),
                     ),
                   ),
+                  FavoriteStar(
+                    resourceId: matrix.id,
+                    type: 'eisenhower_matrix',
+                    title: matrix.title,
+                    colorHex: '#4CAF50', // Default color for matrices
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
                   // Menu compatto
                   SizedBox(
                     width: 24,
@@ -542,7 +593,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : Colors.transparent,
+            color: isSelected ? AppColors.success : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(
@@ -654,7 +705,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           // Header
           Row(
             children: [
-              const Icon(Icons.format_list_numbered, color: AppColors.secondary),
+              const Icon(Icons.format_list_numbered, color: AppColors.success),
               const SizedBox(width: 8),
               Text(
                 l10n.eisenhowerPriorityList,
@@ -1090,14 +1141,16 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     if (_selectedMatrix == null) {
       return FloatingActionButton.extended(
         onPressed: _showCreateMatrixDialog,
-        icon: const Icon(Icons.add),
-        label: Text(l10n.eisenhowerNewMatrix),
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(l10n.eisenhowerNewMatrix, style: const TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.success,
       );
     } else {
       return FloatingActionButton.extended(
         onPressed: _showAddActivityDialog,
-        icon: const Icon(Icons.add_task),
-        label: Text(l10n.eisenhowerAddActivity),
+        icon: const Icon(Icons.add_task, color: Colors.white),
+        label: Text(l10n.eisenhowerAddActivity, style: const TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.success,
       );
     }
   }
@@ -1725,7 +1778,7 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: const Icon(Icons.add_circle, color: AppColors.secondary),
+                    icon: Icon(Icons.add_circle, color: AppColors.secondary),
                     onPressed: _addParticipant,
                   ),
                 ],

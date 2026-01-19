@@ -22,27 +22,43 @@ class RetroColumnWidget extends StatelessWidget {
     final items = retro.getItemsForColumn(column.id);
     
     // Theme
-    final Color headerColor = column.color.withOpacity(0.2);
-    final Color bgColor = column.color.withOpacity(0.05);
-    final Color textColor = Theme.of(context).brightness == Brightness.dark 
-        ? Colors.white 
-        : Colors.black87;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color bgColor = isDark 
+        ? column.color.withValues(alpha: 0.03)
+        : column.color.withValues(alpha: 0.05);
 
     return Container(
-      color: bgColor,
+      decoration: BoxDecoration(
+        color: bgColor,
+        border: Border(
+          right: BorderSide(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+        ),
+      ),
       child: Column(
         children: [
           // Header
           Tooltip(
             message: column.description.isNotEmpty ? column.description : column.title,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               decoration: BoxDecoration(
-                color: column.color, // Full distinct color
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    column.color,
+                    column.color.withValues(alpha: 0.8),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: column.color.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              width: double.infinity,
-              child: Column( // Changed Row to Column to accommodate description
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
@@ -50,40 +66,37 @@ class RetroColumnWidget extends StatelessWidget {
                     children: [
                       Icon(
                         column.icon, 
-                        size: 20, 
-                        color: ThemeData.estimateBrightnessForColor(column.color) == Brightness.dark 
-                            ? Colors.white 
-                            : Colors.black87
+                        size: 22, 
+                        color: Colors.white,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 10),
                       Flexible(
                         child: Text(
                           column.title.toUpperCase(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            letterSpacing: 0.5,
-                            color: ThemeData.estimateBrightnessForColor(column.color) == Brightness.dark 
-                                ? Colors.white 
-                                : Colors.black87,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                            letterSpacing: 1.2,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(color: Colors.black26, offset: Offset(0, 1), blurRadius: 2),
+                            ],
                           ),
                           textAlign: TextAlign.center,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
                   if (column.description.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       column.description,
                       style: TextStyle(
-                        fontSize: 10,
-                        fontStyle: FontStyle.italic,
-                        color: ThemeData.estimateBrightnessForColor(column.color) == Brightness.dark 
-                            ? Colors.white.withOpacity(0.9) 
-                            : Colors.black87.withOpacity(0.7),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 2,
@@ -98,7 +111,7 @@ class RetroColumnWidget extends StatelessWidget {
           // Items List
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.fromLTRB(12, 16, 12, 80),
               itemCount: items.length + 1, 
               itemBuilder: (context, index) {
                 if (index == items.length) {
@@ -117,57 +130,100 @@ class RetroColumnWidget extends StatelessWidget {
     final bool isMine = item.authorEmail == currentUserEmail;
     final bool isContentVisible = isMine || retro.areTeamCardsVisible || retro.currentPhase != RetroPhase.writing;
     final bool isDraggable = retro.currentPhase == RetroPhase.discuss;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final cardContent = Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+    final cardContent = Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (isContentVisible)
-               Text(
-                item.content,
-                style: const TextStyle(fontSize: 15, height: 1.3),
-              )
-            else
-               _buildBlurredContent(context),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          // Background Tint
+          Positioned.fill(
+            child: Container(
+              color: column.color.withValues(alpha: isDark ? 0.05 : 0.03),
+            ),
+          ),
+          
+          // Left Accent Bar
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 5,
+            child: Container(color: column.color),
+          ),
 
-            const SizedBox(height: 12),
-            
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (isContentVisible)
-                    Row(
-                        children: [
-                            CircleAvatar(
-                                radius: 9,
-                                backgroundColor: Colors.grey.shade300,
-                                child: Text(item.authorName.isNotEmpty ? item.authorName[0] : '?', 
-                                    style: const TextStyle(fontSize: 9, color: Colors.black)),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                                item.authorName,
-                                style: TextStyle(fontSize: 11, color: Theme.of(context).disabledColor),
-                            ),
-                        ],
-                    )
+                   Text(
+                    item.content,
+                    style: TextStyle(
+                      fontSize: 15, 
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.grey[200] : Colors.grey[800],
+                    ),
+                  )
                 else
-                    const Text('???', style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey)),
+                   _buildBlurredContent(context),
 
-                if (retro.currentPhase == RetroPhase.voting || retro.currentPhase == RetroPhase.discuss)
-                  _buildVoteWidget(context, item)
+                const SizedBox(height: 16),
+                
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (isContentVisible)
+                        Row(
+                            children: [
+                                CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: column.color.withValues(alpha: 0.2),
+                                    child: Text(
+                                      item.authorName.isNotEmpty ? item.authorName[0].toUpperCase() : '?', 
+                                      style: TextStyle(
+                                        fontSize: 10, 
+                                        fontWeight: FontWeight.bold,
+                                        color: column.color,
+                                      ),
+                                    ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                    item.authorName,
+                                    style: TextStyle(
+                                      fontSize: 12, 
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                    ),
+                                ),
+                            ],
+                        )
+                    else
+                        const Text('???', style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey)),
+
+                    if (retro.currentPhase == RetroPhase.voting || retro.currentPhase == RetroPhase.discuss)
+                      _buildVoteWidget(context, item)
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
 
@@ -215,6 +271,7 @@ class RetroColumnWidget extends StatelessWidget {
 
   Widget _buildVoteWidget(BuildContext context, RetroItem item) {
     final bool hasVoted = item.hasVoted(currentUserEmail);
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return InkWell(
       onTap: () {
@@ -230,22 +287,36 @@ class RetroColumnWidget extends StatelessWidget {
          final service = RetrospectiveFirestoreService();
          service.voteItem(retro.id, item.id, currentUserEmail);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: hasVoted ? Colors.red.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: hasVoted ? Border.all(color: Colors.red.withOpacity(0.3)) : Border.all(color: Colors.grey.shade300),
+          color: hasVoted 
+              ? Colors.red.withValues(alpha: 0.15) 
+              : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100]),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: hasVoted ? Colors.red.withValues(alpha: 0.4) : Colors.transparent,
+            width: 1.5,
+          ),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               hasVoted ? Icons.favorite : Icons.favorite_border,
-              size: 14,
-              color: hasVoted ? Colors.red : Colors.grey,
+              size: 16,
+              color: hasVoted ? Colors.red : (isDark ? Colors.grey[400] : Colors.grey[500]),
             ),
-            const SizedBox(width: 4),
-            Text('${item.votes}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: hasVoted ? Colors.red : Colors.grey)),
+            const SizedBox(width: 6),
+            Text(
+              '${item.votes}', 
+              style: TextStyle(
+                fontSize: 13, 
+                fontWeight: FontWeight.w800, 
+                color: hasVoted ? Colors.red : (isDark ? Colors.grey[300] : Colors.grey[700]),
+              ),
+            ),
           ],
         ),
       ),
@@ -255,17 +326,42 @@ class RetroColumnWidget extends StatelessWidget {
   Widget _buildAddButton(BuildContext context, RetroColumn column) {
     final bool canAdd = retro.currentPhase == RetroPhase.writing || retro.currentPhase == RetroPhase.discuss;
     if (!canAdd) return const SizedBox.shrink();
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return InkWell(
-      onTap: () => _showAddDialog(context, column),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).dividerColor, width: 1), // Standard border
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Center(
-          child: Icon(Icons.add, color: Theme.of(context).disabledColor),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: InkWell(
+        onTap: () => _showAddDialog(context, column),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: column.color.withValues(alpha: 0.3), 
+              width: 2,
+              style: BorderStyle.solid,
+            ),
+            color: column.color.withValues(alpha: isDark ? 0.05 : 0.02),
+          ),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_circle_outline, color: column.color, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'AGGIUNGI CARD',
+                  style: TextStyle(
+                    color: column.color,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.1,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
   bool _isRegisterMode = false;
+  bool _acceptTerms = false;
   String? _errorMessage;
 
   @override
@@ -71,6 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_isRegisterMode) {
         if (_nameController.text.isEmpty) {
           setState(() => _errorMessage = l10n.formNameRequired);
+          return;
+        }
+        if (!_acceptTerms) {
+          setState(() => _errorMessage = l10n.legalMustAcceptTerms);
           return;
         }
         final credential = await _authService.registerWithEmail(
@@ -142,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Agile Tools',
+                  l10n.appTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
@@ -188,6 +193,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Google Sign In
                 _buildGoogleButton(context, isDark, l10n),
+                const SizedBox(height: 12),
+                Text(
+                   l10n.legalAcceptTerms,
+                   textAlign: TextAlign.center,
+                   style: TextStyle(
+                     fontSize: 12,
+                     color: context.textSecondaryColor.withValues(alpha: 0.7),
+                   ),
+                ),
                 const SizedBox(height: 24),
 
                 // Divider
@@ -229,7 +243,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   onSubmitted: (_) => _signInWithEmail(),
                   context: context,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+
+                if (_isRegisterMode) ...[
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _acceptTerms,
+                        onChanged: (val) => setState(() => _acceptTerms = val ?? false),
+                        activeColor: AppColors.primary,
+                      ),
+                      Expanded(
+                        child: Wrap(
+                          children: [
+                            Text(
+                              l10n.legalAcceptTerms,
+                              style: TextStyle(fontSize: 13, color: context.textPrimaryColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                const SizedBox(height: 8),
 
                 // Submit button
                 ElevatedButton(

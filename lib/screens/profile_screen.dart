@@ -5,6 +5,9 @@ import '../models/user_profile/subscription_model.dart';
 import '../models/user_profile/user_settings_model.dart';
 import '../services/user_profile_service.dart';
 import '../services/auth_service.dart';
+import '../services/gdpr_service.dart';
+import 'dart:html' as html;
+import 'dart:convert';
 
 /// Schermata profilo utente completa
 ///
@@ -153,6 +156,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           // Sezione Notifiche
                           _buildNotificationsSection(theme, isDark),
+                          const SizedBox(height: 16),
+
+                          // Sezione Privacy & GDPR
+                          _buildPrivacySection(theme, isDark),
                           const SizedBox(height: 16),
 
                           // Sezione Cancellazione Account
@@ -415,7 +422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (_subscription!.plan != SubscriptionPlan.enterprise)
+            if (_subscription!.plan != SubscriptionPlan.elite)
               TextButton.icon(
                 onPressed: _showUpgradeDialog,
                 icon: const Icon(Icons.upgrade),
@@ -482,13 +489,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.language),
           title: Text(l10n.settingsLanguage),
-          subtitle: Text(_settings!.locale == 'it' ? 'Italiano' : 'English'),
+          subtitle: Text(_settings!.locale == 'it' ? l10n.langItalian : l10n.langEnglish),
           trailing: DropdownButton<String>(
             value: _settings!.locale,
             underline: const SizedBox(),
-            items: const [
-              DropdownMenuItem(value: 'it', child: Text('Italiano')),
-              DropdownMenuItem(value: 'en', child: Text('English')),
+            items: [
+              DropdownMenuItem(value: 'it', child: Text(l10n.langItalian)),
+              DropdownMenuItem(value: 'en', child: Text(l10n.langEnglish)),
             ],
             onChanged: (value) {
               if (value != null) _updateLocale(value);
@@ -610,11 +617,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildPrivacySection(ThemeData theme, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+    return _buildExpandableSection(
+      title: l10n.profilePrivacy,
+      icon: Icons.privacy_tip_outlined,
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.download_for_offline_outlined),
+          title: Text(l10n.profileExportData),
+          subtitle: Text(l10n.jsonExportLabel),
+          trailing: OutlinedButton(
+            onPressed: _exportData,
+            child: Text(l10n.actionExport),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildDangerZoneSection(ThemeData theme, bool isDark) {
     final l10n = AppLocalizations.of(context)!;
 
     return Card(
-      color: Colors.red.withOpacity(isDark ? 0.15 : 0.05),
+      color: Colors.red.withValues(alpha: isDark ? 0.15 : 0.05),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -636,73 +663,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 16),
 
-            if (_profile?.hasDeletionRequest == true) ...[
-              // Mostra stato richiesta cancellazione
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.hourglass_top, color: Colors.orange),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.profileDeletionInProgress,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
-                          ),
-                          Text(
-                            l10n.profileDeletionRequestedAt('${_profile!.deletionRequestedAt}'),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: _cancelDeletionRequest,
-                      child: Text(l10n.profileCancelRequest),
-                    ),
-                  ],
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.delete_forever, color: Colors.red[400]),
+              title: Text(
+                l10n.profileDeleteAccount,
+                style: TextStyle(color: Colors.red[400]),
+              ),
+              subtitle: Text(
+                l10n.profileDeleteAccountConfirm,
+                style: TextStyle(
+                  color: isDark ? Colors.grey[500] : Colors.grey[600],
+                  fontSize: 12,
                 ),
               ),
-            ] else ...[
-              // Pulsante richiesta cancellazione
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(Icons.delete_forever, color: Colors.red[400]),
-                title: Text(
-                  l10n.profileDeleteAccount,
-                  style: TextStyle(color: Colors.red[400]),
+              trailing: OutlinedButton(
+                onPressed: _showDeleteAccountConfirmDialog,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
                 ),
-                subtitle: Text(
-                  l10n.profileDeleteAccountDesc,
-                  style: TextStyle(
-                    color: isDark ? Colors.grey[500] : Colors.grey[600],
-                    fontSize: 12,
-                  ),
-                ),
-                trailing: OutlinedButton(
-                  onPressed: _showDeleteAccountDialog,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    side: const BorderSide(color: Colors.red),
-                  ),
-                  child: Text(l10n.profileDeleteAccountRequest),
-                ),
+                child: Text(l10n.actionDelete),
               ),
-            ],
+            ),
 
             const SizedBox(height: 8),
             const Divider(),
@@ -723,6 +706,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _exportData() async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final json = await GDPRService().exportUserData();
+      final bytes = utf8.encode(json);
+      final blob = html.Blob([bytes]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute("download", "agile_tools_data_${DateTime.now().millisecondsSinceEpoch}.json")
+        ..click();
+      html.Url.revokeObjectUrl(url);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.errorExporting(e.toString()))),
+      );
+    }
+  }
+
+  void _showDeleteAccountConfirmDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.profileDeleteAccount),
+        content: Text(l10n.profileDeleteAccountConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.actionCancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _deleteAccount();
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(l10n.actionDelete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    setState(() => _isSaving = true);
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await GDPRService().deleteAccount();
+      if (mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      }
+    } catch (e) {
+      setState(() => _isSaving = false);
+      String message = l10n.errorDeletingAccount(e.toString());
+      if (e.toString().contains('recent-login-required')) {
+        message = l10n.errorRecentLoginRequired;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1044,7 +1090,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     try {
-      await _profileService.cancelSubscription(reason: 'Richiesta utente');
+      await _profileService.cancelSubscription(reason: 'User request');
       await _loadUserData();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

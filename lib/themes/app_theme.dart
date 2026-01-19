@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Sistema di temi centralizzato per Agile Tools
+/// Sistema di temi centralizzato per Keisen
 /// Supporta Dark Mode e Light Mode con switch dinamico
 class AppTheme {
   // ══════════════════════════════════════════════════════════════════════════

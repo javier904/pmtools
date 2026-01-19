@@ -95,11 +95,60 @@
 - [x] Creare RetroGlobalDashboard
 - [x] Implementare board con colonne (Went Well, To Improve, Actions)
 
+### 12. Sistema Abbonamenti (Stripe + AdSense)
+- [x] FASE 1: Creare subscription_limits_model.dart
+- [x] FASE 1: Aggiornare subscription_model.dart (Free/Premium/Elite)
+- [x] FASE 2: Creare subscription_limits_service.dart
+- [x] FASE 3: Creare stripe_payment_service.dart
+- [x] FASE 4: Creare ads_service.dart (Google AdSense Web)
+- [x] FASE 5: Integrare check limiti nei servizi esistenti
+  - [x] eisenhower_firestore_service.dart
+  - [x] planning_poker_firestore_service.dart
+  - [x] smart_todo_service.dart
+  - [x] eisenhower_invite_service.dart
+  - [x] planning_poker_invite_service.dart
+  - [x] smart_todo_invite_service.dart
+- [x] FASE 6: Creare Cloud Functions Stripe (functions/src/index.ts)
+- [x] FASE 7: Creare UI widgets
+  - [x] plan_card_widget.dart
+  - [x] limit_reached_dialog.dart
+  - [x] usage_meter_widget.dart
+  - [x] ad_banner_widget.dart
+- [x] FASE 7: Creare subscription_screen.dart
+
 ---
 
 ## URL Produzione
 
 **Hosting URL**: https://pm-agile-tools-app.web.app
+
+---
+
+## Attivita' Pendenti (Sistema Abbonamenti)
+
+### Configurazione Stripe Dashboard
+- [ ] Creare prodotti/prezzi in Stripe:
+  - Premium Monthly: €4.99 (price_premium_monthly)
+  - Premium Yearly: €39.99 (price_premium_yearly)
+  - Elite Monthly: €7.99 (price_elite_monthly)
+  - Elite Yearly: €69.99 (price_elite_yearly)
+- [ ] Configurare Webhook endpoint per Cloud Functions
+- [ ] Collegare chiavi Stripe in Firebase Config
+
+### Configurazione AdSense
+- [ ] Ottenere AdSense Client ID
+- [ ] Aggiornare `AdsService.adClientId` in ads_service.dart
+- [ ] Creare slot ID per banner
+
+### Integrazione UI Abbonamenti
+- [ ] Aggiungere route `/subscription` in main.dart
+- [ ] Aggiungere link a SubscriptionScreen in ProfileScreen
+- [ ] Integrare ConditionalAdBanner nelle schermate principali
+- [ ] Gestire LimitExceededException con LimitReachedDialog
+
+### Deploy Cloud Functions
+- [ ] `cd functions && npm install`
+- [ ] `firebase deploy --only functions`
 
 ---
 

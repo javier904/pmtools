@@ -11,7 +11,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
       lastUpdated: '18 Gennaio 2026',
       mdContent: '''
 ## 1. Introduzione
-Benvenuto su **Agile Tools** ("noi", "nostro", "la Piattaforma"). La tua privacy è importante per noi. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando utilizzi la nostra applicazione web.
+Benvenuto su **Keisen** ("noi", "nostro", "la Piattaforma"). La tua privacy è importante per noi. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando utilizzi la nostra applicazione web.
 
 ## 2. Dati che raccogliamo
 Raccogliamo due tipi di dati e informazioni:
