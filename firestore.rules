@@ -377,6 +377,30 @@ service cloud.firestore {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
+    // SMART TODO TASKS - COLLECTION GROUP QUERY (per View Global Tasks)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    // Questa regola permette le Collection Group Query su smart_todo_tasks
+    // Usata da streamAssignments() e streamTasksByOwner() in smart_todo_service.dart
+    match /{path=**}/smart_todo_tasks/{taskId} {
+      // Lettura: l'utente deve:
+      // 1. Essere assegnato al task (assignedTo array) - per "My Tasks" e "Today"
+      // 2. O essere owner della lista parent - per "Owner"
+      // 3. O essere partecipante della lista parent
+      allow read: if isAuthenticated() && (
+        // Case 1: Assegnato al task
+        userEmail() in resource.data.get('assignedTo', []) ||
+        // Case 2: Owner della lista parent
+        get(/databases/$(database)/documents/smart_todo_lists/$(resource.data.listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+        // Case 3: Partecipante della lista parent
+        userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(resource.data.listId)).data.get('participantEmails', [])
+      );
+
+      // Scrittura: non consentita via collection group (usare il path completo)
+      allow write: if false;
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
     // SMART TODO INVITES (TOP-LEVEL - DEPRECATA, mantenuta per backward compatibility)
     // ════════════════════════════════════════════════════════════════════════════
 

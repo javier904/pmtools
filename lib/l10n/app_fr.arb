@@ -2,6 +2,7 @@
   "@@locale": "fr",
 
   "appTitle": "Keisen",
+  "goToHome": "Aller à l'accueil",
 
   "actionSave": "Enregistrer",
   "actionCancel": "Annuler",
@@ -1781,6 +1782,7 @@
   "toolSectionTitle": "Outils",
   "deadlineTitle": "Échéances",
   "deadlineNoUpcoming": "Aucune échéance à venir",
+  "deadlineAll": "Tous",
   "deadlineToday": "Aujourd'hui",
   "deadlineTomorrow": "Demain",
   "deadlineSprint": "Sprint",
@@ -1981,5 +1983,15 @@
   "retroPhaseIcebreaker": "BRISE-GLACE",
   "retroPhaseWriting": "ÉCRITURE",
   "retroPhaseVoting": "VOTE",
-  "retroPhaseDiscuss": "DISCUSSION"
+  "retroPhaseDiscuss": "DISCUSSION",
+  "retroBoardTitle": "Tableau Rétrospectives",
+  "searchPlaceholder": "Rechercher partout...",
+  "searchResultsTitle": "Résultats de Recherche",
+  "searchNoResults": "Aucun résultat pour '{query}'",
+  "searchResultTypeProject": "Projet",
+  "searchResultTypeTodo": "Liste ToDo",
+  "searchResultTypeRetro": "Rétrospective",
+  "searchResultTypeEisenhower": "Matrice Eisenhower",
+  "searchResultTypeEstimation": "Estimation Room",
+  "searchBackToDashboard": "Retour au Tableau de bord"
 }

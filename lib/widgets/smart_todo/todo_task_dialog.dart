@@ -166,12 +166,12 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                          const SizedBox(height: 24),
                          
                          // Description
-                         Text('DESCRIZIONE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.grey[400] : Colors.grey)),
+                         Text(AppLocalizations.of(context)!.smartTodoDescription, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.grey[400] : Colors.grey)),
                          const SizedBox(height: 8),
                          TextField(
                            controller: _descController,
                            decoration: InputDecoration(
-                             hintText: 'Aggiungi una descrizione dettagliata...',
+                             hintText: AppLocalizations.of(context)!.smartTodoDescriptionHint,
                              hintStyle: TextStyle(color: dialogIsDark ? Colors.grey[500] : null),
                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: dialogBorder)),
                              filled: true,
@@ -183,7 +183,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                          const SizedBox(height: 32),
 
                          // Subtasks
-                         _buildSectionHeader('CHECKLIST'),
+                         _buildSectionHeader(AppLocalizations.of(context)!.smartTodoChecklist),
                          ..._subtasks.asMap().entries.map((entry) {
                            final i = entry.key;
                            final s = entry.value;
@@ -201,13 +201,13 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                          TextButton.icon(
                            onPressed: _addSubtask,
                            icon: const Icon(Icons.add_rounded),
-                           label: const Text('Aggiungi voce'),
+                           label: Text(AppLocalizations.of(context)!.smartTodoAddItem),
                            style: TextButton.styleFrom(alignment: Alignment.centerLeft),
                          ),
 
                          const SizedBox(height: 32),
                          // Attachments
-                         _buildSectionHeader('ALLEGATI'),
+                         _buildSectionHeader(AppLocalizations.of(context)!.smartTodoAttachments),
                          if (_attachments.isNotEmpty) ...[
                            const SizedBox(height: 8),
                            Wrap(
@@ -250,13 +250,13 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                          TextButton.icon(
                            onPressed: _addAttachment,
                            icon: const Icon(Icons.add_link_rounded),
-                           label: const Text('Aggiungi Link'),
+                           label: Text(AppLocalizations.of(context)!.smartTodoAddLink),
                            style: TextButton.styleFrom(alignment: Alignment.centerLeft),
                          ),
 
                          const SizedBox(height: 32),
                          // Comments
-                         _buildSectionHeader('COMMENTI'),
+                         _buildSectionHeader(AppLocalizations.of(context)!.smartTodoComments),
                          const SizedBox(height: 16),
                          ..._comments.asMap().entries.map((entry) {
                            final index = entry.key;
@@ -310,8 +310,8 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                    icon: Icon(Icons.more_vert, size: 16, color: Colors.grey[400]),
                                    padding: EdgeInsets.zero,
                                    itemBuilder: (context) => [
-                                     const PopupMenuItem(value: 'edit', child: Text('Modifica')),
-                                     const PopupMenuItem(value: 'delete', child: Text('Elimina', style: TextStyle(color: Colors.red))),
+                                     PopupMenuItem(value: 'edit', child: Text(AppLocalizations.of(context)!.smartTodoEditComment)),
+                                     PopupMenuItem(value: 'delete', child: Text(AppLocalizations.of(context)!.smartTodoDeleteComment, style: const TextStyle(color: Colors.red))),
                                    ],
                                    onSelected: (value) {
                                      if (value == 'delete') {
@@ -329,14 +329,14 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                            children: [
                              IconButton(
                                icon: const Icon(Icons.image_outlined, color: Colors.grey), 
-                               tooltip: 'Aggiungi Immagine (URL)',
+                               tooltip: AppLocalizations.of(context)!.smartTodoAddImageUrl,
                                onPressed: _addImageComment, // Add image action
                              ),
                              Expanded(
                                child: TextField(
                                  controller: _commentController,
                                  decoration: InputDecoration(
-                                   hintText: 'Scrivi un commento...',
+                                   hintText: AppLocalizations.of(context)!.smartTodoWriteComment,
                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                                  ),
@@ -357,7 +357,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                       padding: const EdgeInsets.all(20),
                       children: [
                         _buildSidebarGroup(
-                           title: 'STATO',
+                           title: AppLocalizations.of(context)!.smartTodoStatus,
                            isDark: dialogIsDark,
                            child: DropdownButtonFormField<String>(
                              value: _statusId,
@@ -373,7 +373,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                         ),
                         
                         _buildSidebarGroup(
-                           title: 'PRIORITÀ',
+                           title: AppLocalizations.of(context)!.smartTodoPriority,
                            isDark: dialogIsDark,
                            child: DropdownButtonFormField<TodoTaskPriority>(
                              value: _priority,
@@ -388,7 +388,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                child: Row(children: [
                                  Icon(Icons.flag, size: 16, color: _getPriorityColor(p)), 
                                  const SizedBox(width: 8), 
-                                 Text(p.name.toUpperCase(), style: const TextStyle(fontSize: 12))
+                                 Text(_getLocalizedPriority(p, context), style: const TextStyle(fontSize: 12))
                                ])
                              )).toList(),
                              onChanged: (v) => setState(() => _priority = v!),
@@ -396,7 +396,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                         ),
 
                         _buildSidebarGroup(
-                           title: 'ASSEGNATARI',
+                           title: AppLocalizations.of(context)!.smartTodoAssignees,
                            isDark: dialogIsDark,
                            child: InkWell(
                              onTap: _showAssigneeSelector,
@@ -408,7 +408,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                  borderRadius: BorderRadius.circular(8),
                                ),
                                child: _assignedTo.isEmpty 
-                                 ? Text('Nessuno', style: TextStyle(color: dialogIsDark ? Colors.grey[500] : Colors.grey))
+                                 ? Text(AppLocalizations.of(context)!.smartTodoNone, style: TextStyle(color: dialogIsDark ? Colors.grey[500] : Colors.grey))
                                  : Wrap(
                                      spacing: 4,
                                      runSpacing: 4,
@@ -425,7 +425,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                         ),
 
                         _buildSidebarGroup(
-                           title: 'TAGS',
+                           title: AppLocalizations.of(context)!.smartTodoTags,
                            isDark: dialogIsDark,
                            child: InkWell(
                              onTap: _showTagSelectorDialog,
@@ -438,7 +438,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                  borderRadius: BorderRadius.circular(8),
                                ),
                                child: _assignedTags.isEmpty 
-                                 ? Text('Nessun tag', style: TextStyle(color: dialogIsDark ? Colors.grey[500] : Colors.grey))
+                                 ? Text(AppLocalizations.of(context)!.smartTodoNoTags, style: TextStyle(color: dialogIsDark ? Colors.grey[500] : Colors.grey))
                                  : Wrap(
                                      spacing: 4, runSpacing: 4,
                                      children: _assignedTags.map((t) => Chip(
@@ -454,7 +454,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                         ),
 
                         _buildSidebarGroup(
-                           title: 'SCADENZA',
+                           title: AppLocalizations.of(context)!.smartTodoDueDate,
                            isDark: dialogIsDark,
                            child: InkWell(
                              onTap: _pickDueDate,
@@ -474,7 +474,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                          Icon(Icons.calendar_today_rounded, size: 16, color: _dueDate != null ? Colors.blue : Colors.grey),
                                          const SizedBox(width: 8),
                                          Text(
-                                            _dueDate != null ? DateFormat('dd MMM yyyy').format(_dueDate!) : 'Imposta data',
+                                            _dueDate != null ? DateFormat('dd MMM yyyy').format(_dueDate!) : AppLocalizations.of(context)!.smartTodoSetDate,
                                             style: TextStyle(
                                               color: _dueDate != null ? (dialogIsDark ? Colors.white : Colors.black) : Colors.grey,
                                               fontWeight: _dueDate != null ? FontWeight.w500 : FontWeight.normal
@@ -498,14 +498,14 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                         ),
                         
                         _buildSidebarGroup(
-                           title: 'EFFORT',
+                           title: AppLocalizations.of(context)!.smartTodoEffort,
                            isDark: dialogIsDark,
                            child: TextField(
                              controller: _effortController,
                              keyboardType: TextInputType.number,
                              style: TextStyle(color: dialogTextColor),
                              decoration: _sidebarInputDec(dialogIsDark).copyWith(
-                               hintText: 'Punti (es. 5)',
+                               hintText: AppLocalizations.of(context)!.smartTodoPointsHint,
                                hintStyle: TextStyle(color: dialogIsDark ? Colors.grey[500] : null),
                                filled: true,
                                fillColor: dialogInputBg,
@@ -572,14 +572,23 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
-          const SizedBox(height: 8),
-          child,
-        ],
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
+        const SizedBox(height: 8),
+        child,
+      ],
       ),
     );
+  }
+
+  String _getLocalizedPriority(TodoTaskPriority p, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (p) {
+      case TodoTaskPriority.high: return l10n.priorityHigh;
+      case TodoTaskPriority.medium: return l10n.priorityMedium;
+      case TodoTaskPriority.low: return l10n.priorityLow;
+    }
   }
 
   void _showAssigneeSelector() {
@@ -587,7 +596,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Assegna a'),
+          title: Text(AppLocalizations.of(context)!.smartTodoAssignTo),
           content: SizedBox(
              width: 300,
              child: SingleChildScrollView(
@@ -627,7 +636,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
 
   void _showTagSelectorDialog() async {
     if (widget.listAvailableTags.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoNoTagsAvailable ?? 'No tags available. Create one in settings.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoNoTagsAvailable ?? 'No tags available')));
       return;
     }
 
@@ -679,6 +688,8 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
   }
 
   void _pickDueDate() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     final date = await showDatePicker(
       context: context,
       initialDate: _dueDate ?? DateTime.now(),
@@ -687,16 +698,20 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.blue, // Header background color
-              onPrimary: Colors.white, // Header text color
-              onSurface: Colors.black, // Body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blue, // Button text color
-              ),
-            ),
+            colorScheme: isDark 
+                ? const ColorScheme.dark(
+                    primary: Color(0xFF1E2633), // Dark Header? Or primary color?
+                    onPrimary: Colors.white,
+                    surface: Color(0xFF2D3748),
+                    onSurface: Colors.white,
+                  )
+                : const ColorScheme.light(
+                    primary: Colors.blue,
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
+            dialogBackgroundColor: isDark ? const Color(0xFF1E2633) : Colors.white,
           ),
           child: child!,
         );
@@ -712,7 +727,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Nuovo stato'),
+        title: Text(AppLocalizations.of(context)?.smartTodoNewItem ?? 'New item'),
         content: TextField(controller: controller, autofocus: true),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),

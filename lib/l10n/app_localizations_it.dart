@@ -12,6 +12,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appTitle => 'Keisen';
 
   @override
+  String get goToHome => 'Vai alla Home';
+
+  @override
   String get actionSave => 'Salva';
 
   @override
@@ -1713,10 +1716,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get retroTableOwner => 'Owner';
 
   @override
-  String get retroTablePriority => 'Priorita';
+  String get retroIcebreakerTwoTruths => 'Due Verità e una Bugia';
 
   @override
-  String get retroTableDueDate => 'Scadenza';
+  String get retroDescTwoTruths => 'Semplice e classico.';
+
+  @override
+  String get retroIcebreakerCheckin => 'Check-in Emotivo';
+
+  @override
+  String get retroDescCheckin => 'Come si sentono tutti?';
 
   @override
   String get retroTableActions => 'Azioni';
@@ -1809,13 +1818,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoUnassigned => 'Non Assegnati';
 
   @override
-  String get smartTodoNewTask => 'Nuova Attivita';
+  String get smartTodoNewTask => 'Nuovo Task';
 
   @override
-  String get smartTodoEditTask => 'Modifica';
+  String get smartTodoEditTask => 'Modifica Task';
 
   @override
-  String get smartTodoTaskTitle => 'Titolo attivita';
+  String get smartTodoTaskTitle => 'Titolo task';
 
   @override
   String get smartTodoDescription => 'DESCRIZIONE';
@@ -1849,7 +1858,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoStatus => 'STATO';
 
   @override
-  String get smartTodoPriority => 'PRIORITA';
+  String get smartTodoPriority => 'PRIORITÀ';
 
   @override
   String get smartTodoAssignees => 'ASSEGNATARI';
@@ -1879,11 +1888,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoAssignTo => 'Assegna a';
 
   @override
-  String get smartTodoSelectTags => 'Seleziona Tag';
+  String get smartTodoSelectTags => 'Seleziona Tags';
 
   @override
-  String get smartTodoNoTagsAvailable =>
-      'Nessun tag disponibile. Creane uno nelle impostazioni.';
+  String get smartTodoNoTagsAvailable => 'Nessun tag disponibile';
 
   @override
   String get smartTodoNewSubtask => 'Nuovo stato';
@@ -1895,7 +1903,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoLinkName => 'Nome';
 
   @override
-  String get smartTodoLinkUrl => 'URL (https://...)';
+  String get smartTodoLinkUrl => 'URL';
 
   @override
   String get smartTodoCannotOpenLink => 'Impossibile aprire il link';
@@ -1927,7 +1935,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoPasteFromClipboard => 'Incolla da Appunti';
 
   @override
-  String get smartTodoEditComment => 'Modifica commento';
+  String get smartTodoEditComment => 'Modifica';
 
   @override
   String get smartTodoEnterTitle => 'Inserisci un titolo';
@@ -3769,6 +3777,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get deadlineNoUpcoming => 'Nessuna scadenza imminente';
 
   @override
+  String get deadlineAll => 'Tutti';
+
+  @override
   String get deadlineToday => 'Oggi';
 
   @override
@@ -4177,4 +4188,63 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get retroPhaseDiscuss => 'DISCUSSIONE';
+
+  @override
+  String get retroBoardTitle => 'Bacheca Retrospettive';
+
+  @override
+  String get searchPlaceholder => 'Cerca ovunque...';
+
+  @override
+  String get searchResultsTitle => 'Risultati Ricerca';
+
+  @override
+  String searchNoResults(Object query) {
+    return 'Nessun risultato per \'$query\'';
+  }
+
+  @override
+  String get searchResultTypeProject => 'Progetto';
+
+  @override
+  String get searchResultTypeTodo => 'Lista ToDo';
+
+  @override
+  String get searchResultTypeRetro => 'Retrospettiva';
+
+  @override
+  String get searchResultTypeEisenhower => 'Matrice Eisenhower';
+
+  @override
+  String get searchResultTypeEstimation => 'Estimation Room';
+
+  @override
+  String get searchBackToDashboard => 'Torna alla Dashboard';
+
+  @override
+  String get smartTodoAddItem => 'Aggiungi voce';
+
+  @override
+  String get smartTodoAddImageUrl => 'Aggiungi Immagine (URL)';
+
+  @override
+  String get smartTodoNone => 'Nessuno';
+
+  @override
+  String get smartTodoPointsHint => 'Punti (es. 5)';
+
+  @override
+  String get smartTodoNewItem => 'Nuova voce';
+
+  @override
+  String get smartTodoDeleteComment => 'Elimina';
+
+  @override
+  String get priorityHigh => 'ALTA';
+
+  @override
+  String get priorityMedium => 'MEDIA';
+
+  @override
+  String get priorityLow => 'BASSA';
 }

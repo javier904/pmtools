@@ -12,6 +12,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Keisen';
 
   @override
+  String get goToHome => 'Ir al inicio';
+
+  @override
   String get actionSave => 'Guardar';
 
   @override
@@ -1712,10 +1715,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroTableOwner => 'Responsable';
 
   @override
-  String get retroTablePriority => 'Prioridad';
+  String get retroIcebreakerTwoTruths => 'Due Verità e una Bugia';
 
   @override
-  String get retroTableDueDate => 'Fecha Límite';
+  String get retroDescTwoTruths => 'Semplice e classico.';
+
+  @override
+  String get retroIcebreakerCheckin => 'Check-in Emotivo';
+
+  @override
+  String get retroDescCheckin => 'Come si sentono tutti?';
 
   @override
   String get retroTableActions => 'Acciones';
@@ -3775,6 +3784,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deadlineNoUpcoming => 'Sin fechas límite próximas';
 
   @override
+  String get deadlineAll => 'Todos';
+
+  @override
   String get deadlineToday => 'Hoy';
 
   @override
@@ -4184,4 +4196,63 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroPhaseDiscuss => 'DISCUSIÓN';
+
+  @override
+  String get retroBoardTitle => 'Tablero de Retrospectivas';
+
+  @override
+  String get searchPlaceholder => 'Buscar todo...';
+
+  @override
+  String get searchResultsTitle => 'Resultados de Búsqueda';
+
+  @override
+  String searchNoResults(Object query) {
+    return 'Sin resultados para \'$query\'';
+  }
+
+  @override
+  String get searchResultTypeProject => 'Proyecto';
+
+  @override
+  String get searchResultTypeTodo => 'Lista ToDo';
+
+  @override
+  String get searchResultTypeRetro => 'Retrospectiva';
+
+  @override
+  String get searchResultTypeEisenhower => 'Matriz Eisenhower';
+
+  @override
+  String get searchResultTypeEstimation => 'Estimation Room';
+
+  @override
+  String get searchBackToDashboard => 'Volver al Tablero';
+
+  @override
+  String get smartTodoAddItem => 'Aggiungi voce';
+
+  @override
+  String get smartTodoAddImageUrl => 'Aggiungi Immagine (URL)';
+
+  @override
+  String get smartTodoNone => 'Nessuno';
+
+  @override
+  String get smartTodoPointsHint => 'Punti (es. 5)';
+
+  @override
+  String get smartTodoNewItem => 'Nuova voce';
+
+  @override
+  String get smartTodoDeleteComment => 'Elimina';
+
+  @override
+  String get priorityHigh => 'ALTA';
+
+  @override
+  String get priorityMedium => 'MEDIA';
+
+  @override
+  String get priorityLow => 'BASSA';
 }

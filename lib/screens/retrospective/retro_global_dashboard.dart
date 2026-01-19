@@ -56,7 +56,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           children: [
             const Icon(Icons.psychology_rounded),
             const SizedBox(width: 8),
-            Text(AppLocalizations.of(context)!.retroTitle),
+            Text(AppLocalizations.of(context)!.retroBoardTitle),
           ],
         ),
         actions: [

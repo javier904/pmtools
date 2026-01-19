@@ -12,6 +12,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'Keisen';
 
   @override
+  String get goToHome => 'Aller à l\'accueil';
+
+  @override
   String get actionSave => 'Enregistrer';
 
   @override
@@ -1724,10 +1727,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroTableOwner => 'Propriétaire';
 
   @override
-  String get retroTablePriority => 'Priorité';
+  String get retroIcebreakerTwoTruths => 'Due Verità e una Bugia';
 
   @override
-  String get retroTableDueDate => 'Échéance';
+  String get retroDescTwoTruths => 'Semplice e classico.';
+
+  @override
+  String get retroIcebreakerCheckin => 'Check-in Emotivo';
+
+  @override
+  String get retroDescCheckin => 'Come si sentono tutti?';
 
   @override
   String get retroTableActions => 'Actions';
@@ -3802,6 +3811,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deadlineNoUpcoming => 'Aucune échéance à venir';
 
   @override
+  String get deadlineAll => 'Tous';
+
+  @override
   String get deadlineToday => 'Aujourd\'hui';
 
   @override
@@ -4211,4 +4223,63 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get retroPhaseDiscuss => 'DISCUSSION';
+
+  @override
+  String get retroBoardTitle => 'Tableau Rétrospectives';
+
+  @override
+  String get searchPlaceholder => 'Rechercher partout...';
+
+  @override
+  String get searchResultsTitle => 'Résultats de Recherche';
+
+  @override
+  String searchNoResults(Object query) {
+    return 'Aucun résultat pour \'$query\'';
+  }
+
+  @override
+  String get searchResultTypeProject => 'Projet';
+
+  @override
+  String get searchResultTypeTodo => 'Liste ToDo';
+
+  @override
+  String get searchResultTypeRetro => 'Rétrospective';
+
+  @override
+  String get searchResultTypeEisenhower => 'Matrice Eisenhower';
+
+  @override
+  String get searchResultTypeEstimation => 'Estimation Room';
+
+  @override
+  String get searchBackToDashboard => 'Retour au Tableau de bord';
+
+  @override
+  String get smartTodoAddItem => 'Aggiungi voce';
+
+  @override
+  String get smartTodoAddImageUrl => 'Aggiungi Immagine (URL)';
+
+  @override
+  String get smartTodoNone => 'Nessuno';
+
+  @override
+  String get smartTodoPointsHint => 'Punti (es. 5)';
+
+  @override
+  String get smartTodoNewItem => 'Nuova voce';
+
+  @override
+  String get smartTodoDeleteComment => 'Elimina';
+
+  @override
+  String get priorityHigh => 'ALTA';
+
+  @override
+  String get priorityMedium => 'MEDIA';
+
+  @override
+  String get priorityLow => 'BASSA';
 }

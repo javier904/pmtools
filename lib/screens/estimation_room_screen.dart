@@ -49,6 +49,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   String? _myVote;
   bool _isLoading = true;
 
+  bool _isDeepLink = false;
+
   // Filtri ricerca sessioni
   String _searchQuery = '';
   PlanningPokerSessionStatus? _statusFilter;
@@ -80,6 +82,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args is Map<String, dynamic> && args.containsKey('id')) {
+      _isDeepLink = true;
       final sessionId = args['id'] as String;
       await _initializeWithSession(sessionId);
     } else {
@@ -146,10 +149,26 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         leading: _selectedSession != null
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () => setState(() => _selectedSession = null),
+                onPressed: () {
+                  if (_isDeepLink && Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  } else {
+                    setState(() => _selectedSession = null);
+                  }
+                },
                 tooltip: l10n.estimationBackToSessions,
               )
-            : null,
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                tooltip: l10n.goToHome,
+                onPressed: () {
+                   if (Navigator.of(context).canPop()) {
+                     Navigator.of(context).pop();
+                   } else {
+                     Navigator.of(context).pushReplacementNamed('/home');
+                   }
+                },
+              ),
         title: Row(
           children: [
             Icon(_selectedSession != null ? Icons.analytics : Icons.casino_rounded),

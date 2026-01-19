@@ -47,7 +47,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         );
         
         if (targetList != null && mounted) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => SmartTodoDetailScreen(list: targetList),
@@ -68,6 +68,17 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: l10n?.goToHome ?? 'Back',
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              Navigator.of(context).pushReplacementNamed('/home');
+            }
+          },
+        ),
         title: const Row(
           children: [
             Icon(Icons.check_circle_outline, color: Colors.blue),
@@ -350,7 +361,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                           _formatDate(list.createdAt),
                           style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
                         // Task Count
                         StreamBuilder<int>(
                           stream: _todoService.streamTaskCountRealtime(list.id),
@@ -371,15 +382,18 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         ),
                         const Spacer(),
                         if (list.participants.isNotEmpty)
-                           Container(
-                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                             decoration: BoxDecoration(
-                               color: Colors.blue.withOpacity(0.1),
-                               borderRadius: BorderRadius.circular(10),
-                             ),
-                             child: Text(
-                               l10n?.smartTodoMembersCount(list.participants.length) ?? '${list.participants.length} members',
-                               style: const TextStyle(fontSize: 10, color: Colors.blue),
+                           Flexible(
+                             child: Container(
+                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                               decoration: BoxDecoration(
+                                 color: Colors.blue.withOpacity(0.1),
+                                 borderRadius: BorderRadius.circular(10),
+                               ),
+                               child: Text(
+                                 l10n?.smartTodoMembersCount(list.participants.length) ?? '${list.participants.length} members',
+                                 style: const TextStyle(fontSize: 10, color: Colors.blue),
+                                 overflow: TextOverflow.ellipsis,
+                               ),
                              ),
                            ),
                       ],
@@ -531,12 +545,19 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
       onPressed: () {
         setState(() {
-          if (value == 'owner') {
+          // If already selected, deselect (toggle off)
+          if (isSelected) {
             _viewMode = 'lists';
-            _filterMode = value;
+            _filterMode = null;
           } else {
-            _viewMode = 'global';
-            _filterMode = value;
+            // Select the filter
+            if (value == 'owner') {
+              _viewMode = 'lists';
+              _filterMode = value;
+            } else {
+              _viewMode = 'global';
+              _filterMode = value;
+            }
           }
         });
       },

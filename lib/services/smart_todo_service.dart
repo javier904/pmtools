@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
@@ -36,6 +37,25 @@ class SmartTodoService {
           lists.sort((a, b) => b.createdAt.compareTo(a.createdAt));
           return lists;
         });
+  }
+
+  /// Get lists once (for search)
+  Future<List<TodoListModel>> getTodoListsOnce(String userEmail) async {
+    if (userEmail.isEmpty) return [];
+    
+    try {
+      final snapshot = await _firestore
+          .collection(_listsCollection)
+          .where('participantEmails', arrayContains: userEmail.toLowerCase())
+          .get();
+
+      return snapshot.docs
+          .map((doc) => TodoListModel.fromMap(doc.data(), doc.id))
+          .toList();
+    } catch (e) {
+      print('Error getting lists once: $e');
+      return [];
+    }
   }
 
   /// Crea una nuova lista
@@ -219,11 +239,18 @@ class SmartTodoService {
   
   /// Get ALL tasks assigned to the user across ALL lists (Collection Group Query)
   Stream<List<TodoTaskModel>> streamAssignments(String userEmail) {
+    // Queries for both original and lowercase to handle potential inconsistencies
+    final trimmedEmail = userEmail.trim();
+    final emails = {trimmedEmail, trimmedEmail.toLowerCase()}.toList();
+    
+    debugPrint('DEBUG: SmartTodoService streamAssignments for emails: $emails');
+
     return _firestore
         .collectionGroup(_tasksSubcollection)
-        .where('assignedTo', arrayContains: userEmail)
+        .where('assignedTo', arrayContainsAny: emails)
         .snapshots()
         .map((snapshot) {
+          debugPrint('DEBUG: SmartTodoService Found ${snapshot.docs.length} tasks for user.');
           final tasks = snapshot.docs
             .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
             .toList();

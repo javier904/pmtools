@@ -49,6 +49,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   bool _isExporting = false;
   bool _isInit = false;
 
+  bool _isDeepLink = false;
+  
   // Vista: 0 = Griglia, 1 = Grafico, 2 = Lista Priorità, 3 = RACI
   int _viewMode = 0;
 
@@ -75,6 +77,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   Future<void> _checkArguments() async {
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args is Map<String, dynamic> && args.containsKey('id')) {
+      _isDeepLink = true;
       final matrixId = args['id'] as String;
       await _loadMatrixById(matrixId);
     } else {
@@ -133,7 +136,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return PopScope(
-      canPop: _selectedMatrix == null,
+      canPop: _selectedMatrix == null || _isDeepLink,
       onPopInvoked: (didPop) {
         if (didPop) return;
         setState(() {
@@ -144,6 +147,24 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       child: Scaffold(
         backgroundColor: context.backgroundColor,
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            // tooltip: l10n.goToHome, // Removed to prevent RenderBox layout error during OpenContainer transition
+            onPressed: () {
+               // Se deep link o se nulla selezionato (e sono nello stato 1), pop
+               if ((_isDeepLink || _selectedMatrix == null) && Navigator.of(context).canPop()) {
+                 Navigator.of(context).pop();
+               } else if (_selectedMatrix != null) {
+                 // Chiudi dettaglio
+                 setState(() {
+                   _selectedMatrix = null;
+                   _activities = [];
+                 });
+               } else {
+                 Navigator.of(context).pushReplacementNamed('/home');
+               }
+            },
+          ),
           title: Row(
             children: [
               Icon(Icons.grid_4x4, color: context.textPrimaryColor),
@@ -199,6 +220,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               ),
               const SizedBox(width: 8),
               // Torna alla lista
+              if (!_isDeepLink) // Mostra solo se NON è deep link, altrimenti è back generale
               TextButton.icon(
                 icon: Icon(Icons.arrow_back, size: 18, color: context.textPrimaryColor),
                 label: Text(l10n.eisenhowerBackToList, style: TextStyle(color: context.textPrimaryColor)),

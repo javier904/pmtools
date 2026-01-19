@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Keisen';
 
   @override
+  String get goToHome => 'Go to Home';
+
+  @override
   String get actionSave => 'Save';
 
   @override
@@ -1704,10 +1707,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroTableOwner => 'Owner';
 
   @override
-  String get retroTablePriority => 'Priority';
+  String get retroIcebreakerTwoTruths => 'Two Truths and a Lie';
 
   @override
-  String get retroTableDueDate => 'Due Date';
+  String get retroDescTwoTruths => 'Simple and classic.';
+
+  @override
+  String get retroIcebreakerCheckin => 'Emotional Check-in';
+
+  @override
+  String get retroDescCheckin => 'How is everyone feeling?';
 
   @override
   String get retroTableActions => 'Actions';
@@ -1803,7 +1812,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoNewTask => 'New Task';
 
   @override
-  String get smartTodoEditTask => 'Edit';
+  String get smartTodoEditTask => 'Edit Task';
 
   @override
   String get smartTodoTaskTitle => 'Task title';
@@ -1872,8 +1881,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoSelectTags => 'Select Tags';
 
   @override
-  String get smartTodoNoTagsAvailable =>
-      'No tags available. Create one in settings.';
+  String get smartTodoNoTagsAvailable => 'No tags available';
 
   @override
   String get smartTodoNewSubtask => 'New status';
@@ -1885,7 +1893,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoLinkName => 'Name';
 
   @override
-  String get smartTodoLinkUrl => 'URL (https://...)';
+  String get smartTodoLinkUrl => 'URL';
 
   @override
   String get smartTodoCannotOpenLink => 'Cannot open link';
@@ -1917,7 +1925,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoPasteFromClipboard => 'Paste from Clipboard';
 
   @override
-  String get smartTodoEditComment => 'Edit comment';
+  String get smartTodoEditComment => 'Edit';
 
   @override
   String get smartTodoEnterTitle => 'Enter a title';
@@ -3753,6 +3761,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deadlineNoUpcoming => 'No upcoming deadlines';
 
   @override
+  String get deadlineAll => 'All';
+
+  @override
   String get deadlineToday => 'Today';
 
   @override
@@ -4155,4 +4166,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retroPhaseDiscuss => 'DISCUSS';
+
+  @override
+  String get retroBoardTitle => 'Retrospective Board';
+
+  @override
+  String get searchPlaceholder => 'Search everything...';
+
+  @override
+  String get searchResultsTitle => 'Search Results';
+
+  @override
+  String searchNoResults(Object query) {
+    return 'No results found for \'$query\'';
+  }
+
+  @override
+  String get searchResultTypeProject => 'Project';
+
+  @override
+  String get searchResultTypeTodo => 'ToDo List';
+
+  @override
+  String get searchResultTypeRetro => 'Retrospective';
+
+  @override
+  String get searchResultTypeEisenhower => 'Eisenhower Matrix';
+
+  @override
+  String get searchResultTypeEstimation => 'Estimation Room';
+
+  @override
+  String get searchBackToDashboard => 'Back to Dashboard';
+
+  @override
+  String get smartTodoAddItem => 'Add item';
+
+  @override
+  String get smartTodoAddImageUrl => 'Add Image (URL)';
+
+  @override
+  String get smartTodoNone => 'None';
+
+  @override
+  String get smartTodoPointsHint => 'Points (e.g. 5)';
+
+  @override
+  String get smartTodoNewItem => 'New item';
+
+  @override
+  String get smartTodoDeleteComment => 'Delete';
+
+  @override
+  String get priorityHigh => 'HIGH';
+
+  @override
+  String get priorityMedium => 'MEDIUM';
+
+  @override
+  String get priorityLow => 'LOW';
 }

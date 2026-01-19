@@ -13,10 +13,11 @@ class SectionDeadlines extends StatefulWidget {
 }
 
 class _SectionDeadlinesState extends State<SectionDeadlines> {
-  int _daysFilter = 1; // 0 = Oggi, 1 = Domani, 7 = Settimana
+  int _daysFilter = -1; // -1 = All, 0 = Today, 1 = Tomorrow, etc.
 
   // Filters config: map of days -> visible
   final Map<int, bool> _visibleFilters = {
+    -1: true, // All
     0: true, // Today
     1: true, // Tomorrow
     2: false,
@@ -72,7 +73,22 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
+                if (snapshot.hasError) {
+                  debugPrint('DEBUG: UI Error: ${snapshot.error}');
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SelectableText(
+                        'Errore: ${snapshot.error}',
+                        style: const TextStyle(color: AppColors.error, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
+
                 final items = snapshot.data ?? [];
+                debugPrint('DEBUG: UI received ${items.length} items');
 
                 if (items.isEmpty) {
                   return Center(
@@ -132,6 +148,7 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
               children: [
                 Text(l10n.deadlineConfigDesc, style: TextStyle(fontSize: 13, color: context.textMutedColor)),
                 const SizedBox(height: 16),
+                _buildCheckbox(-1, l10n.deadlineAll, setStateDialog),
                 _buildCheckbox(0, l10n.deadlineToday, setStateDialog),
                 _buildCheckbox(1, l10n.deadlineTomorrow, setStateDialog),
                 _buildCheckbox(2, l10n.deadline2Days, setStateDialog),
@@ -178,6 +195,7 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
       children: activeOptions.map((days) {
         String label;
         switch (days) {
+          case -1: label = l10n.deadlineAll; break;
           case 0: label = l10n.deadlineToday; break;
           case 1: label = l10n.deadlineTomorrow; break;
           case 2: label = l10n.deadline2Days; break;

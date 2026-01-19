@@ -2,6 +2,7 @@
   "@@locale": "es",
 
   "appTitle": "Keisen",
+  "goToHome": "Ir al inicio",
 
   "actionSave": "Guardar",
   "actionCancel": "Cancelar",
@@ -1792,6 +1793,7 @@
   "toolSectionTitle": "Herramientas",
   "deadlineTitle": "Fechas Límite",
   "deadlineNoUpcoming": "Sin fechas límite próximas",
+  "deadlineAll": "Todos",
   "deadlineToday": "Hoy",
   "deadlineTomorrow": "Mañana",
   "deadlineSprint": "Sprint",
@@ -1980,5 +1982,15 @@
   "retroPhaseIcebreaker": "ROMPEHIELOS",
   "retroPhaseWriting": "ESCRITURA",
   "retroPhaseVoting": "VOTACIÓN",
-  "retroPhaseDiscuss": "DISCUSIÓN"
+  "retroPhaseDiscuss": "DISCUSIÓN",
+  "retroBoardTitle": "Tablero de Retrospectivas",
+  "searchPlaceholder": "Buscar todo...",
+  "searchResultsTitle": "Resultados de Búsqueda",
+  "searchNoResults": "Sin resultados para '{query}'",
+  "searchResultTypeProject": "Proyecto",
+  "searchResultTypeTodo": "Lista ToDo",
+  "searchResultTypeRetro": "Retrospectiva",
+  "searchResultTypeEisenhower": "Matriz Eisenhower",
+  "searchResultTypeEstimation": "Estimation Room",
+  "searchBackToDashboard": "Volver al Tablero"
 }

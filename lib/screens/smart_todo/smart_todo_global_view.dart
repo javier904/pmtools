@@ -60,21 +60,50 @@ class _SmartTodoGlobalViewState extends State<SmartTodoGlobalView> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Errore: ${snapshot.error}'));
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SelectableText(
+                    'Errore caricamento tasks:\n${snapshot.error}',
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
             }
 
             var tasks = snapshot.data ?? [];
 
             // Apply "Today" filter client-side
+            // Apply "Today" filter client-side
             if (widget.filterMode == 'today') {
               final now = DateTime.now();
               final today = DateTime(now.year, now.month, now.day);
+              final tomorrow = today.add(const Duration(days: 1));
+              
+              debugPrint('DEBUG: SmartTodo Global Filter: Today');
+              debugPrint('DEBUG: Current Time (Now): $now');
+              debugPrint('DEBUG: Filter Threshold (Tomorrow 00:00): $tomorrow');
+              debugPrint('DEBUG: Total Tasks from stream before filter: ${tasks.length}');
+
               tasks = tasks.where((t) {
-                 if (t.isCompleted) return false;
-                 if (t.dueDate == null) return false;
+                 if (t.isCompleted) {
+                   debugPrint('DEBUG: Task ${t.title} skipped (Completed)');
+                   return false;
+                 }
+                 if (t.dueDate == null) {
+                   debugPrint('DEBUG: Task ${t.title} skipped (No Due Date)');
+                   return false;
+                 }
+                 
                  final date = t.dueDate!;
-                 return date.isBefore(today.add(const Duration(days: 1)));
+                 // Include Overdue + Today (Before Tomorrow 00:00)
+                 final matches = date.isBefore(tomorrow);
+                 debugPrint('DEBUG: Task ${t.title} | Due: $date | Matches: $matches');
+                 return matches;
               }).toList();
+              
+              debugPrint('DEBUG: Tasks after filter: ${tasks.length}');
             }
 
             final listTitles = {for (var l in widget.userLists) l.id: l.title};

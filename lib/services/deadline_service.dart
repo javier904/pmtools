@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/smart_todo/todo_task_model.dart';
 import '../models/sprint_model.dart';
+import 'package:flutter/foundation.dart';
 
 enum DeadlineType { task, sprint }
 
@@ -42,101 +43,158 @@ class DeadlineService {
   DeadlineService._internal();
 
   /// Stream combined deadlines for the current user
-  Stream<List<DeadlineItem>> streamDeadlines({int daysAhead = 1}) async* {
+  /// [daysAhead]: -1 = All (no date filter), 0 = Today, 1 = Tomorrow, etc.
+  /// [exactDay]: if true, filters for exact day only; if false, shows "up to" that day
+  Stream<List<DeadlineItem>> streamDeadlines({int daysAhead = 1, bool exactDay = true}) {
     final email = _auth.currentUser?.email;
     if (email == null) {
-      yield [];
-      return;
+      return Stream.value([]);
     }
+
+    // Normalize email
+    final trimmedEmail = email.trim();
+    final emails = {trimmedEmail, trimmedEmail.toLowerCase()}.toList();
 
     final now = DateTime.now();
-    final threshold = DateTime(now.year, now.month, now.day + daysAhead, 23, 59, 59);
+    final todayStart = DateTime(now.year, now.month, now.day);
 
-    // 1. Projects the user is in (to filter sprints)
-    final projectsSnap = await _firestore
-        .collection('agile_projects')
-        .where('participantEmails', arrayContains: email.toLowerCase())
-        .get();
-    
-    final projectIds = projectsSnap.docs.map((doc) => doc.id).toList();
+    // Calculate date range based on filter mode
+    DateTime? startThreshold;
+    DateTime? endThreshold;
 
-    // Streams
-    final tasksStream = _firestore
-        .collectionGroup('smart_todo_tasks')
-        .where('assignedTo', arrayContains: email.toLowerCase())
-        .where('statusId', whereNotIn: ['done', 'completed']) 
-        .snapshots();
-
-    // Sprints stream (if there are projects)
-    Stream<QuerySnapshot<Map<String, dynamic>>> sprintsStream;
-    if (projectIds.isNotEmpty) {
-      // Limit to first 30 projects for whereIn
-      final limitedProjectIds = projectIds.take(30).toList();
-      sprintsStream = _firestore
-          .collectionGroup('sprints')
-          .where('projectId', whereIn: limitedProjectIds)
-          .where('status', isEqualTo: 'active') // Only active sprints
-          .snapshots();
+    if (daysAhead == -1) {
+      // "All" mode - no date filtering (show all non-completed tasks with due dates)
+      startThreshold = null;
+      endThreshold = null;
+      debugPrint('DEBUG: DeadlineService stream for $emails | Mode: ALL (no date filter)');
+    } else if (exactDay) {
+      // Exact day mode - only tasks due on that specific day
+      final targetDay = todayStart.add(Duration(days: daysAhead));
+      startThreshold = targetDay;
+      endThreshold = DateTime(targetDay.year, targetDay.month, targetDay.day, 23, 59, 59);
+      debugPrint('DEBUG: DeadlineService stream for $emails | Mode: EXACT DAY $daysAhead ($startThreshold - $endThreshold)');
     } else {
-      sprintsStream = Stream.empty();
+      // Legacy mode - show all tasks up to that day
+      startThreshold = null;
+      endThreshold = DateTime(now.year, now.month, now.day + daysAhead, 23, 59, 59);
+      debugPrint('DEBUG: DeadlineService stream for $emails | Mode: UP TO $daysAhead (Threshold: $endThreshold)');
     }
 
-    await for (final taskSnap in tasksStream) {
-      final items = <DeadlineItem>[];
+    // Combine streams using StreamZip or Rx would be better, but let's stick to a simpler approach
+    // We will listen to tasks and on each update, fetch sprints.
+    
+    return _firestore
+        .collectionGroup('smart_todo_tasks')
+        .where('assignedTo', arrayContainsAny: emails)
+        // .where('statusId', whereNotIn: ['done', 'completed']) // Requires composite index usually
+        // Let's filter status client-side to avoid index hell if possible, or handle error
+        .snapshots()
+        .asyncMap((taskSnap) async {
+          debugPrint('DEBUG: DeadlineService found ${taskSnap.docs.length} raw tasks');
+          final items = <DeadlineItem>[];
 
-      // Process Tasks
-      for (var doc in taskSnap.docs) {
-        final data = doc.data();
-        final dueDateStr = data['dueDate'] as String?;
-        if (dueDateStr != null) {
-          final dueDate = DateTime.tryParse(dueDateStr);
-          if (dueDate != null && dueDate.isBefore(threshold)) {
-             // Avoid adding overdue tasks if they are too old? 
-             // Usually deadlines section shows upcoming or overdue today.
-             items.add(DeadlineItem(
-              id: doc.id,
-              parentId: data['listId'] ?? '',
-              title: data['title'] ?? '',
-              date: dueDate,
-              type: DeadlineType.task,
-              priority: data['priority'],
-            ));
+          // 1. Process Tasks
+          for (var doc in taskSnap.docs) {
+            final data = doc.data();
+            
+            // Client-side status filter (safer without index)
+            final statusId = data['statusId'] ?? data['status'];
+            if (statusId == 'done' || statusId == 'completed') continue;
+
+            final dueDateStr = data['dueDate'] as String?;
+            if (dueDateStr != null) {
+              final dueDate = DateTime.tryParse(dueDateStr);
+              if (dueDate != null) {
+                // Check if dueDate falls within the filter range
+                bool include = false;
+                if (startThreshold == null && endThreshold == null) {
+                  // "All" mode - include all tasks with due dates
+                  include = true;
+                } else if (startThreshold != null && endThreshold != null) {
+                  // Exact day mode - include if within the exact day range
+                  include = !dueDate.isBefore(startThreshold) && dueDate.isBefore(endThreshold.add(const Duration(seconds: 1)));
+                } else if (endThreshold != null) {
+                  // Legacy mode - include if before threshold
+                  include = dueDate.isBefore(endThreshold);
+                }
+
+                if (include) {
+                  items.add(DeadlineItem(
+                    id: doc.id,
+                    parentId: data['listId'] ?? '',
+                    title: data['title'] ?? '',
+                    date: dueDate,
+                    type: DeadlineType.task,
+                    priority: data['priority'],
+                  ));
+                }
+              }
+            }
           }
-        }
-      }
 
-      // We need to wait for or combine with sprints. 
-      // For simplicity in this async* pattern, let's fetch sprints once or use a more complex combination.
-      // But snapshots streams are persistent. 
-      // Let's use a simpler approach: get tasks once, get sprints once, yield then stop? 
-      // No, it should be a stream.
-      
-      // Let's use a nested fetch for sprints for now to keep it simple within the task stream update.
-      if (projectIds.isNotEmpty) {
-        final sprintSnap = await _firestore
-            .collectionGroup('sprints')
-            .where('projectId', whereIn: projectIds.take(30).toList())
-            .where('status', isEqualTo: 'active')
-            .get();
+          // 2. Fetch Sprints (Once per task update is not ideal, but okay for "Home" view)
+          // To improve, we should use BehaviorSubject or similar.
+          try {
+             // Fetch projects first
+             final projectsSnap = await _firestore
+                .collection('agile_projects')
+                .where('participantEmails', arrayContains: trimmedEmail.toLowerCase())
+                .get();
+             
+             final projectIds = projectsSnap.docs.map((doc) => doc.id).toList();
+             
+             if (projectIds.isNotEmpty) {
+                final sprintSnap = await _firestore
+                    .collectionGroup('sprints')
+                    .where('projectId', whereIn: projectIds.take(30).toList())
+                    .where('status', isEqualTo: 'active')
+                    .get();
 
-        for (var doc in sprintSnap.docs) {
-          final data = doc.data();
-          final endDate = (data['endDate'] as Timestamp?)?.toDate();
-          if (endDate != null && endDate.isBefore(threshold)) {
-            items.add(DeadlineItem(
-              id: doc.id,
-              parentId: data['projectId'] ?? '',
-              title: 'Sprint ${data['number']}: ${data['name']}',
-              date: endDate,
-              type: DeadlineType.sprint,
-            ));
+                for (var doc in sprintSnap.docs) {
+                  final data = doc.data();
+                  final endDate = (data['endDate'] as Timestamp?)?.toDate();
+                  if (endDate != null) {
+                    // Check if endDate falls within the filter range
+                    bool include = false;
+                    if (startThreshold == null && endThreshold == null) {
+                      // "All" mode - include all
+                      include = true;
+                    } else if (startThreshold != null && endThreshold != null) {
+                      // Exact day mode
+                      include = !endDate.isBefore(startThreshold) && endDate.isBefore(endThreshold.add(const Duration(seconds: 1)));
+                    } else if (endThreshold != null) {
+                      // Legacy mode
+                      include = endDate.isBefore(endThreshold);
+                    }
+
+                    if (include) {
+                      items.add(DeadlineItem(
+                        id: doc.id,
+                        parentId: data['projectId'] ?? '',
+                        title: 'Sprint ${data['number']}: ${data['name']}',
+                        date: endDate,
+                        type: DeadlineType.sprint,
+                      ));
+                    }
+                  }
+                }
+             }
+          } catch (e) {
+            debugPrint('DEBUG: Error fetching sprints/projects: $e');
+            // Continue with just tasks
           }
-        }
-      }
 
-      // Sort by date 
-      items.sort((a, b) => a.date.compareTo(b.date));
-      yield items;
-    }
+          // Sort by date
+          items.sort((a, b) => a.date.compareTo(b.date));
+          debugPrint('DEBUG: DeadlineService yielding ${items.length} items');
+          return items;
+        }).handleError((e) {
+             debugPrint('DEBUG: DeadlineService Stream Error: $e');
+             // If it's an index error, rethrow or return empty?
+             // If we return empty, user sees "No upcoming". 
+             // Better to let UI handle error if possible, but StreamBuilder handles it.
+             throw e; 
+        });
   }
 }
+

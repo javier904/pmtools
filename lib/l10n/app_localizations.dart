@@ -108,6 +108,12 @@ abstract class AppLocalizations {
   /// **'Keisen'**
   String get appTitle;
 
+  /// No description provided for @goToHome.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai alla Home'**
+  String get goToHome;
+
   /// No description provided for @actionSave.
   ///
   /// In it, this message translates to:
@@ -3250,17 +3256,29 @@ abstract class AppLocalizations {
   /// **'Owner'**
   String get retroTableOwner;
 
-  /// No description provided for @retroTablePriority.
+  /// No description provided for @retroIcebreakerTwoTruths.
   ///
   /// In it, this message translates to:
-  /// **'Priorita'**
-  String get retroTablePriority;
+  /// **'Due Verità e una Bugia'**
+  String get retroIcebreakerTwoTruths;
 
-  /// No description provided for @retroTableDueDate.
+  /// No description provided for @retroDescTwoTruths.
   ///
   /// In it, this message translates to:
-  /// **'Scadenza'**
-  String get retroTableDueDate;
+  /// **'Semplice e classico.'**
+  String get retroDescTwoTruths;
+
+  /// No description provided for @retroIcebreakerCheckin.
+  ///
+  /// In it, this message translates to:
+  /// **'Check-in Emotivo'**
+  String get retroIcebreakerCheckin;
+
+  /// No description provided for @retroDescCheckin.
+  ///
+  /// In it, this message translates to:
+  /// **'Come si sentono tutti?'**
+  String get retroDescCheckin;
 
   /// No description provided for @retroTableActions.
   ///
@@ -3427,19 +3445,19 @@ abstract class AppLocalizations {
   /// No description provided for @smartTodoNewTask.
   ///
   /// In it, this message translates to:
-  /// **'Nuova Attivita'**
+  /// **'Nuovo Task'**
   String get smartTodoNewTask;
 
   /// No description provided for @smartTodoEditTask.
   ///
   /// In it, this message translates to:
-  /// **'Modifica'**
+  /// **'Modifica Task'**
   String get smartTodoEditTask;
 
   /// No description provided for @smartTodoTaskTitle.
   ///
   /// In it, this message translates to:
-  /// **'Titolo attivita'**
+  /// **'Titolo task'**
   String get smartTodoTaskTitle;
 
   /// No description provided for @smartTodoDescription.
@@ -3505,7 +3523,7 @@ abstract class AppLocalizations {
   /// No description provided for @smartTodoPriority.
   ///
   /// In it, this message translates to:
-  /// **'PRIORITA'**
+  /// **'PRIORITÀ'**
   String get smartTodoPriority;
 
   /// No description provided for @smartTodoAssignees.
@@ -3565,13 +3583,13 @@ abstract class AppLocalizations {
   /// No description provided for @smartTodoSelectTags.
   ///
   /// In it, this message translates to:
-  /// **'Seleziona Tag'**
+  /// **'Seleziona Tags'**
   String get smartTodoSelectTags;
 
   /// No description provided for @smartTodoNoTagsAvailable.
   ///
   /// In it, this message translates to:
-  /// **'Nessun tag disponibile. Creane uno nelle impostazioni.'**
+  /// **'Nessun tag disponibile'**
   String get smartTodoNoTagsAvailable;
 
   /// No description provided for @smartTodoNewSubtask.
@@ -3595,7 +3613,7 @@ abstract class AppLocalizations {
   /// No description provided for @smartTodoLinkUrl.
   ///
   /// In it, this message translates to:
-  /// **'URL (https://...)'**
+  /// **'URL'**
   String get smartTodoLinkUrl;
 
   /// No description provided for @smartTodoCannotOpenLink.
@@ -3655,7 +3673,7 @@ abstract class AppLocalizations {
   /// No description provided for @smartTodoEditComment.
   ///
   /// In it, this message translates to:
-  /// **'Modifica commento'**
+  /// **'Modifica'**
   String get smartTodoEditComment;
 
   /// No description provided for @smartTodoEnterTitle.
@@ -6916,6 +6934,12 @@ abstract class AppLocalizations {
   /// **'Nessuna scadenza imminente'**
   String get deadlineNoUpcoming;
 
+  /// No description provided for @deadlineAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get deadlineAll;
+
   /// No description provided for @deadlineToday.
   ///
   /// In it, this message translates to:
@@ -7659,6 +7683,120 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'DISCUSSIONE'**
   String get retroPhaseDiscuss;
+
+  /// No description provided for @retroBoardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Bacheca Retrospettive'**
+  String get retroBoardTitle;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca ovunque...'**
+  String get searchPlaceholder;
+
+  /// No description provided for @searchResultsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Risultati Ricerca'**
+  String get searchResultsTitle;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato per \'{query}\''**
+  String searchNoResults(Object query);
+
+  /// No description provided for @searchResultTypeProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetto'**
+  String get searchResultTypeProject;
+
+  /// No description provided for @searchResultTypeTodo.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista ToDo'**
+  String get searchResultTypeTodo;
+
+  /// No description provided for @searchResultTypeRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospettiva'**
+  String get searchResultTypeRetro;
+
+  /// No description provided for @searchResultTypeEisenhower.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice Eisenhower'**
+  String get searchResultTypeEisenhower;
+
+  /// No description provided for @searchResultTypeEstimation.
+  ///
+  /// In it, this message translates to:
+  /// **'Estimation Room'**
+  String get searchResultTypeEstimation;
+
+  /// No description provided for @searchBackToDashboard.
+  ///
+  /// In it, this message translates to:
+  /// **'Torna alla Dashboard'**
+  String get searchBackToDashboard;
+
+  /// No description provided for @smartTodoAddItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi voce'**
+  String get smartTodoAddItem;
+
+  /// No description provided for @smartTodoAddImageUrl.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Immagine (URL)'**
+  String get smartTodoAddImageUrl;
+
+  /// No description provided for @smartTodoNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno'**
+  String get smartTodoNone;
+
+  /// No description provided for @smartTodoPointsHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Punti (es. 5)'**
+  String get smartTodoPointsHint;
+
+  /// No description provided for @smartTodoNewItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova voce'**
+  String get smartTodoNewItem;
+
+  /// No description provided for @smartTodoDeleteComment.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get smartTodoDeleteComment;
+
+  /// No description provided for @priorityHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'ALTA'**
+  String get priorityHigh;
+
+  /// No description provided for @priorityMedium.
+  ///
+  /// In it, this message translates to:
+  /// **'MEDIA'**
+  String get priorityMedium;
+
+  /// No description provided for @priorityLow.
+  ///
+  /// In it, this message translates to:
+  /// **'BASSA'**
+  String get priorityLow;
 }
 
 class _AppLocalizationsDelegate
