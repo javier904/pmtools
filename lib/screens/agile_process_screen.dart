@@ -115,7 +115,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.speed_rounded, color: Colors.white, size: 18),
+              child: const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 18),
             ),
             const SizedBox(width: 10),
             const Text(
@@ -368,19 +368,15 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                   const SizedBox(width: 4),
                   // Menu opzioni
                   if (canManage)
-                    PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, size: 18, color: context.textSecondaryColor),
-                      padding: EdgeInsets.zero,
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit, size: 18), SizedBox(width: 8), Text('Modifica')])),
-                        const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings, size: 18), SizedBox(width: 8), Text('Impostazioni')])),
-                        if (isOwner) const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, size: 18, color: Colors.red), SizedBox(width: 8), Text('Elimina', style: TextStyle(color: Colors.red))])),
-                      ],
-                      onSelected: (value) {
-                        if (value == 'edit') _showEditProjectDialog(project);
-                        else if (value == 'settings') _showProjectSettingsDialog(project);
-                        else if (value == 'delete') _confirmDeleteProject(project);
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        _showProjectMenuAtPosition(context, project, details.globalPosition, isOwner);
                       },
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Icon(Icons.more_vert, size: 18, color: context.textSecondaryColor),
+                      ),
                     ),
                 ],
               ),
@@ -673,7 +669,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                 ),
               ],
             ),
-            child: const Icon(Icons.speed_rounded, size: 48, color: Colors.white),
+            child: const Icon(Icons.rocket_launch_rounded, size: 48, color: Colors.white),
           ),
           const SizedBox(height: 32),
           Text(
@@ -867,6 +863,40 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         _showSuccess('Progetto "${project.name}" creato con successo!');
       } catch (e) {
         _showError('Errore creazione progetto: $e');
+      }
+    }
+  }
+
+  void _showProjectMenuAtPosition(BuildContext context, AgileProjectModel project, Offset globalPosition, bool isOwner) async {
+    final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromLTRB(
+      globalPosition.dx,
+      globalPosition.dy,
+      overlay.size.width - globalPosition.dx,
+      overlay.size.height - globalPosition.dy,
+    );
+
+    final result = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit, size: 18), SizedBox(width: 8), Text('Modifica')])),
+        const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings, size: 18), SizedBox(width: 8), Text('Impostazioni')])),
+        if (isOwner) const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, size: 18, color: Colors.red), SizedBox(width: 8), Text('Elimina', style: TextStyle(color: Colors.red))])),
+      ],
+    );
+
+    if (result != null && mounted) {
+      switch (result) {
+        case 'edit':
+          _showEditProjectDialog(project);
+          break;
+        case 'settings':
+          _showProjectSettingsDialog(project);
+          break;
+        case 'delete':
+          _confirmDeleteProject(project);
+          break;
       }
     }
   }

@@ -169,17 +169,34 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                 child: _buildSearchBar(),
               ),
               Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 240, // Reduced size (~30% less than 350)
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1.3, // Adjusted for narrower width
-                  ),
-                  itemCount: lists.length,
-                  itemBuilder: (context, index) {
-                    return _buildListCard(lists[index]);
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Card compatte - stesso layout di Agile Process Manager
+                    final compactCrossAxisCount = constraints.maxWidth > 1400
+                        ? 6
+                        : constraints.maxWidth > 1100
+                            ? 5
+                            : constraints.maxWidth > 800
+                                ? 4
+                                : constraints.maxWidth > 550
+                                    ? 3
+                                    : constraints.maxWidth > 350
+                                        ? 2
+                                        : 1;
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(8),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: compactCrossAxisCount,
+                        childAspectRatio: 1.25,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: lists.length,
+                      itemBuilder: (context, index) {
+                        return _buildListCard(lists[index]);
+                      },
+                    );
                   },
                 ),
               ),
@@ -313,29 +330,14 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         ),
                         const SizedBox(width: 4),
                         if (isOwner)
-                          SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: PopupMenuButton<String>(
-                              padding: EdgeInsets.zero,
-                              icon: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
-                              itemBuilder: (ctx) => [
-                                PopupMenuItem(
-                                  value: 'rename',
-                                  child: Row(children: [const Icon(Icons.edit, size: 16), const SizedBox(width: 8), Text(l10n?.smartTodoEdit ?? 'Edit')]),
-                                ),
-                                PopupMenuItem(
-                                  value: 'delete',
-                                  child: Row(children: [const Icon(Icons.delete, size: 16, color: Colors.red), const SizedBox(width: 8), Text(l10n?.smartTodoDelete ?? 'Delete', style: const TextStyle(color: Colors.red))]),
-                                ),
-                              ],
-                              onSelected: (value) {
-                                if (value == 'rename') {
-                                  _showRenameListDialog(list);
-                                } else if (value == 'delete') {
-                                  _confirmDeleteList(list);
-                                }
-                              },
+                          GestureDetector(
+                            onTapDown: (TapDownDetails details) {
+                              _showListMenuAtPosition(context, list, details.globalPosition);
+                            },
+                            child: SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
                             ),
                           )
                         else
@@ -475,6 +477,42 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
       ),
     );
   }
+
+  void _showListMenuAtPosition(BuildContext context, TodoListModel list, Offset globalPosition) async {
+    final l10n = AppLocalizations.of(context);
+    final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      globalPosition.dx,
+      globalPosition.dy,
+      overlay.size.width - globalPosition.dx,
+      overlay.size.height - globalPosition.dy,
+    );
+
+    final result = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          value: 'rename',
+          child: Row(children: [const Icon(Icons.edit, size: 16), const SizedBox(width: 8), Text(l10n?.smartTodoEdit ?? 'Edit')]),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(children: [const Icon(Icons.delete, size: 16, color: Colors.red), const SizedBox(width: 8), Text(l10n?.smartTodoDelete ?? 'Delete', style: const TextStyle(color: Colors.red))]),
+        ),
+      ],
+    );
+
+    if (!mounted || result == null) return;
+
+    if (result == 'rename') {
+      _showRenameListDialog(list);
+    } else if (result == 'delete') {
+      _confirmDeleteList(list);
+    }
+  }
+
   void _showRenameListDialog(TodoListModel list) {
     final controller = TextEditingController(text: list.title);
     final l10n = AppLocalizations.of(context);

@@ -164,34 +164,39 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
                       ),
                       if (_subscription != null && widget.showSubscriptionBadge) ...[
                         const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _subscription!.plan.color.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                _subscription!.plan.icon,
-                                size: 12,
-                                color: _subscription!.plan.color,
+                        Builder(
+                          builder: (context) {
+                            final l10n = AppLocalizations.of(context)!;
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                _subscription!.plan.displayName,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: _subscription!.plan.color,
-                                ),
+                              decoration: BoxDecoration(
+                                color: _subscription!.plan.color.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ],
-                          ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _subscription!.plan.icon,
+                                    size: 12,
+                                    color: _subscription!.plan.color,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _subscription!.plan.getDisplayName(l10n),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: _subscription!.plan.color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ],

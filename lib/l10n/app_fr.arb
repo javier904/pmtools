@@ -290,6 +290,10 @@
   "voteDistribution": "Distribution des votes",
   "voteFinalEstimate": "Estimation finale",
   "voteSelectFinal": "Sélectionner l'estimation finale",
+  "voteAverageTooltip": "Moyenne arithmétique des votes numériques",
+  "voteMedianTooltip": "Valeur centrale lorsque les votes sont triés",
+  "voteModeTooltip": "Vote le plus fréquent (la valeur choisie le plus souvent)",
+  "voteVotersTooltip": "Nombre total de participants ayant voté",
   "voteWaiting": "En attente des votes...",
   "voteSubmitted": "Vote soumis",
   "voteNotSubmitted": "N'a pas voté",
@@ -2012,8 +2016,8 @@
     }
   },
   "exportSuccess": "Exporté avec succès",
-  "exportFromEstimation": "Importer dans Liste",
-  "exportFromEstimationDesc": "Ajouter les histoires estimées à une liste Smart Todo",
+  "exportFromEstimation": "Exporter vers Liste",
+  "exportFromEstimationDesc": "Exporter les histoires estimées vers une liste Smart Todo",
   "selectDestinationList": "Sélectionner Liste Destination",
   "createNewList": "Créer Nouvelle Liste",
   "existingList": "Liste Existante",
@@ -2098,5 +2102,32 @@
       "count": {"type": "int"}
     }
   },
-  "configureNewProject": "Configurer Nouveau Projet"
+  "configureNewProject": "Configurer Nouveau Projet",
+  "exportToAgileSprint": "Exporter vers Sprint",
+  "exportToAgileSprintDesc": "Ajouter les stories estimées à un sprint Agile",
+  "selectSprint": "Sélectionner Sprint",
+  "selectSprintHint": "Choisissez un sprint de destination",
+  "noSprintsAvailable": "Aucun sprint disponible. Créez d'abord un sprint en planification.",
+  "sprintExportFieldMappingInfo": "Mapping : Titre \u2192 Titre story, Description \u2192 Description, Estimation \u2192 Story points",
+  "exportToSprint": "Exporter vers Sprint",
+  "totalStoryPoints": "{count} story points au total",
+  "@totalStoryPoints": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "storiesAddedToSprint": "{count} stories ajoutées à {sprintName}",
+  "@storiesAddedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "storiesAddedToProject": "{count} stories ajoutées au projet {projectName}",
+  "@storiesAddedToProject": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "projectName": {"type": "String"}
+    }
+  }
 }

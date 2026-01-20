@@ -252,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      _subscription!.plan.displayName,
+                      _subscription!.plan.getDisplayName(l10n),
                       style: TextStyle(
                         color: _subscription!.plan.color,
                         fontWeight: FontWeight.bold,
@@ -378,7 +378,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          _subscription!.status.displayName,
+          _subscription!.status.getDisplayName(l10n),
           style: TextStyle(
             color: _subscription!.status.color,
             fontSize: 12,
@@ -390,17 +390,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // Info abbonamento attuale
         _buildInfoRow(
           l10n.profilePlan,
-          _subscription!.plan.displayName,
+          _subscription!.plan.getDisplayName(l10n),
           icon: _subscription!.plan.icon,
           iconColor: _subscription!.plan.color,
         ),
         _buildInfoRow(
           l10n.profileBillingCycle,
-          _subscription!.billingCycle.displayName,
+          _subscription!.billingCycle.getDisplayName(l10n),
         ),
         _buildInfoRow(
           l10n.profilePrice,
-          _subscription!.formattedPrice,
+          _subscription!.getFormattedPrice(l10n),
         ),
         _buildInfoRow(
           l10n.profileActivationDate,
@@ -837,7 +837,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         trailing: trailing,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: children,
@@ -1072,7 +1072,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ))
               ListTile(
                 leading: Icon(plan.icon, color: plan.color),
-                title: Text(plan.displayName),
+                title: Text(plan.getDisplayName(l10n)),
                 subtitle: Text(plan.description),
                 trailing: Text(
                   plan.monthlyPrice > 0
@@ -1103,7 +1103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // TODO: Integrare con sistema di pagamento
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(l10n.profileUpgradeComingSoon(plan.displayName)),
+        content: Text(l10n.profileUpgradeComingSoon(plan.getDisplayName(l10n))),
         backgroundColor: Colors.blue,
       ),
     );

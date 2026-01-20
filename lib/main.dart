@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show PlatformDispatcher;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,11 +33,26 @@ void main() async {
   // Carica preferenze salvate
   final prefs = await SharedPreferences.getInstance();
   final savedThemeMode = prefs.getString('themeMode') ?? 'dark';
-  final savedLocale = prefs.getString('locale') ?? 'en';
+  
+  // Rilevamento lingua: 1. Preferenza salvata, 2. Lingua sistema, 3. Default 'en'
+  String initialLocale = prefs.getString('locale') ?? '';
+  if (initialLocale.isEmpty) {
+    final systemLocale = PlatformDispatcher.instance.locale.languageCode;
+    // Verifica se la lingua di sistema è supportata, altrimenti 'en'
+    if (['it', 'en', 'fr', 'es'].contains(systemLocale)) {
+      initialLocale = systemLocale;
+    } else {
+      initialLocale = 'en';
+    }
+  }
+
+  // Carica stato cookie
+  final initialCookieConsent = prefs.getBool('cookie_consent_accepted');
 
   runApp(AgileToolsApp(
     initialThemeMode: savedThemeMode,
-    initialLocale: savedLocale,
+    initialLocale: initialLocale,
+    initialCookieConsent: initialCookieConsent,
   ));
 }
 
@@ -113,11 +129,13 @@ class ThemeControllerProvider extends InheritedNotifier<ThemeController> {
 class AgileToolsApp extends StatefulWidget {
   final String initialThemeMode;
   final String initialLocale;
+  final bool? initialCookieConsent;
 
   const AgileToolsApp({
     super.key,
     required this.initialThemeMode,
     required this.initialLocale,
+    this.initialCookieConsent,
   });
 
   @override
@@ -187,7 +205,9 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 return Stack(
                   children: [
                     child!,
-                    const CookieConsentBanner(),
+                    CookieConsentBanner(
+                      initialConsent: widget.initialCookieConsent,
+                    ),
                   ],
                 );
               },

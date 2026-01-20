@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Modello abbonamento utente - Modulare e riutilizzabile
 ///
@@ -106,9 +107,9 @@ class SubscriptionModel {
   bool get isPaid => plan != SubscriptionPlan.free;
 
   /// Prezzo formattato
-  String get formattedPrice {
-    if (price == null) return 'Gratuito';
-    return '€${price!.toStringAsFixed(2)}/${billingCycle.shortName}';
+  String getFormattedPrice(AppLocalizations l10n) {
+    if (price == null) return l10n.priceFree;
+    return '€${price!.toStringAsFixed(2)}/${billingCycle.getShortName(l10n)}';
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -332,14 +333,14 @@ enum SubscriptionPlan {
   premium,
   elite;
 
-  String get displayName {
+  String getDisplayName(AppLocalizations l10n) {
     switch (this) {
       case SubscriptionPlan.free:
-        return 'Free';
+        return l10n.planFree;
       case SubscriptionPlan.premium:
-        return 'Premium';
+        return l10n.planPremium;
       case SubscriptionPlan.elite:
-        return 'Elite';
+        return l10n.planElite;
     }
   }
 
@@ -478,20 +479,20 @@ enum SubscriptionStatus {
   cancelled,
   expired;
 
-  String get displayName {
+  String getDisplayName(AppLocalizations l10n) {
     switch (this) {
       case SubscriptionStatus.active:
-        return 'Attivo';
+        return l10n.statusActive;
       case SubscriptionStatus.trialing:
-        return 'In prova';
+        return l10n.statusTrialing;
       case SubscriptionStatus.pastDue:
-        return 'Pagamento scaduto';
+        return l10n.statusPastDue;
       case SubscriptionStatus.paused:
-        return 'In pausa';
+        return l10n.statusPaused;
       case SubscriptionStatus.cancelled:
-        return 'Cancellato';
+        return l10n.statusCancelled;
       case SubscriptionStatus.expired:
-        return 'Scaduto';
+        return l10n.statusExpired;
     }
   }
 
@@ -520,29 +521,29 @@ enum BillingCycle {
   yearly,
   lifetime;
 
-  String get displayName {
+  String getDisplayName(AppLocalizations l10n) {
     switch (this) {
       case BillingCycle.monthly:
-        return 'Mensile';
+        return l10n.cycleMonthly;
       case BillingCycle.quarterly:
-        return 'Trimestrale';
+        return l10n.cycleQuarterly;
       case BillingCycle.yearly:
-        return 'Annuale';
+        return l10n.cycleYearly;
       case BillingCycle.lifetime:
-        return 'Lifetime';
+        return l10n.cycleLifetime;
     }
   }
 
-  String get shortName {
+  String getShortName(AppLocalizations l10n) {
     switch (this) {
       case BillingCycle.monthly:
-        return 'mese';
+        return l10n.pricePerMonth;
       case BillingCycle.quarterly:
-        return 'trim';
+        return l10n.pricePerQuarter;
       case BillingCycle.yearly:
-        return 'anno';
+        return l10n.pricePerYear;
       case BillingCycle.lifetime:
-        return 'sempre';
+        return l10n.priceForever;
     }
   }
 

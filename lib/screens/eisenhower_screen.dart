@@ -405,28 +405,28 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                       )
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          // Card compatte - molte per riga
-                          final cardWidth = constraints.maxWidth > 1400
-                              ? (constraints.maxWidth - 30) / 6 // 6 card
+                          // Card compatte - stesso layout di Agile Process Manager
+                          final compactCrossAxisCount = constraints.maxWidth > 1400
+                              ? 6
                               : constraints.maxWidth > 1100
-                                  ? (constraints.maxWidth - 25) / 5 // 5 card
+                                  ? 5
                                   : constraints.maxWidth > 800
-                                      ? (constraints.maxWidth - 18) / 4 // 4 card
+                                      ? 4
                                       : constraints.maxWidth > 550
-                                          ? (constraints.maxWidth - 12) / 3 // 3 card
+                                          ? 3
                                           : constraints.maxWidth > 350
-                                              ? (constraints.maxWidth - 6) / 2 // 2 card
-                                              : constraints.maxWidth; // 1 card
+                                              ? 2
+                                              : 1;
 
-                          return SingleChildScrollView(
-                            child: Wrap(
-                              spacing: 6,
-                              runSpacing: 6,
-                              children: filteredMatrices.map((matrix) => SizedBox(
-                                width: cardWidth,
-                                child: _buildMatrixCard(matrix),
-                              )).toList(),
+                          return GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: compactCrossAxisCount,
+                              childAspectRatio: 1.25,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
                             ),
+                            itemCount: filteredMatrices.length,
+                            itemBuilder: (context, index) => _buildMatrixCard(filteredMatrices[index]),
                           );
                         },
                       ),
@@ -532,44 +532,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   ),
                   const SizedBox(width: 4),
                   // Menu compatto
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: PopupMenuButton<String>(
-                      padding: EdgeInsets.zero,
-                      iconSize: 16,
-                      onSelected: (value) async {
-                        switch (value) {
-                          case 'edit':
-                            _showEditMatrixDialog(matrix);
-                            break;
-                          case 'delete':
-                            _confirmDeleteMatrix(matrix);
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
-                              const SizedBox(width: 8),
-                              Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.delete, size: 16, color: AppColors.error),
-                              const SizedBox(width: 8),
-                              Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: AppColors.error)),
-                            ],
-                          ),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTapDown: (TapDownDetails details) {
+                      _showMatrixMenuAtPosition(context, matrix, details.globalPosition);
+                    },
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
                     ),
                   ),
                 ],
@@ -1243,6 +1213,55 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         _showSuccess(l10n.eisenhowerMatrixCreated);
       } catch (e) {
         _showError('${l10n.errorCreatingMatrix}: $e');
+      }
+    }
+  }
+
+  void _showMatrixMenuAtPosition(BuildContext context, EisenhowerMatrixModel matrix, Offset globalPosition) async {
+    final l10n = AppLocalizations.of(context)!;
+    final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromLTRB(
+      globalPosition.dx,
+      globalPosition.dy,
+      overlay.size.width - globalPosition.dx,
+      overlay.size.height - globalPosition.dy,
+    );
+
+    final result = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
+              const SizedBox(width: 8),
+              Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              const Icon(Icons.delete, size: 16, color: AppColors.error),
+              const SizedBox(width: 8),
+              Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: AppColors.error)),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    if (result != null && mounted) {
+      switch (result) {
+        case 'edit':
+          _showEditMatrixDialog(matrix);
+          break;
+        case 'delete':
+          _confirmDeleteMatrix(matrix);
+          break;
       }
     }
   }

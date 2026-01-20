@@ -3,10 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:agile_tools/themes/app_colors.dart';
 import 'package:agile_tools/themes/app_theme.dart';
+import 'package:agile_tools/services/auth_service.dart';
+import 'package:agile_tools/services/user_profile_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CookieConsentBanner extends StatefulWidget {
-  const CookieConsentBanner({super.key});
+  final bool? initialConsent;
+
+  const CookieConsentBanner({
+    super.key,
+    this.initialConsent,
+  });
 
   @override
   State<CookieConsentBanner> createState() => _CookieConsentBannerState();
@@ -15,31 +22,79 @@ class CookieConsentBanner extends StatefulWidget {
 class _CookieConsentBannerState extends State<CookieConsentBanner> {
   bool _isVisible = false;
   static const String _consentKey = 'cookie_consent_accepted';
+  
+  /// Flag statico per evitare che il banner riappaia nella stessa sessione 
+  /// se l'utente lo ha già chiuso, anche se il salvataggio locale fallisce.
+  static bool _dismissedInSession = false;
 
   @override
   void initState() {
     super.initState();
+    _isVisible = widget.initialConsent == null && !_dismissedInSession;
     _checkConsent();
   }
 
   Future<void> _checkConsent() async {
+    if (_dismissedInSession) return;
+
+    // 1. Verifica SharedPreferences (caricato già in main.dart, ma ricontrolliamo per sicurezza)
     final prefs = await SharedPreferences.getInstance();
-    final consented = prefs.getBool(_consentKey);
-    if (consented == null && mounted) {
+    final localConsent = prefs.getBool(_consentKey);
+    
+    if (localConsent != null) {
+      if (mounted && _isVisible) setState(() => _isVisible = false);
+      return;
+    }
+
+    // 2. Se non c'è in locale, e l'utente è loggato, verifica su Firestore
+    final authService = AuthService();
+    if (authService.isAuthenticated) {
+      final profileService = UserProfileService();
+      final settings = await profileService.getCurrentSettings();
+      
+      if (settings?.cookieConsent != null) {
+        // Sincronizza Firestore -> Local
+        await prefs.setBool(_consentKey, settings!.cookieConsent!);
+        if (mounted && _isVisible) setState(() => _isVisible = false);
+        return;
+      }
+    }
+
+    // Mostra il banner se non abbiamo trovato nulla
+    if (mounted && widget.initialConsent == null) {
       setState(() => _isVisible = true);
     }
   }
 
-  Future<void> _acceptAll() async {
+  Future<void> _persistConsent(bool accepted) async {
+    // 1. Salva in SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_consentKey, true);
+    await prefs.setBool(_consentKey, accepted);
+
+    // 2. Salva in sessione
+    _dismissedInSession = true;
+
+    // 3. Salva in Firestore se loggato
+    final authService = AuthService();
+    if (authService.isAuthenticated) {
+      final profileService = UserProfileService();
+      final settings = await profileService.getCurrentSettings();
+      if (settings != null) {
+        await profileService.updateSettings(
+          settings.copyWith(cookieConsent: accepted),
+        );
+      }
+    }
+
     if (mounted) setState(() => _isVisible = false);
   }
 
+  Future<void> _acceptAll() async {
+    await _persistConsent(true);
+  }
+
   Future<void> _acceptNecessary() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_consentKey, false); // False means only necessary
-    if (mounted) setState(() => _isVisible = false);
+    await _persistConsent(false);
   }
 
   void _openPolicy(String route) {

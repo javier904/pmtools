@@ -627,6 +627,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get voteSelectFinal => 'Sélectionner l\'estimation finale';
 
   @override
+  String get voteAverageTooltip => 'Moyenne arithmétique des votes numériques';
+
+  @override
+  String get voteMedianTooltip =>
+      'Valeur centrale lorsque les votes sont triés';
+
+  @override
+  String get voteModeTooltip =>
+      'Vote le plus fréquent (la valeur choisie le plus souvent)';
+
+  @override
+  String get voteVotersTooltip => 'Nombre total de participants ayant voté';
+
+  @override
   String get voteWaiting => 'En attente des votes...';
 
   @override
@@ -916,6 +930,60 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileUpgradePlan => 'Mettre à niveau le plan';
+
+  @override
+  String get planFree => 'Gratuito';
+
+  @override
+  String get planPremium => 'Premium';
+
+  @override
+  String get planElite => 'Elite';
+
+  @override
+  String get statusActive => 'Attivo';
+
+  @override
+  String get statusTrialing => 'In prova';
+
+  @override
+  String get statusPastDue => 'Pagamento scaduto';
+
+  @override
+  String get statusPaused => 'In pausa';
+
+  @override
+  String get statusCancelled => 'Cancellato';
+
+  @override
+  String get statusExpired => 'Scaduto';
+
+  @override
+  String get cycleMonthly => 'Mensile';
+
+  @override
+  String get cycleQuarterly => 'Trimestrale';
+
+  @override
+  String get cycleYearly => 'Annuale';
+
+  @override
+  String get cycleLifetime => 'Sempre';
+
+  @override
+  String get pricePerMonth => 'mese';
+
+  @override
+  String get pricePerQuarter => 'trim';
+
+  @override
+  String get pricePerYear => 'anno';
+
+  @override
+  String get priceForever => 'sempre';
+
+  @override
+  String get priceFree => 'Gratuito';
 
   @override
   String get profileGeneralSettings => 'Paramètres généraux';
@@ -4324,11 +4392,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get exportSuccess => 'Exporté avec succès';
 
   @override
-  String get exportFromEstimation => 'Importer dans Liste';
+  String get exportFromEstimation => 'Exporter vers Liste';
 
   @override
   String get exportFromEstimationDesc =>
-      'Ajouter les histoires estimées à une liste Smart Todo';
+      'Exporter les histoires estimées vers une liste Smart Todo';
 
   @override
   String get selectDestinationList => 'Sélectionner Liste Destination';
@@ -4516,4 +4584,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get configureNewProject => 'Configurer Nouveau Projet';
+
+  @override
+  String get exportToAgileSprint => 'Exporter vers Sprint';
+
+  @override
+  String get exportToAgileSprintDesc =>
+      'Ajouter les stories estimées à un sprint Agile';
+
+  @override
+  String get selectSprint => 'Sélectionner Sprint';
+
+  @override
+  String get selectSprintHint => 'Choisissez un sprint de destination';
+
+  @override
+  String get noSprintsAvailable =>
+      'Aucun sprint disponible. Créez d\'abord un sprint en planification.';
+
+  @override
+  String get sprintExportFieldMappingInfo =>
+      'Mapping : Titre → Titre story, Description → Description, Estimation → Story points';
+
+  @override
+  String get exportToSprint => 'Exporter vers Sprint';
+
+  @override
+  String totalStoryPoints(int count) {
+    return '$count story points au total';
+  }
+
+  @override
+  String storiesAddedToSprint(int count, String sprintName) {
+    return '$count stories ajoutées à $sprintName';
+  }
+
+  @override
+  String storiesAddedToProject(int count, String projectName) {
+    return '$count stories ajoutées au projet $projectName';
+  }
 }

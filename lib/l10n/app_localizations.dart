@@ -1272,6 +1272,30 @@ abstract class AppLocalizations {
   /// **'Seleziona stima finale'**
   String get voteSelectFinal;
 
+  /// No description provided for @voteAverageTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Media aritmetica dei voti numerici'**
+  String get voteAverageTooltip;
+
+  /// No description provided for @voteMedianTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore centrale quando i voti sono ordinati'**
+  String get voteMedianTooltip;
+
+  /// No description provided for @voteModeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto più frequente (il valore scelto più volte)'**
+  String get voteModeTooltip;
+
+  /// No description provided for @voteVotersTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Numero totale di partecipanti che hanno votato'**
+  String get voteVotersTooltip;
+
   /// No description provided for @voteWaiting.
   ///
   /// In it, this message translates to:
@@ -1821,7 +1845,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileUpgrade.
   ///
   /// In it, this message translates to:
-  /// **'Upgrade'**
+  /// **'Passa a Premium'**
   String get profileUpgrade;
 
   /// No description provided for @profileUpgradePlan.
@@ -1829,6 +1853,114 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Upgrade Piano'**
   String get profileUpgradePlan;
+
+  /// No description provided for @planFree.
+  ///
+  /// In it, this message translates to:
+  /// **'Gratuito'**
+  String get planFree;
+
+  /// No description provided for @planPremium.
+  ///
+  /// In it, this message translates to:
+  /// **'Premium'**
+  String get planPremium;
+
+  /// No description provided for @planElite.
+  ///
+  /// In it, this message translates to:
+  /// **'Elite'**
+  String get planElite;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivo'**
+  String get statusActive;
+
+  /// No description provided for @statusTrialing.
+  ///
+  /// In it, this message translates to:
+  /// **'In prova'**
+  String get statusTrialing;
+
+  /// No description provided for @statusPastDue.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagamento scaduto'**
+  String get statusPastDue;
+
+  /// No description provided for @statusPaused.
+  ///
+  /// In it, this message translates to:
+  /// **'In pausa'**
+  String get statusPaused;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancellato'**
+  String get statusCancelled;
+
+  /// No description provided for @statusExpired.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaduto'**
+  String get statusExpired;
+
+  /// No description provided for @cycleMonthly.
+  ///
+  /// In it, this message translates to:
+  /// **'Mensile'**
+  String get cycleMonthly;
+
+  /// No description provided for @cycleQuarterly.
+  ///
+  /// In it, this message translates to:
+  /// **'Trimestrale'**
+  String get cycleQuarterly;
+
+  /// No description provided for @cycleYearly.
+  ///
+  /// In it, this message translates to:
+  /// **'Annuale'**
+  String get cycleYearly;
+
+  /// No description provided for @cycleLifetime.
+  ///
+  /// In it, this message translates to:
+  /// **'Sempre'**
+  String get cycleLifetime;
+
+  /// No description provided for @pricePerMonth.
+  ///
+  /// In it, this message translates to:
+  /// **'mese'**
+  String get pricePerMonth;
+
+  /// No description provided for @pricePerQuarter.
+  ///
+  /// In it, this message translates to:
+  /// **'trim'**
+  String get pricePerQuarter;
+
+  /// No description provided for @pricePerYear.
+  ///
+  /// In it, this message translates to:
+  /// **'anno'**
+  String get pricePerYear;
+
+  /// No description provided for @priceForever.
+  ///
+  /// In it, this message translates to:
+  /// **'sempre'**
+  String get priceForever;
+
+  /// No description provided for @priceFree.
+  ///
+  /// In it, this message translates to:
+  /// **'Gratuito'**
+  String get priceFree;
 
   /// No description provided for @profileGeneralSettings.
   ///
@@ -7873,13 +8005,13 @@ abstract class AppLocalizations {
   /// No description provided for @exportFromEstimation.
   ///
   /// In it, this message translates to:
-  /// **'Importa in Lista'**
+  /// **'Esporta in Lista'**
   String get exportFromEstimation;
 
   /// No description provided for @exportFromEstimationDesc.
   ///
   /// In it, this message translates to:
-  /// **'Aggiungi le storie stimate a una lista Smart Todo'**
+  /// **'Esporta le storie stimate in una lista Smart Todo'**
   String get exportFromEstimationDesc;
 
   /// No description provided for @selectDestinationList.
@@ -8211,6 +8343,66 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Configura Nuovo Progetto'**
   String get configureNewProject;
+
+  /// No description provided for @exportToAgileSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta in Sprint'**
+  String get exportToAgileSprint;
+
+  /// No description provided for @exportToAgileSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi le stories stimate a uno sprint Agile'**
+  String get exportToAgileSprintDesc;
+
+  /// No description provided for @selectSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Sprint'**
+  String get selectSprint;
+
+  /// No description provided for @selectSprintHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli uno sprint di destinazione'**
+  String get selectSprintHint;
+
+  /// No description provided for @noSprintsAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno sprint disponibile. Crea prima uno sprint in pianificazione.'**
+  String get noSprintsAvailable;
+
+  /// No description provided for @sprintExportFieldMappingInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Mappatura: Titolo → Titolo story, Descrizione → Descrizione, Stima → Story points'**
+  String get sprintExportFieldMappingInfo;
+
+  /// No description provided for @exportToSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta in Sprint'**
+  String get exportToSprint;
+
+  /// No description provided for @totalStoryPoints.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} story points totali'**
+  String totalStoryPoints(int count);
+
+  /// No description provided for @storiesAddedToSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} stories aggiunte a {sprintName}'**
+  String storiesAddedToSprint(int count, String sprintName);
+
+  /// No description provided for @storiesAddedToProject.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} stories aggiunte al progetto {projectName}'**
+  String storiesAddedToProject(int count, String projectName);
 }
 
 class _AppLocalizationsDelegate

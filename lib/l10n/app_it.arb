@@ -290,6 +290,10 @@
   "voteDistribution": "Distribuzione voti",
   "voteFinalEstimate": "Stima finale",
   "voteSelectFinal": "Seleziona stima finale",
+  "voteAverageTooltip": "Media aritmetica dei voti numerici",
+  "voteMedianTooltip": "Valore centrale quando i voti sono ordinati",
+  "voteModeTooltip": "Voto più frequente (il valore scelto più volte)",
+  "voteVotersTooltip": "Numero totale di partecipanti che hanno votato",
   "voteWaiting": "In attesa di voti...",
   "voteSubmitted": "Voto inviato",
   "voteNotSubmitted": "Non ha votato",
@@ -429,8 +433,26 @@
   "profileTrialEnd": "Fine periodo di prova",
   "profileNextRenewal": "Prossimo rinnovo",
   "profileDaysRemaining": "Giorni rimanenti",
-  "profileUpgrade": "Upgrade",
+  "profileUpgrade": "Passa a Premium",
   "profileUpgradePlan": "Upgrade Piano",
+  "planFree": "Gratuito",
+  "planPremium": "Premium",
+  "planElite": "Elite",
+  "statusActive": "Attivo",
+  "statusTrialing": "In prova",
+  "statusPastDue": "Pagamento scaduto",
+  "statusPaused": "In pausa",
+  "statusCancelled": "Cancellato",
+  "statusExpired": "Scaduto",
+  "cycleMonthly": "Mensile",
+  "cycleQuarterly": "Trimestrale",
+  "cycleYearly": "Annuale",
+  "cycleLifetime": "Sempre",
+  "pricePerMonth": "mese",
+  "pricePerQuarter": "trim",
+  "pricePerYear": "anno",
+  "priceForever": "sempre",
+  "priceFree": "Gratuito",
   "profileGeneralSettings": "Impostazioni Generali",
   "profileAnimations": "Animazioni",
   "profileAnimationsDesc": "Abilita animazioni UI",
@@ -2117,8 +2139,8 @@
     }
   },
   "exportSuccess": "Esportato con successo",
-  "exportFromEstimation": "Importa in Lista",
-  "exportFromEstimationDesc": "Aggiungi le storie stimate a una lista Smart Todo",
+  "exportFromEstimation": "Esporta in Lista",
+  "exportFromEstimationDesc": "Esporta le storie stimate in una lista Smart Todo",
   "selectDestinationList": "Seleziona Lista Destinazione",
   "createNewList": "Crea Nuova Lista",
   "existingList": "Lista Esistente",
@@ -2203,5 +2225,32 @@
       "count": {"type": "int"}
     }
   },
-  "configureNewProject": "Configura Nuovo Progetto"
+  "configureNewProject": "Configura Nuovo Progetto",
+  "exportToAgileSprint": "Esporta in Sprint",
+  "exportToAgileSprintDesc": "Aggiungi le stories stimate a uno sprint Agile",
+  "selectSprint": "Seleziona Sprint",
+  "selectSprintHint": "Scegli uno sprint di destinazione",
+  "noSprintsAvailable": "Nessuno sprint disponibile. Crea prima uno sprint in pianificazione.",
+  "sprintExportFieldMappingInfo": "Mappatura: Titolo \u2192 Titolo story, Descrizione \u2192 Descrizione, Stima \u2192 Story points",
+  "exportToSprint": "Esporta in Sprint",
+  "totalStoryPoints": "{count} story points totali",
+  "@totalStoryPoints": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "storiesAddedToSprint": "{count} stories aggiunte a {sprintName}",
+  "@storiesAddedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "storiesAddedToProject": "{count} stories aggiunte al progetto {projectName}",
+  "@storiesAddedToProject": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "projectName": {"type": "String"}
+    }
+  }
 }

@@ -291,6 +291,10 @@
   "voteDistribution": "Vote distribution",
   "voteFinalEstimate": "Final estimate",
   "voteSelectFinal": "Select final estimate",
+  "voteAverageTooltip": "Arithmetic average of numeric votes",
+  "voteMedianTooltip": "Middle value when votes are sorted",
+  "voteModeTooltip": "Most frequent vote (the value chosen most often)",
+  "voteVotersTooltip": "Total number of participants who voted",
   "voteWaiting": "Waiting for votes...",
   "voteSubmitted": "Vote submitted",
   "voteNotSubmitted": "Not voted",
@@ -432,6 +436,24 @@
   "profileDaysRemaining": "Days remaining",
   "profileUpgrade": "Upgrade",
   "profileUpgradePlan": "Upgrade Plan",
+  "planFree": "Free",
+  "planPremium": "Premium",
+  "planElite": "Elite",
+  "statusActive": "Active",
+  "statusTrialing": "Trialing",
+  "statusPastDue": "Past due",
+  "statusPaused": "Paused",
+  "statusCancelled": "Cancelled",
+  "statusExpired": "Expired",
+  "cycleMonthly": "Monthly",
+  "cycleQuarterly": "Quarterly",
+  "cycleYearly": "Yearly",
+  "cycleLifetime": "Lifetime",
+  "pricePerMonth": "month",
+  "pricePerQuarter": "quart",
+  "pricePerYear": "year",
+  "priceForever": "forever",
+  "priceFree": "Free",
   "profileGeneralSettings": "General Settings",
   "profileAnimations": "Animations",
   "profileAnimationsDesc": "Enable UI animations",
@@ -2199,8 +2221,8 @@
     }
   },
   "exportSuccess": "Exported successfully",
-  "exportFromEstimation": "Import to List",
-  "exportFromEstimationDesc": "Add estimated stories to a Smart Todo list",
+  "exportFromEstimation": "Export to List",
+  "exportFromEstimationDesc": "Export estimated stories to a Smart Todo list",
   "selectDestinationList": "Select Destination List",
   "createNewList": "Create New List",
   "existingList": "Existing List",
@@ -2285,5 +2307,32 @@
       "count": {"type": "int"}
     }
   },
-  "configureNewProject": "Configure New Project"
+  "configureNewProject": "Configure New Project",
+  "exportToAgileSprint": "Export to Sprint",
+  "exportToAgileSprintDesc": "Add estimated stories to an Agile sprint",
+  "selectSprint": "Select Sprint",
+  "selectSprintHint": "Choose a destination sprint",
+  "noSprintsAvailable": "No sprints available. Create a sprint in planning state first.",
+  "sprintExportFieldMappingInfo": "Mapping: Title \u2192 Story title, Description \u2192 Description, Estimate \u2192 Story points",
+  "exportToSprint": "Export to Sprint",
+  "totalStoryPoints": "{count} total story points",
+  "@totalStoryPoints": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "storiesAddedToSprint": "{count} stories added to {sprintName}",
+  "@storiesAddedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "storiesAddedToProject": "{count} stories added to project {projectName}",
+  "@storiesAddedToProject": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "projectName": {"type": "String"}
+    }
+  }
 }

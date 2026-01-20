@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../themes/app_theme.dart';
@@ -21,8 +22,15 @@ import '../widgets/estimation_room/participant_list_widget.dart';
 import '../widgets/estimation_room/session_search_widget.dart';
 import '../widgets/estimation_room/estimation_input_wrapper.dart';
 import '../widgets/estimation_room/export_to_smart_todo_dialog.dart';
+import '../widgets/estimation_room/export_to_agile_sprint_dialog.dart';
 import '../models/estimation_mode.dart';
+import '../models/agile_project_model.dart';
+import '../models/sprint_model.dart';
+import '../models/user_story_model.dart';
+import '../models/agile_enums.dart' as agile;
+import '../services/agile_firestore_service.dart';
 import '../widgets/home/favorite_star.dart';
+import 'agile_project_detail_screen.dart';
 
 /// Screen principale per l'Estimation Room
 ///
@@ -46,6 +54,7 @@ class EstimationRoomScreen extends StatefulWidget {
 class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   final PlanningPokerFirestoreService _firestoreService = PlanningPokerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
+  final AgileFirestoreService _agileService = AgileFirestoreService();
   final AuthService _authService = AuthService();
 
   // Stato
@@ -54,6 +63,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   PlanningPokerStoryModel? _currentStory;
   String? _myVote;
   bool _isLoading = true;
+
+  // Stream subscription per aggiornamenti real-time delle storie
+  StreamSubscription<List<PlanningPokerStoryModel>>? _storiesSubscription;
 
   bool _isDeepLink = false;
 
@@ -68,6 +80,12 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _storiesSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -159,6 +177,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   if (_isDeepLink && Navigator.of(context).canPop()) {
                     Navigator.of(context).pop();
                   } else {
+                    _storiesSubscription?.cancel();
                     setState(() => _selectedSession = null);
                   }
                 },
@@ -205,6 +224,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             ? _showExportToSmartTodoDialog
             : null,
       ),
+      // Export to Agile Sprint
+      IconButton(
+        icon: const Icon(Icons.rocket_launch_rounded),
+        tooltip: l10n.exportToAgileSprint,
+        onPressed: _stories.any((s) => s.finalEstimate != null)
+            ? _showExportToAgileSprintDialog
+            : null,
+      ),
       // ═══════════════════════════════════════════════════════════
       // SEPARATOR
       // ═══════════════════════════════════════════════════════════
@@ -242,12 +269,15 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         icon: const Icon(Icons.arrow_back, size: 18),
         label: Text(l10n.estimationList),
         style: TextButton.styleFrom(foregroundColor: Colors.white),
-        onPressed: () => setState(() {
-          _selectedSession = null;
-          _stories = [];
-          _currentStory = null;
-          _myVote = null;
-        }),
+        onPressed: () {
+          _storiesSubscription?.cancel();
+          setState(() {
+            _selectedSession = null;
+            _stories = [];
+            _currentStory = null;
+            _myVote = null;
+          });
+        },
       ),
     ];
   }
@@ -407,28 +437,28 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       )
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          // Calcola quante card per riga - card molto compatte
-                          final cardWidth = constraints.maxWidth > 1400
-                              ? (constraints.maxWidth - 30) / 6 // 6 card
+                          // Card compatte - stesso layout di Agile Process Manager
+                          final compactCrossAxisCount = constraints.maxWidth > 1400
+                              ? 6
                               : constraints.maxWidth > 1100
-                                  ? (constraints.maxWidth - 25) / 5 // 5 card
+                                  ? 5
                                   : constraints.maxWidth > 800
-                                      ? (constraints.maxWidth - 18) / 4 // 4 card
+                                      ? 4
                                       : constraints.maxWidth > 550
-                                          ? (constraints.maxWidth - 12) / 3 // 3 card
+                                          ? 3
                                           : constraints.maxWidth > 350
-                                              ? (constraints.maxWidth - 6) / 2 // 2 card
-                                              : constraints.maxWidth; // 1 card
+                                              ? 2
+                                              : 1;
 
-                          return SingleChildScrollView(
-                            child: Wrap(
-                              spacing: 6,
-                              runSpacing: 6,
-                              children: filteredSessions.map((session) => SizedBox(
-                                width: cardWidth,
-                                child: _buildSessionCard(session),
-                              )).toList(),
+                          return GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: compactCrossAxisCount,
+                              childAspectRatio: 1.25,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
                             ),
+                            itemCount: filteredSessions.length,
+                            itemBuilder: (context, index) => _buildSessionCard(filteredSessions[index]),
                           );
                         },
                       ),
@@ -575,72 +605,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   ),
                   const SizedBox(width: 4),
                   // Menu compatto
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: PopupMenuButton<String>(
-                      padding: EdgeInsets.zero,
-                      iconSize: 16,
-                      onSelected: (value) async {
-                        switch (value) {
-                          case 'edit':
-                            _showEditSessionDialog(session);
-                            break;
-                          case 'start':
-                            await _startSession(session);
-                            break;
-                          case 'complete':
-                            await _completeSession(session);
-                            break;
-                          case 'delete':
-                            _confirmDeleteSession(session);
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.edit, size: 16),
-                              const SizedBox(width: 8),
-                              Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
-                            ],
-                          ),
-                        ),
-                        if (session.isDraft)
-                          PopupMenuItem(
-                            value: 'start',
-                            child: Row(
-                              children: [
-                                const Icon(Icons.play_arrow, size: 16, color: Colors.green),
-                                const SizedBox(width: 8),
-                                Text(l10n.estimationStart, style: const TextStyle(fontSize: 13, color: Colors.green)),
-                              ],
-                            ),
-                          ),
-                        if (session.isActive)
-                          PopupMenuItem(
-                            value: 'complete',
-                            child: Row(
-                              children: [
-                                const Icon(Icons.check, size: 16, color: Colors.blue),
-                                const SizedBox(width: 8),
-                                Text(l10n.estimationComplete, style: const TextStyle(fontSize: 13, color: Colors.blue)),
-                              ],
-                            ),
-                          ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.delete, size: 16, color: Colors.red),
-                              const SizedBox(width: 8),
-                              Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: Colors.red)),
-                            ],
-                          ),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTapDown: (TapDownDetails details) {
+                      _showSessionMenuAtPosition(context, session, details.globalPosition);
+                    },
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
                     ),
                   ),
                 ],
@@ -1074,7 +1046,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.list_alt, size: 18, color: Colors.green),
+            const Icon(Icons.list_alt, size: 18, color: Colors.amber),
             const SizedBox(width: 8),
             Text(
               '${l10n.estimationStories} (${stories.length})',
@@ -1118,7 +1090,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         break;
       case StoryStatus.completed:
         statusIcon = Icons.check_circle;
-        statusColor = Colors.green;
+        statusColor = Colors.amber;
         break;
     }
 
@@ -1168,11 +1140,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: Colors.amber,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.green.withOpacity(0.3),
+                          color: Colors.amber.withOpacity(0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -1380,6 +1352,83 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     }
   }
 
+  void _showSessionMenuAtPosition(BuildContext context, PlanningPokerSessionModel session, Offset globalPosition) async {
+    final l10n = AppLocalizations.of(context)!;
+    final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromLTRB(
+      globalPosition.dx,
+      globalPosition.dy,
+      overlay.size.width - globalPosition.dx,
+      overlay.size.height - globalPosition.dy,
+    );
+
+    final result = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              const Icon(Icons.edit, size: 16),
+              const SizedBox(width: 8),
+              Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
+            ],
+          ),
+        ),
+        if (session.isDraft)
+          PopupMenuItem(
+            value: 'start',
+            child: Row(
+              children: [
+                const Icon(Icons.play_arrow, size: 16, color: Colors.green),
+                const SizedBox(width: 8),
+                Text(l10n.estimationStart, style: const TextStyle(fontSize: 13, color: Colors.green)),
+              ],
+            ),
+          ),
+        if (session.isActive)
+          PopupMenuItem(
+            value: 'complete',
+            child: Row(
+              children: [
+                const Icon(Icons.check, size: 16, color: Colors.blue),
+                const SizedBox(width: 8),
+                Text(l10n.estimationComplete, style: const TextStyle(fontSize: 13, color: Colors.blue)),
+              ],
+            ),
+          ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              const Icon(Icons.delete, size: 16, color: Colors.red),
+              const SizedBox(width: 8),
+              Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: Colors.red)),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    if (result != null && mounted) {
+      switch (result) {
+        case 'edit':
+          _showEditSessionDialog(session);
+          break;
+        case 'start':
+          await _startSession(session);
+          break;
+        case 'complete':
+          await _completeSession(session);
+          break;
+        case 'delete':
+          _confirmDeleteSession(session);
+          break;
+      }
+    }
+  }
+
   Future<void> _showEditSessionDialog(PlanningPokerSessionModel session) async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -1447,7 +1496,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       String listId;
 
       if (result.createNewList) {
-        // Create a new list
+        // Create a new list with default columns
         final newList = TodoListModel(
           id: '',
           title: result.newListTitle!,
@@ -1462,6 +1511,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               joinedAt: DateTime.now(),
             ),
           },
+          columns: const [
+            TodoColumn(id: 'todo', title: 'To Do', colorValue: 0xFF2196F3),
+            TodoColumn(id: 'in_progress', title: 'In Progress', colorValue: 0xFFFF9800),
+            TodoColumn(id: 'done', title: 'Done', colorValue: 0xFF4CAF50, isDone: true),
+          ],
         );
         listId = await _todoService.createList(newList, _currentUserEmail);
       } else {
@@ -1516,6 +1570,200 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         _showError('${l10n.stateError}: $e');
       }
     }
+  }
+
+  /// Export estimated stories to an Agile Sprint
+  Future<void> _showExportToAgileSprintDialog() async {
+    if (_selectedSession == null) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Get available projects for the user
+    List<AgileProjectModel> projects = [];
+    try {
+      projects = await _agileService.getUserProjects(_currentUserEmail);
+    } catch (e) {
+      // Silently continue if no projects
+    }
+
+    if (!mounted) return;
+
+    final result = await showDialog<ExportToAgileSprintResult>(
+      context: context,
+      builder: (context) => ExportToAgileSprintDialog(
+        stories: _stories,
+        availableProjects: projects,
+        sessionName: _selectedSession!.name,
+        getProjectSprints: (projectId) => _agileService.getProjectSprints(projectId),
+      ),
+    );
+
+    if (result == null || result.selectedStories.isEmpty) return;
+
+    try {
+      AgileProjectModel targetProject;
+      SprintModel? targetSprint;
+      int createdCount = 0;
+      final List<String> createdStoryIds = [];
+
+      if (result.createNewProject && result.newProjectConfig != null) {
+        // Create new project with configured settings
+        targetProject = await _agileService.createProject(
+          name: result.newProjectConfig!.name,
+          description: result.newProjectConfig!.description,
+          framework: result.newProjectConfig!.framework,
+          createdBy: _currentUserEmail,
+          createdByName: _currentUserName,
+          sprintDurationDays: result.newProjectConfig!.sprintDurationDays,
+          workingHoursPerDay: result.newProjectConfig!.workingHoursPerDay,
+        );
+
+        // Create stories directly in the backlog (no sprint assignment for new project)
+        for (final story in result.selectedStories) {
+          int? storyPoints;
+          if (story.finalEstimate != null) {
+            storyPoints = _convertEstimateToStoryPoints(story.finalEstimate!);
+          }
+
+          final userStory = await _agileService.createStory(
+            projectId: targetProject.id,
+            title: story.title,
+            description: story.description,
+            createdBy: _currentUserEmail,
+          );
+
+          // Update story with story points
+          final updatedStory = UserStoryModel(
+            id: userStory.id,
+            projectId: targetProject.id,
+            title: story.title,
+            description: story.description,
+            storyPoints: storyPoints,
+            finalEstimate: story.finalEstimate,
+            estimationType: agile.EstimationType.planningPoker,
+            status: agile.StoryStatus.backlog,
+            createdAt: userStory.createdAt,
+            createdBy: _currentUserEmail,
+            order: userStory.order,
+          );
+
+          await _agileService.updateStory(targetProject.id, updatedStory);
+          createdStoryIds.add(userStory.id);
+          createdCount++;
+        }
+      } else if (result.existingProject != null && result.sprint != null) {
+        // Use existing project and sprint
+        targetProject = result.existingProject!;
+        targetSprint = result.sprint!;
+
+        for (final story in result.selectedStories) {
+          int? storyPoints;
+          if (story.finalEstimate != null) {
+            storyPoints = _convertEstimateToStoryPoints(story.finalEstimate!);
+          }
+
+          final userStory = await _agileService.createStory(
+            projectId: targetProject.id,
+            title: story.title,
+            description: story.description,
+            createdBy: _currentUserEmail,
+          );
+
+          final updatedStory = UserStoryModel(
+            id: userStory.id,
+            projectId: targetProject.id,
+            title: story.title,
+            description: story.description,
+            storyPoints: storyPoints,
+            finalEstimate: story.finalEstimate,
+            estimationType: agile.EstimationType.planningPoker,
+            sprintId: targetSprint.id,
+            status: targetSprint.status == agile.SprintStatus.active
+                ? agile.StoryStatus.inSprint
+                : agile.StoryStatus.ready,
+            createdAt: userStory.createdAt,
+            createdBy: _currentUserEmail,
+            order: userStory.order,
+          );
+
+          await _agileService.updateStory(targetProject.id, updatedStory);
+          createdStoryIds.add(userStory.id);
+          createdCount++;
+        }
+
+        // Update sprint with new story IDs and points
+        final totalNewPoints = result.selectedStories.fold<int>(0, (sum, story) {
+          return sum + (_convertEstimateToStoryPoints(story.finalEstimate ?? '0'));
+        });
+
+        final updatedSprint = targetSprint.copyWith(
+          storyIds: [...targetSprint.storyIds, ...createdStoryIds],
+          plannedPoints: targetSprint.plannedPoints + totalNewPoints,
+        );
+
+        await _agileService.updateSprint(targetProject.id, updatedSprint);
+      } else {
+        // Invalid state
+        return;
+      }
+
+      if (mounted) {
+        final message = targetSprint != null
+            ? l10n.storiesAddedToSprint(createdCount, targetSprint.name)
+            : l10n.storiesAddedToProject(createdCount, targetProject.name);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: l10n.actionOpen,
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AgileProjectDetailScreen(
+                      project: targetProject,
+                      onBack: () => Navigator.pop(context),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError('${l10n.stateError}: $e');
+      }
+    }
+  }
+
+  /// Converts estimate string to story points (Fibonacci)
+  int _convertEstimateToStoryPoints(String estimate) {
+    // Try direct Fibonacci parsing
+    final directParse = int.tryParse(estimate);
+    if (directParse != null) return directParse;
+
+    // T-Shirt size mapping
+    const tshirtMap = {
+      'XS': 1,
+      'S': 2,
+      'M': 3,
+      'L': 5,
+      'XL': 8,
+      'XXL': 13,
+    };
+    if (tshirtMap.containsKey(estimate.toUpperCase())) {
+      return tshirtMap[estimate.toUpperCase()]!;
+    }
+
+    // Decimal value parsing
+    final decimalParse = double.tryParse(estimate);
+    if (decimalParse != null) return decimalParse.round();
+
+    return 0;
   }
 
   Future<void> _showAddStoryDialog() async {
@@ -1627,11 +1875,31 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Future<void> _selectSession(PlanningPokerSessionModel session) async {
+    // Cancel any existing subscription
+    await _storiesSubscription?.cancel();
+
     setState(() {
       _selectedSession = session;
       _isLoading = true;
     });
     await _loadStories(session.id);
+
+    // Set up stream subscription for real-time updates
+    _storiesSubscription = _firestoreService.streamStories(session.id).listen(
+      (stories) {
+        if (mounted) {
+          setState(() {
+            _stories = stories;
+            _currentStory = stories.currentlyVoting;
+            _myVote = _currentStory?.getUserVote(_currentUserEmail)?.value;
+          });
+        }
+      },
+      onError: (e) {
+        // Silently handle stream errors
+      },
+    );
+
     setState(() => _isLoading = false);
   }
 
@@ -1702,21 +1970,21 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.amber.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green.withOpacity(0.3)),
+                      border: Border.all(color: Colors.amber.withOpacity(0.3)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.check_circle, color: Colors.green),
+                        const Icon(Icons.check_circle, color: Colors.amber),
                         const SizedBox(width: 8),
                         Text(l10n.estimationFinalEstimateLabel, style: const TextStyle(fontWeight: FontWeight.w500)),
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Colors.amber,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -1931,7 +2199,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.check_circle, color: Colors.green),
+            const Icon(Icons.check_circle, color: Colors.amber),
             const SizedBox(width: 8),
             Text(l10n.estimationConfirmFinalEstimate),
           ],
@@ -1980,19 +2248,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               ),
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(6),
+                  color: context.surfaceVariantColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: context.borderColor.withOpacity(0.5)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
-                    const SizedBox(width: 8),
+                    Icon(Icons.lightbulb_outline, size: 18, color: Colors.amber[700]),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         l10n.estimationRationaleHelp,
-                        style: const TextStyle(fontSize: 12, color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: context.textSecondaryColor,
+                          height: 1.4,
+                        ),
                       ),
                     ),
                   ],
@@ -2024,8 +2297,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             icon: const Icon(Icons.check),
             label: Text(l10n.actionConfirm),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.black87,
             ),
           ),
         ],

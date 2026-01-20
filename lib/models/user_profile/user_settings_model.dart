@@ -14,6 +14,9 @@ class UserSettingsModel {
   final String locale; // it, en, etc.
   final bool enableAnimations;
 
+  // Cookie consent (true = accepted all, false = necessary only, null = not yet decided)
+  final bool? cookieConsent;
+
   // Notifiche
   final NotificationSettings notifications;
 
@@ -32,6 +35,7 @@ class UserSettingsModel {
     this.themeMode = ThemePreference.system,
     this.locale = 'it',
     this.enableAnimations = true,
+    this.cookieConsent,
     this.notifications = const NotificationSettings(),
     this.featureFlags = const FeatureFlags(),
     this.moduleSettings = const {},
@@ -58,6 +62,7 @@ class UserSettingsModel {
       'themeMode': themeMode.name,
       'locale': locale,
       'enableAnimations': enableAnimations,
+      'cookieConsent': cookieConsent,
       'notifications': notifications.toMap(),
       'featureFlags': featureFlags.toMap(),
       'moduleSettings': moduleSettings,
@@ -75,6 +80,7 @@ class UserSettingsModel {
       ),
       locale: data['locale'] ?? 'it',
       enableAnimations: data['enableAnimations'] ?? true,
+      cookieConsent: data['cookieConsent'],
       notifications: NotificationSettings.fromMap(
         data['notifications'] as Map<String, dynamic>? ?? {},
       ),
@@ -91,6 +97,7 @@ class UserSettingsModel {
     ThemePreference? themeMode,
     String? locale,
     bool? enableAnimations,
+    bool? cookieConsent,
     NotificationSettings? notifications,
     FeatureFlags? featureFlags,
     Map<String, dynamic>? moduleSettings,
@@ -101,6 +108,7 @@ class UserSettingsModel {
       themeMode: themeMode ?? this.themeMode,
       locale: locale ?? this.locale,
       enableAnimations: enableAnimations ?? this.enableAnimations,
+      cookieConsent: cookieConsent ?? this.cookieConsent,
       notifications: notifications ?? this.notifications,
       featureFlags: featureFlags ?? this.featureFlags,
       moduleSettings: moduleSettings ?? this.moduleSettings,

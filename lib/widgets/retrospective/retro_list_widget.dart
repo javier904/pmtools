@@ -7,8 +7,9 @@ class RetroListWidget extends StatelessWidget {
   final List<RetrospectiveModel> retrospectives;
   final Function(RetrospectiveModel) onTap;
   final VoidCallback onCreateNew;
-  final String currentUserEmail; // Added
-  final Function(RetrospectiveModel)? onDelete; // Added
+  final String currentUserEmail;
+  final Function(RetrospectiveModel)? onEdit;
+  final Function(RetrospectiveModel)? onDelete;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
 
@@ -17,7 +18,8 @@ class RetroListWidget extends StatelessWidget {
     required this.retrospectives,
     required this.onTap,
     required this.onCreateNew,
-    required this.currentUserEmail, // Required now
+    required this.currentUserEmail,
+    this.onEdit,
     this.onDelete,
     this.shrinkWrap = false,
     this.physics,
@@ -49,48 +51,83 @@ class RetroListWidget extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calcola quante card per riga - simile a EstimationRoomScreen
-        final cardWidth = constraints.maxWidth > 1400
-            ? (constraints.maxWidth - 30) / 6
+        // Card compatte - stesso layout di Agile Process Manager
+        final compactCrossAxisCount = constraints.maxWidth > 1400
+            ? 6
             : constraints.maxWidth > 1100
-                ? (constraints.maxWidth - 25) / 5
+                ? 5
                 : constraints.maxWidth > 800
-                    ? (constraints.maxWidth - 18) / 4
+                    ? 4
                     : constraints.maxWidth > 550
-                        ? (constraints.maxWidth - 12) / 3
+                        ? 3
                         : constraints.maxWidth > 350
-                            ? (constraints.maxWidth - 6) / 2
-                            : constraints.maxWidth;
+                            ? 2
+                            : 1;
 
-        final isVerticalList = cardWidth == constraints.maxWidth;
-
-        // Se è una lista verticale singola, possiamo usare ListView per performance se shrinkWrap lo permette
-        // Ma per coerenza visiva usiamo Wrap o Grid
-        // Dato che abbiamo shrinkWrap support, usiamo SingleChildScrollView + Wrap se shrinkWrap=false?
-        // No, se shrinkWrap=true, dobbiamo rendere solo il contenuto.
-        
-        // Se shrinkWrap è true, questo è dentro un'altra scroll view.
-        // Se false, è la scroll view principale.
-        
-        Widget content = Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: retrospectives.map((retro) => SizedBox(
-            width: cardWidth,
-            child: _buildRetroCard(context, retro),
-          )).toList(),
+        return GridView.builder(
+          shrinkWrap: shrinkWrap,
+          physics: physics,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: compactCrossAxisCount,
+            childAspectRatio: 1.25,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
+          itemCount: retrospectives.length,
+          itemBuilder: (context, index) => _buildRetroCard(context, retrospectives[index]),
         );
-
-        if (shrinkWrap) {
-          return content;
-        } else {
-          return SingleChildScrollView(
-            physics: physics,
-            child: content,
-          );
-        }
       },
     );
+  }
+
+  void _showRetroMenuAtPosition(BuildContext context, RetrospectiveModel retro, Offset globalPosition) async {
+    final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromLTRB(
+      globalPosition.dx,
+      globalPosition.dy,
+      overlay.size.width - globalPosition.dx,
+      overlay.size.height - globalPosition.dy,
+    );
+
+    final result = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        if (onEdit != null)
+          const PopupMenuItem(
+            value: 'edit',
+            child: Row(
+              children: [
+                Icon(Icons.edit, size: 16),
+                SizedBox(width: 8),
+                Text('Modifica', style: TextStyle(fontSize: 13)),
+              ],
+            ),
+          ),
+        if (onDelete != null)
+          const PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                Icon(Icons.delete, size: 16, color: Colors.red),
+                SizedBox(width: 8),
+                Text('Elimina', style: TextStyle(fontSize: 13, color: Colors.red)),
+              ],
+            ),
+          ),
+      ],
+    );
+
+    if (result != null) {
+      switch (result) {
+        case 'edit':
+          onEdit?.call(retro);
+          break;
+        case 'delete':
+          onDelete?.call(retro);
+          break;
+      }
+    }
   }
 
   Widget _buildRetroCard(BuildContext context, RetrospectiveModel retro) {
@@ -169,15 +206,20 @@ class RetroListWidget extends StatelessWidget {
                     type: 'retrospective',
                     title: retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
                     colorHex: '#E91E63', // Pink for Retros
-                    size: 20,
+                    size: 16,
                   ),
-                  // Delete Action (Only for Creator)
-                  if (retro.createdBy == currentUserEmail && onDelete != null)
-                     IconButton(
-                       icon: const Icon(Icons.delete_outline, size: 20, color: Colors.grey),
-                       tooltip: 'Elimina Retrospettiva',
-                       onPressed: () => onDelete!(retro),
-                     ),
+                  // Menu (Only for Creator)
+                  if (retro.createdBy == currentUserEmail && (onEdit != null || onDelete != null))
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        _showRetroMenuAtPosition(context, retro, details.globalPosition);
+                      },
+                      child: const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Icon(Icons.more_vert, size: 16, color: Colors.grey),
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 12),
