@@ -63,6 +63,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actionReset => 'Restablecer';
 
   @override
+  String get actionOpen => 'Abrir';
+
+  @override
   String get stateLoading => 'Cargando...';
 
   @override
@@ -4255,4 +4258,234 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get priorityLow => 'BASSA';
+
+  @override
+  String get exportToEstimation => 'Enviar a Estimation';
+
+  @override
+  String get exportToEstimationDesc =>
+      'Crear una sesión de estimación con estas tareas';
+
+  @override
+  String get exportToEisenhower => 'Enviar a Eisenhower';
+
+  @override
+  String get exportToEisenhowerDesc =>
+      'Crear una matriz Eisenhower con estas tareas';
+
+  @override
+  String get selectTasksToExport => 'Seleccionar Tareas';
+
+  @override
+  String get selectTasksToExportDesc => 'Elige qué tareas incluir';
+
+  @override
+  String get noTasksSelected => 'Ninguna tarea seleccionada';
+
+  @override
+  String get selectAtLeastOne => 'Selecciona al menos una tarea';
+
+  @override
+  String get createEstimationSession => 'Crear Sesión de Estimación';
+
+  @override
+  String tasksSelectedCount(int count) {
+    return '$count tarea(s) seleccionada(s)';
+  }
+
+  @override
+  String get exportSuccess => 'Exportado con éxito';
+
+  @override
+  String get exportFromEstimation => 'Importar a Lista';
+
+  @override
+  String get exportFromEstimationDesc =>
+      'Agregar historias estimadas a una lista Smart Todo';
+
+  @override
+  String get selectDestinationList => 'Seleccionar Lista Destino';
+
+  @override
+  String get createNewList => 'Crear Nueva Lista';
+
+  @override
+  String get existingList => 'Lista Existente';
+
+  @override
+  String get listName => 'Nombre de Lista';
+
+  @override
+  String get listNameHint => 'Introduce un nombre para la nueva lista';
+
+  @override
+  String get selectList => 'Seleccionar Lista';
+
+  @override
+  String get selectListHint => 'Elige una lista de destino';
+
+  @override
+  String get noListsAvailable => 'No hay listas disponibles. Crea una nueva.';
+
+  @override
+  String storiesSelectedCount(int count) {
+    return '$count historia(s) seleccionada(s)';
+  }
+
+  @override
+  String get selectAll => 'Seleccionar Todo';
+
+  @override
+  String get deselectAll => 'Deseleccionar Todo';
+
+  @override
+  String get importStories => 'Importar Historias';
+
+  @override
+  String storiesImportedCount(int count) {
+    return '$count historia(s) importada(s)';
+  }
+
+  @override
+  String get noEstimatedStories =>
+      'Sin historias con estimaciones para importar';
+
+  @override
+  String get selectDestinationMatrix => 'Seleccionar Matriz Destino';
+
+  @override
+  String get existingMatrix => 'Matriz Existente';
+
+  @override
+  String get createNewMatrix => 'Crear Nueva Matriz';
+
+  @override
+  String get matrixName => 'Nombre de Matriz';
+
+  @override
+  String get matrixNameHint => 'Introduce un nombre para la nueva matriz';
+
+  @override
+  String get selectMatrix => 'Seleccionar Matriz';
+
+  @override
+  String get selectMatrixHint => 'Elige una matriz de destino';
+
+  @override
+  String get noMatricesAvailable =>
+      'No hay matrices disponibles. Crea una nueva.';
+
+  @override
+  String activitiesCreated(int count) {
+    return '$count actividades creadas';
+  }
+
+  @override
+  String get importFromEisenhower => 'Importar desde Eisenhower';
+
+  @override
+  String get importFromEisenhowerDesc =>
+      'Agregar tareas priorizadas a esta lista';
+
+  @override
+  String get quadrantQ1 => 'Urgente e Importante';
+
+  @override
+  String get quadrantQ2 => 'No Urgente e Importante';
+
+  @override
+  String get quadrantQ3 => 'Urgente y No Importante';
+
+  @override
+  String get quadrantQ4 => 'No Urgente y No Importante';
+
+  @override
+  String get warningQ4Tasks =>
+      'Las tareas Q4 generalmente no valen la pena. ¿Estás seguro?';
+
+  @override
+  String get priorityMappingInfo =>
+      'Mapeo de prioridad: Q1=Alta, Q2=Media, Q3/Q4=Baja';
+
+  @override
+  String get selectColumns => 'Seleccionar Columnas';
+
+  @override
+  String get allTasks => 'Todas las Tareas';
+
+  @override
+  String get filterByColumn => 'Filtrar por columna';
+
+  @override
+  String get exportFromEisenhower => 'Exportar a Smart Todo';
+
+  @override
+  String get exportFromEisenhowerDesc =>
+      'Crear tareas desde actividades priorizadas';
+
+  @override
+  String get filterByQuadrant => 'Filtrar por cuadrante';
+
+  @override
+  String get allActivities => 'Todas las Actividades';
+
+  @override
+  String activitiesSelectedCount(int count) {
+    return '$count actividad(es) seleccionada(s)';
+  }
+
+  @override
+  String get noActivitiesSelected => 'Ninguna actividad disponible';
+
+  @override
+  String get unvoted => 'Sin votar';
+
+  @override
+  String tasksCreated(int count) {
+    return '$count tareas creadas';
+  }
+
+  @override
+  String get exportToUserStories => 'Exportar a User Stories';
+
+  @override
+  String get exportToUserStoriesDesc =>
+      'Crear user stories en un proyecto Agile';
+
+  @override
+  String get selectDestinationProject => 'Seleccionar Proyecto Destino';
+
+  @override
+  String get existingProject => 'Proyecto Existente';
+
+  @override
+  String get createNewProject => 'Crear Nuevo Proyecto';
+
+  @override
+  String get projectName => 'Nombre del Proyecto';
+
+  @override
+  String get projectNameHint => 'Ingresa un nombre para el nuevo proyecto';
+
+  @override
+  String get selectProject => 'Seleccionar Proyecto';
+
+  @override
+  String get selectProjectHint => 'Elige un proyecto de destino';
+
+  @override
+  String get noProjectsAvailable =>
+      'No hay proyectos disponibles. Crea uno nuevo.';
+
+  @override
+  String get userStoryFieldMappingInfo =>
+      'Mapeo: Título → Título story, Descripción → Descripción story, Esfuerzo → Story points, Prioridad → Business value';
+
+  @override
+  String storiesCreated(int count) {
+    return '$count stories creadas';
+  }
+
+  @override
+  String get configureNewProject => 'Configurar Nuevo Proyecto';
 }

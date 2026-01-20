@@ -6,8 +6,12 @@ import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_story_model.dart';
 import '../models/planning_poker_participant_model.dart';
 import '../models/planning_poker_invite_model.dart';
+import '../models/smart_todo/todo_list_model.dart';
+import '../models/smart_todo/todo_task_model.dart';
+import '../models/smart_todo/todo_participant_model.dart';
 import '../services/planning_poker_firestore_service.dart';
 import '../services/planning_poker_invite_service.dart';
+import '../services/smart_todo_service.dart';
 import '../services/auth_service.dart';
 import '../widgets/estimation_room/session_form_dialog.dart';
 import '../widgets/estimation_room/story_form_dialog.dart';
@@ -16,6 +20,7 @@ import '../widgets/estimation_room/results_panel_widget.dart';
 import '../widgets/estimation_room/participant_list_widget.dart';
 import '../widgets/estimation_room/session_search_widget.dart';
 import '../widgets/estimation_room/estimation_input_wrapper.dart';
+import '../widgets/estimation_room/export_to_smart_todo_dialog.dart';
 import '../models/estimation_mode.dart';
 import '../widgets/home/favorite_star.dart';
 
@@ -40,6 +45,7 @@ class EstimationRoomScreen extends StatefulWidget {
 
 class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   final PlanningPokerFirestoreService _firestoreService = PlanningPokerFirestoreService();
+  final SmartTodoService _todoService = SmartTodoService();
   final AuthService _authService = AuthService();
 
   // Stato
@@ -188,6 +194,30 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return [
+      // ═══════════════════════════════════════════════════════════
+      // EXPORT/INTEGRATION BUTTONS (left side)
+      // ═══════════════════════════════════════════════════════════
+      // Export to Smart Todo
+      IconButton(
+        icon: const Icon(Icons.check_circle_outline_rounded),
+        tooltip: l10n.exportFromEstimation,
+        onPressed: _stories.any((s) => s.finalEstimate != null)
+            ? _showExportToSmartTodoDialog
+            : null,
+      ),
+      // ═══════════════════════════════════════════════════════════
+      // SEPARATOR
+      // ═══════════════════════════════════════════════════════════
+      const SizedBox(width: 8),
+      Container(
+        width: 1,
+        height: 24,
+        color: Colors.grey,
+      ),
+      const SizedBox(width: 8),
+      // ═══════════════════════════════════════════════════════════
+      // PAGE FUNCTIONALITY BUTTONS (right side)
+      // ═══════════════════════════════════════════════════════════
       // Status badge
       _buildStatusBadge(),
       const SizedBox(width: 8),
@@ -1389,6 +1419,102 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   Future<void> _showSessionSettings() async {
     if (_selectedSession != null) {
       await _showEditSessionDialog(_selectedSession!);
+    }
+  }
+
+  /// Export estimated stories to a Smart Todo list
+  Future<void> _showExportToSmartTodoDialog() async {
+    if (_selectedSession == null) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Get available lists for the user
+    final lists = await _todoService.getTodoListsOnce(_currentUserEmail);
+
+    if (!mounted) return;
+
+    final result = await showDialog<ExportToSmartTodoResult>(
+      context: context,
+      builder: (context) => ExportToSmartTodoDialog(
+        stories: _stories,
+        availableLists: lists,
+        sessionName: _selectedSession!.name,
+      ),
+    );
+
+    if (result == null || result.selectedStories.isEmpty) return;
+
+    try {
+      String listId;
+
+      if (result.createNewList) {
+        // Create a new list
+        final newList = TodoListModel(
+          id: '',
+          title: result.newListTitle!,
+          description: '${l10n.importStories}: ${_selectedSession!.name}',
+          ownerId: _currentUserEmail,
+          createdAt: DateTime.now(),
+          participants: {
+            _currentUserEmail: TodoParticipant(
+              email: _currentUserEmail,
+              displayName: _currentUserName,
+              role: TodoParticipantRole.owner,
+              joinedAt: DateTime.now(),
+            ),
+          },
+        );
+        listId = await _todoService.createList(newList, _currentUserEmail);
+      } else {
+        listId = result.existingList!.id;
+      }
+
+      // Convert stories to tasks
+      final tasks = result.selectedStories.map((story) {
+        // Parse effort from finalEstimate (can be numeric or T-shirt size)
+        int? effort;
+        if (story.finalEstimate != null) {
+          effort = int.tryParse(story.finalEstimate!);
+        }
+
+        return TodoTaskModel(
+          id: '',
+          listId: listId,
+          title: story.title,
+          description: story.description,
+          statusId: 'todo',
+          priority: TodoTaskPriority.medium,
+          effort: effort,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+      }).toList();
+
+      // Create tasks in batch
+      await _todoService.batchCreateTasks(listId, tasks);
+
+      if (mounted) {
+        _showSuccess(l10n.storiesImportedCount(result.selectedStories.length));
+
+        // Offer to navigate to the list
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.storiesImportedCount(result.selectedStories.length)),
+            action: SnackBarAction(
+              label: l10n.actionOpen,
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  '/smart-todo',
+                  arguments: {'listId': listId},
+                );
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError('${l10n.stateError}: $e');
+      }
     }
   }
 

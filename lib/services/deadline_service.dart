@@ -180,7 +180,7 @@ class DeadlineService {
                 }
              }
           } catch (e) {
-            debugPrint('DEBUG: Error fetching sprints/projects: $e');
+            // Silently ignore - sprints/agile_projects may not exist in this app
             // Continue with just tasks
           }
 

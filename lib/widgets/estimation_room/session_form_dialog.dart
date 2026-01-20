@@ -4,11 +4,33 @@ import '../../models/planning_poker_session_model.dart';
 import '../../models/estimation_mode.dart';
 import '../../utils/validators.dart';
 
+/// Data class for preloaded stories (from Smart Todo export)
+class PreloadedStory {
+  final String title;
+  final String description;
+  final String? sourceTaskId;
+  final String? sourceListId;
+
+  const PreloadedStory({
+    required this.title,
+    this.description = '',
+    this.sourceTaskId,
+    this.sourceListId,
+  });
+}
+
 /// Dialog per creare/modificare una sessione di Planning Poker
 class SessionFormDialog extends StatefulWidget {
   final PlanningPokerSessionModel? session;
+  final List<PreloadedStory>? preloadedStories;
+  final String? suggestedName;
 
-  const SessionFormDialog({super.key, this.session});
+  const SessionFormDialog({
+    super.key,
+    this.session,
+    this.preloadedStories,
+    this.suggestedName,
+  });
 
   @override
   State<SessionFormDialog> createState() => _SessionFormDialogState();
@@ -28,7 +50,9 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.session?.name ?? '');
+    _nameController = TextEditingController(
+      text: widget.session?.name ?? widget.suggestedName ?? '',
+    );
     _descriptionController = TextEditingController(text: widget.session?.description ?? '');
 
     if (widget.session != null) {
@@ -120,14 +144,13 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                 items: EstimationMode.values.map((mode) => DropdownMenuItem(
                   value: mode,
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(_getEstimationModeIcon(mode), size: 18, color: Colors.grey),
                       const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          mode.displayName,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      Text(
+                        mode.displayName,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -269,6 +292,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
       'estimationMode': _selectedEstimationMode,
       'allowObservers': _allowObservers,
       'autoReveal': _autoReveal,
+      if (widget.preloadedStories != null) 'preloadedStories': widget.preloadedStories,
     });
   }
 }

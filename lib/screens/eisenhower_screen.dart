@@ -19,7 +19,13 @@ import '../widgets/eisenhower/participant_invite_dialog.dart';
 import '../widgets/eisenhower/independent_vote_dialog.dart';
 import '../widgets/eisenhower/scatter_chart_widget.dart';
 import '../widgets/eisenhower/matrix_grid_widget.dart';
+import '../widgets/eisenhower/export_to_smart_todo_dialog.dart';
 import '../widgets/home/favorite_star.dart';
+import '../models/smart_todo/todo_list_model.dart';
+import '../models/smart_todo/todo_task_model.dart';
+import '../models/smart_todo/todo_participant_model.dart';
+import '../services/smart_todo_service.dart';
+import 'smart_todo/smart_todo_detail_screen.dart';
 
 /// Screen principale per la gestione delle Matrici di Eisenhower
 ///
@@ -30,7 +36,12 @@ import '../widgets/home/favorite_star.dart';
 /// - Visualizzazione griglia 4 quadranti
 /// - Grafico scatter plot
 class EisenhowerScreen extends StatefulWidget {
-  const EisenhowerScreen({super.key});
+  final String? initialMatrixId;
+
+  const EisenhowerScreen({
+    super.key,
+    this.initialMatrixId,
+  });
 
   @override
   State<EisenhowerScreen> createState() => _EisenhowerScreenState();
@@ -38,6 +49,7 @@ class EisenhowerScreen extends StatefulWidget {
 
 class _EisenhowerScreenState extends State<EisenhowerScreen> {
   final EisenhowerFirestoreService _firestoreService = EisenhowerFirestoreService();
+  final SmartTodoService _todoService = SmartTodoService();
   final EisenhowerInviteService _inviteService = EisenhowerInviteService();
   final EisenhowerSheetsExportService _sheetsExportService = EisenhowerSheetsExportService();
   final AuthService _authService = AuthService();
@@ -75,6 +87,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   }
 
   Future<void> _checkArguments() async {
+    // First check if initialMatrixId was passed directly
+    if (widget.initialMatrixId != null) {
+      _isDeepLink = true;
+      await _loadMatrixById(widget.initialMatrixId!);
+      return;
+    }
+
+    // Then check route arguments
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args is Map<String, dynamic> && args.containsKey('id')) {
       _isDeepLink = true;
@@ -174,6 +194,28 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           ),
           actions: [
             if (_selectedMatrix != null) ...[
+              // ═══════════════════════════════════════════════════════════
+              // EXPORT/INTEGRATION BUTTONS (left side)
+              // ═══════════════════════════════════════════════════════════
+              // Export to Smart Todo
+              IconButton(
+                icon: const Icon(Icons.check_circle_outline_rounded),
+                tooltip: l10n.exportFromEisenhower,
+                onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
+              ),
+              // ═══════════════════════════════════════════════════════════
+              // SEPARATOR
+              // ═══════════════════════════════════════════════════════════
+              const SizedBox(width: 8),
+              Container(
+                width: 1,
+                height: 24,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 8),
+              // ═══════════════════════════════════════════════════════════
+              // PAGE FUNCTIONALITY BUTTONS (right side)
+              // ═══════════════════════════════════════════════════════════
               // Toggle viste (Griglia / Grafico / Lista)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -1299,6 +1341,141 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       if (mounted) {
         setState(() => _isExporting = false);
       }
+    }
+  }
+
+  /// Show dialog to export activities to Smart Todo
+  Future<void> _showExportToSmartTodoDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_selectedMatrix == null || _currentUserEmail == null) return;
+
+    final userEmail = _currentUserEmail!;
+
+    // Get available lists for current user
+    List<TodoListModel> availableLists = [];
+    try {
+      availableLists = await _todoService.streamLists(userEmail).first;
+    } catch (e) {
+      print('Error fetching lists: $e');
+    }
+
+    if (!mounted) return;
+
+    // Show export dialog
+    final result = await showDialog<ExportToSmartTodoFromEisenhowerResult>(
+      context: context,
+      builder: (context) => ExportToSmartTodoFromEisenhowerDialog(
+        matrix: _selectedMatrix!,
+        activities: _activities,
+        availableLists: availableLists,
+      ),
+    );
+
+    if (result == null || result.selectedActivities.isEmpty || !mounted) return;
+
+    try {
+      String listId;
+      TodoListModel? targetList;
+
+      if (result.createNewList) {
+        // Create new list model
+        final newList = TodoListModel(
+          id: '',
+          title: result.newListTitle!,
+          description: 'Imported from: ${_selectedMatrix!.title}',
+          ownerId: userEmail,
+          createdAt: DateTime.now(),
+          participants: {
+            userEmail: TodoParticipant(
+              email: userEmail,
+              role: TodoParticipantRole.owner,
+              joinedAt: DateTime.now(),
+            ),
+          },
+          columns: [
+            const TodoColumn(id: 'todo', title: 'To Do', colorValue: 0xFF2196F3),
+            const TodoColumn(id: 'in_progress', title: 'In Progress', colorValue: 0xFFFF9800),
+            const TodoColumn(id: 'done', title: 'Done', colorValue: 0xFF4CAF50, isDone: true),
+          ],
+        );
+        listId = await _todoService.createList(newList, userEmail);
+        // Fetch the created list
+        targetList = await _todoService.streamLists(userEmail).first.then(
+          (lists) => lists.firstWhere((l) => l.id == listId),
+        );
+      } else {
+        // Use existing list
+        listId = result.existingList!.id;
+        targetList = result.existingList!;
+      }
+
+      // Create tasks for each selected activity
+      final now = DateTime.now();
+      int createdCount = 0;
+      for (final activity in result.selectedActivities) {
+        // Map quadrant to priority
+        final priority = _mapQuadrantToPriority(activity.quadrant);
+
+        final task = TodoTaskModel(
+          id: '',
+          listId: listId,
+          title: activity.title,
+          description: activity.description,
+          priority: priority,
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        await _todoService.createTask(listId, task);
+        createdCount++;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.tasksCreated(createdCount)),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: l10n.actionOpen,
+              textColor: Colors.white,
+              onPressed: () {
+                if (mounted && targetList != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SmartTodoDetailScreen(list: targetList!),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Map Eisenhower quadrant to task priority
+  TodoTaskPriority _mapQuadrantToPriority(EisenhowerQuadrant? quadrant) {
+    switch (quadrant) {
+      case EisenhowerQuadrant.q1: // Urgent & Important
+        return TodoTaskPriority.high;
+      case EisenhowerQuadrant.q2: // Not Urgent & Important
+        return TodoTaskPriority.high;
+      case EisenhowerQuadrant.q3: // Urgent & Not Important
+        return TodoTaskPriority.medium;
+      case EisenhowerQuadrant.q4: // Not Urgent & Not Important
+      case null: // Unvoted
+        return TodoTaskPriority.low;
     }
   }
 

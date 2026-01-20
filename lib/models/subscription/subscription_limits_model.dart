@@ -60,18 +60,21 @@ class SubscriptionLimits {
   // ═══════════════════════════════════════════════════════════════════════════
 
   /// Limiti per tier FREE
-  /// - 5 progetti attivi
+  /// - 5 per ogni tipo di entità (NON sommati)
+  /// - 5 matrici Eisenhower
+  /// - 5 sessioni Estimation Room
+  /// - 5 retrospettive
   /// - 5 liste Smart Todo
+  /// - 5 progetti Agile
   /// - 50 task per entita
   /// - 10 inviti per entita
-  /// - Mostra pubblicita
   factory SubscriptionLimits.free() => const SubscriptionLimits(
-    maxActiveProjects: 5,
+    maxActiveProjects: 5,  // Limite per OGNI tipo, non sommato
     maxActiveLists: 5,
     maxTasksPerEntity: 50,
     maxInvitesPerEntity: 10,
-    showsAds: true,
-    hasAdvancedExport: false,
+    showsAds: false,  // No ads per Agile Tools standalone
+    hasAdvancedExport: true,
     hasApiAccess: false,
     hasPrioritySupport: false,
   );

@@ -160,8 +160,8 @@ class EisenhowerFirestoreService {
       return null;
     }
 
-    // 🔒 CHECK LIMITE SUBSCRIPTION
-    await _limitsService.enforceProjectLimit(userEmail);
+    // 🔒 CHECK LIMITE SUBSCRIPTION (limite separato per matrici Eisenhower)
+    await _limitsService.enforceProjectLimit(userEmail, entityType: 'eisenhower');
 
     try {
       final now = DateTime.now();

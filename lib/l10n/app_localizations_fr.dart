@@ -63,6 +63,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get actionReset => 'Réinitialiser';
 
   @override
+  String get actionOpen => 'Ouvrir';
+
+  @override
   String get stateLoading => 'Chargement...';
 
   @override
@@ -4282,4 +4285,235 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get priorityLow => 'BASSA';
+
+  @override
+  String get exportToEstimation => 'Envoyer à Estimation';
+
+  @override
+  String get exportToEstimationDesc =>
+      'Créer une session d\'estimation avec ces tâches';
+
+  @override
+  String get exportToEisenhower => 'Envoyer à Eisenhower';
+
+  @override
+  String get exportToEisenhowerDesc =>
+      'Créer une matrice Eisenhower avec ces tâches';
+
+  @override
+  String get selectTasksToExport => 'Sélectionner les Tâches';
+
+  @override
+  String get selectTasksToExportDesc => 'Choisir les tâches à inclure';
+
+  @override
+  String get noTasksSelected => 'Aucune tâche sélectionnée';
+
+  @override
+  String get selectAtLeastOne => 'Sélectionnez au moins une tâche';
+
+  @override
+  String get createEstimationSession => 'Créer Session d\'Estimation';
+
+  @override
+  String tasksSelectedCount(int count) {
+    return '$count tâche(s) sélectionnée(s)';
+  }
+
+  @override
+  String get exportSuccess => 'Exporté avec succès';
+
+  @override
+  String get exportFromEstimation => 'Importer dans Liste';
+
+  @override
+  String get exportFromEstimationDesc =>
+      'Ajouter les histoires estimées à une liste Smart Todo';
+
+  @override
+  String get selectDestinationList => 'Sélectionner Liste Destination';
+
+  @override
+  String get createNewList => 'Créer Nouvelle Liste';
+
+  @override
+  String get existingList => 'Liste Existante';
+
+  @override
+  String get listName => 'Nom de la Liste';
+
+  @override
+  String get listNameHint => 'Entrez un nom pour la nouvelle liste';
+
+  @override
+  String get selectList => 'Sélectionner Liste';
+
+  @override
+  String get selectListHint => 'Choisissez une liste de destination';
+
+  @override
+  String get noListsAvailable =>
+      'Aucune liste disponible. Créez-en une nouvelle.';
+
+  @override
+  String storiesSelectedCount(int count) {
+    return '$count histoire(s) sélectionnée(s)';
+  }
+
+  @override
+  String get selectAll => 'Tout Sélectionner';
+
+  @override
+  String get deselectAll => 'Tout Désélectionner';
+
+  @override
+  String get importStories => 'Importer Histoires';
+
+  @override
+  String storiesImportedCount(int count) {
+    return '$count histoire(s) importée(s)';
+  }
+
+  @override
+  String get noEstimatedStories =>
+      'Aucune histoire avec estimations à importer';
+
+  @override
+  String get selectDestinationMatrix => 'Sélectionner Matrice Destination';
+
+  @override
+  String get existingMatrix => 'Matrice Existante';
+
+  @override
+  String get createNewMatrix => 'Créer Nouvelle Matrice';
+
+  @override
+  String get matrixName => 'Nom de la Matrice';
+
+  @override
+  String get matrixNameHint => 'Entrez un nom pour la nouvelle matrice';
+
+  @override
+  String get selectMatrix => 'Sélectionner Matrice';
+
+  @override
+  String get selectMatrixHint => 'Choisissez une matrice de destination';
+
+  @override
+  String get noMatricesAvailable =>
+      'Aucune matrice disponible. Créez-en une nouvelle.';
+
+  @override
+  String activitiesCreated(int count) {
+    return '$count activités créées';
+  }
+
+  @override
+  String get importFromEisenhower => 'Importer depuis Eisenhower';
+
+  @override
+  String get importFromEisenhowerDesc =>
+      'Ajouter les tâches priorisées à cette liste';
+
+  @override
+  String get quadrantQ1 => 'Urgent et Important';
+
+  @override
+  String get quadrantQ2 => 'Non Urgent et Important';
+
+  @override
+  String get quadrantQ3 => 'Urgent et Non Important';
+
+  @override
+  String get quadrantQ4 => 'Non Urgent et Non Important';
+
+  @override
+  String get warningQ4Tasks =>
+      'Les tâches Q4 ne valent généralement pas la peine. Êtes-vous sûr ?';
+
+  @override
+  String get priorityMappingInfo =>
+      'Mapping priorité : Q1=Haute, Q2=Moyenne, Q3/Q4=Basse';
+
+  @override
+  String get selectColumns => 'Sélectionner Colonnes';
+
+  @override
+  String get allTasks => 'Toutes les Tâches';
+
+  @override
+  String get filterByColumn => 'Filtrer par colonne';
+
+  @override
+  String get exportFromEisenhower => 'Exporter vers Smart Todo';
+
+  @override
+  String get exportFromEisenhowerDesc =>
+      'Créer des tâches à partir des activités priorisées';
+
+  @override
+  String get filterByQuadrant => 'Filtrer par quadrant';
+
+  @override
+  String get allActivities => 'Toutes les Activités';
+
+  @override
+  String activitiesSelectedCount(int count) {
+    return '$count activité(s) sélectionnée(s)';
+  }
+
+  @override
+  String get noActivitiesSelected => 'Aucune activité disponible';
+
+  @override
+  String get unvoted => 'Non votée';
+
+  @override
+  String tasksCreated(int count) {
+    return '$count tâches créées';
+  }
+
+  @override
+  String get exportToUserStories => 'Exporter vers User Stories';
+
+  @override
+  String get exportToUserStoriesDesc =>
+      'Créer des user stories dans un projet Agile';
+
+  @override
+  String get selectDestinationProject => 'Sélectionner Projet Destination';
+
+  @override
+  String get existingProject => 'Projet Existant';
+
+  @override
+  String get createNewProject => 'Créer Nouveau Projet';
+
+  @override
+  String get projectName => 'Nom du Projet';
+
+  @override
+  String get projectNameHint => 'Entrez un nom pour le nouveau projet';
+
+  @override
+  String get selectProject => 'Sélectionner Projet';
+
+  @override
+  String get selectProjectHint => 'Choisissez un projet de destination';
+
+  @override
+  String get noProjectsAvailable =>
+      'Aucun projet disponible. Créez-en un nouveau.';
+
+  @override
+  String get userStoryFieldMappingInfo =>
+      'Mapping : Titre → Titre story, Description → Description story, Effort → Story points, Priorité → Business value';
+
+  @override
+  String storiesCreated(int count) {
+    return '$count stories créées';
+  }
+
+  @override
+  String get configureNewProject => 'Configurer Nouveau Projet';
 }

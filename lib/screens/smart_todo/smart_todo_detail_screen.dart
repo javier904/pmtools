@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
+import '../../models/eisenhower_matrix_model.dart';
 import '../../services/smart_todo_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/planning_poker_firestore_service.dart';
+import '../../services/eisenhower_firestore_service.dart';
 import '../../widgets/smart_todo/todo_list_view.dart';
 import '../../widgets/smart_todo/todo_kanban_view.dart';
 import '../../widgets/smart_todo/todo_task_dialog.dart';
 import '../../widgets/smart_todo/smart_todo_participants_dialog.dart';
 import '../../widgets/smart_todo/todo_resource_view.dart';
 import '../../widgets/smart_todo/smart_task_import_dialog.dart';
+import '../../widgets/smart_todo/export_to_estimation_dialog.dart';
+import '../../widgets/smart_todo/export_to_eisenhower_dialog.dart';
+import '../../widgets/smart_todo/export_to_user_stories_dialog.dart';
+import '../../widgets/estimation_room/session_form_dialog.dart';
 import '../../services/smart_todo_sheets_export_service.dart';
+import '../../services/agile_firestore_service.dart';
+import '../../models/agile_project_model.dart';
+import '../../models/agile_enums.dart';
 import '../../l10n/app_localizations.dart';
+import '../estimation_room_screen.dart';
+import '../eisenhower_screen.dart';
+import '../agile_project_detail_screen.dart';
 
 enum TodoViewMode { kanban, list, resource }
 
@@ -25,6 +38,8 @@ class SmartTodoDetailScreen extends StatefulWidget {
 
 class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   final SmartTodoService _todoService = SmartTodoService();
+  final EisenhowerFirestoreService _eisenhowerService = EisenhowerFirestoreService();
+  final AgileFirestoreService _agileService = AgileFirestoreService();
   final AuthService _authService = AuthService();
   
   TodoViewMode? _viewMode = TodoViewMode.kanban;
@@ -81,6 +96,67 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 ],
               ),
               actions: [
+                // ═══════════════════════════════════════════════════════════
+                // EXPORT/INTEGRATION BUTTONS (left side)
+                // ═══════════════════════════════════════════════════════════
+                // Export to Estimation button
+                StreamBuilder<List<TodoTaskModel>>(
+                  stream: _todoService.streamTasks(currentList.id),
+                  builder: (context, taskSnapshot) {
+                    final tasks = taskSnapshot.data ?? [];
+                    final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
+                    return IconButton(
+                      icon: const Icon(Icons.casino_rounded),
+                      tooltip: AppLocalizations.of(context)?.exportToEstimation ?? 'Send to Estimation',
+                      onPressed: hasNonDoneTasks
+                          ? () => _showExportToEstimationDialog(currentList, tasks)
+                          : null,
+                    );
+                  },
+                ),
+                // Export to Eisenhower button
+                StreamBuilder<List<TodoTaskModel>>(
+                  stream: _todoService.streamTasks(currentList.id),
+                  builder: (context, taskSnapshot) {
+                    final tasks = taskSnapshot.data ?? [];
+                    final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
+                    return IconButton(
+                      icon: const Icon(Icons.grid_view_rounded),
+                      tooltip: AppLocalizations.of(context)?.exportToEisenhower ?? 'Send to Eisenhower',
+                      onPressed: hasNonDoneTasks
+                          ? () => _showExportToEisenhowerDialog(currentList, tasks)
+                          : null,
+                    );
+                  },
+                ),
+                // Export to User Stories button
+                StreamBuilder<List<TodoTaskModel>>(
+                  stream: _todoService.streamTasks(currentList.id),
+                  builder: (context, taskSnapshot) {
+                    final tasks = taskSnapshot.data ?? [];
+                    final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
+                    return IconButton(
+                      icon: const Icon(Icons.auto_stories_rounded),
+                      tooltip: AppLocalizations.of(context)?.exportToUserStories ?? 'Send to User Stories',
+                      onPressed: hasNonDoneTasks
+                          ? () => _showExportToUserStoriesDialog(currentList, tasks)
+                          : null,
+                    );
+                  },
+                ),
+                // ═══════════════════════════════════════════════════════════
+                // SEPARATOR
+                // ═══════════════════════════════════════════════════════════
+                const SizedBox(width: 8),
+                Container(
+                  width: 1,
+                  height: 24,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 8),
+                // ═══════════════════════════════════════════════════════════
+                // PAGE FUNCTIONALITY BUTTONS (right side)
+                // ═══════════════════════════════════════════════════════════
                 // View Switcher
                 Row(
                   children: [
@@ -1086,7 +1162,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   );
                   final newTags = List<TodoLabel>.from(list.availableTags)..add(newTag);
                   await _todoService.updateList(list.copyWith(availableTags: newTags));
-                  
+
                   if (context.mounted) {
                      Navigator.pop(context); // Close Add Dialog
                      Navigator.pop(context); // Close List Dialog (to refresh)
@@ -1100,5 +1176,329 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         }
       ),
     );
+  }
+
+  /// Show dialog to select tasks and export to Estimation Room
+  Future<void> _showExportToEstimationDialog(TodoListModel list, List<TodoTaskModel> tasks) async {
+    final l10n = AppLocalizations.of(context);
+
+    // Show task selection dialog
+    final selectedTasks = await showDialog<List<TodoTaskModel>>(
+      context: context,
+      builder: (context) => ExportToEstimationDialog(
+        list: list,
+        tasks: tasks,
+      ),
+    );
+
+    if (selectedTasks == null || selectedTasks.isEmpty || !mounted) return;
+
+    // Convert tasks to preloaded stories
+    final preloadedStories = selectedTasks.map((task) => PreloadedStory(
+      title: task.title,
+      description: task.description,
+      sourceTaskId: task.id,
+      sourceListId: list.id,
+    )).toList();
+
+    // Show session creation dialog with preloaded stories
+    final sessionData = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => SessionFormDialog(
+        preloadedStories: preloadedStories,
+        suggestedName: '${list.title} - Estimation',
+      ),
+    );
+
+    if (sessionData == null || !mounted) return;
+
+    // Create the session
+    try {
+      final pokerService = PlanningPokerFirestoreService();
+      final sessionId = await pokerService.createSession(
+        name: sessionData['name'],
+        description: sessionData['description'] ?? '',
+        createdBy: _currentUserEmail,
+        cardSet: sessionData['cardSet'],
+        estimationMode: sessionData['estimationMode'],
+        allowObservers: sessionData['allowObservers'],
+        autoReveal: sessionData['autoReveal'],
+      );
+
+      // Add stories to the session
+      for (int i = 0; i < preloadedStories.length; i++) {
+        final story = preloadedStories[i];
+        await pokerService.createStory(
+          sessionId: sessionId,
+          title: story.title,
+          description: story.description,
+          order: i,
+          linkedTaskId: story.sourceTaskId,
+          linkedTaskTitle: story.title,
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n?.exportSuccess ?? 'Exported successfully'),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: 'Open',
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EstimationRoomScreen(initialSessionId: sessionId),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Show dialog to select tasks and export to Eisenhower Matrix
+  Future<void> _showExportToEisenhowerDialog(TodoListModel list, List<TodoTaskModel> tasks) async {
+    final l10n = AppLocalizations.of(context);
+
+    // Get available matrices for current user
+    List<EisenhowerMatrixModel> availableMatrices = [];
+    try {
+      availableMatrices = await _eisenhowerService.streamMatrices().first;
+    } catch (e) {
+      print('Error fetching matrices: $e');
+    }
+
+    if (!mounted) return;
+
+    // Show export dialog
+    final result = await showDialog<ExportToEisenhowerResult>(
+      context: context,
+      builder: (context) => ExportToEisenhowerDialog(
+        list: list,
+        tasks: tasks,
+        availableMatrices: availableMatrices,
+      ),
+    );
+
+    if (result == null || result.selectedTasks.isEmpty || !mounted) return;
+
+    try {
+      String? matrixId;
+
+      if (result.createNewMatrix) {
+        // Create new matrix
+        matrixId = await _eisenhowerService.createMatrix(
+          title: result.newMatrixTitle!,
+          description: 'Imported from: ${list.title}',
+        );
+        if (matrixId == null) {
+          throw Exception('Failed to create matrix');
+        }
+      } else {
+        // Use existing matrix
+        matrixId = result.existingMatrix!.id;
+      }
+
+      // Create activities for each selected task
+      // Note: Activities in Eisenhower are voted on for urgency/importance
+      int createdCount = 0;
+      for (final task in result.selectedTasks) {
+        await _eisenhowerService.createActivity(
+          matrixId: matrixId,
+          title: task.title,
+          description: task.description,
+        );
+        createdCount++;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n?.activitiesCreated(createdCount) ?? '$createdCount activities created'),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: l10n?.actionOpen ?? 'Open',
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EisenhowerScreen(initialMatrixId: matrixId),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Show dialog to select tasks and export to User Stories
+  Future<void> _showExportToUserStoriesDialog(TodoListModel list, List<TodoTaskModel> tasks) async {
+    final l10n = AppLocalizations.of(context);
+
+    // Get available Agile projects for current user
+    List<AgileProjectModel> availableProjects = [];
+    try {
+      availableProjects = await _agileService.getUserProjects(_currentUserEmail);
+    } catch (e) {
+      print('Error fetching projects: $e');
+    }
+
+    if (!mounted) return;
+
+    // Show export dialog
+    final result = await showDialog<ExportToUserStoriesResult>(
+      context: context,
+      builder: (context) => ExportToUserStoriesDialog(
+        list: list,
+        tasks: tasks,
+        availableProjects: availableProjects,
+      ),
+    );
+
+    if (result == null || result.selectedTasks.isEmpty || !mounted) return;
+
+    try {
+      String projectId;
+      AgileProjectModel? targetProject;
+
+      if (result.createNewProject) {
+        // Create new Agile project with full configuration
+        final userName = _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
+        final config = result.newProjectConfig!;
+        targetProject = await _agileService.createProject(
+          name: config.name,
+          description: config.description.isNotEmpty
+              ? config.description
+              : 'Imported from: ${list.title}',
+          createdBy: _currentUserEmail,
+          createdByName: userName,
+          framework: config.framework,
+          sprintDurationDays: config.sprintDurationDays,
+          workingHoursPerDay: config.workingHoursPerDay,
+          productOwnerEmail: config.productOwnerEmail,
+          scrumMasterEmail: config.scrumMasterEmail,
+        );
+        projectId = targetProject.id;
+      } else {
+        // Use existing project
+        projectId = result.existingProject!.id;
+        targetProject = result.existingProject;
+      }
+
+      // Create stories for each selected task
+      int createdCount = 0;
+      for (final task in result.selectedTasks) {
+        // Map priority to business value
+        final businessValue = _mapPriorityToBusinessValue(task.priority);
+
+        await _agileService.createStory(
+          projectId: projectId,
+          title: task.title,
+          description: task.description,
+          createdBy: _currentUserEmail,
+          priority: _mapPriorityToStoryPriority(task.priority),
+          businessValue: businessValue,
+          tags: task.tags.map((t) => t.title).toList(),
+        );
+        createdCount++;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n?.storiesCreated(createdCount) ?? '$createdCount stories created'),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: l10n?.actionOpen ?? 'Open',
+              textColor: Colors.white,
+              onPressed: () {
+                if (targetProject != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AgileProjectDetailScreen(
+                        project: targetProject!,
+                        onBack: () => Navigator.pop(context),
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Map task priority to business value (1-10)
+  int _mapPriorityToBusinessValue(TodoTaskPriority priority) {
+    switch (priority) {
+      case TodoTaskPriority.high:
+        return 8;
+      case TodoTaskPriority.medium:
+        return 5;
+      case TodoTaskPriority.low:
+        return 3;
+    }
+  }
+
+  /// Map task effort (hours) to story points (Fibonacci)
+  int _mapEffortToStoryPoints(int hours) {
+    // Using a simple mapping: 1h = 1 point, then Fibonacci scale
+    if (hours <= 1) return 1;
+    if (hours <= 2) return 2;
+    if (hours <= 4) return 3;
+    if (hours <= 8) return 5;
+    if (hours <= 16) return 8;
+    if (hours <= 24) return 13;
+    return 21;
+  }
+
+  /// Map task priority to story priority
+  StoryPriority _mapPriorityToStoryPriority(TodoTaskPriority priority) {
+    switch (priority) {
+      case TodoTaskPriority.high:
+        return StoryPriority.must;
+      case TodoTaskPriority.medium:
+        return StoryPriority.should;
+      case TodoTaskPriority.low:
+        return StoryPriority.could;
+    }
   }
 }

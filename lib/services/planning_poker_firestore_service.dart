@@ -58,8 +58,8 @@ class PlanningPokerFirestoreService {
     String? projectName,
     String? projectCode,
   }) async {
-    // 🔒 CHECK LIMITE SUBSCRIPTION
-    await _limitsService.enforceProjectLimit(createdBy.toLowerCase());
+    // 🔒 CHECK LIMITE SUBSCRIPTION (limite separato per sessioni Estimation)
+    await _limitsService.enforceProjectLimit(createdBy.toLowerCase(), entityType: 'estimation');
 
     try {
       // print('🎯 [PlanningPoker] Creando sessione: $name (mode: ${estimationMode.name})');

@@ -222,17 +222,22 @@ class SubscriptionLimitsService {
   // CONTROLLO LIMITI
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /// Verifica se l'utente puo creare un nuovo progetto (matrice/sessione/retro)
-  Future<LimitCheckResult> canCreateProject(String userEmail) async {
+  /// Verifica se l'utente puo creare una nuova entità del tipo specificato
+  /// Ogni tipo ha il suo limite SEPARATO (non sommato)
+  /// entityType: 'eisenhower', 'estimation', 'retrospective', 'agile_project'
+  Future<LimitCheckResult> canCreateProject(String userEmail, {String entityType = 'eisenhower'}) async {
     final limits = await getCurrentLimits();
     if (limits.isUnlimitedProjects) {
       return LimitCheckResult.allowed();
     }
 
-    final currentCount = await countTotalProjects(userEmail);
+    // Conta solo le entità del tipo specificato (NON sommate)
+    final currentCount = await _countEntitiesByType(userEmail, entityType);
+    final entityLabel = _getEntityLabel(entityType);
+
     if (currentCount >= limits.maxActiveProjects) {
       return LimitCheckResult.denied(
-        reason: 'Hai raggiunto il limite di ${limits.maxActiveProjects} progetti attivi.',
+        reason: 'Hai raggiunto il limite di ${limits.maxActiveProjects} $entityLabel.',
         currentCount: currentCount,
         limit: limits.maxActiveProjects,
         upgradeRequired: true,
@@ -244,6 +249,52 @@ class SubscriptionLimitsService {
       currentCount: currentCount,
       limit: limits.maxActiveProjects,
     );
+  }
+
+  /// Conta le entità di un tipo specifico per l'utente
+  Future<int> _countEntitiesByType(String userEmail, String entityType) async {
+    switch (entityType) {
+      case 'eisenhower':
+        return countEisenhowerMatrices(userEmail);
+      case 'estimation':
+        return countEstimationSessions(userEmail);
+      case 'retrospective':
+        return countRetrospectives(userEmail);
+      case 'agile_project':
+        return _countAgileProjects(userEmail);
+      default:
+        return 0;
+    }
+  }
+
+  /// Conta i progetti Agile dell'utente
+  Future<int> _countAgileProjects(String userEmail) async {
+    try {
+      final snapshot = await _firestore
+          .collection('agile_projects')
+          .where('createdBy', isEqualTo: userEmail.toLowerCase())
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  /// Restituisce l'etichetta per il tipo di entità
+  String _getEntityLabel(String entityType) {
+    switch (entityType) {
+      case 'eisenhower':
+        return 'matrici Eisenhower';
+      case 'estimation':
+        return 'sessioni Estimation';
+      case 'retrospective':
+        return 'retrospettive';
+      case 'agile_project':
+        return 'progetti Agile';
+      default:
+        return 'entità';
+    }
   }
 
   /// Verifica se l'utente puo creare una nuova lista Smart Todo
@@ -383,8 +434,9 @@ class SubscriptionLimitsService {
 
   /// Verifica il limite e lancia eccezione se superato
   /// Utility method per uso diretto nei servizi
-  Future<void> enforceProjectLimit(String userEmail) async {
-    final result = await canCreateProject(userEmail);
+  /// entityType: 'eisenhower', 'estimation', 'retrospective', 'agile_project'
+  Future<void> enforceProjectLimit(String userEmail, {String entityType = 'eisenhower'}) async {
+    final result = await canCreateProject(userEmail, entityType: entityType);
     if (!result.allowed) {
       throw LimitExceededException(
         message: result.reason!,

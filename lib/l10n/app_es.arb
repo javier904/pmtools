@@ -20,6 +20,7 @@
   "actionShare": "Compartir",
   "actionDone": "Hecho",
   "actionReset": "Restablecer",
+  "actionOpen": "Abrir",
 
   "stateLoading": "Cargando...",
   "stateEmpty": "Sin elementos",
@@ -1992,5 +1993,109 @@
   "searchResultTypeRetro": "Retrospectiva",
   "searchResultTypeEisenhower": "Matriz Eisenhower",
   "searchResultTypeEstimation": "Estimation Room",
-  "searchBackToDashboard": "Volver al Tablero"
+  "searchBackToDashboard": "Volver al Tablero",
+
+  "exportToEstimation": "Enviar a Estimation",
+  "exportToEstimationDesc": "Crear una sesión de estimación con estas tareas",
+  "exportToEisenhower": "Enviar a Eisenhower",
+  "exportToEisenhowerDesc": "Crear una matriz Eisenhower con estas tareas",
+  "selectTasksToExport": "Seleccionar Tareas",
+  "selectTasksToExportDesc": "Elige qué tareas incluir",
+  "noTasksSelected": "Ninguna tarea seleccionada",
+  "selectAtLeastOne": "Selecciona al menos una tarea",
+  "createEstimationSession": "Crear Sesión de Estimación",
+  "tasksSelectedCount": "{count} tarea(s) seleccionada(s)",
+  "@tasksSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "exportSuccess": "Exportado con éxito",
+  "exportFromEstimation": "Importar a Lista",
+  "exportFromEstimationDesc": "Agregar historias estimadas a una lista Smart Todo",
+  "selectDestinationList": "Seleccionar Lista Destino",
+  "createNewList": "Crear Nueva Lista",
+  "existingList": "Lista Existente",
+  "listName": "Nombre de Lista",
+  "listNameHint": "Introduce un nombre para la nueva lista",
+  "selectList": "Seleccionar Lista",
+  "selectListHint": "Elige una lista de destino",
+  "noListsAvailable": "No hay listas disponibles. Crea una nueva.",
+  "storiesSelectedCount": "{count} historia(s) seleccionada(s)",
+  "@storiesSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "selectAll": "Seleccionar Todo",
+  "deselectAll": "Deseleccionar Todo",
+  "importStories": "Importar Historias",
+  "storiesImportedCount": "{count} historia(s) importada(s)",
+  "@storiesImportedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "noEstimatedStories": "Sin historias con estimaciones para importar",
+  "selectDestinationMatrix": "Seleccionar Matriz Destino",
+  "existingMatrix": "Matriz Existente",
+  "createNewMatrix": "Crear Nueva Matriz",
+  "matrixName": "Nombre de Matriz",
+  "matrixNameHint": "Introduce un nombre para la nueva matriz",
+  "selectMatrix": "Seleccionar Matriz",
+  "selectMatrixHint": "Elige una matriz de destino",
+  "noMatricesAvailable": "No hay matrices disponibles. Crea una nueva.",
+  "activitiesCreated": "{count} actividades creadas",
+  "@activitiesCreated": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importFromEisenhower": "Importar desde Eisenhower",
+  "importFromEisenhowerDesc": "Agregar tareas priorizadas a esta lista",
+  "quadrantQ1": "Urgente e Importante",
+  "quadrantQ2": "No Urgente e Importante",
+  "quadrantQ3": "Urgente y No Importante",
+  "quadrantQ4": "No Urgente y No Importante",
+  "warningQ4Tasks": "Las tareas Q4 generalmente no valen la pena. ¿Estás seguro?",
+  "priorityMappingInfo": "Mapeo de prioridad: Q1=Alta, Q2=Media, Q3/Q4=Baja",
+  "selectColumns": "Seleccionar Columnas",
+  "allTasks": "Todas las Tareas",
+  "filterByColumn": "Filtrar por columna",
+  "exportFromEisenhower": "Exportar a Smart Todo",
+  "exportFromEisenhowerDesc": "Crear tareas desde actividades priorizadas",
+  "filterByQuadrant": "Filtrar por cuadrante",
+  "allActivities": "Todas las Actividades",
+  "activitiesSelectedCount": "{count} actividad(es) seleccionada(s)",
+  "@activitiesSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "noActivitiesSelected": "Ninguna actividad disponible",
+  "unvoted": "Sin votar",
+  "tasksCreated": "{count} tareas creadas",
+  "@tasksCreated": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "exportToUserStories": "Exportar a User Stories",
+  "exportToUserStoriesDesc": "Crear user stories en un proyecto Agile",
+  "selectDestinationProject": "Seleccionar Proyecto Destino",
+  "existingProject": "Proyecto Existente",
+  "createNewProject": "Crear Nuevo Proyecto",
+  "projectName": "Nombre del Proyecto",
+  "projectNameHint": "Ingresa un nombre para el nuevo proyecto",
+  "selectProject": "Seleccionar Proyecto",
+  "selectProjectHint": "Elige un proyecto de destino",
+  "noProjectsAvailable": "No hay proyectos disponibles. Crea uno nuevo.",
+  "userStoryFieldMappingInfo": "Mapeo: Título \u2192 Título story, Descripción \u2192 Descripción story, Esfuerzo \u2192 Story points, Prioridad \u2192 Business value",
+  "storiesCreated": "{count} stories creadas",
+  "@storiesCreated": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "configureNewProject": "Configurar Nuevo Proyecto"
 }

@@ -88,7 +88,6 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
                 }
 
                 final items = snapshot.data ?? [];
-                debugPrint('DEBUG: UI received ${items.length} items');
 
                 if (items.isEmpty) {
                   return Center(

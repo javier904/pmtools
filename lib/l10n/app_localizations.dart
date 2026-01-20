@@ -210,6 +210,12 @@ abstract class AppLocalizations {
   /// **'Reset'**
   String get actionReset;
 
+  /// No description provided for @actionOpen.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri'**
+  String get actionOpen;
+
   /// No description provided for @stateLoading.
   ///
   /// In it, this message translates to:
@@ -7797,6 +7803,414 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'BASSA'**
   String get priorityLow;
+
+  /// No description provided for @exportToEstimation.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia a Estimation'**
+  String get exportToEstimation;
+
+  /// No description provided for @exportToEstimationDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una sessione di stima con questi task'**
+  String get exportToEstimationDesc;
+
+  /// No description provided for @exportToEisenhower.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia a Eisenhower'**
+  String get exportToEisenhower;
+
+  /// No description provided for @exportToEisenhowerDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una matrice Eisenhower con questi task'**
+  String get exportToEisenhowerDesc;
+
+  /// No description provided for @selectTasksToExport.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Task'**
+  String get selectTasksToExport;
+
+  /// No description provided for @selectTasksToExportDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli quali task includere'**
+  String get selectTasksToExportDesc;
+
+  /// No description provided for @noTasksSelected.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun task selezionato'**
+  String get noTasksSelected;
+
+  /// No description provided for @selectAtLeastOne.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona almeno un task'**
+  String get selectAtLeastOne;
+
+  /// No description provided for @createEstimationSession.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Sessione di Stima'**
+  String get createEstimationSession;
+
+  /// No description provided for @tasksSelectedCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} task selezionati'**
+  String tasksSelectedCount(int count);
+
+  /// No description provided for @exportSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Esportato con successo'**
+  String get exportSuccess;
+
+  /// No description provided for @exportFromEstimation.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa in Lista'**
+  String get exportFromEstimation;
+
+  /// No description provided for @exportFromEstimationDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi le storie stimate a una lista Smart Todo'**
+  String get exportFromEstimationDesc;
+
+  /// No description provided for @selectDestinationList.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Lista Destinazione'**
+  String get selectDestinationList;
+
+  /// No description provided for @createNewList.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Nuova Lista'**
+  String get createNewList;
+
+  /// No description provided for @existingList.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista Esistente'**
+  String get existingList;
+
+  /// No description provided for @listName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Lista'**
+  String get listName;
+
+  /// No description provided for @listNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un nome per la nuova lista'**
+  String get listNameHint;
+
+  /// No description provided for @selectList.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Lista'**
+  String get selectList;
+
+  /// No description provided for @selectListHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli una lista di destinazione'**
+  String get selectListHint;
+
+  /// No description provided for @noListsAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna lista disponibile. Creane una nuova.'**
+  String get noListsAvailable;
+
+  /// No description provided for @storiesSelectedCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} storie selezionate'**
+  String storiesSelectedCount(int count);
+
+  /// No description provided for @selectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Tutto'**
+  String get selectAll;
+
+  /// No description provided for @deselectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Deseleziona Tutto'**
+  String get deselectAll;
+
+  /// No description provided for @importStories.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa Storie'**
+  String get importStories;
+
+  /// No description provided for @storiesImportedCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} storie importate'**
+  String storiesImportedCount(int count);
+
+  /// No description provided for @noEstimatedStories.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna storia con stime da importare'**
+  String get noEstimatedStories;
+
+  /// No description provided for @selectDestinationMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Matrice Destinazione'**
+  String get selectDestinationMatrix;
+
+  /// No description provided for @existingMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice Esistente'**
+  String get existingMatrix;
+
+  /// No description provided for @createNewMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Nuova Matrice'**
+  String get createNewMatrix;
+
+  /// No description provided for @matrixName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Matrice'**
+  String get matrixName;
+
+  /// No description provided for @matrixNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un nome per la nuova matrice'**
+  String get matrixNameHint;
+
+  /// No description provided for @selectMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Matrice'**
+  String get selectMatrix;
+
+  /// No description provided for @selectMatrixHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli una matrice di destinazione'**
+  String get selectMatrixHint;
+
+  /// No description provided for @noMatricesAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna matrice disponibile. Creane una nuova.'**
+  String get noMatricesAvailable;
+
+  /// No description provided for @activitiesCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività create'**
+  String activitiesCreated(int count);
+
+  /// No description provided for @importFromEisenhower.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa da Eisenhower'**
+  String get importFromEisenhower;
+
+  /// No description provided for @importFromEisenhowerDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi i task prioritizzati a questa lista'**
+  String get importFromEisenhowerDesc;
+
+  /// No description provided for @quadrantQ1.
+  ///
+  /// In it, this message translates to:
+  /// **'Urgente & Importante'**
+  String get quadrantQ1;
+
+  /// No description provided for @quadrantQ2.
+  ///
+  /// In it, this message translates to:
+  /// **'Non Urgente & Importante'**
+  String get quadrantQ2;
+
+  /// No description provided for @quadrantQ3.
+  ///
+  /// In it, this message translates to:
+  /// **'Urgente & Non Importante'**
+  String get quadrantQ3;
+
+  /// No description provided for @quadrantQ4.
+  ///
+  /// In it, this message translates to:
+  /// **'Non Urgente & Non Importante'**
+  String get quadrantQ4;
+
+  /// No description provided for @warningQ4Tasks.
+  ///
+  /// In it, this message translates to:
+  /// **'I task Q4 di solito non valgono la pena. Sei sicuro?'**
+  String get warningQ4Tasks;
+
+  /// No description provided for @priorityMappingInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Mappatura priorità: Q1=Alta, Q2=Media, Q3/Q4=Bassa'**
+  String get priorityMappingInfo;
+
+  /// No description provided for @selectColumns.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Colonne'**
+  String get selectColumns;
+
+  /// No description provided for @allTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i Task'**
+  String get allTasks;
+
+  /// No description provided for @filterByColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per colonna'**
+  String get filterByColumn;
+
+  /// No description provided for @exportFromEisenhower.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta in Smart Todo'**
+  String get exportFromEisenhower;
+
+  /// No description provided for @exportFromEisenhowerDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea task dalle attività prioritizzate'**
+  String get exportFromEisenhowerDesc;
+
+  /// No description provided for @filterByQuadrant.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per quadrante'**
+  String get filterByQuadrant;
+
+  /// No description provided for @allActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le Attività'**
+  String get allActivities;
+
+  /// No description provided for @activitiesSelectedCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività selezionate'**
+  String activitiesSelectedCount(int count);
+
+  /// No description provided for @noActivitiesSelected.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività disponibile'**
+  String get noActivitiesSelected;
+
+  /// No description provided for @unvoted.
+  ///
+  /// In it, this message translates to:
+  /// **'Non votata'**
+  String get unvoted;
+
+  /// No description provided for @tasksCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} task creati'**
+  String tasksCreated(int count);
+
+  /// No description provided for @exportToUserStories.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta in User Stories'**
+  String get exportToUserStories;
+
+  /// No description provided for @exportToUserStoriesDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea user stories in un progetto Agile'**
+  String get exportToUserStoriesDesc;
+
+  /// No description provided for @selectDestinationProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Progetto Destinazione'**
+  String get selectDestinationProject;
+
+  /// No description provided for @existingProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetto Esistente'**
+  String get existingProject;
+
+  /// No description provided for @createNewProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Nuovo Progetto'**
+  String get createNewProject;
+
+  /// No description provided for @projectName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Progetto'**
+  String get projectName;
+
+  /// No description provided for @projectNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un nome per il nuovo progetto'**
+  String get projectNameHint;
+
+  /// No description provided for @selectProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Progetto'**
+  String get selectProject;
+
+  /// No description provided for @selectProjectHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli un progetto di destinazione'**
+  String get selectProjectHint;
+
+  /// No description provided for @noProjectsAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun progetto disponibile. Creane uno nuovo.'**
+  String get noProjectsAvailable;
+
+  /// No description provided for @userStoryFieldMappingInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Mappatura: Titolo → Titolo story, Descrizione → Descrizione story, Effort → Story points, Priorità → Business value'**
+  String get userStoryFieldMappingInfo;
+
+  /// No description provided for @storiesCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} stories create'**
+  String storiesCreated(int count);
+
+  /// No description provided for @configureNewProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura Nuovo Progetto'**
+  String get configureNewProject;
 }
 
 class _AppLocalizationsDelegate
