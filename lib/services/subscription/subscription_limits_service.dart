@@ -67,24 +67,49 @@ class SubscriptionLimitsService {
   // ═══════════════════════════════════════════════════════════════════════════
 
   /// Conta le matrici Eisenhower dell'utente (come creatore)
+  /// Esclude le matrici archiviate
   Future<int> countEisenhowerMatrices(String userEmail) async {
-    final snapshot = await _firestore
-        .collection('eisenhower_matrices')
-        .where('createdBy', isEqualTo: userEmail.toLowerCase())
-        .count()
-        .get();
-    return snapshot.count ?? 0;
+    try {
+      final snapshot = await _firestore
+          .collection('eisenhower_matrices')
+          .where('createdBy', isEqualTo: userEmail.toLowerCase())
+          .where('isArchived', isEqualTo: false)
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    } catch (e) {
+      // Fallback per backward compatibility (documenti senza isArchived)
+      final snapshot = await _firestore
+          .collection('eisenhower_matrices')
+          .where('createdBy', isEqualTo: userEmail.toLowerCase())
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    }
   }
 
   /// Conta le sessioni Estimation Room attive dell'utente
+  /// Esclude le sessioni archiviate e completate
   Future<int> countEstimationSessions(String userEmail) async {
-    final snapshot = await _firestore
-        .collection('planning_poker_sessions')
-        .where('createdBy', isEqualTo: userEmail.toLowerCase())
-        .where('status', whereIn: ['draft', 'active'])
-        .count()
-        .get();
-    return snapshot.count ?? 0;
+    try {
+      final snapshot = await _firestore
+          .collection('planning_poker_sessions')
+          .where('createdBy', isEqualTo: userEmail.toLowerCase())
+          .where('status', whereIn: ['draft', 'active'])
+          .where('isArchived', isEqualTo: false)
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    } catch (e) {
+      // Fallback per backward compatibility (documenti senza isArchived)
+      final snapshot = await _firestore
+          .collection('planning_poker_sessions')
+          .where('createdBy', isEqualTo: userEmail.toLowerCase())
+          .where('status', whereIn: ['draft', 'active'])
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    }
   }
 
   /// Conta le retrospettive dell'utente
@@ -103,17 +128,29 @@ class SubscriptionLimitsService {
     }
   }
 
-  /// Conta le liste Smart Todo dell'utente (attive = non tutte complete)
+  /// Conta le liste Smart Todo dell'utente (attive = non archiviate)
+  /// Esclude le liste archiviate
   Future<int> countSmartTodoLists(String userEmail) async {
     try {
       final snapshot = await _firestore
           .collection('smart_todo_lists')
           .where('ownerId', isEqualTo: userEmail.toLowerCase())
+          .where('isArchived', isEqualTo: false)
           .count()
           .get();
       return snapshot.count ?? 0;
     } catch (e) {
-      return 0;
+      // Fallback per backward compatibility (documenti senza isArchived)
+      try {
+        final snapshot = await _firestore
+            .collection('smart_todo_lists')
+            .where('ownerId', isEqualTo: userEmail.toLowerCase())
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      } catch (e2) {
+        return 0;
+      }
     }
   }
 
@@ -129,6 +166,7 @@ class SubscriptionLimitsService {
   }
 
   /// Conta le attivita in un'entita specifica
+  /// Esclude elementi completati e archiviati dove applicabile
   Future<int> countTasksInEntity({
     required String entityType,
     required String entityId,
@@ -158,15 +196,50 @@ class SubscriptionLimitsService {
     }
 
     try {
-      final snapshot = await _firestore
-          .collection(collection)
-          .doc(entityId)
-          .collection(subcollection)
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      // Per Eisenhower e Smart Todo, escludiamo completati e archiviati
+      if (entityType == 'eisenhower') {
+        final snapshot = await _firestore
+            .collection(collection)
+            .doc(entityId)
+            .collection(subcollection)
+            .where('isCompleted', isEqualTo: false)
+            .where('isArchived', isEqualTo: false)
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      } else if (entityType == 'smart_todo') {
+        // Smart Todo tasks: escludiamo solo archiviati (completati rimangono visibili)
+        final snapshot = await _firestore
+            .collection(collection)
+            .doc(entityId)
+            .collection(subcollection)
+            .where('isArchived', isEqualTo: false)
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      } else {
+        // Altri tipi: conteggio semplice
+        final snapshot = await _firestore
+            .collection(collection)
+            .doc(entityId)
+            .collection(subcollection)
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      }
     } catch (e) {
-      return 0;
+      // Fallback senza filtri per backward compatibility
+      try {
+        final snapshot = await _firestore
+            .collection(collection)
+            .doc(entityId)
+            .collection(subcollection)
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      } catch (e2) {
+        return 0;
+      }
     }
   }
 
@@ -268,16 +341,28 @@ class SubscriptionLimitsService {
   }
 
   /// Conta i progetti Agile dell'utente
+  /// Esclude i progetti archiviati
   Future<int> _countAgileProjects(String userEmail) async {
     try {
       final snapshot = await _firestore
           .collection('agile_projects')
           .where('createdBy', isEqualTo: userEmail.toLowerCase())
+          .where('isArchived', isEqualTo: false)
           .count()
           .get();
       return snapshot.count ?? 0;
     } catch (e) {
-      return 0;
+      // Fallback per backward compatibility (documenti senza isArchived)
+      try {
+        final snapshot = await _firestore
+            .collection('agile_projects')
+            .where('createdBy', isEqualTo: userEmail.toLowerCase())
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      } catch (e2) {
+        return 0;
+      }
     }
   }
 

@@ -4,6 +4,7 @@ import '../../models/smart_todo/todo_participant_model.dart';
 import '../../services/smart_todo_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_colors.dart';
 import 'smart_todo_detail_screen.dart';
 import 'smart_todo_global_view.dart';
 import '../../widgets/home/favorite_star.dart';
@@ -24,6 +25,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   String? _filterMode; // Nullable to handle Hot Reload init issues
   bool _initialNavigationChecked = false;
   String _searchQuery = '';
+  bool _showArchived = false;
 
   @override
   void didChangeDependencies() {
@@ -95,6 +97,22 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           const SizedBox(width: 16),
           Container(width: 1, height: 24, color: Colors.grey[300]), // Divider
           const SizedBox(width: 16),
+          // Toggle archivio
+          FilterChip(
+            label: Text(
+              _showArchived ? (l10n?.archiveHideArchived ?? 'Hide archived') : (l10n?.archiveShowArchived ?? 'Show archived'),
+              style: const TextStyle(fontSize: 12),
+            ),
+            selected: _showArchived,
+            onSelected: (value) => setState(() => _showArchived = value),
+            avatar: Icon(
+              _showArchived ? Icons.visibility_off : Icons.visibility,
+              size: 16,
+            ),
+            selectedColor: AppColors.warning.withValues(alpha: 0.2),
+            showCheckmark: false,
+          ),
+          const SizedBox(width: 16),
           IconButton(
             icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
             tooltip: _viewMode == 'lists'
@@ -114,7 +132,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         ],
       ),
       body: StreamBuilder<List<TodoListModel>>(
-        stream: _todoService.streamLists(_currentUserEmail),
+        stream: _todoService.streamListsFiltered(
+          userEmail: _currentUserEmail,
+          includeArchived: _showArchived,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -313,14 +334,31 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         Expanded(
                           child: Text(
                             list.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
+                              color: list.isArchived ? Colors.grey : null,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        // Badge archiviato
+                        if (list.isArchived)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: Tooltip(
+                              message: l10n?.archiveBadge ?? 'Archived',
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                              ),
+                            ),
+                          ),
                         FavoriteStar(
                           resourceId: list.id,
                           type: 'todo_list',
@@ -497,6 +535,19 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           value: 'rename',
           child: Row(children: [const Icon(Icons.edit, size: 16), const SizedBox(width: 8), Text(l10n?.smartTodoEdit ?? 'Edit')]),
         ),
+        // Archive/Restore option
+        PopupMenuItem(
+          value: list.isArchived ? 'restore' : 'archive',
+          child: Row(children: [
+            Icon(
+              list.isArchived ? Icons.unarchive : Icons.archive,
+              size: 16,
+              color: Colors.orange,
+            ),
+            const SizedBox(width: 8),
+            Text(list.isArchived ? (l10n?.archiveRestoreAction ?? 'Restore') : (l10n?.archiveAction ?? 'Archive')),
+          ]),
+        ),
         PopupMenuItem(
           value: 'delete',
           child: Row(children: [const Icon(Icons.delete, size: 16, color: Colors.red), const SizedBox(width: 8), Text(l10n?.smartTodoDelete ?? 'Delete', style: const TextStyle(color: Colors.red))]),
@@ -508,8 +559,38 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
 
     if (result == 'rename') {
       _showRenameListDialog(list);
+    } else if (result == 'archive') {
+      _archiveList(list);
+    } else if (result == 'restore') {
+      _restoreList(list);
     } else if (result == 'delete') {
       _confirmDeleteList(list);
+    }
+  }
+
+  Future<void> _archiveList(TodoListModel list) async {
+    final l10n = AppLocalizations.of(context);
+    final success = await _todoService.archiveList(list.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? (l10n?.archiveSuccessMessage ?? 'Archived') : (l10n?.archiveErrorMessage ?? 'Error')),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreList(TodoListModel list) async {
+    final l10n = AppLocalizations.of(context);
+    final success = await _todoService.restoreList(list.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? (l10n?.archiveRestoreSuccessMessage ?? 'Restored') : (l10n?.archiveRestoreErrorMessage ?? 'Error')),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
     }
   }
 

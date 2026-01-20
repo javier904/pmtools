@@ -322,4 +322,156 @@ class SmartTodoService {
             .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
             .toList());
   }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // ARCHIVIAZIONE - Liste
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  /// Archivia una lista
+  ///
+  /// [listId] - ID della lista da archiviare
+  ///
+  /// Le liste archiviate sono escluse dai conteggi subscription
+  /// e non appaiono nelle liste di default
+  Future<bool> archiveList(String listId) async {
+    try {
+      await _firestore.collection(_listsCollection).doc(listId).update({
+        'isArchived': true,
+        'archivedAt': DateTime.now().toIso8601String(),
+      });
+      print('🗄️ Lista archiviata: $listId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveList: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina una lista archiviata
+  ///
+  /// [listId] - ID della lista da ripristinare
+  Future<bool> restoreList(String listId) async {
+    try {
+      await _firestore.collection(_listsCollection).doc(listId).update({
+        'isArchived': false,
+        'archivedAt': null,
+      });
+      print('📦 Lista ripristinata: $listId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreList: $e');
+      return false;
+    }
+  }
+
+  /// Stream delle liste con filtro archivio
+  ///
+  /// [userEmail] - Email dell'utente
+  /// [includeArchived] - Se true, include anche le archiviate
+  Stream<List<TodoListModel>> streamListsFiltered({
+    required String userEmail,
+    bool includeArchived = false,
+  }) {
+    if (userEmail.isEmpty) return Stream.value([]);
+
+    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
+    return _firestore
+        .collection(_listsCollection)
+        .where('participantEmails', arrayContains: userEmail.toLowerCase())
+        .snapshots()
+        .map((snapshot) {
+      var lists = snapshot.docs
+          .map((doc) => TodoListModel.fromMap(doc.data(), doc.id))
+          .toList();
+
+      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+      if (!includeArchived) {
+        lists = lists.where((list) => list.isArchived != true).toList();
+      }
+
+      // Client-side sort by createdAt descending
+      lists.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return lists;
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // ARCHIVIAZIONE - Task
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  /// Archivia un task
+  ///
+  /// [listId] - ID della lista
+  /// [taskId] - ID del task da archiviare
+  Future<bool> archiveTask(String listId, String taskId) async {
+    try {
+      await _firestore
+          .collection(_listsCollection)
+          .doc(listId)
+          .collection(_tasksSubcollection)
+          .doc(taskId)
+          .update({
+        'isArchived': true,
+        'archivedAt': DateTime.now().toIso8601String(),
+      });
+      print('🗄️ Task archiviato: $taskId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveTask: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina un task archiviato
+  ///
+  /// [listId] - ID della lista
+  /// [taskId] - ID del task da ripristinare
+  Future<bool> restoreTask(String listId, String taskId) async {
+    try {
+      await _firestore
+          .collection(_listsCollection)
+          .doc(listId)
+          .collection(_tasksSubcollection)
+          .doc(taskId)
+          .update({
+        'isArchived': false,
+        'archivedAt': null,
+      });
+      print('📦 Task ripristinato: $taskId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreTask: $e');
+      return false;
+    }
+  }
+
+  /// Stream dei task con filtro archivio
+  ///
+  /// [listId] - ID della lista
+  /// [includeArchived] - Se true, include anche gli archiviati
+  Stream<List<TodoTaskModel>> streamTasksFiltered({
+    required String listId,
+    bool includeArchived = false,
+  }) {
+    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
+    return _firestore
+        .collection(_listsCollection)
+        .doc(listId)
+        .collection(_tasksSubcollection)
+        .snapshots()
+        .map((snapshot) {
+      var tasks = snapshot.docs
+          .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
+          .toList();
+
+      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+      if (!includeArchived) {
+        tasks = tasks.where((t) => t.isArchived != true).toList();
+      }
+
+      // Client-side sort by updatedAt descending
+      tasks.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      return tasks;
+    });
+  }
 }

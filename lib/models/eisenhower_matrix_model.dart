@@ -37,6 +37,10 @@ class EisenhowerMatrixModel {
   final String? projectName; // Nome progetto (denormalizzato per visualizzazione)
   final String? projectCode; // Codice progetto (es. "GDMS")
 
+  // 🗄️ Archiviazione
+  final bool isArchived;
+  final DateTime? archivedAt;
+
   EisenhowerMatrixModel({
     required this.id,
     required this.title,
@@ -55,6 +59,8 @@ class EisenhowerMatrixModel {
     this.projectId,
     this.projectName,
     this.projectCode,
+    this.isArchived = false,
+    this.archivedAt,
   });
 
   /// Crea un'istanza da documento Firestore
@@ -119,6 +125,8 @@ class EisenhowerMatrixModel {
       projectId: data['projectId'],
       projectName: data['projectName'],
       projectCode: data['projectCode'],
+      isArchived: data['isArchived'] ?? false,
+      archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -152,6 +160,9 @@ class EisenhowerMatrixModel {
       if (projectId != null) 'projectId': projectId,
       if (projectName != null) 'projectName': projectName,
       if (projectCode != null) 'projectCode': projectCode,
+      // 🗄️ Archiviazione
+      'isArchived': isArchived,
+      if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
     };
   }
 
@@ -174,6 +185,8 @@ class EisenhowerMatrixModel {
     String? projectId,
     String? projectName,
     String? projectCode,
+    bool? isArchived,
+    DateTime? archivedAt,
   }) {
     return EisenhowerMatrixModel(
       id: id ?? this.id,
@@ -193,6 +206,8 @@ class EisenhowerMatrixModel {
       projectId: projectId ?? this.projectId,
       projectName: projectName ?? this.projectName,
       projectCode: projectCode ?? this.projectCode,
+      isArchived: isArchived ?? this.isArchived,
+      archivedAt: archivedAt ?? this.archivedAt,
     );
   }
 

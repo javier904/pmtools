@@ -75,6 +75,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoading = false;
       });
 
+      // Sincronizza locale globale con impostazioni Firestore
+      if (_settings != null && _settings!.locale.isNotEmpty) {
+        final currentGlobalLocale = LocaleControllerProvider.of(context).locale.languageCode;
+        if (currentGlobalLocale != _settings!.locale) {
+          LocaleControllerProvider.of(context).setLocale(_settings!.locale);
+        }
+      }
+
       // Popola i controller
       if (_profile != null) {
         _displayNameController.text = _profile!.displayName ?? '';
@@ -492,27 +500,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const Divider(),
 
-        // Lingua
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.language),
-          title: Text(l10n.settingsLanguage),
-          subtitle: Text(_settings!.locale == 'it' ? l10n.langItalian : l10n.langEnglish),
-          trailing: DropdownButton<String>(
-            value: _settings!.locale,
-            underline: const SizedBox(),
-            items: [
-              DropdownMenuItem(value: 'it', child: Text(l10n.langItalian)),
-              DropdownMenuItem(value: 'en', child: Text(l10n.langEnglish)),
-            ],
-            onChanged: (value) {
-              if (value != null) {
-                // FIX: Aggiorna state globale locale
-                LocaleControllerProvider.of(context).setLocale(value);
-                _updateLocale(value);
+        // Lingua - legge da LocaleController (single source of truth)
+        Builder(
+          builder: (context) {
+            // Legge la lingua corrente da LocaleController (non da Firestore)
+            final currentLocale = LocaleControllerProvider.of(context).locale.languageCode;
+
+            String getLanguageDisplayName(String code) {
+              switch (code) {
+                case 'it': return l10n.langItalian;
+                case 'en': return l10n.langEnglish;
+                case 'fr': return l10n.langFrench;
+                case 'es': return l10n.langSpanish;
+                default: return code;
               }
-            },
-          ),
+            }
+
+            return ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.language),
+              title: Text(l10n.settingsLanguage),
+              subtitle: Text(getLanguageDisplayName(currentLocale)),
+              trailing: DropdownButton<String>(
+                value: currentLocale,
+                underline: const SizedBox(),
+                items: [
+                  DropdownMenuItem(value: 'it', child: Text(l10n.langItalian)),
+                  DropdownMenuItem(value: 'en', child: Text(l10n.langEnglish)),
+                  DropdownMenuItem(value: 'fr', child: Text(l10n.langFrench)),
+                  DropdownMenuItem(value: 'es', child: Text(l10n.langSpanish)),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    // Aggiorna LocaleController (salva anche in SharedPreferences)
+                    LocaleControllerProvider.of(context).setLocale(value);
+                    // Aggiorna anche Firestore per sincronizzazione cross-device
+                    _updateLocale(value);
+                  }
+                },
+              ),
+            );
+          },
         ),
         const Divider(),
 
@@ -610,42 +638,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.email_outlined),
-          title: Text(l10n.profileEmailNotifications),
+          title: _buildFeatureTitle(l10n.profileEmailNotifications, isComingSoon: true),
           subtitle: Text(l10n.profileEmailNotificationsDesc),
-          value: notifications.emailNotifications,
-          onChanged: (v) => _updateNotification('emailNotifications', v),
+          value: false,
+          onChanged: null,
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.notifications_active_outlined),
-          title: Text(l10n.profilePushNotifications),
+          title: _buildFeatureTitle(l10n.profilePushNotifications, isComingSoon: true),
           subtitle: Text(l10n.profilePushNotificationsDesc),
-          value: notifications.pushNotifications,
-          onChanged: (v) => _updateNotification('pushNotifications', v),
+          value: false,
+          onChanged: null,
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.alarm),
-          title: Text(l10n.profileSprintReminders),
+          title: _buildFeatureTitle(l10n.profileSprintReminders, isComingSoon: true),
           subtitle: Text(l10n.profileSprintRemindersDesc),
-          value: notifications.sprintReminders,
-          onChanged: (v) => _updateNotification('sprintReminders', v),
+          value: false,
+          onChanged: null,
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.group_add_outlined),
           title: _buildFeatureTitle(l10n.profileSessionInvites, isComingSoon: true),
           subtitle: Text(l10n.profileSessionInvitesDesc),
-          value: false, // Disabilitato
+          value: false,
           onChanged: null,
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.summarize_outlined),
-          title: Text(l10n.profileWeeklySummary),
+          title: _buildFeatureTitle(l10n.profileWeeklySummary, isComingSoon: true),
           subtitle: Text(l10n.profileWeeklySummaryDesc),
-          value: notifications.weeklyDigest,
-          onChanged: (v) => _updateNotification('weeklyDigest', v),
+          value: false,
+          onChanged: null,
         ),
       ],
     );

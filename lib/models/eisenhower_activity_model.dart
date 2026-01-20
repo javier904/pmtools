@@ -56,6 +56,12 @@ class EisenhowerActivityModel {
   // Campi RACI
   final Map<String, RaciRole> raciAssignments; // {columnId: RaciRole}
 
+  // Campi completamento e archiviazione
+  final bool isCompleted;
+  final bool isArchived;
+  final DateTime? completedAt;
+  final DateTime? archivedAt;
+
   // Valori calcolati (cached)
   double? _cachedUrgency;
   double? _cachedImportance;
@@ -75,6 +81,10 @@ class EisenhowerActivityModel {
     this.revealedAt,
     this.readyVoters = const [],
     this.raciAssignments = const {},
+    this.isCompleted = false,
+    this.isArchived = false,
+    this.completedAt,
+    this.archivedAt,
   });
 
   /// Crea un'istanza da documento Firestore
@@ -116,6 +126,10 @@ class EisenhowerActivityModel {
       revealedAt: (data['revealedAt'] as Timestamp?)?.toDate(),
       readyVoters: List<String>.from(data['readyVoters'] ?? []),
       raciAssignments: raciMap,
+      isCompleted: data['isCompleted'] ?? false,
+      isArchived: data['isArchived'] ?? false,
+      completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
+      archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -151,6 +165,11 @@ class EisenhowerActivityModel {
       'readyVoters': readyVoters,
       // Campi RACI
       'raciAssignments': raciData,
+      // Campi completamento e archiviazione
+      'isCompleted': isCompleted,
+      'isArchived': isArchived,
+      if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt!),
+      if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
     };
   }
 
@@ -218,6 +237,10 @@ class EisenhowerActivityModel {
     DateTime? revealedAt,
     List<String>? readyVoters,
     Map<String, RaciRole>? raciAssignments,
+    bool? isCompleted,
+    bool? isArchived,
+    DateTime? completedAt,
+    DateTime? archivedAt,
   }) {
     return EisenhowerActivityModel(
       id: id ?? this.id,
@@ -233,6 +256,10 @@ class EisenhowerActivityModel {
       revealedAt: revealedAt ?? this.revealedAt,
       readyVoters: readyVoters ?? this.readyVoters,
       raciAssignments: raciAssignments ?? this.raciAssignments,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isArchived: isArchived ?? this.isArchived,
+      completedAt: completedAt ?? this.completedAt,
+      archivedAt: archivedAt ?? this.archivedAt,
     );
   }
 
@@ -300,6 +327,21 @@ extension EisenhowerActivityListExtension on List<EisenhowerActivityModel> {
   /// Attività con voti
   List<EisenhowerActivityModel> get voted {
     return where((a) => a.hasVotes).toList();
+  }
+
+  /// Attività attive (non completate e non archiviate)
+  List<EisenhowerActivityModel> get active {
+    return where((a) => !a.isCompleted && !a.isArchived).toList();
+  }
+
+  /// Attività completate
+  List<EisenhowerActivityModel> get completed {
+    return where((a) => a.isCompleted).toList();
+  }
+
+  /// Attività archiviate
+  List<EisenhowerActivityModel> get archived {
+    return where((a) => a.isArchived).toList();
   }
 
   /// Ordina per urgenza (decrescente)

@@ -459,4 +459,74 @@ class RetrospectiveFirestoreService {
   Future<void> _logAudit(AuditLogModel log) async {
     await _auditCollection.add(log.toFirestore());
   }
+
+  // =========================================================================
+  // ARCHIVIAZIONE - Retrospettive
+  // =========================================================================
+
+  /// Archivia una retrospettiva
+  ///
+  /// [retroId] - ID della retrospettiva da archiviare
+  ///
+  /// Le retrospettive archiviate sono escluse dai conteggi subscription
+  /// e non appaiono nelle liste di default
+  Future<bool> archiveRetrospective(String retroId) async {
+    try {
+      await _retrosCollection.doc(retroId).update({
+        'isArchived': true,
+        'archivedAt': Timestamp.fromDate(DateTime.now()),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('🗄️ Retrospettiva archiviata: $retroId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveRetrospective: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina una retrospettiva archiviata
+  ///
+  /// [retroId] - ID della retrospettiva da ripristinare
+  Future<bool> restoreRetrospective(String retroId) async {
+    try {
+      await _retrosCollection.doc(retroId).update({
+        'isArchived': false,
+        'archivedAt': null,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('📦 Retrospettiva ripristinata: $retroId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreRetrospective: $e');
+      return false;
+    }
+  }
+
+  /// Stream delle retrospettive con filtro archivio
+  ///
+  /// [userEmail] - Email dell'utente
+  /// [includeArchived] - Se true, include anche le archiviate
+  Stream<List<RetrospectiveModel>> streamRetrospectivesFiltered({
+    required String userEmail,
+    bool includeArchived = false,
+  }) {
+    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
+    return _retrosCollection
+        .where('participantEmails', arrayContains: userEmail.toLowerCase())
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      var retros = snapshot.docs
+          .map((doc) => RetrospectiveModel.fromFirestore(doc))
+          .toList();
+
+      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+      if (!includeArchived) {
+        retros = retros.where((r) => r.isArchived != true).toList();
+      }
+
+      return retros;
+    });
+  }
 }

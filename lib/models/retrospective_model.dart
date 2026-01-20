@@ -42,6 +42,10 @@ class RetrospectiveModel {
   final String createdBy;
   final bool isCompleted;
 
+  // 🗄️ Archiviazione
+  final bool isArchived;
+  final DateTime? archivedAt;
+
   // Real-time Session  // State
   final RetroStatus status;
   final RetroPhase currentPhase;
@@ -73,6 +77,8 @@ class RetrospectiveModel {
     required this.createdAt,
     required this.createdBy,
     this.isCompleted = false,
+    this.isArchived = false,
+    this.archivedAt,
     this.status = RetroStatus.draft,
     this.currentPhase = RetroPhase.setup,
     this.template = RetroTemplate.startStopContinue,
@@ -132,6 +138,8 @@ class RetrospectiveModel {
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       createdBy: data['createdBy'] ?? '',
       isCompleted: data['isCompleted'] ?? false,
+      isArchived: data['isArchived'] ?? false,
+      archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
       status: RetroStatus.values.firstWhere((e) => e.name == data['status'], orElse: () => RetroStatus.draft),
       currentPhase: RetroPhase.values.firstWhere((e) => e.name == data['currentPhase'], orElse: () => RetroPhase.setup),
       template: RetroTemplate.values.firstWhere((e) => e.name == data['template'], orElse: () => RetroTemplate.startStopContinue),
@@ -163,6 +171,8 @@ class RetrospectiveModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'createdBy': createdBy,
       'isCompleted': isCompleted,
+      'isArchived': isArchived,
+      if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
       'status': status.name,
       'participantEmails': participantEmails,
       'maxVotesPerUser': maxVotesPerUser,
@@ -206,6 +216,8 @@ class RetrospectiveModel {
       createdAt: createdAt,
       createdBy: createdBy,
       isCompleted: isCompleted,
+      isArchived: isArchived,
+      archivedAt: archivedAt,
       status: status ?? this.status,
       currentPhase: currentPhase ?? this.currentPhase,
       template: template, 

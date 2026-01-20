@@ -1940,7 +1940,7 @@ ClipRRect(
             Icon(Icons.email_outlined, size: 16, color: context.textMutedColor),
             const SizedBox(width: 8),
             Text(
-              'support@agiletools.app',
+              'suppkesien@gmail.com',
               style: TextStyle(
                 fontSize: 13,
                 color: context.textSecondaryColor,

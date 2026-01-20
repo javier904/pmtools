@@ -10,6 +10,7 @@ import '../widgets/agile/methodology_guide_dialog.dart';
 import '../themes/app_colors.dart';
 import 'agile_project_detail_screen.dart';
 import '../widgets/home/favorite_star.dart';
+import '../l10n/app_localizations.dart';
 
 /// Screen principale per la gestione dei Progetti Agile
 ///
@@ -34,6 +35,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   // Stato
   AgileProjectModel? _selectedProject;
   String _searchQuery = '';
+  bool _showArchived = false;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _authService.currentUser?.displayName ?? 'Utente';
@@ -107,16 +109,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         elevation: 0,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.purple.shade500, Colors.purple.shade700],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 18),
-            ),
+            const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 20),
             const SizedBox(width: 10),
             const Text(
               'Agile Process Manager',
@@ -125,6 +118,24 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           ],
         ),
         actions: [
+          // Toggle archivio
+          FilterChip(
+            label: Text(
+              _showArchived
+                  ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                  : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
+              style: const TextStyle(fontSize: 12),
+            ),
+            selected: _showArchived,
+            onSelected: (value) => setState(() => _showArchived = value),
+            avatar: Icon(
+              _showArchived ? Icons.visibility_off : Icons.visibility,
+              size: 16,
+            ),
+            selectedColor: AppColors.warning.withValues(alpha: 0.2),
+            showCheckmark: false,
+          ),
+          const SizedBox(width: 16),
           // Pulsante guida metodologie - piu visibile
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -156,7 +167,10 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
 
   Widget _buildProjectList() {
     return StreamBuilder<List<AgileProjectModel>>(
-      stream: _firestoreService.streamUserProjects(_currentUserEmail),
+      stream: _firestoreService.streamProjectsFiltered(
+        userEmail: _currentUserEmail,
+        includeArchived: _showArchived,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -328,8 +342,24 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                     ),
                   ),
                   const Spacer(),
+                  // Badge archiviato
+                  if (project.isArchived)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Tooltip(
+                        message: AppLocalizations.of(context)!.archiveBadge,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                        ),
+                      ),
+                    ),
                   // Sprint attivo badge
-                  if (project.hasActiveSprint)
+                  if (project.hasActiveSprint && !project.isArchived)
                     Tooltip(
                       message: 'Sprint in corso',
                       child: Container(
@@ -653,24 +683,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         children: [
           const SizedBox(height: 40),
           // Icona principale
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple.shade400, Colors.purple.shade600],
-              ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.purple.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: const Icon(Icons.rocket_launch_rounded, size: 48, color: Colors.white),
-          ),
+          const Icon(Icons.rocket_launch_rounded, size: 60, color: Colors.white),
           const SizedBox(height: 32),
           Text(
             'Nessun Progetto Agile',
@@ -868,6 +881,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   }
 
   void _showProjectMenuAtPosition(BuildContext context, AgileProjectModel project, Offset globalPosition, bool isOwner) async {
+    final l10n = AppLocalizations.of(context)!;
     final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromLTRB(
       globalPosition.dx,
@@ -882,6 +896,21 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
       items: [
         const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit, size: 18), SizedBox(width: 8), Text('Modifica')])),
         const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings, size: 18), SizedBox(width: 8), Text('Impostazioni')])),
+        // Archive/Restore option
+        PopupMenuItem(
+          value: project.isArchived ? 'restore' : 'archive',
+          child: Row(
+            children: [
+              Icon(
+                project.isArchived ? Icons.unarchive : Icons.archive,
+                size: 18,
+                color: Colors.orange,
+              ),
+              const SizedBox(width: 8),
+              Text(project.isArchived ? l10n.archiveRestoreAction : l10n.archiveAction),
+            ],
+          ),
+        ),
         if (isOwner) const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, size: 18, color: Colors.red), SizedBox(width: 8), Text('Elimina', style: TextStyle(color: Colors.red))])),
       ],
     );
@@ -894,10 +923,42 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         case 'settings':
           _showProjectSettingsDialog(project);
           break;
+        case 'archive':
+          _archiveProject(project);
+          break;
+        case 'restore':
+          _restoreProject(project);
+          break;
         case 'delete':
           _confirmDeleteProject(project);
           break;
       }
+    }
+  }
+
+  Future<void> _archiveProject(AgileProjectModel project) async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await _firestoreService.archiveProject(project.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.archiveSuccessMessage : l10n.archiveErrorMessage),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreProject(AgileProjectModel project) async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await _firestoreService.restoreProject(project.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.archiveRestoreSuccessMessage : l10n.archiveRestoreErrorMessage),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
     }
   }
 

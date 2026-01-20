@@ -42,6 +42,10 @@ class TodoListModel {
   final List<TodoLabel> availableTags;
   final List<String> pendingEmails; // New: Pending invites
 
+  // 🗄️ Archiviazione
+  final bool isArchived;
+  final DateTime? archivedAt;
+
   const TodoListModel({
     required this.id,
     required this.title,
@@ -52,6 +56,8 @@ class TodoListModel {
     this.columns = const [],
     this.availableTags = const [],
     this.pendingEmails = const [],
+    this.isArchived = false,
+    this.archivedAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -65,6 +71,8 @@ class TodoListModel {
       'columns': columns.map((c) => c.toMap()).toList(),
       'availableTags': availableTags.map((t) => t.toMap()).toList(),
       'pendingEmails': pendingEmails,
+      'isArchived': isArchived,
+      if (archivedAt != null) 'archivedAt': archivedAt!.toIso8601String(),
     };
   }
 
@@ -91,6 +99,8 @@ class TodoListModel {
           ?.map((item) => TodoLabel.fromMap(item))
           .toList() ?? [],
       pendingEmails: List<String>.from(map['pendingEmails'] ?? []),
+      isArchived: map['isArchived'] ?? false,
+      archivedAt: map['archivedAt'] != null ? DateTime.tryParse(map['archivedAt']) : null,
     );
   }
 
@@ -104,6 +114,8 @@ class TodoListModel {
     List<TodoColumn>? columns,
     List<TodoLabel>? availableTags,
     List<String>? pendingEmails,
+    bool? isArchived,
+    DateTime? archivedAt,
   }) {
     return TodoListModel(
       id: id ?? this.id,
@@ -115,6 +127,8 @@ class TodoListModel {
       columns: columns ?? this.columns,
       availableTags: availableTags ?? this.availableTags,
       pendingEmails: pendingEmails ?? this.pendingEmails,
+      isArchived: isArchived ?? this.isArchived,
+      archivedAt: archivedAt ?? this.archivedAt,
     );
   }
 

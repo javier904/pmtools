@@ -794,4 +794,74 @@ class AgileFirestoreService {
 
     return totalVelocity / query.docs.length;
   }
+
+  // =========================================================================
+  // ARCHIVIAZIONE - Progetti
+  // =========================================================================
+
+  /// Archivia un progetto Agile
+  ///
+  /// [projectId] - ID del progetto da archiviare
+  ///
+  /// I progetti archiviati sono esclusi dai conteggi subscription.
+  /// Sprint e stories del progetto vengono considerati archiviati di conseguenza.
+  Future<bool> archiveProject(String projectId) async {
+    try {
+      await _projectsRef.doc(projectId).update({
+        'isArchived': true,
+        'archivedAt': Timestamp.fromDate(DateTime.now()),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('🗄️ Progetto archiviato: $projectId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveProject: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina un progetto archiviato
+  ///
+  /// [projectId] - ID del progetto da ripristinare
+  Future<bool> restoreProject(String projectId) async {
+    try {
+      await _projectsRef.doc(projectId).update({
+        'isArchived': false,
+        'archivedAt': null,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('📦 Progetto ripristinato: $projectId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreProject: $e');
+      return false;
+    }
+  }
+
+  /// Stream dei progetti con filtro archivio
+  ///
+  /// [userEmail] - Email dell'utente
+  /// [includeArchived] - Se true, include anche gli archiviati
+  Stream<List<AgileProjectModel>> streamProjectsFiltered({
+    required String userEmail,
+    bool includeArchived = false,
+  }) {
+    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
+    return _projectsRef
+        .where('participantEmails', arrayContains: userEmail.toLowerCase())
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      var projects = snapshot.docs
+          .map((doc) => AgileProjectModel.fromFirestore(doc))
+          .toList();
+
+      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+      if (!includeArchived) {
+        projects = projects.where((p) => p.isArchived != true).toList();
+      }
+
+      return projects;
+    });
+  }
 }

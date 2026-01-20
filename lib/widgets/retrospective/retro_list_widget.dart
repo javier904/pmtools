@@ -2,6 +2,7 @@ import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:flutter/material.dart';
 import '../home/favorite_star.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 class RetroListWidget extends StatelessWidget {
   final List<RetrospectiveModel> retrospectives;
@@ -10,6 +11,8 @@ class RetroListWidget extends StatelessWidget {
   final String currentUserEmail;
   final Function(RetrospectiveModel)? onEdit;
   final Function(RetrospectiveModel)? onDelete;
+  final Function(RetrospectiveModel)? onArchive;
+  final Function(RetrospectiveModel)? onRestore;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
 
@@ -21,6 +24,8 @@ class RetroListWidget extends StatelessWidget {
     required this.currentUserEmail,
     this.onEdit,
     this.onDelete,
+    this.onArchive,
+    this.onRestore,
     this.shrinkWrap = false,
     this.physics,
   }) : super(key: key);
@@ -81,6 +86,7 @@ class RetroListWidget extends StatelessWidget {
   }
 
   void _showRetroMenuAtPosition(BuildContext context, RetrospectiveModel retro, Offset globalPosition) async {
+    final l10n = AppLocalizations.of(context);
     final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromLTRB(
       globalPosition.dx,
@@ -104,6 +110,29 @@ class RetroListWidget extends StatelessWidget {
               ],
             ),
           ),
+        // Archive/Restore option
+        if (retro.isArchived && onRestore != null)
+          PopupMenuItem(
+            value: 'restore',
+            child: Row(
+              children: [
+                const Icon(Icons.unarchive, size: 16, color: Colors.orange),
+                const SizedBox(width: 8),
+                Text(l10n?.archiveRestoreAction ?? 'Restore', style: const TextStyle(fontSize: 13)),
+              ],
+            ),
+          ),
+        if (!retro.isArchived && onArchive != null)
+          PopupMenuItem(
+            value: 'archive',
+            child: Row(
+              children: [
+                const Icon(Icons.archive, size: 16, color: Colors.orange),
+                const SizedBox(width: 8),
+                Text(l10n?.archiveAction ?? 'Archive', style: const TextStyle(fontSize: 13)),
+              ],
+            ),
+          ),
         if (onDelete != null)
           const PopupMenuItem(
             value: 'delete',
@@ -122,6 +151,12 @@ class RetroListWidget extends StatelessWidget {
       switch (result) {
         case 'edit':
           onEdit?.call(retro);
+          break;
+        case 'archive':
+          onArchive?.call(retro);
+          break;
+        case 'restore':
+          onRestore?.call(retro);
           break;
         case 'delete':
           onDelete?.call(retro);
@@ -201,6 +236,22 @@ class RetroListWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
+                  // Badge archiviato
+                  if (retro.isArchived)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Tooltip(
+                        message: AppLocalizations.of(context)?.archiveBadge ?? 'Archived',
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                        ),
+                      ),
+                    ),
                   FavoriteStar(
                     resourceId: retro.id,
                     type: 'retrospective',
@@ -209,7 +260,7 @@ class RetroListWidget extends StatelessWidget {
                     size: 16,
                   ),
                   // Menu (Only for Creator)
-                  if (retro.createdBy == currentUserEmail && (onEdit != null || onDelete != null))
+                  if (retro.createdBy == currentUserEmail && (onEdit != null || onDelete != null || onArchive != null || onRestore != null))
                     GestureDetector(
                       onTapDown: (TapDownDetails details) {
                         _showRetroMenuAtPosition(context, retro, details.globalPosition);

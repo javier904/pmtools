@@ -24,13 +24,13 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   final RetrospectiveFirestoreService _retroService = RetrospectiveFirestoreService();
   final TextEditingController _searchController = TextEditingController();
   RetroStatus? _selectedFilter; // null = All
-  
+  bool _showArchived = false;
+
   // State
   RetroTemplate selectedTemplate = RetroTemplate.startStopContinue; // Added
-  
+
   late String _currentUserEmail;
   late String _currentUserName;
-  late Stream<List<RetrospectiveModel>> _retrospectivesStream; // Added
 
   @override
   void initState() {
@@ -38,8 +38,13 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
     final user = FirebaseAuth.instance.currentUser;
     _currentUserEmail = user?.email ?? '';
     _currentUserName = user?.displayName ?? 'User';
-    // Initialize stream once
-    _retrospectivesStream = _retroService.streamUserRetrospectives(_currentUserEmail);
+  }
+
+  Stream<List<RetrospectiveModel>> _getRetrosStream() {
+    return _retroService.streamRetrospectivesFiltered(
+      userEmail: _currentUserEmail,
+      includeArchived: _showArchived,
+    );
   }
 
   @override
@@ -60,6 +65,24 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           ],
         ),
         actions: [
+          // Toggle archivio
+          FilterChip(
+            label: Text(
+              _showArchived
+                  ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                  : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
+              style: const TextStyle(fontSize: 12),
+            ),
+            selected: _showArchived,
+            onSelected: (value) => setState(() => _showArchived = value),
+            avatar: Icon(
+              _showArchived ? Icons.visibility_off : Icons.visibility,
+              size: 16,
+            ),
+            selectedColor: AppColors.warning.withValues(alpha: 0.2),
+            showCheckmark: false,
+          ),
+          const SizedBox(width: 16),
           IconButton(
             icon: const Icon(Icons.help_outline),
             tooltip: 'Guida alle Retrospettive',
@@ -79,7 +102,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           _buildSearchFilterSection(),
           Expanded(
             child: StreamBuilder<List<RetrospectiveModel>>(
-              stream: _retrospectivesStream,
+              stream: _getRetrosStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -136,6 +159,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     onCreateNew: _showCreateStandaloneDialog,
                     currentUserEmail: _currentUserEmail, // Pass current user
                     onDelete: _confirmDeleteRetro, // Pass delete handler
+                    onArchive: _archiveRetro,
+                    onRestore: _restoreRetro,
                   ),
                 );
               },
@@ -285,6 +310,32 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         ],
       ),
     );
+  }
+
+  Future<void> _archiveRetro(RetrospectiveModel retro) async {
+    final l10n = AppLocalizations.of(context);
+    final success = await _retroService.archiveRetrospective(retro.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? (l10n?.archiveSuccessMessage ?? 'Archived') : (l10n?.archiveErrorMessage ?? 'Error')),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreRetro(RetrospectiveModel retro) async {
+    final l10n = AppLocalizations.of(context);
+    final success = await _retroService.restoreRetrospective(retro.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? (l10n?.archiveRestoreSuccessMessage ?? 'Restored') : (l10n?.archiveRestoreErrorMessage ?? 'Error')),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
   }
 
   void _showCreateStandaloneDialog() {

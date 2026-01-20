@@ -3100,7 +3100,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get landingFooterLegal => 'Legal';
 
   @override
-  String get landingCopyright => '© 2025 Keisen. All rights reserved.';
+  String get landingCopyright => '© 2026 Keisen. All rights reserved.';
 
   @override
   String get featureSmartImportDesc =>
@@ -3468,11 +3468,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalGDPR => 'GDPR';
 
   @override
+  String get legalLastUpdatedLabel => 'Last updated';
+
+  @override
+  String get legalLastUpdatedDate => 'January 18, 2026';
+
+  @override
   String get legalAcceptTerms =>
       'I accept the Terms of Service and Privacy Policy';
 
   @override
   String get legalMustAcceptTerms => 'You must accept the terms to continue';
+
+  @override
+  String get legalPrivacyContent =>
+      '## 1. Introduction\nWelcome to **Keisen** (\"we\", \"our\", \"the Platform\"). Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and protect your information when you use our web application.\n\n## 2. Information We Collect\nWe collect two types of data and information:\n\n### 2.1 User-Provided Information\n- **Account Data:** When you sign in via Google Sign-In or create an account, we collect your name, email address, and profile picture.\n- **User Content:** We collect data you voluntarily enter into the platform, including tasks, estimates, retrospectives, comments, and team configurations.\n\n### 2.2 Automatically Collected Information\n- **System Logs:** IP addresses, browser type, pages visited, and timestamps.\n- **Cookies:** We use essential technical cookies to keep your session active.\n\n## 3. How We Use Your Information\nWe use the collected information to:\n- Provide, operate, and maintain our Services.\n- Improve, personalize, and expand our Platform.\n- Analyze how you use the website to improve the user experience.\n- Send you service emails (e.g., team invitations, important updates).\n\n## 4. Information Sharing\nWe do not sell your personal data. We share information only with:\n- **Service Providers:** We use **Google Firebase** (Google LLC) for hosting, authentication, and database services. Data is processed according to [Google\'s Privacy Policy](https://policies.google.com/privacy).\n- **Legal Obligations:** If required by law or to protect our rights.\n\n## 5. Data Security\nWe implement industry-standard technical and organizational security measures (such as encryption in transit) to protect your data. However, no method of transmission over the Internet is 100% secure.\n\n## 6. Your Rights\nYou have the right to:\n- Access your personal data.\n- Request the correction of inaccurate data.\n- Request the deletion of your data (\"Right to be forgotten\").\n- Object to the processing of your data.\n\nTo exercise these rights, contact us at: suppkesien@gmail.com.\n\n## 7. Changes to This Policy\nWe may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Policy on this page.';
+
+  @override
+  String get legalTermsContent =>
+      '## 1. Acceptance of Terms\nBy accessing or using **Keisen**, you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree to these Terms, you must not use our Services.\n\n## 2. Description of Service\nKeisen is a collaboration platform for agile teams offering tools like Smart Todo, Eisenhower Matrix, Estimation Room, and Agile Process Management. We reserve the right to modify or discontinue the service at any time.\n\n## 3. User Accounts\nYou are responsible for maintaining the confidentiality of your account credentials and all activities that occur under your account. We reserve the right to suspend or delete accounts that violate these Terms.\n\n## 4. User Conduct\nYou agree not to use the Service to:\n- Violate local, national, or international laws.\n- Upload offensive, defamatory, or illegal content.\n- Attempt unauthorized access to the Platform\'s systems.\n\n## 5. Intellectual Property\nAll intellectual property rights related to the Platform and its original content (excluding user-provided content) are the exclusive property of Leonardo Torella.\n\n## 6. Limitation of Liability\nTo the maximum extent permitted by law, Keisen is provided \"as is\" and \"as available\". We do not guarantee that the service will be uninterrupted or error-free. We will not be liable for indirect, incidental, or consequential damages arising from the use of the service.\n\n## 7. Governing Law\nThese Terms are governed by the laws of the Italian State.\n\n## 8. Contacts\nFor questions about these Terms, contact us at: suppkesien@gmail.com.';
+
+  @override
+  String get legalCookiesContent =>
+      '## 1. What are Cookies?\nCookies are small text files that are saved on your device when you visit a website. They are widely used to make websites work more efficiently and provide information to site owners.\n\n## 2. How We Use Cookies\nWe use cookies for several purposes:\n\n### 2.1 Technical Cookies (Essential)\nThese cookies are necessary for the website to function and cannot be turned off in our systems. They are usually set only in response to actions you take that constitute a request for services, such as setting your privacy preferences, logging in, or filling out forms.\n*Example:* Firebase Auth session cookies to keep the user logged in.\n\n### 2.2 Analytical Cookies\nThese cookies allow us to count visits and traffic sources so we can measure and improve our site\'s performance. All information collected by these cookies is aggregated and therefore anonymous.\n\n## 3. Cookie Management\nMost web browsers allow you to control most cookies through the browser settings. However, if you disable essential cookies, some parts of our Service may not work correctly (e.g., you won\'t be able to log in).\n\n## 4. Third-Party Cookies\nWe use third-party services like **Google Firebase** that may set their own cookies. We encourage you to consult their respective privacy policies for more details.';
+
+  @override
+  String get legalGdprContent =>
+      '## Commitment to Data Protection (GDPR)\nIn accordance with the European Union General Data Protection Regulation (GDPR), Keisen is committed to protecting users\' personal data and ensuring transparency in its processing.\n\n## Data Controller\nThe Data Controller is:\n**Keisen Team**\nEmail: suppkesien@gmail.com\n\n## Legal Basis for Processing\nWe process your personal data only when we have a legal basis to do so. This includes:\n- **Consent:** You have given us permission to process your data for a specific purpose.\n- **Performance of a contract:** Processing is necessary to provide the Services you have requested (e.g., use of the platform).\n- **Legitimate interest:** Processing is necessary for our legitimate interests (e.g., security, service improvement), unless your fundamental rights and freedoms override those interests.\n\n## Data Transfer\nYour data is stored on secure servers provided by Google Cloud Platform (Google Firebase). Google adheres to international security standards and complies with GDPR through Standard Contractual Clauses (SCC).\n\n## Your GDPR Rights\nAs a user in the EU, you have the following rights:\n1.  **Right to access:** You have the right to request copies of your personal data.\n2.  **Right to rectification:** You have the right to request the correction of information you believe is inaccurate.\n3.  **Right to erasure (\"Right to be forgotten\"):** You have the right to request the deletion of your personal data, under certain conditions.\n4.  **Right to restrict processing:** You have the right to request the restriction of processing your data.\n5.  **Right to data portability:** You have the right to request the transfer of the data we have collected to another organization or directly to you.\n\n## Exercise of Rights\nIf you wish to exercise any of these rights, please contact us at: suppkesien@gmail.com. We will respond to your request within one month.';
 
   @override
   String get profilePrivacy => 'Privacy';
@@ -4028,10 +4050,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exceptionListNotFound => 'List not found';
 
   @override
-  String get langItalian => 'Italian';
+  String get langItalian => 'Italiano';
 
   @override
   String get langEnglish => 'English';
+
+  @override
+  String get langFrench => 'Français';
+
+  @override
+  String get langSpanish => 'Español';
 
   @override
   String get jsonExportLabel => 'Download JSON copy of your data';
@@ -4628,4 +4656,88 @@ class AppLocalizationsEn extends AppLocalizations {
   String activitiesExportedToEstimation(int count, String sessionName) {
     return '$count activities exported to estimation session $sessionName';
   }
+
+  @override
+  String get archiveAction => 'Archive';
+
+  @override
+  String get archiveRestoreAction => 'Restore';
+
+  @override
+  String get archiveShowArchived => 'Show archived';
+
+  @override
+  String get archiveHideArchived => 'Hide archived';
+
+  @override
+  String archiveConfirmTitle(String itemType) {
+    return 'Archive $itemType';
+  }
+
+  @override
+  String get archiveConfirmMessage =>
+      'Are you sure you want to archive this item? It can be restored later.';
+
+  @override
+  String archiveRestoreConfirmTitle(String itemType) {
+    return 'Restore $itemType';
+  }
+
+  @override
+  String get archiveRestoreConfirmMessage =>
+      'Do you want to restore this item from the archive?';
+
+  @override
+  String get archiveSuccessMessage => 'Item archived successfully';
+
+  @override
+  String get archiveRestoreSuccessMessage => 'Item restored successfully';
+
+  @override
+  String get archiveErrorMessage => 'Error during archiving';
+
+  @override
+  String get archiveRestoreErrorMessage => 'Error during restoration';
+
+  @override
+  String get archiveFilterLabel => 'Archive';
+
+  @override
+  String get archiveFilterActive => 'Active';
+
+  @override
+  String get archiveFilterArchived => 'Archived';
+
+  @override
+  String get archiveFilterAll => 'All';
+
+  @override
+  String get archiveBadge => 'Archived';
+
+  @override
+  String get archiveEmptyMessage => 'No archived items';
+
+  @override
+  String get completeAction => 'Complete';
+
+  @override
+  String get reopenAction => 'Reopen';
+
+  @override
+  String completeConfirmTitle(String itemType) {
+    return 'Complete $itemType';
+  }
+
+  @override
+  String get completeConfirmMessage =>
+      'Are you sure you want to complete this item?';
+
+  @override
+  String get completeSuccessMessage => 'Item completed successfully';
+
+  @override
+  String get reopenSuccessMessage => 'Item reopened successfully';
+
+  @override
+  String get completedBadge => 'Completed';
 }

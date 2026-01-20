@@ -93,13 +93,55 @@ class DeadlineService {
           // debugPrint('DEBUG: DeadlineService found ${taskSnap.docs.length} raw tasks');
           final items = <DeadlineItem>[];
 
+          // Collect unique list IDs to batch check for archived status
+          final listIds = <String>{};
+          for (var doc in taskSnap.docs) {
+            final listId = doc.data()['listId'] as String?;
+            if (listId != null && listId.isNotEmpty) {
+              listIds.add(listId);
+            }
+          }
+
+          // Batch check which lists are archived
+          final archivedListIds = <String>{};
+          if (listIds.isNotEmpty) {
+            try {
+              // Firestore allows up to 30 items in whereIn, so we batch if needed
+              final listIdsList = listIds.toList();
+              for (var i = 0; i < listIdsList.length; i += 30) {
+                final batch = listIdsList.skip(i).take(30).toList();
+                final listsSnap = await _firestore
+                    .collection('smart_todo_lists')
+                    .where(FieldPath.documentId, whereIn: batch)
+                    .get();
+                for (var listDoc in listsSnap.docs) {
+                  final isArchived = listDoc.data()['isArchived'] == true;
+                  if (isArchived) {
+                    archivedListIds.add(listDoc.id);
+                  }
+                }
+              }
+            } catch (e) {
+              // Continue without filtering if query fails
+              debugPrint('DEBUG: DeadlineService failed to check archived lists: $e');
+            }
+          }
+
           // 1. Process Tasks
           for (var doc in taskSnap.docs) {
             final data = doc.data();
-            
+
             // Client-side status filter (safer without index)
             final statusId = data['statusId'] ?? data['status'];
             if (statusId == 'done' || statusId == 'completed') continue;
+
+            // Skip archived tasks
+            final isTaskArchived = data['isArchived'] == true;
+            if (isTaskArchived) continue;
+
+            // Skip tasks from archived lists
+            final listId = data['listId'] as String?;
+            if (listId != null && archivedListIds.contains(listId)) continue;
 
             final dueDateStr = data['dueDate'] as String?;
             if (dueDateStr != null) {
@@ -135,13 +177,17 @@ class DeadlineService {
           // 2. Fetch Sprints (Once per task update is not ideal, but okay for "Home" view)
           // To improve, we should use BehaviorSubject or similar.
           try {
-             // Fetch projects first
+             // Fetch projects first (excluding archived ones)
              final projectsSnap = await _firestore
                 .collection('agile_projects')
                 .where('participantEmails', arrayContains: trimmedEmail.toLowerCase())
                 .get();
-             
-             final projectIds = projectsSnap.docs.map((doc) => doc.id).toList();
+
+             // Filter out archived projects
+             final projectIds = projectsSnap.docs
+                .where((doc) => doc.data()['isArchived'] != true)
+                .map((doc) => doc.id)
+                .toList();
              
              if (projectIds.isNotEmpty) {
                 final sprintSnap = await _firestore

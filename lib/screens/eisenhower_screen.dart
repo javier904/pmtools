@@ -78,6 +78,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   // Filtro ricerca matrici
   String _searchQuery = '';
 
+  // Filtro archivio
+  bool _showArchived = false;
+
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
   @override
@@ -202,6 +205,24 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             ],
           ),
           actions: [
+            // Toggle archivio - sempre visibile nella lista
+            if (_selectedMatrix == null) ...[
+              FilterChip(
+                label: Text(
+                  _showArchived ? l10n.archiveHideArchived : l10n.archiveShowArchived,
+                  style: const TextStyle(fontSize: 12),
+                ),
+                selected: _showArchived,
+                onSelected: (value) => setState(() => _showArchived = value),
+                avatar: Icon(
+                  _showArchived ? Icons.visibility_off : Icons.visibility,
+                  size: 16,
+                ),
+                selectedColor: AppColors.warning.withValues(alpha: 0.2),
+                showCheckmark: false,
+              ),
+              const SizedBox(width: 16),
+            ],
             if (_selectedMatrix != null) ...[
               // ═══════════════════════════════════════════════════════════
               // EXPORT/INTEGRATION BUTTONS (left side)
@@ -309,7 +330,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return StreamBuilder<List<EisenhowerMatrixModel>>(
-      stream: _firestoreService.streamMatricesByUser(_currentUserEmail),
+      stream: _firestoreService.streamMatricesFiltered(
+        userEmail: _currentUserEmail,
+        includeArchived: _showArchived,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -537,13 +561,29 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: context.textPrimaryColor,
+                          color: matrix.isArchived ? context.textMutedColor : context.textPrimaryColor,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
+                  // Badge archiviato
+                  if (matrix.isArchived)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Tooltip(
+                        message: l10n.archiveBadge,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
+                        ),
+                      ),
+                    ),
                   FavoriteStar(
                     resourceId: matrix.id,
                     type: 'eisenhower_matrix',
@@ -1262,6 +1302,24 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             ],
           ),
         ),
+        // Archive/Restore option
+        PopupMenuItem(
+          value: matrix.isArchived ? 'restore' : 'archive',
+          child: Row(
+            children: [
+              Icon(
+                matrix.isArchived ? Icons.unarchive : Icons.archive,
+                size: 16,
+                color: AppColors.warning,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                matrix.isArchived ? l10n.archiveRestoreAction : l10n.archiveAction,
+                style: const TextStyle(fontSize: 13),
+              ),
+            ],
+          ),
+        ),
         PopupMenuItem(
           value: 'delete',
           child: Row(
@@ -1280,10 +1338,42 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         case 'edit':
           _showEditMatrixDialog(matrix);
           break;
+        case 'archive':
+          _archiveMatrix(matrix);
+          break;
+        case 'restore':
+          _restoreMatrix(matrix);
+          break;
         case 'delete':
           _confirmDeleteMatrix(matrix);
           break;
       }
+    }
+  }
+
+  Future<void> _archiveMatrix(EisenhowerMatrixModel matrix) async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await _firestoreService.archiveMatrix(matrix.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.archiveSuccessMessage : l10n.archiveErrorMessage),
+          backgroundColor: success ? AppColors.success : AppColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreMatrix(EisenhowerMatrixModel matrix) async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await _firestoreService.restoreMatrix(matrix.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.archiveRestoreSuccessMessage : l10n.archiveRestoreErrorMessage),
+          backgroundColor: success ? AppColors.success : AppColors.error,
+        ),
+      );
     }
   }
 

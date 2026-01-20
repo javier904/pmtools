@@ -105,6 +105,10 @@ class PlanningPokerSessionModel {
   // Story corrente in votazione
   final String? currentStoryId;
 
+  // 🗄️ Archiviazione
+  final bool isArchived;
+  final DateTime? archivedAt;
+
   PlanningPokerSessionModel({
     required this.id,
     required this.name,
@@ -129,6 +133,8 @@ class PlanningPokerSessionModel {
     this.completedStoryCount = 0,
     this.currentStoryId,
     this.pendingEmails = const [],
+    this.isArchived = false,
+    this.archivedAt,
   });
 
   /// Crea da documento Firestore
@@ -170,6 +176,8 @@ class PlanningPokerSessionModel {
       completedStoryCount: data['completedStoryCount'] ?? 0,
       currentStoryId: data['currentStoryId'],
       pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
+      isArchived: data['isArchived'] ?? false,
+      archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -204,6 +212,9 @@ class PlanningPokerSessionModel {
       if (projectId != null) 'projectId': projectId,
       if (projectName != null) 'projectName': projectName,
       if (projectCode != null) 'projectCode': projectCode,
+      // 🗄️ Archiviazione
+      'isArchived': isArchived,
+      if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
     };
   }
 
@@ -233,6 +244,8 @@ class PlanningPokerSessionModel {
 
     String? currentStoryId,
     List<String>? pendingEmails,
+    bool? isArchived,
+    DateTime? archivedAt,
   }) {
     return PlanningPokerSessionModel(
       id: id ?? this.id,
@@ -258,6 +271,8 @@ class PlanningPokerSessionModel {
       completedStoryCount: completedStoryCount ?? this.completedStoryCount,
       currentStoryId: currentStoryId ?? this.currentStoryId,
       pendingEmails: pendingEmails ?? this.pendingEmails,
+      isArchived: isArchived ?? this.isArchived,
+      archivedAt: archivedAt ?? this.archivedAt,
     );
   }
 

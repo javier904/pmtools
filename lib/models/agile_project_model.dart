@@ -42,6 +42,10 @@ class AgileProjectModel {
   final List<String> developmentTeamEmails;
   final List<String> pendingEmails; // Inviti in attesa
 
+  // 🗄️ Archiviazione
+  final bool isArchived;
+  final DateTime? archivedAt;
+
   const AgileProjectModel({
     required this.id,
     required this.name,
@@ -64,6 +68,8 @@ class AgileProjectModel {
     this.scrumMasterEmail,
     this.developmentTeamEmails = const [],
     this.pendingEmails = const [],
+    this.isArchived = false,
+    this.archivedAt,
   });
 
   /// Crea da documento Firestore
@@ -120,6 +126,8 @@ class AgileProjectModel {
       scrumMasterEmail: data['scrumMasterEmail'],
       developmentTeamEmails: List<String>.from(data['developmentTeamEmails'] ?? []),
       pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
+      isArchived: data['isArchived'] ?? false,
+      archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -154,6 +162,9 @@ class AgileProjectModel {
       'pendingEmails': pendingEmails,
       // Per query
       'participantEmails': participants.keys.toList(),
+      // 🗄️ Archiviazione
+      'isArchived': isArchived,
+      if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
     };
   }
 
@@ -189,6 +200,8 @@ class AgileProjectModel {
     String? scrumMasterEmail,
     List<String>? developmentTeamEmails,
     List<String>? pendingEmails,
+    bool? isArchived,
+    DateTime? archivedAt,
   }) {
     return AgileProjectModel(
       id: id ?? this.id,
@@ -212,6 +225,8 @@ class AgileProjectModel {
       scrumMasterEmail: scrumMasterEmail ?? this.scrumMasterEmail,
       developmentTeamEmails: developmentTeamEmails ?? this.developmentTeamEmails,
       pendingEmails: pendingEmails ?? this.pendingEmails,
+      isArchived: isArchived ?? this.isArchived,
+      archivedAt: archivedAt ?? this.archivedAt,
     );
   }
 

@@ -33,7 +33,7 @@ class UserSettingsModel {
   const UserSettingsModel({
     required this.userId,
     this.themeMode = ThemePreference.system,
-    this.locale = 'it',
+    this.locale = '',  // Empty = use app's locale (SharedPreferences)
     this.enableAnimations = true,
     this.cookieConsent,
     this.notifications = const NotificationSettings(),
@@ -78,7 +78,7 @@ class UserSettingsModel {
         (t) => t.name == data['themeMode'],
         orElse: () => ThemePreference.system,
       ),
-      locale: data['locale'] ?? 'it',
+      locale: data['locale'] ?? '',  // Empty = use app's locale (SharedPreferences)
       enableAnimations: data['enableAnimations'] ?? true,
       cookieConsent: data['cookieConsent'],
       notifications: NotificationSettings.fromMap(

@@ -162,6 +162,10 @@ class TodoTaskModel {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  // 🗄️ Archiviazione
+  final bool isArchived;
+  final DateTime? archivedAt;
+
   const TodoTaskModel({
     required this.id,
     required this.listId,
@@ -179,6 +183,8 @@ class TodoTaskModel {
     this.comments = const [],
     required this.createdAt,
     required this.updatedAt,
+    this.isArchived = false,
+    this.archivedAt,
   });
 
   // Helpers
@@ -204,6 +210,8 @@ class TodoTaskModel {
       'comments': comments.map((c) => c.toMap()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'isArchived': isArchived,
+      if (archivedAt != null) 'archivedAt': archivedAt!.toIso8601String(),
     };
   }
 
@@ -236,6 +244,8 @@ class TodoTaskModel {
           .toList() ?? [],
       createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(map['updatedAt'] ?? '') ?? DateTime.now(),
+      isArchived: map['isArchived'] ?? false,
+      archivedAt: map['archivedAt'] != null ? DateTime.tryParse(map['archivedAt']) : null,
     );
   }
 
@@ -254,6 +264,8 @@ class TodoTaskModel {
     List<TodoSubtask>? subtasks,
     List<TodoComment>? comments,
     DateTime? updatedAt,
+    bool? isArchived,
+    DateTime? archivedAt,
   }) {
     return TodoTaskModel(
       id: id ?? this.id,
@@ -272,6 +284,8 @@ class TodoTaskModel {
       comments: comments ?? this.comments,
       createdAt: createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
+      isArchived: isArchived ?? this.isArchived,
+      archivedAt: archivedAt ?? this.archivedAt,
     );
   }
 }

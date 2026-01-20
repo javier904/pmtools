@@ -100,4 +100,66 @@ class FavoriteService {
         .snapshots()
         .map((snapshot) => snapshot.docs.isNotEmpty);
   }
+
+  /// Stream favorites excluding archived resources
+  /// This method checks each resource to see if it's archived
+  Stream<List<FavoriteModel>> streamFavoritesExcludingArchived() {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return Stream.value([]);
+
+    return _favoritesRef(uid)
+        .orderBy('addedAt', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      final favorites =
+          snapshot.docs.map((doc) => FavoriteModel.fromFirestore(doc)).toList();
+
+      // Check each resource for archive status
+      final nonArchivedFavorites = <FavoriteModel>[];
+      for (final favorite in favorites) {
+        final isArchived = await _isResourceArchived(favorite.resourceId, favorite.type);
+        if (!isArchived) {
+          nonArchivedFavorites.add(favorite);
+        }
+      }
+      return nonArchivedFavorites;
+    });
+  }
+
+  /// Check if a resource is archived based on its type
+  Future<bool> _isResourceArchived(String resourceId, String type) async {
+    try {
+      String collection;
+      switch (type) {
+        case 'todo_list':
+          collection = 'smart_todo_lists';
+          break;
+        case 'eisenhower_matrix':
+          collection = 'eisenhower_matrices';
+          break;
+        case 'agile_project':
+          collection = 'agile_projects';
+          break;
+        case 'planning_poker':
+        case 'poker':
+          collection = 'planning_poker_sessions';
+          break;
+        case 'retrospective':
+        case 'retro':
+          collection = 'retrospectives';
+          break;
+        default:
+          return false;
+      }
+
+      final doc = await _firestore.collection(collection).doc(resourceId).get();
+      if (!doc.exists) return true; // Treat missing resource as archived (to filter out)
+
+      final data = doc.data();
+      return data?['isArchived'] == true;
+    } catch (e) {
+      print('Error checking archive status: $e');
+      return false; // Default to not archived on error
+    }
+  }
 }

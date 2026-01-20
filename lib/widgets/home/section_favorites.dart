@@ -52,7 +52,7 @@ class _SectionFavoritesState extends State<SectionFavorites> {
           const Divider(height: 1),
           Expanded(
             child: StreamBuilder<List<FavoriteModel>>(
-              stream: service.streamFavorites(),
+              stream: service.streamFavoritesExcludingArchived(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

@@ -1205,6 +1205,82 @@ class PlanningPokerFirestoreService {
       );
     }
   }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ARCHIVIAZIONE - Sessioni
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Archivia una sessione
+  ///
+  /// [sessionId] - ID della sessione da archiviare
+  ///
+  /// Le sessioni archiviate sono escluse dai conteggi subscription
+  /// e non appaiono nelle liste di default
+  Future<bool> archiveSession(String sessionId) async {
+    try {
+      await _sessionsCollection.doc(sessionId).update({
+        'isArchived': true,
+        'archivedAt': Timestamp.fromDate(DateTime.now()),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('🗄️ Sessione archiviata: $sessionId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveSession: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina una sessione archiviata
+  ///
+  /// [sessionId] - ID della sessione da ripristinare
+  Future<bool> restoreSession(String sessionId) async {
+    try {
+      await _sessionsCollection.doc(sessionId).update({
+        'isArchived': false,
+        'archivedAt': null,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('📦 Sessione ripristinata: $sessionId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreSession: $e');
+      return false;
+    }
+  }
+
+  /// Stream delle sessioni con filtro archivio
+  ///
+  /// [userEmail] - Email dell'utente
+  /// [includeArchived] - Se true, include anche le archiviate
+  Stream<List<PlanningPokerSessionModel>> streamSessionsByUserFiltered({
+    required String userEmail,
+    bool includeArchived = false,
+  }) {
+    final email = userEmail.toLowerCase();
+
+    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
+    return _sessionsCollection
+        .where('participantEmails', arrayContains: email)
+        .snapshots()
+        .map((snapshot) {
+      var sessions = snapshot.docs
+          .map((doc) => PlanningPokerSessionModel.fromFirestore(doc))
+          .toList();
+
+      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+      if (!includeArchived) {
+        sessions = sessions.where((s) => s.isArchived != true).toList();
+      }
+
+      // Ordina per updatedAt
+      sessions.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      return sessions;
+    }).handleError((e) {
+      print('⚠️ [PlanningPoker] Stream sessioni filtrate error: $e');
+      return <PlanningPokerSessionModel>[];
+    });
+  }
 }
 
 /// Risultato della verifica di idoneità per il sync

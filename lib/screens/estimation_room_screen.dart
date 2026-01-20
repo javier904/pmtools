@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../themes/app_theme.dart';
+import '../themes/app_colors.dart';
 import '../l10n/app_localizations.dart';
 import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_story_model.dart';
@@ -73,6 +74,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   String _searchQuery = '';
   PlanningPokerSessionStatus? _statusFilter;
   EstimationMode? _modeFilter;
+  bool _showArchived = false;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
@@ -209,8 +211,28 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   List<Widget> _buildAppBarActions() {
-    if (_selectedSession == null) return [];
     final l10n = AppLocalizations.of(context)!;
+
+    // Se siamo nella lista sessioni, mostra solo il toggle archivio
+    if (_selectedSession == null) {
+      return [
+        FilterChip(
+          label: Text(
+            _showArchived ? l10n.archiveHideArchived : l10n.archiveShowArchived,
+            style: const TextStyle(fontSize: 12),
+          ),
+          selected: _showArchived,
+          onSelected: (value) => setState(() => _showArchived = value),
+          avatar: Icon(
+            _showArchived ? Icons.visibility_off : Icons.visibility,
+            size: 16,
+          ),
+          selectedColor: AppColors.warning.withValues(alpha: 0.2),
+          showCheckmark: false,
+        ),
+        const SizedBox(width: 16),
+      ];
+    }
 
     return [
       // ═══════════════════════════════════════════════════════════
@@ -328,7 +350,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   Widget _buildSessionList() {
     final l10n = AppLocalizations.of(context)!;
     return StreamBuilder<List<PlanningPokerSessionModel>>(
-      stream: _firestoreService.streamSessionsByUser(_currentUserEmail),
+      stream: _firestoreService.streamSessionsByUserFiltered(
+        userEmail: _currentUserEmail,
+        includeArchived: _showArchived,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -407,6 +432,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   _searchQuery = '';
                   _statusFilter = null;
                   _modeFilter = null;
+                  _showArchived = false;
                 }),
               ),
               const SizedBox(height: 12),
@@ -587,15 +613,32 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       message: '${session.name}${session.description.isNotEmpty ? '\n${session.description}' : ''}',
                       child: Text(
                         session.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          color: session.isArchived ? context.textMutedColor : context.textPrimaryColor,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
+                  // Badge archiviato
+                  if (session.isArchived)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Tooltip(
+                        message: l10n.archiveBadge,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                        ),
+                      ),
+                    ),
                   FavoriteStar(
                     resourceId: session.id,
                     type: 'planning_poker',
@@ -1398,6 +1441,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               ],
             ),
           ),
+        // Archive/Restore option
+        PopupMenuItem(
+          value: session.isArchived ? 'restore' : 'archive',
+          child: Row(
+            children: [
+              Icon(
+                session.isArchived ? Icons.unarchive : Icons.archive,
+                size: 16,
+                color: Colors.orange,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                session.isArchived ? l10n.archiveRestoreAction : l10n.archiveAction,
+                style: const TextStyle(fontSize: 13),
+              ),
+            ],
+          ),
+        ),
         PopupMenuItem(
           value: 'delete',
           child: Row(
@@ -1422,10 +1483,42 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         case 'complete':
           await _completeSession(session);
           break;
+        case 'archive':
+          await _archiveSession(session);
+          break;
+        case 'restore':
+          await _restoreSession(session);
+          break;
         case 'delete':
           _confirmDeleteSession(session);
           break;
       }
+    }
+  }
+
+  Future<void> _archiveSession(PlanningPokerSessionModel session) async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await _firestoreService.archiveSession(session.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.archiveSuccessMessage : l10n.archiveErrorMessage),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreSession(PlanningPokerSessionModel session) async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await _firestoreService.restoreSession(session.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.archiveRestoreSuccessMessage : l10n.archiveRestoreErrorMessage),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
     }
   }
 

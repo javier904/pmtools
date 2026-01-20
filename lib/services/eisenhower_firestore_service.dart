@@ -1245,4 +1245,201 @@ class EisenhowerFirestoreService {
       return false;
     }
   }
+
+  // ============================================================
+  // ARCHIVIAZIONE - Matrici
+  // ============================================================
+
+  /// Archivia una matrice
+  ///
+  /// [matrixId] - ID della matrice da archiviare
+  ///
+  /// Le matrici archiviate sono escluse dai conteggi subscription
+  /// e non appaiono nelle liste di default
+  Future<bool> archiveMatrix(String matrixId) async {
+    try {
+      await _matricesRef.doc(matrixId).update({
+        'isArchived': true,
+        'archivedAt': Timestamp.fromDate(DateTime.now()),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('🗄️ Matrice archiviata: $matrixId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveMatrix: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina una matrice archiviata
+  ///
+  /// [matrixId] - ID della matrice da ripristinare
+  Future<bool> restoreMatrix(String matrixId) async {
+    try {
+      await _matricesRef.doc(matrixId).update({
+        'isArchived': false,
+        'archivedAt': null,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+      print('📦 Matrice ripristinata: $matrixId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreMatrix: $e');
+      return false;
+    }
+  }
+
+  /// Stream delle matrici con filtro archivio
+  ///
+  /// [userEmail] - Email dell'utente
+  /// [includeArchived] - Se true, include anche le archiviate
+  Stream<List<EisenhowerMatrixModel>> streamMatricesFiltered({
+    required String userEmail,
+    bool includeArchived = false,
+  }) {
+    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
+    return _matricesRef
+        .where('createdBy', isEqualTo: userEmail.toLowerCase())
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      var matrices = snapshot.docs
+          .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
+          .toList();
+
+      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+      if (!includeArchived) {
+        matrices = matrices.where((m) => m.isArchived != true).toList();
+      }
+
+      return matrices;
+    });
+  }
+
+  // ============================================================
+  // ARCHIVIAZIONE - Attivita'
+  // ============================================================
+
+  /// Marca un'attivita' come completata
+  ///
+  /// [matrixId] - ID della matrice
+  /// [activityId] - ID dell'attivita' da completare
+  Future<bool> markActivityCompleted(String matrixId, String activityId) async {
+    try {
+      await _activitiesRef(matrixId).doc(activityId).update({
+        'isCompleted': true,
+        'completedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      await _matricesRef.doc(matrixId).update({
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      print('✅ Attivita completata: $activityId');
+      return true;
+    } catch (e) {
+      print('❌ Errore markActivityCompleted: $e');
+      return false;
+    }
+  }
+
+  /// Rimuove lo stato completato da un'attivita'
+  ///
+  /// [matrixId] - ID della matrice
+  /// [activityId] - ID dell'attivita'
+  Future<bool> markActivityIncomplete(String matrixId, String activityId) async {
+    try {
+      await _activitiesRef(matrixId).doc(activityId).update({
+        'isCompleted': false,
+        'completedAt': null,
+      });
+
+      await _matricesRef.doc(matrixId).update({
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      print('⏪ Attivita riaperta: $activityId');
+      return true;
+    } catch (e) {
+      print('❌ Errore markActivityIncomplete: $e');
+      return false;
+    }
+  }
+
+  /// Archivia un'attivita'
+  ///
+  /// [matrixId] - ID della matrice
+  /// [activityId] - ID dell'attivita' da archiviare
+  Future<bool> archiveActivity(String matrixId, String activityId) async {
+    try {
+      await _activitiesRef(matrixId).doc(activityId).update({
+        'isArchived': true,
+        'archivedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      await _matricesRef.doc(matrixId).update({
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      print('🗄️ Attivita archiviata: $activityId');
+      return true;
+    } catch (e) {
+      print('❌ Errore archiveActivity: $e');
+      return false;
+    }
+  }
+
+  /// Ripristina un'attivita' archiviata
+  ///
+  /// [matrixId] - ID della matrice
+  /// [activityId] - ID dell'attivita' da ripristinare
+  Future<bool> restoreActivity(String matrixId, String activityId) async {
+    try {
+      await _activitiesRef(matrixId).doc(activityId).update({
+        'isArchived': false,
+        'archivedAt': null,
+      });
+
+      await _matricesRef.doc(matrixId).update({
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      print('📦 Attivita ripristinata: $activityId');
+      return true;
+    } catch (e) {
+      print('❌ Errore restoreActivity: $e');
+      return false;
+    }
+  }
+
+  /// Stream delle attivita' con filtro archivio/completamento
+  ///
+  /// [matrixId] - ID della matrice
+  /// [includeArchived] - Se true, include anche le archiviate
+  /// [includeCompleted] - Se true, include anche le completate
+  Stream<List<EisenhowerActivityModel>> streamActivitiesFiltered({
+    required String matrixId,
+    bool includeArchived = false,
+    bool includeCompleted = true,
+  }) {
+    Query<Map<String, dynamic>> query = _activitiesRef(matrixId)
+        .orderBy('createdAt', descending: false);
+
+    // Nota: Firestore non supporta query multiple con != su campi diversi
+    // Quindi filtriamo lato client se necessario per combinazioni complesse
+    return query.snapshots().map((snapshot) {
+      var activities = snapshot.docs
+          .map((doc) => EisenhowerActivityModel.fromFirestore(doc, matrixId))
+          .toList();
+
+      if (!includeArchived) {
+        activities = activities.where((a) => !a.isArchived).toList();
+      }
+      if (!includeCompleted) {
+        activities = activities.where((a) => !a.isCompleted).toList();
+      }
+
+      return activities;
+    });
+  }
 }

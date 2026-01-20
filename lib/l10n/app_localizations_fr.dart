@@ -3142,7 +3142,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get landingFooterLegal => 'Légal';
 
   @override
-  String get landingCopyright => '© 2025 Keisen. Tous droits réservés.';
+  String get landingCopyright => '© 2026 Keisen. Tous droits réservés.';
 
   @override
   String get featureSmartImportDesc =>
@@ -3511,12 +3511,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get legalGDPR => 'RGPD';
 
   @override
+  String get legalLastUpdatedLabel => 'Dernière mise à jour';
+
+  @override
+  String get legalLastUpdatedDate => '18 janvier 2026';
+
+  @override
   String get legalAcceptTerms =>
       'J\'accepte les Conditions d\'utilisation et la Politique de confidentialité';
 
   @override
   String get legalMustAcceptTerms =>
       'Vous devez accepter les conditions pour continuer';
+
+  @override
+  String get legalPrivacyContent =>
+      '## 1. Introduction\nBienvenue sur **Keisen** (\"nous\", \"notre\", \"la Plateforme\"). Votre vie privée est importante pour nous. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre application web.\n\n## 2. Informations que nous collectons\nNous collectons deux types de données et d\'informations :\n\n### 2.1 Informations fournies par l\'utilisateur\n- **Données de compte :** Lorsque vous vous connectez via Google Sign-In ou créez un compte, nous collectons votre nom, votre adresse e-mail et votre photo de profil.\n- **Contenu utilisateur :** Nous collectons les données que vous saisissez volontairement sur la plateforme, y compris les tâches, les estimations, les rétrospectives, les commentaires et les configurations d\'équipe.\n\n### 2.2 Informations collectées automatiquement\n- **Journaux système :** Adresses IP, type de navigateur, pages visitées et horodatages.\n- **Cookies :** Nous utilisons des cookies techniques essentiels pour maintenir votre session active.\n\n## 3. Comment nous utilisons vos informations\nNous utilisons les informations collectées pour :\n- Fournir, exploiter et maintenir nos Services.\n- Améliorer, personnaliser et étendre notre Plateforme.\n- Analyser comment vous utilisez le site web pour améliorer l\'expérience utilisateur.\n- Vous envoyer des e-mails de service (par ex., invitations d\'équipe, mises à jour importantes).\n\n## 4. Partage d\'informations\nNous ne vendons pas vos données personnelles. Nous partageons les informations uniquement avec :\n- **Prestataires de services :** Nous utilisons **Google Firebase** (Google LLC) pour l\'hébergement, l\'authentification et les services de base de données. Les données sont traitées conformément à la [Politique de confidentialité de Google](https://policies.google.com/privacy).\n- **Obligations légales :** Si la loi l\'exige ou pour protéger nos droits.\n\n## 5. Sécurité des données\nNous mettons en œuvre des mesures de sécurité techniques et organisationnelles conformes aux normes de l\'industrie (telles que le chiffrement en transit) pour protéger vos données. Cependant, aucune méthode de transmission sur Internet n\'est sûre à 100 %.\n\n## 6. Vos droits\nVous avez le droit de :\n- Accéder à vos données personnelles.\n- Demander la correction de données inexactes.\n- Demander la suppression de vos données (\"Droit à l\'oubli\").\n- Vous opposer au traitement de vos données.\n\nPour exercer ces droits, contactez-nous à : suppkesien@gmail.com.\n\n## 7. Modifications de cette Politique\nNous pouvons mettre à jour cette Politique de confidentialité de temps à autre. Nous vous informerons de tout changement en publiant la nouvelle Politique sur cette page.';
+
+  @override
+  String get legalTermsContent =>
+      '## 1. Acceptation des conditions\nEn accédant ou en utilisant **Keisen**, vous acceptez d\'être lié par ces Conditions d\'utilisation (\"Conditions\"). Si vous n\'acceptez pas ces Conditions, vous ne devez pas utiliser nos Services.\n\n## 2. Description du service\nKeisen est une plateforme de collaboration pour les équipes agiles proposant des outils tels que Smart Todo, la Matrice d\'Eisenhower, l\'Estimation Room et la gestion des processus agiles. Nous nous réservons le droit de modifier ou d\'interrompre le service à tout moment.\n\n## 3. Comptes utilisateurs\nVous êtes responsable du maintien de la confidentialité de vos identifiants de compte et de toutes les activités qui se produisent sous votre compte. Nous nous réservons le droit de suspendre ou de supprimer les comptes qui violent ces Conditions.\n\n## 4. Conduite de l\'utilisateur\nVous acceptez de ne pas utiliser le Service pour :\n- Violer les lois locales, nationales ou internationales.\n- Télécharger du contenu offensant, diffamatoire ou illégal.\n- Tenter d\'accéder sans autorisation aux systèmes de la Plateforme.\n\n## 5. Propriété intellectuelle\nTous les droits de propriété intellectuelle liés à la Plateforme et à son contenu original (à l\'exclusion du contenu fourni par l\'utilisateur) sont la propriété exclusive de Leonardo Torella.\n\n## 6. Limitation de responsabilité\nDans la mesure maximale permise par la loi, Keisen est fourni \"en l\'état\" et \"selon disponibilité\". Nous ne garantissons pas que le service sera ininterrompu ou sans erreur. Nous ne serons pas responsables des dommages indirects, accessoires ou consécutifs résultant de l\'utilisation du service.\n\n## 7. Loi applicable\nCes Conditions sont régies par les lois de l\'État italien.\n\n## 8. Contacts\nPour toute question concernant ces Conditions, contactez-nous à : suppkesien@gmail.com.';
+
+  @override
+  String get legalCookiesContent =>
+      '## 1. Que sont les cookies ?\nLes cookies sont de petits fichiers texte enregistrés sur votre appareil lorsque vous visitez un site web. Ils sont largement utilisés pour faire fonctionner les sites web plus efficacement et fournir des informations aux propriétaires du site.\n\n## 2. Comment nous utilisons les cookies\nNous utilisons des cookies à plusieurs fins :\n\n### 2.1 Cookies techniques (essentiels)\nCes cookies sont nécessaires au fonctionnement du site web et ne peuvent pas être désactivés dans nos systèmes. Ils ne sont généralement définis qu\'en réponse à des actions que vous effectuez et qui constituent une demande de services, telles que le paramétrage de vos préférences de confidentialité, la connexion ou le remplissage de formulaires.\n*Exemple :* Cookies de session Firebase Auth pour maintenir l\'utilisateur connecté.\n\n### 2.2 Cookies analytiques\nCes cookies nous permettent de compter les visites et les sources de trafic afin de mesurer et d\'améliorer les performances de notre site. Toutes les informations collectées par ces cookies sont agrégées et donc anonymes.\n\n## 3. Gestion des cookies\nLa plupart des navigateurs web vous permettent de contrôler la plupart des cookies via les paramètres du navigateur. Cependant, si vous désactivez les cookies essentiels, certaines parties de notre Service pourraient ne pas fonctionner correctement (par exemple, vous ne pourrez pas vous connecter).\n\n## 4. Cookies tiers\nNous utilisons des services tiers comme **Google Firebase** qui peuvent définir leurs propres cookies. Nous vous encourageons à consulter leurs politiques de confidentialité respectives pour plus de détails.';
+
+  @override
+  String get legalGdprContent =>
+      '## Engagement pour la protection des données (RGPD)\nConformément au Règlement général sur la protection des données (RGPD) de l\'Union européenne, Keisen s\'engage à protéger les données personnelles des utilisateurs et à garantir la transparence de leur traitement.\n\n## Responsable du traitement\nLe responsable du traitement est :\n**Keisen Team**\nE-mail : suppkesien@gmail.com\n\n## Base légale du traitement\nNous ne traitons vos données personnelles que lorsque nous avons une base légale pour le faire. Cela inclut :\n- **Consentement :** Vous nous avez donné la permission de traiter vos données dans un but spécifique.\n- **Exécution d\'un contrat :** Le traitement est nécessaire pour fournir les Services que vous avez demandés (par ex., utilisation de la plateforme).\n- **Intérêt légitime :** Le traitement est nécessaire à nos intérêts légitimes (par ex., sécurité, amélioration du service), à moins que vos droits et libertés fondamentaux ne prévalent sur ces intérêts.\n\n## Transfert de données\nVos données sont stockées sur des serveurs sécurisés fournis par Google Cloud Platform (Google Firebase). Google adhère aux normes de sécurité internationales et se conforme au RGPD via des clauses contractuelles types (CCT).\n\n## Vos droits RGPD\nEn tant qu\'utilisateur dans l\'UE, vous avez les droits suivants :\n1.  **Droit d\'accès :** Vous avez le droit de demander des copies de vos données personnelles.\n2.  **Droit de rectification :** Vous avez le droit de demander la correction d\'informations que vous jugez inexactes.\n3.  **Droit à l\'effacement (\"Droit à l\'oubli\") :** Vous avez le droit de demander la suppression de vos données personnelles, sous certaines conditions.\n4.  **Droit à la limitation du traitement :** Vous avez le droit de demander la limitation du traitement de vos données.\n5.  **Droit à la portabilité des données :** Vous avez le droit de demander le transfert des données que nous avons collectées à une autre organisation ou directement à vous.\n\n## Exercice des droits\nSi vous souhaitez exercer l\'un de ces droits, veuillez nous contacter à : suppkesien@gmail.com. Nous répondrons à votre demande dans un délai d\'un mois.';
 
   @override
   String get profilePrivacy => 'Confidentialité';
@@ -4083,10 +4105,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get exceptionListNotFound => 'Liste introuvable';
 
   @override
-  String get langItalian => 'Italien';
+  String get langItalian => 'Italiano';
 
   @override
-  String get langEnglish => 'Anglais';
+  String get langEnglish => 'English';
+
+  @override
+  String get langFrench => 'Français';
+
+  @override
+  String get langSpanish => 'Español';
 
   @override
   String get jsonExportLabel => 'Télécharger une copie JSON de vos données';
@@ -4691,4 +4719,88 @@ class AppLocalizationsFr extends AppLocalizations {
   String activitiesExportedToEstimation(int count, String sessionName) {
     return '$count activités exportées vers la session d\'estimation $sessionName';
   }
+
+  @override
+  String get archiveAction => 'Archiver';
+
+  @override
+  String get archiveRestoreAction => 'Restaurer';
+
+  @override
+  String get archiveShowArchived => 'Afficher les archivés';
+
+  @override
+  String get archiveHideArchived => 'Masquer les archivés';
+
+  @override
+  String archiveConfirmTitle(String itemType) {
+    return 'Archiver $itemType';
+  }
+
+  @override
+  String get archiveConfirmMessage =>
+      'Êtes-vous sûr de vouloir archiver cet élément ? Il pourra être restauré ultérieurement.';
+
+  @override
+  String archiveRestoreConfirmTitle(String itemType) {
+    return 'Restaurer $itemType';
+  }
+
+  @override
+  String get archiveRestoreConfirmMessage =>
+      'Voulez-vous restaurer cet élément des archives ?';
+
+  @override
+  String get archiveSuccessMessage => 'Élément archivé avec succès';
+
+  @override
+  String get archiveRestoreSuccessMessage => 'Élément restauré avec succès';
+
+  @override
+  String get archiveErrorMessage => 'Erreur lors de l\'archivage';
+
+  @override
+  String get archiveRestoreErrorMessage => 'Erreur lors de la restauration';
+
+  @override
+  String get archiveFilterLabel => 'Archives';
+
+  @override
+  String get archiveFilterActive => 'Actifs';
+
+  @override
+  String get archiveFilterArchived => 'Archivés';
+
+  @override
+  String get archiveFilterAll => 'Tous';
+
+  @override
+  String get archiveBadge => 'Archivé';
+
+  @override
+  String get archiveEmptyMessage => 'Aucun élément archivé';
+
+  @override
+  String get completeAction => 'Terminer';
+
+  @override
+  String get reopenAction => 'Rouvrir';
+
+  @override
+  String completeConfirmTitle(String itemType) {
+    return 'Terminer $itemType';
+  }
+
+  @override
+  String get completeConfirmMessage =>
+      'Êtes-vous sûr de vouloir terminer cet élément ?';
+
+  @override
+  String get completeSuccessMessage => 'Élément terminé avec succès';
+
+  @override
+  String get reopenSuccessMessage => 'Élément rouvert avec succès';
+
+  @override
+  String get completedBadge => 'Terminé';
 }

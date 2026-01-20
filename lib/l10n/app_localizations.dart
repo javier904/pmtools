@@ -5767,7 +5767,7 @@ abstract class AppLocalizations {
   /// No description provided for @landingCopyright.
   ///
   /// In it, this message translates to:
-  /// **'© 2025 Keisen. Tutti i diritti riservati.'**
+  /// **'© 2026 Keisen. Tutti i diritti riservati.'**
   String get landingCopyright;
 
   /// No description provided for @featureSmartImportDesc.
@@ -6442,6 +6442,18 @@ abstract class AppLocalizations {
   /// **'GDPR'**
   String get legalGDPR;
 
+  /// No description provided for @legalLastUpdatedLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Ultimo aggiornamento'**
+  String get legalLastUpdatedLabel;
+
+  /// No description provided for @legalLastUpdatedDate.
+  ///
+  /// In it, this message translates to:
+  /// **'18 gennaio 2026'**
+  String get legalLastUpdatedDate;
+
   /// No description provided for @legalAcceptTerms.
   ///
   /// In it, this message translates to:
@@ -6453,6 +6465,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Devi accettare i termini per continuare'**
   String get legalMustAcceptTerms;
+
+  /// No description provided for @legalPrivacyContent.
+  ///
+  /// In it, this message translates to:
+  /// **'## 1. Introduzione\nBenvenuto su **Keisen** (\"noi\", \"nostro\", \"la Piattaforma\"). La tua privacy è importante per noi. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando utilizzi la nostra applicazione web.\n\n## 2. Dati che raccogliamo\nRaccogliamo due tipi di dati e informazioni:\n\n### 2.1 Informazioni fornite dall\'utente\n- **Dati Account:** Quando accedi tramite Google Sign-In o crei un account, raccogliamo il tuo nome, indirizzo email e immagine del profilo.\n- **Contenuti Utente:** Raccogliamo i dati che inserisci volontariamente nella piattaforma, inclusi task, stime, retrospettive, commenti e configurazioni dei team.\n\n### 2.2 Informazioni raccolte automaticamente\n- **Log di sistema:** Indirizzi IP, tipo di browser, pagine visitate e timestamp.\n- **Cookies:** Utilizziamo cookie tecnici essenziali per mantenere la sessione attiva.\n\n## 3. Come utilizziamo i tuoi dati\nUtilizziamo le informazioni raccolte per:\n- Fornire, gestire e mantenere i nostri Servizi.\n- Migliorare, personalizzare ed espandere la nostra Piattaforma.\n- Analizzare come utilizzi il sito web per migliorare l\'esperienza utente.\n- Inviarti email di servizio (es. inviti ai team, aggiornamenti importanti).\n\n## 4. Condivisione dei dati\nNon vendiamo i tuoi dati personali. Condividiamo le informazioni solo con:\n- **Service Provider:** Utilizziamo **Google Firebase** (Google LLC) per l\'hosting, l\'autenticazione e il database. I dati sono trattati secondo la [Privacy Policy di Google](https://policies.google.com/privacy).\n- **Obblighi Legali:** Se richiesto dalla legge o per proteggere i nostri diritti.\n\n## 5. Sicurezza dei dati\nImplementiamo misure di sicurezza tecniche e organizzative standard del settore (come la crittografia in transito) per proteggere i tuoi dati. Tuttavia, nessun metodo di trasmissione su Internet è sicuro al 100%.\n\n## 6. I tuoi diritti\nHai il diritto di:\n- Accedere ai tuoi dati personali.\n- Richiedere la correzione di dati inesatti.\n- Richiedere la cancellazione dei tuoi dati (\"Diritto all\'oblio\").\n- Opporti al trattamento dei tuoi dati.\n\nPer esercitare questi diritti, contattaci a: suppkesien@gmail.com.\n\n## 7. Modifiche a questa Policy\nPotremmo aggiornare questa Privacy Policy di volta in volta. Ti notificheremo di eventuali modifiche pubblicando la nuova Policy su questa pagina.'**
+  String get legalPrivacyContent;
+
+  /// No description provided for @legalTermsContent.
+  ///
+  /// In it, this message translates to:
+  /// **'## 1. Accettazione dei Termini\nAccedendo o utilizzando **Keisen**, accetti di essere vincolato da questi Termini di Servizio (\"Termini\"). Se non accetti questi Termini, non devi utilizzare i nostri Servizi.\n\n## 2. Descrizione del Servizio\nKeisen è una piattaforma di collaborazione per team agili che offre strumenti come Smart Todo, Matrice di Eisenhower, Estimation Room e Gestione Processi Agili. Ci riserviamo il diritto di modificare o interrompere il servizio in qualsiasi momento.\n\n## 3. Account Utente\nSei responsabile di mantenere la riservatezza delle credenziali del tuo account e di tutte le attività che avvengono sotto il tuo account. Ci riserviamo il diritto di sospendere o cancellare account che violano questi Termini.\n\n## 4. Comportamento dell\'Utente\nAccetti di non utilizzare il Servizio per:\n- Violare leggi locali, nazionali o internazionali.\n- Caricare contenuti offensivi, diffamatori o illegali.\n- Tentare di accedere non autorizzato ai sistemi della Piattaforma.\n\n## 5. Proprietà Intellettuale\nTutti i diritti di proprietà intellettuale relativi alla Piattaforma e ai suoi contenuti originali (esclusi i contenuti forniti dagli utenti) sono di proprietà esclusiva di Leonardo Torella.\n\n## 6. Limitazione di Responsabilità\nNella misura massima consentita dalla legge, Keisen viene fornito \"così com\'è\" e \"come disponibile\". Non garantiamo che il servizio sarà ininterrotto o privo di errori. Non saremo responsabili per danni indiretti, incidentali o consequenziali derivanti dall\'uso del servizio.\n\n## 7. Legge Applicabile\nQuesti Termini sono regolati dalle leggi dello Stato Italiano.\n\n## 8. Contatti\nPer domande su questi Termini, contattaci a: suppkesien@gmail.com.'**
+  String get legalTermsContent;
+
+  /// No description provided for @legalCookiesContent.
+  ///
+  /// In it, this message translates to:
+  /// **'## 1. Cosa sono i Cookie?\nI cookie sono piccoli file di testo che vengono salvati sul tuo dispositivo quando visiti un sito web. Sono ampiamente utilizzati per far funzionare i siti web in modo più efficiente e fornire informazioni ai proprietari del sito.\n\n## 2. Come utilizziamo i Cookie\nUtilizziamo i cookie per diversi scopi:\n\n### 2.1 Cookie Tecnici (Essenziali)\nQuesti cookie sono necessari per il funzionamento del sito web e non possono essere disattivati nei nostri sistemi. Di solito vengono impostati solo in risposta alle azioni da te effettuate che costituiscono una richiesta di servizi, come l\'impostazione delle preferenze di privacy, l\'accesso (Login) o la compilazione di moduli.\n*Esempio:* Cookie di sessione Firebase Auth per mantenere l\'utente loggato.\n\n### 2.2 Cookie di Analisi\nQuesti cookie ci permettono di contare le visite e le fonti di traffico, in modo da poter misurare e migliorare le prestazioni del nostro sito. Tutte le informazioni raccolte da questi cookie sono aggregate e quindi anonime.\n\n## 3. Gestione dei Cookie\nLa maggior parte dei browser web consente di controllare la maggior parte dei cookie attraverso le impostazioni del browser. Tuttavia, se disabiliti i cookie essenziali, alcune parti del nostro Servizio potrebbero non funzionare correttamente (ad esempio, non potrai effettuare il login).\n\n## 4. Cookie di Terze Parti\nUtilizziamo servizi di terze parti come **Google Firebase** che potrebbero impostare i propri cookie. Ti invitiamo a consultare le rispettive informative sulla privacy per maggiori dettagli.'**
+  String get legalCookiesContent;
+
+  /// No description provided for @legalGdprContent.
+  ///
+  /// In it, this message translates to:
+  /// **'## Impegno per la Protezione dei Dati (GDPR)\nIn conformità con il Regolamento Generale sulla Protezione dei Dati (GDPR) dell\'Unione Europea, Keisen si impegna a proteggere i dati personali degli utenti e a garantire la trasparenza nel loro trattamento.\n\n## Titolare del Trattamento\nIl Titolare del Trattamento dei dati è:\n**Keisen Team**\nEmail: suppkesien@gmail.com\n\n## Base Giuridica del Trattamento\nTrattiamo i tuoi dati personali solo quando abbiamo una base giuridica per farlo. Questo include:\n- **Consenso:** Ci hai dato il permesso di trattare i tuoi dati per uno scopo specifico.\n- **Esecuzione di un contratto:** Il trattamento è necessario per fornire i Servizi che hai richiesto (es. utilizzo della piattaforma).\n- **Interesse legittimo:** Il trattamento è necessario per i nostri legittimi interessi (es. sicurezza, miglioramento del servizio), a meno che non prevalgano i tuoi diritti e libertà fondamentali.\n\n## Trasferimento dei Dati\nI tuoi dati sono conservati su server sicuri forniti da Google Cloud Platform (Google Firebase). Google aderisce agli standard di sicurezza internazionali ed è conforme al GDPR attraverso le Clausole Contrattuali Tipo (SCC).\n\n## I Tuoi Diritti GDPR\nCome utente nell\'UE, hai i seguenti diritti:\n1.  **Diritto di accesso:** Hai il diritto di richiedere copie dei tuoi dati personali.\n2.  **Diritto di rettifica:** Hai il diritto di richiedere la correzione di informazioni che ritieni inesatte.\n3.  **Diritto alla cancellazione (\"Diritto all\'oblio\"):** Hai il diritto di richiedere la cancellazione dei tuoi dati personali, a determinate condizioni.\n4.  **Diritto alla limitazione del trattamento:** Hai il diritto di richiedere la limitazione del trattamento dei tuoi dati.\n5.  **Diritto alla portabilità dei dati:** Hai il diritto di richiedere il trasferimento dei dati che abbiamo raccolto a un\'altra organizzazione o direttamente a te.\n\n## Esercizio dei Diritti\nSe desideri esercitare uno di questi diritti, ti preghiamo di contattarci a: suppkesien@gmail.com. Risponderemo alla tua richiesta entro un mese.'**
+  String get legalGdprContent;
 
   /// No description provided for @profilePrivacy.
   ///
@@ -7453,8 +7489,20 @@ abstract class AppLocalizations {
   /// No description provided for @langEnglish.
   ///
   /// In it, this message translates to:
-  /// **'Inglese'**
+  /// **'English'**
   String get langEnglish;
+
+  /// No description provided for @langFrench.
+  ///
+  /// In it, this message translates to:
+  /// **'Français'**
+  String get langFrench;
+
+  /// No description provided for @langSpanish.
+  ///
+  /// In it, this message translates to:
+  /// **'Español'**
+  String get langSpanish;
 
   /// No description provided for @jsonExportLabel.
   ///
@@ -8511,6 +8559,156 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{count} attività esportate nella sessione di stima {sessionName}'**
   String activitiesExportedToEstimation(int count, String sessionName);
+
+  /// No description provided for @archiveAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivia'**
+  String get archiveAction;
+
+  /// No description provided for @archiveRestoreAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina'**
+  String get archiveRestoreAction;
+
+  /// No description provided for @archiveShowArchived.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra archiviati'**
+  String get archiveShowArchived;
+
+  /// No description provided for @archiveHideArchived.
+  ///
+  /// In it, this message translates to:
+  /// **'Nascondi archiviati'**
+  String get archiveHideArchived;
+
+  /// No description provided for @archiveConfirmTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivia {itemType}'**
+  String archiveConfirmTitle(String itemType);
+
+  /// No description provided for @archiveConfirmMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler archiviare questo elemento? Potrà essere ripristinato in seguito.'**
+  String get archiveConfirmMessage;
+
+  /// No description provided for @archiveRestoreConfirmTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina {itemType}'**
+  String archiveRestoreConfirmTitle(String itemType);
+
+  /// No description provided for @archiveRestoreConfirmMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi ripristinare questo elemento dall\'archivio?'**
+  String get archiveRestoreConfirmMessage;
+
+  /// No description provided for @archiveSuccessMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Elemento archiviato con successo'**
+  String get archiveSuccessMessage;
+
+  /// No description provided for @archiveRestoreSuccessMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Elemento ripristinato con successo'**
+  String get archiveRestoreSuccessMessage;
+
+  /// No description provided for @archiveErrorMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'archiviazione'**
+  String get archiveErrorMessage;
+
+  /// No description provided for @archiveRestoreErrorMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante il ripristino'**
+  String get archiveRestoreErrorMessage;
+
+  /// No description provided for @archiveFilterLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivio'**
+  String get archiveFilterLabel;
+
+  /// No description provided for @archiveFilterActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivi'**
+  String get archiveFilterActive;
+
+  /// No description provided for @archiveFilterArchived.
+  ///
+  /// In it, this message translates to:
+  /// **'Archiviati'**
+  String get archiveFilterArchived;
+
+  /// No description provided for @archiveFilterAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get archiveFilterAll;
+
+  /// No description provided for @archiveBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'Archiviato'**
+  String get archiveBadge;
+
+  /// No description provided for @archiveEmptyMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun elemento archiviato'**
+  String get archiveEmptyMessage;
+
+  /// No description provided for @completeAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa'**
+  String get completeAction;
+
+  /// No description provided for @reopenAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Riapri'**
+  String get reopenAction;
+
+  /// No description provided for @completeConfirmTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa {itemType}'**
+  String completeConfirmTitle(String itemType);
+
+  /// No description provided for @completeConfirmMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler completare questo elemento?'**
+  String get completeConfirmMessage;
+
+  /// No description provided for @completeSuccessMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Elemento completato con successo'**
+  String get completeSuccessMessage;
+
+  /// No description provided for @reopenSuccessMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Elemento riaperto con successo'**
+  String get reopenSuccessMessage;
+
+  /// No description provided for @completedBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato'**
+  String get completedBadge;
 }
 
 class _AppLocalizationsDelegate

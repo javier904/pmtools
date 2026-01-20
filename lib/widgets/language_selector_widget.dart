@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
 import '../controllers/locale_controller.dart';
+import '../services/user_profile_service.dart';
+import '../services/auth_service.dart';
 
 /// Widget compatto per cambio lingua istantaneo.
 /// Mostra una bandiera con dropdown per selezionare la lingua.
+/// Sincronizza automaticamente con Firestore se l'utente è loggato.
 class LanguageSelectorWidget extends StatelessWidget {
   final bool showLabel;
+  /// Callback opzionale per notificare il cambio lingua
+  final void Function(String localeCode)? onLocaleChanged;
 
-  const LanguageSelectorWidget({super.key, this.showLabel = false});
+  const LanguageSelectorWidget({
+    super.key,
+    this.showLabel = false,
+    this.onLocaleChanged,
+  });
+
+  /// Sincronizza la lingua con Firestore se l'utente è loggato
+  Future<void> _syncLocaleToFirestore(String localeCode) async {
+    try {
+      final authService = AuthService();
+      if (authService.currentUser != null) {
+        final profileService = UserProfileService();
+        final currentSettings = await profileService.getCurrentSettings();
+        if (currentSettings != null) {
+          await profileService.updateSettings(
+            currentSettings.copyWith(locale: localeCode),
+          );
+        }
+      }
+    } catch (e) {
+      // Ignora errori - la sincronizzazione locale via SharedPreferences è sufficiente
+      debugPrint('Errore sync locale Firestore: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,14 +88,42 @@ class LanguageSelectorWidget extends StatelessWidget {
           ),
         );
       }).toList(),
-      onSelected: (locale) => localeController.setLocale(locale.languageCode),
+      onSelected: (locale) {
+        final localeCode = locale.languageCode;
+        // Aggiorna LocaleController (salva in SharedPreferences)
+        localeController.setLocale(localeCode);
+        // Sincronizza anche con Firestore per cross-device sync
+        _syncLocaleToFirestore(localeCode);
+        // Notifica callback opzionale
+        onLocaleChanged?.call(localeCode);
+      },
     );
   }
 }
 
 /// Toggle button compatto IT/EN per switch rapido.
+/// Sincronizza automaticamente con Firestore se l'utente è loggato.
 class LanguageToggleButton extends StatelessWidget {
   const LanguageToggleButton({super.key});
+
+  /// Sincronizza la lingua con Firestore se l'utente è loggato
+  Future<void> _syncLocaleToFirestore(String localeCode) async {
+    try {
+      final authService = AuthService();
+      if (authService.currentUser != null) {
+        final profileService = UserProfileService();
+        final currentSettings = await profileService.getCurrentSettings();
+        if (currentSettings != null) {
+          await profileService.updateSettings(
+            currentSettings.copyWith(locale: localeCode),
+          );
+        }
+      }
+    } catch (e) {
+      // Ignora errori - la sincronizzazione locale via SharedPreferences è sufficiente
+      debugPrint('Errore sync locale Firestore: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +135,11 @@ class LanguageToggleButton extends StatelessWidget {
         localeController.getFlagEmoji(localeController.locale),
         style: const TextStyle(fontSize: 20),
       ),
-      onPressed: () => localeController.toggleLocale(),
+      onPressed: () {
+        localeController.toggleLocale();
+        // Sincronizza anche con Firestore per cross-device sync
+        _syncLocaleToFirestore(localeController.locale.languageCode);
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../l10n/app_localizations.dart';
 
 class LegalDocumentScreen extends StatefulWidget {
   final String title;
@@ -61,7 +62,7 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Ultimo aggiornamento: ${widget.lastUpdated}',
+                      '${AppLocalizations.of(context)!.legalLastUpdatedLabel}: ${widget.lastUpdated}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey,
                           ),
