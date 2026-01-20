@@ -24,9 +24,12 @@ class GDPRService {
     };
 
     // 1. Profilo Utente
-    final userDoc = await _firestore.collection('users').doc(email).get();
-    if (userDoc.exists) {
-      exportData['user_profile'] = userDoc.data();
+    // FIX: Usa UID invece di email per leggere il documento utente (richiesto da firestore.rules)
+    if (user.uid.isNotEmpty) {
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (userDoc.exists) {
+        exportData['user_profile'] = userDoc.data();
+      }
     }
 
     // 2. Planning Poker Sessions

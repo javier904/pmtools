@@ -434,61 +434,65 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     );
   }
 
-  Widget _buildEmptyState() {
+   Widget _buildEmptyState() {
     if (_hasActiveFilters || _searchQuery.isNotEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off, size: 64, color: context.textMutedColor),
-            const SizedBox(height: 16),
-            Text(
-              'Nessuna story trovata',
-              style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => setState(() {
-                _searchQuery = '';
-                _statusFilter = null;
-                _priorityFilter = null;
-                _tagFilter = null;
-              }),
-              child: const Text('Rimuovi filtri'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search_off, size: 64, color: context.textMutedColor),
+              const SizedBox(height: 16),
+              Text(
+                'Nessuna story trovata',
+                style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => setState(() {
+                  _searchQuery = '';
+                  _statusFilter = null;
+                  _priorityFilter = null;
+                  _tagFilter = null;
+                }),
+                child: const Text('Rimuovi filtri'),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.note_add, size: 64, color: context.textMutedColor),
-          const SizedBox(height: 16),
-          Text(
-            'Backlog vuoto',
-            style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Aggiungi la prima User Story',
-            style: TextStyle(color: context.textTertiaryColor),
-          ),
-          if (widget.canEdit && widget.onAddStory != null) ...[
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.note_add, size: 64, color: context.textMutedColor),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: widget.onAddStory,
-              icon: const Icon(Icons.add),
-              label: const Text('Nuova Story'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-              ),
+            Text(
+              'Backlog vuoto',
+              style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
             ),
+            const SizedBox(height: 8),
+            Text(
+              'Aggiungi la prima User Story',
+              style: TextStyle(color: context.textTertiaryColor),
+            ),
+            if (widget.canEdit && widget.onAddStory != null) ...[
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: widget.onAddStory,
+                icon: const Icon(Icons.add),
+                label: const Text('Nuova Story'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

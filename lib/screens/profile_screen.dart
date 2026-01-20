@@ -6,6 +6,7 @@ import '../models/user_profile/user_settings_model.dart';
 import '../services/user_profile_service.dart';
 import '../services/auth_service.dart';
 import '../services/gdpr_service.dart';
+import '../controllers/locale_controller.dart';
 import 'dart:html' as html;
 import 'dart:convert';
 
@@ -278,6 +279,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           controller: _displayNameController,
           label: l10n.profileDisplayName,
           icon: Icons.badge_outlined,
+          // FIX: Gestione overflow label
+          floatingLabelBehavior: FloatingLabelBehavior.always,
         ),
         const SizedBox(height: 12),
         Row(
@@ -461,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     : Icons.brightness_auto,
           ),
           title: Text(l10n.settingsTheme),
-          subtitle: Text(_settings!.themeMode.displayName),
+          subtitle: Text(_getThemeDisplayName(l10n, _settings!.themeMode)),
           trailing: SegmentedButton<ThemePreference>(
             segments: ThemePreference.values
                 .map((t) => ButtonSegment(
@@ -480,6 +483,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onSelectionChanged: (selected) {
               _updateTheme(selected.first);
             },
+            showSelectedIcon: false,
+            style: ButtonStyle(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
           ),
         ),
         const Divider(),
@@ -498,7 +506,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               DropdownMenuItem(value: 'en', child: Text(l10n.langEnglish)),
             ],
             onChanged: (value) {
-              if (value != null) _updateLocale(value);
+              if (value != null) {
+                // FIX: Aggiorna state globale locale
+                LocaleControllerProvider.of(context).setLocale(value);
+                _updateLocale(value);
+              }
             },
           ),
         ),
@@ -530,10 +542,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.calendar_today),
-          title: Text(l10n.profileCalendarIntegration),
+          title: _buildFeatureTitle(l10n.profileCalendarIntegration, isComingSoon: true),
           subtitle: Text(l10n.profileCalendarIntegrationDesc),
-          value: flags.calendarIntegration,
-          onChanged: (v) => _toggleFeatureFlag('calendarIntegration', v),
+          value: false, // Disabilitato
+          onChanged: null, // Disabilitato
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
@@ -554,10 +566,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.analytics),
-          title: Text(l10n.profileAdvancedMetrics),
+          title: _buildFeatureTitle(l10n.profileAdvancedMetrics, isComingSoon: true),
           subtitle: Text(l10n.profileAdvancedMetricsDesc),
-          value: flags.advancedMetrics,
-          onChanged: (v) => _toggleFeatureFlag('advancedMetrics', v),
+          value: false, // Disabilitato
+          onChanged: null, // Disabilitato
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeatureTitle(String title, {bool isComingSoon = false}) {
+    if (!isComingSoon) return Text(title);
+    return Row(
+      children: [
+        Text(title),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.orange.withOpacity(0.5)),
+          ),
+          child: const Text(
+            'COMING SOON',
+            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.orange),
+          ),
         ),
       ],
     );
@@ -600,10 +634,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           secondary: const Icon(Icons.group_add_outlined),
-          title: Text(l10n.profileSessionInvites),
+          title: _buildFeatureTitle(l10n.profileSessionInvites, isComingSoon: true),
           subtitle: Text(l10n.profileSessionInvitesDesc),
-          value: notifications.sessionInvites,
-          onChanged: (v) => _updateNotification('sessionInvites', v),
+          value: false, // Disabilitato
+          onChanged: null,
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
@@ -615,6 +649,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ],
     );
+  }
+
+
+
+  String _getThemeDisplayName(AppLocalizations l10n, ThemePreference mode) {
+    switch (mode) {
+      case ThemePreference.light:
+        return l10n.settingsThemeLight;
+      case ThemePreference.dark:
+        return l10n.settingsThemeDark;
+      case ThemePreference.system:
+        return l10n.settingsThemeSystem;
+    }
   }
 
   Widget _buildPrivacySection(ThemeData theme, bool isDark) {
@@ -806,6 +853,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String label,
     required IconData icon,
     int maxLines = 1,
+    FloatingLabelBehavior? floatingLabelBehavior,
   }) {
     return TextField(
       controller: controller,
@@ -814,6 +862,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         labelText: label,
         prefixIcon: Icon(icon),
         border: const OutlineInputBorder(),
+        floatingLabelBehavior: floatingLabelBehavior,
       ),
     );
   }

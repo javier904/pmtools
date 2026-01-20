@@ -62,7 +62,7 @@ class PlanningPokerFirestoreService {
     await _limitsService.enforceProjectLimit(createdBy.toLowerCase());
 
     try {
-      print('🎯 [PlanningPoker] Creando sessione: $name (mode: ${estimationMode.name})');
+      // print('🎯 [PlanningPoker] Creando sessione: $name (mode: ${estimationMode.name})');
 
       final now = DateTime.now();
       final data = <String, dynamic>{
@@ -100,7 +100,7 @@ class PlanningPokerFirestoreService {
 
       final docRef = await _sessionsCollection.add(data);
 
-      print('✅ [PlanningPoker] Sessione creata con ID: ${docRef.id}');
+      // print('✅ [PlanningPoker] Sessione creata con ID: ${docRef.id}');
       return docRef.id;
     } catch (e) {
       print('❌ [PlanningPoker] Errore creazione sessione: $e');
@@ -124,7 +124,7 @@ class PlanningPokerFirestoreService {
   /// Include sessioni legacy (senza participantEmails) create dall'utente
   Future<List<PlanningPokerSessionModel>> getSessionsByUser(String userEmail) async {
     try {
-      print('🎯 [PlanningPoker] Caricando sessioni per: $userEmail');
+      // print('🎯 [PlanningPoker] Caricando sessioni per: $userEmail');
       final email = userEmail.toLowerCase();
       final sessionsMap = <String, PlanningPokerSessionModel>{};
 
@@ -137,7 +137,7 @@ class PlanningPokerFirestoreService {
         for (final doc in newSnapshot.docs) {
           sessionsMap[doc.id] = PlanningPokerSessionModel.fromFirestore(doc);
         }
-        print('📋 [PlanningPoker] Sessioni nuove: ${newSnapshot.docs.length}');
+        // print('📋 [PlanningPoker] Sessioni nuove: ${newSnapshot.docs.length}');
       } catch (e) {
         print('⚠️ [PlanningPoker] Query participantEmails fallita: $e');
       }
@@ -153,7 +153,7 @@ class PlanningPokerFirestoreService {
             sessionsMap[doc.id] = PlanningPokerSessionModel.fromFirestore(doc);
           }
         }
-        print('📋 [PlanningPoker] Sessioni legacy/create: ${legacySnapshot.docs.length}');
+        // print('📋 [PlanningPoker] Sessioni legacy/create: ${legacySnapshot.docs.length}');
       } catch (e) {
         print('⚠️ [PlanningPoker] Query createdBy fallita: $e');
       }
@@ -162,7 +162,7 @@ class PlanningPokerFirestoreService {
       final sessions = sessionsMap.values.toList()
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
-      print('✅ [PlanningPoker] Totale sessioni uniche: ${sessions.length}');
+      // print('✅ [PlanningPoker] Totale sessioni uniche: ${sessions.length}');
       return sessions;
     } catch (e) {
       print('❌ [PlanningPoker] Errore caricamento sessioni: $e');
@@ -256,7 +256,7 @@ class PlanningPokerFirestoreService {
     bool clearBusinessUnit = false,
   }) async {
     try {
-      print('🎯 [PlanningPoker] Aggiornando sessione: $sessionId');
+      // print('🎯 [PlanningPoker] Aggiornando sessione: $sessionId');
 
       final updates = <String, dynamic>{
         'updatedAt': Timestamp.fromDate(DateTime.now()),
@@ -296,7 +296,7 @@ class PlanningPokerFirestoreService {
       }
 
       await _sessionsCollection.doc(sessionId).update(updates);
-      print('✅ [PlanningPoker] Sessione aggiornata');
+      // print('✅ [PlanningPoker] Sessione aggiornata');
     } catch (e) {
       print('❌ [PlanningPoker] Errore aggiornamento sessione: $e');
       rethrow;

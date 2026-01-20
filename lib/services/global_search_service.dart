@@ -21,26 +21,26 @@ class GlobalSearchService {
     List<SearchResultItem> results = [];
 
     // Parallel execution for performance
-    debugPrint('GlobalSearch: Starting search for "$query"');
+    // debugPrint('GlobalSearch: Starting search for "$query"');
     await Future.wait([
       _searchProjects(lowercaseQuery, userEmail).then((r) {
-         debugPrint('GlobalSearch: Found ${r.length} Projects');
+         // debugPrint('GlobalSearch: Found ${r.length} Projects');
          results.addAll(r);
       }),
       _searchTodos(lowercaseQuery, userEmail).then((r) {
-         debugPrint('GlobalSearch: Found ${r.length} Todos');
+         // debugPrint('GlobalSearch: Found ${r.length} Todos');
          results.addAll(r);
       }),
       _searchRetros(lowercaseQuery, userEmail).then((r) {
-         debugPrint('GlobalSearch: Found ${r.length} Retros');
+         // debugPrint('GlobalSearch: Found ${r.length} Retros');
          results.addAll(r);
       }),
       _searchEstimationSessions(lowercaseQuery, userEmail).then((r) {
-         debugPrint('GlobalSearch: Found ${r.length} Estimations');
+         // debugPrint('GlobalSearch: Found ${r.length} Estimations');
          results.addAll(r);
       }),
       _searchEisenhowerMatrices(lowercaseQuery, userEmail).then((r) {
-         debugPrint('GlobalSearch: Found ${r.length} Matrices');
+         // debugPrint('GlobalSearch: Found ${r.length} Matrices');
          results.addAll(r);
       }),
     ]);

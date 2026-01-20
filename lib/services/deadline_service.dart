@@ -66,18 +66,18 @@ class DeadlineService {
       // "All" mode - no date filtering (show all non-completed tasks with due dates)
       startThreshold = null;
       endThreshold = null;
-      debugPrint('DEBUG: DeadlineService stream for $emails | Mode: ALL (no date filter)');
+      // debugPrint('DEBUG: DeadlineService stream for $emails | Mode: ALL (no date filter)');
     } else if (exactDay) {
       // Exact day mode - only tasks due on that specific day
       final targetDay = todayStart.add(Duration(days: daysAhead));
       startThreshold = targetDay;
       endThreshold = DateTime(targetDay.year, targetDay.month, targetDay.day, 23, 59, 59);
-      debugPrint('DEBUG: DeadlineService stream for $emails | Mode: EXACT DAY $daysAhead ($startThreshold - $endThreshold)');
+      // debugPrint('DEBUG: DeadlineService stream for $emails | Mode: EXACT DAY $daysAhead ($startThreshold - $endThreshold)');
     } else {
       // Legacy mode - show all tasks up to that day
       startThreshold = null;
       endThreshold = DateTime(now.year, now.month, now.day + daysAhead, 23, 59, 59);
-      debugPrint('DEBUG: DeadlineService stream for $emails | Mode: UP TO $daysAhead (Threshold: $endThreshold)');
+      // debugPrint('DEBUG: DeadlineService stream for $emails | Mode: UP TO $daysAhead (Threshold: $endThreshold)');
     }
 
     // Combine streams using StreamZip or Rx would be better, but let's stick to a simpler approach
@@ -90,7 +90,7 @@ class DeadlineService {
         // Let's filter status client-side to avoid index hell if possible, or handle error
         .snapshots()
         .asyncMap((taskSnap) async {
-          debugPrint('DEBUG: DeadlineService found ${taskSnap.docs.length} raw tasks');
+          // debugPrint('DEBUG: DeadlineService found ${taskSnap.docs.length} raw tasks');
           final items = <DeadlineItem>[];
 
           // 1. Process Tasks
@@ -186,7 +186,7 @@ class DeadlineService {
 
           // Sort by date
           items.sort((a, b) => a.date.compareTo(b.date));
-          debugPrint('DEBUG: DeadlineService yielding ${items.length} items');
+          // debugPrint('DEBUG: DeadlineService yielding ${items.length} items');
           return items;
         }).handleError((e) {
              debugPrint('DEBUG: DeadlineService Stream Error: $e');
