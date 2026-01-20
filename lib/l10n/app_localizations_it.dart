@@ -549,7 +549,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get sessionStatusCompleted => 'Completata';
 
   @override
-  String get sessionName => 'Nome Sessione';
+  String get sessionName => 'Nome sessione';
 
   @override
   String get sessionNameRequired => 'Nome Sessione *';
@@ -4585,5 +4585,73 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String storiesAddedToProject(int count, String projectName) {
     return '$count stories aggiunte al progetto $projectName';
+  }
+
+  @override
+  String get exportEisenhowerToSprintDesc =>
+      'Trasforma le attività Eisenhower in User Stories';
+
+  @override
+  String get exportEisenhowerToEstimationDesc =>
+      'Crea una sessione di stima dalle attività';
+
+  @override
+  String get selectedActivities => 'attività selezionate';
+
+  @override
+  String get noActivitiesToExport => 'Nessuna attività da esportare';
+
+  @override
+  String get hiddenQ4Activities => 'Nascoste';
+
+  @override
+  String get q4Activities => 'attività Q4 (Elimina)';
+
+  @override
+  String get showQ4 => 'Mostra Q4';
+
+  @override
+  String get hideQ4 => 'Nascondi Q4';
+
+  @override
+  String get showingAllActivities => 'Mostrando tutte le attività';
+
+  @override
+  String get eisenhowerMappingInfo =>
+      'Q1→Must, Q2→Should, Q3→Could, Q4→Won\'t. Importanza→Business Value.';
+
+  @override
+  String get estimationExportInfo =>
+      'Le attività verranno aggiunte come storie da stimare. La priorità Q non verrà trasferita.';
+
+  @override
+  String get createSession => 'Crea Sessione';
+
+  @override
+  String get estimationType => 'Tipo di stima';
+
+  @override
+  String activitiesAddedToSprint(int count, String sprintName) {
+    return '$count attività aggiunte a $sprintName';
+  }
+
+  @override
+  String activitiesAddedToProject(int count, String projectName) {
+    return '$count attività aggiunte al progetto $projectName';
+  }
+
+  @override
+  String estimationSessionCreated(int count) {
+    return 'Sessione di stima creata con $count attività';
+  }
+
+  @override
+  String activitiesExportedToSprint(int count, String sprintName) {
+    return '$count attività esportate nello sprint $sprintName';
+  }
+
+  @override
+  String activitiesExportedToEstimation(int count, String sessionName) {
+    return '$count attività esportate nella sessione di stima $sessionName';
   }
 }

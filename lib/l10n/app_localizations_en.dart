@@ -4560,4 +4560,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String storiesAddedToProject(int count, String projectName) {
     return '$count stories added to project $projectName';
   }
+
+  @override
+  String get exportEisenhowerToSprintDesc =>
+      'Transform Eisenhower activities into User Stories';
+
+  @override
+  String get exportEisenhowerToEstimationDesc =>
+      'Create an estimation session from activities';
+
+  @override
+  String get selectedActivities => 'activities selected';
+
+  @override
+  String get noActivitiesToExport => 'No activities to export';
+
+  @override
+  String get hiddenQ4Activities => 'Hidden';
+
+  @override
+  String get q4Activities => 'Q4 activities (Delete)';
+
+  @override
+  String get showQ4 => 'Show Q4';
+
+  @override
+  String get hideQ4 => 'Hide Q4';
+
+  @override
+  String get showingAllActivities => 'Showing all activities';
+
+  @override
+  String get eisenhowerMappingInfo =>
+      'Q1→Must, Q2→Should, Q3→Could, Q4→Won\'t. Importance→Business Value.';
+
+  @override
+  String get estimationExportInfo =>
+      'Activities will be added as stories to estimate. Q priority will not be transferred.';
+
+  @override
+  String get createSession => 'Create Session';
+
+  @override
+  String get estimationType => 'Estimation type';
+
+  @override
+  String activitiesAddedToSprint(int count, String sprintName) {
+    return '$count attività aggiunte a $sprintName';
+  }
+
+  @override
+  String activitiesAddedToProject(int count, String projectName) {
+    return '$count attività aggiunte al progetto $projectName';
+  }
+
+  @override
+  String estimationSessionCreated(int count) {
+    return 'Sessione di stima creata con $count attività';
+  }
+
+  @override
+  String activitiesExportedToSprint(int count, String sprintName) {
+    return '$count activities exported to sprint $sprintName';
+  }
+
+  @override
+  String activitiesExportedToEstimation(int count, String sessionName) {
+    return '$count activities exported to estimation session $sessionName';
+  }
 }

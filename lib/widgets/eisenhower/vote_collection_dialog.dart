@@ -92,8 +92,11 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
   Widget build(BuildContext context) {
     final quadrant = _calculatedQuadrant;
     final quadrantColor = Color(quadrant.colorValue);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Dialog(
+      backgroundColor: theme.dialogBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
@@ -105,7 +108,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
-            _buildHeader(quadrantColor),
+            _buildHeader(quadrantColor, theme, isDark),
             // Contenuto scrollabile
             Flexible(
               child: SingleChildScrollView(
@@ -115,9 +118,9 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Info attività
-                    _buildActivityInfo(),
+                    _buildActivityInfo(theme, isDark),
                     const SizedBox(height: 20),
-                    const Divider(),
+                    Divider(color: theme.dividerColor),
                     const SizedBox(height: 16),
                     // Voti partecipanti
                     ...widget.participants.asMap().entries.map((entry) {
@@ -125,9 +128,9 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
                       final participant = entry.value;
                       return Column(
                         children: [
-                          _buildParticipantVote(participant, index),
+                          _buildParticipantVote(participant, index, theme, isDark),
                           if (index < widget.participants.length - 1)
-                            const Divider(height: 32),
+                            Divider(height: 32, color: theme.dividerColor),
                         ],
                       );
                     }),
@@ -136,18 +139,20 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
               ),
             ),
             // Riepilogo e azioni
-            _buildFooter(quadrant, quadrantColor),
+            _buildFooter(quadrant, quadrantColor, theme, isDark),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(Color quadrantColor) {
+  Widget _buildHeader(Color quadrantColor, ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: quadrantColor.withOpacity(0.1),
+        color: isDark
+            ? quadrantColor.withOpacity(0.2)
+            : quadrantColor.withOpacity(0.1),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(16),
           topRight: Radius.circular(16),
@@ -161,25 +166,26 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Raccogli Voti',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: theme.textTheme.titleLarge?.color,
                   ),
                 ),
                 Text(
                   '${widget.participants.length} partecipanti',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: theme.textTheme.bodySmall?.color,
                   ),
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, color: theme.iconTheme.color),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -187,16 +193,18 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
     );
   }
 
-  Widget _buildActivityInfo() {
+  Widget _buildActivityInfo(ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: isDark
+            ? theme.colorScheme.surfaceContainerHighest
+            : theme.colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          const Icon(Icons.task_alt, color: Colors.blue),
+          Icon(Icons.task_alt, color: theme.colorScheme.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -204,9 +212,10 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
               children: [
                 Text(
                   widget.activity.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
+                    color: theme.textTheme.titleMedium?.color,
                   ),
                 ),
                 if (widget.activity.description.isNotEmpty)
@@ -216,7 +225,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
                       widget.activity.description,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: theme.textTheme.bodySmall?.color,
                       ),
                     ),
                   ),
@@ -228,7 +237,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
     );
   }
 
-  Widget _buildParticipantVote(String participant, int index) {
+  Widget _buildParticipantVote(String participant, int index, ThemeData theme, bool isDark) {
     final vote = _votes[participant]!;
     final colors = [
       Colors.blue,
@@ -250,7 +259,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundColor: color.withOpacity(0.2),
+              backgroundColor: color.withOpacity(isDark ? 0.3 : 0.2),
               child: Text(
                 participant.isNotEmpty ? participant[0].toUpperCase() : '?',
                 style: TextStyle(
@@ -264,9 +273,10 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
             Expanded(
               child: Text(
                 participant,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
+                  color: theme.textTheme.titleMedium?.color,
                 ),
               ),
             ),
@@ -274,14 +284,17 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: isDark
+                    ? theme.colorScheme.surfaceContainerHighest
+                    : theme.colorScheme.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 'U:${vote.urgency} I:${vote.importance}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
+                  color: theme.textTheme.bodyMedium?.color,
                 ),
               ),
             ),
@@ -295,6 +308,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
           color: Colors.orange,
           leftLabel: 'Non urgente',
           rightLabel: 'Molto urgente',
+          theme: theme,
           onChanged: (value) {
             setState(() {
               _votes[participant] = vote.copyWith(urgency: value);
@@ -309,6 +323,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
           color: Colors.blue,
           leftLabel: 'Non importante',
           rightLabel: 'Molto importante',
+          theme: theme,
           onChanged: (value) {
             setState(() {
               _votes[participant] = vote.copyWith(importance: value);
@@ -325,8 +340,11 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
     required Color color,
     required String leftLabel,
     required String rightLabel,
+    required ThemeData theme,
     required Function(int) onChanged,
   }) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -338,7 +356,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: theme.textTheme.bodySmall?.color,
                 ),
               ),
             ),
@@ -346,7 +364,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: color,
-                  inactiveTrackColor: color.withOpacity(0.2),
+                  inactiveTrackColor: color.withOpacity(isDark ? 0.4 : 0.2),
                   thumbColor: color,
                   overlayColor: color.withOpacity(0.1),
                   valueIndicatorColor: color,
@@ -370,7 +388,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withOpacity(isDark ? 0.3 : 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -391,11 +409,17 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
             children: [
               Text(
                 leftLabel,
-                style: TextStyle(fontSize: 9, color: Colors.grey[500]),
+                style: TextStyle(
+                  fontSize: 9,
+                  color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                ),
               ),
               Text(
                 rightLabel,
-                style: TextStyle(fontSize: 9, color: Colors.grey[500]),
+                style: TextStyle(
+                  fontSize: 9,
+                  color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                ),
               ),
             ],
           ),
@@ -404,17 +428,19 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
     );
   }
 
-  Widget _buildFooter(EisenhowerQuadrant quadrant, Color quadrantColor) {
+  Widget _buildFooter(EisenhowerQuadrant quadrant, Color quadrantColor, ThemeData theme, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: isDark
+            ? theme.colorScheme.surfaceContainerHigh
+            : theme.colorScheme.surfaceContainerLowest,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(16),
           bottomRight: Radius.circular(16),
         ),
         border: Border(
-          top: BorderSide(color: Colors.grey[300]!),
+          top: BorderSide(color: theme.dividerColor),
         ),
       ),
       child: Column(
@@ -423,9 +449,9 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: quadrantColor.withOpacity(0.1),
+              color: quadrantColor.withOpacity(isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: quadrantColor.withOpacity(0.3)),
+              border: Border.all(color: quadrantColor.withOpacity(isDark ? 0.5 : 0.3)),
             ),
             child: Row(
               children: [
@@ -452,7 +478,7 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
                         'Importanza ${_averageImportance.toStringAsFixed(1)}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[700],
+                          color: theme.textTheme.bodyMedium?.color,
                         ),
                       ),
                     ],
@@ -468,7 +494,10 @@ class _VoteCollectionDialogState extends State<VoteCollectionDialog> {
             children: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Annulla'),
+                child: Text(
+                  'Annulla',
+                  style: TextStyle(color: theme.colorScheme.primary),
+                ),
               ),
               const SizedBox(width: 12),
               ElevatedButton.icon(

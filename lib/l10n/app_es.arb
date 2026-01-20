@@ -304,6 +304,7 @@
   "storyNoStories": "No hay historias para estimar",
   "storyComplete": "Historia completada",
   "storySkip": "Omitir historia",
+  "estimationType": "Tipo de estimación",
   "estimationModeFibonacci": "Fibonacci",
   "estimationModeTshirt": "Tallas de Camiseta",
   "estimationModeDecimal": "Decimal",
@@ -943,7 +944,7 @@
   "landingFooterResources": "Recursos",
   "landingFooterCompany": "Empresa",
   "landingFooterLegal": "Legal",
-  "landingCopyright": "© 2025 Keisen. Todos los derechos reservados.",
+  "landingCopyright": "© 2026 Keisen. Todos los derechos reservados.",
 
   "featureSmartImportDesc": "Creación rápida de tareas con descripción\nAsignación a miembros del equipo\nPrioridad y fechas límite configurables\nNotificaciones de finalización",
   "featureImportDesc": "Importar desde archivo CSV\nCopiar/pegar desde Excel\nParseo inteligente de texto\nMapeo automático de campos",
@@ -2127,6 +2128,32 @@
     "placeholders": {
       "count": {"type": "int"},
       "projectName": {"type": "String"}
+    }
+  },
+  "exportEisenhowerToSprintDesc": "Transforma las actividades Eisenhower en User Stories",
+  "exportEisenhowerToEstimationDesc": "Crear una sesión de estimación a partir de las actividades",
+  "selectedActivities": "actividades seleccionadas",
+  "noActivitiesToExport": "No hay actividades para exportar",
+  "hiddenQ4Activities": "Ocultas",
+  "q4Activities": "actividades Q4 (Eliminar)",
+  "showingAllActivities": "Mostrando todas las actividades",
+  "showQ4": "Mostrar Q4",
+  "hideQ4": "Ocultar Q4",
+  "eisenhowerMappingInfo": "Q1→Must, Q2→Should, Q3→Could, Q4→Won't. Importancia→Business Value.",
+  "estimationExportInfo": "Las actividades se agregarán como stories a estimar. La prioridad Q no se transferirá.",
+  "createSession": "Crear Sesión",
+  "activitiesExportedToSprint": "{count} actividades exportadas al sprint {sprintName}",
+  "@activitiesExportedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "activitiesExportedToEstimation": "{count} actividades exportadas a la sesión de estimación {sessionName}",
+  "@activitiesExportedToEstimation": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sessionName": {"type": "String"}
     }
   }
 }

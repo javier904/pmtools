@@ -305,6 +305,7 @@
   "storyNoStories": "No stories to estimate",
   "storyComplete": "Story completed",
   "storySkip": "Skip story",
+  "estimationType": "Estimation type",
   "estimationModeFibonacci": "Fibonacci",
   "estimationModeTshirt": "T-Shirt Sizes",
   "estimationModeDecimal": "Decimal",
@@ -964,7 +965,7 @@
   "landingFooterResources": "Resources",
   "landingFooterCompany": "Company",
   "landingFooterLegal": "Legal",
-  "landingCopyright": "© 2025 Keisen. All rights reserved.",
+  "landingCopyright": "© 2026 Keisen. All rights reserved.",
 
   "featureSmartImportDesc": "Quick task creation with description\nAssignment to team members\nConfigurable priority and deadlines\nCompletion notifications",
   "featureImportDesc": "Import from CSV file\nCopy/paste from Excel\nSmart text parsing\nAutomatic field mapping",
@@ -2333,6 +2334,32 @@
     "placeholders": {
       "count": {"type": "int"},
       "projectName": {"type": "String"}
+    }
+  },
+  "exportEisenhowerToSprintDesc": "Transform Eisenhower activities into User Stories",
+  "exportEisenhowerToEstimationDesc": "Create an estimation session from activities",
+  "selectedActivities": "activities selected",
+  "noActivitiesToExport": "No activities to export",
+  "hiddenQ4Activities": "Hidden",
+  "q4Activities": "Q4 activities (Delete)",
+  "showingAllActivities": "Showing all activities",
+  "showQ4": "Show Q4",
+  "hideQ4": "Hide Q4",
+  "eisenhowerMappingInfo": "Q1→Must, Q2→Should, Q3→Could, Q4→Won't. Importance→Business Value.",
+  "estimationExportInfo": "Activities will be added as stories to estimate. Q priority will not be transferred.",
+  "createSession": "Create Session",
+  "activitiesExportedToSprint": "{count} activities exported to sprint {sprintName}",
+  "@activitiesExportedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "activitiesExportedToEstimation": "{count} activities exported to estimation session {sessionName}",
+  "@activitiesExportedToEstimation": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sessionName": {"type": "String"}
     }
   }
 }

@@ -4623,4 +4623,72 @@ class AppLocalizationsFr extends AppLocalizations {
   String storiesAddedToProject(int count, String projectName) {
     return '$count stories ajoutées au projet $projectName';
   }
+
+  @override
+  String get exportEisenhowerToSprintDesc =>
+      'Transformez les activités Eisenhower en User Stories';
+
+  @override
+  String get exportEisenhowerToEstimationDesc =>
+      'Créer une session d\'estimation à partir des activités';
+
+  @override
+  String get selectedActivities => 'activités sélectionnées';
+
+  @override
+  String get noActivitiesToExport => 'Aucune activité à exporter';
+
+  @override
+  String get hiddenQ4Activities => 'Masquées';
+
+  @override
+  String get q4Activities => 'activités Q4 (Supprimer)';
+
+  @override
+  String get showQ4 => 'Afficher Q4';
+
+  @override
+  String get hideQ4 => 'Masquer Q4';
+
+  @override
+  String get showingAllActivities => 'Affichage de toutes les activités';
+
+  @override
+  String get eisenhowerMappingInfo =>
+      'Q1→Must, Q2→Should, Q3→Could, Q4→Won\'t. Importance→Business Value.';
+
+  @override
+  String get estimationExportInfo =>
+      'Les activités seront ajoutées comme stories à estimer. La priorité Q ne sera pas transférée.';
+
+  @override
+  String get createSession => 'Créer Session';
+
+  @override
+  String get estimationType => 'Type d\'estimation';
+
+  @override
+  String activitiesAddedToSprint(int count, String sprintName) {
+    return '$count attività aggiunte a $sprintName';
+  }
+
+  @override
+  String activitiesAddedToProject(int count, String projectName) {
+    return '$count attività aggiunte al progetto $projectName';
+  }
+
+  @override
+  String estimationSessionCreated(int count) {
+    return 'Sessione di stima creata con $count attività';
+  }
+
+  @override
+  String activitiesExportedToSprint(int count, String sprintName) {
+    return '$count activités exportées vers le sprint $sprintName';
+  }
+
+  @override
+  String activitiesExportedToEstimation(int count, String sessionName) {
+    return '$count activités exportées vers la session d\'estimation $sessionName';
+  }
 }

@@ -1505,7 +1505,7 @@
   "landingFooterResources": "Risorse",
   "landingFooterCompany": "Azienda",
   "landingFooterLegal": "Legale",
-  "landingCopyright": "© 2025 Keisen. Tutti i diritti riservati.",
+  "landingCopyright": "© 2026 Keisen. Tutti i diritti riservati.",
 
   "featureSmartImportDesc": "Creazione rapida task con descrizione\nAssegnazione a membri del team\nPriorità e deadline configurabili\nNotifiche di completamento",
   "featureImportDesc": "Import da file CSV\nCopia/incolla da Excel\nParsing testo intelligente\nMapping campi automatico",
@@ -2251,6 +2251,55 @@
     "placeholders": {
       "count": {"type": "int"},
       "projectName": {"type": "String"}
+    }
+  },
+
+  "exportEisenhowerToSprintDesc": "Trasforma le attività Eisenhower in User Stories",
+  "exportEisenhowerToEstimationDesc": "Crea una sessione di stima dalle attività",
+  "selectedActivities": "attività selezionate",
+  "noActivitiesToExport": "Nessuna attività da esportare",
+  "hiddenQ4Activities": "Nascoste",
+  "q4Activities": "attività Q4 (Elimina)",
+  "showQ4": "Mostra Q4",
+  "hideQ4": "Nascondi Q4",
+  "showingAllActivities": "Mostrando tutte le attività",
+  "eisenhowerMappingInfo": "Q1→Must, Q2→Should, Q3→Could, Q4→Won't. Importanza→Business Value.",
+  "estimationExportInfo": "Le attività verranno aggiunte come storie da stimare. La priorità Q non verrà trasferita.",
+  "createSession": "Crea Sessione",
+  "sessionName": "Nome sessione",
+  "estimationType": "Tipo di stima",
+  "activitiesAddedToSprint": "{count} attività aggiunte a {sprintName}",
+  "@activitiesAddedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "activitiesAddedToProject": "{count} attività aggiunte al progetto {projectName}",
+  "@activitiesAddedToProject": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "projectName": {"type": "String"}
+    }
+  },
+  "estimationSessionCreated": "Sessione di stima creata con {count} attività",
+  "@estimationSessionCreated": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "activitiesExportedToSprint": "{count} attività esportate nello sprint {sprintName}",
+  "@activitiesExportedToSprint": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sprintName": {"type": "String"}
+    }
+  },
+  "activitiesExportedToEstimation": "{count} attività esportate nella sessione di stima {sessionName}",
+  "@activitiesExportedToEstimation": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sessionName": {"type": "String"}
     }
   }
 }

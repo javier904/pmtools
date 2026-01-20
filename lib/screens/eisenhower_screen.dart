@@ -20,12 +20,21 @@ import '../widgets/eisenhower/independent_vote_dialog.dart';
 import '../widgets/eisenhower/scatter_chart_widget.dart';
 import '../widgets/eisenhower/matrix_grid_widget.dart';
 import '../widgets/eisenhower/export_to_smart_todo_dialog.dart';
+import '../widgets/eisenhower/export_to_sprint_dialog.dart';
+import '../widgets/eisenhower/export_to_estimation_dialog.dart';
 import '../widgets/home/favorite_star.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
+import '../models/agile_project_model.dart';
+import '../models/sprint_model.dart';
+import '../models/estimation_mode.dart';
+import '../models/user_story_model.dart';
 import '../services/smart_todo_service.dart';
+import '../services/agile_firestore_service.dart';
+import '../services/planning_poker_firestore_service.dart';
 import 'smart_todo/smart_todo_detail_screen.dart';
+import 'estimation_room_screen.dart';
 
 /// Screen principale per la gestione delle Matrici di Eisenhower
 ///
@@ -202,6 +211,18 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 icon: const Icon(Icons.check_circle_outline_rounded),
                 tooltip: l10n.exportFromEisenhower,
                 onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
+              ),
+              // Export to Sprint (Agile Process Manager)
+              IconButton(
+                icon: const Icon(Icons.rocket_launch),
+                tooltip: l10n.exportToSprint,
+                onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
+              ),
+              // Export to Estimation Room
+              IconButton(
+                icon: const Icon(Icons.casino),
+                tooltip: l10n.exportToEstimation,
+                onPressed: _activities.isNotEmpty ? _showExportToEstimationDialog : null,
               ),
               // ═══════════════════════════════════════════════════════════
               // SEPARATOR
@@ -1495,6 +1516,191 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       case EisenhowerQuadrant.q4: // Not Urgent & Not Important
       case null: // Unvoted
         return TodoTaskPriority.low;
+    }
+  }
+
+  /// Show dialog to export activities to Agile Sprint
+  Future<void> _showExportToSprintDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_selectedMatrix == null || _currentUserEmail == null) return;
+
+    final userEmail = _currentUserEmail!;
+    final agileService = AgileFirestoreService();
+
+    // Get available projects for current user
+    List<AgileProjectModel> availableProjects = [];
+    try {
+      availableProjects = await agileService.streamUserProjects(userEmail).first;
+    } catch (e) {
+      print('Error fetching projects: $e');
+    }
+
+    if (!mounted) return;
+
+    // Show export dialog
+    final result = await showDialog<ExportEisenhowerToSprintResult>(
+      context: context,
+      builder: (context) => ExportEisenhowerToSprintDialog(
+        activities: _activities,
+        matrix: _selectedMatrix!,
+        availableProjects: availableProjects,
+        getProjectSprints: (projectId) => agileService.streamProjectSprints(projectId).first,
+      ),
+    );
+
+    if (result == null || result.selectedActivities.isEmpty || !mounted) return;
+
+    try {
+      String projectId;
+      SprintModel? targetSprint;
+
+      if (result.createNewProject && result.newProjectConfig != null) {
+        // Create new project
+        final createdProject = await agileService.createProject(
+          name: result.newProjectConfig!.name,
+          description: result.newProjectConfig!.description,
+          createdBy: userEmail,
+          createdByName: userEmail.split('@').first,
+          framework: result.newProjectConfig!.framework,
+          sprintDurationDays: result.newProjectConfig!.sprintDurationDays,
+          workingHoursPerDay: result.newProjectConfig!.workingHoursPerDay,
+          productOwnerEmail: result.newProjectConfig!.productOwnerEmail,
+          scrumMasterEmail: result.newProjectConfig!.scrumMasterEmail,
+        );
+        projectId = createdProject.id;
+
+        // Create new sprint in the project
+        final createdSprint = await agileService.createSprint(
+          projectId: projectId,
+          name: 'Sprint 1',
+          goal: 'Stories imported from ${_selectedMatrix!.title}',
+          startDate: DateTime.now(),
+          endDate: DateTime.now().add(Duration(days: result.newProjectConfig!.sprintDurationDays)),
+          createdBy: userEmail,
+        );
+        targetSprint = createdSprint;
+      } else if (result.existingProject != null) {
+        // Use existing project
+        projectId = result.existingProject!.id;
+        targetSprint = result.sprint;
+      } else {
+        return; // No valid configuration
+      }
+
+      // Create stories for each selected activity
+      int createdCount = 0;
+      for (final activity in result.selectedActivities) {
+        // Map quadrant to priority using the function from the dialog
+        final priority = priorityFromQuadrant(activity.quadrant);
+
+        // Map importance to business value (1-10 scale)
+        final businessValue = activity.aggregatedImportance.round().clamp(1, 10);
+
+        await agileService.createStory(
+          projectId: projectId,
+          title: activity.title,
+          description: activity.description ?? '',
+          createdBy: userEmail,
+          priority: priority,
+          businessValue: businessValue,
+        );
+        createdCount++;
+      }
+
+      if (mounted) {
+        final sprintName = targetSprint?.name ?? 'Backlog';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.activitiesExportedToSprint(createdCount, sprintName)),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Show dialog to export activities to Estimation Room
+  Future<void> _showExportToEstimationDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_selectedMatrix == null || _currentUserEmail == null) return;
+
+    final userEmail = _currentUserEmail!;
+
+    if (!mounted) return;
+
+    // Show export dialog
+    final result = await showDialog<ExportEisenhowerToEstimationResult>(
+      context: context,
+      builder: (context) => ExportEisenhowerToEstimationDialog(
+        activities: _activities,
+        matrix: _selectedMatrix!,
+      ),
+    );
+
+    if (result == null || result.selectedActivities.isEmpty || !mounted) return;
+
+    try {
+      final pokerService = PlanningPokerFirestoreService();
+
+      // Create new estimation session
+      final sessionId = await pokerService.createSession(
+        name: result.sessionName,
+        description: result.sessionDescription ?? '',
+        createdBy: userEmail,
+        estimationMode: result.estimationMode,
+      );
+
+      // Create stories for each selected activity
+      int createdCount = 0;
+      for (final activity in result.selectedActivities) {
+        await pokerService.createStory(
+          sessionId: sessionId,
+          title: activity.title,
+          description: activity.description ?? '',
+        );
+        createdCount++;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.activitiesExportedToEstimation(createdCount, result.sessionName)),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: l10n.actionOpen,
+              textColor: Colors.white,
+              onPressed: () {
+                if (mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EstimationRoomScreen(initialSessionId: sessionId),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

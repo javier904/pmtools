@@ -1125,7 +1125,7 @@ abstract class AppLocalizations {
   /// No description provided for @sessionName.
   ///
   /// In it, this message translates to:
-  /// **'Nome Sessione'**
+  /// **'Nome sessione'**
   String get sessionName;
 
   /// No description provided for @sessionNameRequired.
@@ -8403,6 +8403,114 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{count} stories aggiunte al progetto {projectName}'**
   String storiesAddedToProject(int count, String projectName);
+
+  /// No description provided for @exportEisenhowerToSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Trasforma le attività Eisenhower in User Stories'**
+  String get exportEisenhowerToSprintDesc;
+
+  /// No description provided for @exportEisenhowerToEstimationDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una sessione di stima dalle attività'**
+  String get exportEisenhowerToEstimationDesc;
+
+  /// No description provided for @selectedActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'attività selezionate'**
+  String get selectedActivities;
+
+  /// No description provided for @noActivitiesToExport.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività da esportare'**
+  String get noActivitiesToExport;
+
+  /// No description provided for @hiddenQ4Activities.
+  ///
+  /// In it, this message translates to:
+  /// **'Nascoste'**
+  String get hiddenQ4Activities;
+
+  /// No description provided for @q4Activities.
+  ///
+  /// In it, this message translates to:
+  /// **'attività Q4 (Elimina)'**
+  String get q4Activities;
+
+  /// No description provided for @showQ4.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra Q4'**
+  String get showQ4;
+
+  /// No description provided for @hideQ4.
+  ///
+  /// In it, this message translates to:
+  /// **'Nascondi Q4'**
+  String get hideQ4;
+
+  /// No description provided for @showingAllActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostrando tutte le attività'**
+  String get showingAllActivities;
+
+  /// No description provided for @eisenhowerMappingInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Q1→Must, Q2→Should, Q3→Could, Q4→Won\'t. Importanza→Business Value.'**
+  String get eisenhowerMappingInfo;
+
+  /// No description provided for @estimationExportInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Le attività verranno aggiunte come storie da stimare. La priorità Q non verrà trasferita.'**
+  String get estimationExportInfo;
+
+  /// No description provided for @createSession.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Sessione'**
+  String get createSession;
+
+  /// No description provided for @estimationType.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo di stima'**
+  String get estimationType;
+
+  /// No description provided for @activitiesAddedToSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività aggiunte a {sprintName}'**
+  String activitiesAddedToSprint(int count, String sprintName);
+
+  /// No description provided for @activitiesAddedToProject.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività aggiunte al progetto {projectName}'**
+  String activitiesAddedToProject(int count, String projectName);
+
+  /// No description provided for @estimationSessionCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'Sessione di stima creata con {count} attività'**
+  String estimationSessionCreated(int count);
+
+  /// No description provided for @activitiesExportedToSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività esportate nello sprint {sprintName}'**
+  String activitiesExportedToSprint(int count, String sprintName);
+
+  /// No description provided for @activitiesExportedToEstimation.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività esportate nella sessione di stima {sessionName}'**
+  String activitiesExportedToEstimation(int count, String sessionName);
 }
 
 class _AppLocalizationsDelegate
