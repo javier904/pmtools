@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:url_launcher/url_launcher.dart';
 import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
@@ -58,7 +61,7 @@ class EisenhowerScreen extends StatefulWidget {
   State<EisenhowerScreen> createState() => _EisenhowerScreenState();
 }
 
-class _EisenhowerScreenState extends State<EisenhowerScreen> {
+class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBindingObserver {
   final EisenhowerFirestoreService _firestoreService = EisenhowerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final EisenhowerInviteService _inviteService = EisenhowerInviteService();
@@ -101,7 +104,50 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _setupWebBeforeUnload();
     // _loadData sarà chiamato in didChangeDependencies se non ci sono argomenti
+  }
+
+  /// Setup listener per beforeunload (web) - forza aggiornamento offline
+  void _setupWebBeforeUnload() {
+    if (kIsWeb) {
+      html.window.onBeforeUnload.listen((event) {
+        _setOfflineImmediately();
+      });
+    }
+  }
+
+  /// Imposta lo stato offline immediatamente (sincrono per beforeunload)
+  void _setOfflineImmediately() {
+    if (_selectedMatrix != null && _currentUserEmail.isNotEmpty) {
+      _firestoreService.updateParticipantOnlineStatus(
+        _selectedMatrix!.id,
+        _currentUserEmail,
+        false,
+      );
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
+
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        // App in background o chiusa - imposta offline
+        _setOfflineImmediately();
+        _presenceHeartbeat?.cancel();
+        break;
+      case AppLifecycleState.resumed:
+        // App tornata in primo piano - riavvia heartbeat
+        _startPresenceHeartbeat();
+        break;
+    }
   }
 
   @override
@@ -155,6 +201,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cancelSubscriptions();
     _stopPresenceHeartbeat();
     super.dispose();
@@ -174,6 +221,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   /// Avvia il tracking della presenza per la matrice corrente
   void _startPresenceTracking() {
+    if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
+
+    // Avvia il tracking della presenza
+    _startPresenceHeartbeat();
+  }
+
+  /// Avvia il tracking della presenza (estratto per riutilizzo in didChangeAppLifecycleState)
+  void _startPresenceHeartbeat() {
     if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
 
     // Imposta subito online
