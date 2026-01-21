@@ -160,8 +160,8 @@ Nell'AppBar viene mostrato un badge con il conteggio dei partecipanti online nel
 
 - **Verde**: Almeno un partecipante online
 - **Grigio**: Nessun partecipante online
-- **Heartbeat**: Ogni 30 secondi viene aggiornato lo stato online
-- **Timeout**: Un utente è considerato offline dopo 2 minuti di inattività
+- **Heartbeat**: Ogni 15 secondi viene aggiornato lo stato online
+- **Timeout**: Un utente è considerato offline dopo 45 secondi di inattività
 
 ## Campi Firestore per Attività
 

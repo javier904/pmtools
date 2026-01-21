@@ -93,11 +93,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   StreamSubscription<EisenhowerMatrixModel?>? _matrixSubscription;
   Timer? _presenceHeartbeat;
 
-  /// Intervallo heartbeat per aggiornare lo stato online (30 secondi)
-  static const _heartbeatInterval = Duration(seconds: 30);
+  /// Intervallo heartbeat per aggiornare lo stato online (15 secondi)
+  static const _heartbeatInterval = Duration(seconds: 15);
 
-  /// Soglia per considerare un utente offline (2 minuti senza heartbeat)
-  static const _offlineThreshold = Duration(minutes: 2);
+  /// Soglia per considerare un utente offline (45 secondi senza heartbeat)
+  /// Ridotto per aggiornamenti più reattivi del contatore online
+  static const _offlineThreshold = Duration(seconds: 45);
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
