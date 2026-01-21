@@ -2244,10 +2244,18 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   /// Condizioni:
   /// - L'utente ha il ruolo di facilitatore o voter (non observer)
   /// - L'attività NON è già stata rivelata (a meno che non sia stata riaperta)
+  /// - Se l'utente ha già votato, solo il facilitatore può modificare
   bool _canVoteOnActivity(EisenhowerActivityModel activity) {
     if (!_canVote) return false;
     // Non si può votare su attività già rivelate
     if (activity.isRevealed) return false;
+    // Se l'utente ha già votato e NON è facilitatore, non può modificare
+    if (!_isFacilitator && _currentUserEmail != null) {
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(_currentUserEmail!);
+      final hasVoted = activity.votes.containsKey(escapedEmail) ||
+                       activity.votes.containsKey(_currentUserEmail!);
+      if (hasVoted) return false;
+    }
     return true;
   }
 
@@ -2991,6 +2999,8 @@ class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
     final l10n = AppLocalizations.of(context)!;
     final readyCount = _currentActivity?.readyVoters.length ?? 0;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AlertDialog(
       title: Row(
         children: [
@@ -3001,14 +3011,14 @@ class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${l10n.eisenhowerVoting} (${widget.currentIndex + 1}/${widget.totalActivities})',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
                   _currentActivity?.title ?? '',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '${l10n.eisenhowerVoting} (${widget.currentIndex + 1}/${widget.totalActivities})',
+                  style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[600], fontWeight: FontWeight.normal),
                 ),
               ],
             ),
@@ -3084,11 +3094,12 @@ class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
                         ],
                       ),
                     ),
-                    // Pulsante per modificare il voto
-                    TextButton(
-                      onPressed: _submitVote,
-                      child: Text(l10n.actionEdit),
-                    ),
+                    // Pulsante per modificare il voto - SOLO facilitatore
+                    if (widget.isFacilitator)
+                      TextButton(
+                        onPressed: _submitVote,
+                        child: Text(l10n.actionEdit),
+                      ),
                   ],
                 ),
               ),
