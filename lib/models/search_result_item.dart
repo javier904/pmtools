@@ -20,6 +20,8 @@ class SearchResultItem {
   final String? colorHex;
   /// Optional IconData for the card
   final IconData? iconOverride;
+  /// Indica se l'item è archiviato
+  final bool isArchived;
 
   SearchResultItem({
     required this.id,
@@ -31,5 +33,6 @@ class SearchResultItem {
     this.updatedAt,
     this.colorHex,
     this.iconOverride,
+    this.isArchived = false,
   });
 }

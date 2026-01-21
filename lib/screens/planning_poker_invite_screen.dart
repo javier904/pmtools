@@ -248,11 +248,11 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Column(
+      return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
           Text(AppLocalizations.of(context)?.pokerVerifyingInvite ?? 'Verifica invito in corso...'),
         ],
       );

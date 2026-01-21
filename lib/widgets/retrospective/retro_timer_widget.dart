@@ -150,27 +150,28 @@ class _RetroTimerWidgetState extends State<RetroTimerWidget> {
   }
 
   Widget _buildControls(BuildContext context, bool isRunning) {
+    final l10n = AppLocalizations.of(context)!;
     if (isRunning) {
       return InkWell(
         onTap: () => RetrospectiveFirestoreService().stopTimer(widget.retroId),
-        child: const Tooltip(
-           message: 'Stop Timer',
-           child: Icon(Icons.stop_circle_outlined, size: 20, color: Colors.red),
+        child: Tooltip(
+           message: l10n.retroStopTimer,
+           child: const Icon(Icons.stop_circle_outlined, size: 20, color: Colors.red),
         ),
       );
     } else {
       return PopupMenuButton<int>(
-        tooltip: 'Start Timer',
+        tooltip: l10n.retroStartTimer,
         icon: const Icon(Icons.play_circle_outline, size: 20, color: Colors.green),
         onSelected: (minutes) {
           RetrospectiveFirestoreService().startTimer(widget.retroId, minutes);
         },
         itemBuilder: (context) => [
-          const PopupMenuItem(value: 5, child: Text('5 Min')),
-          const PopupMenuItem(value: 10, child: Text('10 Min')),
-          const PopupMenuItem(value: 15, child: Text('15 Min')),
-          const PopupMenuItem(value: 20, child: Text('20 Min')),
-          const PopupMenuItem(value: 30, child: Text('30 Min')),
+          PopupMenuItem(value: 5, child: Text(l10n.retroTimerMinutes(5))),
+          PopupMenuItem(value: 10, child: Text(l10n.retroTimerMinutes(10))),
+          PopupMenuItem(value: 15, child: Text(l10n.retroTimerMinutes(15))),
+          PopupMenuItem(value: 20, child: Text(l10n.retroTimerMinutes(20))),
+          PopupMenuItem(value: 30, child: Text(l10n.retroTimerMinutes(30))),
         ],
       );
     }

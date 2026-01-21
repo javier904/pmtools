@@ -554,11 +554,11 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
                 ),
                 _buildConfigChip(
                   icon: Icons.calendar_today,
-                  label: '${_newProjectConfig!.sprintDurationDays}gg sprint',
+                  label: l10n.smartTodoSprintDays(_newProjectConfig!.sprintDurationDays),
                 ),
                 _buildConfigChip(
                   icon: Icons.access_time,
-                  label: '${_newProjectConfig!.workingHoursPerDay}h/giorno',
+                  label: l10n.smartTodoHoursPerDay(_newProjectConfig!.workingHoursPerDay),
                 ),
               ],
             ),

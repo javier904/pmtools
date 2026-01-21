@@ -730,7 +730,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
         title: Text(AppLocalizations.of(context)?.smartTodoNewItem ?? 'New item'),
         content: TextField(controller: controller, autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)!.actionConfirm)),
         ],
       ),
     ).then((_) {
@@ -867,15 +867,16 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
   }
 
   void _promptToAddImage(String imageSource, {bool isDataUri = false}) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Incolla Immagine'),
+        title: Text(l10n.smartTodoPasteImage),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(isDataUri ? 'Immagine dagli appunti trovata.' : 'Vuoi aggiungere questa immagine dai tuoi appunti?'),
+            Text(isDataUri ? l10n.smartTodoImageFromClipboardFound : l10n.smartTodoAddImageFromClipboard),
             const SizedBox(height: 12),
             Container(
               height: 150,
@@ -884,7 +885,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.grey[300]!),
                 image: DecorationImage(
-                  image: isDataUri 
+                  image: isDataUri
                     ? MemoryImage(base64Decode(imageSource.split(',').last)) as ImageProvider
                     : NetworkImage(imageSource),
                   fit: BoxFit.cover,
@@ -894,7 +895,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('No')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -903,14 +904,14 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                 _comments.add(TodoComment(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   authorEmail: user?.email ?? 'anonymous',
-                  authorName: user?.displayName ?? 'Utente',
+                  authorName: user?.displayName ?? l10n.smartTodoUser,
                   text: '',
                   imageUrl: imageSource,
                   timestamp: DateTime.now(),
                 ));
               });
-            }, 
-            child: Text(AppLocalizations.of(context)!.smartTodoYesAdd)
+            },
+            child: Text(l10n.smartTodoYesAdd)
           ),
         ],
       ),

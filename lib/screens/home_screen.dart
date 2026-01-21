@@ -9,6 +9,7 @@ import '../themes/app_colors.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/profile_menu_widget.dart';
 import '../widgets/language_selector_widget.dart';
+import '../widgets/pending_invites_button.dart';
 import '../widgets/home/section_favorites.dart';
 import '../widgets/home/section_deadlines.dart';
 import '../widgets/home/section_tools.dart';
@@ -31,11 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final GlobalSearchService _searchService = GlobalSearchService();
   final AuthService _authService = AuthService();
-  
+
   String _searchQuery = '';
   List<SearchResultItem> _searchResults = [];
   bool _isSearching = false;
   bool _isLoading = false;
+  bool _includeArchived = false;
 
   void _performSearch(String query) async {
     if (query.trim().isEmpty) {
@@ -55,7 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final user = _authService.currentUser;
     if (user != null) {
-      final results = await _searchService.search(query, user.email ?? '');
+      final results = await _searchService.search(
+        query,
+        user.email ?? '',
+        includeArchived: _includeArchived,
+      );
       if (mounted) {
         setState(() {
           _searchResults = results;
@@ -125,49 +131,113 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-        title: Container(
-          constraints: const BoxConstraints(maxWidth: 300), // Increased width to 300
-          height: 36, // Slightly clearer
-          child: TextField(
-            controller: _searchController,
-            onSubmitted: _performSearch,
-            textInputAction: TextInputAction.search,
-            textAlignVertical: TextAlignVertical.center,
-            decoration: InputDecoration(
-              hintText: l10n.searchPlaceholder,
-              hintStyle: TextStyle(color: context.textMutedColor, fontSize: 12),
-              prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? GestureDetector(
-                      onTap: () {
-                         _performSearch(_searchController.text);
-                      },
-                      child: const Icon(Icons.arrow_forward_rounded, size: 16),
-                    ) 
-                  : null, 
-              filled: true,
-              fillColor: context.surfaceVariantColor,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              constraints: const BoxConstraints(maxWidth: 300),
+              height: 36,
+              child: TextField(
+                controller: _searchController,
+                onSubmitted: _performSearch,
+                textInputAction: TextInputAction.search,
+                textAlignVertical: TextAlignVertical.center,
+                decoration: InputDecoration(
+                  hintText: l10n.searchPlaceholder,
+                  hintStyle: TextStyle(color: context.textMutedColor, fontSize: 12),
+                  prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                             _performSearch(_searchController.text);
+                          },
+                          child: const Icon(Icons.arrow_forward_rounded, size: 16),
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: context.surfaceVariantColor,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
+                ),
+                style: TextStyle(fontSize: 13, color: context.textPrimaryColor),
               ),
             ),
-            style: TextStyle(fontSize: 13, color: context.textPrimaryColor),
-          ),
+            // Toggle per includere archiviati nella ricerca
+            if (_isSearching || _searchController.text.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Tooltip(
+                message: _includeArchived
+                    ? l10n.archiveHideArchived
+                    : l10n.archiveShowArchived,
+                child: InkWell(
+                  onTap: () {
+                    setState(() => _includeArchived = !_includeArchived);
+                    if (_searchQuery.isNotEmpty) {
+                      _performSearch(_searchQuery);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _includeArchived
+                          ? AppColors.warning.withValues(alpha: 0.2)
+                          : context.surfaceVariantColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _includeArchived
+                            ? AppColors.warning
+                            : Colors.transparent,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _includeArchived ? Icons.inventory_2 : Icons.inventory_2_outlined,
+                          size: 14,
+                          color: _includeArchived
+                              ? AppColors.warning
+                              : context.textSecondaryColor,
+                        ),
+                        if (!isMobile) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            _includeArchived ? 'Archivio' : 'Archivio',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: _includeArchived
+                                  ? AppColors.warning
+                                  : context.textSecondaryColor,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         centerTitle: true,
         actions: [
           // Language Selector
           if (!isMobile) const LanguageSelectorWidget(),
+          const SizedBox(width: 4),
+          // Pending Invites Button
+          const PendingInvitesButton(),
           const SizedBox(width: 4),
           // Theme Toggle Button
           if (themeController != null)

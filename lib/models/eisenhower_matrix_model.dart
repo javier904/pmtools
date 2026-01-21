@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'eisenhower_participant_model.dart';
 import 'raci_models.dart';
+import '../l10n/app_localizations.dart';
 
 /// Modello per la Matrice di Eisenhower
 ///
@@ -364,6 +365,34 @@ extension EisenhowerQuadrantExtension on EisenhowerQuadrant {
         return 'Urgente + Non Importante';
       case EisenhowerQuadrant.q4:
         return 'Non Urgente + Non Importante';
+    }
+  }
+
+  /// Titolo localizzato
+  String localizedTitle(AppLocalizations l10n) {
+    switch (this) {
+      case EisenhowerQuadrant.q1:
+        return l10n.quadrantQ1Title;
+      case EisenhowerQuadrant.q2:
+        return l10n.quadrantQ2Title;
+      case EisenhowerQuadrant.q3:
+        return l10n.quadrantQ3Title;
+      case EisenhowerQuadrant.q4:
+        return l10n.quadrantQ4Title;
+    }
+  }
+
+  /// Sottotitolo localizzato
+  String localizedSubtitle(AppLocalizations l10n) {
+    switch (this) {
+      case EisenhowerQuadrant.q1:
+        return l10n.quadrantQ1Subtitle;
+      case EisenhowerQuadrant.q2:
+        return l10n.quadrantQ2Subtitle;
+      case EisenhowerQuadrant.q3:
+        return l10n.quadrantQ3Subtitle;
+      case EisenhowerQuadrant.q4:
+        return l10n.quadrantQ4Subtitle;
     }
   }
 

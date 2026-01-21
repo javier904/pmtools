@@ -2,15 +2,13 @@ import 'dart:math';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:googleapis/gmail/v1.dart' as gmail;
-import '../models/eisenhower_invite_model.dart';
-import '../models/eisenhower_participant_model.dart';
+import '../models/retro_invite_model.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import '../utils/validators.dart';
 import 'auth_service.dart';
-import 'eisenhower_firestore_service.dart';
 import 'subscription/subscription_limits_service.dart';
 
-/// Servizio per la gestione degli inviti alla Matrice di Eisenhower
+/// Servizio per la gestione degli inviti alle Retrospective
 ///
 /// Gestisce il ciclo di vita completo degli inviti:
 /// - Creazione inviti con token univoci
@@ -20,10 +18,10 @@ import 'subscription/subscription_limits_service.dart';
 ///
 /// Struttura Firestore:
 /// ```
-/// eisenhower_invites/{inviteId}
-///   - matrixId: String
+/// retro_invites/{inviteId}
+///   - boardId: String
 ///   - email: String
-///   - role: String (voter, observer)
+///   - role: String (facilitator, participant, observer)
 ///   - status: String (pending, accepted, declined, expired, revoked)
 ///   - token: String (32 chars)
 ///   - invitedBy: String
@@ -34,18 +32,17 @@ import 'subscription/subscription_limits_service.dart';
 ///   - declinedAt: Timestamp?
 ///   - declineReason: String?
 /// ```
-class EisenhowerInviteService {
-  static final EisenhowerInviteService _instance = EisenhowerInviteService._internal();
-  factory EisenhowerInviteService() => _instance;
-  EisenhowerInviteService._internal();
+class RetroInviteService {
+  static final RetroInviteService _instance = RetroInviteService._internal();
+  factory RetroInviteService() => _instance;
+  RetroInviteService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
-  final EisenhowerFirestoreService _matrixService = EisenhowerFirestoreService();
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   /// Nome della collection
-  static const String _invitesCollection = 'eisenhower_invites';
+  static const String _invitesCollection = 'retro_invites';
 
   /// Riferimento alla collection
   CollectionReference<Map<String, dynamic>> get _invitesRef =>
@@ -55,19 +52,19 @@ class EisenhowerInviteService {
   // CREAZIONE INVITI
   // ============================================================
 
-  /// Crea un nuovo invito per una matrice
+  /// Crea un nuovo invito per una retrospective
   ///
-  /// [matrixId] - ID della matrice
+  /// [boardId] - ID della retrospective
   /// [email] - Email dell'invitato
-  /// [role] - Ruolo assegnato (default: voter)
+  /// [role] - Ruolo assegnato (default: participant)
   /// [expirationDays] - Giorni di validita' (default: 7)
   ///
   /// Ritorna l'invito creato o null in caso di errore
   /// Lancia [LimitExceededException] se il limite inviti per entita' e' raggiunto
-  Future<EisenhowerInviteModel?> createInvite({
-    required String matrixId,
+  Future<RetroInviteModel?> createInvite({
+    required String boardId,
     required String email,
-    EisenhowerParticipantRole role = EisenhowerParticipantRole.voter,
+    RetroParticipantRole role = RetroParticipantRole.participant,
     int expirationDays = 7,
   }) async {
     final inviterEmail = _authService.currentUserEmail;
@@ -77,10 +74,10 @@ class EisenhowerInviteService {
     }
 
     // 🔒 CHECK LIMITE INVITI PER ENTITA'
-    await _limitsService.enforceInviteLimit(entityType: 'eisenhower', entityId: matrixId);
+    await _limitsService.enforceInviteLimit(entityType: 'retro', entityId: boardId);
 
     // Verifica che non esista già un invito pending per questa email
-    final existingInvite = await getActiveInviteForEmail(matrixId, email);
+    final existingInvite = await getActiveInviteForEmail(boardId, email);
     if (existingInvite != null) {
       print('⚠️ Invito già esistente per $email');
       return existingInvite;
@@ -90,12 +87,12 @@ class EisenhowerInviteService {
       final now = DateTime.now();
       final token = _generateToken();
 
-      final invite = EisenhowerInviteModel(
+      final invite = RetroInviteModel(
         id: '', // Sarà l'ID del documento
-        matrixId: matrixId,
+        boardId: boardId,
         email: email.toLowerCase().trim(),
         role: role,
-        status: EisenhowerInviteStatus.pending,
+        status: RetroInviteStatus.pending,
         invitedBy: inviterEmail,
         invitedByName: inviterEmail.split('@').first,
         invitedAt: now,
@@ -104,22 +101,22 @@ class EisenhowerInviteService {
       );
 
       final batch = _firestore.batch();
-      
+
       // 1. Crea invito
       final inviteRef = _invitesRef.doc();
       batch.set(inviteRef, invite.toFirestore());
 
-      // 2. Aggiungi a pendingEmails nella matrice
-      final matrixDocRef = _firestore.collection('eisenhower_matrices').doc(matrixId);
-      
-      batch.update(matrixDocRef, {
+      // 2. Aggiungi a pendingEmails nella retrospective (se il campo esiste)
+      final retroDocRef = _firestore.collection('retrospectives').doc(boardId);
+
+      batch.update(retroDocRef, {
         'pendingEmails': FieldValue.arrayUnion([email.toLowerCase().trim()]),
         'updatedAt': Timestamp.fromDate(now),
       });
 
       await batch.commit();
 
-      print('✅ Invito creato con Pending: ${inviteRef.id} per $email');
+      print('✅ Invito retro creato con Pending: ${inviteRef.id} per $email');
 
       return invite.copyWith(id: inviteRef.id);
     } catch (e) {
@@ -140,7 +137,7 @@ class EisenhowerInviteService {
   // ============================================================
 
   /// Ottiene un invito per token (per deep linking)
-  Future<EisenhowerInviteModel?> getInviteByToken(String token) async {
+  Future<RetroInviteModel?> getInviteByToken(String token) async {
     try {
       final snapshot = await _invitesRef
           .where('token', isEqualTo: token)
@@ -148,61 +145,61 @@ class EisenhowerInviteService {
           .get();
 
       if (snapshot.docs.isEmpty) return null;
-      return EisenhowerInviteModel.fromFirestore(snapshot.docs.first);
+      return RetroInviteModel.fromFirestore(snapshot.docs.first);
     } catch (e) {
       print('❌ Errore getInviteByToken: $e');
       return null;
     }
   }
 
-  /// Ottiene un invito attivo per email in una matrice
-  Future<EisenhowerInviteModel?> getActiveInviteForEmail(String matrixId, String email) async {
+  /// Ottiene un invito attivo per email in una retrospective
+  Future<RetroInviteModel?> getActiveInviteForEmail(String boardId, String email) async {
     try {
       final snapshot = await _invitesRef
-          .where('matrixId', isEqualTo: matrixId)
+          .where('boardId', isEqualTo: boardId)
           .where('email', isEqualTo: email.toLowerCase())
           .where('status', isEqualTo: 'pending')
           .limit(1)
           .get();
 
       if (snapshot.docs.isEmpty) return null;
-      return EisenhowerInviteModel.fromFirestore(snapshot.docs.first);
+      return RetroInviteModel.fromFirestore(snapshot.docs.first);
     } catch (e) {
       print('❌ Errore getActiveInviteForEmail: $e');
       return null;
     }
   }
 
-  /// Ottiene tutti gli inviti per una matrice
-  Future<List<EisenhowerInviteModel>> getInvitesForMatrix(String matrixId) async {
+  /// Ottiene tutti gli inviti per una retrospective
+  Future<List<RetroInviteModel>> getInvitesForBoard(String boardId) async {
     try {
       final snapshot = await _invitesRef
-          .where('matrixId', isEqualTo: matrixId)
+          .where('boardId', isEqualTo: boardId)
           .orderBy('invitedAt', descending: true)
           .get();
 
       return snapshot.docs
-          .map((doc) => EisenhowerInviteModel.fromFirestore(doc))
+          .map((doc) => RetroInviteModel.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print('❌ Errore getInvitesForMatrix: $e');
+      print('❌ Errore getInvitesForBoard: $e');
       return [];
     }
   }
 
-  /// Stream degli inviti per una matrice
-  Stream<List<EisenhowerInviteModel>> streamInvitesForMatrix(String matrixId) {
+  /// Stream degli inviti per una retrospective
+  Stream<List<RetroInviteModel>> streamInvitesForBoard(String boardId) {
     return _invitesRef
-        .where('matrixId', isEqualTo: matrixId)
+        .where('boardId', isEqualTo: boardId)
         .orderBy('invitedAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => EisenhowerInviteModel.fromFirestore(doc))
+            .map((doc) => RetroInviteModel.fromFirestore(doc))
             .toList());
   }
 
   /// Ottiene gli inviti pendenti per l'utente corrente
-  Future<List<EisenhowerInviteModel>> getMyPendingInvites() async {
+  Future<List<RetroInviteModel>> getMyPendingInvites() async {
     final userEmail = _authService.currentUserEmail;
     if (userEmail == null) return [];
 
@@ -215,7 +212,7 @@ class EisenhowerInviteService {
       // Filtra quelli scaduti
       final now = DateTime.now();
       return snapshot.docs
-          .map((doc) => EisenhowerInviteModel.fromFirestore(doc))
+          .map((doc) => RetroInviteModel.fromFirestore(doc))
           .where((invite) => invite.expiresAt.isAfter(now))
           .toList();
     } catch (e) {
@@ -225,7 +222,7 @@ class EisenhowerInviteService {
   }
 
   /// Stream degli inviti pendenti per l'utente corrente
-  Stream<List<EisenhowerInviteModel>> streamMyPendingInvites() {
+  Stream<List<RetroInviteModel>> streamMyPendingInvites() {
     final userEmail = _authService.currentUserEmail;
     if (userEmail == null) return Stream.value([]);
 
@@ -236,7 +233,7 @@ class EisenhowerInviteService {
         .map((snapshot) {
       final now = DateTime.now();
       return snapshot.docs
-          .map((doc) => EisenhowerInviteModel.fromFirestore(doc))
+          .map((doc) => RetroInviteModel.fromFirestore(doc))
           .where((invite) => invite.expiresAt.isAfter(now))
           .toList();
     });
@@ -251,7 +248,7 @@ class EisenhowerInviteService {
   /// [inviteId] - ID dell'invito
   /// [accepterName] - Nome dell'utente che accetta (opzionale)
   ///
-  /// Aggiunge automaticamente l'utente come partecipante alla matrice
+  /// Aggiunge automaticamente l'utente come partecipante alla retrospective
   Future<bool> acceptInvite(String inviteId, {String? accepterName}) async {
     final userEmail = _authService.currentUserEmail;
     if (userEmail == null) {
@@ -267,7 +264,7 @@ class EisenhowerInviteService {
         return false;
       }
 
-      final invite = EisenhowerInviteModel.fromFirestore(doc);
+      final invite = RetroInviteModel.fromFirestore(doc);
 
       // Verifica che l'invito sia valido
       if (!invite.isValid) {
@@ -289,27 +286,18 @@ class EisenhowerInviteService {
         'acceptedAt': Timestamp.fromDate(DateTime.now()),
       });
 
-      // 2. Aggiungi l'utente come partecipante alla matrice e rimuovi da pending
-      final participant = EisenhowerParticipantModel(
-        email: userEmail,
-        name: accepterName ?? userEmail.split('@').first,
-        role: invite.role,
-        joinedAt: DateTime.now(),
-        isOnline: true,
-      );
+      // 2. Aggiungi l'utente come partecipante alla retrospective
+      final retroRef = _firestore.collection('retrospectives').doc(invite.boardId);
 
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(userEmail);
-      final matrixRef = _firestore.collection('eisenhower_matrices').doc(invite.matrixId);
-
-      batch.update(matrixRef, {
-        'participants.$escapedEmail': participant.toMap(),
-        'pendingEmails': FieldValue.arrayRemove([userEmail]), // Rimuovi da pending
+      batch.update(retroRef, {
+        'participantEmails': FieldValue.arrayUnion([userEmail.toLowerCase()]),
+        'pendingEmails': FieldValue.arrayRemove([userEmail.toLowerCase()]),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
       await batch.commit();
 
-      print('✅ Invito accettato e promosso: $inviteId');
+      print('✅ Invito retro accettato e promosso: $inviteId');
       return true;
     } catch (e) {
       print('❌ Errore acceptInvite: $e');
@@ -329,13 +317,26 @@ class EisenhowerInviteService {
         return false;
       }
 
-      await _invitesRef.doc(inviteId).update({
+      final invite = RetroInviteModel.fromFirestore(doc);
+
+      final batch = _firestore.batch();
+
+      // 1. Aggiorna status invito
+      batch.update(_invitesRef.doc(inviteId), {
         'status': 'declined',
         'declinedAt': Timestamp.fromDate(DateTime.now()),
         if (reason != null) 'declineReason': reason,
       });
 
-      print('✅ Invito rifiutato: $inviteId');
+      // 2. Rimuovi da pendingEmails
+      final retroRef = _firestore.collection('retrospectives').doc(invite.boardId);
+      batch.update(retroRef, {
+        'pendingEmails': FieldValue.arrayRemove([invite.email.toLowerCase()]),
+      });
+
+      await batch.commit();
+
+      print('✅ Invito retro rifiutato: $inviteId');
       return true;
     } catch (e) {
       print('❌ Errore declineInvite: $e');
@@ -352,11 +353,23 @@ class EisenhowerInviteService {
         return false;
       }
 
-      await _invitesRef.doc(inviteId).update({
+      final invite = RetroInviteModel.fromFirestore(doc);
+
+      final batch = _firestore.batch();
+
+      batch.update(_invitesRef.doc(inviteId), {
         'status': 'revoked',
       });
 
-      print('✅ Invito revocato: $inviteId');
+      // Rimuovi da pendingEmails
+      final retroRef = _firestore.collection('retrospectives').doc(invite.boardId);
+      batch.update(retroRef, {
+        'pendingEmails': FieldValue.arrayRemove([invite.email.toLowerCase()]),
+      });
+
+      await batch.commit();
+
+      print('✅ Invito retro revocato: $inviteId');
       return true;
     } catch (e) {
       print('❌ Errore revokeInvite: $e');
@@ -365,7 +378,7 @@ class EisenhowerInviteService {
   }
 
   /// Reinvia un invito (crea un nuovo token e resetta la scadenza)
-  Future<EisenhowerInviteModel?> resendInvite(String inviteId, {int expirationDays = 7}) async {
+  Future<RetroInviteModel?> resendInvite(String inviteId, {int expirationDays = 7}) async {
     try {
       final doc = await _invitesRef.doc(inviteId).get();
       if (!doc.exists) {
@@ -373,7 +386,7 @@ class EisenhowerInviteService {
         return null;
       }
 
-      final invite = EisenhowerInviteModel.fromFirestore(doc);
+      final invite = RetroInviteModel.fromFirestore(doc);
       final now = DateTime.now();
       final newToken = _generateToken();
 
@@ -384,10 +397,10 @@ class EisenhowerInviteService {
         'invitedAt': Timestamp.fromDate(now),
       });
 
-      print('✅ Invito reinviato: $inviteId');
+      print('✅ Invito retro reinviato: $inviteId');
       return invite.copyWith(
         token: newToken,
-        status: EisenhowerInviteStatus.pending,
+        status: RetroInviteStatus.pending,
         expiresAt: now.add(Duration(days: expirationDays)),
         invitedAt: now,
       );
@@ -400,8 +413,18 @@ class EisenhowerInviteService {
   /// Elimina un invito
   Future<bool> deleteInvite(String inviteId) async {
     try {
+      final doc = await _invitesRef.doc(inviteId).get();
+      if (doc.exists) {
+        final invite = RetroInviteModel.fromFirestore(doc);
+
+        // Rimuovi anche da pendingEmails
+        await _firestore.collection('retrospectives').doc(invite.boardId).update({
+          'pendingEmails': FieldValue.arrayRemove([invite.email.toLowerCase()]),
+        });
+      }
+
       await _invitesRef.doc(inviteId).delete();
-      print('✅ Invito eliminato: $inviteId');
+      print('✅ Invito retro eliminato: $inviteId');
       return true;
     } catch (e) {
       print('❌ Errore deleteInvite: $e');
@@ -414,18 +437,18 @@ class EisenhowerInviteService {
   // ============================================================
 
   /// Genera il link di invito
-  /// Nuovo formato deep link: /invite/eisenhower/{matrixId}/{token}
-  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? matrixId}) {
-    if (matrixId != null) {
-      return '$baseUrl/#/invite/eisenhower/$matrixId';
+  /// Formato deep link: /invite/retro/{boardId}
+  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? boardId}) {
+    if (boardId != null) {
+      return '$baseUrl/#/invite/retro/$boardId';
     }
     // Fallback al formato token per retrocompatibilità
-    return '$baseUrl/#/invite/eisenhower/token/$token';
+    return '$baseUrl/#/invite/retro/token/$token';
   }
 
   /// Aggiorna gli inviti scaduti a status 'expired'
   ///
-  /// Da chiamare periodicamente o al caricamento delle matrici
+  /// Da chiamare periodicamente o al caricamento delle retrospective
   Future<int> expireOldInvites() async {
     try {
       final now = DateTime.now();
@@ -442,7 +465,7 @@ class EisenhowerInviteService {
       }
       await batch.commit();
 
-      print('✅ ${snapshot.docs.length} inviti scaduti aggiornati');
+      print('✅ ${snapshot.docs.length} inviti retro scaduti aggiornati');
       return snapshot.docs.length;
     } catch (e) {
       print('❌ Errore expireOldInvites: $e');
@@ -450,11 +473,11 @@ class EisenhowerInviteService {
     }
   }
 
-  /// Conta gli inviti pendenti per una matrice
-  Future<int> countPendingInvites(String matrixId) async {
+  /// Conta gli inviti pendenti per una retrospective
+  Future<int> countPendingInvites(String boardId) async {
     try {
       final snapshot = await _invitesRef
-          .where('matrixId', isEqualTo: matrixId)
+          .where('boardId', isEqualTo: boardId)
           .where('status', isEqualTo: 'pending')
           .count()
           .get();
@@ -478,26 +501,26 @@ class EisenhowerInviteService {
 
   /// Invia email di invito usando l'account Gmail dell'utente loggato
   Future<bool> sendInviteEmail({
-    required EisenhowerInviteModel invite,
-    required String matrixTitle,
+    required RetroInviteModel invite,
+    required String retroTitle,
     required String baseUrl,
     required String senderEmail,
     required gmail.GmailApi gmailApi,
   }) async {
-    print('📧 [SERVICE] sendInviteEmail() chiamato');
-    print('📧 [SERVICE] - matrixTitle: $matrixTitle');
+    print('📧 [SERVICE] sendInviteEmail() chiamato per retro');
+    print('📧 [SERVICE] - retroTitle: $retroTitle');
     print('📧 [SERVICE] - baseUrl: $baseUrl');
     print('📧 [SERVICE] - senderEmail: $senderEmail');
     print('📧 [SERVICE] - destinatario: ${invite.email}');
 
     try {
-      final inviteLink = generateInviteLink(invite.token, baseUrl: baseUrl, matrixId: invite.matrixId);
+      final inviteLink = generateInviteLink(invite.token, baseUrl: baseUrl, boardId: invite.boardId);
       final expirationDate = _formatDate(invite.expiresAt);
       final roleName = _getRoleName(invite.role);
 
       // 🔒 SICUREZZA: Sanitizza input utente per prevenire HTML injection
       final safeInviterName = Validators.sanitizeHtml(invite.invitedByName);
-      final safeMatrixTitle = Validators.sanitizeHtml(matrixTitle);
+      final safeRetroTitle = Validators.sanitizeHtml(retroTitle);
 
       print('📧 [SERVICE] Link invito: $inviteLink');
 
@@ -510,27 +533,27 @@ class EisenhowerInviteService {
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .header { background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
     .header h1 { color: white; margin: 0; font-size: 24px; }
     .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; }
     .button { display: inline-block; background: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
     .button:hover { background: #45a049; }
-    .info-box { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #2196F3; }
+    .info-box { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #9C27B0; }
     .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-    .role-badge { display: inline-block; background: #e3f2fd; color: #1565c0; padding: 5px 10px; border-radius: 15px; font-size: 12px; }
+    .role-badge { display: inline-block; background: #f3e5f5; color: #7b1fa2; padding: 5px 10px; border-radius: 15px; font-size: 12px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>📊 Invito Matrice Eisenhower</h1>
+      <h1>🔄 Invito Retrospettiva</h1>
     </div>
     <div class="content">
       <p>Ciao!</p>
-      <p><strong>$safeInviterName</strong> ti ha invitato a partecipare a una sessione di prioritizzazione con la Matrice di Eisenhower.</p>
+      <p><strong>$safeInviterName</strong> ti ha invitato a partecipare a una sessione di Retrospettiva.</p>
 
       <div class="info-box">
-        <p><strong>📋 Matrice:</strong> $safeMatrixTitle</p>
+        <p><strong>📋 Retrospettiva:</strong> $safeRetroTitle</p>
         <p><strong>👤 Ruolo:</strong> <span class="role-badge">$roleName</span></p>
         <p><strong>⏰ Scadenza invito:</strong> $expirationDate</p>
       </div>
@@ -545,7 +568,7 @@ class EisenhowerInviteService {
       </p>
     </div>
     <div class="footer">
-      <p>Questa email è stata inviata automaticamente dal sistema Keisen.</p>
+      <p>Questa email è stata inviata automaticamente dal sistema Agile Tools.</p>
     </div>
   </div>
 </body>
@@ -555,7 +578,7 @@ class EisenhowerInviteService {
       // Costruisci email in formato MIME (Subject non richiede HTML escape, solo base64)
       final emailContent = '''From: $senderEmail
 To: ${invite.email}
-Subject: =?UTF-8?B?${base64Encode(utf8.encode('📊 Invito Matrice Eisenhower: $safeMatrixTitle'))}?=
+Subject: =?UTF-8?B?${base64Encode(utf8.encode('🔄 Invito Retrospettiva: $safeRetroTitle'))}?=
 MIME-Version: 1.0
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: base64
@@ -582,7 +605,6 @@ ${base64Encode(utf8.encode(htmlBody))}
       } catch (gmailError) {
         print('❌ [SERVICE] ERRORE Gmail API: $gmailError');
         print('❌ [SERVICE] Tipo errore: ${gmailError.runtimeType}');
-        // Check if it's a DetailedApiRequestError
         if (gmailError is gmail.DetailedApiRequestError) {
           print('❌ [SERVICE] Status: ${gmailError.status}');
           print('❌ [SERVICE] Message: ${gmailError.message}');
@@ -604,13 +626,13 @@ ${base64Encode(utf8.encode(htmlBody))}
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
-  String _getRoleName(EisenhowerParticipantRole role) {
+  String _getRoleName(RetroParticipantRole role) {
     switch (role) {
-      case EisenhowerParticipantRole.facilitator:
+      case RetroParticipantRole.facilitator:
         return 'Facilitatore';
-      case EisenhowerParticipantRole.voter:
-        return 'Votante';
-      case EisenhowerParticipantRole.observer:
+      case RetroParticipantRole.participant:
+        return 'Partecipante';
+      case RetroParticipantRole.observer:
         return 'Osservatore';
     }
   }

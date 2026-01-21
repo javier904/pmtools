@@ -65,9 +65,9 @@ class PlanningPokerInviteModel {
     return diff.inDays;
   }
 
-  /// Genera il link di invito
+  /// Genera il link di invito - nuovo formato deep link
   String generateInviteLink(String baseUrl) {
-    return '$baseUrl/planning-poker/invite/$token';
+    return '$baseUrl/#/invite/estimation-room/$sessionId';
   }
 
   /// Crea da documento Firestore

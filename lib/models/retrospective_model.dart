@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 /// Modello per una Retrospettiva di Sprint
 ///
@@ -56,6 +57,7 @@ class RetrospectiveModel {
   // Participants & Voting Config
   final List<String> activeParticipants;
   final List<String> participantEmails;
+  final List<String> pendingEmails; // Emails con inviti in attesa
   final int maxVotesPerUser;
 
   const RetrospectiveModel({
@@ -85,6 +87,7 @@ class RetrospectiveModel {
     this.currentWizardStep = 0,
     this.activeParticipants = const [],
     this.participantEmails = const [],
+    this.pendingEmails = const [],
     this.maxVotesPerUser = 3,
   });
 
@@ -133,6 +136,7 @@ class RetrospectiveModel {
           : null,
       activeParticipants: List<String>.from(data['activeParticipants'] ?? []),
       participantEmails: List<String>.from(data['participantEmails'] ?? []),
+      pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
       averageSentiment: (data['averageSentiment'] as num?)?.toDouble(),
       reviewData: data['reviewData'] != null ? SprintReviewData.fromMap(data['reviewData']) : null,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -175,6 +179,7 @@ class RetrospectiveModel {
       if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
       'status': status.name,
       'participantEmails': participantEmails,
+      'pendingEmails': pendingEmails,
       'maxVotesPerUser': maxVotesPerUser,
     };
   }
@@ -193,6 +198,7 @@ class RetrospectiveModel {
     RetroStatus? status,
     int? currentWizardStep,
     List<String>? participantEmails,
+    List<String>? pendingEmails,
     int? maxVotesPerUser,
     // Add other fields as needed...
   }) {
@@ -224,6 +230,7 @@ class RetrospectiveModel {
       currentWizardStep: currentWizardStep ?? this.currentWizardStep,
       activeParticipants: activeParticipants,
       participantEmails: participantEmails ?? this.participantEmails,
+      pendingEmails: pendingEmails ?? this.pendingEmails,
       maxVotesPerUser: maxVotesPerUser ?? this.maxVotesPerUser,
     );
   }
@@ -269,6 +276,32 @@ class RetroColumn {
 
   IconData get icon => IconData(iconCode, fontFamily: 'MaterialIcons');
   Color get color => Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+
+  String getLocalizedTitle(AppLocalizations l10n) {
+    switch (id) {
+      case 'start': return l10n.retroPhaseStart ?? 'Start';
+      case 'stop': return l10n.retroPhaseStop ?? 'Stop';
+      case 'continue': return l10n.retroPhaseContinue ?? 'Continue';
+      case 'wind': return 'Wind (Spinge)';
+      case 'anchor': return 'Anchors (Frena)';
+      case 'rock': return 'Rocks (Rischi)';
+      case 'goal': return 'Island (Obiettivi)';
+      case 'liked': return 'Liked';
+      case 'learned': return 'Learned';
+      case 'lacked': return 'Lacked';
+      case 'longed': return 'Longed For';
+      case 'keep': return 'Keep';
+      case 'more': return 'More';
+      case 'less': return 'Less';
+      case 'mad': return 'Mad';
+      case 'sad': return 'Sad';
+      case 'glad': return 'Glad';
+      case 'drop': return 'Drop';
+      case 'add': return 'Add';
+      case 'improve': return 'Improve';
+      default: return title;
+    }
+  }
 }
 
 class RetroTimer {
@@ -538,6 +571,17 @@ extension RetroTemplateExt on RetroTemplate {
     }
   }
 
+  String getLocalizedDisplayName(AppLocalizations l10n) {
+    switch (this) {
+      case RetroTemplate.startStopContinue: return l10n.retroTemplateStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroTemplateSailboat;
+      case RetroTemplate.fourLs: return l10n.retroTemplate4Ls;
+      case RetroTemplate.starfish: return l10n.retroTemplateStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroTemplateMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroTemplateDAKI;
+    }
+  }
+
   String get description {
      switch (this) {
       case RetroTemplate.startStopContinue: return 'Action oriented: Start doing, Stop doing, Continue doing.';
@@ -546,6 +590,17 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return 'Keep, Stop, Start, More, Less.';
       case RetroTemplate.madSadGlad: return 'Emotional: Mad, Sad, Glad.';
       case RetroTemplate.daki: return 'Pragmatic: Drop, Add, Keep, Improve.';
+    }
+  }
+
+  String getLocalizedDescription(AppLocalizations l10n) {
+    switch (this) {
+      case RetroTemplate.startStopContinue: return l10n.retroDescStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroDescSailboat;
+      case RetroTemplate.fourLs: return l10n.retroDesc4Ls;
+      case RetroTemplate.starfish: return l10n.retroDescStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroDescMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroDescDAKI;
     }
   }
 
@@ -564,6 +619,17 @@ extension RetroTemplateExt on RetroTemplate {
         return 'Best for emotional check-ins, resolving conflicts, or after a stressful sprint.';
       case RetroTemplate.daki:
         return 'Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).';
+    }
+  }
+
+  String getLocalizedUsageSuggestion(AppLocalizations l10n) {
+    switch (this) {
+      case RetroTemplate.startStopContinue: return l10n.retroUsageStartStopContinue;
+      case RetroTemplate.sailboat: return l10n.retroUsageSailboat;
+      case RetroTemplate.fourLs: return l10n.retroUsage4Ls;
+      case RetroTemplate.starfish: return l10n.retroUsageStarfish;
+      case RetroTemplate.madSadGlad: return l10n.retroUsageMadSadGlad;
+      case RetroTemplate.daki: return l10n.retroUsageDAKI;
     }
   }
 
@@ -641,11 +707,27 @@ extension RetroIcebreakerExt on RetroIcebreaker {
     }
   }
 
+  String getLocalizedDisplayName(AppLocalizations l10n) {
+    switch (this) {
+      case RetroIcebreaker.sentiment: return l10n.retroIcebreakerSentiment;
+      case RetroIcebreaker.oneWord: return l10n.retroIcebreakerOneWord;
+      case RetroIcebreaker.weatherReport: return l10n.retroIcebreakerWeather;
+    }
+  }
+
   String get description {
     switch (this) {
       case RetroIcebreaker.sentiment: return 'Vota da 1 a 5 come ti sei sentito durante lo sprint.';
       case RetroIcebreaker.oneWord: return 'Descrivi lo sprint con una sola parola.';
       case RetroIcebreaker.weatherReport: return 'Scegli un\'icona meteo che rappresenta lo sprint.';
+    }
+  }
+
+  String getLocalizedDescription(AppLocalizations l10n) {
+    switch (this) {
+      case RetroIcebreaker.sentiment: return l10n.retroIcebreakerSentimentDesc;
+      case RetroIcebreaker.oneWord: return l10n.retroIcebreakerOneWordDesc;
+      case RetroIcebreaker.weatherReport: return l10n.retroIcebreakerWeatherDesc;
     }
   }
 }

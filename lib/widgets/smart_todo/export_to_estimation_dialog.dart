@@ -150,7 +150,7 @@ class _ExportToEstimationDialogState extends State<ExportToEstimationDialog> {
                             }
                           });
                         },
-                        child: const Text('Select All'),
+                        child: Text(l10n.selectAll),
                       ),
                       TextButton(
                         onPressed: () {
@@ -160,7 +160,7 @@ class _ExportToEstimationDialogState extends State<ExportToEstimationDialog> {
                             }
                           });
                         },
-                        child: const Text('Deselect All'),
+                        child: Text(l10n.deselectAll),
                       ),
                     ],
                   ),

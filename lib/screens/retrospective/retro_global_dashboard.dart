@@ -85,7 +85,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           const SizedBox(width: 16),
           IconButton(
             icon: const Icon(Icons.help_outline),
-            tooltip: 'Guida alle Retrospettive',
+            tooltip: AppLocalizations.of(context)!.retroGuidance,
             onPressed: () => showDialog(
               context: context,
               builder: (context) => RetroMethodologyDialog(
@@ -109,7 +109,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 }
 
                 if (snapshot.hasError) {
-                  return Center(child: Text('Errore: ${snapshot.error}'));
+                  return Center(child: Text(AppLocalizations.of(context)!.retroDeleteError(snapshot.error.toString())));
                 }
 
                 var retros = snapshot.data ?? [];
@@ -134,8 +134,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                         const SizedBox(height: 16),
                         Text(
                           _searchController.text.isNotEmpty 
-                              ? 'Nessun risultato per la ricerca' 
-                              : 'Nessuna retrospettiva trovata',
+                              ? AppLocalizations.of(context)!.retroNoResults 
+                              : AppLocalizations.of(context)!.retroNoRetrosFound,
                           style: const TextStyle(fontSize: 18, color: Colors.grey),
                         ),
                         if (_searchController.text.isEmpty) ...[
@@ -143,7 +143,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                           ElevatedButton.icon(
                             onPressed: _showCreateStandaloneDialog,
                             icon: const Icon(Icons.add),
-                            label: const Text('Crea Nuova'),
+                            label: Text(AppLocalizations.of(context)!.retroCreateNew),
                           ),
                         ]
                       ],
@@ -189,7 +189,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Cerca retrospettiva...',
+              hintText: AppLocalizations.of(context)!.retroSearchHint,
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
@@ -210,17 +210,17 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          SingleChildScrollView(
+           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip('Tutte', null),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterAll, null),
                 const SizedBox(width: 8),
-                _buildFilterChip('Active', RetroStatus.active),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterActive, RetroStatus.active),
                 const SizedBox(width: 8),
-                _buildFilterChip('Completed', RetroStatus.completed),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
                 const SizedBox(width: 8),
-                _buildFilterChip('Draft', RetroStatus.draft),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterDraft, RetroStatus.draft),
               ],
             ),
           ),
@@ -276,36 +276,37 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Retrospettiva'),
+        title: Text(AppLocalizations.of(context)!.retroDeleteTitle),
         content: Text(
-            'Sei sicuro di voler eliminare definitivamente la retrospettiva "${retro.sprintName}"?\n\nQuesta azione è irreversibile e cancellerà tutti i dati associati (card, voti, action items).'),
+            AppLocalizations.of(context)!.retroDeleteConfirm(retro.sprintName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               final messenger = ScaffoldMessenger.of(context);
+              final l10n = AppLocalizations.of(context)!;
               Navigator.pop(context); // Close dialog
               
               try {
                 await _retroService.deleteRetrospective(retro.id);
                 if (mounted) {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Retrospettiva eliminata con successo')),
+                    SnackBar(content: Text(l10n.retroDeleteSuccess)),
                   );
                 }
               } catch (e) {
                 if (mounted) {
                   messenger.showSnackBar(
-                    SnackBar(content: Text('Errore durante l\'eliminazione: $e')),
+                    SnackBar(content: Text(l10n.retroDeleteError(e.toString()))),
                   );
                 }
               }
             },
-            child: const Text('Elimina definitivamente', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.retroDeleteConfirmAction, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -387,7 +388,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           }
 
           return AlertDialog(
-          title: const Text('Nuova Retrospettiva'),
+          title: Text(AppLocalizations.of(context)!.retroNewRetroTitle),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -396,7 +397,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 // Standalone / Linked Toggle
                 Row(
                   children: [
-                    const Text('Collega a Sprint?'),
+                    Text(AppLocalizations.of(context)!.retroLinkToSprint),
                     const Spacer(),
                     Switch(
                       value: linkToProject, 
@@ -416,11 +417,11 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                   if (loadingProjects)
                     const Center(child: CircularProgressIndicator())
                   else if (userProjects.isEmpty)
-                     const Text('Nessun progetto trovato.', style: TextStyle(color: Colors.red))
+                     Text(AppLocalizations.of(context)!.retroNoProjectFound, style: const TextStyle(color: Colors.red))
                   else
                     DropdownButtonFormField<AgileProjectModel>(
                       value: selectedProject,
-                      decoration: const InputDecoration(labelText: 'Seleziona Progetto'),
+                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroSelectProject),
                       items: userProjects.map((p) => DropdownMenuItem(
                         value: p,
                         child: Text(p.name),
@@ -451,10 +452,10 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     else 
                       DropdownButtonFormField<SprintModel>(
                         value: selectedSprint,
-                        decoration: const InputDecoration(labelText: 'Seleziona Sprint'),
+                        decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroSelectSprint),
                          items: projectSprints.map((s) => DropdownMenuItem(
                           value: s,
-                          child: Text('Sprint ${s.number}: ${s.name}'),
+                          child: Text(AppLocalizations.of(context)!.retroSprintLabel(s.number, s.name)),
                         )).toList(),
                         onChanged: (s) {
                           setDialogState(() {
@@ -471,9 +472,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 if (!linkToProject || selectedSprint == null)
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Titolo Sessione',
-                      hintText: 'Es: Weekly Sync, Project Review...',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.retroSessionTitle,
+                      hintText: AppLocalizations.of(context)!.retroSessionTitleHint,
                     ),
                     autofocus: !linkToProject,
                   ),
@@ -481,12 +482,12 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 const SizedBox(height: 16),
                 DropdownButtonFormField<RetroTemplate>(
                   value: selectedTemplate,
-                  decoration: const InputDecoration(labelText: 'Template'),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroTemplateLabel),
                   isExpanded: true, // Ensure proper layout for long text
                   selectedItemBuilder: (BuildContext context) {
                     return RetroTemplate.values.map<Widget>((RetroTemplate t) {
                       return Text(
-                        t.displayName,
+                        t.getLocalizedDisplayName(AppLocalizations.of(context)!),
                         style: const TextStyle(fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                       );
@@ -506,12 +507,12 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  t.displayName, 
+                                  t.getLocalizedDisplayName(AppLocalizations.of(context)!), 
                                   style: const TextStyle(fontWeight: FontWeight.w500),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  t.usageSuggestion,
+                                  t.getLocalizedUsageSuggestion(AppLocalizations.of(context)!),
                                   style: TextStyle(
                                     fontSize: 11, 
                                     color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
@@ -538,7 +539,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 // Configurazione Voti
                 Row(
                    children: [
-                      const Text('Voti per utente:', style: TextStyle(fontWeight: FontWeight.w500)),
+                      Text(AppLocalizations.of(context)!.retroVotesPerUser, style: const TextStyle(fontWeight: FontWeight.w500)),
                       const SizedBox(width: 16),
                       IconButton(
                         icon: const Icon(Icons.remove_circle_outline),
@@ -571,17 +572,17 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                           children: [
                             const Icon(Icons.info_outline, size: 20, color: Colors.blue),
                             const SizedBox(width: 8),
-                            Text(_getTemplateName(selectedTemplate, AppLocalizations.of(context)!), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                            Text(selectedTemplate.getLocalizedDisplayName(AppLocalizations.of(context)!), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _getTemplateDesc(selectedTemplate, AppLocalizations.of(context)!),
+                          selectedTemplate.getLocalizedDescription(AppLocalizations.of(context)!),
                           style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _getUsageSuggestion(selectedTemplate, AppLocalizations.of(context)!),
+                          selectedTemplate.getLocalizedUsageSuggestion(AppLocalizations.of(context)!),
                           style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.blue.shade800),
                         ),
                       ],
@@ -608,7 +609,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                           items: RetroIcebreaker.values.map((i) {
                              return DropdownMenuItem(
                                 value: i,
-                                child: Text(_getIcebreakerName(i, AppLocalizations.of(context)!)),
+                                child: Text(i.getLocalizedDisplayName(AppLocalizations.of(context)!)),
                              );
                           }).toList(),
                           onChanged: (val) {
@@ -623,7 +624,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                   _getIcebreakerDesc(selectedIcebreaker, AppLocalizations.of(context)!),
+                   selectedIcebreaker.getLocalizedDescription(AppLocalizations.of(context)!),
                    style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
                 ),
                 const SizedBox(height: 24),
@@ -678,7 +679,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Annulla'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -716,7 +717,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                   }
                 }
               },
-              child: const Text('Crea'),
+              child: Text(AppLocalizations.of(context)!.retroActionCreate),
             ),
           ],
         );

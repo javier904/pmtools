@@ -24,7 +24,9 @@ import 'screens/legal/privacy_policy_screen.dart';
 import 'screens/legal/terms_of_service_screen.dart';
 import 'screens/legal/cookie_policy_screen.dart';
 import 'screens/legal/gdpr_screen.dart';
+import 'screens/invite_landing_screen.dart';
 import 'widgets/legal/cookie_consent_banner.dart';
+import 'models/unified_invite_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -189,8 +191,8 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 '/login': (context) => const LoginScreen(),
                 '/home': (context) => const HomeScreen(),
                 '/profile': (context) => const ProfileScreen(),
-                '/eisenhower': (context) => const EisenhowerScreen(),
-                '/estimation-room': (context) => const EstimationRoomScreen(),
+                // '/eisenhower' gestito in onGenerateRoute per supportare arguments
+                // '/estimation-room' gestito in onGenerateRoute per supportare arguments
                 '/agile-process': (context) => const AgileProcessScreen(),
                 '/agile-project': (context) => const AgileProjectLoaderScreen(),
                 '/retrospective-list': (context) => const RetroGlobalDashboard(),
@@ -200,6 +202,76 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 '/terms': (context) => const TermsOfServiceScreen(),
                 '/cookies': (context) => const CookiePolicyScreen(),
                 '/gdpr': (context) => const GdprScreen(),
+              },
+              onGenerateRoute: (settings) {
+                // Gestione route con arguments
+                final args = settings.arguments as Map<String, dynamic>?;
+
+                // Route /eisenhower (con o senza matrixId)
+                if (settings.name == '/eisenhower') {
+                  final matrixId = args?['matrixId'] as String?;
+                  return MaterialPageRoute(
+                    builder: (context) => EisenhowerScreen(
+                      initialMatrixId: matrixId,
+                    ),
+                    settings: settings,
+                  );
+                }
+
+                // Route /estimation-room (con o senza sessionId)
+                if (settings.name == '/estimation-room') {
+                  final sessionId = args?['sessionId'] as String?;
+                  return MaterialPageRoute(
+                    builder: (context) => EstimationRoomScreen(
+                      initialSessionId: sessionId,
+                    ),
+                    settings: settings,
+                  );
+                }
+
+                // Deep link per inviti: /invite/{type}/{sourceId}
+                final uri = Uri.parse(settings.name ?? '');
+                final segments = uri.pathSegments;
+
+                if (segments.length >= 3 && segments[0] == 'invite') {
+                  final typeStr = segments[1];
+                  final sourceId = segments[2];
+                  final inviteId = segments.length > 3 ? segments[3] : null;
+
+                  InviteSourceType? sourceType;
+                  switch (typeStr) {
+                    case 'eisenhower':
+                      sourceType = InviteSourceType.eisenhower;
+                      break;
+                    case 'estimation-room':
+                      sourceType = InviteSourceType.estimationRoom;
+                      break;
+                    case 'agile-project':
+                      sourceType = InviteSourceType.agileProject;
+                      break;
+                    case 'smart-todo':
+                      sourceType = InviteSourceType.smartTodo;
+                      break;
+                    case 'retro-board':
+                      sourceType = InviteSourceType.retroBoard;
+                      break;
+                  }
+
+                  if (sourceType != null) {
+                    final type = sourceType;
+                    return MaterialPageRoute(
+                      builder: (context) => InviteLandingScreen(
+                        sourceType: type,
+                        sourceId: sourceId,
+                        inviteId: inviteId,
+                      ),
+                      settings: settings,
+                    );
+                  }
+                }
+
+                // Fallback per route non trovate
+                return null;
               },
               builder: (context, child) {
                 return Stack(

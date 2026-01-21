@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'eisenhower_participant_model.dart';
 
-/// Status possibili per un invito
-enum EisenhowerInviteStatus {
+/// Status possibili per un invito Retrospective
+enum RetroInviteStatus {
   pending,   // Invito inviato, in attesa di risposta
   accepted,  // Invito accettato
   declined,  // Invito rifiutato
@@ -10,25 +9,32 @@ enum EisenhowerInviteStatus {
   revoked,   // Invito revocato dal facilitatore
 }
 
-/// Modello per un invito a una Matrice di Eisenhower
-class EisenhowerInviteModel {
+/// Ruoli possibili per partecipante Retrospective
+enum RetroParticipantRole {
+  facilitator,  // Gestisce la sessione, timer, fasi
+  participant,  // Partecipa attivamente (scrive cards, vota)
+  observer,     // Visualizza senza interagire
+}
+
+/// Modello per un invito a una Retrospective Board
+class RetroInviteModel {
   final String id;
-  final String matrixId;
+  final String boardId;          // ID della retrospettiva
   final String email;
-  final EisenhowerParticipantRole role;
-  final EisenhowerInviteStatus status;
-  final String invitedBy;       // Email di chi ha invitato
-  final String invitedByName;   // Nome di chi ha invitato
+  final RetroParticipantRole role;
+  final RetroInviteStatus status;
+  final String invitedBy;        // Email di chi ha invitato
+  final String invitedByName;    // Nome di chi ha invitato
   final DateTime invitedAt;
   final DateTime expiresAt;
-  final String token;           // Token univoco per il link
+  final String token;            // Token univoco per il link
   final DateTime? acceptedAt;
   final DateTime? declinedAt;
   final String? declineReason;
 
-  const EisenhowerInviteModel({
+  const RetroInviteModel({
     required this.id,
-    required this.matrixId,
+    required this.boardId,
     required this.email,
     required this.role,
     required this.status,
@@ -47,17 +53,17 @@ class EisenhowerInviteModel {
 
   /// Verifica se l'invito è ancora valido (non scaduto e pending)
   bool get isValid =>
-      status == EisenhowerInviteStatus.pending &&
+      status == RetroInviteStatus.pending &&
       DateTime.now().isBefore(expiresAt);
 
   /// Verifica se l'invito è scaduto
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
   /// Verifica se l'invito è stato accettato
-  bool get isAccepted => status == EisenhowerInviteStatus.accepted;
+  bool get isAccepted => status == RetroInviteStatus.accepted;
 
   /// Verifica se l'invito è in attesa
-  bool get isPending => status == EisenhowerInviteStatus.pending;
+  bool get isPending => status == RetroInviteStatus.pending;
 
   /// Giorni rimanenti prima della scadenza
   int get daysUntilExpiration {
@@ -65,17 +71,17 @@ class EisenhowerInviteModel {
     return diff.inDays;
   }
 
-  /// Genera il link di invito - nuovo formato deep link
+  /// Genera il link di invito - deep link format
   String generateInviteLink(String baseUrl) {
-    return '$baseUrl/#/invite/eisenhower/$matrixId';
+    return '$baseUrl/#/invite/retro/$boardId';
   }
 
   /// Crea da documento Firestore
-  factory EisenhowerInviteModel.fromFirestore(DocumentSnapshot doc) {
+  factory RetroInviteModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return EisenhowerInviteModel(
+    return RetroInviteModel(
       id: doc.id,
-      matrixId: data['matrixId'] ?? '',
+      boardId: data['boardId'] ?? '',
       email: data['email'] ?? '',
       role: _parseRole(data['role']),
       status: _parseStatus(data['status']),
@@ -91,10 +97,10 @@ class EisenhowerInviteModel {
   }
 
   /// Crea da Map (per dati inline)
-  factory EisenhowerInviteModel.fromMap(Map<String, dynamic> data, String id) {
-    return EisenhowerInviteModel(
+  factory RetroInviteModel.fromMap(Map<String, dynamic> data, String id) {
+    return RetroInviteModel(
       id: id,
-      matrixId: data['matrixId'] ?? '',
+      boardId: data['boardId'] ?? '',
       email: data['email'] ?? '',
       role: _parseRole(data['role']),
       status: _parseStatus(data['status']),
@@ -112,7 +118,7 @@ class EisenhowerInviteModel {
   /// Converti a Map per Firestore
   Map<String, dynamic> toFirestore() {
     return {
-      'matrixId': matrixId,
+      'boardId': boardId,
       'email': email.toLowerCase(),
       'role': role.name,
       'status': status.name,
@@ -128,12 +134,12 @@ class EisenhowerInviteModel {
   }
 
   /// Crea copia con modifiche
-  EisenhowerInviteModel copyWith({
+  RetroInviteModel copyWith({
     String? id,
-    String? matrixId,
+    String? boardId,
     String? email,
-    EisenhowerParticipantRole? role,
-    EisenhowerInviteStatus? status,
+    RetroParticipantRole? role,
+    RetroInviteStatus? status,
     String? invitedBy,
     String? invitedByName,
     DateTime? invitedAt,
@@ -143,9 +149,9 @@ class EisenhowerInviteModel {
     DateTime? declinedAt,
     String? declineReason,
   }) {
-    return EisenhowerInviteModel(
+    return RetroInviteModel(
       id: id ?? this.id,
-      matrixId: matrixId ?? this.matrixId,
+      boardId: boardId ?? this.boardId,
       email: email ?? this.email,
       role: role ?? this.role,
       status: status ?? this.status,
@@ -161,32 +167,32 @@ class EisenhowerInviteModel {
   }
 
   /// Parse role from string
-  static EisenhowerParticipantRole _parseRole(String? role) {
+  static RetroParticipantRole _parseRole(String? role) {
     switch (role) {
       case 'facilitator':
-        return EisenhowerParticipantRole.facilitator;
+        return RetroParticipantRole.facilitator;
       case 'observer':
-        return EisenhowerParticipantRole.observer;
-      case 'voter':
+        return RetroParticipantRole.observer;
+      case 'participant':
       default:
-        return EisenhowerParticipantRole.voter;
+        return RetroParticipantRole.participant;
     }
   }
 
   /// Parse status from string
-  static EisenhowerInviteStatus _parseStatus(String? status) {
+  static RetroInviteStatus _parseStatus(String? status) {
     switch (status) {
       case 'accepted':
-        return EisenhowerInviteStatus.accepted;
+        return RetroInviteStatus.accepted;
       case 'declined':
-        return EisenhowerInviteStatus.declined;
+        return RetroInviteStatus.declined;
       case 'expired':
-        return EisenhowerInviteStatus.expired;
+        return RetroInviteStatus.expired;
       case 'revoked':
-        return EisenhowerInviteStatus.revoked;
+        return RetroInviteStatus.revoked;
       case 'pending':
       default:
-        return EisenhowerInviteStatus.pending;
+        return RetroInviteStatus.pending;
     }
   }
 
@@ -203,13 +209,13 @@ class EisenhowerInviteModel {
 
   @override
   String toString() {
-    return 'EisenhowerInviteModel(id: $id, email: $email, role: $role, status: $status)';
+    return 'RetroInviteModel(id: $id, email: $email, role: $role, status: $status)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is EisenhowerInviteModel && other.id == id;
+    return other is RetroInviteModel && other.id == id;
   }
 
   @override
@@ -217,34 +223,70 @@ class EisenhowerInviteModel {
 }
 
 /// Extension per ottenere label italiano dello status
-extension EisenhowerInviteStatusExtension on EisenhowerInviteStatus {
+extension RetroInviteStatusExtension on RetroInviteStatus {
   String get label {
     switch (this) {
-      case EisenhowerInviteStatus.pending:
+      case RetroInviteStatus.pending:
         return 'In attesa';
-      case EisenhowerInviteStatus.accepted:
+      case RetroInviteStatus.accepted:
         return 'Accettato';
-      case EisenhowerInviteStatus.declined:
+      case RetroInviteStatus.declined:
         return 'Rifiutato';
-      case EisenhowerInviteStatus.expired:
+      case RetroInviteStatus.expired:
         return 'Scaduto';
-      case EisenhowerInviteStatus.revoked:
+      case RetroInviteStatus.revoked:
         return 'Revocato';
     }
   }
 
   String get icon {
     switch (this) {
-      case EisenhowerInviteStatus.pending:
+      case RetroInviteStatus.pending:
         return '⏳';
-      case EisenhowerInviteStatus.accepted:
+      case RetroInviteStatus.accepted:
         return '✅';
-      case EisenhowerInviteStatus.declined:
+      case RetroInviteStatus.declined:
         return '❌';
-      case EisenhowerInviteStatus.expired:
+      case RetroInviteStatus.expired:
         return '⌛';
-      case EisenhowerInviteStatus.revoked:
+      case RetroInviteStatus.revoked:
         return '🚫';
+    }
+  }
+}
+
+/// Extension per ottenere label italiano del ruolo
+extension RetroParticipantRoleExtension on RetroParticipantRole {
+  String get label {
+    switch (this) {
+      case RetroParticipantRole.facilitator:
+        return 'Facilitatore';
+      case RetroParticipantRole.participant:
+        return 'Partecipante';
+      case RetroParticipantRole.observer:
+        return 'Osservatore';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case RetroParticipantRole.facilitator:
+        return 'Gestisce la sessione, controlla timer e fasi';
+      case RetroParticipantRole.participant:
+        return 'Partecipa attivamente: scrive cards, vota, discute';
+      case RetroParticipantRole.observer:
+        return 'Visualizza la sessione senza interagire';
+    }
+  }
+
+  String get icon {
+    switch (this) {
+      case RetroParticipantRole.facilitator:
+        return '👑';
+      case RetroParticipantRole.participant:
+        return '✍️';
+      case RetroParticipantRole.observer:
+        return '👁️';
     }
   }
 }

@@ -7,7 +7,17 @@ import '../services/user_profile_service.dart';
 
 /// Login Screen - Autenticazione Google e Email/Password con tema
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  /// Callback chiamato dopo un login riuscito (opzionale)
+  final VoidCallback? onLoginSuccess;
+
+  /// Mostra il pulsante indietro (per uso da InviteLandingScreen)
+  final bool showBackButton;
+
+  const LoginScreen({
+    super.key,
+    this.onLoginSuccess,
+    this.showBackButton = false,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -42,6 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final credential = await _authService.signInWithGoogle();
       if (credential != null && credential.user != null) {
         await UserProfileService().createOrUpdateProfileFromAuth();
+        // Chiama callback se presente
+        widget.onLoginSuccess?.call();
       }
     } catch (e) {
       final l10n = AppLocalizations.of(context)!;
@@ -85,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         if (credential != null && credential.user != null) {
           await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.email);
+          widget.onLoginSuccess?.call();
         }
       } else {
         final credential = await _authService.signInWithEmail(
@@ -93,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         if (credential != null && credential.user != null) {
           await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.email);
+          widget.onLoginSuccess?.call();
         }
       }
     } catch (e) {
@@ -123,6 +137,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
+      appBar: widget.showBackButton
+          ? AppBar(
+              backgroundColor: context.backgroundColor,
+              surfaceTintColor: context.backgroundColor,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            )
+          : null,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),

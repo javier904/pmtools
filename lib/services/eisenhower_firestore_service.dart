@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
 import '../models/eisenhower_participant_model.dart';
@@ -63,6 +64,7 @@ class EisenhowerFirestoreService {
   /// Ottiene tutte le matrici dell'utente corrente
   ///
   /// Ritorna una lista di [EisenhowerMatrixModel] ordinate per data creazione (desc)
+  /// Include matrici create dall'utente E matrici dove l'utente è partecipante.
   Future<List<EisenhowerMatrixModel>> getMatrices() async {
     final userEmail = _authService.currentUserEmail;
     if (userEmail == null) {
@@ -70,15 +72,34 @@ class EisenhowerFirestoreService {
       return [];
     }
 
+    final normalizedEmail = userEmail.toLowerCase();
+
     try {
-      final snapshot = await _matricesRef
-          .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .orderBy('createdAt', descending: true)
+      // Query 1: Matrici create dall'utente
+      final ownedSnapshot = await _matricesRef
+          .where('createdBy', isEqualTo: normalizedEmail)
           .get();
 
-      return snapshot.docs
-          .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
-          .toList();
+      // Query 2: Matrici dove l'utente è partecipante
+      final participantSnapshot = await _matricesRef
+          .where('participantEmails', arrayContains: normalizedEmail)
+          .get();
+
+      // Combina ed elimina duplicati
+      final allMatrices = <String, EisenhowerMatrixModel>{};
+      for (final doc in ownedSnapshot.docs) {
+        final matrix = EisenhowerMatrixModel.fromFirestore(doc);
+        allMatrices[matrix.id] = matrix;
+      }
+      for (final doc in participantSnapshot.docs) {
+        final matrix = EisenhowerMatrixModel.fromFirestore(doc);
+        allMatrices[matrix.id] = matrix;
+      }
+
+      // Ordina per createdAt descending
+      final result = allMatrices.values.toList();
+      result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return result;
     } catch (e) {
       print('❌ Errore getMatrices: $e');
       return [];
@@ -87,7 +108,8 @@ class EisenhowerFirestoreService {
 
   /// Stream real-time delle matrici dell'utente corrente
   ///
-  /// Emette aggiornamenti automatici quando le matrici cambiano
+  /// Include matrici create dall'utente E matrici dove l'utente è partecipante.
+  /// Emette aggiornamenti automatici quando le matrici cambiano.
   Stream<List<EisenhowerMatrixModel>> streamMatrices() {
     final userEmail = _authService.currentUserEmail;
     if (userEmail == null) {
@@ -95,26 +117,92 @@ class EisenhowerFirestoreService {
       return Stream.value([]);
     }
 
-    return _matricesRef
-        .where('createdBy', isEqualTo: userEmail.toLowerCase())
-        .orderBy('createdAt', descending: true)
+    final normalizedEmail = userEmail.toLowerCase();
+    print('🔍 [EISENHOWER] streamMatrices for user: $normalizedEmail');
+
+    // Stream 1: Matrici create dall'utente
+    final ownedStream = _matricesRef
+        .where('createdBy', isEqualTo: normalizedEmail)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
-            .toList());
+        .map((snapshot) {
+          print('🔍 [EISENHOWER] Owned matrices: ${snapshot.docs.length}');
+          return snapshot.docs
+              .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
+              .toList();
+        });
+
+    // Stream 2: Matrici dove l'utente è partecipante
+    final participantStream = _matricesRef
+        .where('participantEmails', arrayContains: normalizedEmail)
+        .snapshots()
+        .map((snapshot) {
+          print('🔍 [EISENHOWER] Participant matrices: ${snapshot.docs.length}');
+          for (final doc in snapshot.docs) {
+            print('🔍 [EISENHOWER] - Matrix: ${doc.id}, participantEmails: ${doc.data()['participantEmails']}');
+          }
+          return snapshot.docs
+              .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
+              .toList();
+        });
+
+    // Combina entrambi gli stream ed elimina duplicati
+    return CombineLatestStream.list([
+      ownedStream.startWith([]),
+      participantStream.startWith([]),
+    ]).map((lists) {
+      print('🔍 [EISENHOWER] CombineLatestStream emitted: owned=${lists[0].length}, participant=${lists[1].length}');
+      final allMatrices = <String, EisenhowerMatrixModel>{};
+      for (final list in lists) {
+        for (final matrix in list) {
+          allMatrices[matrix.id] = matrix; // Usa ID come chiave per evitare duplicati
+        }
+      }
+      print('🔍 [EISENHOWER] Total unique matrices: ${allMatrices.length}');
+      // Ordina per createdAt descending
+      final result = allMatrices.values.toList();
+      result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return result;
+    });
   }
 
   /// Stream real-time delle matrici di un utente specifico
   ///
+  /// Include matrici create dall'utente E matrici dove l'utente è partecipante.
   /// [userEmail] - Email dell'utente di cui ottenere le matrici
   Stream<List<EisenhowerMatrixModel>> streamMatricesByUser(String userEmail) {
-    return _matricesRef
-        .where('createdBy', isEqualTo: userEmail.toLowerCase())
-        .orderBy('createdAt', descending: true)
+    final normalizedEmail = userEmail.toLowerCase();
+
+    // Stream 1: Matrici create dall'utente
+    final ownedStream = _matricesRef
+        .where('createdBy', isEqualTo: normalizedEmail)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
             .toList());
+
+    // Stream 2: Matrici dove l'utente è partecipante
+    final participantStream = _matricesRef
+        .where('participantEmails', arrayContains: normalizedEmail)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
+            .toList());
+
+    // Combina entrambi gli stream ed elimina duplicati
+    return CombineLatestStream.list([
+      ownedStream.startWith([]),
+      participantStream.startWith([]),
+    ]).map((lists) {
+      final allMatrices = <String, EisenhowerMatrixModel>{};
+      for (final list in lists) {
+        for (final matrix in list) {
+          allMatrices[matrix.id] = matrix;
+        }
+      }
+      final result = allMatrices.values.toList();
+      result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return result;
+    });
   }
 
   /// Ottiene una singola matrice per ID
@@ -1297,21 +1385,53 @@ class EisenhowerFirestoreService {
     required String userEmail,
     bool includeArchived = false,
   }) {
-    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
-    return _matricesRef
-        .where('createdBy', isEqualTo: userEmail.toLowerCase())
-        .orderBy('createdAt', descending: true)
+    final normalizedEmail = userEmail.toLowerCase();
+    print('🔍 [EISENHOWER] streamMatricesFiltered for: $normalizedEmail');
+
+    // Stream 1: Matrici create dall'utente
+    final ownedStream = _matricesRef
+        .where('createdBy', isEqualTo: normalizedEmail)
         .snapshots()
         .map((snapshot) {
-      var matrices = snapshot.docs
-          .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
-          .toList();
+          print('🔍 [EISENHOWER] Owned matrices found: ${snapshot.docs.length}');
+          return snapshot.docs
+              .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
+              .toList();
+        });
 
-      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+    // Stream 2: Matrici dove l'utente è partecipante
+    final participantStream = _matricesRef
+        .where('participantEmails', arrayContains: normalizedEmail)
+        .snapshots()
+        .map((snapshot) {
+          print('🔍 [EISENHOWER] Participant matrices found: ${snapshot.docs.length}');
+          return snapshot.docs
+              .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
+              .toList();
+        });
+
+    // Combina entrambi gli stream ed elimina duplicati
+    return CombineLatestStream.list([
+      ownedStream.startWith([]),
+      participantStream.startWith([]),
+    ]).map((lists) {
+      final allMatrices = <String, EisenhowerMatrixModel>{};
+      for (final list in lists) {
+        for (final matrix in list) {
+          allMatrices[matrix.id] = matrix;
+        }
+      }
+
+      var matrices = allMatrices.values.toList();
+      print('🔍 [EISENHOWER] Total unique matrices: ${matrices.length}');
+
+      // Filtro client-side per isArchived
       if (!includeArchived) {
         matrices = matrices.where((m) => m.isArchived != true).toList();
       }
 
+      // Ordina per createdAt descending
+      matrices.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return matrices;
     });
   }

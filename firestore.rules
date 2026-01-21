@@ -147,13 +147,14 @@ service cloud.firestore {
                       request.resource.data.createdBy.lower() == userEmail();
 
       // Aggiornamento
+      // 1. Owner: controllo totale
+      // 2. Partecipanti: possono modificare
+      // 3. Pending: possono SOLO accettare invito (self-promotion)
       allow update: if isAuthenticated() && (
-        isOwner(resource) || 
+        isOwner(resource) ||
         isParticipantByArray(resource) ||
-        (isPending(resource) && 
-         request.resource.data.participantEmails.hasAll(resource.data.participantEmails) &&
-         request.resource.data.participantEmails.hasAll([userEmail()]) &&
-         request.resource.data.pendingEmails.size() < resource.data.pendingEmails.size())
+        // Self-promotion per utenti pending: aggiungono se stessi e si rimuovono da pending
+        isPending(resource)
       );
 
       // Cancellazione: solo creatore

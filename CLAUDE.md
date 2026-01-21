@@ -364,6 +364,145 @@ Prima dell'attivazione, configurare:
 
 ---
 
+## Sistema Inviti Unificato
+
+### Architettura
+
+Il sistema di inviti è progettato per essere **consistente** tra tutti i tool, con:
+
+1. **Modelli specifici per tool** - Ogni tool ha il proprio `*InviteModel`
+2. **Servizi dedicati** - Ogni tool ha il proprio `*InviteService`
+3. **Aggregatore unificato** - `InviteAggregatorService` combina tutti gli inviti
+4. **Modello unificato** - `UnifiedInviteModel` per visualizzazione uniforme
+
+### Tool Supportati
+
+| Tool | Collection | Modello | Servizio | Ruoli |
+|------|------------|---------|----------|-------|
+| Eisenhower | `eisenhower_invites` | `EisenhowerInviteModel` | `EisenhowerInviteService` | facilitator, voter, observer |
+| Estimation Room | `planning_poker_sessions/{id}/invites` | `PlanningPokerInviteModel` | `PlanningPokerInviteService` | facilitator, voter, observer |
+| Agile Project | `agile_projects/{id}/invites` | `AgileInviteModel` | `AgileInviteService` | owner, admin, member, viewer |
+| Smart Todo | `smart_todo_lists/{id}/invites` | `TodoInviteModel` | `SmartTodoInviteService` | owner, editor, viewer |
+| Retrospective | `retro_invites` | `RetroInviteModel` | `RetroInviteService` | facilitator, participant, observer |
+
+### Struttura Firestore Inviti
+
+```
+{collection}_invites/{inviteId}
+├── {parentId}: String          # matrixId, sessionId, projectId, listId, boardId
+├── email: String               # Email invitato (lowercase)
+├── role: String                # Ruolo assegnato
+├── status: String              # pending, accepted, declined, expired, revoked
+├── token: String               # Token univoco 32 chars
+├── invitedBy: String           # Email di chi ha invitato
+├── invitedByName: String       # Nome di chi ha invitato
+├── invitedAt: Timestamp
+├── expiresAt: Timestamp
+├── acceptedAt: Timestamp?
+├── declinedAt: Timestamp?
+└── declineReason: String?
+```
+
+### Flusso Inviti
+
+```
+1. CREAZIONE
+   Owner/Facilitator → createInvite() → Firestore + pendingEmails + Email
+
+2. RICEZIONE
+   Invitato riceve email con deep link → /invite/{tool}/{entityId}
+
+3. VISUALIZZAZIONE
+   InviteAggregatorService.streamAllPendingInvites() → Lista unificata in HomeScreen
+
+4. ACCETTAZIONE
+   acceptInvite() → status='accepted' + aggiunge a participantEmails + rimuove da pendingEmails
+
+5. VISIBILITA'
+   L'entità diventa visibile nelle query che usano arrayContains('participantEmails', email)
+```
+
+### Componenti UI
+
+| Componente | Descrizione |
+|------------|-------------|
+| `InvitesSummaryWidget` | Mostra inviti pendenti nella HomeScreen |
+| `InviteDetailDialog` | Dettaglio invito con azioni accept/decline |
+| `*ParticipantInviteDialog` | Dialog per creare inviti (uno per tool) |
+
+### Deep Links
+
+```
+/invite/eisenhower/{matrixId}
+/invite/estimation-room/{sessionId}
+/invite/agile/{projectId}
+/invite/smart-todo/{listId}
+/invite/retro/{boardId}
+```
+
+### Pattern di Utilizzo
+
+```dart
+// Creare un invito
+final inviteService = RetroInviteService();
+final invite = await inviteService.createInvite(
+  boardId: retroId,
+  email: 'user@example.com',
+  role: RetroParticipantRole.participant,
+);
+
+// Inviare email (richiede Gmail API)
+await inviteService.sendInviteEmail(
+  invite: invite,
+  retroTitle: 'Sprint 42 Retro',
+  baseUrl: 'https://pm-agile-tools-app.web.app',
+  senderEmail: currentUserEmail,
+  gmailApi: gmailApi,
+);
+
+// Stream inviti pendenti per utente corrente
+InviteAggregatorService().streamAllPendingInvites().listen((invites) {
+  // Aggiorna UI con lista inviti
+});
+
+// Accettare un invito
+final success = await InviteAggregatorService().acceptInvite(invite);
+```
+
+### Firestore Indexes Richiesti
+
+```json
+{
+  "collectionGroup": "invites",
+  "queryScope": "COLLECTION_GROUP",
+  "fields": [
+    { "fieldPath": "email", "order": "ASCENDING" },
+    { "fieldPath": "status", "order": "ASCENDING" }
+  ]
+}
+```
+
+### Visibilità Post-Accettazione
+
+Quando un utente accetta un invito:
+
+1. L'utente viene aggiunto al campo `participantEmails` dell'entità
+2. Le query dei servizi (es. `streamUserRetrospectives`) usano `arrayContains` su `participantEmails`
+3. L'entità diventa automaticamente visibile nella dashboard dell'utente
+4. L'utente può interagire con il ruolo assegnato
+
+### Limite Inviti per Abbonamento
+
+Gli inviti sono soggetti ai limiti dell'abbonamento:
+
+| Tier | Inviti per entità |
+|------|-------------------|
+| Free | 10 |
+| Premium | 15 |
+| Elite | Illimitati |
+
+---
+
 ## Origine
 
 Spinoff standalone da: `/Users/leonardo.torella/Progetti/dashboard` (PMO Dashboard)

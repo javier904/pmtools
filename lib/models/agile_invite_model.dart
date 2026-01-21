@@ -57,9 +57,9 @@ class AgileInviteModel {
     return diff.inDays;
   }
 
-  /// Genera il link di invito
+  /// Genera il link di invito - nuovo formato deep link
   String generateInviteLink(String baseUrl) {
-    return '$baseUrl/agile/invite/$token';
+    return '$baseUrl/#/invite/agile-project/$projectId';
   }
 
   /// Crea da documento Firestore

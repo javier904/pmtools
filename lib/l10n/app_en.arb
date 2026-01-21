@@ -1,9 +1,7 @@
 {
   "@@locale": "en",
-
   "appTitle": "Keisen",
   "goToHome": "Go to Home",
-
   "actionSave": "Save",
   "actionCancel": "Cancel",
   "actionDelete": "Delete",
@@ -21,18 +19,16 @@
   "actionDone": "Done",
   "actionReset": "Reset",
   "actionOpen": "Open",
-
   "stateLoading": "Loading...",
   "stateEmpty": "No items",
   "stateError": "Error",
   "stateSuccess": "Success",
-
   "subscriptionCurrent": "CURRENT",
   "subscriptionRecommended": "RECOMMENDED",
   "subscriptionFree": "Free",
   "subscriptionPerMonth": "/month",
   "subscriptionPerYear": "/year",
-  "subscriptionSaveYearly": "Save {amount} with yearly",
+  "subscriptionSaveYearly": "Save €{amount}/year",
   "@subscriptionSaveYearly": {
     "placeholders": {
       "amount": {
@@ -58,8 +54,7 @@
     }
   },
   "subscriptionUnlimitedLists": "Unlimited lists",
-  "subscriptionUnlimitedLists": "Unlimited lists",
-  "subscriptionSmartTodoLists": "{count} Smart Todo lists",
+  "subscriptionSmartTodoLists": "Smart Todo lists",
   "@subscriptionSmartTodoLists": {
     "placeholders": {
       "count": {
@@ -67,7 +62,7 @@
       }
     }
   },
-  "subscriptionActiveProjectsLabel": "Active Projects",
+  "subscriptionActiveProjectsLabel": "Active projects",
   "subscriptionSmartTodoListsLabel": "Smart Todo Lists",
   "subscriptionUnlimitedTasks": "Unlimited tasks",
   "subscriptionTasksPerProject": "{count} tasks per project",
@@ -88,8 +83,7 @@
     }
   },
   "subscriptionWithAds": "With ads",
-  "subscriptionWithoutAds": "No ads",
-
+  "subscriptionWithoutAds": "Without ads",
   "authSignInGoogle": "Sign in with Google",
   "authSignOut": "Sign out",
   "authLogoutConfirm": "Are you sure you want to sign out?",
@@ -107,11 +101,9 @@
   "authLogin": "Login",
   "authHaveAccount": "Already have an account?",
   "authNoAccount": "Don't have an account?",
-
   "navHome": "Home",
   "navProfile": "Profile",
   "navSettings": "Settings",
-
   "eisenhowerTitle": "Eisenhower Matrix",
   "eisenhowerYourMatrices": "Your matrices",
   "eisenhowerNoMatrices": "No matrices created",
@@ -252,9 +244,38 @@
   "errorSavingVotes": "Error saving votes",
   "errorExport": "Error during export",
   "errorStartingVoting": "Error starting voting",
-  "errorResetVoting": "Error resetting voting",
+  "errorResetVoting": "Error resetting",
   "errorLoadingActivities": "Error loading activities",
-
+  "eisenhowerWaitingForVotes": "Waiting for votes",
+  "eisenhowerVotedParticipants": "{ready}/{total} votes",
+  "@eisenhowerVotedParticipants": {
+    "placeholders": {
+      "ready": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVoteSubmit": "VOTE",
+  "eisenhowerVotedSuccess": "You have voted",
+  "eisenhowerRevealVotes": "REVEAL VOTES",
+  "eisenhowerQuickVote": "Quick Vote",
+  "eisenhowerTeamVote": "Team Vote",
+  "eisenhowerUrgency": "Urgency",
+  "eisenhowerImportance": "Importance",
+  "eisenhowerUrgencyShort": "U:",
+  "eisenhowerImportanceShort": "I:",
+  "eisenhowerVotingInProgress": "VOTING IN PROGRESS",
+  "eisenhowerWaitingForOthers": "Waiting for everyone to vote. The facilitator will reveal the votes.",
+  "eisenhowerReady": "Ready",
+  "eisenhowerWaiting": "Waiting",
+  "eisenhowerIndividualVotes": "INDIVIDUAL VOTES",
+  "eisenhowerResult": "RESULT",
+  "eisenhowerAverage": "AVERAGE",
+  "eisenhowerVotesRevealed": "Votes Revealed",
+  "eisenhowerNoVotesRecorded": "No votes recorded",
   "estimationTitle": "Estimation Room",
   "estimationYourSessions": "Your sessions",
   "estimationNoSessions": "No sessions created",
@@ -313,40 +334,116 @@
   "estimationModeDotVoting": "Dot Voting",
   "estimationModeBucketSystem": "Bucket System",
   "estimationModeFiveFingers": "Five Fingers",
-
   "retroTitle": "My Retrospectives",
   "retroNoRetros": "No retrospectives",
   "retroCreateNew": "Create New",
-
+  "retroGuidance": "Retrospective Guide",
+  "retroSearchHint": "Search retrospective...",
+  "retroNoResults": "No results found",
+  "retroFilterAll": "All",
+  "retroFilterActive": "Active",
+  "retroFilterCompleted": "Completed",
+  "retroFilterDraft": "Draft",
+  "retroDeleteTitle": "Delete Retrospective",
+  "retroDeleteConfirm": "Are you sure you want to permanently delete the retrospective \"{title}\"?\n\nThis action is irreversible and will delete all associated data (cards, votes, action items).",
+  "@retroDeleteConfirm": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "retroDeleteSuccess": "Retrospective deleted successfully",
+  "retroDeleteError": "Error during deletion: {error}",
+  "@retroDeleteError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "retroDeleteConfirmAction": "Permanently Delete",
+  "retroNewRetroTitle": "New Retrospective",
+  "retroLinkToSprint": "Link to Sprint?",
+  "retroNoProjectFound": "No project found.",
+  "retroSelectProject": "Select Project",
+  "retroSelectSprint": "Select Sprint",
+  "retroSprintLabel": "Sprint {number}: {name}",
+  "@retroSprintLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "retroSessionTitle": "Session Title",
+  "retroSessionTitleHint": "e.g., Weekly Sync, Project Review...",
+  "retroTemplateLabel": "Template",
+  "retroVotesPerUser": "Votes per user:",
+  "retroActionClose": "Close",
+  "retroActionCreate": "Create",
+  "retroStatusDraft": "Draft",
+  "retroStatusActive": "Active",
+  "retroStatusCompleted": "Completed",
+  "retroTemplateStartStopContinue": "Start, Stop, Continue",
+  "retroTemplateSailboat": "Sailboat",
+  "retroTemplate4Ls": "4 Ls",
+  "retroTemplateStarfish": "Starfish",
+  "retroTemplateMadSadGlad": "Mad Sad Glad",
+  "retroTemplateDAKI": "DAKI (Drop Add Keep Improve)",
+  "retroDescStartStopContinue": "Action-oriented: Start, Stop, Continue.",
+  "retroDescSailboat": "Visual: Wind (propels), Anchors (drags), Rocks (risks), Island (goals).",
+  "retroDesc4Ls": "Liked, Learned, Lacked, Longed For.",
+  "retroDescStarfish": "Keep, Stop, Start, More, Less.",
+  "retroDescMadSadGlad": "Emotional: Mad, Sad, Glad.",
+  "retroDescDAKI": "Pragmatic: Drop, Add, Keep, Improve.",
+  "retroUsageStartStopContinue": "Best for actionable feedback and focusing on behavioral changes.",
+  "retroUsageSailboat": "Best for visualizing the team's journey, goals, and risks. Great for creative thinking.",
+  "retroUsage4Ls": "Reflective: Best for learning from the past and highlighting emotional/learning aspects.",
+  "retroUsageStarfish": "Calibration: Best for scaling efforts (doing more/less of something), not just binary stop/start.",
+  "retroUsageMadSadGlad": "Best for emotional check-ins, resolving conflicts, or after a stressful sprint.",
+  "retroUsageDAKI": "Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).",
+  "retroIcebreakerSentiment": "Sentiment Vote",
+  "retroIcebreakerOneWord": "One Word",
+  "retroIcebreakerWeather": "Weather Report",
+  "retroIcebreakerSentimentDesc": "Vote from 1 to 5 how you felt during the sprint.",
+  "retroIcebreakerOneWordDesc": "Describe the sprint with a single word.",
+  "retroIcebreakerWeatherDesc": "Choose a weather icon that represents the sprint.",
+  "retroPhaseIcebreaker": "Icebreaker",
+  "retroPhaseWriting": "Writing",
+  "retroPhaseVoting": "Voting",
+  "retroPhaseDiscuss": "Discuss",
+  "retroActionItemsLabel": "Action Items",
+  "retroPhaseStart": "Start",
+  "retroPhaseStop": "Stop",
+  "retroPhaseContinue": "Continue",
   "settingsLanguage": "Language",
   "settingsTheme": "Theme",
   "settingsThemeLight": "Light",
   "settingsThemeDark": "Dark",
   "settingsThemeSystem": "System",
-
   "formTitle": "Title",
   "formDescription": "Description",
   "formName": "Name",
   "formRequired": "Required field",
   "formHint": "Enter a value",
   "formOptional": "Optional",
-
-  "errorGeneric": "An error occurred",
+  "errorGeneric": "Error: {error}",
   "errorLoading": "Error loading data",
   "errorSaving": "Error saving",
   "errorNetwork": "Connection error",
   "errorPermission": "Permission denied",
   "errorNotFound": "Not found",
-
   "successSaved": "Saved successfully",
   "successDeleted": "Deleted successfully",
   "successCopied": "Copied to clipboard",
-
   "filterAll": "All",
   "filterRemove": "Remove filters",
   "filterActive": "Active",
   "filterCompleted": "Completed",
-
   "participants": "Participants",
   "addParticipant": "Add participant",
   "removeParticipant": "Remove participant",
@@ -357,13 +454,11 @@
   "participantVoter": "Voter",
   "participantObserver": "Observer",
   "participantModerator": "Moderator",
-
   "confirmDelete": "Confirm deletion",
   "confirmDeleteMessage": "This action cannot be undone.",
   "yes": "Yes",
   "no": "No",
   "ok": "OK",
-
   "today": "Today",
   "yesterday": "Yesterday",
   "tomorrow": "Tomorrow",
@@ -391,7 +486,6 @@
       }
     }
   },
-
   "itemCount": "{count} items",
   "@itemCount": {
     "placeholders": {
@@ -400,7 +494,6 @@
       }
     }
   },
-
   "welcomeBack": "Welcome back",
   "greeting": "Hello, {name}!",
   "@greeting": {
@@ -410,12 +503,10 @@
       }
     }
   },
-
   "copyLink": "Copy link",
   "shareSession": "Share session",
   "inviteByEmail": "Invite by email",
   "inviteByLink": "Invite by link",
-
   "profileTitle": "Profile",
   "profileEmail": "Email",
   "profileDisplayName": "Display name",
@@ -479,7 +570,7 @@
   "profileWeeklySummary": "Weekly Summary",
   "profileWeeklySummaryDesc": "Weekly activity report",
   "profileDangerZone": "Danger Zone",
-  "profileDeleteAccount": "Delete Account",
+  "profileDeleteAccount": "Delete account",
   "profileDeleteAccountDesc": "Request permanent deletion of your account and all associated data",
   "profileDeleteAccountRequest": "Request",
   "profileDeleteAccountIrreversible": "This action is irreversible. All your data will be permanently deleted.",
@@ -527,10 +618,8 @@
     }
   },
   "stateSaving": "Saving...",
-
   "cardCoffee": "Break",
   "cardQuestion": "Don't know",
-
   "toolEisenhower": "Eisenhower Matrix",
   "toolEisenhowerDesc": "Organize activities by urgency and importance. Quadrants to decide what to do now, schedule, delegate or eliminate.",
   "toolEisenhowerDescShort": "Prioritize by urgency and importance",
@@ -546,13 +635,11 @@
   "toolRetro": "Retrospective Board",
   "toolRetroDesc": "Collect team feedback on what went well, what to improve and actions to take.",
   "toolRetroDescShort": "Collect team feedback on what went well and what to improve.",
-
   "homeUtilities": "Utilities",
   "homeSelectTool": "Select a tool to get started",
   "statusOnline": "Online",
   "comingSoon": "Coming Soon",
   "featureComingSoon": "This feature will be available soon!",
-
   "featureSmartImport": "Smart Import",
   "featureCollaboration": "Collaboration",
   "featureFilters": "Filters",
@@ -568,18 +655,20 @@
   "featureWentWell": "Went Well",
   "featureToImprove": "To Improve",
   "featureActions": "Actions",
-
   "themeLightMode": "Light Mode",
   "themeDarkMode": "Dark Mode",
-
   "estimationBackToSessions": "Back to sessions",
   "estimationSessionSettings": "Session Settings",
   "estimationList": "List",
   "estimationSessionsCount": "Your sessions ({filtered}/{total})",
   "@estimationSessionsCount": {
     "placeholders": {
-      "filtered": { "type": "int" },
-      "total": { "type": "int" }
+      "filtered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "estimationNoSessionFound": "No session found",
@@ -590,9 +679,15 @@
   "estimationProgress": "Progress: {completed}/{total} stories ({percent}%)",
   "@estimationProgress": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" },
-      "percent": { "type": "String" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "estimationStart": "Start",
@@ -602,15 +697,23 @@
   "estimationCompletedLabel": "Completed: {completed}/{total} | Total estimate: {total_estimate} pt",
   "@estimationCompletedLabel": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" },
-      "total_estimate": { "type": "String" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "total_estimate": {
+        "type": "String"
+      }
     }
   },
   "estimationVoteStory": "Vote: {title}",
   "@estimationVoteStory": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "estimationAddStoriesToStart": "Add stories to start",
@@ -626,7 +729,9 @@
   "estimationVotesOf": "Votes: {title}",
   "@estimationVotesOf": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "estimationParticipantVotes": "Participant votes:",
@@ -645,7 +750,6 @@
   "storyStatusPending": "Pending",
   "storyStatusVoting": "Voting",
   "storyStatusRevealed": "Votes revealed",
-
   "participantManagement": "Participant Management",
   "participantCopySessionLink": "Copy session link",
   "participantInvitesTab": "Invites",
@@ -657,8 +761,12 @@
   "participantVotersAndObservers": "{voters} voters, {observers} observers",
   "@participantVotersAndObservers": {
     "placeholders": {
-      "voters": { "type": "int" },
-      "observers": { "type": "int" }
+      "voters": {
+        "type": "int"
+      },
+      "observers": {
+        "type": "int"
+      }
     }
   },
   "participantYou": "You",
@@ -668,29 +776,36 @@
   "participantRemoveConfirm": "Are you sure you want to remove \"{name}\" from the session?",
   "@participantRemoveConfirm": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "participantAddedToSession": "{email} added to session",
   "@participantAddedToSession": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "participantRemovedFromSession": "{name} removed from session",
   "@participantRemovedFromSession": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "participantRoleUpdated": "Role updated for {email}",
   "@participantRoleUpdated": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "participantFacilitator": "Facilitator",
-
   "inviteSendNew": "Send New Invite",
   "inviteRecipientEmail": "Recipient email *",
   "inviteCreate": "Create Invite",
@@ -699,13 +814,17 @@
   "inviteCreatedFor": "Invite created for {email}",
   "@inviteCreatedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteExpiresIn": "Expires in {days}d",
   "@inviteExpiresIn": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "inviteCopyLink": "Copy invite link",
@@ -715,33 +834,40 @@
   "inviteRevokeConfirm": "Are you sure you want to revoke the invite for {email}?",
   "@inviteRevokeConfirm": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteRevoke": "Revoke",
   "inviteRevokedFor": "Invite revoked for {email}",
   "@inviteRevokedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteDeleteTitle": "Delete Invite",
   "inviteDeleteConfirm": "Are you sure you want to delete the invite for {email}?\n\nThis action is irreversible.",
   "@inviteDeleteConfirm": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteDeletedFor": "Invite deleted for {email}",
   "@inviteDeletedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteLinkCopied": "Invite link copied to clipboard",
   "linkCopied": "Link copied to clipboard",
   "enterValidEmail": "Enter a valid email address",
-
   "sessionCreatedSuccess": "Session created successfully",
   "sessionUpdated": "Session updated",
   "sessionDeleted": "Session deleted",
@@ -753,26 +879,32 @@
   "estimateSaved": "Estimate saved: {estimate}",
   "@estimateSaved": {
     "placeholders": {
-      "estimate": { "type": "String" }
+      "estimate": {
+        "type": "String"
+      }
     }
   },
-
   "deleteSessionTitle": "Delete Session",
   "deleteSessionConfirm": "Are you sure you want to delete \"{name}\"?\nAlso all {count} stories will be deleted.",
   "@deleteSessionConfirm": {
     "placeholders": {
-      "name": { "type": "String" },
-      "count": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
     }
   },
   "deleteStoryTitle": "Delete Story",
   "deleteStoryConfirm": "Are you sure you want to delete \"{title}\"?",
   "@deleteStoryConfirm": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "errorLoadingSession": "Error loading session",
   "errorLoadingStories": "Error loading stories",
   "errorCreatingSession": "Error creating session",
@@ -781,19 +913,18 @@
   "errorAddingStory": "Error adding story",
   "errorStartingSession": "Error starting session",
   "errorCompletingSession": "Error completing session",
-  "errorStartingVoting": "Error starting voting",
   "errorSubmittingVote": "Error submitting vote",
   "errorRevealingVotes": "Error revealing",
-  "errorResetVoting": "Error resetting",
   "errorSavingEstimate": "Error saving estimate",
   "errorSkipping": "Error skipping",
-
   "retroIcebreakerTitle": "Icebreaker: Team Morale",
   "retroIcebreakerQuestion": "How did you feel about this sprint?",
   "retroParticipantsVoted": "{count} participants voted",
   "@retroParticipantsVoted": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "retroEndIcebreakerStartWriting": "End Icebreaker & Start Writing",
@@ -802,7 +933,6 @@
   "retroMoodNeutral": "Neutral",
   "retroMoodGood": "Good",
   "retroMoodExcellent": "Excellent",
-
   "retroAgileCoach": "Agile Coach",
   "retroCoachSetup": "Choose a template. \"Start/Stop/Continue\" is great for new teams. Make sure everyone is present.",
   "retroCoachIcebreaker": "Break the ice! Do a quick round asking \"How are you?\" or use a fun question.",
@@ -810,31 +940,35 @@
   "retroCoachVoting": "Review Time! All cards are visible. Read them and use your 3 votes to decide what to discuss.",
   "retroCoachDiscuss": "Focus on the most voted cards. Define clear Action Items: Who does what by when?",
   "retroCoachCompleted": "Great job! The retrospective is complete. Action Items have been sent to the Backlog.",
-
   "retroStep": "Step {step}: {title}",
   "@retroStep": {
     "placeholders": {
-      "step": { "type": "int" },
-      "title": { "type": "String" }
+      "step": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
     }
   },
   "retroCurrentFocus": "Current Focus: {title}",
   "@retroCurrentFocus": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "retroCanvasMinColumns": "Template requires at least 4 columns (Sailboat style)",
   "retroAddTo": "Add to {title}",
   "@retroAddTo": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "retroNoColumnsConfigured": "No columns configured.",
-
   "retroNewActionItem": "New Action Item",
   "retroEditActionItem": "Edit Action Item",
   "retroActionWhatToDo": "What needs to be done?",
@@ -851,10 +985,7 @@
   "retroActionResourcesHint": "Tools, budget, extra people needed...",
   "retroActionMonitoring": "Monitoring Method",
   "retroActionMonitoringHint": "How will we verify progress? (e.g. Daily, Review...)",
-
   "retroNoActionItems": "No Action Items created yet.",
-  "retroNewActionItem": "New Action Item",
-  "retroEditActionItem": "Edit Action Item",
   "retroActionResourcesShort": "Res",
   "retroTableRef": "Ref.",
   "retroTableDescription": "Description",
@@ -865,25 +996,32 @@
   "retroUnassigned": "Unassigned",
   "retroDeleteActionItem": "Delete Action Item",
   "retroDeleteConfirm": "Are you sure?",
-
   "retroChooseMethodology": "Choose Methodology",
-
   "retroHidingWhileTyping": "Hiding while typing...",
   "retroVoteLimitReached": "You have reached the limit of {max} votes!",
   "@retroVoteLimitReached": {
     "placeholders": {
-      "max": { "type": "int" }
+      "max": {
+        "type": "int"
+      }
     }
   },
   "retroAddCardHint": "What are your thoughts?",
   "retroAddCard": "Add Card",
-
   "retroTimeUp": "Time's Up!",
   "retroTimeUpMessage": "The time for this phase has ended. Wrap up the discussion or extend the time.",
   "retroTimeUpOk": "Ok, got it",
   "retroStopTimer": "Stop Timer",
   "retroStartTimer": "Start Timer",
-
+  "retroTimerMinutes": "{minutes} Min",
+  "@retroTimerMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "retroAddCardButton": "Add Card",
   "retroNoRetrosFound": "No retrospectives found",
   "retroDeleteRetro": "Delete Retrospective",
   "retroParticipantsLabel": "Participants",
@@ -896,26 +1034,22 @@
       }
     }
   },
-
   "landingBadge": "Agile Team Tools",
   "landingHeroTitle": "Build better products\nwith Keisen",
   "landingHeroSubtitle": "Prioritize, estimate, and manage your projects with collaborative tools. All in one place, for free.",
   "landingStartFree": "Start for Free",
-  
   "landingEverythingNeed": "Everything you need",
   "landingModernTools": "Tools designed for modern teams",
-  
   "landingSmartTodoBadge": "Productivity",
   "landingSmartTodoTitle": "Smart Todo List",
   "landingSmartTodoSubtitle": "Intelligent and collaborative task management for modern teams",
   "landingSmartTodoCollaborativeTitle": "Collaborative Task Lists",
   "landingSmartTodoCollaborativeDesc": "Smart Todo transforms daily activity management into a fluid and collaborative process. Create lists, assign tasks to team members, and monitor progress in real-time.\n\nIdeal for distributed teams needing continuous synchronization on activities to complete.",
   "landingSmartTodoImportTitle": "Flexible Import",
-  "landingSmartTodoImportDesc": "Import your activities from external sources in just a few clicks. Support for CSV files, copy/paste from Excel, or free text. The system automatically recognizes the data structure.\n\nMigrate easily from other tools without losing information or manually re-entering every task.",
+  "landingSmartTodoImportDesc": "Import your activities from external sources in a few clicks. Support for CSV files, copy/paste from Excel, or free text. The system automatically recognizes data structure.\n\nEasily migrate from other tools without losing information or manually re-entering every task.",
   "landingSmartTodoShareTitle": "Sharing and Invites",
   "landingSmartTodoShareDesc": "Invite colleagues and collaborators to your lists via email. Each participant can view, comment, and update the status of assigned tasks.\n\nPerfect for managing cross-functional projects with external stakeholders or cross-functional teams.",
   "landingSmartTodoFeaturesTitle": "Smart Todo Features",
-  
   "landingEisenhowerBadge": "Prioritization",
   "landingEisenhowerSubtitle": "The decision-making method used by leaders to manage time",
   "landingEisenhowerUrgentImportantTitle": "Urgent vs Important",
@@ -923,30 +1057,26 @@
   "landingEisenhowerDecisionsTitle": "Better Decisions",
   "landingEisenhowerDecisionsDesc": "By constantly applying the matrix, you develop a results-oriented mindset. You learn to say \"no\" to distractions and focus on what generates real value.\n\nOur digital tool makes this process immediate: drag activities into the correct quadrant and get a clear view of your priorities.",
   "landingEisenhowerBenefitsTitle": "Why use the Eisenhower Matrix?",
-  "landingEisenhowerBenefitsDesc": "Studies show that 80% of daily activities fall into quadrants 3 and 4 (not important). The matrix helps you identify them and free up time for what really matters.",
+  "landingEisenhowerBenefitsDesc": "Studies show that 80% of daily activities fall into quadrants 3 and 4 (not important). The matrix helps you identify them and free up time for what truly matters.",
   "landingEisenhowerQuadrants": "Quadrant 1: Urgent + Important → Do Now\nQuadrant 2: Not Urgent + Important → Schedule\nQuadrant 3: Urgent + Not Important → Delegate\nQuadrant 4: Not Urgent + Not Important → Eliminate",
-
   "landingAgileBadge": "Methodologies",
   "landingAgileTitle": "Agile & Scrum Framework",
   "landingAgileSubtitle": "Implement best practices for iterative software development",
   "landingAgileIterativeTitle": "Iterative and Incremental Development",
-  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks long. Each iteration produces a working product increment.\n\nWith Keisen, you can manage your backlog, plan sprints, and monitor team velocity in real-time.",
+  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks. Each iteration produces a working product increment.\n\nWith Keisen you can manage your backlog, plan sprints and monitor team velocity in real time.",
   "landingAgileScrumTitle": "Scrum Framework",
-  "landingAgileScrumDesc": "Scrum is the most widespread Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective), and artifacts (Product Backlog, Sprint Backlog).\n\nKeisen supports all Scrum events with dedicated tools for each ceremony.",
+  "landingAgileScrumDesc": "Scrum is the most popular Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective) and artifacts (Product Backlog, Sprint Backlog).\n\nKeisen supports all Scrum events with dedicated tools for each ceremony.",
   "landingAgileKanbanTitle": "Kanban Board",
-  "landingAgileKanbanDesc": "The Kanban method visualizes the workflow through columns representing process states. It limits Work In Progress (WIP) to maximize throughput.\n\nOur Kanban board supports column customization, WIP limits, and flow metrics.",
-
+  "landingAgileKanbanDesc": "The Kanban method visualizes workflow through columns representing process states. It limits Work In Progress (WIP) to maximize throughput.\n\nOur Kanban board supports column customization, WIP limits, and flow metrics.",
   "landingEstimationBadge": "Estimation",
   "landingEstimationTitle": "Collaborative Estimation Techniques",
   "landingEstimationSubtitle": "Choose the best method for your team for accurate estimates",
   "landingEstimationFeaturesTitle": "Estimation Room Features",
-
   "landingRetroBadge": "Retrospective",
   "landingRetroTitle": "Interactive Retrospectives",
   "landingRetroSubtitle": "Real-time collaborative tools: timers, anonymous voting, action items, and AI reports.",
   "landingRetroActionTitle": "Action Items Tracking",
   "landingRetroActionDesc": "Each retrospective generates trackable action items with owners, deadlines, and status. Monitor follow-up over time.",
-
   "landingWorkflowBadge": "Workflow",
   "landingWorkflowTitle": "How it works",
   "landingWorkflowSubtitle": "Start in 3 simple steps",
@@ -956,29 +1086,25 @@
   "landingStep2Desc": "Estimate user stories together, organize sprints, and track progress in real-time.",
   "landingStep3Title": "Improve",
   "landingStep3Desc": "Analyze metrics, conduct retrospectives, and continuously improve the process.",
-
   "landingCtaTitle": "Ready to start?",
   "landingCtaDesc": "Sign up for free and start collaborating with your team.",
-
   "landingFooterBrandDesc": "Collaborative tools for agile teams.\nPlan, estimate, and improve together.",
   "landingFooterProduct": "Product",
   "landingFooterResources": "Resources",
   "landingFooterCompany": "Company",
   "landingFooterLegal": "Legal",
   "landingCopyright": "© 2026 Keisen. All rights reserved.",
-
-  "featureSmartImportDesc": "Quick task creation with description\nAssignment to team members\nConfigurable priority and deadlines\nCompletion notifications",
+  "featureSmartImportDesc": "Quick task creation with description\nTeam member assignment\nConfigurable priority and deadline\nCompletion notifications",
   "featureImportDesc": "Import from CSV file\nCopy/paste from Excel\nSmart text parsing\nAutomatic field mapping",
-  "featureShareDesc": "Email invites\nConfigurable permissions\nComments on tasks\nModification history",
-
+  "featureShareDesc": "Email invitations\nConfigurable permissions\nTask comments\nChange history",
   "featureSmartTaskCreation": "Quick task creation",
   "featureTeamAssignment": "Team assignment",
   "featurePriorityDeadline": "Priority and Deadlines",
-  "featureCompletionNotifications": "Completion Notifications",
+  "featureCompletionNotifications": "Completion notifications",
   "featureCsvImport": "CSV Import",
-  "featureExcelPaste": "Excel Copy/Paste",
-  "featureSmartParsing": "Smart Text Parsing",
-  "featureAutoMapping": "Auto Field Mapping",
+  "featureExcelPaste": "Copy/Paste Excel",
+  "featureSmartParsing": "Smart Parsing",
+  "featureAutoMapping": "Automatic Mapping",
   "featureEmailInvites": "Email Invites",
   "featurePermissions": "Configurable Permissions",
   "featureTaskComments": "Task Comments",
@@ -989,90 +1115,60 @@
   "featureTagsCategories": "Tags & Categories",
   "featureArchiving": "Archiving",
   "featureDataExport": "Data Export",
-
   "landingIntroFeatures": "Sprint Planning with team capacity\nPrioritized backlog with drag & drop\nVelocity tracking and burndown chart\nDaily standup facilitated",
-
   "landingAgileScrumFeatures": "Product Backlog with story points\nSprint Backlog with task breakdown\nRetrospective board integrated\nAutomatic Scrum metrics",
-
   "landingAgileKanbanFeatures": "Customizable columns\nWIP limits per column\nIntuitive drag & drop\nLead time and cycle time",
-
   "landingEstimationPokerDesc": "The classic method: each member chooses a card (1, 2, 3, 5, 8...). Estimates are revealed simultaneously to avoid bias.",
   "landingEstimationTShirtTitle": "T-Shirt Size",
-  "landingEstimationTShirtSubtitle": "Relative Sizing",
-  "landingEstimationTShirtDesc": "Quick estimation using sizes: XS, S, M, L, XL, XXL. Ideal for initial backlog grooming or when rough estimates are needed.",
+  "landingEstimationTShirtSubtitle": "Relative sizes",
+  "landingEstimationTShirtDesc": "Quick estimate using sizes: XS, S, M, L, XL, XXL. Ideal for initial backlog grooming or when an approximate estimate is needed.",
   "landingEstimationPertTitle": "Three-Point (PERT)",
   "landingEstimationPertSubtitle": "Optimistic / Likely / Pessimistic",
-  "landingEstimationPertDesc": "Statistical technique: each member provides 3 estimates (O, M, P). The PERT formula calculates the weighted average: (O + 4M + P) / 6.",
+  "landingEstimationPertDesc": "Statistical technique: each member provides 3 estimates (O, M, P). The PERT formula calculates the weighted estimate: (O + 4M + P) / 6.",
   "landingEstimationBucketTitle": "Bucket System",
-  "landingEstimationBucketSubtitle": "Quick Categorization",
-  "landingEstimationBucketDesc": "User stories are assigned to predefined \"buckets\". Great for estimating large amounts of items quickly in refinement sessions.",
-
-  "landingEstimationChipHiddenVote": "Hidden Voting",
-  "landingEstimationChipTimer": "Configurable Timer",
-  "landingEstimationChipStats": "Real-time Stats",
-  "landingEstimationChipParticipants": "Up to 20 Participants",
-  "landingEstimationChipHistory": "Estimation History",
-  "landingEstimationChipExport": "Results Export",
-
+  "landingEstimationBucketSubtitle": "Quick categorization",
+  "landingEstimationBucketDesc": "User stories are assigned to predefined buckets. Great for estimating large quantities of items quickly in refinement sessions.",
+  "landingEstimationChipHiddenVote": "Hidden vote",
+  "landingEstimationChipTimer": "Configurable timer",
+  "landingEstimationChipStats": "Real-time statistics",
+  "landingEstimationChipParticipants": "Up to 20 participants",
+  "landingEstimationChipHistory": "Estimate history",
+  "landingEstimationChipExport": "Export results",
   "landingRetroTemplateStartStopTitle": "Start / Stop / Continue",
-  "landingRetroTemplateStartStopDesc": "The classic format: what to start doing, what to stop doing, what to continue doing.",
+  "landingRetroTemplateStartStopDesc": "The classic format: what to start doing, what to stop doing, what to keep doing.",
   "landingRetroTemplateMadSadTitle": "Mad / Sad / Glad",
-  "landingRetroTemplateMadSadDesc": "Emotional retrospective: what made us mad, sad, or glad.",
+  "landingRetroTemplateMadSadDesc": "Emotional retrospective: what made us angry, sad or happy.",
   "landingRetroTemplate4LsTitle": "4L's",
-  "landingRetroTemplate4LsDesc": "Liked, Learned, Lacked, Longed For - comprehensive sprint analysis.",
+  "landingRetroTemplate4LsDesc": "Liked, Learned, Lacked, Longed For - complete sprint analysis.",
   "landingRetroTemplateSailboatTitle": "Sailboat",
   "landingRetroTemplateSailboatDesc": "Visual metaphor: wind (helpers), anchor (obstacles), rocks (risks), island (goals).",
   "landingRetroTemplateWentWellTitle": "Went Well / To Improve",
   "landingRetroTemplateWentWellDesc": "Simple and direct format: what went well and what to improve.",
   "landingRetroTemplateDakiTitle": "DAKI",
   "landingRetroTemplateDakiDesc": "Drop, Add, Keep, Improve - concrete decisions for the next sprint.",
-
   "landingRetroFeatureTrackingTitle": "Action Items Tracking",
-  "landingRetroFeatureTrackingDesc": "Each retrospective generates trackable action items with owner, deadline, and status. Monitor follow-up over time.",
-
+  "landingRetroFeatureTrackingDesc": "Each retrospective generates trackable action items with owner, deadline and status. Monitor follow-up over time.",
   "landingAgileSectionBadge": "Methodologies",
   "landingAgileSectionTitle": "Agile & Scrum Framework",
-  "landingAgileSectionSubtitle": "Implement best practices for iterative software development",
-  "landingAgileIterativeTitle": "Iterative and Incremental Development",
-  "landingAgileIterativeDesc": "The Agile approach divides work into short cycles called Sprints, typically 1-4 weeks. Each iteration produces a working product increment.\n\nWith Keisen you can manage your backlog, plan sprints and monitor team velocity in real time.",
-
-  "landingAgileScrumTitle": "Scrum Framework",
-  "landingAgileScrumDesc": "Scrum is the most popular Agile framework. It defines roles (Product Owner, Scrum Master, Team), events (Sprint Planning, Daily, Review, Retrospective) and artifacts (Product Backlog, Sprint Backlog).\n\nKeisen supports all Scrum events with dedicated tools for each ceremony.",
-
-  "landingAgileKanbanTitle": "Kanban Board",
-  "landingAgileKanbanDesc": "The Kanban method visualizes workflow through columns representing process states. It limits Work In Progress (WIP) to maximize throughput.\n\nOur Kanban board supports column customization, WIP limits, and flow metrics.",
-
-  "landingSmartTodoBadge": "Productivity",
-  "landingSmartTodoTitle": "Smart Todo List",
-  "landingSmartTodoSubtitle": "Intelligent and collaborative task management for modern teams",
+  "landingAgileSectionSubtitle": "Implement the best practices of iterative software development",
   "landingSmartTodoCollabTitle": "Collaborative Task Lists",
-  "landingSmartTodoCollabDesc": "Smart Todo transforms daily task management into a fluid and collaborative process. Create lists, assign tasks to team members, and monitor progress in real-time.\n\nIdeal for distributed teams needing continuous synchronization on tasks to be completed.",
-  "landingSmartTodoCollabFeatures": "Quick task creation with description\nAssignment to team members\nConfigurable priorities and deadlines\nCompletion notifications",
-  "landingSmartTodoImportTitle": "Flexible Import",
-  "landingSmartTodoImportDesc": "Import your activities from external sources in a few clicks. Support for CSV files, copy/paste from Excel, or free text. The system automatically recognizes data structure.\n\nEasily migrate from other tools without losing information or manually re-entering every task.",
+  "landingSmartTodoCollabDesc": "Smart Todo transforms daily activity management into a smooth and collaborative process. Create lists, assign tasks to team members and monitor progress in real-time.\n\nIdeal for distributed teams that need continuous synchronization on activities to complete.",
+  "landingSmartTodoCollabFeatures": "Quick task creation with description\nTeam member assignment\nConfigurable priority and deadline\nCompletion notifications",
   "landingSmartTodoImportFeatures": "Import from CSV file\nCopy/paste from Excel\nSmart text parsing\nAutomatic field mapping",
-  "landingSmartTodoSharingTitle": "Sharing and Invites",
-  "landingSmartTodoSharingDesc": "Invite colleagues and collaborators to your lists via email. Each participant can view, comment, and update the status of assigned tasks.\n\nPerfect for managing cross-functional projects with external stakeholders or teams.",
-  "landingSmartTodoSharingFeatures": "Email invites\nConfigurable permissions\nTask comments\nChange history",
-  "landingSmartTodoFeaturesTitle": "Smart Todo Features",
+  "landingSmartTodoSharingTitle": "Sharing and Invitations",
+  "landingSmartTodoSharingDesc": "Invite colleagues and collaborators to your lists via email. Each participant can view, comment and update the status of assigned tasks.\n\nPerfect for managing cross-functional projects with external stakeholders or cross-functional teams.",
+  "landingSmartTodoSharingFeatures": "Email invitations\nConfigurable permissions\nTask comments\nChange history",
   "landingSmartTodoChipFilters": "Advanced filters",
   "landingSmartTodoChipSearch": "Full-text search",
   "landingSmartTodoChipSort": "Sorting",
   "landingSmartTodoChipTags": "Tags and categories",
   "landingSmartTodoChipArchive": "Archiving",
   "landingSmartTodoChipExport": "Data export",
-
-  "landingEisenhowerBadge": "Prioritization",
   "landingEisenhowerTitle": "Eisenhower Matrix",
-  "landingEisenhowerSubtitle": "The decision-making method used by leaders to manage time",
   "landingEisenhowerUrgentTitle": "Urgent vs Important",
-  "landingEisenhowerUrgentDesc": "The Eisenhower Matrix, devised by the 34th US President Dwight D. Eisenhower, divides activities into four quadrants based on two criteria: urgency and importance.\n\nThis decision-making framework helps distinguish what requires immediate attention from what contributes to long-term goals.",
-  "landingEisenhowerUrgentFeatures": "Quadrant 1: Urgent + Important → Do first\nQuadrant 2: Not urgent + Important → Schedule\nQuadrant 3: Urgent + Not important → Delegate\nQuadrant 4: Not urgent + Not important → Don't Do",
-  "landingEisenhowerDecisionsTitle": "Better Decisions",
-  "landingEisenhowerDecisionsDesc": "By constantly applying the matrix, you develop a results-oriented mindset. You learn to say \"no\" to distractions and focus on what generates real value.\n\nOur digital tool makes this process immediate: drag activities into the correct quadrant and get a clear view of your priorities.",
+  "landingEisenhowerUrgentDesc": "The Eisenhower Matrix, devised by the 34th President of the United States Dwight D. Eisenhower, divides activities into four quadrants based on two criteria: urgency and importance.\n\nThis decision-making framework helps distinguish what requires immediate attention from what contributes to long-term goals.",
+  "landingEisenhowerUrgentFeatures": "Quadrant 1: Urgent + Important → Do now\nQuadrant 2: Not urgent + Important → Schedule\nQuadrant 3: Urgent + Not important → Delegate\nQuadrant 4: Not urgent + Not important → Eliminate",
   "landingEisenhowerDecisionsFeatures": "Intuitive drag & drop\nReal-time team collaboration\nDistribution statistics\nExport for reporting",
-  "landingEisenhowerBenefitsTitle": "Why use the Eisenhower Matrix?",
-  "landingEisenhowerBenefitsDesc": "Studies show that 80% of daily activities fall into quadrants 3 and 4 (not important). The matrix helps you identify them and free up time for what truly matters.",
   "landingEisenhowerUrgentLabel": "URGENT",
   "landingEisenhowerNotUrgentLabel": "NOT URGENT",
   "landingEisenhowerImportantLabel": "IMPORTANT",
@@ -1085,38 +1181,28 @@
   "landingEisenhowerDelegateDesc": "Interruptions, meetings, emails",
   "landingEisenhowerEliminateLabel": "ELIMINATE",
   "landingEisenhowerEliminateDesc": "Distractions, social, time wasters",
-
-  "landingFooterProduct": "Product",
   "landingFooterFeatures": "Features",
   "landingFooterPricing": "Pricing",
   "landingFooterChangelog": "Changelog",
   "landingFooterRoadmap": "Roadmap",
-
-  "landingFooterResources": "Resources",
   "landingFooterDocs": "Documentation",
   "landingFooterAgileGuides": "Agile Guides",
   "landingFooterBlog": "Blog",
   "landingFooterCommunity": "Community",
-
-  "landingFooterCompany": "Company",
   "landingFooterAbout": "About Us",
   "landingFooterContact": "Contact",
   "landingFooterJobs": "Careers",
   "landingFooterPress": "Press Kit",
-
-  "landingFooterLegal": "Legal",
   "landingFooterPrivacy": "Privacy Policy",
   "landingFooterTerms": "Terms of Service",
   "landingFooterCookies": "Cookie Policy",
   "landingFooterGdpr": "GDPR",
-
   "agileMethodologyGuideTitle": "Agile Methodology Guide",
   "agileMethodologyGuideSubtitle": "Choose the methodology that best fits your project",
   "agileScrumShortDesc": "Fixed-time sprints, Velocity, Burndown. Ideal for products with evolving requirements.",
   "agileKanbanShortDesc": "Continuous flow, WIP Limits, Lead Time. Ideal for support and continuous requests.",
   "agileScrumbanShortDesc": "Mix of Sprints and continuous flow. Ideal for teams wanting flexibility.",
   "agileGuide": "Guide",
-
   "agileAddToSprint": "Add to Sprint",
   "agileEstimate": "ESTIMATE",
   "agileEstimated": "Estimated",
@@ -1125,10 +1211,11 @@
   "agilePointsValue": "{points} pts",
   "@agilePointsValue": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
-
   "backlogProductBacklog": "Product Backlog",
   "backlogArchiveCompleted": "Completed Archive",
   "backlogStories": "stories",
@@ -1137,14 +1224,18 @@
   "backlogShowArchive": "Show Archive ({count} completed)",
   "@backlogShowArchive": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "backlogTab": "Backlog",
   "backlogArchiveTab": "Archive ({count})",
   "@backlogArchiveTab": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "backlogFilters": "Filters",
@@ -1159,29 +1250,36 @@
   "backlogNoStoryFound": "No story found",
   "backlogEmpty": "Empty backlog",
   "backlogAddFirstStory": "Add the first User Story",
-
   "kanbanWipExceeded": "WIP Limit exceeded! Complete some items before starting new ones.",
   "kanbanInfo": "Info",
   "kanbanConfigureWip": "Configure WIP",
   "kanbanWipTooltip": "WIP: {current} of {max} max",
   "@kanbanWipTooltip": {
     "placeholders": {
-      "current": { "type": "int" },
-      "max": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
   "kanbanNoWipLimit": "No WIP limit",
   "kanbanItems": "{count} items",
   "@kanbanItems": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanEmpty": "Empty",
   "kanbanWipLimitTitle": "WIP Limit: {column}",
   "@kanbanWipLimitTitle": {
     "placeholders": {
-      "column": { "type": "String" }
+      "column": {
+        "type": "String"
+      }
     }
   },
   "kanbanWipLimitDesc": "Set the maximum number of items that can be in this column at the same time.",
@@ -1190,7 +1288,9 @@
   "kanbanWipLimitSuggestion": "Suggestion: start with {count} and adjust based on the team.",
   "@kanbanWipLimitSuggestion": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanRemoveLimit": "Remove Limit",
@@ -1201,20 +1301,28 @@
   "kanbanColumnLabel": "Column: {name}",
   "@kanbanColumnLabel": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "kanbanCurrentCount": "Current: {current} | Limit: {limit}",
   "@kanbanCurrentCount": {
     "placeholders": {
-      "current": { "type": "int" },
-      "limit": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "kanbanAfterMove": "After move: {count}",
   "@kanbanAfterMove": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanSuggestion": "Suggestion: complete or move other items before starting new ones to maintain an optimal workflow.",
@@ -1231,11 +1339,12 @@
   "kanbanWipWhatToDoDesc": "1. Complete or move existing items before starting new ones\n2. Help colleagues unblock items in review\n3. Analyze why the limit was exceeded",
   "kanbanUnderstood": "Got it",
   "kanbanBoardTitle": "Kanban Board",
-
   "sprintTitle": "Sprint ({count})",
   "@sprintTitle": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintNew": "New Sprint",
@@ -1244,7 +1353,9 @@
   "sprintNumber": "Sprint {number}",
   "@sprintNumber": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
   "sprintStart": "Start Sprint",
@@ -1252,13 +1363,17 @@
   "sprintDays": "{days}d",
   "@sprintDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintStoriesCount": "{count}",
   "@sprintStoriesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintStoriesLabel": "stories",
@@ -1268,7 +1383,9 @@
   "sprintDaysRemaining": "{days}d remaining",
   "@sprintDaysRemaining": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintStartButton": "Start",
@@ -1285,19 +1402,25 @@
   "sprintDuration": "Duration: {days} days",
   "@sprintDuration": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintAverageVelocity": "Average velocity: {velocity} pts/sprint",
   "@sprintAverageVelocity": {
     "placeholders": {
-      "velocity": { "type": "String" }
+      "velocity": {
+        "type": "String"
+      }
     }
   },
   "sprintTeamMembers": "Team: {count} members",
   "@sprintTeamMembers": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintPlanningTitle": "Sprint Planning",
@@ -1309,7 +1432,9 @@
   "sprintPlanningDays": "{days} days",
   "@sprintPlanningDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintPlanningExceeded": "Warning: exceeded suggested velocity",
@@ -1318,10 +1443,11 @@
   "sprintPlanningConfirm": "Confirm ({count} stories)",
   "@sprintPlanningConfirm": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "storyFormEditTitle": "Edit Story",
   "storyFormNewTitle": "New User Story",
   "storyFormDetailsTab": "Details",
@@ -1371,11 +1497,12 @@
   "storyFormAssigneeLabel": "Assign to",
   "storyFormAssigneeHint": "Select a team member",
   "storyFormNotAssigned": "Not assigned",
-
   "storyDetailPointsLabel": "{points} points",
   "@storyDetailPointsLabel": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
   "storyDetailDescriptionTitle": "Description",
@@ -1383,8 +1510,12 @@
   "storyDetailAcceptanceCriteria": "Acceptance Criteria ({completed}/{total})",
   "@storyDetailAcceptanceCriteria": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "storyDetailNoCriteria": "No criteria defined",
@@ -1393,7 +1524,9 @@
   "storyDetailEstimatesReceived": "{count} estimates received",
   "@storyDetailEstimatesReceived": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "storyDetailInfoTitle": "Information",
@@ -1403,104 +1536,27 @@
   "storyDetailCreatedAt": "Created on",
   "storyDetailStartedAt": "Started on",
   "storyDetailCompletedAt": "Completed on",
-
-  "featureSmartImportDesc": "Quick task creation with description\nTeam member assignment\nConfigurable priority and deadline\nCompletion notifications",
-  "featureImportDesc": "Import from CSV file\nCopy/paste from Excel\nSmart text parsing\nAutomatic field mapping",
-  "featureShareDesc": "Email invitations\nConfigurable permissions\nTask comments\nChange history",
-  "featureSmartTaskCreation": "Quick task creation",
-  "featureTeamAssignment": "Team assignment",
-  "featurePriorityDeadline": "Priority and Deadlines",
-  "featureCompletionNotifications": "Completion notifications",
-  "featureCsvImport": "CSV Import",
-  "featureExcelPaste": "Copy/Paste Excel",
-  "featureSmartParsing": "Smart Parsing",
-  "featureAutoMapping": "Automatic Mapping",
-  "featureEmailInvites": "Email Invites",
-  "featurePermissions": "Configurable Permissions",
-  "featureTaskComments": "Task Comments",
-  "featureHistory": "Change History",
-  "featureAdvancedFilters": "Advanced Filters",
-  "featureFullTextSearch": "Full-text Search",
-  "featureSorting": "Sorting",
-  "featureTagsCategories": "Tags & Categories",
-  "featureArchiving": "Archiving",
   "featureSort": "Sorting",
-  "featureDataExport": "Data Export",
-
-  "landingEstimationPokerDesc": "The classic method: each member chooses a card (1, 2, 3, 5, 8...). Estimates are revealed simultaneously to avoid bias.",
-  "landingEstimationTShirtTitle": "T-Shirt Size",
-  "landingEstimationTShirtSubtitle": "Relative sizes",
-  "landingEstimationTShirtDesc": "Quick estimate using sizes: XS, S, M, L, XL, XXL. Ideal for initial backlog grooming or when an approximate estimate is needed.",
-  "landingEstimationPertTitle": "Three-Point (PERT)",
-  "landingEstimationPertSubtitle": "Optimistic / Likely / Pessimistic",
-  "landingEstimationPertDesc": "Statistical technique: each member provides 3 estimates (O, M, P). The PERT formula calculates the weighted estimate: (O + 4M + P) / 6.",
-  "landingEstimationBucketTitle": "Bucket System",
-  "landingEstimationBucketSubtitle": "Quick categorization",
-  "landingEstimationBucketDesc": "User stories are assigned to predefined buckets. Great for estimating large quantities of items quickly in refinement sessions.",
-
-  "landingEstimationChipHiddenVote": "Hidden vote",
-  "landingEstimationChipTimer": "Configurable timer",
-  "landingEstimationChipStats": "Real-time statistics",
-  "landingEstimationChipParticipants": "Up to 20 participants",
-  "landingEstimationChipHistory": "Estimate history",
-  "landingEstimationChipExport": "Export results",
-
-  "landingRetroTemplateStartStopTitle": "Start / Stop / Continue",
-  "landingRetroTemplateStartStopDesc": "The classic format: what to start doing, what to stop doing, what to keep doing.",
-  "landingRetroTemplateMadSadTitle": "Mad / Sad / Glad",
-  "landingRetroTemplateMadSadDesc": "Emotional retrospective: what made us angry, sad or happy.",
-  "landingRetroTemplate4LsTitle": "4L's",
-  "landingRetroTemplate4LsDesc": "Liked, Learned, Lacked, Longed For - complete sprint analysis.",
-  "landingRetroTemplateSailboatTitle": "Sailboat",
-  "landingRetroTemplateSailboatDesc": "Visual metaphor: wind (helpers), anchor (obstacles), rocks (risks), island (goals).",
-  "landingRetroTemplateWentWellTitle": "Went Well / To Improve",
-  "landingRetroTemplateWentWellDesc": "Simple and direct format: what went well and what to improve.",
-  "landingRetroTemplateDakiTitle": "DAKI",
-  "landingRetroTemplateDakiDesc": "Drop, Add, Keep, Improve - concrete decisions for the next sprint.",
-
-  "landingRetroFeatureTrackingTitle": "Action Items Tracking",
-  "landingRetroFeatureTrackingDesc": "Each retrospective generates trackable action items with owner, deadline and status. Monitor follow-up over time.",
-
-  "landingAgileSectionBadge": "Methodologies",
-  "landingAgileSectionTitle": "Agile & Scrum Framework",
-  "landingAgileSectionSubtitle": "Implement the best practices of iterative software development",
-
-  "landingSmartTodoCollabTitle": "Collaborative Task Lists",
-  "landingSmartTodoCollabDesc": "Smart Todo transforms daily activity management into a smooth and collaborative process. Create lists, assign tasks to team members and monitor progress in real-time.\n\nIdeal for distributed teams that need continuous synchronization on activities to complete.",
-  "landingSmartTodoCollabFeatures": "Quick task creation with description\nTeam member assignment\nConfigurable priority and deadline\nCompletion notifications",
-  "landingSmartTodoImportFeatures": "Import from CSV file\nCopy/paste from Excel\nSmart text parsing\nAutomatic field mapping",
-  "landingSmartTodoSharingTitle": "Sharing and Invitations",
-  "landingSmartTodoSharingDesc": "Invite colleagues and collaborators to your lists via email. Each participant can view, comment and update the status of assigned tasks.\n\nPerfect for managing cross-functional projects with external stakeholders or cross-functional teams.",
-  "landingSmartTodoSharingFeatures": "Email invitations\nConfigurable permissions\nTask comments\nChange history",
-  "landingSmartTodoChipFilters": "Advanced filters",
-  "landingSmartTodoChipSearch": "Full-text search",
-  "landingSmartTodoChipSort": "Sorting",
-  "landingSmartTodoChipTags": "Tags and categories",
-  "landingSmartTodoChipArchive": "Archiving",
-  "landingSmartTodoChipExport": "Data export",
-
-  "landingEisenhowerUrgentTitle": "Urgent vs Important",
-  "landingEisenhowerUrgentDesc": "The Eisenhower Matrix, devised by the 34th President of the United States Dwight D. Eisenhower, divides activities into four quadrants based on two criteria: urgency and importance.\n\nThis decision-making framework helps distinguish what requires immediate attention from what contributes to long-term goals.",
-  "landingEisenhowerUrgentFeatures": "Quadrant 1: Urgent + Important → Do now\nQuadrant 2: Not urgent + Important → Schedule\nQuadrant 3: Urgent + Not important → Delegate\nQuadrant 4: Not urgent + Not important → Eliminate",
-  "landingEisenhowerDecisionsFeatures": "Intuitive drag & drop\nReal-time team collaboration\nDistribution statistics\nExport for reporting",
-
   "retroStatusDraft": "Draft",
   "retroStatusActive": "In Progress",
   "retroStatusCompleted": "Completed",
   "retroDateLabel": "Date: {date}",
   "@retroDateLabel": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "retroSprintDefault": "Sprint {number}",
   "@retroSprintDefault": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
-
-  "smartTodoEditTask": "Edit",
+  "smartTodoEditTask": "Edit Task",
   "smartTodoDescription": "DESCRIPTION",
   "smartTodoDescriptionHint": "Add a detailed description...",
   "smartTodoChecklist": "CHECKLIST",
@@ -1519,7 +1575,7 @@
   "smartTodoAddImage": "Add Image",
   "smartTodoImageUrlHint": "Paste the image URL (e.g. captured with CleanShot/Gyazo)",
   "smartTodoImageUrl": "Image URL",
-  "smartTodoEditComment": "Edit comment",
+  "smartTodoEditComment": "Edit",
   "smartTodoEnterTitle": "Enter a title",
   "smartTodoImportTasks": "Import Tasks",
   "smartTodoImportStep1": "Step 1: Choose Source",
@@ -1528,13 +1584,17 @@
   "smartTodoImportFileSelected": "File selected: {fileName}",
   "@smartTodoImportFileSelected": {
     "placeholders": {
-      "fileName": { "type": "String" }
+      "fileName": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportFileError": "File read error: {error}",
   "@smartTodoImportFileError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportNoData": "No data found",
@@ -1542,14 +1602,20 @@
   "smartTodoImportColumnLabel": "Column {index}: \"{value}\"",
   "@smartTodoImportColumnLabel": {
     "placeholders": {
-      "index": { "type": "int" },
-      "value": { "type": "String" }
+      "index": {
+        "type": "int"
+      },
+      "value": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportFoundTasks": "Found {count} valid tasks. Review before importing.",
   "@smartTodoImportFoundTasks": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImportBack": "Back",
@@ -1557,7 +1623,9 @@
   "smartTodoImportButton": "Import {count} Tasks",
   "@smartTodoImportButton": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImportEnterText": "Enter some text or upload a file.",
@@ -1565,7 +1633,9 @@
   "smartTodoImportError": "Import Error: {error}",
   "@smartTodoImportError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoAddActivity": "Add an activity",
@@ -1589,10 +1659,10 @@
   "smartTodoNoTags": "No tags",
   "smartTodoSetDate": "Set date",
   "smartTodoSelectTags": "Select Tags",
-  "smartTodoNoTagsAvailable": "No tags available. Create one in settings.",
+  "smartTodoNoTagsAvailable": "No tags available",
   "smartTodoNewSubtask": "New status",
   "smartTodoLinkName": "Name",
-  "smartTodoLinkUrl": "URL (https://...)",
+  "smartTodoLinkUrl": "URL",
   "smartTodoPasteImage": "Paste Image",
   "smartTodoPasteImageFound": "Image from clipboard found.",
   "smartTodoPasteImageConfirm": "Do you want to add this image from your clipboard?",
@@ -1607,20 +1677,26 @@
   "smartTodoImportSampleValue": "Sample value: \"{value}\"",
   "@smartTodoImportSampleValue": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportNoValidRows": "No valid rows found.",
   "smartTodoImportParsingError": "Parsing Error: {error}",
   "@smartTodoImportParsingError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportSuccess": "Imported {count} tasks!",
   "@smartTodoImportSuccess": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoNewTaskDefault": "New Task",
@@ -1631,20 +1707,26 @@
   "smartTodoMembers": "Members ({count})",
   "@smartTodoMembers": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoNoInvitesPending": "No pending invitations",
   "smartTodoRoleLabel": "Role: {role}",
   "@smartTodoRoleLabel": {
     "placeholders": {
-      "role": { "type": "String" }
+      "role": {
+        "type": "String"
+      }
     }
   },
   "smartTodoSentBy": "Sent by {name}",
   "@smartTodoSentBy": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "smartTodoResendEmail": "Resend Email",
@@ -1664,75 +1746,76 @@
   "smartTodoInviteSent": "Invitation sent to {email}",
   "@smartTodoInviteSent": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "smartTodoUserAlreadyInvitedOrPending": "User already invited or invitation pending.",
   "smartTodoWriteComment": "Write a comment...",
-
   "smartTodoFilterToday": "Today",
   "smartTodoFilterMyTasks": "My Tasks",
   "smartTodoFilterOwner": "Owner",
   "smartTodoViewGlobalTasks": "View Global Tasks",
   "smartTodoViewLists": "View Lists",
-
   "smartTodoNewListDialogTitle": "New List",
   "smartTodoTitleLabel": "Title *",
   "smartTodoDescriptionLabel": "Description",
   "smartTodoCancel": "Cancel",
   "smartTodoCreate": "Create",
   "smartTodoSave": "Save",
-
   "smartTodoNoListsPresent": "No lists available",
   "smartTodoCreateFirstList": "Create your first list to get started",
   "smartTodoMembersCount": "{count} members",
   "@smartTodoMembersCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "smartTodoRenameListTitle": "Rename List",
   "smartTodoNewNameLabel": "New Name",
   "smartTodoDeleteListTitle": "Delete List",
-  "smartTodoDeleteListConfirm": "Are you sure you want to delete this list and all its tasks? This action cannot be undone.",
+  "smartTodoDeleteListConfirm": "Are you sure you want to delete this list and all its tasks? This action is irreversible.",
   "smartTodoDelete": "Delete",
   "smartTodoEdit": "Edit",
   "smartTodoSearchHint": "Search lists...",
   "smartTodoSearchTasksHint": "Search...",
   "smartTodoNoSearchResults": "No results for \"{query}\"",
-
   "smartTodoColumnTodo": "To Do",
   "smartTodoColumnInProgress": "In Progress",
   "smartTodoColumnDone": "Done",
-
   "smartTodoAllPeople": "All people",
   "smartTodoPeopleCount": "{count} people",
   "@smartTodoPeopleCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoFilterByPerson": "Filter by Person",
   "smartTodoApplyFilters": "Apply Filters",
   "@smartTodoNoSearchResults": {
     "placeholders": {
-      "query": {"type": "String"}
+      "query": {
+        "type": "String"
+      }
     }
   },
-
   "smartTodoError": "Error: {error}",
   "@smartTodoError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "profileMenuTitle": "Profile",
   "profileMenuLogout": "Logout",
   "profileLogoutDialogTitle": "Logout",
   "profileLogoutDialogConfirm": "Are you sure you want to logout?",
-
   "legalCookieTitle": "We use cookies",
   "legalCookieMessage": "We use cookies to improve your experience and for analytical purposes. By continuing, you accept the use of cookies.",
   "legalCookieAccept": "Accept all",
@@ -1751,77 +1834,50 @@
   "legalGdprContent": "## Commitment to Data Protection (GDPR)\nIn accordance with the European Union General Data Protection Regulation (GDPR), Keisen is committed to protecting users' personal data and ensuring transparency in its processing.\n\n## Data Controller\nThe Data Controller is:\n**Keisen Team**\nEmail: suppkesien@gmail.com\n\n## Legal Basis for Processing\nWe process your personal data only when we have a legal basis to do so. This includes:\n- **Consent:** You have given us permission to process your data for a specific purpose.\n- **Performance of a contract:** Processing is necessary to provide the Services you have requested (e.g., use of the platform).\n- **Legitimate interest:** Processing is necessary for our legitimate interests (e.g., security, service improvement), unless your fundamental rights and freedoms override those interests.\n\n## Data Transfer\nYour data is stored on secure servers provided by Google Cloud Platform (Google Firebase). Google adheres to international security standards and complies with GDPR through Standard Contractual Clauses (SCC).\n\n## Your GDPR Rights\nAs a user in the EU, you have the following rights:\n1.  **Right to access:** You have the right to request copies of your personal data.\n2.  **Right to rectification:** You have the right to request the correction of information you believe is inaccurate.\n3.  **Right to erasure (\"Right to be forgotten\"):** You have the right to request the deletion of your personal data, under certain conditions.\n4.  **Right to restrict processing:** You have the right to request the restriction of processing your data.\n5.  **Right to data portability:** You have the right to request the transfer of the data we have collected to another organization or directly to you.\n\n## Exercise of Rights\nIf you wish to exercise any of these rights, please contact us at: suppkesien@gmail.com. We will respond to your request within one month.",
   "profilePrivacy": "Privacy",
   "profileExportData": "Export my data",
-  "profileDeleteAccount": "Delete account",
   "profileDeleteAccountConfirm": "Are you sure you want to permanently delete your account? This action is irreversible.",
-
   "subscriptionTitle": "Subscription",
   "subscriptionTabPlans": "Plans",
   "subscriptionTabUsage": "Usage",
   "subscriptionTabBilling": "Billing",
-  "subscriptionPerMonth": "/month",
-  "subscriptionPerYear": "/year",
-  "subscriptionCurrent": "CURRENT",
-  "subscriptionRecommended": "RECOMMENDED",
-  "subscriptionFree": "Free",
-  "subscriptionSaveYearly": "Save €{amount}/year",
-  "@subscriptionSaveYearly": {
-    "placeholders": {
-      "amount": {"type": "String"}
-    }
-  },
-  "subscriptionTrialDays": "{days} days free trial",
-  "@subscriptionTrialDays": {
-    "placeholders": {
-      "days": {"type": "int"}
-    }
-  },
-  "subscriptionUnlimitedProjects": "Unlimited projects",
   "subscriptionActiveProjects": "{count} active projects",
   "@subscriptionActiveProjects": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "subscriptionUnlimitedLists": "Unlimited lists",
   "subscriptionActiveLists": "{count} Smart Todo lists",
   "@subscriptionActiveLists": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "subscriptionUnlimitedTasks": "Unlimited tasks",
-  "subscriptionTasksPerProject": "{count} tasks per project",
-  "@subscriptionTasksPerProject": {
-    "placeholders": {
-      "count": {"type": "int"}
-    }
-  },
-  "subscriptionUnlimitedInvites": "Unlimited invites",
-  "subscriptionInvitesPerProject": "{count} invites per project",
-  "@subscriptionInvitesPerProject": {
-    "placeholders": {
-      "count": {"type": "int"}
-    }
-  },
-  "subscriptionWithAds": "With ads",
-  "subscriptionWithoutAds": "Without ads",
   "subscriptionCurrentPlan": "Current plan",
   "subscriptionUpgradeTo": "Upgrade to {plan}",
   "@subscriptionUpgradeTo": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionDowngradeTo": "Downgrade to {plan}",
   "@subscriptionDowngradeTo": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionChoose": "Choose {plan}",
   "@subscriptionChoose": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionMonthly": "Monthly",
@@ -1845,34 +1901,42 @@
   "subscriptionCanCreateOne": "You can create 1 more {entity}",
   "@subscriptionCanCreateOne": {
     "placeholders": {
-      "entity": {"type": "String"}
+      "entity": {
+        "type": "String"
+      }
     }
   },
   "subscriptionCanCreateMany": "You can create {count} more {entity}",
   "@subscriptionCanCreateMany": {
     "placeholders": {
-      "count": {"type": "int"},
-      "entity": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "entity": {
+        "type": "String"
+      }
     }
   },
   "subscriptionUpgrade": "UPGRADE",
   "subscriptionUsed": "Used: {count}",
   "@subscriptionUsed": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionUnlimited": "Unlimited",
   "subscriptionLimit": "Limit: {count}",
   "@subscriptionLimit": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionPlanUsage": "Plan usage",
   "subscriptionRefresh": "Refresh",
-  "subscriptionActiveProjectsLabel": "Active projects",
-  "subscriptionSmartTodoLists": "Smart Todo lists",
   "subscriptionAdsActive": "Ads active",
   "subscriptionRemoveAds": "Upgrade to Premium to remove ads",
   "subscriptionNoAds": "No ads",
@@ -1885,14 +1949,18 @@
   "subscriptionLoadingError": "Loading error: {error}",
   "@subscriptionLoadingError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionCompletePayment": "Complete the payment in the opened window",
   "subscriptionError": "Error: {error}",
   "@subscriptionError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionConfirmDowngrade": "Confirm downgrade",
@@ -1903,7 +1971,9 @@
   "subscriptionPortalError": "Portal opening error: {error}",
   "@subscriptionPortalError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionRetry": "Retry",
@@ -1912,19 +1982,25 @@
   "subscriptionPlan": "Plan {plan}",
   "@subscriptionPlan": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionTrialUntil": "Trial until {date}",
   "@subscriptionTrialUntil": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "subscriptionRenewal": "Renewal: {date}",
   "@subscriptionRenewal": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "subscriptionManage": "Manage",
@@ -1996,20 +2072,22 @@
   "smartTodoDone": "Done",
   "smartTodoAdd": "Add",
   "smartTodoEmailLabel": "Email",
-
   "exceptionLoginGoogleRequired": "Google login required to send emails",
   "exceptionUserNotAuthenticated": "User not authenticated",
   "errorLoginFailed": "Login error: {error}",
   "@errorLoginFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "retroParticipantsTitle": "Participants ({count})",
   "@retroParticipantsTitle": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "actionReopen": "Reopen",
@@ -2022,7 +2100,6 @@
   "retroReopenConfirm": "Are you sure you want to reopen the retrospective? It will go back to Discussion phase.",
   "errorAuthRequired": "Authentication required",
   "errorRetroIdMissing": "Retrospective ID missing",
-
   "pokerInviteAccepted": "Invite accepted! Redirecting to session.",
   "pokerInviteRefused": "Invite refused",
   "pokerConfirmRefuseTitle": "Refuse Invite",
@@ -2037,13 +2114,11 @@
   "exceptionInviteInvalid": "Invite not valid or expired",
   "exceptionInviteCalculated": "Invite expired",
   "exceptionInviteWrongUser": "Invite intended for another user",
-
   "todoImportTasks": "Import Tasks",
   "todoExportSheets": "Export to Sheets",
   "todoDeleteColumnTitle": "Delete Column",
   "todoDeleteColumnConfirm": "Are you sure? Tasks in this column will be lost.",
   "exceptionListNotFound": "List not found",
-
   "langItalian": "Italiano",
   "langEnglish": "English",
   "langFrench": "Français",
@@ -2052,34 +2127,14 @@
   "errorExporting": "Error exporting: {error}",
   "@errorExporting": {
     "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "retroCurrentFocus": "Current Focus: {title}",
-  "@retroCurrentFocus": {
-    "placeholders": {
-      "title": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoViewKanban": "Kanban",
   "smartTodoViewList": "List",
   "smartTodoViewResource": "By Resource",
-  "smartTodoMembersCount": "{count} members",
-  "@smartTodoMembersCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "smartTodoSearchTasksHint": "Search...",
-  "smartTodoAllPeople": "All people",
-  "smartTodoPeopleCount": "{count} people",
-  "@smartTodoPeopleCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "smartTodoFilterToday": "Today",
-  "smartTodoFilterByPerson": "Filter by Person",
   "smartTodoInviteTooltip": "Invite",
   "smartTodoOptionsTooltip": "More Options",
   "smartTodoActionImport": "Import Tasks",
@@ -2095,37 +2150,35 @@
   "smartTodoRenameList": "Rename List",
   "smartTodoManageTags": "Manage Tags",
   "smartTodoDeleteList": "Delete List",
-  "smartTodoNewNameLabel": "New Name",
-  "smartTodoDeleteListConfirm": "Are you sure you want to delete this list and all its tasks? This action is irreversible.",
   "smartTodoEditPermissionError": "You can only edit tasks assigned to you",
-  "actionEdit": "Edit",
-  "actionSave": "Save",
   "errorDeletingAccount": "Error deleting account: {error}",
   "@errorDeletingAccount": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "errorRecentLoginRequired": "Recent login required. Please log out and log in again before deleting your account.",
-  "errorGeneric": "Error: {error}",
   "@errorGeneric": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-  "retroChooseMethodology": "Choose Methodology",
-  "actionConfirm": "Confirm",
   "actionGuide": "Guide {framework}",
   "@actionGuide": {
     "placeholders": {
-      "framework": { "type": "String" }
+      "framework": {
+        "type": "String"
+      }
     }
   },
   "actionExportSheets": "Export to Google Sheets",
   "actionAuditLog": "Audit Log",
   "actionInviteMember": "Invite Member",
   "actionSettings": "Settings",
-
   "retroTemplateStartStopContinue": "Start, Stop, Continue",
   "retroDescStartStopContinue": "Action oriented: Start doing, Stop doing, Continue doing.",
   "retroUsageStartStopContinue": "Best for actionable feedback and focusing on behavioral changes.",
@@ -2154,43 +2207,12 @@
   "retroDescTwoTruths": "Simple and classic.",
   "retroIcebreakerCheckin": "Emotional Check-in",
   "retroDescCheckin": "How is everyone feeling?",
-
-  "smartTodoDescription": "DESCRIPTION",
-  "smartTodoDescriptionHint": "Add a detailed description...",
-  "smartTodoChecklist": "CHECKLIST",
   "smartTodoAddItem": "Add item",
-  "smartTodoAttachments": "ATTACHMENTS",
-  "smartTodoAddLink": "Add Link",
-  "smartTodoComments": "COMMENTS",
   "smartTodoAddImageUrl": "Add Image (URL)",
-  "smartTodoWriteComment": "Write a comment...",
-  "smartTodoStatus": "STATUS",
-  "smartTodoPriority": "PRIORITY",
-  "smartTodoAssignees": "ASSIGNEES",
   "smartTodoNone": "None",
-  "smartTodoTags": "TAGS",
-  "smartTodoNoTags": "No tags",
-  "smartTodoDueDate": "DUE DATE",
-  "smartTodoSetDate": "Set date",
-  "smartTodoEffort": "EFFORT",
   "smartTodoPointsHint": "Points (e.g. 5)",
   "smartTodoNewItem": "New item",
-  "smartTodoAssignTo": "Assign to",
-  "smartTodoSelectTags": "Select Tags",
-  "smartTodoNoTagsAvailable": "No tags available",
-  "smartTodoEditTask": "Edit Task",
-  "smartTodoNewTask": "New Task",
-  "smartTodoAddLinkTitle": "Add Link",
-  "smartTodoLinkName": "Name",
-  "smartTodoLinkUrl": "URL",
-  "smartTodoCancel": "Cancel",
-  "smartTodoSave": "Save",
-  "smartTodoUser": "User",
-  "smartTodoCannotOpenLink": "Cannot open link",
   "smartTodoDeleteComment": "Delete",
-  "smartTodoEditComment": "Edit",
-  "smartTodoTaskTitle": "Task title",
-  
   "priorityHigh": "HIGH",
   "priorityMedium": "MEDIUM",
   "priorityLow": "LOW",
@@ -2213,7 +2235,6 @@
   "searchResultTypeEisenhower": "Eisenhower Matrix",
   "searchResultTypeEstimation": "Estimation Room",
   "searchBackToDashboard": "Back to Dashboard",
-
   "exportToEstimation": "Send to Estimation",
   "exportToEstimationDesc": "Create an estimation session with these tasks",
   "exportToEisenhower": "Send to Eisenhower",
@@ -2226,7 +2247,9 @@
   "tasksSelectedCount": "{count} task(s) selected",
   "@tasksSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "exportSuccess": "Exported successfully",
@@ -2243,7 +2266,9 @@
   "storiesSelectedCount": "{count} story/stories selected",
   "@storiesSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "selectAll": "Select All",
@@ -2252,7 +2277,9 @@
   "storiesImportedCount": "{count} story/stories imported",
   "@storiesImportedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noEstimatedStories": "No stories with estimates to import",
@@ -2267,7 +2294,9 @@
   "activitiesCreated": "{count} activities created",
   "@activitiesCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "importFromEisenhower": "Import from Eisenhower",
@@ -2288,7 +2317,9 @@
   "activitiesSelectedCount": "{count} activity/activities selected",
   "@activitiesSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noActivitiesSelected": "No activities available",
@@ -2296,7 +2327,9 @@
   "tasksCreated": "{count} tasks created",
   "@tasksCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "exportToUserStories": "Export to User Stories",
@@ -2309,11 +2342,13 @@
   "selectProject": "Select Project",
   "selectProjectHint": "Choose a destination project",
   "noProjectsAvailable": "No projects available. Create a new one.",
-  "userStoryFieldMappingInfo": "Mapping: Title \u2192 Story title, Description \u2192 Story description, Effort \u2192 Story points, Priority \u2192 Business value",
+  "userStoryFieldMappingInfo": "Mapping: Title → Story title, Description → Story description, Effort → Story points, Priority → Business value",
   "storiesCreated": "{count} stories created",
   "@storiesCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "configureNewProject": "Configure New Project",
@@ -2322,26 +2357,36 @@
   "selectSprint": "Select Sprint",
   "selectSprintHint": "Choose a destination sprint",
   "noSprintsAvailable": "No sprints available. Create a sprint in planning state first.",
-  "sprintExportFieldMappingInfo": "Mapping: Title \u2192 Story title, Description \u2192 Description, Estimate \u2192 Story points",
+  "sprintExportFieldMappingInfo": "Mapping: Title → Story title, Description → Description, Estimate → Story points",
   "exportToSprint": "Export to Sprint",
   "totalStoryPoints": "{count} total story points",
   "@totalStoryPoints": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "storiesAddedToSprint": "{count} stories added to {sprintName}",
   "@storiesAddedToSprint": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sprintName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "storiesAddedToProject": "{count} stories added to project {projectName}",
   "@storiesAddedToProject": {
     "placeholders": {
-      "count": {"type": "int"},
-      "projectName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "projectName": {
+        "type": "String"
+      }
     }
   },
   "exportEisenhowerToSprintDesc": "Transform Eisenhower activities into User Stories",
@@ -2359,18 +2404,25 @@
   "activitiesExportedToSprint": "{count} activities exported to sprint {sprintName}",
   "@activitiesExportedToSprint": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sprintName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "activitiesExportedToEstimation": "{count} activities exported to estimation session {sessionName}",
   "@activitiesExportedToEstimation": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sessionName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sessionName": {
+        "type": "String"
+      }
     }
   },
-
   "archiveAction": "Archive",
   "archiveRestoreAction": "Restore",
   "archiveShowArchived": "Show archived",
@@ -2378,14 +2430,18 @@
   "archiveConfirmTitle": "Archive {itemType}",
   "@archiveConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "archiveConfirmMessage": "Are you sure you want to archive this item? It can be restored later.",
   "archiveRestoreConfirmTitle": "Restore {itemType}",
   "@archiveRestoreConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "archiveRestoreConfirmMessage": "Do you want to restore this item from the archive?",
@@ -2404,11 +2460,609 @@
   "completeConfirmTitle": "Complete {itemType}",
   "@completeConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "completeConfirmMessage": "Are you sure you want to complete this item?",
   "completeSuccessMessage": "Item completed successfully",
   "reopenSuccessMessage": "Item reopened successfully",
-  "completedBadge": "Completed"
+  "completedBadge": "Completed",
+
+  "inviteNewInvite": "NEW INVITE",
+  "inviteRole": "Role:",
+  "inviteSendEmailNotification": "Send email notification",
+  "inviteSendInvite": "Send Invite",
+  "inviteLink": "Invite link:",
+  "inviteLinkCopied": "Link copied!",
+  "inviteCopyLink": "Copy link",
+  "inviteList": "INVITES",
+  "inviteResend": "Resend",
+  "inviteRevoke": "Revoke",
+  "inviteRevokeTitle": "Revoke invite?",
+  "inviteRevokeMessage": "The invite will no longer be valid.",
+  "inviteResent": "Invite resent",
+  "inviteSentByEmail": "Invite sent by email to {email}",
+  "@inviteSentByEmail": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "inviteStatusPending": "Pending",
+  "inviteStatusAccepted": "Accepted",
+  "inviteStatusDeclined": "Declined",
+  "inviteStatusExpired": "Expired",
+  "inviteStatusRevoked": "Revoked",
+  "inviteGmailAuthTitle": "Gmail Authorization",
+  "inviteGmailAuthMessage": "To send invite emails, you need to re-authenticate with Google.\n\nDo you want to proceed?",
+  "inviteGmailAuthNo": "No, link only",
+  "inviteGmailAuthYes": "Authorize",
+  "inviteGmailNotAvailable": "Gmail authorization not available. Try logging out and back in.",
+  "inviteGmailNoPermission": "Gmail permission not granted.",
+  "inviteEnterEmail": "Enter an email",
+  "inviteInvalidEmail": "Invalid email",
+
+  "pendingInvites": "Pending Invites",
+  "noPendingInvites": "No pending invites",
+  "invitedBy": "Invited by {name}",
+  "@invitedBy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "inviteOpenInstance": "Open",
+  "inviteAcceptFirst": "Accept the invite to open",
+  "inviteAccept": "Accept",
+  "inviteDecline": "Decline",
+  "inviteAcceptedSuccess": "Invite accepted successfully!",
+  "inviteAcceptedError": "Failed to accept invite",
+  "inviteDeclinedSuccess": "Invite declined",
+  "inviteDeclineTitle": "Decline invite?",
+  "inviteDeclineMessage": "Are you sure you want to decline this invite?",
+  "expiresInHours": "Expires in {hours}h",
+  "@expiresInHours": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "expiresInDays": "Expires in {days}d",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "close": "Close",
+  "cancel": "Cancel",
+
+  "raciTitle": "RACI Matrix",
+  "raciNoActivities": "No activities available",
+  "raciAddActivity": "Add Activity",
+  "raciAddColumn": "Add Column",
+  "raciActivities": "ACTIVITIES",
+  "raciAssignRole": "Assign role",
+  "raciNone": "None",
+  "raciSaving": "Saving...",
+  "raciSaveChanges": "Save Changes",
+  "raciSavedSuccessfully": "Changes saved successfully",
+  "raciErrorSaving": "Error saving",
+  "raciMissingAccountable": "Missing Accountable (A)",
+  "raciOnlyOneAccountable": "Only one Accountable per activity",
+  "raciDuplicateRoles": "Duplicate roles",
+  "raciNoResponsible": "No Responsible (R) assigned",
+  "raciTooManyInformed": "Too many Informed (I): consider reducing",
+  "raciAddColumn": "Add Column",
+  "raciColumnName": "Column name",
+  "raciColumnNameHint": "E.g.: Development Team",
+  "raciNewColumn": "New Column",
+  "raciRemoveColumn": "Remove column",
+  "raciRemoveColumnConfirm": "Remove column \"{name}\"? All role assignments for this column will be deleted.",
+  "@raciRemoveColumnConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "votingDialogTitle": "Vote",
+  "votingDialogVoteOf": "Vote of {participant}",
+  "@votingDialogVoteOf": {
+    "placeholders": {
+      "participant": {"type": "String"}
+    }
+  },
+  "votingDialogUrgency": "URGENCY",
+  "votingDialogImportance": "IMPORTANCE",
+  "votingDialogNotUrgent": "Not urgent",
+  "votingDialogVeryUrgent": "Very urgent",
+  "votingDialogNotImportant": "Not important",
+  "votingDialogVeryImportant": "Very important",
+  "votingDialogConfirmVote": "Confirm Vote",
+  "votingDialogQuadrant": "Quadrant:",
+
+  "voteCollectionTitle": "Collect Votes",
+  "voteCollectionParticipants": "participants",
+  "voteCollectionResult": "Result:",
+  "voteCollectionAverage": "Average:",
+  "voteCollectionSaveVotes": "Save Votes",
+
+  "scatterChartTitle": "Activity Distribution",
+  "scatterChartNoActivities": "No voted activities",
+  "scatterChartVoteToShow": "Vote activities to view them in the chart",
+  "scatterChartUrgencyLabel": "Urgency:",
+  "scatterChartImportanceLabel": "Importance:",
+  "scatterChartAxisUrgency": "URGENCY",
+  "scatterChartAxisImportance": "IMPORTANCE",
+  "scatterChartQ1Label": "Q1 - DO",
+  "scatterChartQ2Label": "Q2 - SCHEDULE",
+  "scatterChartQ3Label": "Q3 - DELEGATE",
+  "scatterChartQ4Label": "Q4 - ELIMINATE",
+  "scatterChartCardTitle": "Distribution Chart",
+
+  "votingStatusYou": "You",
+  "votingStatusReset": "Reset",
+
+  "exportToEstimation": "Export to Estimation",
+  "exportToSprint": "Export to Sprint",
+  "existingProject": "Existing project",
+  "createNewProject": "Create new project",
+  "selectProject": "Select project",
+  "selectSprint": "Select sprint",
+  "configureNewProject": "Configure new project",
+  "exportFromEisenhower": "Export from Eisenhower",
+  "exportFromEisenhowerDesc": "Select activities to export to Smart Todo",
+  "selectDestinationList": "Select destination list",
+  "existingList": "Existing list",
+  "createNewList": "Create new list",
+  "listName": "List name",
+  "listNameHint": "Enter a name for the new list",
+  "selectList": "Select list",
+  "selectListHint": "Select a list",
+  "noListsAvailable": "No lists available. A new one will be created.",
+  "filterByQuadrant": "Filter by quadrant:",
+  "allActivities": "All",
+  "activitiesSelectedCount": "{count} activities selected",
+  "@activitiesSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "selectAll": "Select all",
+  "deselectAll": "Deselect all",
+  "noActivitiesSelected": "No activities in this filter",
+  "unvoted": "UNVOTED",
+
+  "estimationDecimalTitle": "Decimal Estimation",
+  "estimationDecimalHint": "Enter your estimate in days (e.g. 1.5, 2.25)",
+  "estimationDecimalHintPlaceholder": "E.g. 2.5",
+  "estimationDecimalSuffixDays": "days",
+  "estimationDecimalVote": "Vote",
+  "estimationDecimalVoteValue": "Vote: {value} days",
+  "@estimationDecimalVoteValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDecimalQuickSelect": "Quick select:",
+  "estimationDecimalEnterValue": "Enter a value",
+  "estimationDecimalInvalidValue": "Invalid value",
+  "estimationDecimalMinValue": "Min: {value}",
+  "@estimationDecimalMinValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDecimalMaxValue": "Max: {value}",
+  "@estimationDecimalMaxValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
+  "estimationThreePointTitle": "Three-Point Estimation (PERT)",
+  "estimationThreePointOptimistic": "Optimistic (O)",
+  "estimationThreePointRealistic": "Realistic (M)",
+  "estimationThreePointPessimistic": "Pessimistic (P)",
+  "estimationThreePointBestCase": "Best case",
+  "estimationThreePointMostLikely": "Most likely",
+  "estimationThreePointWorstCase": "Worst case",
+  "estimationThreePointAllFieldsRequired": "All fields are required",
+  "estimationThreePointInvalidValues": "Invalid values",
+  "estimationThreePointOptMustBeLteReal": "Optimistic must be <= Realistic",
+  "estimationThreePointRealMustBeLtePess": "Realistic must be <= Pessimistic",
+  "estimationThreePointOptMustBeLtePess": "Optimistic must be <= Pessimistic",
+  "estimationThreePointGuide": "Guide:",
+  "estimationThreePointGuideO": "O: Best case estimate (everything goes well)",
+  "estimationThreePointGuideM": "M: Most likely estimate (normal conditions)",
+  "estimationThreePointGuideP": "P: Worst case estimate (unexpected issues)",
+  "estimationThreePointStdDev": "Std Dev",
+  "estimationThreePointDaysSuffix": "d",
+
+  "storyFormNewStory": "New Story",
+  "storyFormTitleLabel": "Title *",
+  "storyFormTitleHint": "E.g. US-123: As a user I want...",
+  "storyFormDescriptionLabel": "Description",
+  "storyFormDescriptionHint": "Acceptance criteria, notes...",
+  "storyFormEnterTitle": "Enter a title",
+
+  "sessionSearchHint": "Search sessions...",
+  "sessionSearchFilters": "Filters",
+  "sessionSearchFiltersTooltip": "Filters",
+  "sessionSearchStatusLabel": "Status: ",
+  "sessionSearchStatusAll": "All",
+  "sessionSearchStatusDraft": "Draft",
+  "sessionSearchStatusActive": "Active",
+  "sessionSearchStatusCompleted": "Completed",
+  "sessionSearchModeLabel": "Mode: ",
+  "sessionSearchModeAll": "All",
+  "sessionSearchRemoveFilters": "Remove filters",
+  "sessionSearchActiveFilters": "Active filters:",
+  "sessionSearchRemoveAllFilters": "Remove all",
+
+  "participantsTitle": "Participants ({count})",
+  "@participantsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "participantRoleFacilitator": "Facilitator",
+  "participantRoleVoters": "Voters",
+  "participantRoleObservers": "Observers",
+  "participantYou": "(you)",
+
+  "votingBoardVotesRevealed": "Votes Revealed",
+  "votingBoardVotingInProgress": "Voting in Progress",
+  "votingBoardVotesCount": "{voted}/{total} votes",
+  "@votingBoardVotesCount": {
+    "placeholders": {
+      "voted": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "estimationSelectYourEstimate": "Select your estimate",
+  "estimationVoteSelected": "Vote selected: {value}",
+  "@estimationVoteSelected": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDotVotingTitle": "Dot Voting",
+  "estimationDotVotingDesc": "Voting mode with point allocation.\nComing soon...",
+  "estimationBucketSystemTitle": "Bucket System",
+  "estimationBucketSystemDesc": "Affinity estimation with grouping.\nComing soon...",
+
+  "estimationModeTitle": "Estimation Mode",
+
+  "statisticsTitle": "Voting Statistics",
+  "statisticsAverage": "Average",
+  "statisticsMedian": "Median",
+  "statisticsMode": "Mode",
+  "statisticsVoters": "Voters",
+  "statisticsPertStats": "PERT Statistics",
+  "statisticsPertAvg": "PERT Avg",
+  "statisticsStdDev": "Std Dev",
+  "statisticsVariance": "Variance",
+  "statisticsRange": "Range:",
+  "statisticsConsensusReached": "Consensus reached!",
+
+  "retroGuideTooltip": "Guide to Retrospectives",
+  "retroSearchPlaceholder": "Search retrospective...",
+  "retroNoSearchResults": "No results for the search",
+  "retroNoRetrosFound": "No retrospective found",
+  "retroNewRetro": "New Retrospective",
+  "retroLinkToSprint": "Link to Sprint?",
+  "retroNoProjectsFound": "No projects found.",
+  "retroSelectProject": "Select Project",
+  "retroSelectSprint": "Select Sprint",
+  "retroSessionTitle": "Session Title",
+  "retroSessionTitleHint": "E.g.: Weekly Sync, Project Review...",
+  "retroTemplateLabel": "Template",
+  "retroVotesPerUser": "Votes per user:",
+  "retroDeleteTitle": "Delete Retrospective",
+  "retroDeleteMessage": "Are you sure you want to permanently delete the retrospective \"{retroName}\"?\n\nThis action is irreversible and will delete all associated data (cards, votes, action items).",
+  "@retroDeleteMessage": {
+    "placeholders": {
+      "retroName": {"type": "String"}
+    }
+  },
+  "retroDeletePermanently": "Delete permanently",
+  "retroDeletedSuccess": "Retrospective deleted successfully",
+  "retroDeleteError": "Error during deletion: {error}",
+  "@retroDeleteError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "errorPrefix": "Error: {error}",
+  "@errorPrefix": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "loaderProjectIdMissing": "Project ID missing",
+  "loaderProjectNotFound": "Project not found",
+  "loaderLoadError": "Loading error",
+  "loaderError": "Error",
+  "loaderUnknownError": "Unknown error",
+  "actionGoBack": "Go Back",
+  "authRequired": "Authentication required",
+  "retroIdMissing": "Retrospective ID missing",
+  "pokerInviteStatusAccepted": "was already accepted",
+  "pokerInviteStatusDeclined": "was declined",
+  "pokerInviteStatusExpired": "has expired",
+  "pokerInviteStatusRevoked": "was revoked",
+  "pokerInviteStatusPending": "is pending",
+  "pokerInviteYouAreInvited": "You Are Invited!",
+  "pokerInviteInvitedBy": "{name} invited you to participate",
+  "@pokerInviteInvitedBy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "pokerInviteSessionLabel": "Session",
+  "pokerInviteProjectLabel": "Project",
+  "pokerInviteRoleLabel": "Assigned Role",
+  "pokerInviteExpiryLabel": "Invite Expiry",
+  "pokerInviteExpiryDays": "In {days} days",
+  "@pokerInviteExpiryDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "pokerInviteDecline": "Decline",
+  "pokerInviteAccept": "Accept Invite",
+  "loadingMatrixError": "Error loading matrix: {error}",
+  "@loadingMatrixError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "loadingDataError": "Error loading data: {error}",
+  "@loadingDataError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "loadingActivitiesError": "Error loading activities: {error}",
+  "@loadingActivitiesError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "storyDetailEditTooltip": "Edit",
+  "storyDetailTagsTitle": "Tags",
+
+  "teamTitle": "Team ({count})",
+  "@teamTitle": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "teamInvite": "Invite",
+  "teamNoMembers": "No team members",
+  "teamYou": "You",
+  "teamEditTooltip": "Edit",
+  "teamRemoveTooltip": "Remove",
+  "teamMembersLabel": "{count} members",
+  "@teamMembersLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "teamOnline": "online",
+
+  "teamMemberFormTitle": "Edit Member",
+  "teamMemberName": "Name",
+  "teamMemberNameRequired": "Enter a name",
+  "teamMemberProjectRole": "Role in Project",
+  "teamMemberTeamRole": "Role in Team",
+  "teamMemberCapacity": "Capacity (hours/day)",
+  "teamMemberCapacityHours": "{hours} hours",
+  "@teamMemberCapacityHours": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "teamMemberSkills": "Skills",
+  "teamMemberAddSkillHint": "Add skill...",
+  "teamMemberNoSkills": "No skills added",
+  "teamMemberCapacityPartTimeReduced": "Part-time reduced",
+  "teamMemberCapacityPartTime": "Part-time",
+  "teamMemberCapacityFullTime": "Full-time standard",
+  "teamMemberCapacityOvertime": "Overtime",
+
+  "addTeamMemberTitle": "Add Member",
+  "addTeamMemberEmail": "Email",
+  "addTeamMemberEmailRequired": "Enter an email",
+  "addTeamMemberEmailInvalid": "Invalid email",
+  "addTeamMemberProjectRole": "Project Role",
+  "addTeamMemberTeamRole": "Team Role",
+  "addTeamMemberCapacity": "Capacity: ",
+  "addTeamMemberHoursPerDay": "{hours} hours/day",
+  "@addTeamMemberHoursPerDay": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+
+  "auditLogTitle": "Audit Log",
+  "auditLogEventsCount": "{count} events",
+  "@auditLogEventsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "auditLogRefresh": "Refresh",
+  "auditLogCloseTooltip": "Close",
+  "auditLogFilterType": "Type",
+  "auditLogFilterAll": "All",
+  "auditLogFilterAllActions": "All",
+  "auditLogFilterAction": "Action",
+  "auditLogFilterFrom": "From",
+  "auditLogLoadError": "Error loading log: {error}",
+  "@auditLogLoadError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "auditLogDetailsTitle": "Change Details",
+  "auditLogPreviousValue": "Previous value:",
+  "auditLogNewValue": "New value:",
+  "auditLogDetails": "Details",
+  "auditLogNoEvents": "No events recorded",
+  "auditLogNoEventsSubtitle": "Project activities will be recorded here",
+  "auditLogTimeNow": "Now",
+  "auditLogTimeMinutesAgo": "{minutes} min ago",
+  "@auditLogTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "auditLogTimeHoursAgo": "{hours} hours ago",
+  "@auditLogTimeHoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "auditLogTimeDaysAgo": "{days} days ago",
+  "@auditLogTimeDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "recentActivityTitle": "Recent Activity",
+  "recentActivityViewAll": "View all",
+  "recentActivityNoActivity": "No recent activity",
+
+  "inviteToTeamTitle": "Invite to Team",
+  "inviteProjectRoleTitle": "Role in Project",
+  "inviteTeamRoleTitle": "Role in Team",
+
+  "methodologyProcessFlow": "Process Flow",
+  "methodologyRoles": "ROLES",
+  "methodologyFlow": "FLOW",
+  "methodologyArtifacts": "ARTIFACTS",
+  "methodologyBestPractices": "Best Practices",
+  "methodologyAntiPatterns": "Anti-Patterns to Avoid",
+  "methodologyFAQ": "Frequently Asked Questions",
+  "methodologyGuideTooltip": "Methodology guide",
+  "methodologyGuideButton": "Methodology Guide",
+
+  "setupProjectTitle": "Project Setup",
+  "setupStepsCompleted": "{completed} of {total} steps completed",
+  "@setupStepsCompleted": {
+    "placeholders": {
+      "completed": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "setupCompleteTitle": "Setup Complete!",
+  "setupCompleteSubtitle": "Your project is ready to start.",
+  "setupAddTeamMembers": "Add team members",
+  "setupAddTeamMembersDesc": "Invite team members to collaborate",
+  "setupInvite": "Invite",
+  "setupCreateFirstStories": "Create the first {items}",
+  "@setupCreateFirstStories": {
+    "placeholders": {
+      "items": {"type": "String"}
+    }
+  },
+  "setupCreateFirstStoriesDesc": "Add at least 3 items to the backlog",
+  "setupConfigureWipLimits": "Configure WIP limits",
+  "setupConfigureWipLimitsDesc": "Set limits for each Kanban column",
+  "setupConfigure": "Configure",
+  "setupEstimateStories": "Estimate {items}",
+  "@setupEstimateStories": {
+    "placeholders": {
+      "items": {"type": "String"}
+    }
+  },
+  "setupEstimateStoriesDesc": "Assign Story Points for better planning",
+  "setupCreateSprint": "Create the first Sprint",
+  "setupCreateSprintDesc": "Select stories and start working",
+  "setupStartWorking": "Start working",
+  "setupStartWorkingDesc": "Move an item to in progress",
+  "setupStart": "Start",
+
+  "tipScrumSprintReady": "Ready for a Sprint?",
+  "tipScrumSprintReadyDesc": "You have enough stories in the backlog. Consider planning the first Sprint.",
+  "tipKanbanWipLimits": "Configure WIP Limits",
+  "tipKanbanWipLimitsDesc": "WIP limits are fundamental in Kanban. Limit work in progress to improve flow.",
+  "tipHybridSetup": "Configure your Scrumban",
+  "tipHybridSetupDesc": "You can use Sprints for cadence or WIP limits for continuous flow. Experiment!",
+  "tipDiscover": "Discover",
+
+  "nextStepInviteTeam": "Invite the Team",
+  "nextStepInviteTeamDesc": "Add members to collaborate on the project.",
+  "nextStepCreateBacklog": "Create the Backlog",
+  "nextStepCreateBacklogDesc": "Add the first {items} to the backlog.",
+  "@nextStepCreateBacklogDesc": {
+    "placeholders": {
+      "items": {"type": "String"}
+    }
+  },
+  "nextStepPlanSprint": "Plan a Sprint",
+  "nextStepPlanSprintDesc": "You have {count} items ready. Create the first Sprint!",
+  "@nextStepPlanSprintDesc": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nextStepConfigureWip": "Configure WIP Limits",
+  "nextStepConfigureWipDesc": "Limit work in progress to improve flow.",
+  "nextStepStartWorking": "Start Working",
+  "nextStepStartWorkingDesc": "Move an item \"In Progress\" to begin.",
+  "nextStepGoToKanban": "Go to Kanban",
+
+  "agileProjectFormEditTitle": "Edit Project",
+  "agileProjectFormNewTitle": "New Agile Project",
+  "agileProjectFormNameLabel": "Project Name *",
+  "agileProjectFormNameHint": "E.g.: Fashion PMO v2",
+  "agileProjectFormNameRequired": "Enter the project name",
+  "agileProjectFormDescriptionLabel": "Description",
+  "agileProjectFormDescriptionHint": "Optional description of the project",
+  "agileProjectFormFrameworkLabel": "Agile Framework",
+  "agileProjectFormDiscoverDifferences": "Discover the differences",
+  "agileProjectFormSprintConfig": "Sprint Configuration",
+  "agileProjectFormSprintDuration": "Sprint Duration (days)",
+  "agileProjectFormHoursPerDay": "Hours/Day",
+  "agileProjectFormKeyRoles": "Key Roles",
+  "agileProjectFormKeyRolesTooltip": "Assign the main team roles.\nYou can also modify them from project settings.",
+  "agileProjectFormProductOwner": "Product Owner",
+  "agileProjectFormProductOwnerDesc": "Manages the backlog and priorities",
+  "agileProjectFormScrumMaster": "Scrum Master",
+  "agileProjectFormScrumMasterDesc": "Facilitates the process and removes obstacles",
+  "agileProjectFormSelect": "Select",
+  "agileProjectFormNotAssigned": "Not assigned",
+  "agileProjectFormAssignableAfter": "Assignable after creation",
+  "smartTodoSprintDays": "{days} days/sprint",
+  "@smartTodoSprintDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "smartTodoHoursPerDay": "{hours}h/day",
+  "@smartTodoHoursPerDay": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "smartTodoImageFromClipboardFound": "Image found in clipboard",
+  "smartTodoAddImageFromClipboard": "Add image from clipboard",
+  "smartTodoInviteCreatedAndSent": "Invite created and sent"
 }

@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO Meta Tags -->
+  <meta name="google-site-verification" content="SjUTXKwYCAf64b2rGYEnVaaSgweVRAmcjkYB3IXscBU" />
   <title>Keisen - Strumenti Collaborativi per Team Agili</title>
   <meta name="description"
     content="Keisen: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
@@ -60,16 +61,12 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
-    /* Loading Screen Styles */
+    /* Loading Screen Styles - Minimal */
     :root {
       --bg-dark: #1a1a2e;
       --bg-light: #f8fafc;
       --text-dark: #e2e8f0;
       --text-light: #1e293b;
-      --primary: #3b82f6;
-      --success: #22c55e;
-      --secondary: #f59e0b;
-      --purple: #8b5cf6;
     }
 
     * {
@@ -130,118 +127,7 @@
     .app-title {
       font-size: 32px;
       font-weight: 700;
-      margin-bottom: 8px;
       letter-spacing: -0.5px;
-    }
-
-    .app-subtitle {
-      font-size: 16px;
-      opacity: 0.7;
-      margin-bottom: 40px;
-    }
-
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      max-width: 900px;
-      width: 100%;
-      margin-bottom: 40px;
-    }
-
-    .tool-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: left;
-      transition: all 0.3s ease;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .tool-card {
-        background: white;
-        border-color: #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      }
-    }
-
-    .tool-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      font-size: 20px;
-    }
-
-    .tool-icon.blue {
-      background: rgba(59, 130, 246, 0.15);
-      color: #3b82f6;
-    }
-
-    .tool-icon.green {
-      background: rgba(34, 197, 94, 0.15);
-      color: #22c55e;
-    }
-
-    .tool-icon.orange {
-      background: rgba(245, 158, 11, 0.15);
-      color: #f59e0b;
-    }
-
-    .tool-icon.purple {
-      background: rgba(139, 92, 246, 0.15);
-      color: #8b5cf6;
-    }
-
-    .tool-icon.pink {
-      background: rgba(236, 72, 153, 0.15);
-      color: #ec4899;
-    }
-
-    .tool-name {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .tool-desc {
-      font-size: 13px;
-      opacity: 0.6;
-      line-height: 1.4;
-    }
-
-    .loading-indicator {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      opacity: 0.6;
-    }
-
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .spinner {
-        border-color: rgba(0, 0, 0, 0.1);
-        border-top-color: var(--primary);
-      }
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
     }
 
     /* Hide loading screen once Flutter is ready */
@@ -254,115 +140,12 @@
 </head>
 
 <body>
-  <!-- Loading Screen with Tool Preview -->
+  <!-- Loading Screen - Minimal -->
   <div id="loading-screen" class="loading-screen">
     <div class="logo-container">
       <img src="icons/Icon-192.png" alt="Keisen Logo" class="logo">
     </div>
-
     <h1 class="app-title">Keisen</h1>
-    <p id="app-subtitle" class="app-subtitle">Strumenti collaborativi per team agili</p>
-
-    <div class="tools-grid">
-      <div class="tool-card">
-        <div class="tool-icon blue">&#10003;</div>
-        <div id="tool-name-todo" class="tool-name">Smart Todo</div>
-        <div id="tool-desc-todo" class="tool-desc">Liste intelligenti e collaborative. Importa da CSV e gestisci task.
-        </div>
-      </div>
-
-      <div class="tool-card">
-        <div class="tool-icon green">&#9638;</div>
-        <div id="tool-name-eisenhower" class="tool-name">Matrice Eisenhower</div>
-        <div id="tool-desc-eisenhower" class="tool-desc">Prioritizza le attivita distinguendo tra urgente e importante.
-        </div>
-      </div>
-
-      <div class="tool-card">
-        <div class="tool-icon orange">&#127922;</div>
-        <div id="tool-name-estimation" class="tool-name">Estimation Room</div>
-        <div id="tool-desc-estimation" class="tool-desc">Sessioni di stima collaborative con Planning Poker e altri
-          metodi.</div>
-      </div>
-
-      <div class="tool-card">
-        <div class="tool-icon purple">&#128640;</div>
-        <div id="tool-name-agile" class="tool-name">Agile Process</div>
-        <div id="tool-desc-agile" class="tool-desc">Gestisci backlog, sprint e kanban board. Metriche incluse.</div>
-      </div>
-
-      <div class="tool-card">
-        <div class="tool-icon pink">&#129504;</div>
-        <div id="tool-name-retro" class="tool-name">Retrospective Board</div>
-        <div id="tool-desc-retro" class="tool-desc">Raccogli feedback dal team su cosa e andato bene, cosa migliorare.
-        </div>
-      </div>
-    </div>
-
-    <div class="loading-indicator">
-      <div class="spinner"></div>
-      <span id="loading-text">Caricamento in corso...</span>
-    </div>
-
-    <script>
-      const translations = {
-        en: {
-          title: "Keisen - Collaborative Tools for Agile Teams",
-          subtitle: "Collaborative tools for agile teams",
-          todoName: "Smart Todo",
-          todoDesc: "Smart and collaborative lists. Import from CSV and manage tasks.",
-          eisenhowerName: "Eisenhower Matrix",
-          eisenhowerDesc: "Prioritize activities by distinguishing between urgent and important.",
-          estimationName: "Estimation Room",
-          estimationDesc: "Collaborative estimation sessions with Planning Poker and other methods.",
-          agileName: "Agile Process",
-          agileDesc: "Manage backlog, sprints and kanban boards. Metrics included.",
-          retroName: "Retrospective Board",
-          retroDesc: "Collect team feedback on what went well and what to improve.",
-          loading: "Loading..."
-        },
-        it: {
-          title: "Keisen - Strumenti Collaborativi per Team Agili",
-          subtitle: "Strumenti collaborativi per team agili",
-          todoName: "Smart Todo",
-          todoDesc: "Liste intelligenti e collaborative. Importa da CSV e gestisci task.",
-          eisenhowerName: "Matrice Eisenhower",
-          eisenhowerDesc: "Prioritizza le attivita distinguendo tra urgente e importante.",
-          estimationName: "Estimation Room",
-          estimationDesc: "Sessioni di stima collaborative con Planning Poker e altri metodi.",
-          agileName: "Agile Process",
-          agileDesc: "Gestisci backlog, sprint e kanban board. Metriche incluse.",
-          retroName: "Retrospective Board",
-          retroDesc: "Raccogli feedback dal team su cosa e andato bene, cosa migliorare.",
-          loading: "Caricamento in corso..."
-        }
-      };
-
-      function getLanguage() {
-        const saved = localStorage.getItem('flutter.locale');
-        if (saved) return saved.includes('it') ? 'it' : 'en';
-        const lang = navigator.language || navigator.userLanguage;
-        if (lang.startsWith('it')) return 'it';
-        return 'en';
-      }
-
-      const lang = getLanguage();
-      const t = translations[lang] || translations.en;
-
-      document.title = t.title;
-      document.getElementById('app-subtitle').innerText = t.subtitle;
-      document.getElementById('tool-name-todo').innerText = t.todoName;
-      document.getElementById('tool-desc-todo').innerText = t.todoDesc;
-      document.getElementById('tool-name-eisenhower').innerText = t.eisenhowerName;
-      document.getElementById('tool-desc-eisenhower').innerText = t.eisenhowerDesc;
-      document.getElementById('tool-name-estimation').innerText = t.estimationName;
-      document.getElementById('tool-desc-estimation').innerText = t.estimationDesc;
-      document.getElementById('tool-name-agile').innerText = t.agileName;
-      document.getElementById('tool-desc-agile').innerText = t.agileDesc;
-      document.getElementById('tool-name-retro').innerText = t.retroName;
-      document.getElementById('tool-desc-retro').innerText = t.retroDesc;
-      document.getElementById('loading-text').innerText = t.loading;
-    </script>
   </div>
 
   <script src="flutter_bootstrap.js" async></script>

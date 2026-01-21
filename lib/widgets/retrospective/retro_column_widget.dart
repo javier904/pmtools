@@ -1,5 +1,6 @@
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class RetroColumnWidget extends StatelessWidget {
@@ -249,6 +250,7 @@ class RetroColumnWidget extends StatelessWidget {
   }
 
   Widget _buildBlurredContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
@@ -257,12 +259,12 @@ class RetroColumnWidget extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.visibility_off, size: 14, color: Colors.grey),
-          SizedBox(width: 8),
+        children: [
+          const Icon(Icons.visibility_off, size: 14, color: Colors.grey),
+          const SizedBox(width: 8),
           Text(
-            'Hiding while typing...',
-            style: TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
+            l10n.retroHidingWhileTyping,
+            style: const TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
           ),
         ],
       ),
@@ -270,6 +272,7 @@ class RetroColumnWidget extends StatelessWidget {
   }
 
   Widget _buildVoteWidget(BuildContext context, RetroItem item) {
+    final l10n = AppLocalizations.of(context)!;
     final bool hasVoted = item.hasVoted(currentUserEmail);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -279,11 +282,11 @@ class RetroColumnWidget extends StatelessWidget {
 
          if (!hasVoted && totalVotes >= retro.maxVotesPerUser) {
            ScaffoldMessenger.of(context).showSnackBar(
-             SnackBar(content: Text('Hai raggiunto il limite di ${retro.maxVotesPerUser} voti!'), duration: const Duration(seconds: 1)),
+             SnackBar(content: Text(l10n.retroVoteLimitReached(retro.maxVotesPerUser)), duration: const Duration(seconds: 1)),
            );
            return;
          }
-         
+
          final service = RetrospectiveFirestoreService();
          service.voteItem(retro.id, item.id, currentUserEmail);
       },
@@ -324,6 +327,7 @@ class RetroColumnWidget extends StatelessWidget {
   }
 
   Widget _buildAddButton(BuildContext context, RetroColumn column) {
+    final l10n = AppLocalizations.of(context)!;
     final bool canAdd = retro.currentPhase == RetroPhase.writing || retro.currentPhase == RetroPhase.discuss;
     if (!canAdd) return const SizedBox.shrink();
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
@@ -338,7 +342,7 @@ class RetroColumnWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: column.color.withValues(alpha: 0.3), 
+              color: column.color.withValues(alpha: 0.3),
               width: 2,
               style: BorderStyle.solid,
             ),
@@ -351,7 +355,7 @@ class RetroColumnWidget extends StatelessWidget {
                 Icon(Icons.add_circle_outline, color: column.color, size: 24),
                 const SizedBox(width: 12),
                 Text(
-                  'AGGIUNGI CARD',
+                  l10n.retroAddCardButton.toUpperCase(),
                   style: TextStyle(
                     color: column.color,
                     fontWeight: FontWeight.w800,
@@ -368,36 +372,37 @@ class RetroColumnWidget extends StatelessWidget {
   }
 
   void _showAddDialog(BuildContext context, RetroColumn column) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Add to ${column.title}'),
+        title: Text(l10n.retroAddTo(column.title)),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(hintText: 'What are your thoughts?'),
+          decoration: InputDecoration(hintText: l10n.retroAddCardHint),
           maxLines: 3,
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
           ElevatedButton(
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
                 final newItem = RetroItem(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  columnId: column.id, 
+                  columnId: column.id,
                   content: controller.text.trim(),
                   authorEmail: currentUserEmail,
                   authorName: currentUserName,
                   createdAt: DateTime.now(),
                 );
-                
+
                 RetrospectiveFirestoreService().addRetroItem(retro.id, newItem);
                 Navigator.pop(context);
               }
             },
-            child: const Text('Add Card'),
+            child: Text(l10n.retroAddCard),
           ),
         ],
       ),

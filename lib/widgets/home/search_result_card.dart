@@ -26,81 +26,117 @@ class SearchResultCard extends StatelessWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      // Opacità ridotta se archiviato
+      child: Opacity(
+        opacity: item.isArchived ? 0.7 : 1.0,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
             children: [
-              // Icon with background circle
-              Container(
+              Padding(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: bgColor.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(iconData, color: bgColor, size: 28),
-              ),
-              const SizedBox(height: 12),
-              
-              // Title
-              Text(
-                item.title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: context.textPrimaryColor,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              
-              // Subtitle
-              Text(
-                item.subtitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: context.textSecondaryColor,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              
-              const Spacer(),
-              
-              // Footer: Type label + Favorite
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: context.surfaceVariantColor,
-                      borderRadius: BorderRadius.circular(4),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Icon with background circle
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: bgColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(iconData, color: bgColor, size: 28),
                     ),
-                    child: Text(
-                      _getTypeLabel(context, item.type).toUpperCase(),
+                    const SizedBox(height: 12),
+
+                    // Title
+                    Text(
+                      item.title,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 8,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
+                        color: context.textPrimaryColor,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+
+                    // Subtitle
+                    Text(
+                      item.subtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11,
                         color: context.textSecondaryColor,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    const Spacer(),
+
+                    // Footer: Type label + Favorite
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: context.surfaceVariantColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            _getTypeLabel(context, item.type).toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              color: context.textSecondaryColor,
+                            ),
+                          ),
+                        ),
+                        FavoriteStar(
+                          resourceId: item.id,
+                          type: _getFavoriteType(item.type),
+                          title: item.title,
+                          colorHex: item.colorHex ?? '#000000',
+                          size: 16,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              // Badge "Archiviato" in alto a destra
+              if (item.isArchived)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.warning.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.inventory_2, size: 10, color: Colors.white),
+                        SizedBox(width: 3),
+                        Text(
+                          'ARCHIVIO',
+                          style: TextStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  FavoriteStar(
-                    resourceId: item.id,
-                    type: _getFavoriteType(item.type),
-                    title: item.title,
-                    colorHex: item.colorHex ?? '#000000',
-                    size: 16,
-                  ),
-                ],
-              )
+                ),
             ],
           ),
         ),

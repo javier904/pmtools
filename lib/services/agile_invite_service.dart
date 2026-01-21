@@ -408,9 +408,13 @@ class AgileInviteService {
   // UTILITY
   // ============================================================
 
-  /// Genera il link di invito
-  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app'}) {
-    return '$baseUrl/#/agile/invite/$token';
+  /// Genera il link di invito - nuovo formato deep link
+  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? projectId}) {
+    if (projectId != null) {
+      return '$baseUrl/#/invite/agile-project/$projectId';
+    }
+    // Fallback al formato token per retrocompatibilità
+    return '$baseUrl/#/invite/agile-project/token/$token';
   }
 
   /// Aggiorna gli inviti scaduti a status 'expired'
@@ -481,7 +485,7 @@ class AgileInviteService {
     print('📧 [SERVICE] - destinatario: ${invite.email}');
 
     try {
-      final inviteLink = generateInviteLink(invite.token, baseUrl: baseUrl);
+      final inviteLink = generateInviteLink(invite.token, baseUrl: baseUrl, projectId: invite.projectId);
       final expirationDate = _formatDate(invite.expiresAt);
       final participantRoleName = invite.participantRole.displayName;
       final teamRoleName = invite.teamRole.displayName;

@@ -358,7 +358,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.subscriptionPlan(plan.displayName),
+                  l10n.subscriptionPlan(plan.getDisplayName(l10n)),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -425,7 +425,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
           // Piano corrente
           if (_currentSubscription != null) ...[
             Text(
-              l10n.subscriptionPlanName(_currentSubscription!.plan.displayName),
+              l10n.subscriptionPlanName(_currentSubscription!.plan.getDisplayName(l10n)),
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 24),
@@ -581,7 +581,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
               ),
               const SizedBox(width: 8),
               Text(
-                l10n.subscriptionPlanName(_currentSubscription!.plan.displayName),
+                l10n.subscriptionPlanName(_currentSubscription!.plan.getDisplayName(l10n)),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

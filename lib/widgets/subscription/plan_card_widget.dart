@@ -70,7 +70,7 @@ class PlanCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  plan.displayName,
+                  plan.getDisplayName(l10n),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: _getPlanColor(plan),
@@ -288,9 +288,9 @@ class PlanCardWidget extends StatelessWidget {
 
   String _getButtonText(AppLocalizations l10n) {
     if (_isCurrentPlan) return l10n.subscriptionCurrentPlan;
-    if (_isUpgrade) return l10n.subscriptionUpgradeTo(plan.displayName);
-    if (_isDowngrade) return l10n.subscriptionDowngradeTo(plan.displayName);
-    return l10n.subscriptionChoose(plan.displayName);
+    if (_isUpgrade) return l10n.subscriptionUpgradeTo(plan.getDisplayName(l10n));
+    if (_isDowngrade) return l10n.subscriptionDowngradeTo(plan.getDisplayName(l10n));
+    return l10n.subscriptionChoose(plan.getDisplayName(l10n));
   }
 
   Color _getPlanColor(SubscriptionPlan plan) {

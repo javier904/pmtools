@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_participant_model.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Widget che mostra i voti rivelati con animazione
 ///
@@ -62,8 +63,9 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final quadrant = widget.activity.quadrant;
-    final quadrantInfo = quadrant != null ? _getQuadrantInfo(quadrant) : null;
+    final quadrantInfo = quadrant != null ? _getQuadrantInfo(quadrant, l10n) : null;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -97,15 +99,15 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header con risultato
-            _buildResultHeader(quadrantInfo),
+            _buildResultHeader(quadrantInfo, l10n),
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 12),
 
             // Voti individuali
-            const Text(
-              'VOTI INDIVIDUALI',
-              style: TextStyle(
+            Text(
+              l10n.eisenhowerIndividualVotes,
+              style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
@@ -113,14 +115,14 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
             ),
             const SizedBox(height: 8),
             ...widget.activity.votes.entries.map((entry) =>
-                _buildVoteRow(entry.key, entry.value)),
+                _buildVoteRow(entry.key, entry.value, l10n)),
 
             // Aggregato
             if (widget.activity.votes.isNotEmpty) ...[
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 12),
-              _buildAggregateRow(),
+              _buildAggregateRow(l10n),
             ],
           ],
         ),
@@ -128,7 +130,7 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
     );
   }
 
-  Widget _buildResultHeader(_QuadrantDisplayInfo? quadrantInfo) {
+  Widget _buildResultHeader(_QuadrantDisplayInfo? quadrantInfo, AppLocalizations l10n) {
     if (quadrantInfo == null) {
       return Container(
         padding: const EdgeInsets.all(12),
@@ -136,11 +138,11 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.warning, color: Colors.grey),
-            SizedBox(width: 8),
-            Text('Nessun voto registrato'),
+            const Icon(Icons.warning, color: Colors.grey),
+            const SizedBox(width: 8),
+            Text(l10n.eisenhowerNoVotesRecorded),
           ],
         ),
       );
@@ -172,9 +174,9 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
                   children: [
                     const Icon(Icons.emoji_events, color: Colors.amber, size: 18),
                     const SizedBox(width: 4),
-                    const Text(
-                      'RISULTATO',
-                      style: TextStyle(
+                    Text(
+                      l10n.eisenhowerResult,
+                      style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
@@ -206,7 +208,7 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
     );
   }
 
-  Widget _buildVoteRow(String voterEmail, EisenhowerVote vote) {
+  Widget _buildVoteRow(String voterEmail, EisenhowerVote vote, AppLocalizations l10n) {
     final participant = widget.participants[voterEmail];
     final voterName = participant?.name ?? voterEmail.split('@').first;
 
@@ -233,9 +235,9 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
-          _buildVoteBadge('U', vote.urgency, Colors.red),
-          const SizedBox(width: 8),
-          _buildVoteBadge('I', vote.importance, Colors.green),
+           _buildVoteBadge(l10n.eisenhowerUrgencyShort, vote.urgency, Colors.red),
+           const SizedBox(width: 8),
+           _buildVoteBadge(l10n.eisenhowerImportanceShort, vote.importance, Colors.green),
         ],
       ),
     );
@@ -273,7 +275,7 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
     );
   }
 
-  Widget _buildAggregateRow() {
+  Widget _buildAggregateRow(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -284,23 +286,23 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
         children: [
           const Icon(Icons.functions, color: Colors.grey),
           const SizedBox(width: 8),
-          const Expanded(
+          Expanded(
             child: Text(
-              'MEDIA',
-              style: TextStyle(
+              l10n.eisenhowerAverage,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
               ),
             ),
           ),
           _buildVoteBadge(
-            'U',
+            l10n.eisenhowerUrgencyShort,
             widget.activity.aggregatedUrgency.round(),
             Colors.red,
           ),
           const SizedBox(width: 8),
           _buildVoteBadge(
-            'I',
+            l10n.eisenhowerImportanceShort,
             widget.activity.aggregatedImportance.round(),
             Colors.green,
           ),
@@ -309,33 +311,33 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
     );
   }
 
-  _QuadrantDisplayInfo _getQuadrantInfo(EisenhowerQuadrant quadrant) {
+  _QuadrantDisplayInfo _getQuadrantInfo(EisenhowerQuadrant quadrant, AppLocalizations l10n) {
     switch (quadrant) {
       case EisenhowerQuadrant.q1:
         return _QuadrantDisplayInfo(
-          name: 'Q1 - FAI SUBITO',
-          action: 'Urgente + Importante',
+          name: 'Q1 - ${quadrant.localizedTitle(l10n)}',
+          action: quadrant.localizedSubtitle(l10n),
           color: const Color(0xFFE53935),
           icon: Icons.priority_high,
         );
       case EisenhowerQuadrant.q2:
         return _QuadrantDisplayInfo(
-          name: 'Q2 - PIANIFICA',
-          action: 'Non Urgente + Importante',
+          name: 'Q2 - ${quadrant.localizedTitle(l10n)}',
+          action: quadrant.localizedSubtitle(l10n),
           color: const Color(0xFF43A047),
           icon: Icons.schedule,
         );
       case EisenhowerQuadrant.q3:
         return _QuadrantDisplayInfo(
-          name: 'Q3 - DELEGA',
-          action: 'Urgente + Non Importante',
+          name: 'Q3 - ${quadrant.localizedTitle(l10n)}',
+          action: quadrant.localizedSubtitle(l10n),
           color: const Color(0xFFFDD835),
           icon: Icons.group,
         );
       case EisenhowerQuadrant.q4:
         return _QuadrantDisplayInfo(
-          name: 'Q4 - ELIMINA',
-          action: 'Non Urgente + Non Importante',
+          name: 'Q4 - ${quadrant.localizedTitle(l10n)}',
+          action: quadrant.localizedSubtitle(l10n),
           color: const Color(0xFF9E9E9E),
           icon: Icons.delete_outline,
         );
@@ -384,16 +386,17 @@ class VoteRevealDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.visibility, color: Colors.green),
+          const Icon(Icons.visibility, color: Colors.amber),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Voti Rivelati', style: TextStyle(fontSize: 18)),
+                Text(l10n.eisenhowerVotesRevealed, style: const TextStyle(fontSize: 18, color: Colors.amber)),
                 Text(
                   activity.title,
                   style: TextStyle(
@@ -420,7 +423,7 @@ class VoteRevealDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Chiudi'),
+          child: Text(l10n.actionClose),
         ),
       ],
     );

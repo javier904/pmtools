@@ -1141,6 +1141,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                         fontSize: 13,
                       ),
                     ),
+                    const Spacer(),
+                    // Pulsante aggiungi attività
+                    ElevatedButton.icon(
+                      onPressed: _showAddActivityDialog,
+                      icon: const Icon(Icons.add_task, size: 16),
+                      label: Text(l10n.eisenhowerAddActivity),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.success,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        textStyle: const TextStyle(fontSize: 12),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -1166,6 +1179,20 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                       color: context.textPrimaryColor,
                     ),
                   ),
+                  const Spacer(),
+                  // Pulsante aggiungi attività (se non mostrato sopra)
+                  if (unvotedActivities.isEmpty)
+                    ElevatedButton.icon(
+                      onPressed: _showAddActivityDialog,
+                      icon: const Icon(Icons.add_task, size: 16),
+                      label: Text(l10n.eisenhowerAddActivity),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.success,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        textStyle: const TextStyle(fontSize: 12),
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -1233,6 +1260,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   Widget? _buildFAB() {
     final l10n = AppLocalizations.of(context)!;
 
+    // FAB solo per creare nuova matrice (quando nessuna è selezionata)
+    // Il pulsante "Aggiungi attività" è ora nell'header della lista
     if (_selectedMatrix == null) {
       return FloatingActionButton.extended(
         onPressed: _showCreateMatrixDialog,
@@ -1240,14 +1269,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         label: Text(l10n.eisenhowerNewMatrix, style: const TextStyle(color: Colors.white)),
         backgroundColor: AppColors.success,
       );
-    } else {
-      return FloatingActionButton.extended(
-        onPressed: _showAddActivityDialog,
-        icon: const Icon(Icons.add_task, color: Colors.white),
-        label: Text(l10n.eisenhowerAddActivity, style: const TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.success,
-      );
     }
+    return null;
   }
 
   // ══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/raci_models.dart';
@@ -70,8 +71,9 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (widget.activities.isEmpty) {
-      return const Center(child: Text("Nessuna attività disponibile."));
+      return Center(child: Text(l10n.raciNoActivities));
     }
 
     // Sort activities: Q1 -> Q2 -> Q3 -> Q4, then Score descending
@@ -128,13 +130,14 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
               icon: _isSaving
                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                   : const Icon(Icons.save),
-              label: Text(_isSaving ? "Salvataggio..." : "Salva Modifiche (${_dirtyActivityIds.length})"),
+              label: Text(_isSaving ? l10n.raciSaving : '${l10n.raciSaveChanges} (${_dirtyActivityIds.length})'),
             )
           : null,
     );
   }
 
   Widget _buildToolbar() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: context.surfaceVariantColor,
@@ -143,7 +146,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
           Icon(Icons.table_chart, size: 20, color: context.textSecondaryColor),
           const SizedBox(width: 8),
           Text(
-            'Matrice RACI',
+            l10n.raciTitle,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: context.textPrimaryColor),
           ),
           const Spacer(),
@@ -153,7 +156,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
               child: ElevatedButton.icon(
                 onPressed: widget.onAddActivity,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('Aggiungi Attività'),
+                label: Text(l10n.raciAddActivity),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -164,7 +167,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
           ElevatedButton.icon(
             onPressed: _showAddColumnDialog,
             icon: const Icon(Icons.add_circle_outline, size: 18),
-            label: const Text('Aggiungi Colonna'),
+            label: Text(l10n.raciAddColumn),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.surfaceColor,
               foregroundColor: AppColors.primary,
@@ -178,6 +181,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
   }
 
   Widget _buildHeaderRow() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.primary.withOpacity(0.1),
@@ -189,7 +193,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
             width: 300,
             padding: const EdgeInsets.all(12),
             alignment: Alignment.centerLeft,
-            child: Text('ATTIVITÀ', style: TextStyle(fontWeight: FontWeight.bold, color: context.textSecondaryColor)),
+            child: Text(l10n.raciActivities, style: TextStyle(fontWeight: FontWeight.bold, color: context.textSecondaryColor)),
           ),
           ...widget.matrix.raciColumns.map((col) => _buildColumnHeader(col)),
         ],

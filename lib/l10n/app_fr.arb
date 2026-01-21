@@ -1,9 +1,7 @@
 {
   "@@locale": "fr",
-
   "appTitle": "Keisen",
   "goToHome": "Aller à l'accueil",
-
   "actionSave": "Enregistrer",
   "actionCancel": "Annuler",
   "actionDelete": "Supprimer",
@@ -21,12 +19,10 @@
   "actionDone": "Terminé",
   "actionReset": "Réinitialiser",
   "actionOpen": "Ouvrir",
-
   "stateLoading": "Chargement...",
   "stateEmpty": "Aucun élément",
   "stateError": "Erreur",
   "stateSuccess": "Succès",
-
   "subscriptionCurrent": "ACTUEL",
   "subscriptionRecommended": "RECOMMANDÉ",
   "subscriptionFree": "Gratuit",
@@ -88,7 +84,6 @@
   },
   "subscriptionWithAds": "Avec publicités",
   "subscriptionWithoutAds": "Sans publicités",
-
   "authSignInGoogle": "Se connecter avec Google",
   "authSignOut": "Se déconnecter",
   "authLogoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
@@ -106,11 +101,9 @@
   "authLogin": "Connexion",
   "authHaveAccount": "Vous avez déjà un compte ?",
   "authNoAccount": "Vous n'avez pas de compte ?",
-
   "navHome": "Accueil",
   "navProfile": "Profil",
   "navSettings": "Paramètres",
-
   "eisenhowerTitle": "Matrice Eisenhower",
   "eisenhowerYourMatrices": "Vos matrices",
   "eisenhowerNoMatrices": "Aucune matrice créée",
@@ -251,9 +244,8 @@
   "errorSavingVotes": "Erreur lors de l'enregistrement des votes",
   "errorExport": "Erreur lors de l'export",
   "errorStartingVoting": "Erreur lors du démarrage du vote",
-  "errorResetVoting": "Erreur lors de la réinitialisation du vote",
+  "errorResetVoting": "Erreur lors de la réinitialisation",
   "errorLoadingActivities": "Erreur lors du chargement des activités",
-
   "estimationTitle": "Salle d'Estimation",
   "estimationYourSessions": "Vos sessions",
   "estimationNoSessions": "Aucune session créée",
@@ -312,40 +304,33 @@
   "estimationModeDotVoting": "Vote par points",
   "estimationModeBucketSystem": "Système de seaux",
   "estimationModeFiveFingers": "Cinq doigts",
-
   "retroTitle": "Mes rétrospectives",
   "retroNoRetros": "Aucune rétrospective",
   "retroCreateNew": "Créer nouvelle",
-
   "settingsLanguage": "Langue",
   "settingsTheme": "Thème",
   "settingsThemeLight": "Clair",
   "settingsThemeDark": "Sombre",
   "settingsThemeSystem": "Système",
-
   "formTitle": "Titre",
   "formDescription": "Description",
   "formName": "Nom",
   "formRequired": "Champ obligatoire",
   "formHint": "Entrez une valeur",
   "formOptional": "Optionnel",
-
-  "errorGeneric": "Une erreur s'est produite",
+  "errorGeneric": "Erreur : {error}",
   "errorLoading": "Erreur lors du chargement des données",
   "errorSaving": "Erreur lors de l'enregistrement",
   "errorNetwork": "Erreur de connexion",
   "errorPermission": "Permission refusée",
   "errorNotFound": "Non trouvé",
-
   "successSaved": "Enregistré avec succès",
   "successDeleted": "Supprimé avec succès",
   "successCopied": "Copié dans le presse-papiers",
-
   "filterAll": "Tous",
   "filterRemove": "Supprimer les filtres",
   "filterActive": "Actif",
   "filterCompleted": "Terminé",
-
   "participants": "Participants",
   "addParticipant": "Ajouter un participant",
   "removeParticipant": "Retirer le participant",
@@ -356,13 +341,11 @@
   "participantVoter": "Votant",
   "participantObserver": "Observateur",
   "participantModerator": "Modérateur",
-
   "confirmDelete": "Confirmer la suppression",
   "confirmDeleteMessage": "Cette action ne peut pas être annulée.",
   "yes": "Oui",
   "no": "Non",
   "ok": "OK",
-
   "today": "Aujourd'hui",
   "yesterday": "Hier",
   "tomorrow": "Demain",
@@ -390,7 +373,6 @@
       }
     }
   },
-
   "itemCount": "{count} éléments",
   "@itemCount": {
     "placeholders": {
@@ -399,7 +381,6 @@
       }
     }
   },
-
   "welcomeBack": "Bon retour",
   "greeting": "Bonjour, {name} !",
   "@greeting": {
@@ -409,12 +390,10 @@
       }
     }
   },
-
   "copyLink": "Copier le lien",
   "shareSession": "Partager la session",
   "inviteByEmail": "Inviter par email",
   "inviteByLink": "Inviter par lien",
-
   "profileTitle": "Profil",
   "profileEmail": "Email",
   "profileDisplayName": "Nom d'affichage",
@@ -508,10 +487,8 @@
     }
   },
   "stateSaving": "Enregistrement...",
-
   "cardCoffee": "Pause",
   "cardQuestion": "Je ne sais pas",
-
   "toolEisenhower": "Matrice Eisenhower",
   "toolEisenhowerDesc": "Organisez les activités par urgence et importance. Des quadrants pour décider quoi faire maintenant, planifier, déléguer ou éliminer.",
   "toolEisenhowerDescShort": "Priorisez par urgence et importance",
@@ -527,13 +504,11 @@
   "toolRetro": "Tableau de rétrospective",
   "toolRetroDesc": "Recueillez les retours de l'équipe sur ce qui a bien fonctionné, ce qu'il faut améliorer et les actions à entreprendre.",
   "toolRetroDescShort": "Recueillez les retours de l'équipe sur ce qui a bien fonctionné et ce qu'il faut améliorer.",
-
   "homeUtilities": "Utilitaires",
   "homeSelectTool": "Sélectionnez un outil pour commencer",
   "statusOnline": "En ligne",
   "comingSoon": "Bientôt disponible",
   "featureComingSoon": "Cette fonctionnalité sera bientôt disponible !",
-
   "featureSmartImport": "Import intelligent",
   "featureCollaboration": "Collaboration",
   "featureFilters": "Filtres",
@@ -549,18 +524,20 @@
   "featureWentWell": "Ce qui a bien marché",
   "featureToImprove": "À améliorer",
   "featureActions": "Actions",
-
   "themeLightMode": "Mode clair",
   "themeDarkMode": "Mode sombre",
-
   "estimationBackToSessions": "Retour aux sessions",
   "estimationSessionSettings": "Paramètres de session",
   "estimationList": "Liste",
   "estimationSessionsCount": "Vos sessions ({filtered}/{total})",
   "@estimationSessionsCount": {
     "placeholders": {
-      "filtered": { "type": "int" },
-      "total": { "type": "int" }
+      "filtered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "estimationNoSessionFound": "Aucune session trouvée",
@@ -571,9 +548,15 @@
   "estimationProgress": "Progression : {completed}/{total} stories ({percent}%)",
   "@estimationProgress": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" },
-      "percent": { "type": "String" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "estimationStart": "Démarrer",
@@ -583,15 +566,23 @@
   "estimationCompletedLabel": "Terminé : {completed}/{total} | Estimation totale : {total_estimate} pt",
   "@estimationCompletedLabel": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" },
-      "total_estimate": { "type": "String" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "total_estimate": {
+        "type": "String"
+      }
     }
   },
   "estimationVoteStory": "Vote : {title}",
   "@estimationVoteStory": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "estimationAddStoriesToStart": "Ajoutez des stories pour commencer",
@@ -607,7 +598,9 @@
   "estimationVotesOf": "Votes : {title}",
   "@estimationVotesOf": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "estimationParticipantVotes": "Votes des participants :",
@@ -626,7 +619,6 @@
   "storyStatusPending": "En attente",
   "storyStatusVoting": "Vote en cours",
   "storyStatusRevealed": "Votes révélés",
-
   "participantManagement": "Gestion des participants",
   "participantCopySessionLink": "Copier le lien de session",
   "participantInvitesTab": "Invitations",
@@ -638,8 +630,12 @@
   "participantVotersAndObservers": "{voters} votants, {observers} observateurs",
   "@participantVotersAndObservers": {
     "placeholders": {
-      "voters": { "type": "int" },
-      "observers": { "type": "int" }
+      "voters": {
+        "type": "int"
+      },
+      "observers": {
+        "type": "int"
+      }
     }
   },
   "participantYou": "Vous",
@@ -649,29 +645,36 @@
   "participantRemoveConfirm": "Êtes-vous sûr de vouloir retirer \"{name}\" de la session ?",
   "@participantRemoveConfirm": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "participantAddedToSession": "{email} ajouté à la session",
   "@participantAddedToSession": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "participantRemovedFromSession": "{name} retiré de la session",
   "@participantRemovedFromSession": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "participantRoleUpdated": "Rôle mis à jour pour {email}",
   "@participantRoleUpdated": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "participantFacilitator": "Facilitateur",
-
   "inviteSendNew": "Envoyer une nouvelle invitation",
   "inviteRecipientEmail": "Email du destinataire *",
   "inviteCreate": "Créer l'invitation",
@@ -680,13 +683,17 @@
   "inviteCreatedFor": "Invitation créée pour {email}",
   "@inviteCreatedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteExpiresIn": "Expire dans {days}j",
   "@inviteExpiresIn": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "inviteCopyLink": "Copier le lien d'invitation",
@@ -696,33 +703,40 @@
   "inviteRevokeConfirm": "Êtes-vous sûr de vouloir révoquer l'invitation pour {email} ?",
   "@inviteRevokeConfirm": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteRevoke": "Révoquer",
   "inviteRevokedFor": "Invitation révoquée pour {email}",
   "@inviteRevokedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteDeleteTitle": "Supprimer l'invitation",
   "inviteDeleteConfirm": "Êtes-vous sûr de vouloir supprimer l'invitation pour {email} ?\n\nCette action est irréversible.",
   "@inviteDeleteConfirm": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteDeletedFor": "Invitation supprimée pour {email}",
   "@inviteDeletedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteLinkCopied": "Lien d'invitation copié dans le presse-papiers",
   "linkCopied": "Lien copié dans le presse-papiers",
   "enterValidEmail": "Entrez une adresse email valide",
-
   "sessionCreatedSuccess": "Session créée avec succès",
   "sessionUpdated": "Session mise à jour",
   "sessionDeleted": "Session supprimée",
@@ -734,26 +748,32 @@
   "estimateSaved": "Estimation enregistrée : {estimate}",
   "@estimateSaved": {
     "placeholders": {
-      "estimate": { "type": "String" }
+      "estimate": {
+        "type": "String"
+      }
     }
   },
-
   "deleteSessionTitle": "Supprimer la session",
   "deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer \"{name}\" ?\nToutes les {count} stories seront également supprimées.",
   "@deleteSessionConfirm": {
     "placeholders": {
-      "name": { "type": "String" },
-      "count": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
     }
   },
   "deleteStoryTitle": "Supprimer la story",
   "deleteStoryConfirm": "Êtes-vous sûr de vouloir supprimer \"{title}\" ?",
   "@deleteStoryConfirm": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "errorLoadingSession": "Erreur lors du chargement de la session",
   "errorLoadingStories": "Erreur lors du chargement des stories",
   "errorCreatingSession": "Erreur lors de la création de la session",
@@ -762,19 +782,18 @@
   "errorAddingStory": "Erreur lors de l'ajout de la story",
   "errorStartingSession": "Erreur lors du démarrage de la session",
   "errorCompletingSession": "Erreur lors de la finalisation de la session",
-  "errorStartingVoting": "Erreur lors du démarrage du vote",
   "errorSubmittingVote": "Erreur lors de la soumission du vote",
   "errorRevealingVotes": "Erreur lors de la révélation",
-  "errorResetVoting": "Erreur lors de la réinitialisation",
   "errorSavingEstimate": "Erreur lors de l'enregistrement de l'estimation",
   "errorSkipping": "Erreur lors du passage",
-
   "retroIcebreakerTitle": "Brise-glace : Moral de l'équipe",
   "retroIcebreakerQuestion": "Comment vous êtes-vous senti pendant ce sprint ?",
   "retroParticipantsVoted": "{count} participants ont voté",
   "@retroParticipantsVoted": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "retroEndIcebreakerStartWriting": "Terminer le brise-glace et commencer l'écriture",
@@ -783,7 +802,6 @@
   "retroMoodNeutral": "Neutre",
   "retroMoodGood": "Bon",
   "retroMoodExcellent": "Excellent",
-
   "retroAgileCoach": "Coach Agile",
   "retroCoachSetup": "Choisissez un modèle. \"Start/Stop/Continue\" est idéal pour les nouvelles équipes. Assurez-vous que tout le monde est présent.",
   "retroCoachIcebreaker": "Brisez la glace ! Faites un tour rapide en demandant \"Comment allez-vous ?\" ou utilisez une question amusante.",
@@ -791,31 +809,35 @@
   "retroCoachVoting": "C'est le moment de la révision ! Toutes les cartes sont visibles. Lisez-les et utilisez vos 3 votes pour décider de quoi discuter.",
   "retroCoachDiscuss": "Concentrez-vous sur les cartes les plus votées. Définissez des éléments d'action clairs : Qui fait quoi et quand ?",
   "retroCoachCompleted": "Excellent travail ! La rétrospective est terminée. Les éléments d'action ont été envoyés au Backlog.",
-
   "retroStep": "Étape {step} : {title}",
   "@retroStep": {
     "placeholders": {
-      "step": { "type": "int" },
-      "title": { "type": "String" }
+      "step": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
     }
   },
   "retroCurrentFocus": "Focus actuel : {title}",
   "@retroCurrentFocus": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "retroCanvasMinColumns": "Le modèle nécessite au moins 4 colonnes (style Voilier)",
   "retroAddTo": "Ajouter à {title}",
   "@retroAddTo": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "retroNoColumnsConfigured": "Aucune colonne configurée.",
-
   "retroNewActionItem": "Nouvel élément d'action",
   "retroEditActionItem": "Modifier l'élément d'action",
   "retroActionWhatToDo": "Que faut-il faire ?",
@@ -832,7 +854,6 @@
   "retroActionResourcesHint": "Outils, budget, personnes supplémentaires nécessaires...",
   "retroActionMonitoring": "Méthode de suivi",
   "retroActionMonitoringHint": "Comment allons-nous vérifier la progression ? (ex : Daily, Review...)",
-
   "retroNoActionItems": "Aucun élément d'action créé pour l'instant.",
   "retroActionResourcesShort": "Res",
   "retroTableRef": "Réf.",
@@ -844,25 +865,23 @@
   "retroUnassigned": "Non assigné",
   "retroDeleteActionItem": "Supprimer l'élément d'action",
   "retroDeleteConfirm": "Êtes-vous sûr ?",
-
   "retroChooseMethodology": "Choisir la méthodologie",
-
   "retroHidingWhileTyping": "Masquage pendant la saisie...",
   "retroVoteLimitReached": "Vous avez atteint la limite de {max} votes !",
   "@retroVoteLimitReached": {
     "placeholders": {
-      "max": { "type": "int" }
+      "max": {
+        "type": "int"
+      }
     }
   },
   "retroAddCardHint": "Quelles sont vos réflexions ?",
   "retroAddCard": "Ajouter une carte",
-
   "retroTimeUp": "Temps écoulé !",
   "retroTimeUpMessage": "Le temps pour cette phase est terminé. Finissez la discussion ou prolongez le temps.",
   "retroTimeUpOk": "Ok, compris",
   "retroStopTimer": "Arrêter le chrono",
   "retroStartTimer": "Démarrer le chrono",
-
   "retroNoRetrosFound": "Aucune rétrospective trouvée",
   "retroDeleteRetro": "Supprimer la rétrospective",
   "retroParticipantsLabel": "Participants",
@@ -875,15 +894,12 @@
       }
     }
   },
-
   "landingBadge": "Outils pour équipes Agile",
   "landingHeroTitle": "Créez de meilleurs produits\navec Keisen",
   "landingHeroSubtitle": "Priorisez, estimez et gérez vos projets avec des outils collaboratifs. Tout en un seul endroit, gratuitement.",
   "landingStartFree": "Commencer gratuitement",
-
   "landingEverythingNeed": "Tout ce dont vous avez besoin",
   "landingModernTools": "Des outils conçus pour les équipes modernes",
-
   "landingSmartTodoBadge": "Productivité",
   "landingSmartTodoTitle": "Liste Smart Todo",
   "landingSmartTodoSubtitle": "Gestion de tâches intelligente et collaborative pour les équipes modernes",
@@ -894,7 +910,6 @@
   "landingSmartTodoShareTitle": "Partage et invitations",
   "landingSmartTodoShareDesc": "Invitez collègues et collaborateurs à vos listes par email. Chaque participant peut voir, commenter et mettre à jour le statut des tâches assignées.\n\nParfait pour gérer des projets transverses avec des parties prenantes externes ou des équipes pluridisciplinaires.",
   "landingSmartTodoFeaturesTitle": "Fonctionnalités Smart Todo",
-
   "landingEisenhowerBadge": "Priorisation",
   "landingEisenhowerSubtitle": "La méthode de prise de décision utilisée par les leaders pour gérer le temps",
   "landingEisenhowerUrgentImportantTitle": "Urgent vs Important",
@@ -904,7 +919,6 @@
   "landingEisenhowerBenefitsTitle": "Pourquoi utiliser la Matrice Eisenhower ?",
   "landingEisenhowerBenefitsDesc": "Des études montrent que 80% des activités quotidiennes tombent dans les quadrants 3 et 4 (non importants). La matrice aide à les identifier et à libérer du temps pour ce qui compte vraiment.",
   "landingEisenhowerQuadrants": "Quadrant 1 : Urgent + Important → Faire maintenant\nQuadrant 2 : Non Urgent + Important → Planifier\nQuadrant 3 : Urgent + Non Important → Déléguer\nQuadrant 4 : Non Urgent + Non Important → Éliminer",
-
   "landingAgileBadge": "Méthodologies",
   "landingAgileTitle": "Framework Agile & Scrum",
   "landingAgileSubtitle": "Implémentez les meilleures pratiques pour le développement logiciel itératif",
@@ -914,18 +928,15 @@
   "landingAgileScrumDesc": "Scrum est le framework Agile le plus répandu. Il définit des rôles (Product Owner, Scrum Master, Équipe), des événements (Sprint Planning, Daily, Review, Rétrospective) et des artefacts (Product Backlog, Sprint Backlog).\n\nKeisen supporte tous les événements Scrum avec des outils dédiés pour chaque cérémonie.",
   "landingAgileKanbanTitle": "Tableau Kanban",
   "landingAgileKanbanDesc": "La méthode Kanban visualise le flux de travail à travers des colonnes représentant les états du processus. Elle limite le Travail En Cours (WIP) pour maximiser le débit.\n\nNotre tableau Kanban supporte la personnalisation des colonnes, les limites WIP et les métriques de flux.",
-
   "landingEstimationBadge": "Estimation",
   "landingEstimationTitle": "Techniques d'estimation collaboratives",
   "landingEstimationSubtitle": "Choisissez la meilleure méthode pour votre équipe pour des estimations précises",
   "landingEstimationFeaturesTitle": "Fonctionnalités de la Salle d'Estimation",
-
   "landingRetroBadge": "Rétrospective",
   "landingRetroTitle": "Rétrospectives interactives",
   "landingRetroSubtitle": "Outils collaboratifs en temps réel : chronomètres, votes anonymes, éléments d'action et rapports IA.",
   "landingRetroActionTitle": "Suivi des éléments d'action",
   "landingRetroActionDesc": "Chaque rétrospective génère des éléments d'action traçables avec propriétaires, échéances et statuts. Surveillez le suivi dans le temps.",
-
   "landingWorkflowBadge": "Flux de travail",
   "landingWorkflowTitle": "Comment ça marche",
   "landingWorkflowSubtitle": "Commencez en 3 étapes simples",
@@ -935,21 +946,17 @@
   "landingStep2Desc": "Estimez les user stories ensemble, organisez les sprints et suivez la progression en temps réel.",
   "landingStep3Title": "Améliorer",
   "landingStep3Desc": "Analysez les métriques, menez des rétrospectives et améliorez continuellement le processus.",
-
   "landingCtaTitle": "Prêt à commencer ?",
   "landingCtaDesc": "Inscrivez-vous gratuitement et commencez à collaborer avec votre équipe.",
-
   "landingFooterBrandDesc": "Outils collaboratifs pour les équipes agiles.\nPlanifiez, estimez et améliorez ensemble.",
   "landingFooterProduct": "Produit",
   "landingFooterResources": "Ressources",
   "landingFooterCompany": "Entreprise",
   "landingFooterLegal": "Légal",
   "landingCopyright": "© 2026 Keisen. Tous droits réservés.",
-
   "featureSmartImportDesc": "Création rapide de tâches avec description\nAssignation aux membres de l'équipe\nPriorité et échéances configurables\nNotifications de complétion",
   "featureImportDesc": "Import depuis fichier CSV\nCopier/coller depuis Excel\nAnalyse intelligente du texte\nMapping automatique des champs",
   "featureShareDesc": "Invitations par email\nPermissions configurables\nCommentaires sur les tâches\nHistorique des modifications",
-
   "featureSmartTaskCreation": "Création rapide de tâches",
   "featureTeamAssignment": "Assignation à l'équipe",
   "featurePriorityDeadline": "Priorité et échéances",
@@ -968,13 +975,9 @@
   "featureTagsCategories": "Tags & Catégories",
   "featureArchiving": "Archivage",
   "featureDataExport": "Export des données",
-
   "landingIntroFeatures": "Planification de sprint avec capacité d'équipe\nBacklog priorisé avec glisser-déposer\nSuivi de vélocité et burndown chart\nDaily standup facilité",
-
   "landingAgileScrumFeatures": "Product Backlog avec story points\nSprint Backlog avec découpage des tâches\nTableau de rétrospective intégré\nMétriques Scrum automatiques",
-
   "landingAgileKanbanFeatures": "Colonnes personnalisables\nLimites WIP par colonne\nGlisser-déposer intuitif\nLead time et cycle time",
-
   "landingEstimationPokerDesc": "La méthode classique : chaque membre choisit une carte (1, 2, 3, 5, 8...). Les estimations sont révélées simultanément pour éviter les biais.",
   "landingEstimationTShirtTitle": "Taille T-Shirt",
   "landingEstimationTShirtSubtitle": "Dimensionnement relatif",
@@ -985,14 +988,12 @@
   "landingEstimationBucketTitle": "Système de seaux",
   "landingEstimationBucketSubtitle": "Catégorisation rapide",
   "landingEstimationBucketDesc": "Les user stories sont assignées à des \"seaux\" prédéfinis. Excellent pour estimer rapidement de grandes quantités d'éléments lors des sessions de refinement.",
-
   "landingEstimationChipHiddenVote": "Vote caché",
   "landingEstimationChipTimer": "Chronomètre configurable",
   "landingEstimationChipStats": "Stats en temps réel",
   "landingEstimationChipParticipants": "Jusqu'à 20 participants",
   "landingEstimationChipHistory": "Historique des estimations",
   "landingEstimationChipExport": "Export des résultats",
-
   "landingRetroTemplateStartStopTitle": "Start / Stop / Continue",
   "landingRetroTemplateStartStopDesc": "Le format classique : quoi commencer à faire, quoi arrêter de faire, quoi continuer à faire.",
   "landingRetroTemplateMadSadTitle": "Mad / Sad / Glad",
@@ -1005,14 +1006,11 @@
   "landingRetroTemplateWentWellDesc": "Format simple et direct : ce qui a bien marché et ce qu'il faut améliorer.",
   "landingRetroTemplateDakiTitle": "DAKI",
   "landingRetroTemplateDakiDesc": "Drop, Add, Keep, Improve - décisions concrètes pour le prochain sprint.",
-
   "landingRetroFeatureTrackingTitle": "Suivi des éléments d'action",
   "landingRetroFeatureTrackingDesc": "Chaque rétrospective génère des éléments d'action traçables avec propriétaire, échéance et statut. Surveillez le suivi dans le temps.",
-
   "landingAgileSectionBadge": "Méthodologies",
   "landingAgileSectionTitle": "Framework Agile & Scrum",
   "landingAgileSectionSubtitle": "Implémentez les meilleures pratiques du développement logiciel itératif",
-
   "landingSmartTodoCollabTitle": "Listes de tâches collaboratives",
   "landingSmartTodoCollabDesc": "Smart Todo transforme la gestion quotidienne des tâches en un processus fluide et collaboratif. Créez des listes, assignez des tâches aux membres de l'équipe et suivez la progression en temps réel.\n\nIdéal pour les équipes distribuées nécessitant une synchronisation continue sur les tâches à accomplir.",
   "landingSmartTodoCollabFeatures": "Création rapide de tâches avec description\nAssignation aux membres de l'équipe\nPriorités et échéances configurables\nNotifications de complétion",
@@ -1026,7 +1024,6 @@
   "landingSmartTodoChipTags": "Tags et catégories",
   "landingSmartTodoChipArchive": "Archivage",
   "landingSmartTodoChipExport": "Export des données",
-
   "landingEisenhowerTitle": "Matrice Eisenhower",
   "landingEisenhowerUrgentTitle": "Urgent vs Important",
   "landingEisenhowerUrgentDesc": "La Matrice Eisenhower, conçue par le 34e président des États-Unis Dwight D. Eisenhower, divise les activités en quatre quadrants basés sur deux critères : urgence et importance.\n\nCe cadre de décision aide à distinguer ce qui nécessite une attention immédiate de ce qui contribue aux objectifs à long terme.",
@@ -1044,34 +1041,28 @@
   "landingEisenhowerDelegateDesc": "Interruptions, réunions, emails",
   "landingEisenhowerEliminateLabel": "ÉLIMINER",
   "landingEisenhowerEliminateDesc": "Distractions, réseaux sociaux, pertes de temps",
-
   "landingFooterFeatures": "Fonctionnalités",
   "landingFooterPricing": "Tarifs",
   "landingFooterChangelog": "Journal des modifications",
   "landingFooterRoadmap": "Feuille de route",
-
   "landingFooterDocs": "Documentation",
   "landingFooterAgileGuides": "Guides Agile",
   "landingFooterBlog": "Blog",
   "landingFooterCommunity": "Communauté",
-
   "landingFooterAbout": "À propos",
   "landingFooterContact": "Contact",
   "landingFooterJobs": "Carrières",
   "landingFooterPress": "Kit presse",
-
   "landingFooterPrivacy": "Politique de confidentialité",
   "landingFooterTerms": "Conditions d'utilisation",
   "landingFooterCookies": "Politique des cookies",
   "landingFooterGdpr": "RGPD",
-
   "agileMethodologyGuideTitle": "Guide des méthodologies Agile",
   "agileMethodologyGuideSubtitle": "Choisissez la méthodologie qui convient le mieux à votre projet",
   "agileScrumShortDesc": "Sprints à durée fixe, Vélocité, Burndown. Idéal pour les produits avec des exigences évolutives.",
   "agileKanbanShortDesc": "Flux continu, Limites WIP, Lead Time. Idéal pour le support et les demandes continues.",
   "agileScrumbanShortDesc": "Mix de Sprints et flux continu. Idéal pour les équipes souhaitant de la flexibilité.",
   "agileGuide": "Guide",
-
   "agileAddToSprint": "Ajouter au Sprint",
   "agileEstimate": "ESTIMER",
   "agileEstimated": "Estimé",
@@ -1080,10 +1071,11 @@
   "agilePointsValue": "{points} pts",
   "@agilePointsValue": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
-
   "backlogProductBacklog": "Product Backlog",
   "backlogArchiveCompleted": "Archive des terminés",
   "backlogStories": "stories",
@@ -1092,14 +1084,18 @@
   "backlogShowArchive": "Afficher l'archive ({count} terminées)",
   "@backlogShowArchive": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "backlogTab": "Backlog",
   "backlogArchiveTab": "Archive ({count})",
   "@backlogArchiveTab": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "backlogFilters": "Filtres",
@@ -1114,29 +1110,36 @@
   "backlogNoStoryFound": "Aucune story trouvée",
   "backlogEmpty": "Backlog vide",
   "backlogAddFirstStory": "Ajouter la première User Story",
-
   "kanbanWipExceeded": "Limite WIP dépassée ! Terminez quelques éléments avant d'en commencer de nouveaux.",
   "kanbanInfo": "Info",
   "kanbanConfigureWip": "Configurer WIP",
   "kanbanWipTooltip": "WIP : {current} sur {max} max",
   "@kanbanWipTooltip": {
     "placeholders": {
-      "current": { "type": "int" },
-      "max": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
   "kanbanNoWipLimit": "Pas de limite WIP",
   "kanbanItems": "{count} éléments",
   "@kanbanItems": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanEmpty": "Vide",
   "kanbanWipLimitTitle": "Limite WIP : {column}",
   "@kanbanWipLimitTitle": {
     "placeholders": {
-      "column": { "type": "String" }
+      "column": {
+        "type": "String"
+      }
     }
   },
   "kanbanWipLimitDesc": "Définissez le nombre maximum d'éléments pouvant être dans cette colonne en même temps.",
@@ -1145,7 +1148,9 @@
   "kanbanWipLimitSuggestion": "Suggestion : commencez par {count} et ajustez selon l'équipe.",
   "@kanbanWipLimitSuggestion": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanRemoveLimit": "Supprimer la limite",
@@ -1156,20 +1161,28 @@
   "kanbanColumnLabel": "Colonne : {name}",
   "@kanbanColumnLabel": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "kanbanCurrentCount": "Actuel : {current} | Limite : {limit}",
   "@kanbanCurrentCount": {
     "placeholders": {
-      "current": { "type": "int" },
-      "limit": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "kanbanAfterMove": "Après déplacement : {count}",
   "@kanbanAfterMove": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanSuggestion": "Suggestion : terminez ou déplacez d'autres éléments avant d'en commencer de nouveaux pour maintenir un flux de travail optimal.",
@@ -1186,11 +1199,12 @@
   "kanbanWipWhatToDoDesc": "1. Terminez ou déplacez les éléments existants avant d'en commencer de nouveaux\n2. Aidez les collègues à débloquer les éléments en revue\n3. Analysez pourquoi la limite a été dépassée",
   "kanbanUnderstood": "Compris",
   "kanbanBoardTitle": "Tableau Kanban",
-
   "sprintTitle": "Sprint ({count})",
   "@sprintTitle": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintNew": "Nouveau Sprint",
@@ -1199,7 +1213,9 @@
   "sprintNumber": "Sprint {number}",
   "@sprintNumber": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
   "sprintStart": "Démarrer le Sprint",
@@ -1207,13 +1223,17 @@
   "sprintDays": "{days}j",
   "@sprintDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintStoriesCount": "{count}",
   "@sprintStoriesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintStoriesLabel": "stories",
@@ -1223,7 +1243,9 @@
   "sprintDaysRemaining": "{days}j restants",
   "@sprintDaysRemaining": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintStartButton": "Démarrer",
@@ -1240,19 +1262,25 @@
   "sprintDuration": "Durée : {days} jours",
   "@sprintDuration": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintAverageVelocity": "Vélocité moyenne : {velocity} pts/sprint",
   "@sprintAverageVelocity": {
     "placeholders": {
-      "velocity": { "type": "String" }
+      "velocity": {
+        "type": "String"
+      }
     }
   },
   "sprintTeamMembers": "Équipe : {count} membres",
   "@sprintTeamMembers": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintPlanningTitle": "Planification de Sprint",
@@ -1264,7 +1292,9 @@
   "sprintPlanningDays": "{days} jours",
   "@sprintPlanningDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintPlanningExceeded": "Attention : vélocité suggérée dépassée",
@@ -1273,10 +1303,11 @@
   "sprintPlanningConfirm": "Confirmer ({count} stories)",
   "@sprintPlanningConfirm": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "storyFormEditTitle": "Modifier la Story",
   "storyFormNewTitle": "Nouvelle User Story",
   "storyFormDetailsTab": "Détails",
@@ -1326,11 +1357,12 @@
   "storyFormAssigneeLabel": "Assigner à",
   "storyFormAssigneeHint": "Sélectionner un membre de l'équipe",
   "storyFormNotAssigned": "Non assigné",
-
   "storyDetailPointsLabel": "{points} points",
   "@storyDetailPointsLabel": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
   "storyDetailDescriptionTitle": "Description",
@@ -1338,8 +1370,12 @@
   "storyDetailAcceptanceCriteria": "Critères d'acceptation ({completed}/{total})",
   "@storyDetailAcceptanceCriteria": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "storyDetailNoCriteria": "Aucun critère défini",
@@ -1348,7 +1384,9 @@
   "storyDetailEstimatesReceived": "{count} estimations reçues",
   "@storyDetailEstimatesReceived": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "storyDetailInfoTitle": "Informations",
@@ -1358,25 +1396,26 @@
   "storyDetailCreatedAt": "Créée le",
   "storyDetailStartedAt": "Démarrée le",
   "storyDetailCompletedAt": "Terminée le",
-
   "featureSort": "Tri",
-
   "retroStatusDraft": "Brouillon",
   "retroStatusActive": "En cours",
   "retroStatusCompleted": "Terminée",
   "retroDateLabel": "Date : {date}",
   "@retroDateLabel": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "retroSprintDefault": "Sprint {number}",
   "@retroSprintDefault": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
-
   "smartTodoEditTask": "Modifier",
   "smartTodoDescription": "DESCRIPTION",
   "smartTodoDescriptionHint": "Ajouter une description détaillée...",
@@ -1405,13 +1444,17 @@
   "smartTodoImportFileSelected": "Fichier sélectionné : {fileName}",
   "@smartTodoImportFileSelected": {
     "placeholders": {
-      "fileName": { "type": "String" }
+      "fileName": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportFileError": "Erreur de lecture du fichier : {error}",
   "@smartTodoImportFileError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportNoData": "Aucune donnée trouvée",
@@ -1419,14 +1462,20 @@
   "smartTodoImportColumnLabel": "Colonne {index} : \"{value}\"",
   "@smartTodoImportColumnLabel": {
     "placeholders": {
-      "index": { "type": "int" },
-      "value": { "type": "String" }
+      "index": {
+        "type": "int"
+      },
+      "value": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportFoundTasks": "{count} tâches valides trouvées. Vérifiez avant d'importer.",
   "@smartTodoImportFoundTasks": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImportBack": "Retour",
@@ -1434,7 +1483,9 @@
   "smartTodoImportButton": "Importer {count} tâches",
   "@smartTodoImportButton": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImportEnterText": "Entrez du texte ou téléchargez un fichier.",
@@ -1442,7 +1493,9 @@
   "smartTodoImportError": "Erreur d'import : {error}",
   "@smartTodoImportError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoAddActivity": "Ajouter une activité",
@@ -1484,20 +1537,26 @@
   "smartTodoImportSampleValue": "Exemple de valeur : \"{value}\"",
   "@smartTodoImportSampleValue": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportNoValidRows": "Aucune ligne valide trouvée.",
   "smartTodoImportParsingError": "Erreur d'analyse : {error}",
   "@smartTodoImportParsingError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportSuccess": "{count} tâches importées !",
   "@smartTodoImportSuccess": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoNewTaskDefault": "Nouvelle tâche",
@@ -1508,20 +1567,26 @@
   "smartTodoMembers": "Membres ({count})",
   "@smartTodoMembers": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoNoInvitesPending": "Aucune invitation en attente",
   "smartTodoRoleLabel": "Rôle : {role}",
   "@smartTodoRoleLabel": {
     "placeholders": {
-      "role": { "type": "String" }
+      "role": {
+        "type": "String"
+      }
     }
   },
   "smartTodoSentBy": "Envoyé par {name}",
   "@smartTodoSentBy": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "smartTodoResendEmail": "Renvoyer l'email",
@@ -1541,36 +1606,36 @@
   "smartTodoInviteSent": "Invitation envoyée à {email}",
   "@smartTodoInviteSent": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "smartTodoUserAlreadyInvitedOrPending": "Utilisateur déjà invité ou invitation en attente.",
   "smartTodoWriteComment": "Écrire un commentaire...",
-
   "smartTodoFilterToday": "Aujourd'hui",
   "smartTodoFilterMyTasks": "Mes Tâches",
   "smartTodoFilterOwner": "Propriétaire",
   "smartTodoViewGlobalTasks": "Voir Tâches Globales",
   "smartTodoViewLists": "Voir Listes",
-
   "smartTodoNewListDialogTitle": "Nouvelle Liste",
   "smartTodoTitleLabel": "Titre *",
   "smartTodoDescriptionLabel": "Description",
   "smartTodoCancel": "Annuler",
   "smartTodoCreate": "Créer",
   "smartTodoSave": "Enregistrer",
-
   "smartTodoNoListsPresent": "Aucune liste disponible",
   "smartTodoCreateFirstList": "Créez votre première liste pour commencer",
   "smartTodoMembersCount": "{count} membres",
   "@smartTodoMembersCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "smartTodoRenameListTitle": "Renommer la Liste",
-  "smartTodoNewNameLabel": "Nouveau Nom",
+  "smartTodoNewNameLabel": "Nouveau nom",
   "smartTodoDeleteListTitle": "Supprimer la Liste",
   "smartTodoDeleteListConfirm": "Êtes-vous sûr de vouloir supprimer cette liste et toutes ses tâches ? Cette action est irréversible.",
   "smartTodoDelete": "Supprimer",
@@ -1578,38 +1643,39 @@
   "smartTodoSearchHint": "Rechercher des listes...",
   "smartTodoSearchTasksHint": "Rechercher...",
   "smartTodoNoSearchResults": "Aucun résultat pour \"{query}\"",
-
   "smartTodoColumnTodo": "À Faire",
   "smartTodoColumnInProgress": "En Cours",
   "smartTodoColumnDone": "Terminé",
-
   "smartTodoAllPeople": "Toutes les personnes",
   "smartTodoPeopleCount": "{count} personnes",
   "@smartTodoPeopleCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "smartTodoFilterByPerson": "Filtrer par Personne",
+  "smartTodoFilterByPerson": "Filtrer par personne",
   "smartTodoApplyFilters": "Appliquer les Filtres",
   "@smartTodoNoSearchResults": {
     "placeholders": {
-      "query": {"type": "String"}
+      "query": {
+        "type": "String"
+      }
     }
   },
-
   "smartTodoError": "Erreur : {error}",
   "@smartTodoError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "profileMenuTitle": "Profil",
   "profileMenuLogout": "Déconnexion",
   "profileLogoutDialogTitle": "Déconnexion",
   "profileLogoutDialogConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
-
   "legalCookieTitle": "Nous utilisons des cookies",
   "legalCookieMessage": "Nous utilisons des cookies pour améliorer votre expérience et à des fins analytiques. En continuant, vous acceptez l'utilisation des cookies.",
   "legalCookieAccept": "Tout accepter",
@@ -1629,7 +1695,6 @@
   "profilePrivacy": "Confidentialité",
   "profileExportData": "Exporter mes données",
   "profileDeleteAccountConfirm": "Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.",
-
   "subscriptionTitle": "Abonnement",
   "subscriptionTabPlans": "Plans",
   "subscriptionTabUsage": "Utilisation",
@@ -1638,19 +1703,25 @@
   "subscriptionUpgradeTo": "Passer à {plan}",
   "@subscriptionUpgradeTo": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionDowngradeTo": "Rétrograder vers {plan}",
   "@subscriptionDowngradeTo": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionChoose": "Choisir {plan}",
   "@subscriptionChoose": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionMonthly": "Mensuel",
@@ -1674,28 +1745,38 @@
   "subscriptionCanCreateOne": "Vous pouvez créer 1 {entity} supplémentaire",
   "@subscriptionCanCreateOne": {
     "placeholders": {
-      "entity": {"type": "String"}
+      "entity": {
+        "type": "String"
+      }
     }
   },
   "subscriptionCanCreateMany": "Vous pouvez créer {count} {entity} supplémentaires",
   "@subscriptionCanCreateMany": {
     "placeholders": {
-      "count": {"type": "int"},
-      "entity": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "entity": {
+        "type": "String"
+      }
     }
   },
   "subscriptionUpgrade": "AMÉLIORER",
   "subscriptionUsed": "Utilisé : {count}",
   "@subscriptionUsed": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionUnlimited": "Illimité",
   "subscriptionLimit": "Limite : {count}",
   "@subscriptionLimit": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionPlanUsage": "Utilisation du plan",
@@ -1712,14 +1793,18 @@
   "subscriptionLoadingError": "Erreur de chargement : {error}",
   "@subscriptionLoadingError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionCompletePayment": "Complétez le paiement dans la fenêtre ouverte",
   "subscriptionError": "Erreur : {error}",
   "@subscriptionError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionConfirmDowngrade": "Confirmer la rétrogradation",
@@ -1730,28 +1815,44 @@
   "subscriptionPortalError": "Erreur d'ouverture du portail : {error}",
   "@subscriptionPortalError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionRetry": "Réessayer",
   "subscriptionChooseRightPlan": "Choisissez le plan qui vous convient",
   "subscriptionStartFree": "Commencez gratuitement, améliorez quand vous voulez",
   "subscriptionPlan": "Plan {plan}",
+  "subscriptionPlanName": "Plan actuel : {plan}",
+  "@subscriptionPlanName": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
   "@subscriptionPlan": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionTrialUntil": "Essai jusqu'au {date}",
   "@subscriptionTrialUntil": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "subscriptionRenewal": "Renouvellement : {date}",
   "@subscriptionRenewal": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "subscriptionManage": "Gérer",
@@ -1822,33 +1923,39 @@
   "subscriptionActiveProjects": "{count} projets actifs",
   "@subscriptionActiveProjects": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionActiveLists": "{count} listes Smart Todo",
   "@subscriptionActiveLists": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoClose": "Fermer",
   "smartTodoDone": "Terminé",
   "smartTodoAdd": "Ajouter",
   "smartTodoEmailLabel": "Email",
-
   "exceptionLoginGoogleRequired": "Connexion Google requise pour envoyer des e-mails",
   "exceptionUserNotAuthenticated": "Utilisateur non authentifié",
   "errorLoginFailed": "Erreur de connexion : {error}",
   "@errorLoginFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "retroParticipantsTitle": "Participants ({count})",
   "@retroParticipantsTitle": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "actionReopen": "Rouvrir",
@@ -1861,7 +1968,6 @@
   "retroReopenConfirm": "Êtes-vous sûr de vouloir rouvrir la rétrospective ? Elle retournera à la phase de Discussion.",
   "errorAuthRequired": "Authentification requise",
   "errorRetroIdMissing": "ID de rétrospective manquant",
-
   "pokerInviteAccepted": "Invitation acceptée ! Redirection vers la session.",
   "pokerInviteRefused": "Invitation refusée",
   "pokerConfirmRefuseTitle": "Refuser l'Invitation",
@@ -1876,13 +1982,11 @@
   "exceptionInviteInvalid": "Invitation invalide ou expirée",
   "exceptionInviteCalculated": "Invitation expirée",
   "exceptionInviteWrongUser": "Invitation destinée à un autre utilisateur",
-
   "todoImportTasks": "Importer des Tâches",
   "todoExportSheets": "Exporter vers Sheets",
   "todoDeleteColumnTitle": "Supprimer la Colonne",
   "todoDeleteColumnConfirm": "Êtes-vous sûr ? Les tâches de cette colonne seront perdues.",
   "exceptionListNotFound": "Liste introuvable",
-
   "langItalian": "Italiano",
   "langEnglish": "English",
   "langFrench": "Français",
@@ -1891,34 +1995,14 @@
   "errorExporting": "Erreur lors de l'exportation : {error}",
   "@errorExporting": {
     "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "retroCurrentFocus": "Focus actuel : {title}",
-  "@retroCurrentFocus": {
-    "placeholders": {
-      "title": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoViewKanban": "Kanban",
   "smartTodoViewList": "Liste",
   "smartTodoViewResource": "Par Ressource",
-  "smartTodoMembersCount": "{count} membres",
-  "@smartTodoMembersCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "smartTodoSearchTasksHint": "Rechercher...",
-  "smartTodoAllPeople": "Toutes les personnes",
-  "smartTodoPeopleCount": "{count} personnes",
-  "@smartTodoPeopleCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "smartTodoFilterToday": "Aujourd'hui",
-  "smartTodoFilterByPerson": "Filtrer par personne",
   "smartTodoInviteTooltip": "Inviter",
   "smartTodoOptionsTooltip": "Plus d'options",
   "smartTodoActionImport": "Importer des tâches",
@@ -1934,37 +2018,35 @@
   "smartTodoRenameList": "Renommer la liste",
   "smartTodoManageTags": "Gérer les étiquettes",
   "smartTodoDeleteList": "Supprimer la liste",
-  "smartTodoNewNameLabel": "Nouveau nom",
-  "smartTodoDeleteListConfirm": "Êtes-vous sûr de vouloir supprimer cette liste et toutes ses tâches ? Cette action est irréversible.",
   "smartTodoEditPermissionError": "Vous ne pouvez modifier que les tâches qui vous sont assignées",
-  "actionEdit": "Modifier",
-  "actionSave": "Enregistrer",
   "errorDeletingAccount": "Erreur lors de la suppression du compte : {error}",
   "@errorDeletingAccount": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "errorRecentLoginRequired": "Connexion récente requise. Veuillez vous déconnecter et vous reconnecter avant de supprimer votre compte.",
-  "errorGeneric": "Erreur : {error}",
   "@errorGeneric": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-  "retroChooseMethodology": "Choisir la méthodologie",
-  "actionConfirm": "Confirmer",
   "actionGuide": "Guide {framework}",
   "@actionGuide": {
     "placeholders": {
-      "framework": { "type": "String" }
+      "framework": {
+        "type": "String"
+      }
     }
   },
   "actionExportSheets": "Exporter vers Google Sheets",
   "actionAuditLog": "Journal d'audit",
   "actionInviteMember": "Inviter un membre",
   "actionSettings": "Paramètres",
-
   "retroTemplateStartStopContinue": "Start, Stop, Continue",
   "retroDescStartStopContinue": "Orienté action : Commencer, Arrêter, Continuer.",
   "retroUsageStartStopContinue": "Idéal pour des retours exploitables et des changements comportementaux.",
@@ -2008,7 +2090,6 @@
   "searchResultTypeEisenhower": "Matrice Eisenhower",
   "searchResultTypeEstimation": "Estimation Room",
   "searchBackToDashboard": "Retour au Tableau de bord",
-
   "exportToEstimation": "Envoyer à Estimation",
   "exportToEstimationDesc": "Créer une session d'estimation avec ces tâches",
   "exportToEisenhower": "Envoyer à Eisenhower",
@@ -2021,7 +2102,9 @@
   "tasksSelectedCount": "{count} tâche(s) sélectionnée(s)",
   "@tasksSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "exportSuccess": "Exporté avec succès",
@@ -2038,7 +2121,9 @@
   "storiesSelectedCount": "{count} histoire(s) sélectionnée(s)",
   "@storiesSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "selectAll": "Tout Sélectionner",
@@ -2047,7 +2132,9 @@
   "storiesImportedCount": "{count} histoire(s) importée(s)",
   "@storiesImportedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noEstimatedStories": "Aucune histoire avec estimations à importer",
@@ -2062,7 +2149,9 @@
   "activitiesCreated": "{count} activités créées",
   "@activitiesCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "importFromEisenhower": "Importer depuis Eisenhower",
@@ -2083,7 +2172,9 @@
   "activitiesSelectedCount": "{count} activité(s) sélectionnée(s)",
   "@activitiesSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noActivitiesSelected": "Aucune activité disponible",
@@ -2091,7 +2182,9 @@
   "tasksCreated": "{count} tâches créées",
   "@tasksCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "exportToUserStories": "Exporter vers User Stories",
@@ -2104,11 +2197,13 @@
   "selectProject": "Sélectionner Projet",
   "selectProjectHint": "Choisissez un projet de destination",
   "noProjectsAvailable": "Aucun projet disponible. Créez-en un nouveau.",
-  "userStoryFieldMappingInfo": "Mapping : Titre \u2192 Titre story, Description \u2192 Description story, Effort \u2192 Story points, Priorité \u2192 Business value",
+  "userStoryFieldMappingInfo": "Mapping : Titre → Titre story, Description → Description story, Effort → Story points, Priorité → Business value",
   "storiesCreated": "{count} stories créées",
   "@storiesCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "configureNewProject": "Configurer Nouveau Projet",
@@ -2117,26 +2212,36 @@
   "selectSprint": "Sélectionner Sprint",
   "selectSprintHint": "Choisissez un sprint de destination",
   "noSprintsAvailable": "Aucun sprint disponible. Créez d'abord un sprint en planification.",
-  "sprintExportFieldMappingInfo": "Mapping : Titre \u2192 Titre story, Description \u2192 Description, Estimation \u2192 Story points",
+  "sprintExportFieldMappingInfo": "Mapping : Titre → Titre story, Description → Description, Estimation → Story points",
   "exportToSprint": "Exporter vers Sprint",
   "totalStoryPoints": "{count} story points au total",
   "@totalStoryPoints": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "storiesAddedToSprint": "{count} stories ajoutées à {sprintName}",
   "@storiesAddedToSprint": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sprintName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "storiesAddedToProject": "{count} stories ajoutées au projet {projectName}",
   "@storiesAddedToProject": {
     "placeholders": {
-      "count": {"type": "int"},
-      "projectName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "projectName": {
+        "type": "String"
+      }
     }
   },
   "exportEisenhowerToSprintDesc": "Transformez les activités Eisenhower en User Stories",
@@ -2154,18 +2259,25 @@
   "activitiesExportedToSprint": "{count} activités exportées vers le sprint {sprintName}",
   "@activitiesExportedToSprint": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sprintName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "activitiesExportedToEstimation": "{count} activités exportées vers la session d'estimation {sessionName}",
   "@activitiesExportedToEstimation": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sessionName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sessionName": {
+        "type": "String"
+      }
     }
   },
-
   "archiveAction": "Archiver",
   "archiveRestoreAction": "Restaurer",
   "archiveShowArchived": "Afficher les archivés",
@@ -2173,14 +2285,18 @@
   "archiveConfirmTitle": "Archiver {itemType}",
   "@archiveConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "archiveConfirmMessage": "Êtes-vous sûr de vouloir archiver cet élément ? Il pourra être restauré ultérieurement.",
   "archiveRestoreConfirmTitle": "Restaurer {itemType}",
   "@archiveRestoreConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "archiveRestoreConfirmMessage": "Voulez-vous restaurer cet élément des archives ?",
@@ -2199,11 +2315,401 @@
   "completeConfirmTitle": "Terminer {itemType}",
   "@completeConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "completeConfirmMessage": "Êtes-vous sûr de vouloir terminer cet élément ?",
   "completeSuccessMessage": "Élément terminé avec succès",
   "reopenSuccessMessage": "Élément rouvert avec succès",
-  "completedBadge": "Terminé"
+  "completedBadge": "Terminé",
+
+  "inviteNewInvite": "NOUVELLE INVITATION",
+  "inviteRole": "Rôle :",
+  "inviteSendEmailNotification": "Envoyer une notification par email",
+  "inviteSendInvite": "Envoyer l'invitation",
+  "inviteLink": "Lien d'invitation :",
+  "inviteLinkCopied": "Lien copié !",
+  "inviteCopyLink": "Copier le lien",
+  "inviteList": "INVITATIONS",
+  "inviteResend": "Renvoyer",
+  "inviteRevoke": "Révoquer",
+  "inviteRevokeTitle": "Révoquer l'invitation ?",
+  "inviteRevokeMessage": "L'invitation ne sera plus valide.",
+  "inviteResent": "Invitation renvoyée",
+  "inviteSentByEmail": "Invitation envoyée par email à {email}",
+  "@inviteSentByEmail": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "inviteStatusPending": "En attente",
+  "inviteStatusAccepted": "Acceptée",
+  "inviteStatusDeclined": "Refusée",
+  "inviteStatusExpired": "Expirée",
+  "inviteStatusRevoked": "Révoquée",
+  "inviteGmailAuthTitle": "Autorisation Gmail",
+  "inviteGmailAuthMessage": "Pour envoyer des emails d'invitation, vous devez vous ré-authentifier avec Google.\n\nVoulez-vous continuer ?",
+  "inviteGmailAuthNo": "Non, juste le lien",
+  "inviteGmailAuthYes": "Autoriser",
+  "inviteGmailNotAvailable": "Autorisation Gmail non disponible. Essayez de vous déconnecter et de vous reconnecter.",
+  "inviteGmailNoPermission": "Permission Gmail non accordée.",
+  "inviteEnterEmail": "Entrez un email",
+  "inviteInvalidEmail": "Email invalide",
+
+  "pendingInvites": "Invitations en attente",
+  "noPendingInvites": "Aucune invitation en attente",
+  "invitedBy": "Invité par {name}",
+  "@invitedBy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "inviteOpenInstance": "Ouvrir",
+  "inviteAcceptFirst": "Acceptez l'invitation pour ouvrir",
+  "inviteAccept": "Accepter",
+  "inviteDecline": "Refuser",
+  "inviteAcceptedSuccess": "Invitation acceptée avec succès !",
+  "inviteAcceptedError": "Échec de l'acceptation de l'invitation",
+  "inviteDeclinedSuccess": "Invitation refusée",
+  "inviteDeclineTitle": "Refuser l'invitation ?",
+  "inviteDeclineMessage": "Êtes-vous sûr de vouloir refuser cette invitation ?",
+  "expiresInHours": "Expire dans {hours}h",
+  "@expiresInHours": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "expiresInDays": "Expire dans {days}j",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "close": "Fermer",
+  "cancel": "Annuler",
+
+  "raciTitle": "Matrice RACI",
+  "raciNoActivities": "Aucune activité disponible",
+  "raciAddActivity": "Ajouter une activité",
+  "raciAddColumn": "Ajouter une colonne",
+  "raciActivities": "ACTIVITÉS",
+  "raciAssignRole": "Attribuer un rôle",
+  "raciNone": "Aucun",
+  "raciSaving": "Enregistrement...",
+  "raciSaveChanges": "Enregistrer les modifications",
+  "raciSavedSuccessfully": "Modifications enregistrées avec succès",
+  "raciErrorSaving": "Erreur d'enregistrement",
+  "raciMissingAccountable": "Accountable (A) manquant",
+  "raciOnlyOneAccountable": "Un seul Accountable par activité",
+  "raciDuplicateRoles": "Rôles dupliqués",
+  "raciNoResponsible": "Aucun Responsible (R) attribué",
+  "raciTooManyInformed": "Trop d'Informed (I) : envisagez de réduire",
+  "raciColumnName": "Nom de la colonne",
+  "raciColumnNameHint": "Ex. : Équipe développement",
+  "raciNewColumn": "Nouvelle colonne",
+  "raciRemoveColumn": "Supprimer la colonne",
+  "raciRemoveColumnConfirm": "Supprimer la colonne \"{name}\" ? Toutes les attributions de rôles pour cette colonne seront supprimées.",
+  "@raciRemoveColumnConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "votingDialogTitle": "Voter",
+  "votingDialogVoteOf": "Vote de {participant}",
+  "@votingDialogVoteOf": {
+    "placeholders": {
+      "participant": {"type": "String"}
+    }
+  },
+  "votingDialogUrgency": "URGENCE",
+  "votingDialogImportance": "IMPORTANCE",
+  "votingDialogNotUrgent": "Pas urgent",
+  "votingDialogVeryUrgent": "Très urgent",
+  "votingDialogNotImportant": "Pas important",
+  "votingDialogVeryImportant": "Très important",
+  "votingDialogConfirmVote": "Confirmer le vote",
+  "votingDialogQuadrant": "Quadrant :",
+
+  "voteCollectionTitle": "Collecter les votes",
+  "voteCollectionParticipants": "participants",
+  "voteCollectionResult": "Résultat :",
+  "voteCollectionAverage": "Moyenne :",
+  "voteCollectionSaveVotes": "Enregistrer les votes",
+
+  "scatterChartTitle": "Distribution des activités",
+  "scatterChartNoActivities": "Aucune activité votée",
+  "scatterChartVoteToShow": "Votez les activités pour les afficher dans le graphique",
+  "scatterChartUrgencyLabel": "Urgence :",
+  "scatterChartImportanceLabel": "Importance :",
+  "scatterChartAxisUrgency": "URGENCE",
+  "scatterChartAxisImportance": "IMPORTANCE",
+  "scatterChartQ1Label": "Q1 - FAIRE",
+  "scatterChartQ2Label": "Q2 - PLANIFIER",
+  "scatterChartQ3Label": "Q3 - DÉLÉGUER",
+  "scatterChartQ4Label": "Q4 - ÉLIMINER",
+  "scatterChartCardTitle": "Graphique de distribution",
+
+  "votingStatusYou": "Vous",
+  "votingStatusReset": "Réinitialiser",
+
+  "exportToEstimation": "Exporter vers l'estimation",
+  "exportToSprint": "Exporter vers le sprint",
+  "existingProject": "Projet existant",
+  "createNewProject": "Créer un nouveau projet",
+  "selectProject": "Sélectionner un projet",
+  "selectSprint": "Sélectionner un sprint",
+  "configureNewProject": "Configurer un nouveau projet",
+  "exportFromEisenhower": "Exporter depuis Eisenhower",
+  "exportFromEisenhowerDesc": "Sélectionnez les activités à exporter vers Smart Todo",
+  "selectDestinationList": "Sélectionner la liste de destination",
+  "existingList": "Liste existante",
+  "createNewList": "Créer une nouvelle liste",
+  "listName": "Nom de la liste",
+  "listNameHint": "Entrez un nom pour la nouvelle liste",
+  "selectList": "Sélectionner une liste",
+  "selectListHint": "Choisissez une liste",
+  "noListsAvailable": "Aucune liste disponible. Une nouvelle sera créée.",
+  "filterByQuadrant": "Filtrer par quadrant :",
+  "allActivities": "Toutes",
+  "activitiesSelectedCount": "{count} activités sélectionnées",
+  "@activitiesSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "selectAll": "Tout sélectionner",
+  "deselectAll": "Tout désélectionner",
+  "noActivitiesSelected": "Aucune activité dans ce filtre",
+  "unvoted": "NON VOTÉ",
+
+  "estimationDecimalTitle": "Estimation décimale",
+  "estimationDecimalHint": "Entrez votre estimation en jours (ex: 1.5, 2.25)",
+  "estimationDecimalHintPlaceholder": "Ex: 2.5",
+  "estimationDecimalSuffixDays": "jours",
+  "estimationDecimalVote": "Voter",
+  "estimationDecimalVoteValue": "Vote: {value} jours",
+  "@estimationDecimalVoteValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDecimalQuickSelect": "Sélection rapide :",
+  "estimationDecimalEnterValue": "Entrez une valeur",
+  "estimationDecimalInvalidValue": "Valeur invalide",
+  "estimationDecimalMinValue": "Min: {value}",
+  "@estimationDecimalMinValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDecimalMaxValue": "Max: {value}",
+  "@estimationDecimalMaxValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
+  "estimationThreePointTitle": "Estimation à trois points (PERT)",
+  "estimationThreePointOptimistic": "Optimiste (O)",
+  "estimationThreePointRealistic": "Réaliste (M)",
+  "estimationThreePointPessimistic": "Pessimiste (P)",
+  "estimationThreePointBestCase": "Meilleur cas",
+  "estimationThreePointMostLikely": "Plus probable",
+  "estimationThreePointWorstCase": "Pire cas",
+  "estimationThreePointAllFieldsRequired": "Tous les champs sont obligatoires",
+  "estimationThreePointInvalidValues": "Valeurs invalides",
+  "estimationThreePointOptMustBeLteReal": "Optimiste doit être <= Réaliste",
+  "estimationThreePointRealMustBeLtePess": "Réaliste doit être <= Pessimiste",
+  "estimationThreePointOptMustBeLtePess": "Optimiste doit être <= Pessimiste",
+  "estimationThreePointGuide": "Guide :",
+  "estimationThreePointGuideO": "O : Estimation du meilleur cas (tout va bien)",
+  "estimationThreePointGuideM": "M : Estimation la plus probable (conditions normales)",
+  "estimationThreePointGuideP": "P : Estimation du pire cas (imprévus)",
+  "estimationThreePointStdDev": "Écart type",
+  "estimationThreePointDaysSuffix": "j",
+
+  "storyFormNewStory": "Nouvelle Story",
+  "storyFormTitleLabel": "Titre *",
+  "storyFormTitleHint": "Ex: US-123: En tant qu'utilisateur je veux...",
+  "storyFormDescriptionLabel": "Description",
+  "storyFormDescriptionHint": "Critères d'acceptation, notes...",
+  "storyFormEnterTitle": "Entrez un titre",
+
+  "sessionSearchHint": "Rechercher des sessions...",
+  "sessionSearchFilters": "Filtres",
+  "sessionSearchFiltersTooltip": "Filtres",
+  "sessionSearchStatusLabel": "Statut : ",
+  "sessionSearchStatusAll": "Tous",
+  "sessionSearchStatusDraft": "Brouillon",
+  "sessionSearchStatusActive": "Active",
+  "sessionSearchStatusCompleted": "Terminée",
+  "sessionSearchModeLabel": "Mode : ",
+  "sessionSearchModeAll": "Tous",
+  "sessionSearchRemoveFilters": "Supprimer les filtres",
+  "sessionSearchActiveFilters": "Filtres actifs :",
+  "sessionSearchRemoveAllFilters": "Tout supprimer",
+
+  "participantsTitle": "Participants ({count})",
+  "@participantsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "participantRoleFacilitator": "Facilitateur",
+  "participantRoleVoters": "Votants",
+  "participantRoleObservers": "Observateurs",
+  "participantYou": "(vous)",
+
+  "votingBoardVotesRevealed": "Votes révélés",
+  "votingBoardVotingInProgress": "Vote en cours",
+  "votingBoardVotesCount": "{voted}/{total} votes",
+  "@votingBoardVotesCount": {
+    "placeholders": {
+      "voted": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "estimationSelectYourEstimate": "Sélectionnez votre estimation",
+  "estimationVoteSelected": "Vote sélectionné : {value}",
+  "@estimationVoteSelected": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDotVotingTitle": "Dot Voting",
+  "estimationDotVotingDesc": "Mode de vote avec allocation de points.\nBientôt disponible...",
+  "estimationBucketSystemTitle": "Bucket System",
+  "estimationBucketSystemDesc": "Estimation par affinité avec regroupement.\nBientôt disponible...",
+
+  "estimationModeTitle": "Mode d'estimation",
+
+  "statisticsTitle": "Statistiques de vote",
+  "statisticsAverage": "Moyenne",
+  "statisticsMedian": "Médiane",
+  "statisticsMode": "Mode",
+  "statisticsVoters": "Votants",
+  "statisticsPertStats": "Statistiques PERT",
+  "statisticsPertAvg": "Moy. PERT",
+  "statisticsStdDev": "Écart type",
+  "statisticsVariance": "Variance",
+  "statisticsRange": "Plage :",
+  "statisticsConsensusReached": "Consensus atteint !",
+
+  "retroGuideTooltip": "Guide des Rétrospectives",
+  "retroSearchPlaceholder": "Rechercher rétrospective...",
+  "retroNoSearchResults": "Aucun résultat pour la recherche",
+  "retroNoRetrosFound": "Aucune rétrospective trouvée",
+  "retroNewRetro": "Nouvelle Rétrospective",
+  "retroLinkToSprint": "Lier au Sprint ?",
+  "retroNoProjectsFound": "Aucun projet trouvé.",
+  "retroSelectProject": "Sélectionner le Projet",
+  "retroSelectSprint": "Sélectionner le Sprint",
+  "retroSessionTitle": "Titre de la Session",
+  "retroSessionTitleHint": "Ex : Weekly Sync, Project Review...",
+  "retroTemplateLabel": "Modèle",
+  "retroVotesPerUser": "Votes par utilisateur :",
+  "retroDeleteTitle": "Supprimer la Rétrospective",
+  "retroDeleteMessage": "Êtes-vous sûr de vouloir supprimer définitivement la rétrospective \"{retroName}\" ?\n\nCette action est irréversible et supprimera toutes les données associées (cartes, votes, action items).",
+  "@retroDeleteMessage": {
+    "placeholders": {
+      "retroName": {"type": "String"}
+    }
+  },
+  "retroDeletePermanently": "Supprimer définitivement",
+  "retroDeletedSuccess": "Rétrospective supprimée avec succès",
+  "retroDeleteError": "Erreur lors de la suppression : {error}",
+  "@retroDeleteError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "errorPrefix": "Erreur : {error}",
+  "@errorPrefix": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "loaderProjectIdMissing": "ID du projet manquant",
+  "loaderProjectNotFound": "Projet non trouvé",
+  "loaderLoadError": "Erreur de chargement",
+  "loaderError": "Erreur",
+  "loaderUnknownError": "Erreur inconnue",
+  "actionGoBack": "Retour",
+  "authRequired": "Authentification requise",
+  "retroIdMissing": "ID de rétrospective manquant",
+  "pokerInviteStatusAccepted": "a déjà été acceptée",
+  "pokerInviteStatusDeclined": "a été refusée",
+  "pokerInviteStatusExpired": "a expiré",
+  "pokerInviteStatusRevoked": "a été révoquée",
+  "pokerInviteStatusPending": "est en attente",
+  "pokerInviteYouAreInvited": "Vous Êtes Invité !",
+  "pokerInviteInvitedBy": "{name} vous a invité à participer",
+  "@pokerInviteInvitedBy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "pokerInviteSessionLabel": "Session",
+  "pokerInviteProjectLabel": "Projet",
+  "pokerInviteRoleLabel": "Rôle Assigné",
+  "pokerInviteExpiryLabel": "Expiration de l'Invitation",
+  "pokerInviteExpiryDays": "Dans {days} jours",
+  "@pokerInviteExpiryDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "pokerInviteDecline": "Refuser",
+  "pokerInviteAccept": "Accepter l'Invitation",
+  "loadingMatrixError": "Erreur de chargement de la matrice : {error}",
+  "@loadingMatrixError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "loadingDataError": "Erreur de chargement des données : {error}",
+  "@loadingDataError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "loadingActivitiesError": "Erreur de chargement des activités : {error}",
+  "@loadingActivitiesError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "smartTodoSprintDays": "{days} jours/sprint",
+  "@smartTodoSprintDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "smartTodoHoursPerDay": "{hours}h/jour",
+  "@smartTodoHoursPerDay": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "smartTodoImageFromClipboardFound": "Image trouvée dans le presse-papiers",
+  "smartTodoAddImageFromClipboard": "Ajouter une image depuis le presse-papiers",
+  "smartTodoInviteCreatedAndSent": "Invitation créée et envoyée"
 }

@@ -5,7 +5,8 @@ import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/widgets/retrospective/retro_board_widget.dart';
 import 'package:agile_tools/widgets/retrospective/agile_coach_overlay.dart';
 import 'package:agile_tools/widgets/retrospective/sentiment_voting_widget.dart';
-import 'package:agile_tools/widgets/agile/participant_invite_dialog.dart';
+import 'package:agile_tools/widgets/retrospective/retro_participant_invite_dialog.dart';
+import 'package:agile_tools/services/retro_invite_service.dart';
 import 'package:agile_tools/widgets/retrospective/action_items_table_widget.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/services/retrospective_sheets_export_service.dart';
@@ -452,13 +453,18 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   // I will just create a new one if ID is empty.
 
 
-  void _showInviteDialog(RetrospectiveModel retro) {
-    showDialog(
+  void _showInviteDialog(RetrospectiveModel retro) async {
+    // Carica gli inviti pendenti per mostrarli nel dialog
+    final inviteService = RetroInviteService();
+    final pendingInvites = await inviteService.getInvitesForBoard(retro.id);
+
+    if (!mounted) return;
+
+    RetroParticipantInviteDialog.show(
       context: context,
-      builder: (context) => AgileParticipantInviteDialog(
-        projectId: retro.projectId ?? retro.id,
-        projectName: retro.sprintName.isNotEmpty ? retro.sprintName : 'Retrospective',
-      ),
+      boardId: retro.id,
+      boardTitle: retro.sprintName.isNotEmpty ? retro.sprintName : 'Retrospective',
+      pendingInvites: pendingInvites,
     );
   }
   

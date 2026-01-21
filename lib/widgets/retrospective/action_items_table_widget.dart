@@ -141,14 +141,14 @@ class ActionItemsTableWidget extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.edit, size: 20),
                             onPressed: () => _editItem(context, item),
-                            tooltip: 'Modifica',
+                            tooltip: l10n.actionEdit,
                           ),
                           if (isFacilitator)
                             IconButton(
                               icon: const Icon(Icons.delete,
                                   size: 20, color: Colors.red),
                               onPressed: () => _deleteItem(context, item),
-                              tooltip: 'Elimina',
+                              tooltip: l10n.actionDelete,
                             ),
                         ],
                       ),
@@ -190,19 +190,20 @@ class ActionItemsTableWidget extends StatelessWidget {
   }
 
   Future<void> _deleteItem(BuildContext context, ActionItem item) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Action Item'),
-        content: const Text('Sei sicuro?'),
+        title: Text(l10n.retroDeleteActionItem),
+        content: Text(l10n.confirmDeleteMessage),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('No')),
+              child: Text(l10n.no)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Elimina'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),

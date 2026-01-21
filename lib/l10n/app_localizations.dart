@@ -1056,6 +1056,126 @@ abstract class AppLocalizations {
   /// **'Errore caricamento attivita'**
   String get errorLoadingActivities;
 
+  /// No description provided for @eisenhowerWaitingForVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa di voti'**
+  String get eisenhowerWaitingForVotes;
+
+  /// No description provided for @eisenhowerVotedParticipants.
+  ///
+  /// In it, this message translates to:
+  /// **'{ready}/{total} voti'**
+  String eisenhowerVotedParticipants(int ready, int total);
+
+  /// No description provided for @eisenhowerVoteSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'VOTA'**
+  String get eisenhowerVoteSubmit;
+
+  /// No description provided for @eisenhowerVotedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai votato'**
+  String get eisenhowerVotedSuccess;
+
+  /// No description provided for @eisenhowerRevealVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'RIVELA VOTI'**
+  String get eisenhowerRevealVotes;
+
+  /// No description provided for @eisenhowerQuickVote.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto Rapido'**
+  String get eisenhowerQuickVote;
+
+  /// No description provided for @eisenhowerTeamVote.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto Team'**
+  String get eisenhowerTeamVote;
+
+  /// No description provided for @eisenhowerUrgency.
+  ///
+  /// In it, this message translates to:
+  /// **'Urgenza'**
+  String get eisenhowerUrgency;
+
+  /// No description provided for @eisenhowerImportance.
+  ///
+  /// In it, this message translates to:
+  /// **'Importanza'**
+  String get eisenhowerImportance;
+
+  /// No description provided for @eisenhowerUrgencyShort.
+  ///
+  /// In it, this message translates to:
+  /// **'U:'**
+  String get eisenhowerUrgencyShort;
+
+  /// No description provided for @eisenhowerImportanceShort.
+  ///
+  /// In it, this message translates to:
+  /// **'I:'**
+  String get eisenhowerImportanceShort;
+
+  /// No description provided for @eisenhowerVotingInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'VOTAZIONE IN CORSO'**
+  String get eisenhowerVotingInProgress;
+
+  /// No description provided for @eisenhowerWaitingForOthers.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa che tutti votino. Il facilitatore rivelerà i voti.'**
+  String get eisenhowerWaitingForOthers;
+
+  /// No description provided for @eisenhowerReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Pronto'**
+  String get eisenhowerReady;
+
+  /// No description provided for @eisenhowerWaiting.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa'**
+  String get eisenhowerWaiting;
+
+  /// No description provided for @eisenhowerIndividualVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'VOTI INDIVIDUALI'**
+  String get eisenhowerIndividualVotes;
+
+  /// No description provided for @eisenhowerResult.
+  ///
+  /// In it, this message translates to:
+  /// **'RISULTATO'**
+  String get eisenhowerResult;
+
+  /// No description provided for @eisenhowerAverage.
+  ///
+  /// In it, this message translates to:
+  /// **'MEDIA'**
+  String get eisenhowerAverage;
+
+  /// No description provided for @eisenhowerVotesRevealed.
+  ///
+  /// In it, this message translates to:
+  /// **'Voti Rivelati'**
+  String get eisenhowerVotesRevealed;
+
+  /// No description provided for @eisenhowerNoVotesRecorded.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun voto registrato'**
+  String get eisenhowerNoVotesRecorded;
+
   /// No description provided for @estimationTitle.
   ///
   /// In it, this message translates to:
@@ -1415,6 +1535,360 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Crea Nuova'**
   String get retroCreateNew;
+
+  /// No description provided for @retroGuidance.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida alle Retrospettive'**
+  String get retroGuidance;
+
+  /// No description provided for @retroSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca retrospettiva...'**
+  String get retroSearchHint;
+
+  /// No description provided for @retroNoResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato per la ricerca'**
+  String get retroNoResults;
+
+  /// No description provided for @retroFilterAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte'**
+  String get retroFilterAll;
+
+  /// No description provided for @retroFilterActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Active'**
+  String get retroFilterActive;
+
+  /// No description provided for @retroFilterCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completed'**
+  String get retroFilterCompleted;
+
+  /// No description provided for @retroFilterDraft.
+  ///
+  /// In it, this message translates to:
+  /// **'Draft'**
+  String get retroFilterDraft;
+
+  /// No description provided for @retroDeleteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Retrospettiva'**
+  String get retroDeleteTitle;
+
+  /// No description provided for @retroDeleteConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro?'**
+  String retroDeleteConfirm(String title);
+
+  /// No description provided for @retroDeleteSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospettiva eliminata con successo'**
+  String get retroDeleteSuccess;
+
+  /// No description provided for @retroDeleteError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'eliminazione: {error}'**
+  String retroDeleteError(String error);
+
+  /// No description provided for @retroDeleteConfirmAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina definitivamente'**
+  String get retroDeleteConfirmAction;
+
+  /// No description provided for @retroNewRetroTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Retrospettiva'**
+  String get retroNewRetroTitle;
+
+  /// No description provided for @retroLinkToSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Collega a Sprint?'**
+  String get retroLinkToSprint;
+
+  /// No description provided for @retroNoProjectFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun progetto trovato.'**
+  String get retroNoProjectFound;
+
+  /// No description provided for @retroSelectProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Progetto'**
+  String get retroSelectProject;
+
+  /// No description provided for @retroSelectSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Sprint'**
+  String get retroSelectSprint;
+
+  /// No description provided for @retroSprintLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint {number}: {name}'**
+  String retroSprintLabel(int number, String name);
+
+  /// No description provided for @retroSessionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo Sessione'**
+  String get retroSessionTitle;
+
+  /// No description provided for @retroSessionTitleHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Es: Weekly Sync, Project Review...'**
+  String get retroSessionTitleHint;
+
+  /// No description provided for @retroTemplateLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Template'**
+  String get retroTemplateLabel;
+
+  /// No description provided for @retroVotesPerUser.
+  ///
+  /// In it, this message translates to:
+  /// **'Voti per utente:'**
+  String get retroVotesPerUser;
+
+  /// No description provided for @retroActionClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get retroActionClose;
+
+  /// No description provided for @retroActionCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea'**
+  String get retroActionCreate;
+
+  /// No description provided for @retroStatusDraft.
+  ///
+  /// In it, this message translates to:
+  /// **'Bozza'**
+  String get retroStatusDraft;
+
+  /// No description provided for @retroStatusActive.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso'**
+  String get retroStatusActive;
+
+  /// No description provided for @retroStatusCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completata'**
+  String get retroStatusCompleted;
+
+  /// No description provided for @retroTemplateStartStopContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Start, Stop, Continue'**
+  String get retroTemplateStartStopContinue;
+
+  /// No description provided for @retroTemplateSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Barca a Vela'**
+  String get retroTemplateSailboat;
+
+  /// No description provided for @retroTemplate4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'4 Ls'**
+  String get retroTemplate4Ls;
+
+  /// No description provided for @retroTemplateStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Stella Marina'**
+  String get retroTemplateStarfish;
+
+  /// No description provided for @retroTemplateMadSadGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Mad Sad Glad'**
+  String get retroTemplateMadSadGlad;
+
+  /// No description provided for @retroTemplateDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'DAKI (Drop Add Keep Improve)'**
+  String get retroTemplateDAKI;
+
+  /// No description provided for @retroDescStartStopContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Orientata all\'azione: Iniziare, Smettere, Continuare.'**
+  String get retroDescStartStopContinue;
+
+  /// No description provided for @retroDescSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Visiva: Vento (spinge), Ancore (frena), Rocce (rischi), Isola (obiettivi).'**
+  String get retroDescSailboat;
+
+  /// No description provided for @retroDesc4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'Liked (Piaciuto), Learned (Imparato), Lacked (Mancato), Longed For (Desiderato).'**
+  String get retroDesc4Ls;
+
+  /// No description provided for @retroDescStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Keep, Stop, Start, More, Less.'**
+  String get retroDescStarfish;
+
+  /// No description provided for @retroDescMadSadGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Emotiva: Arrabbiato, Triste, Felice.'**
+  String get retroDescMadSadGlad;
+
+  /// No description provided for @retroDescDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'Pragmatica: Elimina, Aggiungi, Mantieni, Migliora.'**
+  String get retroDescDAKI;
+
+  /// No description provided for @retroUsageStartStopContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale per feedback azionabili e focus sui cambiamenti comportamentali.'**
+  String get retroUsageStartStopContinue;
+
+  /// No description provided for @retroUsageSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale per visualizzare il viaggio del team, obiettivi e rischi. Ottima per il pensiero creativo.'**
+  String get retroUsageSailboat;
+
+  /// No description provided for @retroUsage4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'Riflessiva: Ideale per imparare dal passato ed evidenziare aspetti emotivi e di apprendimento.'**
+  String get retroUsage4Ls;
+
+  /// No description provided for @retroUsageStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Calibrazione: Ideale per scalare gli sforzi (fare di più/meno), non solo stop/start binari.'**
+  String get retroUsageStarfish;
+
+  /// No description provided for @retroUsageMadSadGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale per check-in emotivi, risolvere conflitti o dopo uno sprint stressante.'**
+  String get retroUsageMadSadGlad;
+
+  /// No description provided for @retroUsageDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'Decisiva: Ideale per fare pulizia. Focus su decisioni concrete di Eliminare o Aggiungere.'**
+  String get retroUsageDAKI;
+
+  /// No description provided for @retroIcebreakerSentiment.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto Sentiment'**
+  String get retroIcebreakerSentiment;
+
+  /// No description provided for @retroIcebreakerOneWord.
+  ///
+  /// In it, this message translates to:
+  /// **'Una Parola'**
+  String get retroIcebreakerOneWord;
+
+  /// No description provided for @retroIcebreakerWeather.
+  ///
+  /// In it, this message translates to:
+  /// **'Meteo'**
+  String get retroIcebreakerWeather;
+
+  /// No description provided for @retroIcebreakerSentimentDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota da 1 a 5 come ti sei sentito durante lo sprint.'**
+  String get retroIcebreakerSentimentDesc;
+
+  /// No description provided for @retroIcebreakerOneWordDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrivi lo sprint con una sola parola.'**
+  String get retroIcebreakerOneWordDesc;
+
+  /// No description provided for @retroIcebreakerWeatherDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli un\'icona meteo che rappresenta lo sprint.'**
+  String get retroIcebreakerWeatherDesc;
+
+  /// No description provided for @retroPhaseIcebreaker.
+  ///
+  /// In it, this message translates to:
+  /// **'ICEBREAKER'**
+  String get retroPhaseIcebreaker;
+
+  /// No description provided for @retroPhaseWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'SCRITTURA'**
+  String get retroPhaseWriting;
+
+  /// No description provided for @retroPhaseVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'VOTAZIONE'**
+  String get retroPhaseVoting;
+
+  /// No description provided for @retroPhaseDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'DISCUSSIONE'**
+  String get retroPhaseDiscuss;
+
+  /// No description provided for @retroActionItemsLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Action Items'**
+  String get retroActionItemsLabel;
+
+  /// No description provided for @retroPhaseStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia'**
+  String get retroPhaseStart;
+
+  /// No description provided for @retroPhaseStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Smetti'**
+  String get retroPhaseStop;
+
+  /// No description provided for @retroPhaseContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Continua'**
+  String get retroPhaseContinue;
 
   /// No description provided for @settingsLanguage.
   ///
@@ -2821,7 +3295,7 @@ abstract class AppLocalizations {
   /// No description provided for @participantYou.
   ///
   /// In it, this message translates to:
-  /// **'Tu'**
+  /// **'(tu)'**
   String get participantYou;
 
   /// No description provided for @participantMakeVoter.
@@ -2917,7 +3391,7 @@ abstract class AppLocalizations {
   /// No description provided for @inviteCopyLink.
   ///
   /// In it, this message translates to:
-  /// **'Copia link invito'**
+  /// **'Copia link'**
   String get inviteCopyLink;
 
   /// No description provided for @inviteRevokeAction.
@@ -2935,7 +3409,7 @@ abstract class AppLocalizations {
   /// No description provided for @inviteRevokeTitle.
   ///
   /// In it, this message translates to:
-  /// **'Revoca Invito'**
+  /// **'Revocare invito?'**
   String get inviteRevokeTitle;
 
   /// No description provided for @inviteRevokeConfirm.
@@ -2977,7 +3451,7 @@ abstract class AppLocalizations {
   /// No description provided for @inviteLinkCopied.
   ///
   /// In it, this message translates to:
-  /// **'Link invito copiato negli appunti'**
+  /// **'Link copiato!'**
   String get inviteLinkCopied;
 
   /// No description provided for @linkCopied.
@@ -3436,12 +3910,6 @@ abstract class AppLocalizations {
   /// **'Elimina Action Item'**
   String get retroDeleteActionItem;
 
-  /// No description provided for @retroDeleteConfirm.
-  ///
-  /// In it, this message translates to:
-  /// **'Sei sicuro?'**
-  String get retroDeleteConfirm;
-
   /// No description provided for @retroChooseMethodology.
   ///
   /// In it, this message translates to:
@@ -3502,6 +3970,18 @@ abstract class AppLocalizations {
   /// **'Avvia Timer'**
   String get retroStartTimer;
 
+  /// No description provided for @retroTimerMinutes.
+  ///
+  /// In it, this message translates to:
+  /// **'{minutes} Min'**
+  String retroTimerMinutes(int minutes);
+
+  /// No description provided for @retroAddCardButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Card'**
+  String get retroAddCardButton;
+
   /// No description provided for @retroNoRetrosFound.
   ///
   /// In it, this message translates to:
@@ -3531,24 +4011,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Stato: {status}'**
   String retroStatusLabel(String status);
-
-  /// No description provided for @retroStatusDraft.
-  ///
-  /// In it, this message translates to:
-  /// **'Bozza'**
-  String get retroStatusDraft;
-
-  /// No description provided for @retroStatusActive.
-  ///
-  /// In it, this message translates to:
-  /// **'In Corso'**
-  String get retroStatusActive;
-
-  /// No description provided for @retroStatusCompleted.
-  ///
-  /// In it, this message translates to:
-  /// **'Completata'**
-  String get retroStatusCompleted;
 
   /// No description provided for @retroDateLabel.
   ///
@@ -5059,13 +5521,13 @@ abstract class AppLocalizations {
   /// No description provided for @storyFormTitleLabel.
   ///
   /// In it, this message translates to:
-  /// **'Titolo'**
+  /// **'Titolo *'**
   String get storyFormTitleLabel;
 
   /// No description provided for @storyFormTitleHint.
   ///
   /// In it, this message translates to:
-  /// **'Breve descrizione della funzionalita'**
+  /// **'Es: US-123: Come utente voglio...'**
   String get storyFormTitleHint;
 
   /// No description provided for @storyFormTitleRequired.
@@ -5137,7 +5599,7 @@ abstract class AppLocalizations {
   /// No description provided for @storyFormDescriptionHint.
   ///
   /// In it, this message translates to:
-  /// **'Descrizione libera della story'**
+  /// **'Criteri di accettazione, note...'**
   String get storyFormDescriptionHint;
 
   /// No description provided for @storyFormDescriptionRequired.
@@ -6856,6 +7318,12 @@ abstract class AppLocalizations {
   /// **'Piano {plan}'**
   String subscriptionPlan(String plan);
 
+  /// No description provided for @subscriptionPlanName.
+  ///
+  /// In it, this message translates to:
+  /// **'Piano Attuale: {plan}'**
+  String subscriptionPlanName(String plan);
+
   /// No description provided for @subscriptionTrialUntil.
   ///
   /// In it, this message translates to:
@@ -7672,150 +8140,6 @@ abstract class AppLocalizations {
   /// **'Impostazioni'**
   String get actionSettings;
 
-  /// No description provided for @retroTemplateStartStopContinue.
-  ///
-  /// In it, this message translates to:
-  /// **'Start, Stop, Continue'**
-  String get retroTemplateStartStopContinue;
-
-  /// No description provided for @retroDescStartStopContinue.
-  ///
-  /// In it, this message translates to:
-  /// **'Orientata all\'azione: Iniziare, Smettere, Continuare.'**
-  String get retroDescStartStopContinue;
-
-  /// No description provided for @retroUsageStartStopContinue.
-  ///
-  /// In it, this message translates to:
-  /// **'Ideale per feedback azionabili e focus sui cambiamenti comportamentali.'**
-  String get retroUsageStartStopContinue;
-
-  /// No description provided for @retroTemplateSailboat.
-  ///
-  /// In it, this message translates to:
-  /// **'Barca a Vela'**
-  String get retroTemplateSailboat;
-
-  /// No description provided for @retroDescSailboat.
-  ///
-  /// In it, this message translates to:
-  /// **'Visiva: Vento (spinge), Ancore (frena), Rocce (rischi), Isola (obiettivi).'**
-  String get retroDescSailboat;
-
-  /// No description provided for @retroUsageSailboat.
-  ///
-  /// In it, this message translates to:
-  /// **'Ideale per visualizzare il viaggio del team, obiettivi e rischi. Ottima per il pensiero creativo.'**
-  String get retroUsageSailboat;
-
-  /// No description provided for @retroTemplate4Ls.
-  ///
-  /// In it, this message translates to:
-  /// **'4 Ls'**
-  String get retroTemplate4Ls;
-
-  /// No description provided for @retroDesc4Ls.
-  ///
-  /// In it, this message translates to:
-  /// **'Liked (Piaciuto), Learned (Imparato), Lacked (Mancato), Longed For (Desiderato).'**
-  String get retroDesc4Ls;
-
-  /// No description provided for @retroUsage4Ls.
-  ///
-  /// In it, this message translates to:
-  /// **'Riflessiva: Ideale per imparare dal passato ed evidenziare aspetti emotivi e di apprendimento.'**
-  String get retroUsage4Ls;
-
-  /// No description provided for @retroTemplateStarfish.
-  ///
-  /// In it, this message translates to:
-  /// **'Stella Marina'**
-  String get retroTemplateStarfish;
-
-  /// No description provided for @retroDescStarfish.
-  ///
-  /// In it, this message translates to:
-  /// **'Keep, Stop, Start, More, Less.'**
-  String get retroDescStarfish;
-
-  /// No description provided for @retroUsageStarfish.
-  ///
-  /// In it, this message translates to:
-  /// **'Calibrazione: Ideale per scalare gli sforzi (fare di più/meno), non solo stop/start binari.'**
-  String get retroUsageStarfish;
-
-  /// No description provided for @retroTemplateMadSadGlad.
-  ///
-  /// In it, this message translates to:
-  /// **'Mad Sad Glad'**
-  String get retroTemplateMadSadGlad;
-
-  /// No description provided for @retroDescMadSadGlad.
-  ///
-  /// In it, this message translates to:
-  /// **'Emotiva: Arrabbiato, Triste, Felice.'**
-  String get retroDescMadSadGlad;
-
-  /// No description provided for @retroUsageMadSadGlad.
-  ///
-  /// In it, this message translates to:
-  /// **'Ideale per check-in emotivi, risolvere conflitti o dopo uno sprint stressante.'**
-  String get retroUsageMadSadGlad;
-
-  /// No description provided for @retroTemplateDAKI.
-  ///
-  /// In it, this message translates to:
-  /// **'DAKI (Drop Add Keep Improve)'**
-  String get retroTemplateDAKI;
-
-  /// No description provided for @retroDescDAKI.
-  ///
-  /// In it, this message translates to:
-  /// **'Pragmatica: Elimina, Aggiungi, Mantieni, Migliora.'**
-  String get retroDescDAKI;
-
-  /// No description provided for @retroUsageDAKI.
-  ///
-  /// In it, this message translates to:
-  /// **'Decisiva: Ideale per fare pulizia. Focus su decisioni concrete di Eliminare o Aggiungere.'**
-  String get retroUsageDAKI;
-
-  /// No description provided for @retroIcebreakerSentiment.
-  ///
-  /// In it, this message translates to:
-  /// **'Voto Sentiment'**
-  String get retroIcebreakerSentiment;
-
-  /// No description provided for @retroIcebreakerSentimentDesc.
-  ///
-  /// In it, this message translates to:
-  /// **'Vota da 1 a 5 come ti sei sentito durante lo sprint.'**
-  String get retroIcebreakerSentimentDesc;
-
-  /// No description provided for @retroIcebreakerOneWord.
-  ///
-  /// In it, this message translates to:
-  /// **'Una Parola'**
-  String get retroIcebreakerOneWord;
-
-  /// No description provided for @retroIcebreakerOneWordDesc.
-  ///
-  /// In it, this message translates to:
-  /// **'Descrivi lo sprint con una sola parola.'**
-  String get retroIcebreakerOneWordDesc;
-
-  /// No description provided for @retroIcebreakerWeather.
-  ///
-  /// In it, this message translates to:
-  /// **'Meteo'**
-  String get retroIcebreakerWeather;
-
-  /// No description provided for @retroIcebreakerWeatherDesc.
-  ///
-  /// In it, this message translates to:
-  /// **'Scegli un\'icona meteo che rappresenta lo sprint.'**
-  String get retroIcebreakerWeatherDesc;
-
   /// No description provided for @retroSelectIcebreakerTooltip.
   ///
   /// In it, this message translates to:
@@ -7845,30 +8169,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Icebreaker'**
   String get retroIcebreakerSectionTitle;
-
-  /// No description provided for @retroPhaseIcebreaker.
-  ///
-  /// In it, this message translates to:
-  /// **'ICEBREAKER'**
-  String get retroPhaseIcebreaker;
-
-  /// No description provided for @retroPhaseWriting.
-  ///
-  /// In it, this message translates to:
-  /// **'SCRITTURA'**
-  String get retroPhaseWriting;
-
-  /// No description provided for @retroPhaseVoting.
-  ///
-  /// In it, this message translates to:
-  /// **'VOTAZIONE'**
-  String get retroPhaseVoting;
-
-  /// No description provided for @retroPhaseDiscuss.
-  ///
-  /// In it, this message translates to:
-  /// **'DISCUSSIONE'**
-  String get retroPhaseDiscuss;
 
   /// No description provided for @retroBoardTitle.
   ///
@@ -7987,7 +8287,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportToEstimation.
   ///
   /// In it, this message translates to:
-  /// **'Invia a Estimation'**
+  /// **'Esporta verso Stima'**
   String get exportToEstimation;
 
   /// No description provided for @exportToEstimationDesc.
@@ -8065,25 +8365,25 @@ abstract class AppLocalizations {
   /// No description provided for @selectDestinationList.
   ///
   /// In it, this message translates to:
-  /// **'Seleziona Lista Destinazione'**
+  /// **'Seleziona lista di destinazione'**
   String get selectDestinationList;
 
   /// No description provided for @createNewList.
   ///
   /// In it, this message translates to:
-  /// **'Crea Nuova Lista'**
+  /// **'Crea nuova lista'**
   String get createNewList;
 
   /// No description provided for @existingList.
   ///
   /// In it, this message translates to:
-  /// **'Lista Esistente'**
+  /// **'Lista esistente'**
   String get existingList;
 
   /// No description provided for @listName.
   ///
   /// In it, this message translates to:
-  /// **'Nome Lista'**
+  /// **'Nome lista'**
   String get listName;
 
   /// No description provided for @listNameHint.
@@ -8095,19 +8395,19 @@ abstract class AppLocalizations {
   /// No description provided for @selectList.
   ///
   /// In it, this message translates to:
-  /// **'Seleziona Lista'**
+  /// **'Seleziona lista'**
   String get selectList;
 
   /// No description provided for @selectListHint.
   ///
   /// In it, this message translates to:
-  /// **'Scegli una lista di destinazione'**
+  /// **'Scegli una lista'**
   String get selectListHint;
 
   /// No description provided for @noListsAvailable.
   ///
   /// In it, this message translates to:
-  /// **'Nessuna lista disponibile. Creane una nuova.'**
+  /// **'Nessuna lista disponibile. Ne verrà creata una nuova.'**
   String get noListsAvailable;
 
   /// No description provided for @storiesSelectedCount.
@@ -8119,13 +8419,13 @@ abstract class AppLocalizations {
   /// No description provided for @selectAll.
   ///
   /// In it, this message translates to:
-  /// **'Seleziona Tutto'**
+  /// **'Seleziona tutti'**
   String get selectAll;
 
   /// No description provided for @deselectAll.
   ///
   /// In it, this message translates to:
-  /// **'Deseleziona Tutto'**
+  /// **'Deseleziona tutti'**
   String get deselectAll;
 
   /// No description provided for @importStories.
@@ -8269,25 +8569,25 @@ abstract class AppLocalizations {
   /// No description provided for @exportFromEisenhower.
   ///
   /// In it, this message translates to:
-  /// **'Esporta in Smart Todo'**
+  /// **'Esporta da Eisenhower'**
   String get exportFromEisenhower;
 
   /// No description provided for @exportFromEisenhowerDesc.
   ///
   /// In it, this message translates to:
-  /// **'Crea task dalle attività prioritizzate'**
+  /// **'Seleziona le attività da esportare su Smart Todo'**
   String get exportFromEisenhowerDesc;
 
   /// No description provided for @filterByQuadrant.
   ///
   /// In it, this message translates to:
-  /// **'Filtra per quadrante'**
+  /// **'Filtra per quadrante:'**
   String get filterByQuadrant;
 
   /// No description provided for @allActivities.
   ///
   /// In it, this message translates to:
-  /// **'Tutte le Attività'**
+  /// **'Tutte'**
   String get allActivities;
 
   /// No description provided for @activitiesSelectedCount.
@@ -8299,13 +8599,13 @@ abstract class AppLocalizations {
   /// No description provided for @noActivitiesSelected.
   ///
   /// In it, this message translates to:
-  /// **'Nessuna attività disponibile'**
+  /// **'Nessuna attività in questo filtro'**
   String get noActivitiesSelected;
 
   /// No description provided for @unvoted.
   ///
   /// In it, this message translates to:
-  /// **'Non votata'**
+  /// **'NON VOTATA'**
   String get unvoted;
 
   /// No description provided for @tasksCreated.
@@ -8431,7 +8731,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportToSprint.
   ///
   /// In it, this message translates to:
-  /// **'Esporta in Sprint'**
+  /// **'Esporta verso Sprint'**
   String get exportToSprint;
 
   /// No description provided for @totalStoryPoints.
@@ -8709,6 +9009,1188 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Completato'**
   String get completedBadge;
+
+  /// No description provided for @inviteNewInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'NUOVO INVITO'**
+  String get inviteNewInvite;
+
+  /// No description provided for @inviteRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruolo:'**
+  String get inviteRole;
+
+  /// No description provided for @inviteSendEmailNotification.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia email di notifica'**
+  String get inviteSendEmailNotification;
+
+  /// No description provided for @inviteSendInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia Invito'**
+  String get inviteSendInvite;
+
+  /// No description provided for @inviteLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Link di invito:'**
+  String get inviteLink;
+
+  /// No description provided for @inviteList.
+  ///
+  /// In it, this message translates to:
+  /// **'INVITI'**
+  String get inviteList;
+
+  /// No description provided for @inviteResend.
+  ///
+  /// In it, this message translates to:
+  /// **'Reinvia'**
+  String get inviteResend;
+
+  /// No description provided for @inviteRevokeMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'invito non sarà più valido.'**
+  String get inviteRevokeMessage;
+
+  /// No description provided for @inviteResent.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito reinviato'**
+  String get inviteResent;
+
+  /// No description provided for @inviteSentByEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito inviato via email a {email}'**
+  String inviteSentByEmail(String email);
+
+  /// No description provided for @inviteStatusPending.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa'**
+  String get inviteStatusPending;
+
+  /// No description provided for @inviteStatusAccepted.
+  ///
+  /// In it, this message translates to:
+  /// **'Accettato'**
+  String get inviteStatusAccepted;
+
+  /// No description provided for @inviteStatusDeclined.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiutato'**
+  String get inviteStatusDeclined;
+
+  /// No description provided for @inviteStatusExpired.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaduto'**
+  String get inviteStatusExpired;
+
+  /// No description provided for @inviteStatusRevoked.
+  ///
+  /// In it, this message translates to:
+  /// **'Revocato'**
+  String get inviteStatusRevoked;
+
+  /// No description provided for @inviteGmailAuthTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizzazione Gmail'**
+  String get inviteGmailAuthTitle;
+
+  /// No description provided for @inviteGmailAuthMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\nVuoi procedere?'**
+  String get inviteGmailAuthMessage;
+
+  /// No description provided for @inviteGmailAuthNo.
+  ///
+  /// In it, this message translates to:
+  /// **'No, solo link'**
+  String get inviteGmailAuthNo;
+
+  /// No description provided for @inviteGmailAuthYes.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizza'**
+  String get inviteGmailAuthYes;
+
+  /// No description provided for @inviteGmailNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizzazione Gmail non disponibile. Prova a fare logout e login.'**
+  String get inviteGmailNotAvailable;
+
+  /// No description provided for @inviteGmailNoPermission.
+  ///
+  /// In it, this message translates to:
+  /// **'Permesso Gmail non concesso.'**
+  String get inviteGmailNoPermission;
+
+  /// No description provided for @inviteEnterEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un\'email'**
+  String get inviteEnterEmail;
+
+  /// No description provided for @inviteInvalidEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Email non valida'**
+  String get inviteInvalidEmail;
+
+  /// No description provided for @pendingInvites.
+  ///
+  /// In it, this message translates to:
+  /// **'Inviti in Sospeso'**
+  String get pendingInvites;
+
+  /// No description provided for @noPendingInvites.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun invito in sospeso'**
+  String get noPendingInvites;
+
+  /// No description provided for @invitedBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Invitato da {name}'**
+  String invitedBy(String name);
+
+  /// No description provided for @inviteOpenInstance.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri'**
+  String get inviteOpenInstance;
+
+  /// No description provided for @inviteAcceptFirst.
+  ///
+  /// In it, this message translates to:
+  /// **'Accetta l\'invito per aprire'**
+  String get inviteAcceptFirst;
+
+  /// No description provided for @inviteAccept.
+  ///
+  /// In it, this message translates to:
+  /// **'Accetta'**
+  String get inviteAccept;
+
+  /// No description provided for @inviteDecline.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiuta'**
+  String get inviteDecline;
+
+  /// No description provided for @inviteAcceptedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito accettato con successo!'**
+  String get inviteAcceptedSuccess;
+
+  /// No description provided for @inviteAcceptedError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nell\'accettare l\'invito'**
+  String get inviteAcceptedError;
+
+  /// No description provided for @inviteDeclinedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito rifiutato'**
+  String get inviteDeclinedSuccess;
+
+  /// No description provided for @inviteDeclineTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiutare l\'invito?'**
+  String get inviteDeclineTitle;
+
+  /// No description provided for @inviteDeclineMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler rifiutare questo invito?'**
+  String get inviteDeclineMessage;
+
+  /// No description provided for @expiresInHours.
+  ///
+  /// In it, this message translates to:
+  /// **'Scade in {hours}h'**
+  String expiresInHours(int hours);
+
+  /// No description provided for @expiresInDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Scade in {days}g'**
+  String expiresInDays(int days);
+
+  /// No description provided for @close.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get close;
+
+  /// No description provided for @cancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get cancel;
+
+  /// No description provided for @raciTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice RACI'**
+  String get raciTitle;
+
+  /// No description provided for @raciNoActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività disponibile'**
+  String get raciNoActivities;
+
+  /// No description provided for @raciAddActivity.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Attività'**
+  String get raciAddActivity;
+
+  /// No description provided for @raciAddColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Colonna'**
+  String get raciAddColumn;
+
+  /// No description provided for @raciActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'ATTIVITÀ'**
+  String get raciActivities;
+
+  /// No description provided for @raciAssignRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegna ruolo'**
+  String get raciAssignRole;
+
+  /// No description provided for @raciNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno'**
+  String get raciNone;
+
+  /// No description provided for @raciSaving.
+  ///
+  /// In it, this message translates to:
+  /// **'Salvataggio...'**
+  String get raciSaving;
+
+  /// No description provided for @raciSaveChanges.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Modifiche'**
+  String get raciSaveChanges;
+
+  /// No description provided for @raciSavedSuccessfully.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifiche salvate correttamente'**
+  String get raciSavedSuccessfully;
+
+  /// No description provided for @raciErrorSaving.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore salvataggio'**
+  String get raciErrorSaving;
+
+  /// No description provided for @raciMissingAccountable.
+  ///
+  /// In it, this message translates to:
+  /// **'Manca Accountable (A)'**
+  String get raciMissingAccountable;
+
+  /// No description provided for @raciOnlyOneAccountable.
+  ///
+  /// In it, this message translates to:
+  /// **'Un solo Accountable per attività'**
+  String get raciOnlyOneAccountable;
+
+  /// No description provided for @raciDuplicateRoles.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruoli duplicati'**
+  String get raciDuplicateRoles;
+
+  /// No description provided for @raciNoResponsible.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun Responsible (R) assegnato'**
+  String get raciNoResponsible;
+
+  /// No description provided for @raciTooManyInformed.
+  ///
+  /// In it, this message translates to:
+  /// **'Troppi Informed (I): considera di ridurre'**
+  String get raciTooManyInformed;
+
+  /// No description provided for @raciColumnName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome colonna'**
+  String get raciColumnName;
+
+  /// No description provided for @raciColumnNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Es.: Team Sviluppo'**
+  String get raciColumnNameHint;
+
+  /// No description provided for @raciNewColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Colonna'**
+  String get raciNewColumn;
+
+  /// No description provided for @raciRemoveColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi colonna'**
+  String get raciRemoveColumn;
+
+  /// No description provided for @raciRemoveColumnConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovere la colonna \"{name}\"? Tutte le assegnazioni di ruolo per questa colonna verranno eliminate.'**
+  String raciRemoveColumnConfirm(String name);
+
+  /// No description provided for @votingDialogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota'**
+  String get votingDialogTitle;
+
+  /// No description provided for @votingDialogVoteOf.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto di {participant}'**
+  String votingDialogVoteOf(String participant);
+
+  /// No description provided for @votingDialogUrgency.
+  ///
+  /// In it, this message translates to:
+  /// **'URGENZA'**
+  String get votingDialogUrgency;
+
+  /// No description provided for @votingDialogImportance.
+  ///
+  /// In it, this message translates to:
+  /// **'IMPORTANZA'**
+  String get votingDialogImportance;
+
+  /// No description provided for @votingDialogNotUrgent.
+  ///
+  /// In it, this message translates to:
+  /// **'Non urgente'**
+  String get votingDialogNotUrgent;
+
+  /// No description provided for @votingDialogVeryUrgent.
+  ///
+  /// In it, this message translates to:
+  /// **'Molto urgente'**
+  String get votingDialogVeryUrgent;
+
+  /// No description provided for @votingDialogNotImportant.
+  ///
+  /// In it, this message translates to:
+  /// **'Non importante'**
+  String get votingDialogNotImportant;
+
+  /// No description provided for @votingDialogVeryImportant.
+  ///
+  /// In it, this message translates to:
+  /// **'Molto importante'**
+  String get votingDialogVeryImportant;
+
+  /// No description provided for @votingDialogConfirmVote.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma Voto'**
+  String get votingDialogConfirmVote;
+
+  /// No description provided for @votingDialogQuadrant.
+  ///
+  /// In it, this message translates to:
+  /// **'Quadrante:'**
+  String get votingDialogQuadrant;
+
+  /// No description provided for @voteCollectionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Raccogli Voti'**
+  String get voteCollectionTitle;
+
+  /// No description provided for @voteCollectionParticipants.
+  ///
+  /// In it, this message translates to:
+  /// **'partecipanti'**
+  String get voteCollectionParticipants;
+
+  /// No description provided for @voteCollectionResult.
+  ///
+  /// In it, this message translates to:
+  /// **'Risultato:'**
+  String get voteCollectionResult;
+
+  /// No description provided for @voteCollectionAverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Media:'**
+  String get voteCollectionAverage;
+
+  /// No description provided for @voteCollectionSaveVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Voti'**
+  String get voteCollectionSaveVotes;
+
+  /// No description provided for @scatterChartTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Distribuzione Attività'**
+  String get scatterChartTitle;
+
+  /// No description provided for @scatterChartNoActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività votata'**
+  String get scatterChartNoActivities;
+
+  /// No description provided for @scatterChartVoteToShow.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota le attività per visualizzarle nel grafico'**
+  String get scatterChartVoteToShow;
+
+  /// No description provided for @scatterChartUrgencyLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Urgenza:'**
+  String get scatterChartUrgencyLabel;
+
+  /// No description provided for @scatterChartImportanceLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Importanza:'**
+  String get scatterChartImportanceLabel;
+
+  /// No description provided for @scatterChartAxisUrgency.
+  ///
+  /// In it, this message translates to:
+  /// **'URGENZA'**
+  String get scatterChartAxisUrgency;
+
+  /// No description provided for @scatterChartAxisImportance.
+  ///
+  /// In it, this message translates to:
+  /// **'IMPORTANZA'**
+  String get scatterChartAxisImportance;
+
+  /// No description provided for @scatterChartQ1Label.
+  ///
+  /// In it, this message translates to:
+  /// **'Q1 - FAI'**
+  String get scatterChartQ1Label;
+
+  /// No description provided for @scatterChartQ2Label.
+  ///
+  /// In it, this message translates to:
+  /// **'Q2 - PIANIFICA'**
+  String get scatterChartQ2Label;
+
+  /// No description provided for @scatterChartQ3Label.
+  ///
+  /// In it, this message translates to:
+  /// **'Q3 - DELEGA'**
+  String get scatterChartQ3Label;
+
+  /// No description provided for @scatterChartQ4Label.
+  ///
+  /// In it, this message translates to:
+  /// **'Q4 - ELIMINA'**
+  String get scatterChartQ4Label;
+
+  /// No description provided for @scatterChartCardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Grafico Distribuzione'**
+  String get scatterChartCardTitle;
+
+  /// No description provided for @votingStatusYou.
+  ///
+  /// In it, this message translates to:
+  /// **'Tu'**
+  String get votingStatusYou;
+
+  /// No description provided for @votingStatusReset.
+  ///
+  /// In it, this message translates to:
+  /// **'Reset'**
+  String get votingStatusReset;
+
+  /// No description provided for @estimationDecimalTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima Decimale'**
+  String get estimationDecimalTitle;
+
+  /// No description provided for @estimationDecimalHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci la tua stima in giorni (es: 1.5, 2.25)'**
+  String get estimationDecimalHint;
+
+  /// No description provided for @estimationDecimalHintPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Es: 2.5'**
+  String get estimationDecimalHintPlaceholder;
+
+  /// No description provided for @estimationDecimalSuffixDays.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni'**
+  String get estimationDecimalSuffixDays;
+
+  /// No description provided for @estimationDecimalVote.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota'**
+  String get estimationDecimalVote;
+
+  /// No description provided for @estimationDecimalVoteValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto: {value} giorni'**
+  String estimationDecimalVoteValue(String value);
+
+  /// No description provided for @estimationDecimalQuickSelect.
+  ///
+  /// In it, this message translates to:
+  /// **'Selezione rapida:'**
+  String get estimationDecimalQuickSelect;
+
+  /// No description provided for @estimationDecimalEnterValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un valore'**
+  String get estimationDecimalEnterValue;
+
+  /// No description provided for @estimationDecimalInvalidValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore non valido'**
+  String get estimationDecimalInvalidValue;
+
+  /// No description provided for @estimationDecimalMinValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Min: {value}'**
+  String estimationDecimalMinValue(String value);
+
+  /// No description provided for @estimationDecimalMaxValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Max: {value}'**
+  String estimationDecimalMaxValue(String value);
+
+  /// No description provided for @estimationThreePointTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima a Tre Punti (PERT)'**
+  String get estimationThreePointTitle;
+
+  /// No description provided for @estimationThreePointOptimistic.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimistico (O)'**
+  String get estimationThreePointOptimistic;
+
+  /// No description provided for @estimationThreePointRealistic.
+  ///
+  /// In it, this message translates to:
+  /// **'Realistico (M)'**
+  String get estimationThreePointRealistic;
+
+  /// No description provided for @estimationThreePointPessimistic.
+  ///
+  /// In it, this message translates to:
+  /// **'Pessimistico (P)'**
+  String get estimationThreePointPessimistic;
+
+  /// No description provided for @estimationThreePointBestCase.
+  ///
+  /// In it, this message translates to:
+  /// **'Caso migliore'**
+  String get estimationThreePointBestCase;
+
+  /// No description provided for @estimationThreePointMostLikely.
+  ///
+  /// In it, this message translates to:
+  /// **'Più probabile'**
+  String get estimationThreePointMostLikely;
+
+  /// No description provided for @estimationThreePointWorstCase.
+  ///
+  /// In it, this message translates to:
+  /// **'Caso peggiore'**
+  String get estimationThreePointWorstCase;
+
+  /// No description provided for @estimationThreePointAllFieldsRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i campi sono obbligatori'**
+  String get estimationThreePointAllFieldsRequired;
+
+  /// No description provided for @estimationThreePointInvalidValues.
+  ///
+  /// In it, this message translates to:
+  /// **'Valori non validi'**
+  String get estimationThreePointInvalidValues;
+
+  /// No description provided for @estimationThreePointOptMustBeLteReal.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimistico deve essere <= Realistico'**
+  String get estimationThreePointOptMustBeLteReal;
+
+  /// No description provided for @estimationThreePointRealMustBeLtePess.
+  ///
+  /// In it, this message translates to:
+  /// **'Realistico deve essere <= Pessimistico'**
+  String get estimationThreePointRealMustBeLtePess;
+
+  /// No description provided for @estimationThreePointOptMustBeLtePess.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimistico deve essere <= Pessimistico'**
+  String get estimationThreePointOptMustBeLtePess;
+
+  /// No description provided for @estimationThreePointGuide.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida:'**
+  String get estimationThreePointGuide;
+
+  /// No description provided for @estimationThreePointGuideO.
+  ///
+  /// In it, this message translates to:
+  /// **'O: Stima nel caso migliore (tutto va bene)'**
+  String get estimationThreePointGuideO;
+
+  /// No description provided for @estimationThreePointGuideM.
+  ///
+  /// In it, this message translates to:
+  /// **'M: Stima più probabile (condizioni normali)'**
+  String get estimationThreePointGuideM;
+
+  /// No description provided for @estimationThreePointGuideP.
+  ///
+  /// In it, this message translates to:
+  /// **'P: Stima nel caso peggiore (imprevisti)'**
+  String get estimationThreePointGuideP;
+
+  /// No description provided for @estimationThreePointStdDev.
+  ///
+  /// In it, this message translates to:
+  /// **'Dev. Std'**
+  String get estimationThreePointStdDev;
+
+  /// No description provided for @estimationThreePointDaysSuffix.
+  ///
+  /// In it, this message translates to:
+  /// **'gg'**
+  String get estimationThreePointDaysSuffix;
+
+  /// No description provided for @storyFormNewStory.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Story'**
+  String get storyFormNewStory;
+
+  /// No description provided for @storyFormEnterTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un titolo'**
+  String get storyFormEnterTitle;
+
+  /// No description provided for @sessionSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca sessioni...'**
+  String get sessionSearchHint;
+
+  /// No description provided for @sessionSearchFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtri'**
+  String get sessionSearchFilters;
+
+  /// No description provided for @sessionSearchFiltersTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtri'**
+  String get sessionSearchFiltersTooltip;
+
+  /// No description provided for @sessionSearchStatusLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato: '**
+  String get sessionSearchStatusLabel;
+
+  /// No description provided for @sessionSearchStatusAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get sessionSearchStatusAll;
+
+  /// No description provided for @sessionSearchStatusDraft.
+  ///
+  /// In it, this message translates to:
+  /// **'Bozza'**
+  String get sessionSearchStatusDraft;
+
+  /// No description provided for @sessionSearchStatusActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Attiva'**
+  String get sessionSearchStatusActive;
+
+  /// No description provided for @sessionSearchStatusCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completata'**
+  String get sessionSearchStatusCompleted;
+
+  /// No description provided for @sessionSearchModeLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Modalità: '**
+  String get sessionSearchModeLabel;
+
+  /// No description provided for @sessionSearchModeAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte'**
+  String get sessionSearchModeAll;
+
+  /// No description provided for @sessionSearchRemoveFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi filtri'**
+  String get sessionSearchRemoveFilters;
+
+  /// No description provided for @sessionSearchActiveFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtri attivi:'**
+  String get sessionSearchActiveFilters;
+
+  /// No description provided for @sessionSearchRemoveAllFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi tutti'**
+  String get sessionSearchRemoveAllFilters;
+
+  /// No description provided for @participantsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipanti ({count})'**
+  String participantsTitle(int count);
+
+  /// No description provided for @participantRoleFacilitator.
+  ///
+  /// In it, this message translates to:
+  /// **'Facilitatore'**
+  String get participantRoleFacilitator;
+
+  /// No description provided for @participantRoleVoters.
+  ///
+  /// In it, this message translates to:
+  /// **'Votanti'**
+  String get participantRoleVoters;
+
+  /// No description provided for @participantRoleObservers.
+  ///
+  /// In it, this message translates to:
+  /// **'Osservatori'**
+  String get participantRoleObservers;
+
+  /// No description provided for @votingBoardVotesRevealed.
+  ///
+  /// In it, this message translates to:
+  /// **'Voti Rivelati'**
+  String get votingBoardVotesRevealed;
+
+  /// No description provided for @votingBoardVotingInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'Votazione in Corso'**
+  String get votingBoardVotingInProgress;
+
+  /// No description provided for @votingBoardVotesCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{voted}/{total} voti'**
+  String votingBoardVotesCount(int voted, int total);
+
+  /// No description provided for @estimationSelectYourEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona la tua stima'**
+  String get estimationSelectYourEstimate;
+
+  /// No description provided for @estimationVoteSelected.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto selezionato: {value}'**
+  String estimationVoteSelected(String value);
+
+  /// No description provided for @estimationDotVotingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Dot Voting'**
+  String get estimationDotVotingTitle;
+
+  /// No description provided for @estimationDotVotingDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Modalità di votazione con allocazione punti.\nProssimamente...'**
+  String get estimationDotVotingDesc;
+
+  /// No description provided for @estimationBucketSystemTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Bucket System'**
+  String get estimationBucketSystemTitle;
+
+  /// No description provided for @estimationBucketSystemDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima per affinità con raggruppamento.\nProssimamente...'**
+  String get estimationBucketSystemDesc;
+
+  /// No description provided for @estimationModeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modalità di Stima'**
+  String get estimationModeTitle;
+
+  /// No description provided for @statisticsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Statistiche Votazione'**
+  String get statisticsTitle;
+
+  /// No description provided for @statisticsAverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get statisticsAverage;
+
+  /// No description provided for @statisticsMedian.
+  ///
+  /// In it, this message translates to:
+  /// **'Mediana'**
+  String get statisticsMedian;
+
+  /// No description provided for @statisticsMode.
+  ///
+  /// In it, this message translates to:
+  /// **'Moda'**
+  String get statisticsMode;
+
+  /// No description provided for @statisticsVoters.
+  ///
+  /// In it, this message translates to:
+  /// **'Votanti'**
+  String get statisticsVoters;
+
+  /// No description provided for @statisticsPertStats.
+  ///
+  /// In it, this message translates to:
+  /// **'Statistiche PERT'**
+  String get statisticsPertStats;
+
+  /// No description provided for @statisticsPertAvg.
+  ///
+  /// In it, this message translates to:
+  /// **'Media PERT'**
+  String get statisticsPertAvg;
+
+  /// No description provided for @statisticsStdDev.
+  ///
+  /// In it, this message translates to:
+  /// **'Dev. Std'**
+  String get statisticsStdDev;
+
+  /// No description provided for @statisticsVariance.
+  ///
+  /// In it, this message translates to:
+  /// **'Varianza'**
+  String get statisticsVariance;
+
+  /// No description provided for @statisticsRange.
+  ///
+  /// In it, this message translates to:
+  /// **'Range:'**
+  String get statisticsRange;
+
+  /// No description provided for @statisticsConsensusReached.
+  ///
+  /// In it, this message translates to:
+  /// **'Consenso raggiunto!'**
+  String get statisticsConsensusReached;
+
+  /// No description provided for @retroGuideTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida alle Retrospettive'**
+  String get retroGuideTooltip;
+
+  /// No description provided for @retroSearchPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca retrospettiva...'**
+  String get retroSearchPlaceholder;
+
+  /// No description provided for @retroNoSearchResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato per la ricerca'**
+  String get retroNoSearchResults;
+
+  /// No description provided for @retroNewRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Retrospettiva'**
+  String get retroNewRetro;
+
+  /// No description provided for @retroNoProjectsFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun progetto trovato.'**
+  String get retroNoProjectsFound;
+
+  /// No description provided for @retroDeleteMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare definitivamente la retrospettiva \"{retroName}\"?\n\nQuesta azione è irreversibile e cancellerà tutti i dati associati (card, voti, action items).'**
+  String retroDeleteMessage(String retroName);
+
+  /// No description provided for @retroDeletePermanently.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina definitivamente'**
+  String get retroDeletePermanently;
+
+  /// No description provided for @retroDeletedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospettiva eliminata con successo'**
+  String get retroDeletedSuccess;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore: {error}'**
+  String errorPrefix(String error);
+
+  /// No description provided for @loaderProjectIdMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'ID progetto mancante'**
+  String get loaderProjectIdMissing;
+
+  /// No description provided for @loaderProjectNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetto non trovato'**
+  String get loaderProjectNotFound;
+
+  /// No description provided for @loaderLoadError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore caricamento'**
+  String get loaderLoadError;
+
+  /// No description provided for @loaderError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore'**
+  String get loaderError;
+
+  /// No description provided for @loaderUnknownError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore sconosciuto'**
+  String get loaderUnknownError;
+
+  /// No description provided for @actionGoBack.
+  ///
+  /// In it, this message translates to:
+  /// **'Torna indietro'**
+  String get actionGoBack;
+
+  /// No description provided for @authRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Autenticazione richiesta'**
+  String get authRequired;
+
+  /// No description provided for @retroIdMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'ID retrospettiva mancante'**
+  String get retroIdMissing;
+
+  /// No description provided for @pokerInviteStatusAccepted.
+  ///
+  /// In it, this message translates to:
+  /// **'è già stato accettato'**
+  String get pokerInviteStatusAccepted;
+
+  /// No description provided for @pokerInviteStatusDeclined.
+  ///
+  /// In it, this message translates to:
+  /// **'è stato rifiutato'**
+  String get pokerInviteStatusDeclined;
+
+  /// No description provided for @pokerInviteStatusExpired.
+  ///
+  /// In it, this message translates to:
+  /// **'è scaduto'**
+  String get pokerInviteStatusExpired;
+
+  /// No description provided for @pokerInviteStatusRevoked.
+  ///
+  /// In it, this message translates to:
+  /// **'è stato revocato'**
+  String get pokerInviteStatusRevoked;
+
+  /// No description provided for @pokerInviteStatusPending.
+  ///
+  /// In it, this message translates to:
+  /// **'è in attesa'**
+  String get pokerInviteStatusPending;
+
+  /// No description provided for @pokerInviteYouAreInvited.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei Stato Invitato!'**
+  String get pokerInviteYouAreInvited;
+
+  /// No description provided for @pokerInviteInvitedBy.
+  ///
+  /// In it, this message translates to:
+  /// **'{name} ti ha invitato a partecipare'**
+  String pokerInviteInvitedBy(String name);
+
+  /// No description provided for @pokerInviteSessionLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Sessione'**
+  String get pokerInviteSessionLabel;
+
+  /// No description provided for @pokerInviteProjectLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Progetto'**
+  String get pokerInviteProjectLabel;
+
+  /// No description provided for @pokerInviteRoleLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruolo Assegnato'**
+  String get pokerInviteRoleLabel;
+
+  /// No description provided for @pokerInviteExpiryLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Scadenza Invito'**
+  String get pokerInviteExpiryLabel;
+
+  /// No description provided for @pokerInviteExpiryDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Tra {days} giorni'**
+  String pokerInviteExpiryDays(int days);
+
+  /// No description provided for @pokerInviteDecline.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiuta'**
+  String get pokerInviteDecline;
+
+  /// No description provided for @pokerInviteAccept.
+  ///
+  /// In it, this message translates to:
+  /// **'Accetta Invito'**
+  String get pokerInviteAccept;
+
+  /// No description provided for @loadingMatrixError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore caricamento matrice: {error}'**
+  String loadingMatrixError(String error);
+
+  /// No description provided for @loadingDataError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore caricamento dati: {error}'**
+  String loadingDataError(String error);
+
+  /// No description provided for @loadingActivitiesError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore caricamento attività: {error}'**
+  String loadingActivitiesError(String error);
+
+  /// No description provided for @smartTodoSprintDays.
+  ///
+  /// In it, this message translates to:
+  /// **'{days} giorni/sprint'**
+  String smartTodoSprintDays(int days);
+
+  /// No description provided for @smartTodoHoursPerDay.
+  ///
+  /// In it, this message translates to:
+  /// **'{hours}h/giorno'**
+  String smartTodoHoursPerDay(int hours);
+
+  /// No description provided for @smartTodoImageFromClipboardFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Immagine trovata negli appunti'**
+  String get smartTodoImageFromClipboardFound;
+
+  /// No description provided for @smartTodoAddImageFromClipboard.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi immagine dagli appunti'**
+  String get smartTodoAddImageFromClipboard;
+
+  /// No description provided for @smartTodoInviteCreatedAndSent.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito creato e inviato'**
+  String get smartTodoInviteCreatedAndSent;
 }
 
 class _AppLocalizationsDelegate

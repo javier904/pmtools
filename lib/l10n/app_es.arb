@@ -1,9 +1,7 @@
 {
   "@@locale": "es",
-
   "appTitle": "Keisen",
   "goToHome": "Ir al inicio",
-
   "actionSave": "Guardar",
   "actionCancel": "Cancelar",
   "actionDelete": "Eliminar",
@@ -21,12 +19,10 @@
   "actionDone": "Hecho",
   "actionReset": "Restablecer",
   "actionOpen": "Abrir",
-
   "stateLoading": "Cargando...",
   "stateEmpty": "Sin elementos",
   "stateError": "Error",
   "stateSuccess": "Éxito",
-
   "subscriptionCurrent": "ACTUAL",
   "subscriptionRecommended": "RECOMENDADO",
   "subscriptionFree": "Gratis",
@@ -88,7 +84,6 @@
   },
   "subscriptionWithAds": "Con anuncios",
   "subscriptionWithoutAds": "Sin anuncios",
-
   "authSignInGoogle": "Iniciar sesión con Google",
   "authSignOut": "Cerrar sesión",
   "authLogoutConfirm": "¿Estás seguro de que quieres cerrar sesión?",
@@ -106,11 +101,9 @@
   "authLogin": "Iniciar sesión",
   "authHaveAccount": "¿Ya tienes una cuenta?",
   "authNoAccount": "¿No tienes una cuenta?",
-
   "navHome": "Inicio",
   "navProfile": "Perfil",
   "navSettings": "Configuración",
-
   "eisenhowerTitle": "Matriz Eisenhower",
   "eisenhowerYourMatrices": "Tus matrices",
   "eisenhowerNoMatrices": "No hay matrices creadas",
@@ -250,10 +243,9 @@
   "errorAddingActivity": "Error al añadir actividad",
   "errorSavingVotes": "Error al guardar votos",
   "errorExport": "Error durante la exportación",
-  "errorStartingVoting": "Error al iniciar la votación",
-  "errorResetVoting": "Error al restablecer la votación",
+  "errorStartingVoting": "Error al iniciar votación",
+  "errorResetVoting": "Error al restablecer",
   "errorLoadingActivities": "Error al cargar actividades",
-
   "estimationTitle": "Sala de Estimación",
   "estimationYourSessions": "Tus sesiones",
   "estimationNoSessions": "No hay sesiones creadas",
@@ -312,40 +304,33 @@
   "estimationModeDotVoting": "Votación por Puntos",
   "estimationModeBucketSystem": "Sistema de Cubos",
   "estimationModeFiveFingers": "Cinco Dedos",
-
   "retroTitle": "Mis Retrospectivas",
   "retroNoRetros": "Sin retrospectivas",
   "retroCreateNew": "Crear Nueva",
-
   "settingsLanguage": "Idioma",
   "settingsTheme": "Tema",
   "settingsThemeLight": "Claro",
   "settingsThemeDark": "Oscuro",
   "settingsThemeSystem": "Sistema",
-
   "formTitle": "Título",
   "formDescription": "Descripción",
   "formName": "Nombre",
   "formRequired": "Campo obligatorio",
   "formHint": "Introduce un valor",
   "formOptional": "Opcional",
-
-  "errorGeneric": "Ha ocurrido un error",
+  "errorGeneric": "Error: {error}",
   "errorLoading": "Error al cargar datos",
   "errorSaving": "Error al guardar",
   "errorNetwork": "Error de conexión",
   "errorPermission": "Permiso denegado",
   "errorNotFound": "No encontrado",
-
   "successSaved": "Guardado con éxito",
   "successDeleted": "Eliminado con éxito",
   "successCopied": "Copiado al portapapeles",
-
   "filterAll": "Todos",
   "filterRemove": "Quitar filtros",
   "filterActive": "Activo",
   "filterCompleted": "Completado",
-
   "participants": "Participantes",
   "addParticipant": "Añadir participante",
   "removeParticipant": "Eliminar participante",
@@ -356,13 +341,11 @@
   "participantVoter": "Votante",
   "participantObserver": "Observador",
   "participantModerator": "Moderador",
-
   "confirmDelete": "Confirmar eliminación",
   "confirmDeleteMessage": "Esta acción no se puede deshacer.",
   "yes": "Sí",
   "no": "No",
   "ok": "OK",
-
   "today": "Hoy",
   "yesterday": "Ayer",
   "tomorrow": "Mañana",
@@ -390,7 +373,6 @@
       }
     }
   },
-
   "itemCount": "{count} elementos",
   "@itemCount": {
     "placeholders": {
@@ -399,7 +381,6 @@
       }
     }
   },
-
   "welcomeBack": "Bienvenido de nuevo",
   "greeting": "¡Hola, {name}!",
   "@greeting": {
@@ -409,12 +390,10 @@
       }
     }
   },
-
   "copyLink": "Copiar enlace",
   "shareSession": "Compartir sesión",
   "inviteByEmail": "Invitar por correo",
   "inviteByLink": "Invitar por enlace",
-
   "profileTitle": "Perfil",
   "profileEmail": "Correo electrónico",
   "profileDisplayName": "Nombre para mostrar",
@@ -508,10 +487,8 @@
     }
   },
   "stateSaving": "Guardando...",
-
   "cardCoffee": "Descanso",
   "cardQuestion": "No sé",
-
   "toolEisenhower": "Matriz Eisenhower",
   "toolEisenhowerDesc": "Organiza actividades por urgencia e importancia. Cuadrantes para decidir qué hacer ahora, programar, delegar o eliminar.",
   "toolEisenhowerDescShort": "Prioriza por urgencia e importancia",
@@ -527,13 +504,11 @@
   "toolRetro": "Tablero de Retrospectiva",
   "toolRetroDesc": "Recoge feedback del equipo sobre qué salió bien, qué mejorar y acciones a tomar.",
   "toolRetroDescShort": "Recoge feedback del equipo sobre qué salió bien y qué mejorar.",
-
   "homeUtilities": "Utilidades",
   "homeSelectTool": "Selecciona una herramienta para empezar",
   "statusOnline": "En línea",
   "comingSoon": "Próximamente",
   "featureComingSoon": "¡Esta función estará disponible pronto!",
-
   "featureSmartImport": "Importación Inteligente",
   "featureCollaboration": "Colaboración",
   "featureFilters": "Filtros",
@@ -549,18 +524,20 @@
   "featureWentWell": "Fue Bien",
   "featureToImprove": "A Mejorar",
   "featureActions": "Acciones",
-
   "themeLightMode": "Modo Claro",
   "themeDarkMode": "Modo Oscuro",
-
   "estimationBackToSessions": "Volver a sesiones",
   "estimationSessionSettings": "Configuración de Sesión",
   "estimationList": "Lista",
   "estimationSessionsCount": "Tus sesiones ({filtered}/{total})",
   "@estimationSessionsCount": {
     "placeholders": {
-      "filtered": { "type": "int" },
-      "total": { "type": "int" }
+      "filtered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "estimationNoSessionFound": "No se encontró ninguna sesión",
@@ -571,9 +548,15 @@
   "estimationProgress": "Progreso: {completed}/{total} historias ({percent}%)",
   "@estimationProgress": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" },
-      "percent": { "type": "String" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "estimationStart": "Iniciar",
@@ -583,15 +566,23 @@
   "estimationCompletedLabel": "Completado: {completed}/{total} | Estimación total: {total_estimate} pt",
   "@estimationCompletedLabel": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" },
-      "total_estimate": { "type": "String" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "total_estimate": {
+        "type": "String"
+      }
     }
   },
   "estimationVoteStory": "Votar: {title}",
   "@estimationVoteStory": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "estimationAddStoriesToStart": "Añade historias para empezar",
@@ -607,7 +598,9 @@
   "estimationVotesOf": "Votos: {title}",
   "@estimationVotesOf": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "estimationParticipantVotes": "Votos de participantes:",
@@ -626,7 +619,6 @@
   "storyStatusPending": "Pendiente",
   "storyStatusVoting": "Votando",
   "storyStatusRevealed": "Votos revelados",
-
   "participantManagement": "Gestión de Participantes",
   "participantCopySessionLink": "Copiar enlace de sesión",
   "participantInvitesTab": "Invitaciones",
@@ -638,8 +630,12 @@
   "participantVotersAndObservers": "{voters} votantes, {observers} observadores",
   "@participantVotersAndObservers": {
     "placeholders": {
-      "voters": { "type": "int" },
-      "observers": { "type": "int" }
+      "voters": {
+        "type": "int"
+      },
+      "observers": {
+        "type": "int"
+      }
     }
   },
   "participantYou": "Tú",
@@ -649,29 +645,36 @@
   "participantRemoveConfirm": "¿Estás seguro de que quieres eliminar a \"{name}\" de la sesión?",
   "@participantRemoveConfirm": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "participantAddedToSession": "{email} añadido a la sesión",
   "@participantAddedToSession": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "participantRemovedFromSession": "{name} eliminado de la sesión",
   "@participantRemovedFromSession": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "participantRoleUpdated": "Rol actualizado para {email}",
   "@participantRoleUpdated": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "participantFacilitator": "Facilitador",
-
   "inviteSendNew": "Enviar Nueva Invitación",
   "inviteRecipientEmail": "Correo del destinatario *",
   "inviteCreate": "Crear Invitación",
@@ -680,13 +683,17 @@
   "inviteCreatedFor": "Invitación creada para {email}",
   "@inviteCreatedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteExpiresIn": "Expira en {days}d",
   "@inviteExpiresIn": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "inviteCopyLink": "Copiar enlace de invitación",
@@ -696,33 +703,40 @@
   "inviteRevokeConfirm": "¿Estás seguro de que quieres revocar la invitación para {email}?",
   "@inviteRevokeConfirm": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteRevoke": "Revocar",
   "inviteRevokedFor": "Invitación revocada para {email}",
   "@inviteRevokedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteDeleteTitle": "Eliminar Invitación",
   "inviteDeleteConfirm": "¿Estás seguro de que quieres eliminar la invitación para {email}?\n\nEsta acción es irreversible.",
   "@inviteDeleteConfirm": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteDeletedFor": "Invitación eliminada para {email}",
   "@inviteDeletedFor": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteLinkCopied": "Enlace de invitación copiado al portapapeles",
   "linkCopied": "Enlace copiado al portapapeles",
   "enterValidEmail": "Introduce una dirección de correo válida",
-
   "sessionCreatedSuccess": "Sesión creada con éxito",
   "sessionUpdated": "Sesión actualizada",
   "sessionDeleted": "Sesión eliminada",
@@ -734,26 +748,32 @@
   "estimateSaved": "Estimación guardada: {estimate}",
   "@estimateSaved": {
     "placeholders": {
-      "estimate": { "type": "String" }
+      "estimate": {
+        "type": "String"
+      }
     }
   },
-
   "deleteSessionTitle": "Eliminar Sesión",
   "deleteSessionConfirm": "¿Estás seguro de que quieres eliminar \"{name}\"?\nTambién se eliminarán las {count} historias.",
   "@deleteSessionConfirm": {
     "placeholders": {
-      "name": { "type": "String" },
-      "count": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
     }
   },
   "deleteStoryTitle": "Eliminar Historia",
   "deleteStoryConfirm": "¿Estás seguro de que quieres eliminar \"{title}\"?",
   "@deleteStoryConfirm": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "errorLoadingSession": "Error al cargar sesión",
   "errorLoadingStories": "Error al cargar historias",
   "errorCreatingSession": "Error al crear sesión",
@@ -762,19 +782,18 @@
   "errorAddingStory": "Error al añadir historia",
   "errorStartingSession": "Error al iniciar sesión",
   "errorCompletingSession": "Error al completar sesión",
-  "errorStartingVoting": "Error al iniciar votación",
   "errorSubmittingVote": "Error al enviar voto",
   "errorRevealingVotes": "Error al revelar",
-  "errorResetVoting": "Error al restablecer",
   "errorSavingEstimate": "Error al guardar estimación",
   "errorSkipping": "Error al omitir",
-
   "retroIcebreakerTitle": "Rompehielos: Moral del Equipo",
   "retroIcebreakerQuestion": "¿Cómo te sentiste en este sprint?",
   "retroParticipantsVoted": "{count} participantes votaron",
   "@retroParticipantsVoted": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "retroEndIcebreakerStartWriting": "Terminar Rompehielos e Iniciar Escritura",
@@ -783,7 +802,6 @@
   "retroMoodNeutral": "Neutral",
   "retroMoodGood": "Bien",
   "retroMoodExcellent": "Excelente",
-
   "retroAgileCoach": "Coach Ágil",
   "retroCoachSetup": "Elige una plantilla. \"Start/Stop/Continue\" es genial para equipos nuevos. Asegúrate de que todos estén presentes.",
   "retroCoachIcebreaker": "¡Rompe el hielo! Haz una ronda rápida preguntando \"¿Cómo estás?\" o usa una pregunta divertida.",
@@ -791,31 +809,35 @@
   "retroCoachVoting": "¡Hora de Revisión! Todas las tarjetas son visibles. Léelas y usa tus 3 votos para decidir qué discutir.",
   "retroCoachDiscuss": "Enfócate en las tarjetas más votadas. Define Action Items claros: ¿Quién hace qué y cuándo?",
   "retroCoachCompleted": "¡Buen trabajo! La retrospectiva está completa. Los Action Items han sido enviados al Backlog.",
-
   "retroStep": "Paso {step}: {title}",
   "@retroStep": {
     "placeholders": {
-      "step": { "type": "int" },
-      "title": { "type": "String" }
+      "step": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
     }
   },
-  "retroCurrentFocus": "Enfoque Actual: {title}",
+  "retroCurrentFocus": "Enfoque actual: {title}",
   "@retroCurrentFocus": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "retroCanvasMinColumns": "La plantilla requiere al menos 4 columnas (estilo Velero)",
   "retroAddTo": "Añadir a {title}",
   "@retroAddTo": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
-
   "retroNoColumnsConfigured": "No hay columnas configuradas.",
-
   "retroNewActionItem": "Nuevo Action Item",
   "retroEditActionItem": "Editar Action Item",
   "retroActionWhatToDo": "¿Qué hay que hacer?",
@@ -832,7 +854,6 @@
   "retroActionResourcesHint": "Herramientas, presupuesto, personal adicional necesario...",
   "retroActionMonitoring": "Método de Seguimiento",
   "retroActionMonitoringHint": "¿Cómo verificaremos el progreso? (ej. Daily, Review...)",
-
   "retroNoActionItems": "Aún no se han creado Action Items.",
   "retroActionResourcesShort": "Rec",
   "retroTableRef": "Ref.",
@@ -844,25 +865,23 @@
   "retroUnassigned": "Sin asignar",
   "retroDeleteActionItem": "Eliminar Action Item",
   "retroDeleteConfirm": "¿Estás seguro?",
-
   "retroChooseMethodology": "Elegir Metodología",
-
   "retroHidingWhileTyping": "Ocultando mientras escribes...",
   "retroVoteLimitReached": "¡Has alcanzado el límite de {max} votos!",
   "@retroVoteLimitReached": {
     "placeholders": {
-      "max": { "type": "int" }
+      "max": {
+        "type": "int"
+      }
     }
   },
   "retroAddCardHint": "¿Cuáles son tus pensamientos?",
   "retroAddCard": "Añadir Tarjeta",
-
   "retroTimeUp": "¡Se Acabó el Tiempo!",
   "retroTimeUpMessage": "El tiempo para esta fase ha terminado. Termina la discusión o extiende el tiempo.",
   "retroTimeUpOk": "Ok, entendido",
   "retroStopTimer": "Detener Temporizador",
   "retroStartTimer": "Iniciar Temporizador",
-
   "retroNoRetrosFound": "No se encontraron retrospectivas",
   "retroDeleteRetro": "Eliminar Retrospectiva",
   "retroParticipantsLabel": "Participantes",
@@ -875,15 +894,12 @@
       }
     }
   },
-
   "landingBadge": "Herramientas para Equipos Ágiles",
   "landingHeroTitle": "Construye mejores productos\ncon Keisen",
   "landingHeroSubtitle": "Prioriza, estima y gestiona tus proyectos con herramientas colaborativas. Todo en un solo lugar, gratis.",
   "landingStartFree": "Empezar Gratis",
-
   "landingEverythingNeed": "Todo lo que necesitas",
   "landingModernTools": "Herramientas diseñadas para equipos modernos",
-
   "landingSmartTodoBadge": "Productividad",
   "landingSmartTodoTitle": "Lista Smart Todo",
   "landingSmartTodoSubtitle": "Gestión inteligente y colaborativa de tareas para equipos modernos",
@@ -894,7 +910,6 @@
   "landingSmartTodoShareTitle": "Compartir e Invitaciones",
   "landingSmartTodoShareDesc": "Invita a colegas y colaboradores a tus listas por correo electrónico. Cada participante puede ver, comentar y actualizar el estado de las tareas asignadas.\n\nPerfecto para gestionar proyectos transversales con stakeholders externos o equipos multifuncionales.",
   "landingSmartTodoFeaturesTitle": "Funciones de Smart Todo",
-
   "landingEisenhowerBadge": "Priorización",
   "landingEisenhowerSubtitle": "El método de toma de decisiones usado por líderes para gestionar el tiempo",
   "landingEisenhowerUrgentImportantTitle": "Urgente vs Importante",
@@ -904,7 +919,6 @@
   "landingEisenhowerBenefitsTitle": "¿Por qué usar la Matriz Eisenhower?",
   "landingEisenhowerBenefitsDesc": "Los estudios muestran que el 80% de las actividades diarias caen en los cuadrantes 3 y 4 (no importantes). La matriz te ayuda a identificarlas y liberar tiempo para lo que realmente importa.",
   "landingEisenhowerQuadrants": "Cuadrante 1: Urgente + Importante → Hacer Ahora\nCuadrante 2: No Urgente + Importante → Programar\nCuadrante 3: Urgente + No Importante → Delegar\nCuadrante 4: No Urgente + No Importante → Eliminar",
-
   "landingAgileBadge": "Metodologías",
   "landingAgileTitle": "Framework Agile y Scrum",
   "landingAgileSubtitle": "Implementa las mejores prácticas para el desarrollo iterativo de software",
@@ -914,18 +928,15 @@
   "landingAgileScrumDesc": "Scrum es el framework Ágil más extendido. Define roles (Product Owner, Scrum Master, Equipo), eventos (Sprint Planning, Daily, Review, Retrospective) y artefactos (Product Backlog, Sprint Backlog).\n\nKeisen soporta todos los eventos Scrum con herramientas dedicadas para cada ceremonia.",
   "landingAgileKanbanTitle": "Tablero Kanban",
   "landingAgileKanbanDesc": "El método Kanban visualiza el flujo de trabajo a través de columnas que representan estados del proceso. Limita el Trabajo en Progreso (WIP) para maximizar el rendimiento.\n\nNuestro tablero Kanban soporta personalización de columnas, límites WIP y métricas de flujo.",
-
   "landingEstimationBadge": "Estimación",
   "landingEstimationTitle": "Técnicas de Estimación Colaborativas",
   "landingEstimationSubtitle": "Elige el mejor método para tu equipo para estimaciones precisas",
   "landingEstimationFeaturesTitle": "Funciones de la Sala de Estimación",
-
   "landingRetroBadge": "Retrospectiva",
   "landingRetroTitle": "Retrospectivas Interactivas",
   "landingRetroSubtitle": "Herramientas colaborativas en tiempo real: temporizadores, votación anónima, action items e informes de IA.",
   "landingRetroActionTitle": "Seguimiento de Action Items",
   "landingRetroActionDesc": "Cada retrospectiva genera action items rastreables con responsables, fechas límite y estado. Monitorea el seguimiento a lo largo del tiempo.",
-
   "landingWorkflowBadge": "Flujo de Trabajo",
   "landingWorkflowTitle": "Cómo funciona",
   "landingWorkflowSubtitle": "Empieza en 3 simples pasos",
@@ -935,21 +946,17 @@
   "landingStep2Desc": "Estima historias de usuario juntos, organiza sprints y sigue el progreso en tiempo real.",
   "landingStep3Title": "Mejora",
   "landingStep3Desc": "Analiza métricas, realiza retrospectivas y mejora continuamente el proceso.",
-
   "landingCtaTitle": "¿Listo para empezar?",
   "landingCtaDesc": "Regístrate gratis y empieza a colaborar con tu equipo.",
-
   "landingFooterBrandDesc": "Herramientas colaborativas para equipos ágiles.\nPlanifica, estima y mejora juntos.",
   "landingFooterProduct": "Producto",
   "landingFooterResources": "Recursos",
   "landingFooterCompany": "Empresa",
   "landingFooterLegal": "Legal",
   "landingCopyright": "© 2026 Keisen. Todos los derechos reservados.",
-
   "featureSmartImportDesc": "Creación rápida de tareas con descripción\nAsignación a miembros del equipo\nPrioridad y fechas límite configurables\nNotificaciones de finalización",
   "featureImportDesc": "Importar desde archivo CSV\nCopiar/pegar desde Excel\nParseo inteligente de texto\nMapeo automático de campos",
   "featureShareDesc": "Invitaciones por correo\nPermisos configurables\nComentarios en tareas\nHistorial de modificaciones",
-
   "featureSmartTaskCreation": "Creación rápida de tareas",
   "featureTeamAssignment": "Asignación a equipos",
   "featurePriorityDeadline": "Prioridad y Fechas Límite",
@@ -968,13 +975,9 @@
   "featureTagsCategories": "Etiquetas y Categorías",
   "featureArchiving": "Archivado",
   "featureDataExport": "Exportación de Datos",
-
   "landingIntroFeatures": "Planificación de Sprint con capacidad del equipo\nBacklog priorizado con arrastrar y soltar\nSeguimiento de velocidad y gráfico burndown\nDaily standup facilitado",
-
   "landingAgileScrumFeatures": "Product Backlog con story points\nSprint Backlog con desglose de tareas\nTablero de retrospectiva integrado\nMétricas Scrum automáticas",
-
   "landingAgileKanbanFeatures": "Columnas personalizables\nLímites WIP por columna\nArrastrar y soltar intuitivo\nLead time y cycle time",
-
   "landingEstimationPokerDesc": "El método clásico: cada miembro elige una carta (1, 2, 3, 5, 8...). Las estimaciones se revelan simultáneamente para evitar sesgos.",
   "landingEstimationTShirtTitle": "Talla de Camiseta",
   "landingEstimationTShirtSubtitle": "Dimensionamiento Relativo",
@@ -985,14 +988,12 @@
   "landingEstimationBucketTitle": "Sistema de Cubos",
   "landingEstimationBucketSubtitle": "Categorización Rápida",
   "landingEstimationBucketDesc": "Las historias de usuario se asignan a \"cubos\" predefinidos. Excelente para estimar grandes cantidades de elementos rápidamente en sesiones de refinamiento.",
-
   "landingEstimationChipHiddenVote": "Votación Oculta",
   "landingEstimationChipTimer": "Temporizador Configurable",
   "landingEstimationChipStats": "Estadísticas en Tiempo Real",
   "landingEstimationChipParticipants": "Hasta 20 Participantes",
   "landingEstimationChipHistory": "Historial de Estimaciones",
   "landingEstimationChipExport": "Exportar Resultados",
-
   "landingRetroTemplateStartStopTitle": "Start / Stop / Continue",
   "landingRetroTemplateStartStopDesc": "El formato clásico: qué empezar a hacer, qué dejar de hacer, qué seguir haciendo.",
   "landingRetroTemplateMadSadTitle": "Mad / Sad / Glad",
@@ -1005,14 +1006,11 @@
   "landingRetroTemplateWentWellDesc": "Formato simple y directo: qué salió bien y qué mejorar.",
   "landingRetroTemplateDakiTitle": "DAKI",
   "landingRetroTemplateDakiDesc": "Drop, Add, Keep, Improve - decisiones concretas para el próximo sprint.",
-
   "landingRetroFeatureTrackingTitle": "Seguimiento de Action Items",
   "landingRetroFeatureTrackingDesc": "Cada retrospectiva genera action items rastreables con responsable, fecha límite y estado. Monitorea el seguimiento a lo largo del tiempo.",
-
   "landingAgileSectionBadge": "Metodologías",
   "landingAgileSectionTitle": "Framework Agile y Scrum",
   "landingAgileSectionSubtitle": "Implementa las mejores prácticas del desarrollo iterativo de software",
-
   "landingSmartTodoCollabTitle": "Listas de Tareas Colaborativas",
   "landingSmartTodoCollabDesc": "Smart Todo transforma la gestión diaria de tareas en un proceso fluido y colaborativo. Crea listas, asigna tareas a miembros del equipo y monitorea el progreso en tiempo real.\n\nIdeal para equipos distribuidos que necesitan sincronización continua sobre las tareas a completar.",
   "landingSmartTodoCollabFeatures": "Creación rápida de tareas con descripción\nAsignación a miembros del equipo\nPrioridades y fechas límite configurables\nNotificaciones de finalización",
@@ -1026,7 +1024,6 @@
   "landingSmartTodoChipTags": "Etiquetas y categorías",
   "landingSmartTodoChipArchive": "Archivado",
   "landingSmartTodoChipExport": "Exportación de datos",
-
   "landingEisenhowerTitle": "Matriz Eisenhower",
   "landingEisenhowerUrgentTitle": "Urgente vs Importante",
   "landingEisenhowerUrgentDesc": "La Matriz Eisenhower, ideada por el 34º Presidente de los Estados Unidos Dwight D. Eisenhower, divide las actividades en cuatro cuadrantes basados en dos criterios: urgencia e importancia.\n\nEste marco de toma de decisiones ayuda a distinguir lo que requiere atención inmediata de lo que contribuye a objetivos a largo plazo.",
@@ -1044,34 +1041,28 @@
   "landingEisenhowerDelegateDesc": "Interrupciones, reuniones, correos",
   "landingEisenhowerEliminateLabel": "ELIMINAR",
   "landingEisenhowerEliminateDesc": "Distracciones, redes sociales, pérdidas de tiempo",
-
   "landingFooterFeatures": "Funcionalidades",
   "landingFooterPricing": "Precios",
   "landingFooterChangelog": "Registro de cambios",
   "landingFooterRoadmap": "Hoja de ruta",
-
   "landingFooterDocs": "Documentación",
   "landingFooterAgileGuides": "Guías Ágiles",
   "landingFooterBlog": "Blog",
   "landingFooterCommunity": "Comunidad",
-
   "landingFooterAbout": "Sobre Nosotros",
   "landingFooterContact": "Contacto",
   "landingFooterJobs": "Empleo",
   "landingFooterPress": "Kit de Prensa",
-
   "landingFooterPrivacy": "Política de Privacidad",
   "landingFooterTerms": "Términos de Servicio",
   "landingFooterCookies": "Política de Cookies",
   "landingFooterGdpr": "GDPR",
-
   "agileMethodologyGuideTitle": "Guía de Metodología Ágil",
   "agileMethodologyGuideSubtitle": "Elige la metodología que mejor se adapte a tu proyecto",
   "agileScrumShortDesc": "Sprints de tiempo fijo, Velocidad, Burndown. Ideal para productos con requisitos en evolución.",
   "agileKanbanShortDesc": "Flujo continuo, Límites WIP, Lead Time. Ideal para soporte y solicitudes continuas.",
   "agileScrumbanShortDesc": "Mezcla de Sprints y flujo continuo. Ideal para equipos que quieren flexibilidad.",
   "agileGuide": "Guía",
-
   "agileAddToSprint": "Añadir al Sprint",
   "agileEstimate": "ESTIMAR",
   "agileEstimated": "Estimado",
@@ -1080,10 +1071,11 @@
   "agilePointsValue": "{points} pts",
   "@agilePointsValue": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
-
   "backlogProductBacklog": "Product Backlog",
   "backlogArchiveCompleted": "Archivo Completado",
   "backlogStories": "historias",
@@ -1092,14 +1084,18 @@
   "backlogShowArchive": "Mostrar Archivo ({count} completadas)",
   "@backlogShowArchive": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "backlogTab": "Backlog",
   "backlogArchiveTab": "Archivo ({count})",
   "@backlogArchiveTab": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "backlogFilters": "Filtros",
@@ -1114,29 +1110,36 @@
   "backlogNoStoryFound": "No se encontró ninguna historia",
   "backlogEmpty": "Backlog vacío",
   "backlogAddFirstStory": "Añade la primera User Story",
-
   "kanbanWipExceeded": "¡Límite WIP excedido! Completa algunos elementos antes de empezar nuevos.",
   "kanbanInfo": "Info",
   "kanbanConfigureWip": "Configurar WIP",
   "kanbanWipTooltip": "WIP: {current} de {max} máx",
   "@kanbanWipTooltip": {
     "placeholders": {
-      "current": { "type": "int" },
-      "max": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
   "kanbanNoWipLimit": "Sin límite WIP",
   "kanbanItems": "{count} elementos",
   "@kanbanItems": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanEmpty": "Vacío",
   "kanbanWipLimitTitle": "Límite WIP: {column}",
   "@kanbanWipLimitTitle": {
     "placeholders": {
-      "column": { "type": "String" }
+      "column": {
+        "type": "String"
+      }
     }
   },
   "kanbanWipLimitDesc": "Establece el número máximo de elementos que pueden estar en esta columna al mismo tiempo.",
@@ -1145,7 +1148,9 @@
   "kanbanWipLimitSuggestion": "Sugerencia: empieza con {count} y ajusta según el equipo.",
   "@kanbanWipLimitSuggestion": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanRemoveLimit": "Quitar Límite",
@@ -1156,20 +1161,28 @@
   "kanbanColumnLabel": "Columna: {name}",
   "@kanbanColumnLabel": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "kanbanCurrentCount": "Actual: {current} | Límite: {limit}",
   "@kanbanCurrentCount": {
     "placeholders": {
-      "current": { "type": "int" },
-      "limit": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "kanbanAfterMove": "Después de mover: {count}",
   "@kanbanAfterMove": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "kanbanSuggestion": "Sugerencia: completa o mueve otros elementos antes de empezar nuevos para mantener un flujo de trabajo óptimo.",
@@ -1186,11 +1199,12 @@
   "kanbanWipWhatToDoDesc": "1. Completar o mover elementos existentes antes de empezar nuevos\n2. Ayudar a compañeros a desbloquear elementos en revisión\n3. Analizar por qué se excedió el límite",
   "kanbanUnderstood": "Entendido",
   "kanbanBoardTitle": "Tablero Kanban",
-
   "sprintTitle": "Sprint ({count})",
   "@sprintTitle": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintNew": "Nuevo Sprint",
@@ -1199,7 +1213,9 @@
   "sprintNumber": "Sprint {number}",
   "@sprintNumber": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
   "sprintStart": "Iniciar Sprint",
@@ -1207,13 +1223,17 @@
   "sprintDays": "{days}d",
   "@sprintDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintStoriesCount": "{count}",
   "@sprintStoriesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintStoriesLabel": "historias",
@@ -1223,7 +1243,9 @@
   "sprintDaysRemaining": "{days}d restantes",
   "@sprintDaysRemaining": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintStartButton": "Iniciar",
@@ -1240,19 +1262,25 @@
   "sprintDuration": "Duración: {days} días",
   "@sprintDuration": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintAverageVelocity": "Velocidad promedio: {velocity} pts/sprint",
   "@sprintAverageVelocity": {
     "placeholders": {
-      "velocity": { "type": "String" }
+      "velocity": {
+        "type": "String"
+      }
     }
   },
   "sprintTeamMembers": "Equipo: {count} miembros",
   "@sprintTeamMembers": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sprintPlanningTitle": "Planificación de Sprint",
@@ -1264,7 +1292,9 @@
   "sprintPlanningDays": "{days} días",
   "@sprintPlanningDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "sprintPlanningExceeded": "Advertencia: velocidad sugerida excedida",
@@ -1273,10 +1303,11 @@
   "sprintPlanningConfirm": "Confirmar ({count} historias)",
   "@sprintPlanningConfirm": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "storyFormEditTitle": "Editar Historia",
   "storyFormNewTitle": "Nueva User Story",
   "storyFormDetailsTab": "Detalles",
@@ -1326,11 +1357,12 @@
   "storyFormAssigneeLabel": "Asignar a",
   "storyFormAssigneeHint": "Selecciona un miembro del equipo",
   "storyFormNotAssigned": "Sin asignar",
-
   "storyDetailPointsLabel": "{points} puntos",
   "@storyDetailPointsLabel": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
   "storyDetailDescriptionTitle": "Descripción",
@@ -1338,8 +1370,12 @@
   "storyDetailAcceptanceCriteria": "Criterios de Aceptación ({completed}/{total})",
   "@storyDetailAcceptanceCriteria": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "storyDetailNoCriteria": "Sin criterios definidos",
@@ -1348,7 +1384,9 @@
   "storyDetailEstimatesReceived": "{count} estimaciones recibidas",
   "@storyDetailEstimatesReceived": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "storyDetailInfoTitle": "Información",
@@ -1358,25 +1396,26 @@
   "storyDetailCreatedAt": "Creado el",
   "storyDetailStartedAt": "Iniciado el",
   "storyDetailCompletedAt": "Completado el",
-
   "featureSort": "Ordenación",
-
   "retroStatusDraft": "Borrador",
   "retroStatusActive": "En Progreso",
   "retroStatusCompleted": "Completada",
   "retroDateLabel": "Fecha: {date}",
   "@retroDateLabel": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "retroSprintDefault": "Sprint {number}",
   "@retroSprintDefault": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
-
   "smartTodoEditTask": "Editar",
   "smartTodoDescription": "DESCRIPCIÓN",
   "smartTodoDescriptionHint": "Añadir una descripción detallada...",
@@ -1405,13 +1444,17 @@
   "smartTodoImportFileSelected": "Archivo seleccionado: {fileName}",
   "@smartTodoImportFileSelected": {
     "placeholders": {
-      "fileName": { "type": "String" }
+      "fileName": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportFileError": "Error al leer archivo: {error}",
   "@smartTodoImportFileError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportNoData": "No se encontraron datos",
@@ -1419,14 +1462,20 @@
   "smartTodoImportColumnLabel": "Columna {index}: \"{value}\"",
   "@smartTodoImportColumnLabel": {
     "placeholders": {
-      "index": { "type": "int" },
-      "value": { "type": "String" }
+      "index": {
+        "type": "int"
+      },
+      "value": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportFoundTasks": "Se encontraron {count} tareas válidas. Revisa antes de importar.",
   "@smartTodoImportFoundTasks": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImportBack": "Atrás",
@@ -1434,7 +1483,9 @@
   "smartTodoImportButton": "Importar {count} Tareas",
   "@smartTodoImportButton": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImportEnterText": "Introduce algún texto o sube un archivo.",
@@ -1442,7 +1493,9 @@
   "smartTodoImportError": "Error de Importación: {error}",
   "@smartTodoImportError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoAddActivity": "Añadir una actividad",
@@ -1484,20 +1537,26 @@
   "smartTodoImportSampleValue": "Valor de ejemplo: \"{value}\"",
   "@smartTodoImportSampleValue": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportNoValidRows": "No se encontraron filas válidas.",
   "smartTodoImportParsingError": "Error de Parseo: {error}",
   "@smartTodoImportParsingError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportSuccess": "¡{count} tareas importadas!",
   "@smartTodoImportSuccess": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoNewTaskDefault": "Nueva Tarea",
@@ -1508,20 +1567,26 @@
   "smartTodoMembers": "Miembros ({count})",
   "@smartTodoMembers": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoNoInvitesPending": "No hay invitaciones pendientes",
   "smartTodoRoleLabel": "Rol: {role}",
   "@smartTodoRoleLabel": {
     "placeholders": {
-      "role": { "type": "String" }
+      "role": {
+        "type": "String"
+      }
     }
   },
   "smartTodoSentBy": "Enviado por {name}",
   "@smartTodoSentBy": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "smartTodoResendEmail": "Reenviar Correo",
@@ -1541,75 +1606,76 @@
   "smartTodoInviteSent": "Invitación enviada a {email}",
   "@smartTodoInviteSent": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "smartTodoUserAlreadyInvitedOrPending": "Usuario ya invitado o invitación pendiente.",
   "smartTodoWriteComment": "Escribe un comentario...",
-
   "smartTodoFilterToday": "Hoy",
   "smartTodoFilterMyTasks": "Mis Tareas",
   "smartTodoFilterOwner": "Propietario",
   "smartTodoViewGlobalTasks": "Ver Tareas Globales",
   "smartTodoViewLists": "Ver Listas",
-
   "smartTodoNewListDialogTitle": "Nueva Lista",
   "smartTodoTitleLabel": "Título *",
   "smartTodoDescriptionLabel": "Descripción",
   "smartTodoCancel": "Cancelar",
   "smartTodoCreate": "Crear",
   "smartTodoSave": "Guardar",
-
   "smartTodoNoListsPresent": "No hay listas disponibles",
   "smartTodoCreateFirstList": "Crea tu primera lista para comenzar",
   "smartTodoMembersCount": "{count} miembros",
   "@smartTodoMembersCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "smartTodoRenameListTitle": "Renombrar Lista",
-  "smartTodoNewNameLabel": "Nuevo Nombre",
+  "smartTodoNewNameLabel": "Nuevo nombre",
   "smartTodoDeleteListTitle": "Eliminar Lista",
-  "smartTodoDeleteListConfirm": "¿Estás seguro de que quieres eliminar esta lista y todas sus tareas? Esta acción no se puede deshacer.",
+  "smartTodoDeleteListConfirm": "¿Seguro que quieres eliminar esta lista y todas sus tareas? Esta acción es irreversible.",
   "smartTodoDelete": "Eliminar",
   "smartTodoEdit": "Editar",
   "smartTodoSearchHint": "Buscar listas...",
   "smartTodoSearchTasksHint": "Buscar...",
   "smartTodoNoSearchResults": "Sin resultados para \"{query}\"",
-
   "smartTodoColumnTodo": "Por Hacer",
   "smartTodoColumnInProgress": "En Progreso",
   "smartTodoColumnDone": "Hecho",
-
   "smartTodoAllPeople": "Todas las personas",
   "smartTodoPeopleCount": "{count} personas",
   "@smartTodoPeopleCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "smartTodoFilterByPerson": "Filtrar por Persona",
+  "smartTodoFilterByPerson": "Filtrar por persona",
   "smartTodoApplyFilters": "Aplicar Filtros",
   "@smartTodoNoSearchResults": {
     "placeholders": {
-      "query": {"type": "String"}
+      "query": {
+        "type": "String"
+      }
     }
   },
-
   "smartTodoError": "Error: {error}",
   "@smartTodoError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "profileMenuTitle": "Perfil",
   "profileMenuLogout": "Cerrar Sesión",
   "profileLogoutDialogTitle": "Cerrar Sesión",
   "profileLogoutDialogConfirm": "¿Estás seguro de que quieres cerrar sesión?",
-
   "legalCookieTitle": "Usamos cookies",
   "legalCookieMessage": "Usamos cookies para mejorar tu experiencia y con fines analíticos. Al continuar, aceptas el uso de cookies.",
   "legalCookieAccept": "Aceptar todas",
@@ -1628,7 +1694,6 @@
   "legalGdprContent": "## Compromiso con la protección de datos (RGPD)\nDe acuerdo con el Reglamento General de Protección de Datos (RGPD) de la Unión Europea, Keisen se compromete a proteger los datos personales de los usuarios y a garantizar la transparencia en su tratamiento.\n\n## Responsable del tratamiento\nEl Responsable del tratamiento es:\n**Keisen Team**\nCorreo electrónico: suppkesien@gmail.com\n\n## Base legal para el tratamiento\nTratamos sus datos personales solo cuando tenemos una base legal para hacerlo. Esto incluye:\n- **Consentimiento:** Nos ha dado permiso para tratar sus datos para un propósito específico.\n- **Ejecución de un contrato:** El tratamiento es necesario para proporcionar los Servicios que ha solicitado (por ejemplo, el uso de la plataforma).\n- **Interés legítimo:** El tratamiento es necesario para nuestros intereses legítimos (por ejemplo, seguridad, mejora del servicio), a menos que sus derechos y libertades fundamentales prevalezcan sobre esos intereses.\n\n## Transferencia de datos\nSus datos se almacenan en servidores seguros proporcionados por Google Cloud Platform (Google Firebase). Google se adhiere a los estándares internacionales de seguridad y cumple con el RGPD a través de Cláusulas Contractuales Estándar (SCC).\n\n## Sus derechos RGPD\nComo usuario en la UE, tiene los siguientes derechos:\n1.  **Derecho de acceso:** Tiene derecho a solicitar copias de sus datos personales.\n2.  **Derecho de rectificación:** Tiene derecho a solicitar la corrección de la información que considere inexacta.\n3.  **Derecho a la eliminación (\"Derecho al olvido\"):** Tiene derecho a solicitar la eliminación de sus datos personales, bajo ciertas condiciones.\n4.  **Derecho a restringir el tratamiento:** Tiene derecho a solicitar la restricción del procesamiento de sus datos.\n5.  **Derecho a la portabilidad de los datos:** Tiene derecho a solicitar la transferencia de los datos que hemos recopilado a otra organización o directamente a usted.\n\n## Ejercicio de derechos\nSi desea ejercer alguno de estos derechos, comuníquese con nosotros en: suppkesien@gmail.com. Responderemos a su solicitud en el plazo de un mes.",
   "profilePrivacy": "Privacidad",
   "profileExportData": "Exportar mis datos",
-
   "subscriptionTitle": "Suscripción",
   "subscriptionTabPlans": "Planes",
   "subscriptionTabUsage": "Uso",
@@ -1637,19 +1702,25 @@
   "subscriptionUpgradeTo": "Mejorar a {plan}",
   "@subscriptionUpgradeTo": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionDowngradeTo": "Cambiar a {plan}",
   "@subscriptionDowngradeTo": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionChoose": "Elegir {plan}",
   "@subscriptionChoose": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionMonthly": "Mensual",
@@ -1673,28 +1744,38 @@
   "subscriptionCanCreateOne": "Puedes crear 1 {entity} más",
   "@subscriptionCanCreateOne": {
     "placeholders": {
-      "entity": {"type": "String"}
+      "entity": {
+        "type": "String"
+      }
     }
   },
   "subscriptionCanCreateMany": "Puedes crear {count} {entity} más",
   "@subscriptionCanCreateMany": {
     "placeholders": {
-      "count": {"type": "int"},
-      "entity": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "entity": {
+        "type": "String"
+      }
     }
   },
   "subscriptionUpgrade": "MEJORAR",
   "subscriptionUsed": "Usado: {count}",
   "@subscriptionUsed": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionUnlimited": "Ilimitado",
   "subscriptionLimit": "Límite: {count}",
   "@subscriptionLimit": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionPlanUsage": "Uso del plan",
@@ -1711,14 +1792,18 @@
   "subscriptionLoadingError": "Error de carga: {error}",
   "@subscriptionLoadingError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionCompletePayment": "Completa el pago en la ventana abierta",
   "subscriptionError": "Error: {error}",
   "@subscriptionError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionConfirmDowngrade": "Confirmar cambio",
@@ -1729,28 +1814,44 @@
   "subscriptionPortalError": "Error al abrir el portal: {error}",
   "@subscriptionPortalError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "subscriptionRetry": "Reintentar",
   "subscriptionChooseRightPlan": "Elige el plan adecuado para ti",
   "subscriptionStartFree": "Empieza gratis, mejora cuando quieras",
   "subscriptionPlan": "Plan {plan}",
+  "subscriptionPlanName": "Plan actual: {plan}",
+  "@subscriptionPlanName": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
   "@subscriptionPlan": {
     "placeholders": {
-      "plan": {"type": "String"}
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "subscriptionTrialUntil": "Prueba hasta {date}",
   "@subscriptionTrialUntil": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "subscriptionRenewal": "Renovación: {date}",
   "@subscriptionRenewal": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "subscriptionManage": "Gestionar",
@@ -1793,13 +1894,17 @@
   "subscriptionActiveProjects": "{count} proyectos activos",
   "@subscriptionActiveProjects": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "subscriptionActiveLists": "{count} listas Smart Todo",
   "@subscriptionActiveLists": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "toolSectionTitle": "Herramientas",
@@ -1834,20 +1939,22 @@
   "smartTodoDone": "Hecho",
   "smartTodoAdd": "Añadir",
   "smartTodoEmailLabel": "Email",
-
   "exceptionLoginGoogleRequired": "Inicio de sesión de Google requerido para enviar correos",
   "exceptionUserNotAuthenticated": "Usuario no autenticado",
   "errorLoginFailed": "Error de inicio de sesión: {error}",
   "@errorLoginFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "retroParticipantsTitle": "Participantes ({count})",
   "@retroParticipantsTitle": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "actionReopen": "Reabrir",
@@ -1860,7 +1967,6 @@
   "retroReopenConfirm": "¿Estás seguro de que quieres reabrir la retrospectiva? Volverá a la fase de Discusión.",
   "errorAuthRequired": "Autenticación requerida",
   "errorRetroIdMissing": "Falta ID de retrospectiva",
-
   "pokerInviteAccepted": "¡Invitación aceptada! Redirigiendo a la sesión.",
   "pokerInviteRefused": "Invitación rechazada",
   "pokerConfirmRefuseTitle": "Rechazar Invitación",
@@ -1875,13 +1981,11 @@
   "exceptionInviteInvalid": "Invitación no válida o caducada",
   "exceptionInviteCalculated": "Invitación caducada",
   "exceptionInviteWrongUser": "Invitación destinada a otro usuario",
-
   "todoImportTasks": "Importar Tareas",
   "todoExportSheets": "Exportar a Sheets",
   "todoDeleteColumnTitle": "Eliminar Columna",
   "todoDeleteColumnConfirm": "¿Estás seguro? Las tareas de esta columna se perderán.",
   "exceptionListNotFound": "Lista no encontrada",
-
   "langItalian": "Italiano",
   "langEnglish": "English",
   "langFrench": "Français",
@@ -1890,34 +1994,14 @@
   "errorExporting": "Error al exportar: {error}",
   "@errorExporting": {
     "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "retroCurrentFocus": "Enfoque actual: {title}",
-  "@retroCurrentFocus": {
-    "placeholders": {
-      "title": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoViewKanban": "Kanban",
   "smartTodoViewList": "Lista",
   "smartTodoViewResource": "Por Recurso",
-  "smartTodoMembersCount": "{count} miembros",
-  "@smartTodoMembersCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "smartTodoSearchTasksHint": "Buscar...",
-  "smartTodoAllPeople": "Todas las personas",
-  "smartTodoPeopleCount": "{count} personas",
-  "@smartTodoPeopleCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "smartTodoFilterToday": "Hoy",
-  "smartTodoFilterByPerson": "Filtrar por persona",
   "smartTodoInviteTooltip": "Invitar",
   "smartTodoOptionsTooltip": "Más opciones",
   "smartTodoActionImport": "Importar tareas",
@@ -1933,37 +2017,35 @@
   "smartTodoRenameList": "Renombrar lista",
   "smartTodoManageTags": "Gestionar etiquetas",
   "smartTodoDeleteList": "Eliminar lista",
-  "smartTodoNewNameLabel": "Nuevo nombre",
-  "smartTodoDeleteListConfirm": "¿Seguro que quieres eliminar esta lista y todas sus tareas? Esta acción es irreversible.",
   "smartTodoEditPermissionError": "Solo puedes editar las tareas asignadas a ti",
-  "actionEdit": "Editar",
-  "actionSave": "Guardar",
   "errorDeletingAccount": "Error al eliminar la cuenta: {error}",
   "@errorDeletingAccount": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "errorRecentLoginRequired": "Se requiere inicio de sesión reciente. Por favor, cierra sesión e inicia sesión de nuevo antes de eliminar tu cuenta.",
-  "errorGeneric": "Error: {error}",
   "@errorGeneric": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-  "retroChooseMethodology": "Elegir Metodología",
-  "actionConfirm": "Confirmar",
   "actionGuide": "Guía {framework}",
   "@actionGuide": {
     "placeholders": {
-      "framework": { "type": "String" }
+      "framework": {
+        "type": "String"
+      }
     }
   },
   "actionExportSheets": "Exportar a Google Sheets",
   "actionAuditLog": "Registro de Auditoría",
   "actionInviteMember": "Invitar Miembro",
   "actionSettings": "Configuración",
-
   "retroTemplateStartStopContinue": "Start, Stop, Continue",
   "retroDescStartStopContinue": "Orientada a la acción: Empezar, Parar, Continuar.",
   "retroUsageStartStopContinue": "Mejor para feedback accionable y cambios de comportamiento.",
@@ -2007,7 +2089,6 @@
   "searchResultTypeEisenhower": "Matriz Eisenhower",
   "searchResultTypeEstimation": "Estimation Room",
   "searchBackToDashboard": "Volver al Tablero",
-
   "exportToEstimation": "Enviar a Estimation",
   "exportToEstimationDesc": "Crear una sesión de estimación con estas tareas",
   "exportToEisenhower": "Enviar a Eisenhower",
@@ -2020,7 +2101,9 @@
   "tasksSelectedCount": "{count} tarea(s) seleccionada(s)",
   "@tasksSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "exportSuccess": "Exportado con éxito",
@@ -2037,7 +2120,9 @@
   "storiesSelectedCount": "{count} historia(s) seleccionada(s)",
   "@storiesSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "selectAll": "Seleccionar Todo",
@@ -2046,7 +2131,9 @@
   "storiesImportedCount": "{count} historia(s) importada(s)",
   "@storiesImportedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noEstimatedStories": "Sin historias con estimaciones para importar",
@@ -2061,7 +2148,9 @@
   "activitiesCreated": "{count} actividades creadas",
   "@activitiesCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "importFromEisenhower": "Importar desde Eisenhower",
@@ -2082,7 +2171,9 @@
   "activitiesSelectedCount": "{count} actividad(es) seleccionada(s)",
   "@activitiesSelectedCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noActivitiesSelected": "Ninguna actividad disponible",
@@ -2090,7 +2181,9 @@
   "tasksCreated": "{count} tareas creadas",
   "@tasksCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "exportToUserStories": "Exportar a User Stories",
@@ -2103,11 +2196,13 @@
   "selectProject": "Seleccionar Proyecto",
   "selectProjectHint": "Elige un proyecto de destino",
   "noProjectsAvailable": "No hay proyectos disponibles. Crea uno nuevo.",
-  "userStoryFieldMappingInfo": "Mapeo: Título \u2192 Título story, Descripción \u2192 Descripción story, Esfuerzo \u2192 Story points, Prioridad \u2192 Business value",
+  "userStoryFieldMappingInfo": "Mapeo: Título → Título story, Descripción → Descripción story, Esfuerzo → Story points, Prioridad → Business value",
   "storiesCreated": "{count} stories creadas",
   "@storiesCreated": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "configureNewProject": "Configurar Nuevo Proyecto",
@@ -2116,26 +2211,36 @@
   "selectSprint": "Seleccionar Sprint",
   "selectSprintHint": "Elige un sprint de destino",
   "noSprintsAvailable": "No hay sprints disponibles. Crea primero un sprint en planificación.",
-  "sprintExportFieldMappingInfo": "Mapeo: Título \u2192 Título story, Descripción \u2192 Descripción, Estimación \u2192 Story points",
+  "sprintExportFieldMappingInfo": "Mapeo: Título → Título story, Descripción → Descripción, Estimación → Story points",
   "exportToSprint": "Exportar a Sprint",
   "totalStoryPoints": "{count} story points en total",
   "@totalStoryPoints": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "storiesAddedToSprint": "{count} stories agregadas a {sprintName}",
   "@storiesAddedToSprint": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sprintName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "storiesAddedToProject": "{count} stories agregadas al proyecto {projectName}",
   "@storiesAddedToProject": {
     "placeholders": {
-      "count": {"type": "int"},
-      "projectName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "projectName": {
+        "type": "String"
+      }
     }
   },
   "exportEisenhowerToSprintDesc": "Transforma las actividades Eisenhower en User Stories",
@@ -2153,18 +2258,25 @@
   "activitiesExportedToSprint": "{count} actividades exportadas al sprint {sprintName}",
   "@activitiesExportedToSprint": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sprintName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "activitiesExportedToEstimation": "{count} actividades exportadas a la sesión de estimación {sessionName}",
   "@activitiesExportedToEstimation": {
     "placeholders": {
-      "count": {"type": "int"},
-      "sessionName": {"type": "String"}
+      "count": {
+        "type": "int"
+      },
+      "sessionName": {
+        "type": "String"
+      }
     }
   },
-
   "archiveAction": "Archivar",
   "archiveRestoreAction": "Restaurar",
   "archiveShowArchived": "Mostrar archivados",
@@ -2172,14 +2284,18 @@
   "archiveConfirmTitle": "Archivar {itemType}",
   "@archiveConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "archiveConfirmMessage": "¿Estás seguro de que quieres archivar este elemento? Podrá ser restaurado más tarde.",
   "archiveRestoreConfirmTitle": "Restaurar {itemType}",
   "@archiveRestoreConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "archiveRestoreConfirmMessage": "¿Quieres restaurar este elemento del archivo?",
@@ -2198,11 +2314,316 @@
   "completeConfirmTitle": "Completar {itemType}",
   "@completeConfirmTitle": {
     "placeholders": {
-      "itemType": {"type": "String"}
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "completeConfirmMessage": "¿Estás seguro de que quieres completar este elemento?",
   "completeSuccessMessage": "Elemento completado con éxito",
   "reopenSuccessMessage": "Elemento reabierto con éxito",
-  "completedBadge": "Completado"
+  "completedBadge": "Completado",
+
+  "inviteNewInvite": "NUEVA INVITACIÓN",
+  "inviteRole": "Rol:",
+  "inviteSendEmailNotification": "Enviar notificación por email",
+  "inviteSendInvite": "Enviar Invitación",
+  "inviteLink": "Enlace de invitación:",
+  "inviteLinkCopied": "¡Enlace copiado!",
+  "inviteCopyLink": "Copiar enlace",
+  "inviteList": "INVITACIONES",
+  "inviteResend": "Reenviar",
+  "inviteRevoke": "Revocar",
+  "inviteRevokeTitle": "¿Revocar invitación?",
+  "inviteRevokeMessage": "La invitación ya no será válida.",
+  "inviteResent": "Invitación reenviada",
+  "inviteSentByEmail": "Invitación enviada por email a {email}",
+  "@inviteSentByEmail": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "inviteStatusPending": "Pendiente",
+  "inviteStatusAccepted": "Aceptada",
+  "inviteStatusDeclined": "Rechazada",
+  "inviteStatusExpired": "Expirada",
+  "inviteStatusRevoked": "Revocada",
+  "inviteGmailAuthTitle": "Autorización de Gmail",
+  "inviteGmailAuthMessage": "Para enviar emails de invitación, necesitas volver a autenticarte con Google.\n\n¿Quieres continuar?",
+  "inviteGmailAuthNo": "No, solo enlace",
+  "inviteGmailAuthYes": "Autorizar",
+  "inviteGmailNotAvailable": "Autorización de Gmail no disponible. Intenta cerrar sesión e iniciar de nuevo.",
+  "inviteGmailNoPermission": "Permiso de Gmail no concedido.",
+  "inviteEnterEmail": "Ingresa un email",
+  "inviteInvalidEmail": "Email inválido",
+
+  "pendingInvites": "Invitaciones Pendientes",
+  "noPendingInvites": "No hay invitaciones pendientes",
+  "invitedBy": "Invitado por {name}",
+  "@invitedBy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "inviteOpenInstance": "Abrir",
+  "inviteAcceptFirst": "Acepta la invitación para abrir",
+  "inviteAccept": "Aceptar",
+  "inviteDecline": "Rechazar",
+  "inviteAcceptedSuccess": "¡Invitación aceptada con éxito!",
+  "inviteAcceptedError": "Error al aceptar la invitación",
+  "inviteDeclinedSuccess": "Invitación rechazada",
+  "inviteDeclineTitle": "¿Rechazar invitación?",
+  "inviteDeclineMessage": "¿Estás seguro de que quieres rechazar esta invitación?",
+  "expiresInHours": "Expira en {hours}h",
+  "@expiresInHours": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "expiresInDays": "Expira en {days}d",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "close": "Cerrar",
+  "cancel": "Cancelar",
+
+  "raciTitle": "Matriz RACI",
+  "raciNoActivities": "No hay actividades disponibles",
+  "raciAddActivity": "Agregar actividad",
+  "raciAddColumn": "Agregar columna",
+  "raciActivities": "ACTIVIDADES",
+  "raciAssignRole": "Asignar rol",
+  "raciNone": "Ninguno",
+  "raciSaving": "Guardando...",
+  "raciSaveChanges": "Guardar cambios",
+  "raciSavedSuccessfully": "Cambios guardados correctamente",
+  "raciErrorSaving": "Error al guardar",
+  "raciMissingAccountable": "Falta Accountable (A)",
+  "raciOnlyOneAccountable": "Solo un Accountable por actividad",
+  "raciDuplicateRoles": "Roles duplicados",
+  "raciNoResponsible": "No hay Responsible (R) asignado",
+  "raciTooManyInformed": "Demasiados Informed (I): considera reducir",
+  "raciColumnName": "Nombre de la columna",
+  "raciColumnNameHint": "Ej.: Equipo de desarrollo",
+  "raciNewColumn": "Nueva columna",
+  "raciRemoveColumn": "Eliminar columna",
+  "raciRemoveColumnConfirm": "¿Eliminar la columna \"{name}\"? Se eliminarán todas las asignaciones de roles para esta columna.",
+  "@raciRemoveColumnConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "votingDialogTitle": "Votar",
+  "votingDialogVoteOf": "Voto de {participant}",
+  "@votingDialogVoteOf": {
+    "placeholders": {
+      "participant": {"type": "String"}
+    }
+  },
+  "votingDialogUrgency": "URGENCIA",
+  "votingDialogImportance": "IMPORTANCIA",
+  "votingDialogNotUrgent": "No urgente",
+  "votingDialogVeryUrgent": "Muy urgente",
+  "votingDialogNotImportant": "No importante",
+  "votingDialogVeryImportant": "Muy importante",
+  "votingDialogConfirmVote": "Confirmar voto",
+  "votingDialogQuadrant": "Cuadrante:",
+
+  "voteCollectionTitle": "Recoger votos",
+  "voteCollectionParticipants": "participantes",
+  "voteCollectionResult": "Resultado:",
+  "voteCollectionAverage": "Promedio:",
+  "voteCollectionSaveVotes": "Guardar votos",
+
+  "scatterChartTitle": "Distribución de actividades",
+  "scatterChartNoActivities": "No hay actividades votadas",
+  "scatterChartVoteToShow": "Vota las actividades para verlas en el gráfico",
+  "scatterChartUrgencyLabel": "Urgencia:",
+  "scatterChartImportanceLabel": "Importancia:",
+  "scatterChartAxisUrgency": "URGENCIA",
+  "scatterChartAxisImportance": "IMPORTANCIA",
+  "scatterChartQ1Label": "Q1 - HACER",
+  "scatterChartQ2Label": "Q2 - PLANIFICAR",
+  "scatterChartQ3Label": "Q3 - DELEGAR",
+  "scatterChartQ4Label": "Q4 - ELIMINAR",
+  "scatterChartCardTitle": "Gráfico de distribución",
+
+  "votingStatusYou": "Tú",
+  "votingStatusReset": "Reiniciar",
+
+  "exportToEstimation": "Exportar a estimación",
+  "exportToSprint": "Exportar a sprint",
+  "existingProject": "Proyecto existente",
+  "createNewProject": "Crear nuevo proyecto",
+  "selectProject": "Seleccionar proyecto",
+  "selectSprint": "Seleccionar sprint",
+  "configureNewProject": "Configurar nuevo proyecto",
+  "exportFromEisenhower": "Exportar desde Eisenhower",
+  "exportFromEisenhowerDesc": "Selecciona las actividades para exportar a Smart Todo",
+  "selectDestinationList": "Seleccionar lista de destino",
+  "existingList": "Lista existente",
+  "createNewList": "Crear nueva lista",
+  "listName": "Nombre de la lista",
+  "listNameHint": "Ingresa un nombre para la nueva lista",
+  "selectList": "Seleccionar lista",
+  "selectListHint": "Elige una lista",
+  "noListsAvailable": "No hay listas disponibles. Se creará una nueva.",
+  "filterByQuadrant": "Filtrar por cuadrante:",
+  "allActivities": "Todas",
+  "activitiesSelectedCount": "{count} actividades seleccionadas",
+  "@activitiesSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "selectAll": "Seleccionar todo",
+  "deselectAll": "Deseleccionar todo",
+  "noActivitiesSelected": "No hay actividades en este filtro",
+  "unvoted": "SIN VOTAR",
+
+  "estimationDecimalTitle": "Estimación decimal",
+  "estimationDecimalHint": "Ingresa tu estimación en días (ej: 1.5, 2.25)",
+  "estimationDecimalHintPlaceholder": "Ej: 2.5",
+  "estimationDecimalSuffixDays": "días",
+  "estimationDecimalVote": "Votar",
+  "estimationDecimalVoteValue": "Voto: {value} días",
+  "@estimationDecimalVoteValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDecimalQuickSelect": "Selección rápida:",
+  "estimationDecimalEnterValue": "Ingresa un valor",
+  "estimationDecimalInvalidValue": "Valor no válido",
+  "estimationDecimalMinValue": "Mín: {value}",
+  "@estimationDecimalMinValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDecimalMaxValue": "Máx: {value}",
+  "@estimationDecimalMaxValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
+  "estimationThreePointTitle": "Estimación de tres puntos (PERT)",
+  "estimationThreePointOptimistic": "Optimista (O)",
+  "estimationThreePointRealistic": "Realista (M)",
+  "estimationThreePointPessimistic": "Pesimista (P)",
+  "estimationThreePointBestCase": "Mejor caso",
+  "estimationThreePointMostLikely": "Más probable",
+  "estimationThreePointWorstCase": "Peor caso",
+  "estimationThreePointAllFieldsRequired": "Todos los campos son obligatorios",
+  "estimationThreePointInvalidValues": "Valores no válidos",
+  "estimationThreePointOptMustBeLteReal": "Optimista debe ser <= Realista",
+  "estimationThreePointRealMustBeLtePess": "Realista debe ser <= Pesimista",
+  "estimationThreePointOptMustBeLtePess": "Optimista debe ser <= Pesimista",
+  "estimationThreePointGuide": "Guía:",
+  "estimationThreePointGuideO": "O: Estimación del mejor caso (todo va bien)",
+  "estimationThreePointGuideM": "M: Estimación más probable (condiciones normales)",
+  "estimationThreePointGuideP": "P: Estimación del peor caso (imprevistos)",
+  "estimationThreePointStdDev": "Desv. Est.",
+  "estimationThreePointDaysSuffix": "d",
+
+  "storyFormNewStory": "Nueva Story",
+  "storyFormTitleLabel": "Título *",
+  "storyFormTitleHint": "Ej: US-123: Como usuario quiero...",
+  "storyFormDescriptionLabel": "Descripción",
+  "storyFormDescriptionHint": "Criterios de aceptación, notas...",
+  "storyFormEnterTitle": "Ingresa un título",
+
+  "sessionSearchHint": "Buscar sesiones...",
+  "sessionSearchFilters": "Filtros",
+  "sessionSearchFiltersTooltip": "Filtros",
+  "sessionSearchStatusLabel": "Estado: ",
+  "sessionSearchStatusAll": "Todos",
+  "sessionSearchStatusDraft": "Borrador",
+  "sessionSearchStatusActive": "Activa",
+  "sessionSearchStatusCompleted": "Completada",
+  "sessionSearchModeLabel": "Modo: ",
+  "sessionSearchModeAll": "Todos",
+  "sessionSearchRemoveFilters": "Quitar filtros",
+  "sessionSearchActiveFilters": "Filtros activos:",
+  "sessionSearchRemoveAllFilters": "Quitar todos",
+
+  "participantsTitle": "Participantes ({count})",
+  "@participantsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "participantRoleFacilitator": "Facilitador",
+  "participantRoleVoters": "Votantes",
+  "participantRoleObservers": "Observadores",
+  "participantYou": "(tú)",
+
+  "votingBoardVotesRevealed": "Votos revelados",
+  "votingBoardVotingInProgress": "Votación en curso",
+  "votingBoardVotesCount": "{voted}/{total} votos",
+  "@votingBoardVotesCount": {
+    "placeholders": {
+      "voted": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "estimationSelectYourEstimate": "Selecciona tu estimación",
+  "estimationVoteSelected": "Voto seleccionado: {value}",
+  "@estimationVoteSelected": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationDotVotingTitle": "Dot Voting",
+  "estimationDotVotingDesc": "Modo de votación con asignación de puntos.\nPróximamente...",
+  "estimationBucketSystemTitle": "Bucket System",
+  "estimationBucketSystemDesc": "Estimación por afinidad con agrupación.\nPróximamente...",
+
+  "estimationModeTitle": "Modo de estimación",
+
+  "statisticsTitle": "Estadísticas de votación",
+  "statisticsAverage": "Promedio",
+  "statisticsMedian": "Mediana",
+  "statisticsMode": "Moda",
+  "statisticsVoters": "Votantes",
+  "statisticsPertStats": "Estadísticas PERT",
+  "statisticsPertAvg": "Prom. PERT",
+  "statisticsStdDev": "Desv. Est.",
+  "statisticsVariance": "Varianza",
+  "statisticsRange": "Rango:",
+  "statisticsConsensusReached": "¡Consenso alcanzado!",
+  "smartTodoSprintDays": "{days} días/sprint",
+  "@smartTodoSprintDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "smartTodoHoursPerDay": "{hours}h/día",
+  "@smartTodoHoursPerDay": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "smartTodoImageFromClipboardFound": "Imagen encontrada en el portapapeles",
+  "smartTodoAddImageFromClipboard": "Añadir imagen desde el portapapeles",
+  "smartTodoInviteCreatedAndSent": "Invitación creada y enviada"
 }

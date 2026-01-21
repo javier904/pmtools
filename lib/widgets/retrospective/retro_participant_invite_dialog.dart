@@ -3,62 +3,61 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:googleapis/gmail/v1.dart' as gmail;
 import 'package:http/http.dart' as http;
-import '../../models/eisenhower_invite_model.dart';
-import '../../models/eisenhower_participant_model.dart';
-import '../../services/eisenhower_invite_service.dart';
+import '../../models/retro_invite_model.dart';
+import '../../services/retro_invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 
-/// Dialog per invitare partecipanti a una matrice Eisenhower
+/// Dialog per invitare partecipanti a una Retrospective
 ///
 /// Permette di:
 /// - Inserire email del partecipante
-/// - Selezionare il ruolo (votante/osservatore)
+/// - Selezionare il ruolo (participant/observer)
 /// - Generare link di invito
 /// - Visualizzare inviti pendenti
-class ParticipantInviteDialog extends StatefulWidget {
-  final String matrixId;
-  final String matrixTitle;
-  final List<EisenhowerInviteModel> pendingInvites;
+class RetroParticipantInviteDialog extends StatefulWidget {
+  final String boardId;
+  final String boardTitle;
+  final List<RetroInviteModel> pendingInvites;
 
-  const ParticipantInviteDialog({
+  const RetroParticipantInviteDialog({
     super.key,
-    required this.matrixId,
-    required this.matrixTitle,
+    required this.boardId,
+    required this.boardTitle,
     this.pendingInvites = const [],
   });
 
   static Future<bool?> show({
     required BuildContext context,
-    required String matrixId,
-    required String matrixTitle,
-    List<EisenhowerInviteModel> pendingInvites = const [],
+    required String boardId,
+    required String boardTitle,
+    List<RetroInviteModel> pendingInvites = const [],
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (context) => ParticipantInviteDialog(
-        matrixId: matrixId,
-        matrixTitle: matrixTitle,
+      builder: (context) => RetroParticipantInviteDialog(
+        boardId: boardId,
+        boardTitle: boardTitle,
         pendingInvites: pendingInvites,
       ),
     );
   }
 
   @override
-  State<ParticipantInviteDialog> createState() => _ParticipantInviteDialogState();
+  State<RetroParticipantInviteDialog> createState() => _RetroParticipantInviteDialogState();
 }
 
-class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
+class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _inviteService = EisenhowerInviteService();
+  final _inviteService = RetroInviteService();
   final _authService = AuthService();
 
-  EisenhowerParticipantRole _selectedRole = EisenhowerParticipantRole.voter;
+  RetroParticipantRole _selectedRole = RetroParticipantRole.participant;
   bool _isLoading = false;
-  bool _sendEmailWithInvite = true; // Toggle per invio email
+  bool _sendEmailWithInvite = true;
   String? _generatedLink;
-  List<EisenhowerInviteModel> _invites = [];
+  List<RetroInviteModel> _invites = [];
 
   @override
   void initState() {
@@ -74,7 +73,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
   }
 
   Future<void> _loadInvites() async {
-    final invites = await _inviteService.getInvitesForMatrix(widget.matrixId);
+    final invites = await _inviteService.getInvitesForBoard(widget.boardId);
     if (mounted) {
       setState(() => _invites = invites);
     }
@@ -87,16 +86,15 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
     try {
       final invite = await _inviteService.createInvite(
-        matrixId: widget.matrixId,
+        boardId: widget.boardId,
         email: _emailController.text.trim(),
         role: _selectedRole,
       );
 
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token);
+        final link = _inviteService.generateInviteLink(invite.token, boardId: widget.boardId);
         bool emailSent = false;
 
-        // Invia email se richiesto
         if (_sendEmailWithInvite) {
           emailSent = await _sendEmailInvite(invite);
         }
@@ -107,11 +105,12 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
         });
         await _loadInvites();
         if (mounted) {
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(_sendEmailWithInvite && emailSent
-                  ? 'Invito inviato via email a ${invite.email}'
-                  : 'Invito creato per ${invite.email}'),
+                  ? l10n?.inviteSentByEmail(invite.email) ?? 'Invito inviato via email a ${invite.email}'
+                  : l10n?.inviteCreatedFor(invite.email) ?? 'Invito creato per ${invite.email}'),
               backgroundColor: Colors.green,
             ),
           );
@@ -119,9 +118,10 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text(l10n?.errorGeneric(e.toString()) ?? 'Errore: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -133,49 +133,36 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     }
   }
 
-  /// Invia email di invito usando Gmail API
-  Future<bool> _sendEmailInvite(EisenhowerInviteModel invite) async {
+  Future<bool> _sendEmailInvite(RetroInviteModel invite) async {
     try {
-      print('📧 ============================================');
-      print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
-      print('📧 [EMAIL] Destinatario: ${invite.email}');
-      print('📧 [EMAIL] Piattaforma: ${kIsWeb ? "WEB" : "MOBILE"}');
-      print('📧 ============================================');
+      print('📧 [RETRO EMAIL] Inizio invio email a ${invite.email}');
 
       String? accessToken;
       String? senderEmail;
 
       if (kIsWeb) {
-        // ===== WEB: usa il token OAuth memorizzato da Firebase Auth =====
-        print('📧 [EMAIL] [WEB] Uso token OAuth da Firebase Auth...');
-
         accessToken = _authService.webAccessToken;
         senderEmail = _authService.currentUserEmail;
 
-        print('📧 [EMAIL] [WEB] Token presente: ${accessToken != null}');
-        print('📧 [EMAIL] [WEB] Email utente: $senderEmail');
-
         if (accessToken == null) {
-          // Token non presente, richiedi re-auth
-          print('📧 [EMAIL] [WEB] Token assente - richiedo re-autenticazione...');
-
           if (mounted) {
+            final l10n = AppLocalizations.of(context);
             final shouldReauth = await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: const Text('Autorizzazione Gmail'),
-                content: const Text(
-                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\n'
-                  'Vuoi procedere?'
+                title: Text(l10n?.inviteGmailAuthTitle ?? 'Autorizzazione Gmail'),
+                content: Text(
+                  l10n?.inviteGmailAuthMessage ??
+                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\nVuoi procedere?'
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('No, solo link'),
+                    child: Text(l10n?.inviteGmailAuthNo ?? 'No, solo link'),
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('Autorizza'),
+                    child: Text(l10n?.inviteGmailAuthYes ?? 'Autorizza'),
                   ),
                 ],
               ),
@@ -183,17 +170,16 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
             if (shouldReauth == true) {
               accessToken = await _authService.refreshWebAccessToken();
-              print('📧 [EMAIL] [WEB] Nuovo token ottenuto: ${accessToken != null}');
             }
           }
         }
 
         if (accessToken == null || senderEmail == null) {
-          print('⚠️ [EMAIL] [WEB] FALLITO: Token o email non disponibili');
           if (mounted) {
+            final l10n = AppLocalizations.of(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
+              SnackBar(
+                content: Text(l10n?.inviteGmailNotAvailable ?? 'Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -201,62 +187,37 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
           return false;
         }
 
-        // Crea client con token OAuth
         final authHeaders = {'Authorization': 'Bearer $accessToken'};
         final authClient = _GoogleAuthClient(authHeaders);
         final gmailApi = gmail.GmailApi(authClient);
         final baseUrl = Uri.base.origin;
 
-        print('📧 [EMAIL] [WEB] Invio email via Gmail API...');
-        print('📧 [EMAIL] [WEB] Da: $senderEmail');
-        print('📧 [EMAIL] [WEB] A: ${invite.email}');
-
-        final result = await _inviteService.sendInviteEmail(
+        return await _inviteService.sendInviteEmail(
           invite: invite,
-          matrixTitle: widget.matrixTitle,
+          retroTitle: widget.boardTitle,
           baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
         );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [WEB] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-
       } else {
-        // ===== MOBILE: usa GoogleSignIn =====
-        print('📧 [EMAIL] [MOBILE] Uso GoogleSignIn...');
-
         var googleAccount = _authService.googleSignIn.currentUser;
-        print('📧 [EMAIL] [MOBILE] Account corrente: ${googleAccount?.email ?? "NULL"}');
+        googleAccount ??= await _authService.googleSignIn.signInSilently();
+        googleAccount ??= await _authService.googleSignIn.signIn();
 
         if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signInSilently();
-          print('📧 [EMAIL] [MOBILE] Dopo signInSilently: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signIn();
-          print('📧 [EMAIL] [MOBILE] Dopo signIn: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Nessun account Google');
           return false;
         }
 
-        // Verifica scope Gmail
         final hasGmailScope = await _authService.googleSignIn.requestScopes([
           'https://www.googleapis.com/auth/gmail.send',
         ]);
 
         if (!hasGmailScope) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Scope Gmail non autorizzato');
           if (mounted) {
+            final l10n = AppLocalizations.of(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Permesso Gmail non concesso.'),
+              SnackBar(
+                content: Text(l10n?.inviteGmailNoPermission ?? 'Permesso Gmail non concesso.'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -270,46 +231,36 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
         final baseUrl = 'https://pm-agile-tools-app.web.app';
         senderEmail = googleAccount.email;
 
-        print('📧 [EMAIL] [MOBILE] Invio email via Gmail API...');
-
-        final result = await _inviteService.sendInviteEmail(
+        return await _inviteService.sendInviteEmail(
           invite: invite,
-          matrixTitle: widget.matrixTitle,
+          retroTitle: widget.boardTitle,
           baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
         );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [MOBILE] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
       }
-    } catch (e, stack) {
-      print('❌ ============================================');
-      print('❌ [EMAIL] ECCEZIONE NON GESTITA');
-      print('❌ [EMAIL] Errore: $e');
-      print('❌ [EMAIL] Stack: $stack');
-      print('❌ ============================================');
+    } catch (e) {
+      print('❌ [RETRO EMAIL] Errore: $e');
       return false;
     }
   }
 
   Future<void> _revokeInvite(String inviteId) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Revocare invito?'),
-        content: const Text('L\'invito non sara\' piu\' valido.'),
+        title: Text(l10n?.inviteRevokeTitle ?? 'Revocare invito?'),
+        content: Text(l10n?.inviteRevokeMessage ?? 'L\'invito non sarà più valido.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n?.actionCancel ?? 'Annulla'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Revoca'),
+            child: Text(l10n?.inviteRevoke ?? 'Revoca'),
           ),
         ],
       ),
@@ -326,13 +277,14 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     try {
       final invite = await _inviteService.resendInvite(inviteId);
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token);
+        final link = _inviteService.generateInviteLink(invite.token, boardId: widget.boardId);
         setState(() => _generatedLink = link);
         await _loadInvites();
         if (mounted) {
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Invito reinviato'),
+            SnackBar(
+              content: Text(l10n?.inviteResent ?? 'Invito reinviato'),
               backgroundColor: Colors.green,
             ),
           );
@@ -351,15 +303,15 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.person_add, color: Colors.blue),
+          const Icon(Icons.person_add, color: Colors.purple),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.eisenhowerInviteParticipants, style: const TextStyle(fontSize: 18)),
+                Text(l10n?.inviteSendNew ?? 'Invita partecipanti', style: const TextStyle(fontSize: 18)),
                 Text(
-                  widget.matrixTitle,
+                  widget.boardTitle,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -378,14 +330,13 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Form nuovo invito
               Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.inviteNewInvite,
+                      l10n?.inviteNewInvite ?? 'NUOVO INVITO',
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -394,62 +345,59 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                     ),
                     const SizedBox(height: 8),
 
-                    // Email
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        labelText: l10n.participantEmailHint.split('@').first.replaceAll('.', ' '),
-                        hintText: l10n.participantEmailHint,
+                        labelText: l10n?.participantEmailHint?.split('@').first.replaceAll('.', ' ') ?? 'Email',
+                        hintText: l10n?.participantEmailHint ?? 'esempio@email.com',
                         prefixIcon: const Icon(Icons.email),
                         border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return l10n.inviteEnterEmail;
+                          return l10n?.inviteEnterEmail ?? 'Inserisci una email';
                         }
                         if (!value.contains('@') || !value.contains('.')) {
-                          return l10n.inviteInvalidEmail;
+                          return l10n?.inviteInvalidEmail ?? 'Email non valida';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 12),
 
-                    // Ruolo
                     Row(
                       children: [
-                        Text(l10n.inviteRole),
+                        Text(l10n?.inviteRole ?? 'Ruolo:'),
                         const SizedBox(width: 8),
                         ChoiceChip(
-                          label: Text(l10n.participantVoter),
-                          selected: _selectedRole == EisenhowerParticipantRole.voter,
+                          label: Text(l10n?.participantRoleVoters ?? 'Partecipante'),
+                          selected: _selectedRole == RetroParticipantRole.participant,
                           onSelected: (_) => setState(
-                              () => _selectedRole = EisenhowerParticipantRole.voter),
+                              () => _selectedRole = RetroParticipantRole.participant),
                         ),
                         const SizedBox(width: 8),
                         ChoiceChip(
-                          label: Text(l10n.participantObserver),
-                          selected: _selectedRole == EisenhowerParticipantRole.observer,
+                          label: Text(l10n?.participantObserver ?? 'Osservatore'),
+                          selected: _selectedRole == RetroParticipantRole.observer,
                           onSelected: (_) => setState(
-                              () => _selectedRole = EisenhowerParticipantRole.observer),
+                              () => _selectedRole = RetroParticipantRole.observer),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
 
-                    // Toggle invio email
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: _sendEmailWithInvite
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.1),
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : Colors.grey.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _sendEmailWithInvite
-                              ? Colors.green.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.3),
+                              ? Colors.green.withValues(alpha: 0.3)
+                              : Colors.grey.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -462,7 +410,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              l10n.inviteSendEmailNotification,
+                              l10n?.inviteSendEmailNotification ?? 'Invia notifica email',
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: _sendEmailWithInvite ? Colors.green[700] : Colors.grey[600],
@@ -479,7 +427,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Bottone invita
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
@@ -491,9 +438,9 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.send),
-                        label: Text(l10n.inviteSendInvite),
+                        label: Text(l10n?.inviteSendInvite ?? 'Invia invito'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Colors.purple,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -503,7 +450,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                 ),
               ),
 
-              // Link generato
               if (_generatedLink != null) ...[
                 const SizedBox(height: 16),
                 Container(
@@ -521,7 +467,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                           const Icon(Icons.link, color: Colors.green, size: 18),
                           const SizedBox(width: 8),
                           Text(
-                            l10n.inviteLink,
+                            l10n?.inviteLink ?? 'Link di invito',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
@@ -533,10 +479,10 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                             onPressed: () {
                               Clipboard.setData(ClipboardData(text: _generatedLink!));
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(l10n.inviteLinkCopied)),
+                                SnackBar(content: Text(l10n?.inviteLinkCopied ?? 'Link copiato')),
                               );
                             },
-                            tooltip: l10n.inviteCopyLink,
+                            tooltip: l10n?.inviteCopyLink ?? 'Copia link',
                           ),
                         ],
                       ),
@@ -550,13 +496,12 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                 ),
               ],
 
-              // Lista inviti esistenti
               if (_invites.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 const Divider(),
                 const SizedBox(height: 12),
                 Text(
-                  l10n.inviteList,
+                  l10n?.inviteList ?? 'INVITI ESISTENTI',
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -573,13 +518,13 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, _invites.any((i) => i.isAccepted)),
-          child: Text(l10n.actionClose),
+          child: Text(l10n?.actionClose ?? 'Chiudi'),
         ),
       ],
     );
   }
 
-  Widget _buildInviteRow(EisenhowerInviteModel invite, AppLocalizations l10n) {
+  Widget _buildInviteRow(RetroInviteModel invite, AppLocalizations? l10n) {
     final statusInfo = _getStatusInfo(invite.status, l10n);
 
     return Container(
@@ -592,7 +537,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       ),
       child: Row(
         children: [
-          // Status icon
           Container(
             width: 32,
             height: 32,
@@ -604,7 +548,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
           ),
           const SizedBox(width: 12),
 
-          // Info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -616,7 +559,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                 Row(
                   children: [
                     Text(
-                      invite.role.displayName,
+                      invite.role.label,
                       style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                     ),
                     const SizedBox(width: 8),
@@ -641,17 +584,16 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
             ),
           ),
 
-          // Azioni
           if (invite.isPending) ...[
             IconButton(
               icon: const Icon(Icons.refresh, size: 18),
               onPressed: () => _resendInvite(invite.id),
-              tooltip: l10n.inviteResend,
+              tooltip: l10n?.inviteResend ?? 'Reinvia',
             ),
             IconButton(
               icon: const Icon(Icons.close, size: 18, color: Colors.red),
               onPressed: () => _revokeInvite(invite.id),
-              tooltip: l10n.inviteRevoke,
+              tooltip: l10n?.inviteRevoke ?? 'Revoca',
             ),
           ],
         ],
@@ -659,35 +601,35 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     );
   }
 
-  _InviteStatusInfo _getStatusInfo(EisenhowerInviteStatus status, AppLocalizations l10n) {
+  _InviteStatusInfo _getStatusInfo(RetroInviteStatus status, AppLocalizations? l10n) {
     switch (status) {
-      case EisenhowerInviteStatus.pending:
+      case RetroInviteStatus.pending:
         return _InviteStatusInfo(
-          label: l10n.inviteStatusPending,
+          label: l10n?.inviteStatusPending ?? 'In attesa',
           color: Colors.orange,
           icon: Icons.hourglass_empty,
         );
-      case EisenhowerInviteStatus.accepted:
+      case RetroInviteStatus.accepted:
         return _InviteStatusInfo(
-          label: l10n.inviteStatusAccepted,
+          label: l10n?.inviteStatusAccepted ?? 'Accettato',
           color: Colors.green,
           icon: Icons.check_circle,
         );
-      case EisenhowerInviteStatus.declined:
+      case RetroInviteStatus.declined:
         return _InviteStatusInfo(
-          label: l10n.inviteStatusDeclined,
+          label: l10n?.inviteStatusDeclined ?? 'Rifiutato',
           color: Colors.red,
           icon: Icons.cancel,
         );
-      case EisenhowerInviteStatus.expired:
+      case RetroInviteStatus.expired:
         return _InviteStatusInfo(
-          label: l10n.inviteStatusExpired,
+          label: l10n?.inviteStatusExpired ?? 'Scaduto',
           color: Colors.grey,
           icon: Icons.timer_off,
         );
-      case EisenhowerInviteStatus.revoked:
+      case RetroInviteStatus.revoked:
         return _InviteStatusInfo(
-          label: l10n.inviteStatusRevoked,
+          label: l10n?.inviteStatusRevoked ?? 'Revocato',
           color: Colors.grey,
           icon: Icons.block,
         );
@@ -707,7 +649,6 @@ class _InviteStatusInfo {
   });
 }
 
-/// Client HTTP autenticato per le API Google (Gmail)
 class _GoogleAuthClient extends http.BaseClient {
   final Map<String, String> _headers;
   final http.Client _client = http.Client();

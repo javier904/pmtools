@@ -32,6 +32,7 @@ class RetroListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (retrospectives.isEmpty) {
       return Center(
         child: Column(
@@ -40,14 +41,14 @@ class RetroListWidget extends StatelessWidget {
             Icon(Icons.history, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessuna retrospettiva trovata',
+              l10n.retroNoRetrosFound,
               style: TextStyle(fontSize: 18, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
               onPressed: onCreateNew,
               icon: const Icon(Icons.add),
-              label: const Text('Crea Nuova'),
+              label: Text(l10n.retroCreateNew),
             ),
           ],
         ),
@@ -100,13 +101,13 @@ class RetroListWidget extends StatelessWidget {
       position: position,
       items: [
         if (onEdit != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'edit',
             child: Row(
               children: [
-                Icon(Icons.edit, size: 16),
-                SizedBox(width: 8),
-                Text('Modifica', style: TextStyle(fontSize: 13)),
+                const Icon(Icons.edit, size: 16),
+                const SizedBox(width: 8),
+                Text(l10n?.actionEdit ?? 'Edit', style: const TextStyle(fontSize: 13)),
               ],
             ),
           ),
@@ -134,13 +135,13 @@ class RetroListWidget extends StatelessWidget {
             ),
           ),
         if (onDelete != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'delete',
             child: Row(
               children: [
-                Icon(Icons.delete, size: 16, color: Colors.red),
-                SizedBox(width: 8),
-                Text('Elimina', style: TextStyle(fontSize: 13, color: Colors.red)),
+                const Icon(Icons.delete, size: 16, color: Colors.red),
+                const SizedBox(width: 8),
+                Text(l10n?.actionDelete ?? 'Delete', style: const TextStyle(fontSize: 13, color: Colors.red)),
               ],
             ),
           ),
@@ -166,8 +167,9 @@ class RetroListWidget extends StatelessWidget {
   }
 
   Widget _buildRetroCard(BuildContext context, RetrospectiveModel retro) {
+    final l10n = AppLocalizations.of(context)!;
     final statusColor = _getStatusColor(retro.status);
-    final statusLabel = _getStatusLabel(retro.status);
+    final statusLabel = _getStatusLabel(retro.status, l10n);
 
     return Card(
       margin: EdgeInsets.zero,
@@ -187,7 +189,7 @@ class RetroListWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Tooltip(
-                    message: retro.template.displayName,
+                    message: retro.template.getLocalizedDisplayName(l10n),
                     child: Container(
                       width: 40,
                       height: 40,
@@ -214,7 +216,7 @@ class RetroListWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Tooltip(
-                          message: 'Stato: $statusLabel',
+                          message: l10n.retroStatusLabel(statusLabel),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
@@ -282,7 +284,7 @@ class RetroListWidget extends StatelessWidget {
                 children: [
                    // Partecipanti
                    Tooltip(
-                     message: 'Partecipanti',
+                     message: l10n.retroParticipantsLabel,
                      child: Icon(Icons.people_outline, size: 14, color: Colors.grey[600]),
                    ),
                    const SizedBox(width: 4),
@@ -291,10 +293,10 @@ class RetroListWidget extends StatelessWidget {
                      style: TextStyle(fontSize: 12, color: Colors.grey[800]),
                    ),
                    const SizedBox(width: 12),
-                   
+
                    // Items Generator
                    Tooltip(
-                     message: 'Note create',
+                     message: l10n.retroNotesCreated,
                      child: Icon(Icons.sticky_note_2_outlined, size: 14, color: Colors.grey[600]),
                    ),
                    const SizedBox(width: 4),
@@ -307,7 +309,7 @@ class RetroListWidget extends StatelessWidget {
                    if (retro.actionItems.isNotEmpty) ...[
                       const SizedBox(width: 12),
                       Tooltip(
-                        message: 'Action Items',
+                        message: AppLocalizations.of(context)!.retroActionItemsLabel,
                         child: Icon(Icons.check_circle_outline, size: 14, color: Colors.grey[600]),
                       ),
                       const SizedBox(width: 4),
@@ -320,7 +322,7 @@ class RetroListWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Data: ${_formatDate(retro.createdAt)}',
+                l10n.retroDateLabel(_formatDate(retro.createdAt)),
                 style: TextStyle(fontSize: 11, color: Colors.grey[500]),
               ),
             ],
@@ -338,11 +340,11 @@ class RetroListWidget extends StatelessWidget {
     }
   }
 
-  String _getStatusLabel(RetroStatus status) {
+  String _getStatusLabel(RetroStatus status, AppLocalizations l10n) {
     switch (status) {
-      case RetroStatus.draft: return 'Bozza';
-      case RetroStatus.active: return 'In Corso';
-      case RetroStatus.completed: return 'Completata';
+      case RetroStatus.draft: return l10n.retroStatusDraft;
+      case RetroStatus.active: return l10n.retroStatusActive;
+      case RetroStatus.completed: return l10n.retroStatusCompleted;
     }
   }
   

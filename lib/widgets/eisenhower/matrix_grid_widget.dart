@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_activity_model.dart';
+import '../../l10n/app_localizations.dart';
 import 'activity_card_widget.dart';
 
 /// Widget che visualizza la griglia 2x2 della Matrice di Eisenhower
@@ -32,6 +33,7 @@ class MatrixGridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // Raggruppa attività per quadrante
     final q1Activities = activities.byQuadrant(EisenhowerQuadrant.q1);
     final q2Activities = activities.byQuadrant(EisenhowerQuadrant.q2);
@@ -41,7 +43,7 @@ class MatrixGridWidget extends StatelessWidget {
     return Column(
       children: [
         // Header con etichette
-        _buildAxisLabels(),
+        _buildAxisLabels(l10n),
         const SizedBox(height: 8),
         // Griglia 2x2
         Expanded(
@@ -49,7 +51,7 @@ class MatrixGridWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Etichetta verticale "IMPORTANTE"
-              _buildVerticalLabel('IMPORTANTE', true),
+              _buildVerticalLabel(l10n),
               // Colonna sinistra (NON URGENTE)
               Expanded(
                 child: Column(
@@ -63,6 +65,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        l10n: l10n,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -75,6 +78,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        l10n: l10n,
                       ),
                     ),
                   ],
@@ -94,6 +98,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        l10n: l10n,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -106,6 +111,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        l10n: l10n,
                       ),
                     ),
                   ],
@@ -118,14 +124,14 @@ class MatrixGridWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildAxisLabels() {
+  Widget _buildAxisLabels(AppLocalizations l10n) {
     return Row(
       children: [
         const SizedBox(width: 24), // Spazio per etichetta verticale
         Expanded(
           child: Center(
             child: Text(
-              'NON URGENTE',
+              l10n.quadrantNotUrgent,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
@@ -137,7 +143,7 @@ class MatrixGridWidget extends StatelessWidget {
         Expanded(
           child: Center(
             child: Text(
-              'URGENTE',
+              l10n.quadrantUrgent,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
@@ -150,14 +156,14 @@ class MatrixGridWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalLabel(String text, bool isTop) {
+  Widget _buildVerticalLabel(AppLocalizations l10n) {
     return SizedBox(
       width: 24,
       child: RotatedBox(
         quarterTurns: 3,
         child: Center(
           child: Text(
-            isTop ? 'IMPORTANTE' : 'NON IMPORTANTE',
+            l10n.quadrantImportant,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
@@ -178,11 +184,13 @@ class _QuadrantCell extends StatelessWidget {
   final Function(EisenhowerActivityModel)? onVoteTap;
   final Function(EisenhowerActivityModel)? onDeleteTap;
   final bool showActions;
+  final AppLocalizations l10n;
 
   const _QuadrantCell({
     required this.quadrant,
     required this.activities,
     required this.onActivityTap,
+    required this.l10n,
     this.onVoteTap,
     this.onDeleteTap,
     this.showActions = true,
@@ -225,7 +233,7 @@ class _QuadrantCell extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${quadrant.name}: ${quadrant.title}',
+                        '${quadrant.name}: ${quadrant.localizedTitle(l10n)}',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -233,7 +241,7 @@ class _QuadrantCell extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        quadrant.subtitle,
+                        quadrant.localizedSubtitle(l10n),
                         style: TextStyle(
                           fontSize: 10,
                           color: color.withOpacity(0.7),
@@ -306,7 +314,7 @@ class _QuadrantCell extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Nessuna attività',
+            l10n.eisenhowerNoActivities,
             style: TextStyle(
               fontSize: 11,
               color: color.withOpacity(0.5),

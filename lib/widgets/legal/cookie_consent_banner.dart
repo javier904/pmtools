@@ -20,71 +20,108 @@ class CookieConsentBanner extends StatefulWidget {
 }
 
 class _CookieConsentBannerState extends State<CookieConsentBanner> {
-  bool _isVisible = false;
+  bool _isVisible = false;  // Inizia SEMPRE nascosto per evitare flash
+  bool _checkComplete = false;
   static const String _consentKey = 'cookie_consent_accepted';
-  
-  /// Flag statico per evitare che il banner riappaia nella stessa sessione 
+
+  /// Flag statico per evitare che il banner riappaia nella stessa sessione
   /// se l'utente lo ha già chiuso, anche se il salvataggio locale fallisce.
   static bool _dismissedInSession = false;
 
   @override
   void initState() {
     super.initState();
-    _isVisible = widget.initialConsent == null && !_dismissedInSession;
+    // Non impostare _isVisible qui - lascia che _checkConsent() decida
     _checkConsent();
   }
 
   Future<void> _checkConsent() async {
-    if (_dismissedInSession) return;
+    // Se già chiuso in questa sessione, non mostrare mai
+    if (_dismissedInSession) {
+      if (mounted) setState(() => _checkComplete = true);
+      return;
+    }
 
-    // 1. Verifica SharedPreferences (caricato già in main.dart, ma ricontrolliamo per sicurezza)
+    // Se già passato un valore iniziale dal main.dart
+    if (widget.initialConsent != null) {
+      debugPrint('🍪 Cookie consent già presente da main.dart: ${widget.initialConsent}');
+      if (mounted) setState(() => _checkComplete = true);
+      return;
+    }
+
+    // 1. Verifica SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     final localConsent = prefs.getBool(_consentKey);
-    
+
+    debugPrint('🍪 SharedPreferences cookie_consent_accepted: $localConsent');
+
     if (localConsent != null) {
-      if (mounted && _isVisible) setState(() => _isVisible = false);
+      if (mounted) setState(() => _checkComplete = true);
       return;
     }
 
     // 2. Se non c'è in locale, e l'utente è loggato, verifica su Firestore
     final authService = AuthService();
     if (authService.isAuthenticated) {
-      final profileService = UserProfileService();
-      final settings = await profileService.getCurrentSettings();
-      
-      if (settings?.cookieConsent != null) {
-        // Sincronizza Firestore -> Local
-        await prefs.setBool(_consentKey, settings!.cookieConsent!);
-        if (mounted && _isVisible) setState(() => _isVisible = false);
-        return;
+      try {
+        final profileService = UserProfileService();
+        final settings = await profileService.getCurrentSettings();
+
+        debugPrint('🍪 Firestore cookieConsent: ${settings?.cookieConsent}');
+
+        if (settings?.cookieConsent != null) {
+          // Sincronizza Firestore -> Local
+          await prefs.setBool(_consentKey, settings!.cookieConsent!);
+          debugPrint('🍪 Sincronizzato Firestore -> SharedPreferences');
+          if (mounted) setState(() => _checkComplete = true);
+          return;
+        }
+      } catch (e) {
+        debugPrint('🍪 Errore lettura Firestore: $e');
       }
     }
 
-    // Mostra il banner se non abbiamo trovato nulla
-    if (mounted && widget.initialConsent == null) {
-      setState(() => _isVisible = true);
+    // Mostra il banner se non abbiamo trovato consenso da nessuna parte
+    debugPrint('🍪 Nessun consenso trovato, mostro banner');
+    if (mounted) {
+      setState(() {
+        _isVisible = true;
+        _checkComplete = true;
+      });
     }
   }
 
   Future<void> _persistConsent(bool accepted) async {
+    debugPrint('🍪 Salvataggio consenso: $accepted');
+
     // 1. Salva in SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_consentKey, accepted);
+    debugPrint('🍪 Salvato in SharedPreferences');
 
-    // 2. Salva in sessione
+    // 2. Salva in sessione (backup in caso SharedPreferences fallisca)
     _dismissedInSession = true;
 
-    // 3. Salva in Firestore se loggato
+    // 3. Salva in Firestore se loggato (per cross-device sync)
     final authService = AuthService();
     if (authService.isAuthenticated) {
-      final profileService = UserProfileService();
-      final settings = await profileService.getCurrentSettings();
-      if (settings != null) {
-        await profileService.updateSettings(
-          settings.copyWith(cookieConsent: accepted),
-        );
+      try {
+        final profileService = UserProfileService();
+        final settings = await profileService.getCurrentSettings();
+        if (settings != null) {
+          await profileService.updateSettings(
+            settings.copyWith(cookieConsent: accepted),
+          );
+          debugPrint('🍪 Salvato in Firestore');
+        }
+      } catch (e) {
+        debugPrint('🍪 Errore salvataggio Firestore: $e');
       }
     }
+
+    // 4. Verifica che sia stato salvato correttamente
+    final savedValue = prefs.getBool(_consentKey);
+    debugPrint('🍪 Verifica salvataggio: $savedValue');
 
     if (mounted) setState(() => _isVisible = false);
   }
@@ -103,7 +140,8 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isVisible) return const SizedBox.shrink();
+    // Non mostrare nulla finché il check non è completo o se già accettato
+    if (!_checkComplete || !_isVisible) return const SizedBox.shrink();
 
     final l10n = AppLocalizations.of(context)!;
     final isDark = context.isDarkMode;

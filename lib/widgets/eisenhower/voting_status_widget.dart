@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_participant_model.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Widget che mostra lo stato della votazione indipendente
 ///
@@ -30,6 +31,7 @@ class VotingStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final voters = participants.entries
         .where((e) => e.value.canVote)
         .toList();
@@ -57,14 +59,14 @@ class VotingStatusWidget extends StatelessWidget {
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.how_to_vote, size: 14, color: Colors.white),
-                    SizedBox(width: 4),
+                    const Icon(Icons.how_to_vote, size: 14, color: Colors.white),
+                    const SizedBox(width: 4),
                     Text(
-                      'VOTAZIONE IN CORSO',
-                      style: TextStyle(
+                      l10n.eisenhowerVotingInProgress,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -105,6 +107,7 @@ class VotingStatusWidget extends StatelessWidget {
                 entry.key,
                 entry.value,
                 activity.readyVoters.contains(entry.key),
+                l10n,
               )),
 
           // Azioni
@@ -128,7 +131,7 @@ class VotingStatusWidget extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: allReady ? onReveal : null,
                     icon: const Icon(Icons.visibility),
-                    label: const Text('RIVELA VOTI'),
+                    label: Text(l10n.eisenhowerRevealVotes),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: allReady ? Colors.green : Colors.grey,
                       foregroundColor: Colors.white,
@@ -153,7 +156,7 @@ class VotingStatusWidget extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'In attesa che tutti votino. Il facilitatore rivelera\' i voti.',
+                      l10n.eisenhowerWaitingForOthers,
                       style: TextStyle(fontSize: 12, color: Colors.orange[700]),
                     ),
                   ),
@@ -171,6 +174,7 @@ class VotingStatusWidget extends StatelessWidget {
     String email,
     EisenhowerParticipantModel participant,
     bool hasVoted,
+    AppLocalizations l10n,
   ) {
     final isCurrentUser = email.toLowerCase() == currentUserEmail.toLowerCase();
 
@@ -269,14 +273,14 @@ class VotingStatusWidget extends StatelessWidget {
                 color: Colors.green.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle, size: 14, color: Colors.green),
-                  SizedBox(width: 4),
+                  const Icon(Icons.check_circle, size: 14, color: Colors.green),
+                  const SizedBox(width: 4),
                   Text(
-                    'Pronto',
-                    style: TextStyle(
+                    l10n.eisenhowerReady,
+                    style: const TextStyle(
                       fontSize: 11,
                       color: Colors.green,
                       fontWeight: FontWeight.w500,
@@ -289,7 +293,7 @@ class VotingStatusWidget extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () => onVote!(email),
               icon: const Icon(Icons.how_to_vote, size: 14),
-              label: const Text('VOTA'),
+              label: Text(l10n.eisenhowerVoteSubmit),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -317,7 +321,7 @@ class VotingStatusWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'In attesa',
+                    l10n.eisenhowerWaiting,
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.grey[600],
@@ -345,6 +349,7 @@ class VotingStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final readyCount = activity.readyVoters.length;
     final allReady = readyCount >= totalVoters && totalVoters > 0;
 
@@ -352,17 +357,17 @@ class VotingStatusBadge extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.green.withValues(alpha: 0.15),
+          color: Colors.amber.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.visibility, size: 14, color: Colors.green),
-            SizedBox(width: 4),
+            const Icon(Icons.visibility, size: 14, color: Colors.amber),
+            const SizedBox(width: 4),
             Text(
-              'Rivelato',
-              style: TextStyle(fontSize: 11, color: Colors.green),
+              l10n.storyStatusRevealed,
+              style: const TextStyle(fontSize: 11, color: Colors.amber),
             ),
           ],
         ),
@@ -388,7 +393,7 @@ class VotingStatusBadge extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              '$readyCount/$totalVoters',
+              l10n.eisenhowerVotedParticipants(readyCount, totalVoters),
               style: TextStyle(
                 fontSize: 11,
                 color: allReady ? Colors.green : Colors.blue,

@@ -516,6 +516,69 @@ class AppLocalizationsEs extends AppLocalizations {
   String get errorLoadingActivities => 'Error al cargar actividades';
 
   @override
+  String get eisenhowerWaitingForVotes => 'In attesa di voti';
+
+  @override
+  String eisenhowerVotedParticipants(int ready, int total) {
+    return '$ready/$total voti';
+  }
+
+  @override
+  String get eisenhowerVoteSubmit => 'VOTA';
+
+  @override
+  String get eisenhowerVotedSuccess => 'Hai votato';
+
+  @override
+  String get eisenhowerRevealVotes => 'RIVELA VOTI';
+
+  @override
+  String get eisenhowerQuickVote => 'Voto Rapido';
+
+  @override
+  String get eisenhowerTeamVote => 'Voto Team';
+
+  @override
+  String get eisenhowerUrgency => 'Urgenza';
+
+  @override
+  String get eisenhowerImportance => 'Importanza';
+
+  @override
+  String get eisenhowerUrgencyShort => 'U:';
+
+  @override
+  String get eisenhowerImportanceShort => 'I:';
+
+  @override
+  String get eisenhowerVotingInProgress => 'VOTAZIONE IN CORSO';
+
+  @override
+  String get eisenhowerWaitingForOthers =>
+      'In attesa che tutti votino. Il facilitatore rivelerà i voti.';
+
+  @override
+  String get eisenhowerReady => 'Pronto';
+
+  @override
+  String get eisenhowerWaiting => 'In attesa';
+
+  @override
+  String get eisenhowerIndividualVotes => 'VOTI INDIVIDUALI';
+
+  @override
+  String get eisenhowerResult => 'RISULTATO';
+
+  @override
+  String get eisenhowerAverage => 'MEDIA';
+
+  @override
+  String get eisenhowerVotesRevealed => 'Voti Rivelati';
+
+  @override
+  String get eisenhowerNoVotesRecorded => 'Nessun voto registrato';
+
+  @override
   String get estimationTitle => 'Sala de Estimación';
 
   @override
@@ -697,6 +760,202 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroCreateNew => 'Crear Nueva';
+
+  @override
+  String get retroGuidance => 'Guida alle Retrospettive';
+
+  @override
+  String get retroSearchHint => 'Cerca retrospettiva...';
+
+  @override
+  String get retroNoResults => 'Nessun risultato per la ricerca';
+
+  @override
+  String get retroFilterAll => 'Tutte';
+
+  @override
+  String get retroFilterActive => 'Active';
+
+  @override
+  String get retroFilterCompleted => 'Completed';
+
+  @override
+  String get retroFilterDraft => 'Draft';
+
+  @override
+  String get retroDeleteTitle => 'Elimina Retrospettiva';
+
+  @override
+  String retroDeleteConfirm(String title) {
+    return '¿Estás seguro?';
+  }
+
+  @override
+  String get retroDeleteSuccess => 'Retrospettiva eliminata con successo';
+
+  @override
+  String retroDeleteError(String error) {
+    return 'Errore durante l\'eliminazione: $error';
+  }
+
+  @override
+  String get retroDeleteConfirmAction => 'Elimina definitivamente';
+
+  @override
+  String get retroNewRetroTitle => 'Nuova Retrospettiva';
+
+  @override
+  String get retroLinkToSprint => 'Collega a Sprint?';
+
+  @override
+  String get retroNoProjectFound => 'Nessun progetto trovato.';
+
+  @override
+  String get retroSelectProject => 'Seleziona Progetto';
+
+  @override
+  String get retroSelectSprint => 'Seleziona Sprint';
+
+  @override
+  String retroSprintLabel(int number, String name) {
+    return 'Sprint $number: $name';
+  }
+
+  @override
+  String get retroSessionTitle => 'Titolo Sessione';
+
+  @override
+  String get retroSessionTitleHint => 'Es: Weekly Sync, Project Review...';
+
+  @override
+  String get retroTemplateLabel => 'Template';
+
+  @override
+  String get retroVotesPerUser => 'Voti per utente:';
+
+  @override
+  String get retroActionClose => 'Chiudi';
+
+  @override
+  String get retroActionCreate => 'Crea';
+
+  @override
+  String get retroStatusDraft => 'Borrador';
+
+  @override
+  String get retroStatusActive => 'En Progreso';
+
+  @override
+  String get retroStatusCompleted => 'Completada';
+
+  @override
+  String get retroTemplateStartStopContinue => 'Start, Stop, Continue';
+
+  @override
+  String get retroTemplateSailboat => 'Velero';
+
+  @override
+  String get retroTemplate4Ls => '4 Ls';
+
+  @override
+  String get retroTemplateStarfish => 'Estrella de Mar';
+
+  @override
+  String get retroTemplateMadSadGlad => 'Mad Sad Glad';
+
+  @override
+  String get retroTemplateDAKI => 'DAKI (Drop Add Keep Improve)';
+
+  @override
+  String get retroDescStartStopContinue =>
+      'Orientada a la acción: Empezar, Parar, Continuar.';
+
+  @override
+  String get retroDescSailboat =>
+      'Visual: Viento (empuja), Anclas (frena), Rocas (riesgos), Isla (metas).';
+
+  @override
+  String get retroDesc4Ls =>
+      'Liked (Gustó), Learned (Aprendió), Lacked (Faltó), Longed For (Deseó).';
+
+  @override
+  String get retroDescStarfish => 'Keep, Stop, Start, More, Less.';
+
+  @override
+  String get retroDescMadSadGlad => 'Emocional: Enojado, Triste, Feliz.';
+
+  @override
+  String get retroDescDAKI =>
+      'Pragmática: Eliminar, Añadir, Mantener, Mejorar.';
+
+  @override
+  String get retroUsageStartStopContinue =>
+      'Mejor para feedback accionable y cambios de comportamiento.';
+
+  @override
+  String get retroUsageSailboat =>
+      'Mejor para visualizar el viaje del equipo, metas y riesgos. Bueno para pensamiento creativo.';
+
+  @override
+  String get retroUsage4Ls =>
+      'Reflexiva: Mejor para aprender del pasado y destacar aspectos emocionales.';
+
+  @override
+  String get retroUsageStarfish =>
+      'Calibración: Mejor para escalar esfuerzos (hacer más/menos), no solo binario.';
+
+  @override
+  String get retroUsageMadSadGlad =>
+      'Mejor para check-ins emocionales, resolver conflictos o tras un sprint estresante.';
+
+  @override
+  String get retroUsageDAKI =>
+      'Decisiva: Mejor para limpieza. Foco en decisiones concretas.';
+
+  @override
+  String get retroIcebreakerSentiment => 'Voto de Sentimiento';
+
+  @override
+  String get retroIcebreakerOneWord => 'Una Palabra';
+
+  @override
+  String get retroIcebreakerWeather => 'Reporte Meteorológico';
+
+  @override
+  String get retroIcebreakerSentimentDesc =>
+      'Vota del 1 al 5 cómo te sentiste durante el sprint.';
+
+  @override
+  String get retroIcebreakerOneWordDesc =>
+      'Describe el sprint con una sola palabra.';
+
+  @override
+  String get retroIcebreakerWeatherDesc =>
+      'Elige un icono del clima que represente el sprint.';
+
+  @override
+  String get retroPhaseIcebreaker => 'ROMPEHIELOS';
+
+  @override
+  String get retroPhaseWriting => 'ESCRITURA';
+
+  @override
+  String get retroPhaseVoting => 'VOTACIÓN';
+
+  @override
+  String get retroPhaseDiscuss => 'DISCUSIÓN';
+
+  @override
+  String get retroActionItemsLabel => 'Action Items';
+
+  @override
+  String get retroPhaseStart => 'Inizia';
+
+  @override
+  String get retroPhaseStop => 'Smetti';
+
+  @override
+  String get retroPhaseContinue => 'Continua';
 
   @override
   String get settingsLanguage => 'Idioma';
@@ -1454,7 +1713,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get participantYou => 'Tú';
+  String get participantYou => '(tú)';
 
   @override
   String get participantMakeVoter => 'Hacer Votante';
@@ -1514,7 +1773,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get inviteCopyLink => 'Copiar enlace de invitación';
+  String get inviteCopyLink => 'Copiar enlace';
 
   @override
   String get inviteRevokeAction => 'Revocar invitación';
@@ -1523,7 +1782,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get inviteDeleteAction => 'Eliminar invitación';
 
   @override
-  String get inviteRevokeTitle => 'Revocar Invitación';
+  String get inviteRevokeTitle => '¿Revocar invitación?';
 
   @override
   String inviteRevokeConfirm(String email) {
@@ -1552,7 +1811,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get inviteLinkCopied => 'Enlace de invitación copiado al portapapeles';
+  String get inviteLinkCopied => '¡Enlace copiado!';
 
   @override
   String get linkCopied => 'Enlace copiado al portapapeles';
@@ -1807,9 +2066,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroDeleteActionItem => 'Eliminar Action Item';
 
   @override
-  String get retroDeleteConfirm => '¿Estás seguro?';
-
-  @override
   String get retroChooseMethodology => 'Elegir Metodología';
 
   @override
@@ -1843,6 +2099,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroStartTimer => 'Iniciar Temporizador';
 
   @override
+  String retroTimerMinutes(int minutes) {
+    return '$minutes Min';
+  }
+
+  @override
+  String get retroAddCardButton => 'Aggiungi Card';
+
+  @override
   String get retroNoRetrosFound => 'No se encontraron retrospectivas';
 
   @override
@@ -1858,15 +2122,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String retroStatusLabel(String status) {
     return 'Estado: $status';
   }
-
-  @override
-  String get retroStatusDraft => 'Borrador';
-
-  @override
-  String get retroStatusActive => 'En Progreso';
-
-  @override
-  String get retroStatusCompleted => 'Completada';
 
   @override
   String retroDateLabel(String date) {
@@ -2729,10 +2984,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get storyFormOtherTab => 'Otros';
 
   @override
-  String get storyFormTitleLabel => 'Título';
+  String get storyFormTitleLabel => 'Título *';
 
   @override
-  String get storyFormTitleHint => 'Breve descripción de la funcionalidad';
+  String get storyFormTitleHint => 'Ej: US-123: Como usuario quiero...';
 
   @override
   String get storyFormTitleRequired => 'Introduce un título';
@@ -2768,7 +3023,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get storyFormDescriptionLabel => 'Descripción';
 
   @override
-  String get storyFormDescriptionHint => 'Descripción libre de la historia';
+  String get storyFormDescriptionHint => 'Criterios de aceptación, notas...';
 
   @override
   String get storyFormDescriptionRequired => 'Introduce una descripción';
@@ -3740,6 +3995,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String subscriptionPlanName(String plan) {
+    return 'Plan actual: $plan';
+  }
+
+  @override
   String subscriptionTrialUntil(String date) {
     return 'Prueba hasta $date';
   }
@@ -4183,91 +4443,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actionSettings => 'Configuración';
 
   @override
-  String get retroTemplateStartStopContinue => 'Start, Stop, Continue';
-
-  @override
-  String get retroDescStartStopContinue =>
-      'Orientada a la acción: Empezar, Parar, Continuar.';
-
-  @override
-  String get retroUsageStartStopContinue =>
-      'Mejor para feedback accionable y cambios de comportamiento.';
-
-  @override
-  String get retroTemplateSailboat => 'Velero';
-
-  @override
-  String get retroDescSailboat =>
-      'Visual: Viento (empuja), Anclas (frena), Rocas (riesgos), Isla (metas).';
-
-  @override
-  String get retroUsageSailboat =>
-      'Mejor para visualizar el viaje del equipo, metas y riesgos. Bueno para pensamiento creativo.';
-
-  @override
-  String get retroTemplate4Ls => '4 Ls';
-
-  @override
-  String get retroDesc4Ls =>
-      'Liked (Gustó), Learned (Aprendió), Lacked (Faltó), Longed For (Deseó).';
-
-  @override
-  String get retroUsage4Ls =>
-      'Reflexiva: Mejor para aprender del pasado y destacar aspectos emocionales.';
-
-  @override
-  String get retroTemplateStarfish => 'Estrella de Mar';
-
-  @override
-  String get retroDescStarfish => 'Keep, Stop, Start, More, Less.';
-
-  @override
-  String get retroUsageStarfish =>
-      'Calibración: Mejor para escalar esfuerzos (hacer más/menos), no solo binario.';
-
-  @override
-  String get retroTemplateMadSadGlad => 'Mad Sad Glad';
-
-  @override
-  String get retroDescMadSadGlad => 'Emocional: Enojado, Triste, Feliz.';
-
-  @override
-  String get retroUsageMadSadGlad =>
-      'Mejor para check-ins emocionales, resolver conflictos o tras un sprint estresante.';
-
-  @override
-  String get retroTemplateDAKI => 'DAKI (Drop Add Keep Improve)';
-
-  @override
-  String get retroDescDAKI =>
-      'Pragmática: Eliminar, Añadir, Mantener, Mejorar.';
-
-  @override
-  String get retroUsageDAKI =>
-      'Decisiva: Mejor para limpieza. Foco en decisiones concretas.';
-
-  @override
-  String get retroIcebreakerSentiment => 'Voto de Sentimiento';
-
-  @override
-  String get retroIcebreakerSentimentDesc =>
-      'Vota del 1 al 5 cómo te sentiste durante el sprint.';
-
-  @override
-  String get retroIcebreakerOneWord => 'Una Palabra';
-
-  @override
-  String get retroIcebreakerOneWordDesc =>
-      'Describe el sprint con una sola palabra.';
-
-  @override
-  String get retroIcebreakerWeather => 'Reporte Meteorológico';
-
-  @override
-  String get retroIcebreakerWeatherDesc =>
-      'Elige un icono del clima que represente el sprint.';
-
-  @override
   String get retroSelectIcebreakerTooltip =>
       'Selecciona la actividad para romper el hielo';
 
@@ -4283,18 +4458,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroIcebreakerSectionTitle => 'Rompehielos';
-
-  @override
-  String get retroPhaseIcebreaker => 'ROMPEHIELOS';
-
-  @override
-  String get retroPhaseWriting => 'ESCRITURA';
-
-  @override
-  String get retroPhaseVoting => 'VOTACIÓN';
-
-  @override
-  String get retroPhaseDiscuss => 'DISCUSIÓN';
 
   @override
   String get retroBoardTitle => 'Tablero de Retrospectivas';
@@ -4356,7 +4519,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get priorityLow => 'BASSA';
 
   @override
-  String get exportToEstimation => 'Enviar a Estimation';
+  String get exportToEstimation => 'Exportar a estimación';
 
   @override
   String get exportToEstimationDesc =>
@@ -4400,28 +4563,29 @@ class AppLocalizationsEs extends AppLocalizations {
       'Exportar historias estimadas a una lista Smart Todo';
 
   @override
-  String get selectDestinationList => 'Seleccionar Lista Destino';
+  String get selectDestinationList => 'Seleccionar lista de destino';
 
   @override
-  String get createNewList => 'Crear Nueva Lista';
+  String get createNewList => 'Crear nueva lista';
 
   @override
-  String get existingList => 'Lista Existente';
+  String get existingList => 'Lista existente';
 
   @override
-  String get listName => 'Nombre de Lista';
+  String get listName => 'Nombre de la lista';
 
   @override
-  String get listNameHint => 'Introduce un nombre para la nueva lista';
+  String get listNameHint => 'Ingresa un nombre para la nueva lista';
 
   @override
-  String get selectList => 'Seleccionar Lista';
+  String get selectList => 'Seleccionar lista';
 
   @override
-  String get selectListHint => 'Elige una lista de destino';
+  String get selectListHint => 'Elige una lista';
 
   @override
-  String get noListsAvailable => 'No hay listas disponibles. Crea una nueva.';
+  String get noListsAvailable =>
+      'No hay listas disponibles. Se creará una nueva.';
 
   @override
   String storiesSelectedCount(int count) {
@@ -4429,10 +4593,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get selectAll => 'Seleccionar Todo';
+  String get selectAll => 'Seleccionar todo';
 
   @override
-  String get deselectAll => 'Deseleccionar Todo';
+  String get deselectAll => 'Deseleccionar todo';
 
   @override
   String get importStories => 'Importar Historias';
@@ -4513,28 +4677,28 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterByColumn => 'Filtrar por columna';
 
   @override
-  String get exportFromEisenhower => 'Exportar a Smart Todo';
+  String get exportFromEisenhower => 'Exportar desde Eisenhower';
 
   @override
   String get exportFromEisenhowerDesc =>
-      'Crear tareas desde actividades priorizadas';
+      'Selecciona las actividades para exportar a Smart Todo';
 
   @override
-  String get filterByQuadrant => 'Filtrar por cuadrante';
+  String get filterByQuadrant => 'Filtrar por cuadrante:';
 
   @override
-  String get allActivities => 'Todas las Actividades';
+  String get allActivities => 'Todas';
 
   @override
   String activitiesSelectedCount(int count) {
-    return '$count actividad(es) seleccionada(s)';
+    return '$count actividades seleccionadas';
   }
 
   @override
-  String get noActivitiesSelected => 'Ninguna actividad disponible';
+  String get noActivitiesSelected => 'No hay actividades en este filtro';
 
   @override
-  String get unvoted => 'Sin votar';
+  String get unvoted => 'SIN VOTAR';
 
   @override
   String tasksCreated(int count) {
@@ -4552,10 +4716,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectDestinationProject => 'Seleccionar Proyecto Destino';
 
   @override
-  String get existingProject => 'Proyecto Existente';
+  String get existingProject => 'Proyecto existente';
 
   @override
-  String get createNewProject => 'Crear Nuevo Proyecto';
+  String get createNewProject => 'Crear nuevo proyecto';
 
   @override
   String get projectName => 'Nombre del Proyecto';
@@ -4564,7 +4728,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get projectNameHint => 'Ingresa un nombre para el nuevo proyecto';
 
   @override
-  String get selectProject => 'Seleccionar Proyecto';
+  String get selectProject => 'Seleccionar proyecto';
 
   @override
   String get selectProjectHint => 'Elige un proyecto de destino';
@@ -4583,7 +4747,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get configureNewProject => 'Configurar Nuevo Proyecto';
+  String get configureNewProject => 'Configurar nuevo proyecto';
 
   @override
   String get exportToAgileSprint => 'Exportar a Sprint';
@@ -4593,7 +4757,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Agregar stories estimadas a un sprint Agile';
 
   @override
-  String get selectSprint => 'Seleccionar Sprint';
+  String get selectSprint => 'Seleccionar sprint';
 
   @override
   String get selectSprintHint => 'Elige un sprint de destino';
@@ -4607,7 +4771,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Mapeo: Título → Título story, Descripción → Descripción, Estimación → Story points';
 
   @override
-  String get exportToSprint => 'Exportar a Sprint';
+  String get exportToSprint => 'Exportar a sprint';
 
   @override
   String totalStoryPoints(int count) {
@@ -4775,4 +4939,654 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get completedBadge => 'Completado';
+
+  @override
+  String get inviteNewInvite => 'NUEVA INVITACIÓN';
+
+  @override
+  String get inviteRole => 'Rol:';
+
+  @override
+  String get inviteSendEmailNotification => 'Enviar notificación por email';
+
+  @override
+  String get inviteSendInvite => 'Enviar Invitación';
+
+  @override
+  String get inviteLink => 'Enlace de invitación:';
+
+  @override
+  String get inviteList => 'INVITACIONES';
+
+  @override
+  String get inviteResend => 'Reenviar';
+
+  @override
+  String get inviteRevokeMessage => 'La invitación ya no será válida.';
+
+  @override
+  String get inviteResent => 'Invitación reenviada';
+
+  @override
+  String inviteSentByEmail(String email) {
+    return 'Invitación enviada por email a $email';
+  }
+
+  @override
+  String get inviteStatusPending => 'Pendiente';
+
+  @override
+  String get inviteStatusAccepted => 'Aceptada';
+
+  @override
+  String get inviteStatusDeclined => 'Rechazada';
+
+  @override
+  String get inviteStatusExpired => 'Expirada';
+
+  @override
+  String get inviteStatusRevoked => 'Revocada';
+
+  @override
+  String get inviteGmailAuthTitle => 'Autorización de Gmail';
+
+  @override
+  String get inviteGmailAuthMessage =>
+      'Para enviar emails de invitación, necesitas volver a autenticarte con Google.\n\n¿Quieres continuar?';
+
+  @override
+  String get inviteGmailAuthNo => 'No, solo enlace';
+
+  @override
+  String get inviteGmailAuthYes => 'Autorizar';
+
+  @override
+  String get inviteGmailNotAvailable =>
+      'Autorización de Gmail no disponible. Intenta cerrar sesión e iniciar de nuevo.';
+
+  @override
+  String get inviteGmailNoPermission => 'Permiso de Gmail no concedido.';
+
+  @override
+  String get inviteEnterEmail => 'Ingresa un email';
+
+  @override
+  String get inviteInvalidEmail => 'Email inválido';
+
+  @override
+  String get pendingInvites => 'Invitaciones Pendientes';
+
+  @override
+  String get noPendingInvites => 'No hay invitaciones pendientes';
+
+  @override
+  String invitedBy(String name) {
+    return 'Invitado por $name';
+  }
+
+  @override
+  String get inviteOpenInstance => 'Abrir';
+
+  @override
+  String get inviteAcceptFirst => 'Acepta la invitación para abrir';
+
+  @override
+  String get inviteAccept => 'Aceptar';
+
+  @override
+  String get inviteDecline => 'Rechazar';
+
+  @override
+  String get inviteAcceptedSuccess => '¡Invitación aceptada con éxito!';
+
+  @override
+  String get inviteAcceptedError => 'Error al aceptar la invitación';
+
+  @override
+  String get inviteDeclinedSuccess => 'Invitación rechazada';
+
+  @override
+  String get inviteDeclineTitle => '¿Rechazar invitación?';
+
+  @override
+  String get inviteDeclineMessage =>
+      '¿Estás seguro de que quieres rechazar esta invitación?';
+
+  @override
+  String expiresInHours(int hours) {
+    return 'Expira en ${hours}h';
+  }
+
+  @override
+  String expiresInDays(int days) {
+    return 'Expira en ${days}d';
+  }
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get raciTitle => 'Matriz RACI';
+
+  @override
+  String get raciNoActivities => 'No hay actividades disponibles';
+
+  @override
+  String get raciAddActivity => 'Agregar actividad';
+
+  @override
+  String get raciAddColumn => 'Agregar columna';
+
+  @override
+  String get raciActivities => 'ACTIVIDADES';
+
+  @override
+  String get raciAssignRole => 'Asignar rol';
+
+  @override
+  String get raciNone => 'Ninguno';
+
+  @override
+  String get raciSaving => 'Guardando...';
+
+  @override
+  String get raciSaveChanges => 'Guardar cambios';
+
+  @override
+  String get raciSavedSuccessfully => 'Cambios guardados correctamente';
+
+  @override
+  String get raciErrorSaving => 'Error al guardar';
+
+  @override
+  String get raciMissingAccountable => 'Falta Accountable (A)';
+
+  @override
+  String get raciOnlyOneAccountable => 'Solo un Accountable por actividad';
+
+  @override
+  String get raciDuplicateRoles => 'Roles duplicados';
+
+  @override
+  String get raciNoResponsible => 'No hay Responsible (R) asignado';
+
+  @override
+  String get raciTooManyInformed =>
+      'Demasiados Informed (I): considera reducir';
+
+  @override
+  String get raciColumnName => 'Nombre de la columna';
+
+  @override
+  String get raciColumnNameHint => 'Ej.: Equipo de desarrollo';
+
+  @override
+  String get raciNewColumn => 'Nueva columna';
+
+  @override
+  String get raciRemoveColumn => 'Eliminar columna';
+
+  @override
+  String raciRemoveColumnConfirm(String name) {
+    return '¿Eliminar la columna \"$name\"? Se eliminarán todas las asignaciones de roles para esta columna.';
+  }
+
+  @override
+  String get votingDialogTitle => 'Votar';
+
+  @override
+  String votingDialogVoteOf(String participant) {
+    return 'Voto de $participant';
+  }
+
+  @override
+  String get votingDialogUrgency => 'URGENCIA';
+
+  @override
+  String get votingDialogImportance => 'IMPORTANCIA';
+
+  @override
+  String get votingDialogNotUrgent => 'No urgente';
+
+  @override
+  String get votingDialogVeryUrgent => 'Muy urgente';
+
+  @override
+  String get votingDialogNotImportant => 'No importante';
+
+  @override
+  String get votingDialogVeryImportant => 'Muy importante';
+
+  @override
+  String get votingDialogConfirmVote => 'Confirmar voto';
+
+  @override
+  String get votingDialogQuadrant => 'Cuadrante:';
+
+  @override
+  String get voteCollectionTitle => 'Recoger votos';
+
+  @override
+  String get voteCollectionParticipants => 'participantes';
+
+  @override
+  String get voteCollectionResult => 'Resultado:';
+
+  @override
+  String get voteCollectionAverage => 'Promedio:';
+
+  @override
+  String get voteCollectionSaveVotes => 'Guardar votos';
+
+  @override
+  String get scatterChartTitle => 'Distribución de actividades';
+
+  @override
+  String get scatterChartNoActivities => 'No hay actividades votadas';
+
+  @override
+  String get scatterChartVoteToShow =>
+      'Vota las actividades para verlas en el gráfico';
+
+  @override
+  String get scatterChartUrgencyLabel => 'Urgencia:';
+
+  @override
+  String get scatterChartImportanceLabel => 'Importancia:';
+
+  @override
+  String get scatterChartAxisUrgency => 'URGENCIA';
+
+  @override
+  String get scatterChartAxisImportance => 'IMPORTANCIA';
+
+  @override
+  String get scatterChartQ1Label => 'Q1 - HACER';
+
+  @override
+  String get scatterChartQ2Label => 'Q2 - PLANIFICAR';
+
+  @override
+  String get scatterChartQ3Label => 'Q3 - DELEGAR';
+
+  @override
+  String get scatterChartQ4Label => 'Q4 - ELIMINAR';
+
+  @override
+  String get scatterChartCardTitle => 'Gráfico de distribución';
+
+  @override
+  String get votingStatusYou => 'Tú';
+
+  @override
+  String get votingStatusReset => 'Reiniciar';
+
+  @override
+  String get estimationDecimalTitle => 'Estimación decimal';
+
+  @override
+  String get estimationDecimalHint =>
+      'Ingresa tu estimación en días (ej: 1.5, 2.25)';
+
+  @override
+  String get estimationDecimalHintPlaceholder => 'Ej: 2.5';
+
+  @override
+  String get estimationDecimalSuffixDays => 'días';
+
+  @override
+  String get estimationDecimalVote => 'Votar';
+
+  @override
+  String estimationDecimalVoteValue(String value) {
+    return 'Voto: $value días';
+  }
+
+  @override
+  String get estimationDecimalQuickSelect => 'Selección rápida:';
+
+  @override
+  String get estimationDecimalEnterValue => 'Ingresa un valor';
+
+  @override
+  String get estimationDecimalInvalidValue => 'Valor no válido';
+
+  @override
+  String estimationDecimalMinValue(String value) {
+    return 'Mín: $value';
+  }
+
+  @override
+  String estimationDecimalMaxValue(String value) {
+    return 'Máx: $value';
+  }
+
+  @override
+  String get estimationThreePointTitle => 'Estimación de tres puntos (PERT)';
+
+  @override
+  String get estimationThreePointOptimistic => 'Optimista (O)';
+
+  @override
+  String get estimationThreePointRealistic => 'Realista (M)';
+
+  @override
+  String get estimationThreePointPessimistic => 'Pesimista (P)';
+
+  @override
+  String get estimationThreePointBestCase => 'Mejor caso';
+
+  @override
+  String get estimationThreePointMostLikely => 'Más probable';
+
+  @override
+  String get estimationThreePointWorstCase => 'Peor caso';
+
+  @override
+  String get estimationThreePointAllFieldsRequired =>
+      'Todos los campos son obligatorios';
+
+  @override
+  String get estimationThreePointInvalidValues => 'Valores no válidos';
+
+  @override
+  String get estimationThreePointOptMustBeLteReal =>
+      'Optimista debe ser <= Realista';
+
+  @override
+  String get estimationThreePointRealMustBeLtePess =>
+      'Realista debe ser <= Pesimista';
+
+  @override
+  String get estimationThreePointOptMustBeLtePess =>
+      'Optimista debe ser <= Pesimista';
+
+  @override
+  String get estimationThreePointGuide => 'Guía:';
+
+  @override
+  String get estimationThreePointGuideO =>
+      'O: Estimación del mejor caso (todo va bien)';
+
+  @override
+  String get estimationThreePointGuideM =>
+      'M: Estimación más probable (condiciones normales)';
+
+  @override
+  String get estimationThreePointGuideP =>
+      'P: Estimación del peor caso (imprevistos)';
+
+  @override
+  String get estimationThreePointStdDev => 'Desv. Est.';
+
+  @override
+  String get estimationThreePointDaysSuffix => 'd';
+
+  @override
+  String get storyFormNewStory => 'Nueva Story';
+
+  @override
+  String get storyFormEnterTitle => 'Ingresa un título';
+
+  @override
+  String get sessionSearchHint => 'Buscar sesiones...';
+
+  @override
+  String get sessionSearchFilters => 'Filtros';
+
+  @override
+  String get sessionSearchFiltersTooltip => 'Filtros';
+
+  @override
+  String get sessionSearchStatusLabel => 'Estado: ';
+
+  @override
+  String get sessionSearchStatusAll => 'Todos';
+
+  @override
+  String get sessionSearchStatusDraft => 'Borrador';
+
+  @override
+  String get sessionSearchStatusActive => 'Activa';
+
+  @override
+  String get sessionSearchStatusCompleted => 'Completada';
+
+  @override
+  String get sessionSearchModeLabel => 'Modo: ';
+
+  @override
+  String get sessionSearchModeAll => 'Todos';
+
+  @override
+  String get sessionSearchRemoveFilters => 'Quitar filtros';
+
+  @override
+  String get sessionSearchActiveFilters => 'Filtros activos:';
+
+  @override
+  String get sessionSearchRemoveAllFilters => 'Quitar todos';
+
+  @override
+  String participantsTitle(int count) {
+    return 'Participantes ($count)';
+  }
+
+  @override
+  String get participantRoleFacilitator => 'Facilitador';
+
+  @override
+  String get participantRoleVoters => 'Votantes';
+
+  @override
+  String get participantRoleObservers => 'Observadores';
+
+  @override
+  String get votingBoardVotesRevealed => 'Votos revelados';
+
+  @override
+  String get votingBoardVotingInProgress => 'Votación en curso';
+
+  @override
+  String votingBoardVotesCount(int voted, int total) {
+    return '$voted/$total votos';
+  }
+
+  @override
+  String get estimationSelectYourEstimate => 'Selecciona tu estimación';
+
+  @override
+  String estimationVoteSelected(String value) {
+    return 'Voto seleccionado: $value';
+  }
+
+  @override
+  String get estimationDotVotingTitle => 'Dot Voting';
+
+  @override
+  String get estimationDotVotingDesc =>
+      'Modo de votación con asignación de puntos.\nPróximamente...';
+
+  @override
+  String get estimationBucketSystemTitle => 'Bucket System';
+
+  @override
+  String get estimationBucketSystemDesc =>
+      'Estimación por afinidad con agrupación.\nPróximamente...';
+
+  @override
+  String get estimationModeTitle => 'Modo de estimación';
+
+  @override
+  String get statisticsTitle => 'Estadísticas de votación';
+
+  @override
+  String get statisticsAverage => 'Promedio';
+
+  @override
+  String get statisticsMedian => 'Mediana';
+
+  @override
+  String get statisticsMode => 'Moda';
+
+  @override
+  String get statisticsVoters => 'Votantes';
+
+  @override
+  String get statisticsPertStats => 'Estadísticas PERT';
+
+  @override
+  String get statisticsPertAvg => 'Prom. PERT';
+
+  @override
+  String get statisticsStdDev => 'Desv. Est.';
+
+  @override
+  String get statisticsVariance => 'Varianza';
+
+  @override
+  String get statisticsRange => 'Rango:';
+
+  @override
+  String get statisticsConsensusReached => '¡Consenso alcanzado!';
+
+  @override
+  String get retroGuideTooltip => 'Guida alle Retrospettive';
+
+  @override
+  String get retroSearchPlaceholder => 'Cerca retrospettiva...';
+
+  @override
+  String get retroNoSearchResults => 'Nessun risultato per la ricerca';
+
+  @override
+  String get retroNewRetro => 'Nuova Retrospettiva';
+
+  @override
+  String get retroNoProjectsFound => 'Nessun progetto trovato.';
+
+  @override
+  String retroDeleteMessage(String retroName) {
+    return 'Sei sicuro di voler eliminare definitivamente la retrospettiva \"$retroName\"?\n\nQuesta azione è irreversibile e cancellerà tutti i dati associati (card, voti, action items).';
+  }
+
+  @override
+  String get retroDeletePermanently => 'Elimina definitivamente';
+
+  @override
+  String get retroDeletedSuccess => 'Retrospettiva eliminata con successo';
+
+  @override
+  String errorPrefix(String error) {
+    return 'Errore: $error';
+  }
+
+  @override
+  String get loaderProjectIdMissing => 'ID progetto mancante';
+
+  @override
+  String get loaderProjectNotFound => 'Progetto non trovato';
+
+  @override
+  String get loaderLoadError => 'Errore caricamento';
+
+  @override
+  String get loaderError => 'Errore';
+
+  @override
+  String get loaderUnknownError => 'Errore sconosciuto';
+
+  @override
+  String get actionGoBack => 'Torna indietro';
+
+  @override
+  String get authRequired => 'Autenticazione richiesta';
+
+  @override
+  String get retroIdMissing => 'ID retrospettiva mancante';
+
+  @override
+  String get pokerInviteStatusAccepted => 'è già stato accettato';
+
+  @override
+  String get pokerInviteStatusDeclined => 'è stato rifiutato';
+
+  @override
+  String get pokerInviteStatusExpired => 'è scaduto';
+
+  @override
+  String get pokerInviteStatusRevoked => 'è stato revocato';
+
+  @override
+  String get pokerInviteStatusPending => 'è in attesa';
+
+  @override
+  String get pokerInviteYouAreInvited => 'Sei Stato Invitato!';
+
+  @override
+  String pokerInviteInvitedBy(String name) {
+    return '$name ti ha invitato a partecipare';
+  }
+
+  @override
+  String get pokerInviteSessionLabel => 'Sessione';
+
+  @override
+  String get pokerInviteProjectLabel => 'Progetto';
+
+  @override
+  String get pokerInviteRoleLabel => 'Ruolo Assegnato';
+
+  @override
+  String get pokerInviteExpiryLabel => 'Scadenza Invito';
+
+  @override
+  String pokerInviteExpiryDays(int days) {
+    return 'Tra $days giorni';
+  }
+
+  @override
+  String get pokerInviteDecline => 'Rifiuta';
+
+  @override
+  String get pokerInviteAccept => 'Accetta Invito';
+
+  @override
+  String loadingMatrixError(String error) {
+    return 'Errore caricamento matrice: $error';
+  }
+
+  @override
+  String loadingDataError(String error) {
+    return 'Errore caricamento dati: $error';
+  }
+
+  @override
+  String loadingActivitiesError(String error) {
+    return 'Errore caricamento attività: $error';
+  }
+
+  @override
+  String smartTodoSprintDays(int days) {
+    return '$days días/sprint';
+  }
+
+  @override
+  String smartTodoHoursPerDay(int hours) {
+    return '${hours}h/día';
+  }
+
+  @override
+  String get smartTodoImageFromClipboardFound =>
+      'Imagen encontrada en el portapapeles';
+
+  @override
+  String get smartTodoAddImageFromClipboard =>
+      'Añadir imagen desde el portapapeles';
+
+  @override
+  String get smartTodoInviteCreatedAndSent => 'Invitación creada y enviada';
 }

@@ -41,8 +41,9 @@ class TodoInviteModel {
   bool get isExpired => DateTime.now().isAfter(expiresAt);
   bool get isPending => status == TodoInviteStatus.pending && !isExpired;
 
+  /// Genera il link di invito - nuovo formato deep link
   String generateInviteLink(String baseUrl) {
-    return '$baseUrl/smart-todo/invite?token=$token';
+    return '$baseUrl/#/invite/smart-todo/$listId';
   }
 
   Map<String, dynamic> toFirestore() {

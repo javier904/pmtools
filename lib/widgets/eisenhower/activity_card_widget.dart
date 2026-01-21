@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
+import '../../l10n/app_localizations.dart';
 import 'voting_status_widget.dart';
 
 /// Card per visualizzare una singola attività nella matrice
@@ -43,18 +44,19 @@ class ActivityCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final color = quadrantColor ??
         (activity.quadrant != null
             ? Color(activity.quadrant!.colorValue)
             : Colors.grey);
 
     if (compact) {
-      return _buildCompactCard(context, color);
+      return _buildCompactCard(context, color, l10n);
     }
-    return _buildFullCard(context, color);
+    return _buildFullCard(context, color, l10n);
   }
 
-  Widget _buildCompactCard(BuildContext context, Color color) {
+  Widget _buildCompactCard(BuildContext context, Color color, AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
       color: isDark ? const Color(0xFF2D3748) : Colors.white,
@@ -114,7 +116,7 @@ class ActivityCardWidget extends StatelessWidget {
                       minWidth: 28,
                       minHeight: 28,
                     ),
-                    tooltip: activity.hasVotes ? 'Modifica voti' : 'Vota',
+                    tooltip: activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote,
                   ),
                 if (onDeleteTap != null)
                   IconButton(
@@ -129,7 +131,7 @@ class ActivityCardWidget extends StatelessWidget {
                       minWidth: 28,
                       minHeight: 28,
                     ),
-                    tooltip: 'Elimina',
+                    tooltip: l10n.actionDelete,
                   ),
               ],
             ],
@@ -139,7 +141,7 @@ class ActivityCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFullCard(BuildContext context, Color color) {
+  Widget _buildFullCard(BuildContext context, Color color, AppLocalizations l10n) {
     return Card(
       margin: EdgeInsets.zero,
       elevation: 2,
@@ -212,17 +214,17 @@ class ActivityCardWidget extends StatelessWidget {
                                 size: 18,
                               ),
                               const SizedBox(width: 8),
-                              Text(activity.hasVotes ? 'Modifica voti' : 'Vota'),
+                              Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
                             ],
                           ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Elimina', style: TextStyle(color: Colors.red)),
+                              const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                              const SizedBox(width: 8),
+                              Text(l10n.actionDelete, style: const TextStyle(color: Colors.red)),
                             ],
                           ),
                         ),
@@ -276,14 +278,14 @@ class ActivityCardWidget extends StatelessWidget {
                   children: [
                     // Urgenza
                     _buildScoreIndicator(
-                      'Urgenza',
+                      l10n.eisenhowerUrgency,
                       activity.aggregatedUrgency,
                       Colors.orange,
                     ),
                     const SizedBox(width: 16),
                     // Importanza
                     _buildScoreIndicator(
-                      'Importanza',
+                      l10n.eisenhowerImportance,
                       activity.aggregatedImportance,
                       Colors.blue,
                     ),
@@ -328,7 +330,7 @@ class ActivityCardWidget extends StatelessWidget {
                       Icon(Icons.warning_amber, size: 14, color: Colors.amber[700]),
                       const SizedBox(width: 6),
                       Text(
-                        'In attesa di voti',
+                        l10n.eisenhowerWaitingForVotes,
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.amber[800],
@@ -343,11 +345,11 @@ class ActivityCardWidget extends StatelessWidget {
               // === SEZIONE VOTAZIONE INDIPENDENTE ===
               if (activity.isIndependentVotingInProgress) ...[
                 const SizedBox(height: 12),
-                _buildIndependentVotingSection(),
+                _buildIndependentVotingSection(l10n),
               ] else if (!activity.hasVotes && !activity.isRevealed && totalVoters > 1) ...[
                 // Mostra bottoni per avviare votazione solo se non ci sono già voti
                 const SizedBox(height: 12),
-                _buildVotingButtons(),
+                _buildVotingButtons(l10n),
               ],
             ],
           ),
@@ -357,7 +359,7 @@ class ActivityCardWidget extends StatelessWidget {
   }
 
   /// Costruisce la sezione per la votazione indipendente in corso
-  Widget _buildIndependentVotingSection() {
+  Widget _buildIndependentVotingSection(AppLocalizations l10n) {
     final readyCount = activity.readyVoters.length;
     final allReady = readyCount >= totalVoters && totalVoters > 0;
     final hasCurrentUserVoted =
@@ -406,7 +408,7 @@ class ActivityCardWidget extends StatelessWidget {
 
           // Testo stato
           Text(
-            '$readyCount su $totalVoters partecipanti hanno votato',
+            l10n.eisenhowerVotedParticipants(readyCount, totalVoters),
             style: TextStyle(fontSize: 11, color: Colors.grey[600]),
           ),
           const SizedBox(height: 12),
@@ -420,7 +422,7 @@ class ActivityCardWidget extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: onSubmitIndependentVote,
                     icon: const Icon(Icons.how_to_vote, size: 16),
-                    label: const Text('VOTA'),
+                    label: Text(l10n.eisenhowerVoteSubmit),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -443,7 +445,7 @@ class ActivityCardWidget extends StatelessWidget {
                         const Icon(Icons.check_circle, size: 16, color: Colors.green),
                         const SizedBox(width: 6),
                         Text(
-                          'Hai votato',
+                          l10n.eisenhowerVotedSuccess,
                           style: TextStyle(
                             color: Colors.green[700],
                             fontWeight: FontWeight.w500,
@@ -459,7 +461,7 @@ class ActivityCardWidget extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: allReady ? onRevealVotes : null,
                   icon: const Icon(Icons.visibility, size: 16),
-                  label: const Text('RIVELA'),
+                  label: Text(l10n.eisenhowerRevealVotes),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: allReady ? Colors.green : Colors.grey,
                     foregroundColor: Colors.white,
@@ -475,7 +477,7 @@ class ActivityCardWidget extends StatelessWidget {
   }
 
   /// Costruisce i bottoni per avviare la votazione (rapida o indipendente)
-  Widget _buildVotingButtons() {
+  Widget _buildVotingButtons(AppLocalizations l10n) {
     return Row(
       children: [
         // Voto Rapido (esistente)
@@ -484,7 +486,7 @@ class ActivityCardWidget extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: onVoteTap,
               icon: const Icon(Icons.flash_on, size: 16),
-              label: const Text('Voto Rapido'),
+              label: Text(l10n.eisenhowerQuickVote),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.orange,
                 side: const BorderSide(color: Colors.orange),
@@ -500,7 +502,7 @@ class ActivityCardWidget extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: onStartIndependentVoting,
               icon: const Icon(Icons.group, size: 16),
-              label: const Text('Voto Team'),
+              label: Text(l10n.eisenhowerTeamVote),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -592,6 +594,7 @@ class UnvotedActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Card(
@@ -631,7 +634,7 @@ class UnvotedActivityCard extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onVoteTap,
               icon: const Icon(Icons.how_to_vote, size: 16),
-              label: const Text('Vota'),
+              label: Text(l10n.eisenhowerVote),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -642,7 +645,7 @@ class UnvotedActivityCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: onDeleteTap,
-                tooltip: 'Elimina',
+                tooltip: l10n.actionDelete,
               ),
           ],
         ),

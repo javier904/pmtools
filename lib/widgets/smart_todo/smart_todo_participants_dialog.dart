@@ -8,6 +8,7 @@ import '../../models/smart_todo/todo_invite_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../services/smart_todo_invite_service.dart';
 import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class SmartTodoParticipantsDialog extends StatefulWidget {
   final TodoListModel list;
@@ -43,6 +44,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF1E2633) : Colors.white;
     final dialogInputBg = isDark ? const Color(0xFF2D3748) : Colors.white;
@@ -75,12 +77,12 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                         const Icon(Icons.people_alt_rounded, color: Colors.blue),
                         const SizedBox(width: 12),
                         Text(
-                          'Gestione Partecipanti',
+                          l10n.smartTodoParticipantManagement,
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: dialogTextColor),
                         ),
                         const Spacer(),
                         IconButton(
-                           icon: Icon(Icons.close, color: isDark ? Colors.grey[400] : null), 
+                           icon: Icon(Icons.close, color: isDark ? Colors.grey[400] : null),
                            onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -91,9 +93,9 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                     labelColor: Colors.blue,
                     unselectedLabelColor: isDark ? Colors.grey[500] : Colors.grey,
                     indicatorColor: Colors.blue,
-                    tabs: const [
-                       Tab(text: 'Partecipanti', icon: Icon(Icons.person)),
-                       Tab(text: 'Inviti', icon: Icon(Icons.mail_outline)),
+                    tabs: [
+                       Tab(text: l10n.smartTodoParticipantsTab, icon: const Icon(Icons.person)),
+                       Tab(text: l10n.smartTodoInvitesTab, icon: const Icon(Icons.mail_outline)),
                     ],
                   ),
                 ],
@@ -117,14 +119,15 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
   }
 
   Widget _buildParticipantsTab(bool isDark, Color inputBg, Color borderColor, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
          // Add Section (Quick Add)
          _buildInviteForm(isDark, inputBg, borderColor, textColor),
          Divider(height: 32, color: borderColor),
-         
-         Text('Membri (${widget.list.participants.length})', style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
+
+         Text(l10n.smartTodoMembers(widget.list.participants.length), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
          const SizedBox(height: 16),
          
          ...widget.list.participants.entries.map((entry) {
@@ -155,31 +158,32 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
   }
 
   Widget _buildInvitesTab(bool isDark, Color inputBg, Color borderColor, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     return StreamBuilder<List<TodoInviteModel>>(
       stream: _inviteService.streamInvites(widget.list.id),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        
+
         final invites = snapshot.data!;
         final pending = invites.where((i) => i.status == TodoInviteStatus.pending).toList();
-        
+
         if (pending.isEmpty) {
-           return Center(child: Text('Nessun invito in sospeso', style: TextStyle(color: isDark ? Colors.grey[400] : null)));
+           return Center(child: Text(l10n.smartTodoNoInvitesPending, style: TextStyle(color: isDark ? Colors.grey[400] : null)));
         }
-        
+
         return ListView.builder(
            padding: const EdgeInsets.all(16),
            itemCount: pending.length,
            itemBuilder: (context, index) {
               final invite = pending[index];
               final isExpired = DateTime.now().isAfter(invite.expiresAt);
-              
+
               return Card(
                 elevation: 0,
                 color: isDark ? const Color(0xFF2D3748) : null,
                 margin: const EdgeInsets.only(bottom: 8),
                 shape: RoundedRectangleBorder(
-                   borderRadius: BorderRadius.circular(12), 
+                   borderRadius: BorderRadius.circular(12),
                    side: BorderSide(color: borderColor),
                 ),
                 child: ListTile(
@@ -188,11 +192,11 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                    subtitle: Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
-                        Text('Ruolo: ${invite.role.name}', style: TextStyle(color: isDark ? Colors.grey[400] : null)),
-                        if (isExpired) 
-                          const Text('SCADUTO', style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold))
+                        Text(l10n.smartTodoRoleLabel(invite.role.name), style: TextStyle(color: isDark ? Colors.grey[400] : null)),
+                        if (isExpired)
+                          Text(l10n.smartTodoExpired, style: const TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold))
                         else
-                          Text('Inviato da ${invite.invitedByName}', style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[500] : Colors.grey)),
+                          Text(l10n.smartTodoSentBy(invite.invitedByName), style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[500] : Colors.grey)),
                      ],
                    ),
                    trailing: PopupMenuButton<String>(
@@ -203,25 +207,25 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                         } else if (action == 'resend') {
                           final currentUser = _authService.currentUser;
                           if (currentUser != null && currentUser.email != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invio email in corso...')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoSendingEmail)));
                             final success = await _sendEmailForInvite(invite, currentUser.email!);
                             if (mounted) {
                               ScaffoldMessenger.of(context).hideCurrentSnackBar();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(success ? 'Email reinviata!' : 'Errore durante l\'invio.'),
+                                  content: Text(success ? l10n.smartTodoEmailResent : l10n.smartTodoEmailSendError),
                                   backgroundColor: success ? Colors.green : Colors.red,
                                 )
                               );
                             }
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sessione non valida per inviare email.')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoInvalidSession)));
                           }
                         }
                      },
                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'resend', child: Text('Reinvia Email')),
-                        const PopupMenuItem(value: 'revoke', child: Text('Revoca', style: TextStyle(color: Colors.red))),
+                        PopupMenuItem(value: 'resend', child: Text(l10n.smartTodoResendEmail)),
+                        PopupMenuItem(value: 'revoke', child: Text(l10n.smartTodoRevoke, style: const TextStyle(color: Colors.red))),
                      ],
                    ),
                 ),
@@ -233,6 +237,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
   }
 
   Widget _buildInviteForm(bool isDark, Color inputBg, Color borderColor, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -243,7 +248,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text('Aggiungi Partecipante', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: textColor)),
+           Text(l10n.smartTodoAddParticipant, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: textColor)),
            const SizedBox(height: 12),
            Row(
              children: [
@@ -253,7 +258,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                    controller: _emailController,
                    style: TextStyle(color: textColor),
                    decoration: InputDecoration(
-                     labelText: 'Email',
+                     labelText: l10n.smartTodoEmailLabel,
                      labelStyle: TextStyle(color: isDark ? Colors.grey[400] : null),
                      isDense: true,
                      border: OutlineInputBorder(borderSide: BorderSide(color: borderColor)),
@@ -271,7 +276,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                    dropdownColor: isDark ? const Color(0xFF2D3748) : null,
                    style: TextStyle(color: textColor, fontSize: 12),
                    decoration: InputDecoration(
-                     labelText: 'Ruolo',
+                     labelText: l10n.smartTodoRole,
                      labelStyle: TextStyle(color: isDark ? Colors.grey[400] : null),
                      isDense: true,
                      border: OutlineInputBorder(borderSide: BorderSide(color: borderColor)),
@@ -280,7 +285,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                      fillColor: inputBg,
                    ),
                    items: TodoParticipantRole.values.map((r) => DropdownMenuItem(
-                      value: r, 
+                      value: r,
                       child: Text(r.name),
                    )).toList(),
                    onChanged: (v) => setState(() => _role = v!),
@@ -288,8 +293,8 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                ),
                const SizedBox(width: 12),
                IconButton.filled(
-                 icon: _isLoading 
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+                 icon: _isLoading
+                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                     : const Icon(Icons.add),
                  onPressed: _isLoading ? null : _sendInvite,
                ),
@@ -301,6 +306,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
   }
 
   Future<void> _sendInvite() async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     if (email.isEmpty || !email.contains('@')) return;
 
@@ -308,22 +314,22 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
     try {
       final currentUser = _authService.currentUser;
       if (currentUser == null || currentUser.email == null) return;
-      
+
       final invite = await _inviteService.createInvite(
         listId: widget.list.id,
         email: email,
         role: _role,
         invitedBy: currentUser.email!,
-        invitedByName: currentUser.displayName ?? 'Utente',
+        invitedByName: currentUser.displayName ?? l10n.smartTodoUser,
       );
-      
+
       final emailSent = await _sendEmailForInvite(invite, currentUser.email!);
-      
-      String feedbackMessage = 'Invito creato e inviato con successo!';
+
+      String feedbackMessage = l10n.smartTodoInviteCreatedAndSent;
       if (!emailSent) {
-          feedbackMessage = 'Invito creato, ma email non inviata (controlla login/permessi Google).';
+          feedbackMessage = l10n.smartTodoInviteCreatedNoEmail;
       }
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -335,11 +341,13 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
         _emailController.clear();
         _tabController.animateTo(1);
       }
-      
+
     } catch (e) {
       if (mounted) {
-         String msg = 'Errore: $e';
-         if (e.toString().contains('Esiste già')) msg = 'Utente già invitato.';
+         String msg = '${l10n.stateError}: $e';
+         if (e.toString().contains('Esiste già') || e.toString().contains('already')) {
+           msg = l10n.smartTodoUserAlreadyInvited;
+         }
          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
       }
     } finally {
