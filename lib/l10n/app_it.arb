@@ -788,7 +788,7 @@
   "participantCopySessionLink": "Copia link sessione",
   "participantInvitesTab": "Inviti",
   "participantSessionLink": "Link Sessione (condividi con i partecipanti)",
-  "participantAddDirect": "Aggiungi Partecipante Diretto",
+  "participantAddDirect": "Aggiungi Partecipante Diretto (es. voto palese)",
   "participantEmailRequired": "Email *",
   "participantEmailHint": "email@esempio.com",
   "participantNameHint": "Nome visualizzato",

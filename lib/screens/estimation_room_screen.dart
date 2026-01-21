@@ -1098,12 +1098,16 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             const Spacer(),
             if (_selectedSession!.isFacilitator(_currentUserEmail)) ...[
               // Aggiungi manualmente
-              IconButton(
-                icon: const Icon(Icons.add, size: 20),
+              ElevatedButton.icon(
                 onPressed: _showAddStoryDialog,
-                tooltip: l10n.estimationAddStory,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                icon: const Icon(Icons.add_task, size: 18, color: Colors.black),
+                label: Text(l10n.estimationAddStory, style: const TextStyle(color: Colors.black, fontSize: 13)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
               ),
             ],
           ],
@@ -1345,13 +1349,6 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         onPressed: _showCreateSessionDialog,
         icon: const Icon(Icons.add, color: Colors.black),
         label: Text(l10n.estimationNewSession, style: const TextStyle(color: Colors.black)),
-        backgroundColor: Colors.amber,
-      );
-    } else if (_selectedSession!.isFacilitator(_currentUserEmail)) {
-      return FloatingActionButton.extended(
-        onPressed: _showAddStoryDialog,
-        icon: const Icon(Icons.add_task, color: Colors.black),
-        label: Text(l10n.estimationAddStory, style: const TextStyle(color: Colors.black)),
         backgroundColor: Colors.amber,
       );
     }
@@ -2675,7 +2672,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.people, color: Colors.green),
+          const Icon(Icons.people, color: Colors.amber),
           const SizedBox(width: 8),
           Expanded(child: Text(l10n.participantManagement)),
           // Copia link
@@ -2695,9 +2692,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
             if (widget.isFacilitator)
               TabBar(
                 controller: _tabController,
-                labelColor: Colors.green,
+                labelColor: Colors.amber,
                 unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.green,
+                indicatorColor: Colors.amber,
                 tabs: [
                   Tab(
                     icon: const Icon(Icons.people, size: 18),
@@ -2768,13 +2765,13 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.amber.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                border: Border.all(color: Colors.amber.withOpacity(0.3)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.link, size: 18, color: Colors.blue),
+                  const Icon(Icons.link, size: 18, color: Colors.amber),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
@@ -2784,7 +2781,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                           l10n.participantSessionLink,
                           style: const TextStyle(
                             fontSize: 11,
-                            color: Colors.blue,
+                            color: Colors.amber,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -2812,7 +2809,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
             if (widget.isFacilitator) ...[
               Text(
                 l10n.participantAddDirect,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.amber),
               ),
               const SizedBox(height: 8),
               Row(
@@ -2856,7 +2853,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.how_to_vote, size: 16, color: Colors.green),
+                            const Icon(Icons.how_to_vote, size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(l10n.participantVoter),
                           ],
@@ -2867,7 +2864,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.visibility, size: 16, color: Colors.blue),
+                            const Icon(Icons.visibility, size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(l10n.participantObserver),
                           ],
@@ -2887,9 +2884,10 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                           )
-                        : const Icon(Icons.add),
+                        : const Icon(Icons.add, color: Colors.black),
+                    style: IconButton.styleFrom(backgroundColor: Colors.amber),
                     tooltip: l10n.actionAdd,
                   ),
                 ],
@@ -2905,7 +2903,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                 children: [
                   Text(
                     '${l10n.participants} (${participants.length})',
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.amber),
                   ),
                   const Spacer(),
                   Text(
@@ -2954,12 +2952,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                               margin: const EdgeInsets.only(left: 8),
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
+                                color: Colors.amber.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 l10n.participantYou,
-                                style: const TextStyle(fontSize: 10, color: Colors.green),
+                                style: const TextStyle(fontSize: 10, color: Colors.amber),
                               ),
                             ),
                         ],
@@ -3076,23 +3074,23 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.purple.withOpacity(0.05),
+            color: Colors.amber.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.purple.withOpacity(0.2)),
+            border: Border.all(color: Colors.amber.withOpacity(0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.send, size: 18, color: Colors.purple),
+                  const Icon(Icons.send, size: 18, color: Colors.amber),
                   const SizedBox(width: 8),
                   Text(
                     l10n.inviteSendNew,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
-                      color: Colors.purple,
+                      color: Colors.amber,
                     ),
                   ),
                 ],
@@ -3125,7 +3123,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.how_to_vote, size: 16, color: Colors.green),
+                            const Icon(Icons.how_to_vote, size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(l10n.participantVoter),
                           ],
@@ -3136,7 +3134,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.visibility, size: 16, color: Colors.blue),
+                            const Icon(Icons.visibility, size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(l10n.participantObserver),
                           ],
@@ -3166,8 +3164,8 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                         : const Icon(Icons.send, size: 18),
                     label: Text(l10n.inviteCreate),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.amber,
+                      foregroundColor: Colors.black,
                     ),
                   ),
                 ],

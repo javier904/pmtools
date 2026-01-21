@@ -1764,7 +1764,8 @@ class AppLocalizationsIt extends AppLocalizations {
       'Link Sessione (condividi con i partecipanti)';
 
   @override
-  String get participantAddDirect => 'Aggiungi Partecipante Diretto';
+  String get participantAddDirect =>
+      'Aggiungi Partecipante Diretto (es. voto palese)';
 
   @override
   String get participantEmailRequired => 'Email *';

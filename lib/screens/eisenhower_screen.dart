@@ -27,6 +27,7 @@ import '../widgets/eisenhower/matrix_grid_widget.dart';
 import '../widgets/eisenhower/export_to_smart_todo_dialog.dart';
 import '../widgets/eisenhower/export_to_sprint_dialog.dart';
 import '../widgets/eisenhower/export_to_estimation_dialog.dart';
+import '../widgets/eisenhower/invite_tab_widget.dart';
 import '../widgets/home/favorite_star.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
@@ -61,7 +62,7 @@ class EisenhowerScreen extends StatefulWidget {
   State<EisenhowerScreen> createState() => _EisenhowerScreenState();
 }
 
-class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBindingObserver {
+class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   final EisenhowerFirestoreService _firestoreService = EisenhowerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final EisenhowerInviteService _inviteService = EisenhowerInviteService();
@@ -86,6 +87,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   // Filtro archivio
   bool _showArchived = false;
 
+  // TabController per il side panel (Partecipanti/Inviti)
+  late TabController _sidePanelTabController;
+
   // ═══════════════════════════════════════════════════════════════════════════
   // REAL-TIME STREAMS & PRESENCE
   // ═══════════════════════════════════════════════════════════════════════════
@@ -106,6 +110,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _sidePanelTabController = TabController(length: 2, vsync: this);
     _setupWebBeforeUnload();
     // _loadData sarà chiamato in didChangeDependencies se non ci sono argomenti
   }
@@ -203,6 +208,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _sidePanelTabController.dispose();
     _cancelSubscriptions();
     _stopPresenceHeartbeat();
     super.dispose();
@@ -1350,6 +1356,74 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
   Widget _buildSidePanel() {
     final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // TabBar Partecipanti / Inviti
+        Container(
+          color: context.surfaceColor,
+          child: TabBar(
+            controller: _sidePanelTabController,
+            indicatorColor: AppColors.secondary,
+            labelColor: AppColors.secondary,
+            unselectedLabelColor: context.textSecondaryColor,
+            indicatorWeight: 2,
+            labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            unselectedLabelStyle: const TextStyle(fontSize: 13),
+            tabs: [
+              Tab(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.people, size: 16),
+                    const SizedBox(width: 6),
+                    Text(l10n.participants),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.mail_outline, size: 16),
+                    const SizedBox(width: 6),
+                    Text(l10n.participantInvitesTab),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Divider(height: 1, color: context.borderColor),
+
+        // TabBarView content
+        Expanded(
+          child: TabBarView(
+            controller: _sidePanelTabController,
+            children: [
+              // Tab 0: Partecipanti e Attività
+              _buildParticipantsTabContent(l10n),
+
+              // Tab 1: Inviti
+              EisenhowerInviteTabWidget(
+                matrixId: _selectedMatrix!.id,
+                matrixTitle: _selectedMatrix!.title,
+                isFacilitator: _isFacilitator,
+                onInviteAccepted: () {
+                  // Ricarica dati quando un invito viene accettato
+                  _loadActivities(_selectedMatrix!.id);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Tab content per Partecipanti e Attività
+  Widget _buildParticipantsTabContent(AppLocalizations l10n) {
     final unvotedActivities = _activities.unvoted;
     final votedCount = _activities.length - unvotedActivities.length;
 

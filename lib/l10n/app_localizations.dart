@@ -3373,7 +3373,7 @@ abstract class AppLocalizations {
   /// No description provided for @participantAddDirect.
   ///
   /// In it, this message translates to:
-  /// **'Aggiungi Partecipante Diretto'**
+  /// **'Aggiungi Partecipante Diretto (es. voto palese)'**
   String get participantAddDirect;
 
   /// No description provided for @participantEmailRequired.

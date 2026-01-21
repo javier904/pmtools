@@ -1,0 +1,162 @@
+# Estimation Room Permissions Implementation Plan
+
+The goal is to strictly enforce role-based permissions in the Estimation Room (Planning Poker), ensuring Observers are read-only, Voters can only vote, and Facilitators have full control.
+
+## User Roles & Permissions
+
+| Feature | Observer | Voter | Facilitator |
+| :--- | :---: | :---: | :---: |
+| **View Session/Stories** | ✅ | ✅ | ✅ |
+| **Vote on Stories** | ❌ | ✅ | ✅ |
+| **Reveal Votes** | ❌ | ❌ | ✅ |
+| **Reset/Revote** | ❌ | ❌ | ✅ |
+| **Set Final Estimate** | ❌ | ❌ | ✅ |
+| **Add/Edit/Delete Stories** | ❌ | ❌ | ✅ |
+| **Edit Session Settings** | ❌ | ❌ | ✅ |
+| **Manage Participants** | ❌ | ❌ | ✅ |
+| **Start/Stop/Skip Voting** | ❌ | ❌ | ✅ |
+| **Archive/Complete Session**| ❌ | ❌ | ✅ |
+
+## Proposed Changes
+
+### 0. TDD & Model Setup (New)
+- [ ] **Test File**: Create `test/models/planning_poker_permissions_test.dart`.
+- [ ] **Unit Tests**: Define test cases for `isFacilitator`, `canVote`, and email escaping before implementation.
+- [ ] **Goal**: Ensure logic is sound and regression-proof before tying it to UI/Backend.
+
+### 1. Firestore Rules (`firestore.rules`)
+- [ ] **Helper Functions**:
+    - Add `function isFacilitator(resource)` checking `resource.data.participants[userEmail().replace('.', '_DOT_')].role == 'facilitator'`.
+    - Add `function isVoter(resource)` checking role is `voter` OR `facilitator`.
+- [ ] **Sessions**:
+    - `match /planning_poker_sessions/{sessionId}`
+    - `update`: Allow if `isFacilitator(resource)` OR if updating only `participants.ME.isOnline` / `participants.ME.lastActivity`.
+- [ ] **Stories**:
+    - `match /stories/{storyId}`
+    - `create/delete`: Allow if `isFacilitator(get(sessionPath))`.
+    - `update`:
+        - Allow if `isFacilitator(get(sessionPath))` (Full access).
+        - Allow if `isVoter(get(sessionPath))` AND updating only `votes[userEmail()]` (Atomic vote check).
+- [ ] **CHECKPOINT 1 (Backend)**: Rules deployed. Verify denial of write for Observer (manual test via Facilitator privileges toggle).
+
+#### Acceptance Criteria
+- [ ] **Positive Test**: A **Facilitator** MUST be able to create, update, and delete stories, and update session settings (e.g., estimation mode).
+- [ ] **Positive Test**: A **Voter** MUST be able to update *only* their specific vote entry in `stories`.
+- [ ] **Negative Test**: Attempts by an **Observer** to write to `planning_poker_sessions` or `stories` MUST fail with `PERMISSION_DENIED`.
+- [ ] **Negative Test**: A **Voter** MUST NOT be able to modify anyone else's vote or session settings.
+- [ ] **Edge Case**: Updating `isOnline` status MUST be allowed for ALL authorized participants (including Observers).
+
+### 2. UI Updates (`lib/screens/estimation_room_screen.dart`)
+- [ ] **AppBar (`_buildAppBarActions`)**:
+    - Remove/Hide `_showSessionSettings`, `_showExportToSmartTodoDialog` buttons if `!session.isFacilitator`.
+- [ ] **Main Area (`_buildMainArea`)**:
+    - In `EstimationInputWrapper`, set `enabled: session.canVote(_currentUserEmail)`.
+    - If Observer, show "You are observing this session" message instead of input cards.
+- [ ] **Current Story (`_buildCurrentStoryCard`)**:
+    - Wrap Facilitator actions (Reveal, Skip) in `if (session.isFacilitator)`.
+- [ ] **Sidebar (`_buildStoriesList`)**:
+    - Wrap "Add Story" button in `if (session.isFacilitator)`.
+    - In `_buildStoryListItem`, hide `PopupMenuButton` options (Delete, Revote, Start Voting) for non-facilitators.
+- [ ] **CHECKPOINT 2 (UI)**: Visual verification. Sign in as Observer -> Ensure all admin buttons are hidden and inputs disabled.
+
+#### Acceptance Criteria
+#### Acceptance Criteria
+- [ ] **Observer View**: Voting input area shows "Observing" msg. NO admin buttons (Add Story, Reveal, Reset, Settings, Invite).
+- [ ] **Voter View**: Voting cards are interactive. Admin buttons are HIDDEN. Can see "Add Story" if allowed by policy (or hidden if strict). *Decision: Hidden for strict control.*
+- [ ] **Facilitator View**: All controls visible/interactive. Can see "Invite" button.
+- [ ] **Edge Case**: If a user's role changes from Voter -> Observer *during* a session, the UI MUST immediately reflect the change (input disappears, admin buttons vanish).
+
+### 3. Permissions Logic (`lib/models/planning_poker_session_model.dart`)
+- [ ] **Email Handling**:
+    - Add `static String escapeEmail(String email)` (replace `.` with `_DOT_`).
+    - Add `static String unescapeEmail(String key)`.
+- [ ] **Role Helpers**:
+    - Update `isFacilitator(String email)`: Check `participants[escapeEmail(email)]?.role == facilitator`. **CRITICAL**: Add fallback `|| email == createdBy` to prevent locking out creators of legacy sessions.
+    - Update `canVote(String email)`: Check `role == voter || role == facilitator`. Return `false` for Observers.
+- [ ] **Parsing**: Ensure `fromFirestore` uses `unescapeEmail` when parsing the participants map.
+- [ ] **CHECKPOINT 3 (Logic)**: Verify `canVote` returns false for a known Observer participant in the model unit test/check.
+
+#### Acceptance Criteria
+- [ ] `isFacilitator(email)` returns `true` for `role: facilitator` AND for session creator (legacy fallback).
+- [ ] `canVote(email)` returns `false` for `observer`, `true` for `voter` / `facilitator`.
+- [ ] `escapeEmail` replaces ALL dots with `_DOT_`. Case-insensitive handling checks (e.g., `User.Name@...` vs `user.name@...`).
+- [ ] **Robustness**: `fromFirestore` successfully parses legacy sessions (where `participants` might be a list or map without escaped keys) without crashing.
+
+### 4. Presence System (Online Status)
+- [ ] **Service (`PlanningPokerFirestoreService`)**:
+    - Add `updateParticipantOnlineStatus(sessionId, email, bool isOnline)`.
+- [ ] **Screen (`EstimationRoomScreen`)**:
+    - Add `Timer? _heartbeatTimer` in `initState`.
+    - Implement `_sendHeartbeat()` calling service every 60s.
+    - Implement `didChangeAppLifecycleState`: Call service with `isOnline: false` on `paused/detached`.
+- [ ] **CHECKPOINT 4 (Presence)**: Verify green dot appears/disappears when toggling `isOnline` via simple code change or running second instance.
+
+#### Acceptance Criteria
+#### Acceptance Criteria
+- [ ] `isOnline` in Firestore updates to `true` every heartbeat (e.g., 60s).
+- [ ] `lastActivity` timestamp updates with every heartbeat.
+- [ ] **Graceful Exit**: `isOnline` -> `false` on `AppLifecycleState.paused` / `detached`.
+- [ ] **Crash Resilience**: UI indicates user is "Offline" if `lastActivity` is older than threshold (e.g., 2 mins), even if `isOnline` flag is stuck on `true`.
+
+### 5. Invitation System
+- [ ] **New Widget**: Create `lib/widgets/estimation_room/participant_invite_dialog.dart` (copy & adapt from Eisenhower).
+- [ ] **Service (`PlanningPokerInviteService`)**:
+    - Create new service for managing invites collection (`planning_poker_invites`).
+    - Implement `createInvite` and `sendInviteEmail`.
+    - **Sync**: Ensure `createInvite` ALSO adds the email to `session.pendingEmails` so they appear in the UI immediately.
+- [ ] **Integration**:
+    - Add "Invite" button in `ParticipantListWidget` header (visible only to Facilitators).
+    - **InviteAggregator**: Update `InviteAggregatorService` to fetch and aggregate invites from `planning_poker_invites`.
+    - **Deep Link**: Ensure `InviteLandingScreen` correctly routes `InviteSourceType.estimationRoom`.
+    - **Gmail API**: Use the established client-side Gmail API pattern (as seen in `EisenhowerInviteService`) for sending emails.
+- [ ] **CHECKPOINT 5 (Invites)**: Send test invite. Verify email received and user appears in "Pending" list instantly.
+
+#### Acceptance Criteria
+#### Acceptance Criteria
+- [ ] Invite sent -> Email received by recipient.
+- [ ] Invite sent -> Recipient appears in `pendingEmails` list IMMEDIATELY.
+- [ ] **Duplicate Check**: detailed logic to prevent inviting `pending` or `active` users again.
+- [ ] **Validation**: Invalid emails are rejected by validatior before sending.
+
+### 6. Widgets & Real-time UI
+- [ ] **Results (`ResultsPanelWidget`)**:
+    - Hide "Rivota" button and "Select Final Estimate" section if `!isFacilitator`.
+- [ ] **Voting (`VotingBoardWidget`)**:
+    - Ensure revealed cards are shown to everyone once `story.isRevealed` is true (logic already likely there, verify stream sync).
+- [ ] **CHECKPOINT 6 (Integration)**: Full flow test (Start -> Vote -> Reveal -> Result) with 2 simulated users (Browser + Mobile).
+
+#### Acceptance Criteria
+#### Acceptance Criteria
+- [ ] **State Sync**: When Facilitator reveals, ALL users see results simultaneously.
+- [ ] **Late Joiner**: A user joining AFTER reveal sees the results immediately (not the voting cards).
+- [ ] **Revote**: "Rivota" clears votes and returns everyone to voting state.
+- [ ] **Voter Experience**: Voter sees their own selection highlighted before reveal.
+
+### 7. Localization & Documentation
+- [ ] **Localization**: Scan all modified files for hardcoded strings.
+    - [ ] Create new ARB keys in `app_en.arb` and `app_it.arb` for all new UI elements (invites, roles, error messages).
+    - [ ] Replace any found hardcoded strings with `AppLocalizations.of(context)!.key`.
+- [ ] **Documentation**: Update code documentation (doc comments) for:
+    - [ ] `PlanningPokerSessionModel` (permissions logic).
+    - [ ] `PlanningPokerFirestoreService` (rules and data flows).
+    - [ ] `firestore.rules` (comments explaining the new security logic).
+
+## Risk Analysis & Edge Cases
+
+| Risk | Impact | Mitigation Strategy |
+| :--- | :--- | :--- |
+| **App Crash / Force Kill** | `isOnline` stays `true` indefinitely. | UI will filter online users by comparing `lastActivity` with current time (`now - lastActivity < 2 mins`). The boolean `isOnline` is just a hint. |
+| **Role Change Mid-Vote** | User votes, then gets demoted to Observer. | `EstimationRoomScreen` listens to session stream. If `canVote` becomes false, input widget disappears immediately. Backend rule blocks subsequent vote attempts. |
+| **Backward Compatibility** | Old sessions have different data structure. | `fromFirestore` will support both old (`List` or raw keys) and new (`Map` with `_DOT_` keys) formats during the transition. |
+| **Firestore Costs** | Frequent heartbeats increase writes. | Heartbeat set to 60s (not 30s). UI considers user offline after 120s of inactivity. |
+| **Email Special Chars** | Emails with weird characters break Map keys. | `escapeEmail` will rigorously encode dots and potentially other forbidden chars if necessary (focus on dots for now). |
+| **Facilitator Drop-off** | Sole facilitator loses connection/leaves. | (Future) Implement "Claim Facilitator" logic if inactive > 5 mins. For now, multiple facilitators are allowed. |
+
+## Verification Plan
+- **Manual Verification**:
+    - **Crash Test**: Kill the app while "Online", verify status turns offline for others after timeout.
+    - **Role Switch**: Demote a user while their "Voting Sheet" is open.
+    - **Old Data**: Open an existing session created before these changes.
+    - **Language Check**: Switch language to ensure all new strings are translated correctly.
+- **Automated Tests**:
+    - Validate Firestore rules ensuring Observers cannot write.

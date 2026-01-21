@@ -1753,7 +1753,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get participantSessionLink => 'Session Link (share with participants)';
 
   @override
-  String get participantAddDirect => 'Add Direct Participant';
+  String get participantAddDirect =>
+      'Add Direct Participant (e.g. open voting)';
 
   @override
   String get participantEmailRequired => 'Email *';

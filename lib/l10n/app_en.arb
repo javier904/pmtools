@@ -789,7 +789,7 @@
   "participantCopySessionLink": "Copy session link",
   "participantInvitesTab": "Invites",
   "participantSessionLink": "Session Link (share with participants)",
-  "participantAddDirect": "Add Direct Participant",
+  "participantAddDirect": "Add Direct Participant (e.g. open voting)",
   "participantEmailRequired": "Email *",
   "participantEmailHint": "email@example.com",
   "participantNameHint": "Display name",
