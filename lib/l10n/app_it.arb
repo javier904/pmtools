@@ -275,7 +275,42 @@
   "eisenhowerResult": "RISULTATO",
   "eisenhowerAverage": "MEDIA",
   "eisenhowerVotesRevealed": "Voti Rivelati",
+  "eisenhowerNextActivity": "Prossima Attività",
   "eisenhowerNoVotesRecorded": "Nessun voto registrato",
+  "eisenhowerWaitingForStart": "In attesa",
+  "eisenhowerPreVotesTooltip": "Voti anticipati che verranno conteggiati quando il facilitatore avvia la votazione",
+  "eisenhowerObserverWaiting": "In attesa che il facilitatore avvii la votazione collettiva",
+  "eisenhowerPreVoteTooltip": "Esprimi il tuo voto in anticipo. Verrà conteggiato quando la votazione sarà avviata.",
+  "eisenhowerPreVote": "Pre-vota",
+  "eisenhowerPreVoted": "Hai pre-votato",
+  "eisenhowerStartVotingTooltip": "Avvia la sessione di votazione collettiva. I pre-voti esistenti verranno preservati.",
+  "eisenhowerResetVotingTooltip": "Resetta la votazione cancellando tutti i voti",
+  "eisenhowerObserverWaitingVotes": "Osservando la votazione in corso...",
+  "eisenhowerWaitingForAllVotes": "In attesa che tutti i partecipanti votino",
+  "eisenhowerRevealTooltipReady": "Tutti hanno votato! Clicca per rivelare i risultati.",
+  "eisenhowerRevealTooltipNotReady": "Mancano ancora {count} voti",
+  "@eisenhowerRevealTooltipNotReady": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVotingLocked": "Votazione chiusa",
+  "eisenhowerVotingLockedTooltip": "I voti sono stati rivelati. Non è più possibile votare su questa attività.",
+  "eisenhowerOnlineParticipants": "{online} di {total} partecipanti online",
+  "@eisenhowerOnlineParticipants": {
+    "placeholders": {
+      "online": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVoting": "Votazione",
+  "eisenhowerAllActivitiesVoted": "Tutte le attività sono state votate!",
   "estimationTitle": "Estimation Room",
   "estimationYourSessions": "Le tue sessioni",
   "estimationNoSessions": "Nessuna sessione creata",

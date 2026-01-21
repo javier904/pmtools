@@ -577,7 +577,75 @@ class AppLocalizationsFr extends AppLocalizations {
   String get eisenhowerVotesRevealed => 'Voti Rivelati';
 
   @override
+  String get eisenhowerNextActivity => 'Prossima Attività';
+
+  @override
   String get eisenhowerNoVotesRecorded => 'Nessun voto registrato';
+
+  @override
+  String get eisenhowerWaitingForStart => 'In attesa';
+
+  @override
+  String get eisenhowerPreVotesTooltip =>
+      'Voti anticipati che verranno conteggiati quando il facilitatore avvia la votazione';
+
+  @override
+  String get eisenhowerObserverWaiting =>
+      'In attesa che il facilitatore avvii la votazione collettiva';
+
+  @override
+  String get eisenhowerPreVoteTooltip =>
+      'Esprimi il tuo voto in anticipo. Verrà conteggiato quando la votazione sarà avviata.';
+
+  @override
+  String get eisenhowerPreVote => 'Pre-vota';
+
+  @override
+  String get eisenhowerPreVoted => 'Hai pre-votato';
+
+  @override
+  String get eisenhowerStartVotingTooltip =>
+      'Avvia la sessione di votazione collettiva. I pre-voti esistenti verranno preservati.';
+
+  @override
+  String get eisenhowerResetVotingTooltip =>
+      'Resetta la votazione cancellando tutti i voti';
+
+  @override
+  String get eisenhowerObserverWaitingVotes =>
+      'Osservando la votazione in corso...';
+
+  @override
+  String get eisenhowerWaitingForAllVotes =>
+      'In attesa che tutti i partecipanti votino';
+
+  @override
+  String get eisenhowerRevealTooltipReady =>
+      'Tutti hanno votato! Clicca per rivelare i risultati.';
+
+  @override
+  String eisenhowerRevealTooltipNotReady(int count) {
+    return 'Mancano ancora $count voti';
+  }
+
+  @override
+  String get eisenhowerVotingLocked => 'Votazione chiusa';
+
+  @override
+  String get eisenhowerVotingLockedTooltip =>
+      'I voti sono stati rivelati. Non è più possibile votare su questa attività.';
+
+  @override
+  String eisenhowerOnlineParticipants(int online, int total) {
+    return '$online di $total partecipanti online';
+  }
+
+  @override
+  String get eisenhowerVoting => 'Votazione';
+
+  @override
+  String get eisenhowerAllActivitiesVoted =>
+      'Tutte le attività sono state votate!';
 
   @override
   String get estimationTitle => 'Salle d\'Estimation';

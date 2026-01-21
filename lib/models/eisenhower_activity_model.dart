@@ -200,7 +200,12 @@ class EisenhowerActivityModel {
   }
 
   /// Quadrante calcolato dalla media dei voti
+  ///
+  /// IMPORTANTE: Ritorna null se l'attività non è ancora stata rivelata (isRevealed = false)
+  /// Questo impedisce che le attività vengano posizionate nel quadrante prima del reveal
   EisenhowerQuadrant? get quadrant {
+    // 🔧 FIX: Non mostrare quadrante se non è stato fatto reveal
+    if (!isRevealed) return null;
     if (!hasVotes) return null;
     if (_cachedQuadrant != null) return _cachedQuadrant!;
 
@@ -264,11 +269,23 @@ class EisenhowerActivityModel {
   }
 
   // ============================================================
-  // HELPER per Votazione Indipendente
+  // HELPER per Votazione Indipendente - Stati
   // ============================================================
 
-  /// Verifica se la votazione indipendente è in corso
-  bool get isIndependentVotingInProgress => isVotingActive && !isRevealed;
+  /// STATO 1: In attesa che il facilitatore avvii la votazione
+  /// L'attività non è ancora stata messa in votazione collettiva
+  bool get isWaitingForVoting => !isVotingActive && !isRevealed;
+
+  /// STATO 2: Votazione in corso (facilitatore ha avviato)
+  /// I voter possono votare, i voti sono nascosti fino al reveal
+  bool get isVotingInProgress => isVotingActive && !isRevealed;
+
+  /// STATO 3: Votazione completata e rivelata
+  /// Tutti i voti sono visibili, quadrante calcolato
+  bool get isVotingComplete => isRevealed;
+
+  /// Alias per retrocompatibilità
+  bool get isIndependentVotingInProgress => isVotingInProgress;
 
   /// Verifica se un partecipante ha votato (nella votazione indipendente)
   bool hasVoterReady(String email) => readyVoters.contains(email);

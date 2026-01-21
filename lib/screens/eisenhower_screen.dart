@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
+import '../models/eisenhower_participant_model.dart';
 import '../models/agile_enums.dart';
 import '../services/eisenhower_firestore_service.dart';
 import '../services/eisenhower_invite_service.dart';
@@ -71,7 +73,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   bool _isInit = false;
 
   bool _isDeepLink = false;
-  
+
   // Vista: 0 = Griglia, 1 = Grafico, 2 = Lista Priorità, 3 = RACI
   int _viewMode = 0;
 
@@ -80,6 +82,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   // Filtro archivio
   bool _showArchived = false;
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REAL-TIME STREAMS & PRESENCE
+  // ═══════════════════════════════════════════════════════════════════════════
+  StreamSubscription<List<EisenhowerActivityModel>>? _activitiesSubscription;
+  StreamSubscription<EisenhowerMatrixModel?>? _matrixSubscription;
+  Timer? _presenceHeartbeat;
+
+  /// Intervallo heartbeat per aggiornare lo stato online (30 secondi)
+  static const _heartbeatInterval = Duration(seconds: 30);
+
+  /// Soglia per considerare un utente offline (2 minuti senza heartbeat)
+  static const _offlineThreshold = Duration(minutes: 2);
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
@@ -138,12 +153,132 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _cancelSubscriptions();
+    _stopPresenceHeartbeat();
+    super.dispose();
+  }
+
+  /// Cancella tutte le subscription attive
+  void _cancelSubscriptions() {
+    _activitiesSubscription?.cancel();
+    _activitiesSubscription = null;
+    _matrixSubscription?.cancel();
+    _matrixSubscription = null;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PRESENCE MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Avvia il tracking della presenza per la matrice corrente
+  void _startPresenceTracking() {
+    if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
+
+    // Imposta subito online
+    _firestoreService.updateParticipantOnlineStatus(
+      _selectedMatrix!.id,
+      _currentUserEmail,
+      true,
+    );
+
+    // Avvia heartbeat periodico
+    _presenceHeartbeat?.cancel();
+    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) {
+      if (_selectedMatrix != null && mounted) {
+        _firestoreService.updateParticipantOnlineStatus(
+          _selectedMatrix!.id,
+          _currentUserEmail,
+          true,
+        );
+      }
+    });
+
+    print('🟢 Presence tracking started for ${_currentUserEmail}');
+  }
+
+  /// Ferma il tracking della presenza
+  void _stopPresenceHeartbeat() {
+    _presenceHeartbeat?.cancel();
+    _presenceHeartbeat = null;
+
+    // Imposta offline quando lascia la matrice
+    if (_selectedMatrix != null && _currentUserEmail.isNotEmpty) {
+      _firestoreService.updateParticipantOnlineStatus(
+        _selectedMatrix!.id,
+        _currentUserEmail,
+        false,
+      );
+      print('🔴 Presence tracking stopped for ${_currentUserEmail}');
+    }
+  }
+
+  /// Conta i partecipanti online (lastActivity < 2 minuti)
+  int _countOnlineParticipants() {
+    if (_selectedMatrix == null) return 0;
+    final now = DateTime.now();
+    return _selectedMatrix!.participants.values.where((p) {
+      if (p.lastActivity == null) return p.isOnline;
+      return now.difference(p.lastActivity!).inMinutes < _offlineThreshold.inMinutes;
+    }).length;
+  }
+
+  /// Gestisce l'uscita dalla matrice: ferma presenza e cancella subscription
+  void _leaveMatrix() {
+    _stopPresenceHeartbeat();
+    _cancelSubscriptions();
+    setState(() {
+      _selectedMatrix = null;
+      _activities = [];
+    });
+    print('👋 Left matrix - presence stopped, subscriptions cancelled');
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REAL-TIME STREAMS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Sottoscrive allo stream delle attività per aggiornamenti real-time
+  void _subscribeToActivities(String matrixId) {
+    _activitiesSubscription?.cancel();
+    _activitiesSubscription = _firestoreService.streamActivities(matrixId).listen(
+      (activities) {
+        if (mounted) {
+          setState(() => _activities = activities);
+        }
+      },
+      onError: (e) {
+        print('❌ Errore stream attività: $e');
+      },
+    );
+    print('📡 Subscribed to activities stream for matrix: $matrixId');
+  }
+
+  /// Sottoscrive allo stream della matrice per aggiornamenti partecipanti real-time
+  void _subscribeToMatrix(String matrixId) {
+    _matrixSubscription?.cancel();
+    _matrixSubscription = _firestoreService.streamMatrix(matrixId).listen(
+      (matrix) {
+        if (mounted && matrix != null) {
+          setState(() => _selectedMatrix = matrix);
+        }
+      },
+      onError: (e) {
+        print('❌ Errore stream matrice: $e');
+      },
+    );
+    print('📡 Subscribed to matrix stream: $matrixId');
+  }
+
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     try {
-      // Se c'è una matrice selezionata, ricarica le attività
+      // Se c'è una matrice selezionata, sottoscrivi agli stream
       if (_selectedMatrix != null) {
-        await _loadActivities(_selectedMatrix!.id);
+        _subscribeToActivities(_selectedMatrix!.id);
+        _subscribeToMatrix(_selectedMatrix!.id);
+        _startPresenceTracking();
       }
     } catch (e) {
       _showError('Errore caricamento dati: $e');
@@ -152,15 +287,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     }
   }
 
+  /// Carica le attività una volta (per compatibilità)
+  /// Preferire _subscribeToActivities per real-time
   Future<void> _loadActivities(String matrixId) async {
-    try {
-      final activities = await _firestoreService.getActivities(matrixId);
-      if (mounted) {
-        setState(() => _activities = activities);
-      }
-    } catch (e) {
-      _showError('Errore caricamento attività: $e');
-    }
+    // Usa lo stream invece del load one-shot
+    _subscribeToActivities(matrixId);
+    _subscribeToMatrix(matrixId);
+    _startPresenceTracking();
   }
 
   @override
@@ -171,10 +304,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       canPop: _selectedMatrix == null || _isDeepLink,
       onPopInvoked: (didPop) {
         if (didPop) return;
-        setState(() {
-          _selectedMatrix = null;
-          _activities = [];
-        });
+        _leaveMatrix();
       },
       child: Scaffold(
         backgroundColor: context.backgroundColor,
@@ -187,11 +317,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                if ((_isDeepLink || _selectedMatrix == null) && Navigator.of(context).canPop()) {
                  Navigator.of(context).pop();
                } else if (_selectedMatrix != null) {
-                 // Chiudi dettaglio
-                 setState(() {
-                   _selectedMatrix = null;
-                   _activities = [];
-                 });
+                 // Chiudi dettaglio - ferma presence e subscription
+                 _leaveMatrix();
                } else {
                  Navigator.of(context).pushReplacementNamed('/home');
                }
@@ -224,6 +351,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               const SizedBox(width: 16),
             ],
             if (_selectedMatrix != null) ...[
+              // ═══════════════════════════════════════════════════════════
+              // ONLINE PARTICIPANTS COUNTER
+              // ═══════════════════════════════════════════════════════════
+              _buildOnlineCounter(),
+              const SizedBox(width: 12),
               // ═══════════════════════════════════════════════════════════
               // EXPORT/INTEGRATION BUTTONS (solo Facilitatore)
               // ═══════════════════════════════════════════════════════════
@@ -313,10 +445,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
               TextButton.icon(
                 icon: Icon(Icons.arrow_back, size: 18, color: context.textPrimaryColor),
                 label: Text(l10n.eisenhowerBackToList, style: TextStyle(color: context.textPrimaryColor)),
-                onPressed: () => setState(() {
-                  _selectedMatrix = null;
-                  _activities = [];
-                }),
+                onPressed: _leaveMatrix,
               ),
             ],
           ],
@@ -683,6 +812,72 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   // DETTAGLIO MATRICE
   // ══════════════════════════════════════════════════════════════════════════
 
+  /// Widget che mostra il contatore dei partecipanti online
+  Widget _buildOnlineCounter() {
+    final onlineCount = _countOnlineParticipants();
+    final totalCount = _selectedMatrix?.participants.length ?? 0;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Tooltip(
+      message: l10n.eisenhowerOnlineParticipants(onlineCount, totalCount),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: onlineCount > 0
+              ? AppColors.success.withOpacity(0.15)
+              : context.surfaceVariantColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: onlineCount > 0
+                ? AppColors.success.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Pallino verde/grigio animato
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: onlineCount > 0 ? AppColors.success : Colors.grey,
+                boxShadow: onlineCount > 0 ? [
+                  BoxShadow(
+                    color: AppColors.success.withOpacity(0.5),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  ),
+                ] : null,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '$onlineCount/$totalCount',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: onlineCount > 0
+                    ? AppColors.success
+                    : context.textSecondaryColor,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.people,
+              size: 14,
+              color: onlineCount > 0
+                  ? AppColors.success
+                  : context.textSecondaryColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildViewToggleButton(int mode, IconData icon, String tooltip) {
     final isSelected = _viewMode == mode;
     return Tooltip(
@@ -746,8 +941,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 : MatrixGridWidget(
                     activities: _activities,
                     onActivityTap: _showActivityDetail,
-                    // Solo voter/facilitator possono votare
-                    onVoteTap: _canVote ? _submitIndependentVote : null,
+                    // Solo voter/facilitator possono votare su attività non rivelate
+                    onVoteTap: _canVote ? (activity) {
+                      if (_canVoteOnActivity(activity)) {
+                        _submitIndependentVote(activity);
+                      } else {
+                        _showError('Questa attività è già stata votata. Il facilitatore deve riaprire la votazione.');
+                      }
+                    } : null,
                     // Solo facilitator puo' cancellare
                     onDeleteTap: _isFacilitator ? _confirmDeleteActivity : null,
                   ),
@@ -1190,14 +1391,29 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                           textStyle: const TextStyle(fontSize: 12),
                         ),
                       ),
+                    // Pulsante Avvia Votazione (solo facilitatore, se ci sono attività da votare)
+                    if (_isFacilitator && unvotedActivities.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: () => _startSequentialVoting(unvotedActivities),
+                        icon: const Icon(Icons.play_circle_outline, size: 16),
+                        label: Text(l10n.eisenhowerStartVoting),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          textStyle: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 8),
                 ...unvotedActivities.map((activity) {
                   return UnvotedActivityCard(
                     activity: activity,
-                    // Solo voter/facilitator possono votare, facilitator puo' cancellare
-                    onVoteTap: _canVote ? () => _submitIndependentVote(activity) : null,
+                    // Solo voter/facilitator possono votare su attività non rivelate
+                    onVoteTap: _canVoteOnActivity(activity) ? () => _submitIndependentVote(activity) : null,
                     onDeleteTap: _isFacilitator ? () => _confirmDeleteActivity(activity) : null,
                   );
                 }),
@@ -1239,16 +1455,17 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   child: ActivityCardWidget(
                     activity: activity,
                     onTap: () => _showActivityDetail(activity),
-                    // Voter/Facilitator: vota per se stesso; Observer: nessuna azione
-                    onVoteTap: _canVote ? () => _submitIndependentVote(activity) : null,
+                    // Voter/Facilitator: vota per se stesso su attività non rivelate
+                    onVoteTap: _canVoteOnActivity(activity) ? () => _submitIndependentVote(activity) : null,
                     // Solo facilitatore puo' cancellare
                     onDeleteTap: _isFacilitator ? () => _confirmDeleteActivity(activity) : null,
-                    // Parametri per votazione indipendente
+                    // Parametri per votazione collettiva
                     currentUserEmail: _currentUserEmail,
                     isFacilitator: _isFacilitator,
+                    isObserver: _isObserver,
                     totalVoters: _selectedMatrix?.voterCount ?? 0,
                     onStartIndependentVoting: _isFacilitator ? () => _startIndependentVoting(activity) : null,
-                    onSubmitIndependentVote: _canVote ? () => _submitIndependentVote(activity) : null,
+                    onSubmitIndependentVote: _canVoteOnActivity(activity) ? () => _submitIndependentVote(activity) : null,
                     onRevealVotes: _isFacilitator ? () => _revealVotes(activity) : null,
                     onResetVoting: _isFacilitator ? () => _resetVotingSession(activity) : null,
                   ),
@@ -1925,9 +2142,127 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     }
   }
 
-  /// Gestisce il voto dell'utente corrente in una sessione indipendente
+  /// Avvia una sessione di votazione sequenziale su più attività
+  ///
+  /// Questo metodo:
+  /// 1. Avvia la votazione sulla prima attività della lista
+  /// 2. Mostra un dialog per votare
+  /// 3. Quando rivelata, passa automaticamente alla successiva
+  Future<void> _startSequentialVoting(List<EisenhowerActivityModel> activities) async {
+    if (_selectedMatrix == null || activities.isEmpty) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Verifica che ci siano partecipanti votanti
+    if (_selectedMatrix!.voterCount < 2) {
+      _showError(l10n.eisenhowerMinVotersRequired);
+      return;
+    }
+
+    // Prendi la prima attività non rivelata
+    final currentActivity = activities.first;
+
+    // Avvia la votazione se non è già attiva
+    if (!currentActivity.isVotingInProgress) {
+      try {
+        await _firestoreService.startVotingSession(_selectedMatrix!.id, currentActivity.id);
+        await _loadActivities(_selectedMatrix!.id);
+      } catch (e) {
+        _showError('${l10n.errorStartingVoting}: $e');
+        return;
+      }
+    }
+
+    // Mostra il dialog di votazione sequenziale
+    if (mounted) {
+      await _showSequentialVotingDialog(activities, 0);
+    }
+  }
+
+  /// Mostra il dialog per la votazione sequenziale
+  Future<void> _showSequentialVotingDialog(List<EisenhowerActivityModel> activities, int currentIndex) async {
+    if (_selectedMatrix == null || currentIndex >= activities.length) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Ricarica l'attività corrente per avere i dati aggiornati
+    final currentActivity = await _firestoreService.getActivity(
+      _selectedMatrix!.id,
+      activities[currentIndex].id,
+    );
+    if (currentActivity == null || !mounted) return;
+
+    final hasNextActivity = currentIndex + 1 < activities.length;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => _SequentialVotingDialog(
+        activity: currentActivity,
+        matrix: _selectedMatrix!,
+        currentIndex: currentIndex,
+        totalActivities: activities.length,
+        currentUserEmail: _currentUserEmail,
+        isFacilitator: _isFacilitator,
+        firestoreService: _firestoreService,
+        onVoteSubmitted: () async {
+          // Ricarica le attività
+          await _loadActivities(_selectedMatrix!.id);
+        },
+        onRevealed: () async {
+          // Chiudi il dialog corrente
+          Navigator.of(dialogContext).pop();
+
+          // Ricarica le attività
+          await _loadActivities(_selectedMatrix!.id);
+
+          // Se c'è una prossima attività, avvia la votazione su quella
+          if (hasNextActivity && mounted) {
+            final nextActivity = activities[currentIndex + 1];
+
+            // Avvia la votazione sulla prossima attività
+            try {
+              await _firestoreService.startVotingSession(_selectedMatrix!.id, nextActivity.id);
+              await _loadActivities(_selectedMatrix!.id);
+
+              // Mostra il dialog per la prossima attività
+              await _showSequentialVotingDialog(activities, currentIndex + 1);
+            } catch (e) {
+              _showError('Errore avvio prossima votazione: $e');
+            }
+          } else {
+            _showSuccess(l10n.eisenhowerAllActivitiesVoted);
+          }
+        },
+        onClose: () {
+          Navigator.of(dialogContext).pop();
+        },
+      ),
+    );
+  }
+
+  /// Verifica se l'utente corrente può votare su una specifica attività
+  ///
+  /// Condizioni:
+  /// - L'utente ha il ruolo di facilitatore o voter (non observer)
+  /// - L'attività NON è già stata rivelata (a meno che non sia stata riaperta)
+  bool _canVoteOnActivity(EisenhowerActivityModel activity) {
+    if (!_canVote) return false;
+    // Non si può votare su attività già rivelate
+    if (activity.isRevealed) return false;
+    return true;
+  }
+
+  /// Gestisce il voto dell'utente corrente
+  ///
+  /// Il voter può votare liberamente su qualsiasi attività non ancora rivelata,
+  /// senza dover aspettare che il facilitatore avvii una sessione di voto.
   Future<void> _submitIndependentVote(EisenhowerActivityModel activity) async {
     if (_selectedMatrix == null || _currentUserEmail == null) return;
+
+    // Blocca il voto su attività già rivelate
+    if (activity.isRevealed) {
+      _showError('Questa attività è già stata votata. Il facilitatore deve riaprire la votazione.');
+      return;
+    }
 
     // Ottieni il voto esistente se c'e'
     final existingVote = activity.getVote(_currentUserEmail!);
@@ -1972,6 +2307,16 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     try {
       await _firestoreService.revealVotes(_selectedMatrix!.id, activity.id);
 
+      // Ricarica le attività per trovare la prossima da votare
+      await _loadActivities(_selectedMatrix!.id);
+
+      // Trova la prossima attività non rivelata (per il pulsante "Prossima Attività")
+      final nextActivity = _activities.where((a) =>
+        a.id != activity.id &&
+        !a.isRevealed &&
+        a.hasVotes
+      ).firstOrNull;
+
       // Ricarica e mostra il dialog con i risultati
       final updated = await _firestoreService.getActivity(_selectedMatrix!.id, activity.id);
       if (updated != null && mounted) {
@@ -1979,10 +2324,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
           context: context,
           activity: updated,
           participants: _selectedMatrix!.participants,
+          hasNextActivity: nextActivity != null,
+          onNextActivity: nextActivity != null ? () {
+            // Quando l'utente clicca "Prossima Attività", rivela quella
+            _revealVotes(nextActivity);
+          } : null,
         );
       }
-
-      await _loadActivities(_selectedMatrix!.id);
     } catch (e) {
       _showError('Errore reveal voti: $e');
     }
@@ -2039,6 +2387,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
   bool get _canAddActivity {
     // canVote include sia facilitator che voter, escludendo observer
     return _canVote;
+  }
+
+  /// Verifica se l'utente corrente e' un observer (solo visualizzazione)
+  bool get _isObserver {
+    if (_selectedMatrix == null || _currentUserEmail == null) return false;
+    return _selectedMatrix!.isObserver(_currentUserEmail!);
   }
 
   Future<void> _confirmDeleteMatrix(EisenhowerMatrixModel matrix) async {
@@ -2107,6 +2461,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   Future<void> _showActivityDetail(EisenhowerActivityModel activity) async {
     final l10n = AppLocalizations.of(context)!;
+    final myVote = _currentUserEmail != null ? activity.getVote(_currentUserEmail!) : null;
 
     await showDialog(
       context: context,
@@ -2121,7 +2476,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 Text(activity.description),
                 const SizedBox(height: 16),
               ],
-              if (activity.hasVotes) ...[
+              // Se l'attività è stata rivelata, mostra tutti i voti e il quadrante
+              if (activity.isRevealed && activity.hasVotes) ...[
                 const Divider(),
                 const SizedBox(height: 8),
                 Text(
@@ -2134,16 +2490,50 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 const SizedBox(height: 12),
                 Text(l10n.eisenhowerVotesLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                 ...activity.votes.entries.map((e) {
+                  // Unescape l'email e cerca il partecipante
+                  final unescapedEmail = EisenhowerParticipantModel.unescapeEmail(e.key).toLowerCase();
+                  final participant = _selectedMatrix?.participants[unescapedEmail];
+                  final voterName = participant?.name ?? unescapedEmail.split('@').first;
                   return Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '- ${e.key}: U=${e.value.urgency}, I=${e.value.importance}',
+                      '- $voterName: U=${e.value.urgency}, I=${e.value.importance}',
                       style: const TextStyle(fontSize: 13),
                     ),
                   );
                 }),
-              ] else
+              ]
+              // Se non rivelata, mostra solo il proprio voto (se esiste)
+              else if (myVote != null) ...[
+                const Divider(),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Il tuo voto: U=${myVote.urgency}, I=${myVote.importance}',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'I voti saranno visibili quando il facilitatore farà "Rivela voti"',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
+                ),
+              ]
+              else ...[
                 Text(l10n.eisenhowerNoVotesYet),
+              ],
             ],
           ),
         ),
@@ -2152,14 +2542,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.actionClose),
           ),
-          // Pulsante voto solo per voter/facilitator
-          if (_canVote)
+          // Pulsante voto solo per voter/facilitator su attività non rivelate
+          if (_canVoteOnActivity(activity))
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
                 _submitIndependentVote(activity);
               },
-              child: Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
+              child: Text(myVote != null ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
             ),
         ],
       ),
@@ -2466,6 +2856,306 @@ class _ActivityFormDialogState extends State<_ActivityFormDialog> {
           },
           child: Text(l10n.actionAdd),
         ),
+      ],
+    );
+  }
+}
+
+/// Dialog per la votazione sequenziale di attività
+class _SequentialVotingDialog extends StatefulWidget {
+  final EisenhowerActivityModel activity;
+  final EisenhowerMatrixModel matrix;
+  final int currentIndex;
+  final int totalActivities;
+  final String? currentUserEmail;
+  final bool isFacilitator;
+  final EisenhowerFirestoreService firestoreService;
+  final VoidCallback onVoteSubmitted;
+  final VoidCallback onRevealed;
+  final VoidCallback onClose;
+
+  const _SequentialVotingDialog({
+    required this.activity,
+    required this.matrix,
+    required this.currentIndex,
+    required this.totalActivities,
+    required this.currentUserEmail,
+    required this.isFacilitator,
+    required this.firestoreService,
+    required this.onVoteSubmitted,
+    required this.onRevealed,
+    required this.onClose,
+  });
+
+  @override
+  State<_SequentialVotingDialog> createState() => _SequentialVotingDialogState();
+}
+
+class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
+  EisenhowerActivityModel? _currentActivity;
+  StreamSubscription<EisenhowerActivityModel?>? _activitySubscription;
+  bool _isRevealing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentActivity = widget.activity;
+    _subscribeToActivity();
+  }
+
+  void _subscribeToActivity() {
+    _activitySubscription?.cancel();
+    _activitySubscription = widget.firestoreService
+        .streamActivity(widget.matrix.id, widget.activity.id)
+        .listen((activity) {
+      if (mounted && activity != null) {
+        setState(() => _currentActivity = activity);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _activitySubscription?.cancel();
+    super.dispose();
+  }
+
+  bool get _hasCurrentUserVoted {
+    if (widget.currentUserEmail == null || _currentActivity == null) return false;
+    final escapedEmail = EisenhowerParticipantModel.escapeEmail(widget.currentUserEmail!);
+    return _currentActivity!.votes.containsKey(escapedEmail) ||
+           _currentActivity!.votes.containsKey(widget.currentUserEmail!);
+  }
+
+  EisenhowerVote? get _currentUserVote {
+    if (widget.currentUserEmail == null || _currentActivity == null) return null;
+    final escapedEmail = EisenhowerParticipantModel.escapeEmail(widget.currentUserEmail!);
+    return _currentActivity!.votes[escapedEmail] ?? _currentActivity!.votes[widget.currentUserEmail!];
+  }
+
+  int get _totalExpectedVoters => widget.matrix.voterCount;
+
+  bool get _areAllVotersReady {
+    if (_currentActivity == null) return false;
+    return _currentActivity!.readyVoters.length >= _totalExpectedVoters;
+  }
+
+  Future<void> _submitVote() async {
+    if (_currentActivity == null || widget.currentUserEmail == null) return;
+
+    final vote = await IndependentVoteDialog.show(
+      context: context,
+      activity: _currentActivity!,
+      voterEmail: widget.currentUserEmail!,
+      voterName: widget.currentUserEmail!.split('@').first,
+      existingVote: _currentUserVote,
+    );
+
+    if (vote != null) {
+      await widget.firestoreService.submitBlindedVote(
+        matrixId: widget.matrix.id,
+        activityId: _currentActivity!.id,
+        voterEmail: widget.currentUserEmail!,
+        vote: vote,
+      );
+      await widget.firestoreService.markVoterReady(
+        matrixId: widget.matrix.id,
+        activityId: _currentActivity!.id,
+        voterEmail: widget.currentUserEmail!,
+      );
+      widget.onVoteSubmitted();
+    }
+  }
+
+  Future<void> _revealVotes() async {
+    if (_currentActivity == null || !widget.isFacilitator) return;
+
+    setState(() => _isRevealing = true);
+
+    try {
+      await widget.firestoreService.revealVotes(widget.matrix.id, _currentActivity!.id);
+      widget.onRevealed();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore reveal: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isRevealing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final readyCount = _currentActivity?.readyVoters.length ?? 0;
+
+    return AlertDialog(
+      title: Row(
+        children: [
+          const Icon(Icons.how_to_vote, color: Colors.blue),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${l10n.eisenhowerVoting} (${widget.currentIndex + 1}/${widget.totalActivities})',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  _currentActivity?.title ?? '',
+                  style: TextStyle(fontSize: 13, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: 400,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Descrizione attività
+            if (_currentActivity?.description.isNotEmpty ?? false) ...[
+              Text(
+                _currentActivity!.description,
+                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // Progress bar
+            Row(
+              children: [
+                Text(
+                  l10n.eisenhowerVotedParticipants(readyCount, _totalExpectedVoters),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+                const Spacer(),
+                if (_areAllVotersReady)
+                  const Icon(Icons.check_circle, color: Colors.green, size: 16),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: _totalExpectedVoters > 0 ? readyCount / _totalExpectedVoters : 0.0,
+                minHeight: 8,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation(
+                  _areAllVotersReady ? Colors.green : Colors.blue,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Stato del voto dell'utente
+            if (_hasCurrentUserVoted) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.eisenhowerVotedSuccess,
+                            style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.w600),
+                          ),
+                          if (_currentUserVote != null)
+                            Text(
+                              'U:${_currentUserVote!.urgency} I:${_currentUserVote!.importance}',
+                              style: TextStyle(fontSize: 12, color: Colors.green[600]),
+                            ),
+                        ],
+                      ),
+                    ),
+                    // Pulsante per modificare il voto
+                    TextButton(
+                      onPressed: _submitVote,
+                      child: Text(l10n.actionEdit),
+                    ),
+                  ],
+                ),
+              ),
+            ] else ...[
+              // Pulsante per votare
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: _submitVote,
+                  icon: const Icon(Icons.how_to_vote),
+                  label: Text(l10n.eisenhowerVoteSubmit),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+
+            // Messaggio per il facilitatore
+            if (widget.isFacilitator && !_areAllVotersReady) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.hourglass_empty, color: Colors.orange, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.eisenhowerWaitingForAllVotes,
+                        style: TextStyle(color: Colors.orange[700], fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: widget.onClose,
+          child: Text(l10n.actionClose),
+        ),
+        // Pulsante Rivela (solo facilitatore, solo se tutti hanno votato)
+        if (widget.isFacilitator)
+          ElevatedButton.icon(
+            onPressed: _areAllVotersReady && !_isRevealing ? _revealVotes : null,
+            icon: _isRevealing
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.visibility),
+            label: Text(l10n.eisenhowerRevealVotes),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _areAllVotersReady ? Colors.green : Colors.grey,
+              foregroundColor: Colors.white,
+            ),
+          ),
       ],
     );
   }

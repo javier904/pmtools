@@ -575,7 +575,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eisenhowerVotesRevealed => 'Votes Revealed';
 
   @override
+  String get eisenhowerNextActivity => 'Next Activity';
+
+  @override
   String get eisenhowerNoVotesRecorded => 'No votes recorded';
+
+  @override
+  String get eisenhowerWaitingForStart => 'Waiting';
+
+  @override
+  String get eisenhowerPreVotesTooltip =>
+      'Early votes that will be counted when the facilitator starts voting';
+
+  @override
+  String get eisenhowerObserverWaiting =>
+      'Waiting for the facilitator to start collective voting';
+
+  @override
+  String get eisenhowerPreVoteTooltip =>
+      'Cast your vote early. It will be counted when voting starts.';
+
+  @override
+  String get eisenhowerPreVote => 'Pre-vote';
+
+  @override
+  String get eisenhowerPreVoted => 'Pre-voted';
+
+  @override
+  String get eisenhowerStartVotingTooltip =>
+      'Start collective voting session. Existing pre-votes will be preserved.';
+
+  @override
+  String get eisenhowerResetVotingTooltip =>
+      'Reset voting by deleting all votes';
+
+  @override
+  String get eisenhowerObserverWaitingVotes =>
+      'Observing the voting session...';
+
+  @override
+  String get eisenhowerWaitingForAllVotes =>
+      'Waiting for all participants to vote';
+
+  @override
+  String get eisenhowerRevealTooltipReady =>
+      'Everyone has voted! Click to reveal results.';
+
+  @override
+  String eisenhowerRevealTooltipNotReady(int count) {
+    return '$count votes still missing';
+  }
+
+  @override
+  String get eisenhowerVotingLocked => 'Voting closed';
+
+  @override
+  String get eisenhowerVotingLockedTooltip =>
+      'Votes have been revealed. Voting is no longer possible for this activity.';
+
+  @override
+  String eisenhowerOnlineParticipants(int online, int total) {
+    return '$online of $total participants online';
+  }
+
+  @override
+  String get eisenhowerVoting => 'Voting';
+
+  @override
+  String get eisenhowerAllActivitiesVoted => 'All activities have been voted!';
 
   @override
   String get estimationTitle => 'Estimation Room';

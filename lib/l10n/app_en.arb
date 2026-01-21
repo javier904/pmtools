@@ -275,7 +275,42 @@
   "eisenhowerResult": "RESULT",
   "eisenhowerAverage": "AVERAGE",
   "eisenhowerVotesRevealed": "Votes Revealed",
+  "eisenhowerNextActivity": "Next Activity",
   "eisenhowerNoVotesRecorded": "No votes recorded",
+  "eisenhowerWaitingForStart": "Waiting",
+  "eisenhowerPreVotesTooltip": "Early votes that will be counted when the facilitator starts voting",
+  "eisenhowerObserverWaiting": "Waiting for the facilitator to start collective voting",
+  "eisenhowerPreVoteTooltip": "Cast your vote early. It will be counted when voting starts.",
+  "eisenhowerPreVote": "Pre-vote",
+  "eisenhowerPreVoted": "Pre-voted",
+  "eisenhowerStartVotingTooltip": "Start collective voting session. Existing pre-votes will be preserved.",
+  "eisenhowerResetVotingTooltip": "Reset voting by deleting all votes",
+  "eisenhowerObserverWaitingVotes": "Observing the voting session...",
+  "eisenhowerWaitingForAllVotes": "Waiting for all participants to vote",
+  "eisenhowerRevealTooltipReady": "Everyone has voted! Click to reveal results.",
+  "eisenhowerRevealTooltipNotReady": "{count} votes still missing",
+  "@eisenhowerRevealTooltipNotReady": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVotingLocked": "Voting closed",
+  "eisenhowerVotingLockedTooltip": "Votes have been revealed. Voting is no longer possible for this activity.",
+  "eisenhowerOnlineParticipants": "{online} of {total} participants online",
+  "@eisenhowerOnlineParticipants": {
+    "placeholders": {
+      "online": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVoting": "Voting",
+  "eisenhowerAllActivitiesVoted": "All activities have been voted!",
   "estimationTitle": "Estimation Room",
   "estimationYourSessions": "Your sessions",
   "estimationNoSessions": "No sessions created",

@@ -330,6 +330,24 @@ class EisenhowerMatrixModel {
     return email.toLowerCase() == createdBy.toLowerCase();
   }
 
+  /// Verifica se un utente è un observer (non può votare)
+  ///
+  /// Un observer è un partecipante con ruolo observer esplicito.
+  /// Il creator e gli utenti non in lista non sono mai observer.
+  bool isObserver(String email) {
+    final normalizedEmail = email.toLowerCase();
+
+    // Cerca il partecipante (case-insensitive)
+    for (final entry in participants.entries) {
+      if (entry.key.toLowerCase() == normalizedEmail) {
+        return entry.value.role == EisenhowerParticipantRole.observer;
+      }
+    }
+
+    // Non trovato nella lista: non è observer (potrebbe essere creator)
+    return false;
+  }
+
   /// Partecipanti online
   List<EisenhowerParticipantModel> get onlineParticipants =>
       participants.values.where((p) => p.isOnline).toList();

@@ -786,32 +786,45 @@ class EisenhowerFirestoreService {
   // VOTAZIONE INDIPENDENTE - Session Management
   // ============================================================
 
-  /// Avvia una sessione di votazione indipendente su un'attivita'
+  /// Avvia una sessione di votazione collettiva su un'attivita'
   ///
   /// [matrixId] - ID della matrice
   /// [activityId] - ID dell'attivita'
   ///
-  /// Imposta isVotingActive=true e resetta i voti precedenti
+  /// Imposta isVotingActive=true e PRESERVA i voti pre-esistenti.
+  /// I votanti che hanno gia' votato vengono automaticamente aggiunti a readyVoters.
+  /// Nasconde i valori aggregati fino al reveal.
   Future<bool> startVotingSession(String matrixId, String activityId) async {
     try {
+      // Prima ottieni l'attivita' per vedere se ci sono gia' voti
+      final activity = await getActivity(matrixId, activityId);
+
+      // Raccogli le email dei votanti che hanno gia' votato (pre-voti)
+      final List<String> preVoters = activity?.votes.keys.toList() ?? [];
+
+      print('🗳️ Avvio votazione - Pre-voti esistenti: ${preVoters.length}');
+
       await _activitiesRef(matrixId).doc(activityId).update({
         'isVotingActive': true,
         'isRevealed': false,
         'votingStartedAt': Timestamp.fromDate(DateTime.now()),
         'revealedAt': null,
-        'readyVoters': [],
-        'votes': {}, // Reset voti precedenti
+        // Sincronizza readyVoters con chi ha gia' votato
+        'readyVoters': preVoters,
+        // NON resetta i voti! Preserva i pre-voti esistenti
+        // 'votes': {}, // ❌ RIMOSSO - non cancellare i pre-voti
+        // Nasconde gli aggregati fino al reveal (PMI best practice)
         'aggregatedUrgency': 0,
         'aggregatedImportance': 0,
         'quadrant': null,
-        'voteCount': 0,
+        'voteCount': 0, // Il count reale sara' calcolato al reveal
       });
 
       await _matricesRef.doc(matrixId).update({
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
-      print('✅ Sessione votazione avviata per attivita: $activityId');
+      print('✅ Sessione votazione avviata per attivita: $activityId (${preVoters.length} pre-voti preservati)');
       return true;
     } catch (e) {
       print('❌ Errore startVotingSession: $e');

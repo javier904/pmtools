@@ -1170,11 +1170,119 @@ abstract class AppLocalizations {
   /// **'Voti Rivelati'**
   String get eisenhowerVotesRevealed;
 
+  /// No description provided for @eisenhowerNextActivity.
+  ///
+  /// In it, this message translates to:
+  /// **'Prossima Attività'**
+  String get eisenhowerNextActivity;
+
   /// No description provided for @eisenhowerNoVotesRecorded.
   ///
   /// In it, this message translates to:
   /// **'Nessun voto registrato'**
   String get eisenhowerNoVotesRecorded;
+
+  /// No description provided for @eisenhowerWaitingForStart.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa'**
+  String get eisenhowerWaitingForStart;
+
+  /// No description provided for @eisenhowerPreVotesTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Voti anticipati che verranno conteggiati quando il facilitatore avvia la votazione'**
+  String get eisenhowerPreVotesTooltip;
+
+  /// No description provided for @eisenhowerObserverWaiting.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa che il facilitatore avvii la votazione collettiva'**
+  String get eisenhowerObserverWaiting;
+
+  /// No description provided for @eisenhowerPreVoteTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Esprimi il tuo voto in anticipo. Verrà conteggiato quando la votazione sarà avviata.'**
+  String get eisenhowerPreVoteTooltip;
+
+  /// No description provided for @eisenhowerPreVote.
+  ///
+  /// In it, this message translates to:
+  /// **'Pre-vota'**
+  String get eisenhowerPreVote;
+
+  /// No description provided for @eisenhowerPreVoted.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai pre-votato'**
+  String get eisenhowerPreVoted;
+
+  /// No description provided for @eisenhowerStartVotingTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvia la sessione di votazione collettiva. I pre-voti esistenti verranno preservati.'**
+  String get eisenhowerStartVotingTooltip;
+
+  /// No description provided for @eisenhowerResetVotingTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Resetta la votazione cancellando tutti i voti'**
+  String get eisenhowerResetVotingTooltip;
+
+  /// No description provided for @eisenhowerObserverWaitingVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'Osservando la votazione in corso...'**
+  String get eisenhowerObserverWaitingVotes;
+
+  /// No description provided for @eisenhowerWaitingForAllVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa che tutti i partecipanti votino'**
+  String get eisenhowerWaitingForAllVotes;
+
+  /// No description provided for @eisenhowerRevealTooltipReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti hanno votato! Clicca per rivelare i risultati.'**
+  String get eisenhowerRevealTooltipReady;
+
+  /// No description provided for @eisenhowerRevealTooltipNotReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Mancano ancora {count} voti'**
+  String eisenhowerRevealTooltipNotReady(int count);
+
+  /// No description provided for @eisenhowerVotingLocked.
+  ///
+  /// In it, this message translates to:
+  /// **'Votazione chiusa'**
+  String get eisenhowerVotingLocked;
+
+  /// No description provided for @eisenhowerVotingLockedTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'I voti sono stati rivelati. Non è più possibile votare su questa attività.'**
+  String get eisenhowerVotingLockedTooltip;
+
+  /// No description provided for @eisenhowerOnlineParticipants.
+  ///
+  /// In it, this message translates to:
+  /// **'{online} di {total} partecipanti online'**
+  String eisenhowerOnlineParticipants(int online, int total);
+
+  /// No description provided for @eisenhowerVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Votazione'**
+  String get eisenhowerVoting;
+
+  /// No description provided for @eisenhowerAllActivitiesVoted.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le attività sono state votate!'**
+  String get eisenhowerAllActivitiesVoted;
 
   /// No description provided for @estimationTitle.
   ///
