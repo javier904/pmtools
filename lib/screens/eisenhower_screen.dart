@@ -13,7 +13,7 @@ import '../themes/app_colors.dart';
 import '../widgets/eisenhower/matrix_search_widget.dart';
 import '../widgets/eisenhower/vote_reveal_widget.dart';
 import '../widgets/eisenhower/raci_matrix_widget.dart';
-import '../widgets/eisenhower/vote_collection_dialog.dart';
+// VoteCollectionDialog rimosso - ora si usa solo votazione indipendente
 import '../widgets/eisenhower/activity_card_widget.dart';
 import '../widgets/eisenhower/participant_invite_dialog.dart';
 import '../widgets/eisenhower/independent_vote_dialog.dart';
@@ -225,38 +225,38 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             ],
             if (_selectedMatrix != null) ...[
               // ═══════════════════════════════════════════════════════════
-              // EXPORT/INTEGRATION BUTTONS (left side)
+              // EXPORT/INTEGRATION BUTTONS (solo Facilitatore)
               // ═══════════════════════════════════════════════════════════
-              // Export to Smart Todo
-              IconButton(
-                icon: const Icon(Icons.check_circle_outline_rounded),
-                tooltip: l10n.exportFromEisenhower,
-                onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
-              ),
-              // Export to Sprint (Agile Process Manager)
-              IconButton(
-                icon: const Icon(Icons.rocket_launch),
-                tooltip: l10n.exportToSprint,
-                onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
-              ),
-              // Export to Estimation Room
-              IconButton(
-                icon: const Icon(Icons.casino),
-                tooltip: l10n.exportToEstimation,
-                onPressed: _activities.isNotEmpty ? _showExportToEstimationDialog : null,
-              ),
+              if (_isFacilitator) ...[
+                // Export to Smart Todo
+                IconButton(
+                  icon: const Icon(Icons.check_circle_outline_rounded),
+                  tooltip: l10n.exportFromEisenhower,
+                  onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
+                ),
+                // Export to Sprint (Agile Process Manager)
+                IconButton(
+                  icon: const Icon(Icons.rocket_launch),
+                  tooltip: l10n.exportToSprint,
+                  onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
+                ),
+                // Export to Estimation Room
+                IconButton(
+                  icon: const Icon(Icons.casino),
+                  tooltip: l10n.exportToEstimation,
+                  onPressed: _activities.isNotEmpty ? _showExportToEstimationDialog : null,
+                ),
+                // Separator
+                const SizedBox(width: 8),
+                Container(
+                  width: 1,
+                  height: 24,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 8),
+              ],
               // ═══════════════════════════════════════════════════════════
-              // SEPARATOR
-              // ═══════════════════════════════════════════════════════════
-              const SizedBox(width: 8),
-              Container(
-                width: 1,
-                height: 24,
-                color: Colors.grey,
-              ),
-              const SizedBox(width: 8),
-              // ═══════════════════════════════════════════════════════════
-              // PAGE FUNCTIONALITY BUTTONS (right side)
+              // PAGE FUNCTIONALITY BUTTONS (tutti i ruoli)
               // ═══════════════════════════════════════════════════════════
               // Toggle viste (Griglia / Grafico / Lista)
               Container(
@@ -275,33 +275,38 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   ],
                 ),
               ),
-              // Export Google Sheets
-              IconButton(
-                icon: _isExporting
-                    ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: context.textPrimaryColor,
-                        ),
-                      )
-                    : const Icon(Icons.upload_file),
-                tooltip: l10n.eisenhowerExportSheets,
-                onPressed: _isExporting ? null : _exportToGoogleSheets,
-              ),
-              // Invita partecipanti
-              IconButton(
-                icon: const Icon(Icons.person_add),
-                tooltip: l10n.eisenhowerInviteParticipants,
-                onPressed: _showInviteDialog,
-              ),
-              // Impostazioni matrice
-              IconButton(
-                icon: const Icon(Icons.settings),
-                tooltip: l10n.eisenhowerMatrixSettings,
-                onPressed: _showMatrixSettings,
-              ),
+              // ═══════════════════════════════════════════════════════════
+              // MANAGEMENT BUTTONS (solo Facilitatore)
+              // ═══════════════════════════════════════════════════════════
+              if (_isFacilitator) ...[
+                // Export Google Sheets
+                IconButton(
+                  icon: _isExporting
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: context.textPrimaryColor,
+                          ),
+                        )
+                      : const Icon(Icons.upload_file),
+                  tooltip: l10n.eisenhowerExportSheets,
+                  onPressed: _isExporting ? null : _exportToGoogleSheets,
+                ),
+                // Invita partecipanti
+                IconButton(
+                  icon: const Icon(Icons.person_add),
+                  tooltip: l10n.eisenhowerInviteParticipants,
+                  onPressed: _showInviteDialog,
+                ),
+                // Impostazioni matrice
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  tooltip: l10n.eisenhowerMatrixSettings,
+                  onPressed: _showMatrixSettings,
+                ),
+              ],
               const SizedBox(width: 8),
               // Torna alla lista
               if (!_isDeepLink) // Mostra solo se NON è deep link, altrimenti è back generale
@@ -741,8 +746,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 : MatrixGridWidget(
                     activities: _activities,
                     onActivityTap: _showActivityDetail,
-                    onVoteTap: _showVoteDialog,
-                    onDeleteTap: _confirmDeleteActivity,
+                    // Solo voter/facilitator possono votare
+                    onVoteTap: _canVote ? _submitIndependentVote : null,
+                    // Solo facilitator puo' cancellare
+                    onDeleteTap: _isFacilitator ? _confirmDeleteActivity : null,
                   ),
           ),
         ),
@@ -991,42 +998,47 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              // Azioni
-              PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert, color: context.textTertiaryColor),
-                onSelected: (value) {
-                  switch (value) {
-                    case 'vote':
-                      _showVoteDialog(activity);
-                      break;
-                    case 'delete':
-                      _confirmDeleteActivity(activity);
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'vote',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.how_to_vote, size: 18, color: AppColors.secondary),
-                        const SizedBox(width: 8),
-                        Text(hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.delete, size: 18, color: AppColors.error),
-                        const SizedBox(width: 8),
-                        Text(l10n.actionDelete, style: const TextStyle(color: AppColors.error)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              // Azioni (mostra solo se ci sono azioni disponibili)
+              if (_canVote || _isFacilitator)
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: context.textTertiaryColor),
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'vote':
+                        _submitIndependentVote(activity);
+                        break;
+                      case 'delete':
+                        _confirmDeleteActivity(activity);
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    // Voto solo per voter/facilitator
+                    if (_canVote)
+                      PopupMenuItem(
+                        value: 'vote',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.how_to_vote, size: 18, color: AppColors.secondary),
+                            const SizedBox(width: 8),
+                            Text(hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
+                          ],
+                        ),
+                      ),
+                    // Delete solo per facilitator
+                    if (_isFacilitator)
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.delete, size: 18, color: AppColors.error),
+                            const SizedBox(width: 8),
+                            Text(l10n.actionDelete, style: const TextStyle(color: AppColors.error)),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -1074,30 +1086,53 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                     ),
                   ),
                   const Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
-                    onPressed: _showMatrixSettings,
-                    tooltip: l10n.eisenhowerEditParticipants,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                  ),
+                  // Solo facilitatore puo' modificare i partecipanti
+                  if (_isFacilitator)
+                    IconButton(
+                      icon: Icon(Icons.edit, size: 16, color: context.textSecondaryColor),
+                      onPressed: _showMatrixSettings,
+                      tooltip: l10n.eisenhowerEditParticipants,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
-                children: _selectedMatrix!.participants.values.map((p) {
+                children: _selectedMatrix!.participants.entries.map((entry) {
+                  final p = entry.value;
+                  final email = entry.key;
+                  final isFacilitator = _selectedMatrix!.isFacilitator(email);
+
                   return Chip(
-                    label: Text(p.name, style: const TextStyle(fontSize: 11)),
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(p.name, style: const TextStyle(fontSize: 11)),
+                        if (isFacilitator) ...[
+                          const SizedBox(width: 4),
+                          const Icon(Icons.star, size: 12, color: Colors.amber),
+                        ],
+                      ],
+                    ),
                     avatar: CircleAvatar(
                       radius: 10,
-                      backgroundColor: AppColors.secondary.withOpacity(0.2),
+                      backgroundColor: isFacilitator
+                          ? Colors.amber.withOpacity(0.3)
+                          : AppColors.secondary.withOpacity(0.2),
                       child: Text(
                         p.initial,
-                        style: const TextStyle(fontSize: 10, color: AppColors.secondary),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isFacilitator ? Colors.amber.shade800 : AppColors.secondary,
+                        ),
                       ),
                     ),
+                    side: isFacilitator
+                        ? const BorderSide(color: Colors.amber, width: 1.5)
+                        : BorderSide.none,
                     padding: EdgeInsets.zero,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   );
@@ -1142,26 +1177,28 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                       ),
                     ),
                     const Spacer(),
-                    // Pulsante aggiungi attività
-                    ElevatedButton.icon(
-                      onPressed: _showAddActivityDialog,
-                      icon: const Icon(Icons.add_task, size: 16),
-                      label: Text(l10n.eisenhowerAddActivity),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.success,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        textStyle: const TextStyle(fontSize: 12),
+                    // Pulsante aggiungi attività (solo facilitator e voter)
+                    if (_canAddActivity)
+                      ElevatedButton.icon(
+                        onPressed: _showAddActivityDialog,
+                        icon: const Icon(Icons.add_task, size: 16),
+                        label: Text(l10n.eisenhowerAddActivity),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.success,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          textStyle: const TextStyle(fontSize: 12),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 ...unvotedActivities.map((activity) {
                   return UnvotedActivityCard(
                     activity: activity,
-                    onVoteTap: () => _showVoteDialog(activity),
-                    onDeleteTap: () => _confirmDeleteActivity(activity),
+                    // Solo voter/facilitator possono votare, facilitator puo' cancellare
+                    onVoteTap: _canVote ? () => _submitIndependentVote(activity) : null,
+                    onDeleteTap: _isFacilitator ? () => _confirmDeleteActivity(activity) : null,
                   );
                 }),
                 const SizedBox(height: 16),
@@ -1180,8 +1217,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                     ),
                   ),
                   const Spacer(),
-                  // Pulsante aggiungi attività (se non mostrato sopra)
-                  if (unvotedActivities.isEmpty)
+                  // Pulsante aggiungi attività (se non mostrato sopra, solo facilitator e voter)
+                  if (unvotedActivities.isEmpty && _canAddActivity)
                     ElevatedButton.icon(
                       onPressed: _showAddActivityDialog,
                       icon: const Icon(Icons.add_task, size: 16),
@@ -1202,16 +1239,18 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
                   child: ActivityCardWidget(
                     activity: activity,
                     onTap: () => _showActivityDetail(activity),
-                    onVoteTap: () => _showVoteDialog(activity),
-                    onDeleteTap: () => _confirmDeleteActivity(activity),
+                    // Voter/Facilitator: vota per se stesso; Observer: nessuna azione
+                    onVoteTap: _canVote ? () => _submitIndependentVote(activity) : null,
+                    // Solo facilitatore puo' cancellare
+                    onDeleteTap: _isFacilitator ? () => _confirmDeleteActivity(activity) : null,
                     // Parametri per votazione indipendente
                     currentUserEmail: _currentUserEmail,
                     isFacilitator: _isFacilitator,
                     totalVoters: _selectedMatrix?.voterCount ?? 0,
-                    onStartIndependentVoting: () => _startIndependentVoting(activity),
-                    onSubmitIndependentVote: () => _submitIndependentVote(activity),
-                    onRevealVotes: () => _revealVotes(activity),
-                    onResetVoting: () => _resetVotingSession(activity),
+                    onStartIndependentVoting: _isFacilitator ? () => _startIndependentVoting(activity) : null,
+                    onSubmitIndependentVote: _canVote ? () => _submitIndependentVote(activity) : null,
+                    onRevealVotes: _isFacilitator ? () => _revealVotes(activity) : null,
+                    onResetVoting: _isFacilitator ? () => _resetVotingSession(activity) : null,
                   ),
                 );
               }),
@@ -1990,6 +2029,18 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     return _selectedMatrix!.isFacilitator(_currentUserEmail!);
   }
 
+  /// Verifica se l'utente corrente puo' votare (facilitator o voter)
+  bool get _canVote {
+    if (_selectedMatrix == null || _currentUserEmail == null) return false;
+    return _selectedMatrix!.canUserVote(_currentUserEmail!);
+  }
+
+  /// Verifica se l'utente corrente puo' aggiungere attività (facilitator o voter)
+  bool get _canAddActivity {
+    // canVote include sia facilitator che voter, escludendo observer
+    return _canVote;
+  }
+
   Future<void> _confirmDeleteMatrix(EisenhowerMatrixModel matrix) async {
     final l10n = AppLocalizations.of(context)!;
 
@@ -2054,36 +2105,6 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     }
   }
 
-  Future<void> _showVoteDialog(EisenhowerActivityModel activity) async {
-    final l10n = AppLocalizations.of(context)!;
-
-    if (_selectedMatrix == null || !_selectedMatrix!.hasParticipants) {
-      _showError(l10n.eisenhowerAddParticipantsFirst);
-      return;
-    }
-
-    // Usa i nomi dei partecipanti per il dialog di voto rapido
-    final votes = await VoteCollectionDialog.show(
-      context: context,
-      activity: activity,
-      participants: _selectedMatrix!.participantNames,
-    );
-
-    if (votes != null && _selectedMatrix != null) {
-      try {
-        await _firestoreService.saveVotes(
-          matrixId: _selectedMatrix!.id,
-          activityId: activity.id,
-          votes: votes,
-        );
-        await _loadActivities(_selectedMatrix!.id);
-        _showSuccess(l10n.eisenhowerVotesSaved);
-      } catch (e) {
-        _showError('${l10n.errorSavingVotes}: $e');
-      }
-    }
-  }
-
   Future<void> _showActivityDetail(EisenhowerActivityModel activity) async {
     final l10n = AppLocalizations.of(context)!;
 
@@ -2131,13 +2152,15 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.actionClose),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _showVoteDialog(activity);
-            },
-            child: Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
-          ),
+          // Pulsante voto solo per voter/facilitator
+          if (_canVote)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _submitIndependentVote(activity);
+              },
+              child: Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
+            ),
         ],
       ),
     );

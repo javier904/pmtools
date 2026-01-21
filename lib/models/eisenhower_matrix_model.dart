@@ -76,7 +76,8 @@ class EisenhowerMatrixModel {
       // Nuovo formato: Map<escapedEmail, participantData>
       participantsData.forEach((escapedEmail, value) {
         if (value is Map<String, dynamic>) {
-          final email = EisenhowerParticipantModel.unescapeEmail(escapedEmail);
+          // Unescape e normalizza a lowercase per consistenza nel match
+          final email = EisenhowerParticipantModel.unescapeEmail(escapedEmail).toLowerCase();
           participantsMap[email] = EisenhowerParticipantModel.fromMap(email, value);
         }
       });
@@ -111,7 +112,7 @@ class EisenhowerMatrixModel {
       id: doc.id,
       title: data['title'] ?? '',
       description: data['description'] ?? '',
-      createdBy: data['createdBy'] ?? '',
+      createdBy: (data['createdBy'] ?? '').toString().toLowerCase(),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       participants: participantsMap,
@@ -245,30 +246,88 @@ class EisenhowerMatrixModel {
   bool isParticipant(String email) => participants.containsKey(email);
 
   /// Email dei soli votanti (facilitator + voter, esclusi observer)
-  List<String> get voterEmails => participants.entries
-      .where((e) => e.value.canVote)
-      .map((e) => e.key)
-      .toList();
+  ///
+  /// 🔧 BACKWARD COMPATIBILITY: Include il creator SOLO se non è nella lista partecipanti
+  List<String> get voterEmails {
+    final voters = participants.entries
+        .where((e) => e.value.canVote)
+        .map((e) => e.key)
+        .toList();
+
+    // Aggiungi il creator SOLO se non è nella lista partecipanti (fallback)
+    final creatorInParticipants = participants.keys.any(
+      (k) => k.toLowerCase() == createdBy.toLowerCase(),
+    );
+    if (!creatorInParticipants) {
+      voters.add(createdBy);
+    }
+
+    return voters;
+  }
 
   /// Numero di votanti
   int get voterCount => voterEmails.length;
 
   /// Email dei facilitatori
-  List<String> get facilitatorEmails => participants.entries
-      .where((e) => e.value.isFacilitator)
-      .map((e) => e.key)
-      .toList();
+  ///
+  /// 🔧 BACKWARD COMPATIBILITY: Include il creator SOLO se non è nella lista partecipanti
+  List<String> get facilitatorEmails {
+    final facilitators = participants.entries
+        .where((e) => e.value.isFacilitator)
+        .map((e) => e.key)
+        .toList();
+
+    // Aggiungi il creator SOLO se non è nella lista partecipanti (fallback)
+    final creatorInParticipants = participants.keys.any(
+      (k) => k.toLowerCase() == createdBy.toLowerCase(),
+    );
+    if (!creatorInParticipants) {
+      facilitators.add(createdBy);
+    }
+
+    return facilitators;
+  }
 
   /// Verifica se un utente è facilitatore
+  ///
+  /// Logica:
+  /// 1. Se l'utente è nella lista partecipanti → usa il ruolo esplicito da Firestore
+  /// 2. Se l'utente NON è nella lista E è il creator → fallback a facilitatore
   bool isFacilitator(String email) {
-    final participant = participants[email];
-    return participant?.isFacilitator ?? false;
+    final normalizedEmail = email.toLowerCase();
+
+    // Cerca il partecipante (case-insensitive)
+    for (final entry in participants.entries) {
+      if (entry.key.toLowerCase() == normalizedEmail) {
+        return entry.value.isFacilitator;
+      }
+    }
+
+    // Non trovato: fallback al creator
+    return normalizedEmail == createdBy.toLowerCase();
   }
 
   /// Verifica se un utente può votare
+  ///
+  /// 🔧 BACKWARD COMPATIBILITY: Il creator può sempre votare, anche se non
+  /// è nella lista partecipanti (matrici create prima del sistema ruoli).
   bool canUserVote(String email) {
-    final participant = participants[email];
-    return participant?.canVote ?? false;
+    final normalizedEmail = email.toLowerCase();
+
+    // Cerca il partecipante (case-insensitive)
+    EisenhowerParticipantModel? participant;
+    for (final entry in participants.entries) {
+      if (entry.key.toLowerCase() == normalizedEmail) {
+        participant = entry.value;
+        break;
+      }
+    }
+
+    // Se è nella lista partecipanti, usa il ruolo esplicito
+    if (participant != null) return participant.canVote;
+
+    // Fallback: il creator può sempre votare
+    return email.toLowerCase() == createdBy.toLowerCase();
   }
 
   /// Partecipanti online

@@ -189,8 +189,8 @@ class ActivityCardWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Menu azioni
-                  if (showActions)
+                  // Menu azioni (mostra solo se ci sono azioni disponibili)
+                  if (showActions && (onVoteTap != null || onDeleteTap != null))
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert, size: 20),
                       padding: EdgeInsets.zero,
@@ -205,29 +205,33 @@ class ActivityCardWidget extends StatelessWidget {
                         }
                       },
                       itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'vote',
-                          child: Row(
-                            children: [
-                              Icon(
-                                activity.hasVotes ? Icons.edit : Icons.how_to_vote,
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
-                            ],
+                        // Voto (solo se onVoteTap e' disponibile)
+                        if (onVoteTap != null)
+                          PopupMenuItem(
+                            value: 'vote',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  activity.hasVotes ? Icons.edit : Icons.how_to_vote,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
+                              ],
+                            ),
                           ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                              const SizedBox(width: 8),
-                              Text(l10n.actionDelete, style: const TextStyle(color: Colors.red)),
-                            ],
+                        // Delete (solo se onDeleteTap e' disponibile - facilitatore)
+                        if (onDeleteTap != null)
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                                const SizedBox(width: 8),
+                                Text(l10n.actionDelete, style: const TextStyle(color: Colors.red)),
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                 ],
@@ -476,27 +480,12 @@ class ActivityCardWidget extends StatelessWidget {
     );
   }
 
-  /// Costruisce i bottoni per avviare la votazione (rapida o indipendente)
+  /// Costruisce i bottoni per avviare la votazione
+  /// Il Facilitatore puo' avviare la sessione di voto di team
   Widget _buildVotingButtons(AppLocalizations l10n) {
     return Row(
       children: [
-        // Voto Rapido (esistente)
-        if (onVoteTap != null)
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: onVoteTap,
-              icon: const Icon(Icons.flash_on, size: 16),
-              label: Text(l10n.eisenhowerQuickVote),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.orange,
-                side: const BorderSide(color: Colors.orange),
-                padding: const EdgeInsets.symmetric(vertical: 8),
-              ),
-            ),
-          ),
-        if (onVoteTap != null && onStartIndependentVoting != null)
-          const SizedBox(width: 8),
-        // Voto Indipendente (solo facilitatore)
+        // Voto di Team (solo facilitatore puo' avviare la sessione)
         if (isFacilitator && onStartIndependentVoting != null)
           Expanded(
             child: ElevatedButton.icon(
@@ -580,14 +569,14 @@ class ActivityCardWidget extends StatelessWidget {
 /// Card per attività non ancora votata (da mostrare in lista separata)
 class UnvotedActivityCard extends StatelessWidget {
   final EisenhowerActivityModel activity;
-  final VoidCallback onVoteTap;
+  final VoidCallback? onVoteTap;
   final VoidCallback? onEditTap;
   final VoidCallback? onDeleteTap;
 
   const UnvotedActivityCard({
     super.key,
     required this.activity,
-    required this.onVoteTap,
+    this.onVoteTap,
     this.onEditTap,
     this.onDeleteTap,
   });
@@ -631,16 +620,18 @@ class UnvotedActivityCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton.icon(
-              onPressed: onVoteTap,
-              icon: const Icon(Icons.how_to_vote, size: 16),
-              label: Text(l10n.eisenhowerVote),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            // Pulsante voto solo se l'utente puo' votare
+            if (onVoteTap != null)
+              ElevatedButton.icon(
+                onPressed: onVoteTap,
+                icon: const Icon(Icons.how_to_vote, size: 16),
+                label: Text(l10n.eisenhowerVote),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
               ),
-            ),
             if (onDeleteTap != null)
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
