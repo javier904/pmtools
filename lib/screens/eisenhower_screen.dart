@@ -1465,28 +1465,28 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                       ),
                     ),
                     const Spacer(),
-                    // Pulsante aggiungi attività (solo facilitator e voter)
-                    if (_canAddActivity)
-                      ElevatedButton.icon(
-                        onPressed: _showAddActivityDialog,
-                        icon: const Icon(Icons.add_task, size: 16),
-                        label: Text(l10n.eisenhowerAddActivity),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.success,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          textStyle: const TextStyle(fontSize: 12),
-                        ),
-                      ),
                     // Pulsante Avvia Votazione (solo facilitatore, se ci sono attività da votare)
-                    if (_isFacilitator && unvotedActivities.isNotEmpty) ...[
-                      const SizedBox(width: 8),
+                    if (_isFacilitator && unvotedActivities.isNotEmpty)
                       ElevatedButton.icon(
                         onPressed: () => _startSequentialVoting(unvotedActivities),
                         icon: const Icon(Icons.play_circle_outline, size: 16),
                         label: Text(l10n.eisenhowerStartVoting),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          textStyle: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    // Pulsante aggiungi attività (solo facilitator e voter)
+                    if (_canAddActivity) ...[
+                      const SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: _showAddActivityDialog,
+                        icon: const Icon(Icons.add_task, size: 16),
+                        label: Text(l10n.eisenhowerAddActivity),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.success,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           textStyle: const TextStyle(fontSize: 12),
@@ -1536,7 +1536,23 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 ],
               ),
               const SizedBox(height: 8),
-              ..._activities.map((activity) {
+              // Ordina: attività non votate/non rivelate prima, poi le altre
+              ...(() {
+                final sortedActivities = List<EisenhowerActivityModel>.from(_activities);
+                sortedActivities.sort((a, b) {
+                  // Non rivelate vengono prima delle rivelate
+                  if (!a.isRevealed && b.isRevealed) return -1;
+                  if (a.isRevealed && !b.isRevealed) return 1;
+                  // Tra le non rivelate, quelle senza voti vengono prima
+                  if (!a.isRevealed && !b.isRevealed) {
+                    if (!a.hasVotes && b.hasVotes) return -1;
+                    if (a.hasVotes && !b.hasVotes) return 1;
+                  }
+                  // Per il resto, mantieni ordine originale (createdAt)
+                  return 0;
+                });
+                return sortedActivities;
+              })().map((activity) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: ActivityCardWidget(
@@ -2301,21 +2317,28 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           // Ricarica le attività
           await _loadActivities(_selectedMatrix!.id);
 
-          // Se c'è una prossima attività, avvia la votazione su quella
-          if (hasNextActivity && mounted) {
-            final nextActivity = activities[currentIndex + 1];
+          // Mostra il riepilogo dei voti
+          final currentActivity = activities[currentIndex];
+          final updatedActivity = await _firestoreService.getActivity(_selectedMatrix!.id, currentActivity.id);
 
-            // Avvia la votazione sulla prossima attività
-            try {
-              await _firestoreService.startVotingSession(_selectedMatrix!.id, nextActivity.id);
-              await _loadActivities(_selectedMatrix!.id);
-
-              // Mostra il dialog per la prossima attività
-              await _showSequentialVotingDialog(activities, currentIndex + 1);
-            } catch (e) {
-              _showError('Errore avvio prossima votazione: $e');
-            }
-          } else {
+          if (updatedActivity != null && mounted) {
+            await VoteRevealDialog.show(
+              context: context,
+              activity: updatedActivity,
+              participants: _selectedMatrix!.participants,
+              hasNextActivity: hasNextActivity,
+              onNextActivity: hasNextActivity ? () async {
+                final nextActivity = activities[currentIndex + 1];
+                try {
+                  await _firestoreService.startVotingSession(_selectedMatrix!.id, nextActivity.id);
+                  await _loadActivities(_selectedMatrix!.id);
+                  await _showSequentialVotingDialog(activities, currentIndex + 1);
+                } catch (e) {
+                  _showError('Errore avvio prossima votazione: $e');
+                }
+              } : null,
+            );
+          } else if (!hasNextActivity) {
             _showSuccess(l10n.eisenhowerAllActivitiesVoted);
           }
         },
