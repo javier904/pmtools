@@ -1536,18 +1536,37 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 ],
               ),
               const SizedBox(height: 8),
-              // Ordina: attività non votate/non rivelate prima, poi le altre
+              // Ordina: attività che richiedono il voto dell'utente prima, poi le altre
               ...(() {
                 final sortedActivities = List<EisenhowerActivityModel>.from(_activities);
+
+                // Helper per verificare se l'utente ha votato su un'attività
+                bool hasUserVoted(EisenhowerActivityModel activity) {
+                  if (_currentUserEmail.isEmpty) return false;
+                  final escapedEmail = EisenhowerParticipantModel.escapeEmail(_currentUserEmail);
+                  return activity.votes.containsKey(escapedEmail) ||
+                         activity.votes.containsKey(_currentUserEmail);
+                }
+
                 sortedActivities.sort((a, b) {
-                  // Non rivelate vengono prima delle rivelate
+                  // 1. Non rivelate vengono prima delle rivelate
                   if (!a.isRevealed && b.isRevealed) return -1;
                   if (a.isRevealed && !b.isRevealed) return 1;
-                  // Tra le non rivelate, quelle senza voti vengono prima
+
+                  // 2. Tra le non rivelate, quelle dove l'utente NON ha votato vengono prima
                   if (!a.isRevealed && !b.isRevealed) {
-                    if (!a.hasVotes && b.hasVotes) return -1;
-                    if (a.hasVotes && !b.hasVotes) return 1;
+                    final aUserVoted = hasUserVoted(a);
+                    final bUserVoted = hasUserVoted(b);
+                    if (!aUserVoted && bUserVoted) return -1;
+                    if (aUserVoted && !bUserVoted) return 1;
+
+                    // 3. Tra quelle senza voto utente, quelle senza voti di nessuno vengono prima
+                    if (!aUserVoted && !bUserVoted) {
+                      if (!a.hasVotes && b.hasVotes) return -1;
+                      if (a.hasVotes && !b.hasVotes) return 1;
+                    }
                   }
+
                   // Per il resto, mantieni ordine originale (createdAt)
                   return 0;
                 });
