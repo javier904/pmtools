@@ -820,12 +820,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: context.textMutedColor),
-          const SizedBox(width: 4),
+          Icon(icon, size: 18, color: context.textMutedColor),
+          const SizedBox(width: 5),
           Text(
             value,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               color: context.textSecondaryColor,
               fontWeight: FontWeight.w500,
             ),
@@ -856,12 +856,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.people, size: 14, color: context.textMutedColor),
-          const SizedBox(width: 4),
+          Icon(Icons.people, size: 18, color: context.textMutedColor),
+          const SizedBox(width: 5),
           Text(
             '${matrix.participants.length}',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               color: context.textSecondaryColor,
               fontWeight: FontWeight.w500,
             ),
