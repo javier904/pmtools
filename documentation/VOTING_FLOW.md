@@ -6,11 +6,11 @@ Il sistema di votazione della Matrice di Eisenhower segue un flusso controllato 
 
 ## Ruoli
 
-| Ruolo | Descrizione | Può Votare | Può Avviare | Può Rivelare |
-|-------|-------------|------------|-------------|--------------|
-| **Facilitator** | Gestisce la sessione | ✅ | ✅ | ✅ |
-| **Voter** | Partecipa alla votazione | ✅ | ❌ | ❌ |
-| **Observer** | Solo visualizzazione | ❌ | ❌ | ❌ |
+| Ruolo | Descrizione | Può Votare | Può Modificare | Può Avviare | Può Rivelare |
+|-------|-------------|------------|----------------|-------------|--------------|
+| **Facilitator** | Gestisce la sessione | ✅ | ✅ | ✅ | ✅ |
+| **Voter** | Partecipa alla votazione | ✅ (1 volta) | ❌ | ❌ | ❌ |
+| **Observer** | Solo visualizzazione | ❌ | ❌ | ❌ | ❌ |
 
 ## Schema dei 3 Stati
 
@@ -110,6 +110,13 @@ Prima del reveal, il getter `quadrant` ritorna `null` anche se ci sono voti.
 Una volta che l'attività è **rivelata** (`isRevealed = true`):
 - **Nessuno** può più votare
 - Per modificare, il facilitatore deve usare **"Reset"**
+
+### Modifica Voti (SOLO Facilitatore)
+- Un **Voter** può votare una sola volta su ogni attività
+- Una volta votato, il Voter **NON** può modificare il proprio voto
+- Solo il **Facilitatore** può modificare i voti (inclusi i propri)
+- Nel menu a 3 puntini, l'opzione "Vota" scompare dopo che il voter ha votato
+- Nel dialog sequenziale, il pulsante "Modifica" appare solo al facilitatore
 
 ## Flusso Votazione Sequenziale
 
