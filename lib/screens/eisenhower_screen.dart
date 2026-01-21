@@ -803,12 +803,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                     '$activityCount',
                     l10n.eisenhowerTotalActivities,
                   ),
-                  const SizedBox(width: 8),
-                  _buildCompactMatrixStat(
-                    Icons.people,
-                    '${matrix.participants.length}',
-                    l10n.participants,
-                  ),
+                  const SizedBox(width: 12),
+                  _buildParticipantStat(matrix, l10n),
                 ],
               ),
             ],
@@ -824,12 +820,48 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 10, color: context.textMutedColor),
-          const SizedBox(width: 2),
+          Icon(icon, size: 14, color: context.textMutedColor),
+          const SizedBox(width: 4),
           Text(
             value,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 12,
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Costruisce la statistica partecipanti con tooltip dettagliato (nomi e ruoli)
+  Widget _buildParticipantStat(EisenhowerMatrixModel matrix, AppLocalizations l10n) {
+    // Costruisci tooltip con nomi e ruoli
+    final participantLines = matrix.participants.values.map((p) {
+      final roleLabel = switch (p.role) {
+        EisenhowerParticipantRole.facilitator => '👑 Facilitator',
+        EisenhowerParticipantRole.voter => '🗳️ Voter',
+        EisenhowerParticipantRole.observer => '👁️ Observer',
+      };
+      return '${p.name} - $roleLabel';
+    }).toList();
+
+    final tooltipText = participantLines.isNotEmpty
+        ? '${l10n.participants}:\n${participantLines.join('\n')}'
+        : l10n.participants;
+
+    return Tooltip(
+      message: tooltipText,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people, size: 14, color: context.textMutedColor),
+          const SizedBox(width: 4),
+          Text(
+            '${matrix.participants.length}',
+            style: TextStyle(
+              fontSize: 12,
               color: context.textSecondaryColor,
               fontWeight: FontWeight.w500,
             ),
