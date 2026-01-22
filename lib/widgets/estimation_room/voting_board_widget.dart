@@ -106,7 +106,7 @@ class VotingBoardWidget extends StatelessWidget {
     final progress = story.voteCount / voters;
     if (progress >= 1) return Colors.green;
     if (progress >= 0.5) return Colors.orange;
-    return Colors.blue;
+    return Colors.amber;
   }
 
   Widget _buildVoterCard({

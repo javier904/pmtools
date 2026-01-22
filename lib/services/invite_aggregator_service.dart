@@ -5,9 +5,10 @@ import '../models/unified_invite_model.dart';
 import '../models/eisenhower_invite_model.dart';
 import '../models/planning_poker_invite_model.dart';
 import '../models/agile_invite_model.dart';
-import '../models/smart_todo/todo_invite_model.dart';
+import '../models/smart_todo/todo_invite_model.dart' show TodoInviteModel;
 import '../models/retro_invite_model.dart';
 import 'auth_service.dart';
+import 'invite_service.dart';
 
 /// Servizio per aggregare tutti gli inviti pendenti da tutte le sorgenti
 ///
@@ -15,6 +16,11 @@ import 'auth_service.dart';
 /// - Stream unificato di tutti gli inviti pendenti
 /// - Conteggio inviti pendenti per badge
 /// - Metodi per accettare/rifiutare inviti
+///
+/// ARCHITETTURA:
+/// - Prioritizza la collection unificata `invitations` (nuovi inviti)
+/// - Fallback alle collection legacy per retrocompatibilità
+/// - Flag `_useUnifiedCollection` per controllare il comportamento
 class InviteAggregatorService {
   static final InviteAggregatorService _instance = InviteAggregatorService._internal();
   factory InviteAggregatorService() => _instance;
@@ -22,10 +28,18 @@ class InviteAggregatorService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
+  final InviteService _inviteService = InviteService();
 
-  // Collection names
+  /// Feature flag: se true, usa SOLO la collection unificata
+  /// Se false, combina collection unificata + legacy (periodo transitorio)
+  static const bool _useOnlyUnifiedCollection = false;
+
+  // Collection names (legacy)
+  static const String _unifiedInvitesCollection = 'invitations';
   static const String _eisenhowerInvitesCollection = 'eisenhower_invites';
   static const String _planningPokerSessionsCollection = 'planning_poker_sessions';
+  /// MIGRATO: Collection dedicata per inviti Estimation Room (come Eisenhower)
+  static const String _estimationRoomInvitesCollection = 'estimation_room_invites';
   static const String _agileProjectsCollection = 'agile_projects';
   static const String _smartTodoListsCollection = 'smart_todo_lists';
   static const String _retroInvitesCollection = 'retro_invites';
@@ -42,6 +56,11 @@ class InviteAggregatorService {
   /// Stream di tutti gli inviti pendenti per l'utente corrente
   /// Usa un BehaviorSubject per cachare l'ultimo valore, così i nuovi subscriber
   /// ricevono subito i dati esistenti invece di aspettare le query Firestore
+  ///
+  /// ARCHITETTURA TRANSITORIA:
+  /// - Combina inviti dalla collection unificata `invitations` E dalle collection legacy
+  /// - Rimuove duplicati basandosi su (sourceType, sourceId, email)
+  /// - Quando _useOnlyUnifiedCollection = true, legge solo dalla collection unificata
   Stream<List<UnifiedInviteModel>> streamAllPendingInvites() {
     final userEmail = _authService.currentUserEmail;
     print('📧 [INVITE AGGREGATOR] Current user email: $userEmail');
@@ -58,13 +77,23 @@ class InviteAggregatorService {
       _invitesSubject = BehaviorSubject<List<UnifiedInviteModel>>.seeded([]);
 
       // Crea la subscription al combined stream
-      _invitesSubscription = CombineLatestStream.list([
-        _streamEisenhowerInvites(normalizedEmail).startWith([]),
-        _streamPlanningPokerInvites(normalizedEmail).startWith([]),
-        _streamAgileInvites(normalizedEmail).startWith([]),
-        _streamSmartTodoInvites(normalizedEmail).startWith([]),
-        _streamRetroInvites(normalizedEmail).startWith([]),
-      ]).map((inviteLists) {
+      final streams = <Stream<List<UnifiedInviteModel>>>[];
+
+      // 1. SEMPRE includi la collection unificata (nuovi inviti)
+      streams.add(_streamUnifiedInvites(normalizedEmail).startWith([]));
+
+      // 2. Se non usiamo SOLO la collection unificata, aggiungi anche le legacy
+      if (!_useOnlyUnifiedCollection) {
+        streams.addAll([
+          _streamEisenhowerInvites(normalizedEmail).startWith([]),
+          _streamPlanningPokerInvites(normalizedEmail).startWith([]),
+          _streamAgileInvites(normalizedEmail).startWith([]),
+          _streamSmartTodoInvites(normalizedEmail).startWith([]),
+          _streamRetroInvites(normalizedEmail).startWith([]),
+        ]);
+      }
+
+      _invitesSubscription = CombineLatestStream.list(streams).map((inviteLists) {
         // Appiattisci tutte le liste in una singola lista
         final allInvites = <UnifiedInviteModel>[];
         print('📋 [INVITE AGGREGATOR] Combining ${inviteLists.length} streams');
@@ -73,11 +102,14 @@ class InviteAggregatorService {
           allInvites.addAll(inviteLists[i]);
         }
 
-        // Ordina per data invito (più recenti prima)
-        allInvites.sort((a, b) => b.invitedAt.compareTo(a.invitedAt));
+        // Rimuovi duplicati (stesso sourceType + sourceId + email)
+        final uniqueInvites = _removeDuplicates(allInvites);
 
-        print('📋 [INVITE AGGREGATOR] Total combined invites: ${allInvites.length}');
-        return allInvites;
+        // Ordina per data invito (più recenti prima)
+        uniqueInvites.sort((a, b) => b.invitedAt.compareTo(a.invitedAt));
+
+        print('📋 [INVITE AGGREGATOR] Total combined invites: ${uniqueInvites.length} (dopo dedup)');
+        return uniqueInvites;
       }).listen(
         (invites) => _invitesSubject?.add(invites),
         onError: (error) => print('❌ [INVITE AGGREGATOR] Stream error: $error'),
@@ -87,6 +119,19 @@ class InviteAggregatorService {
     }
 
     return _invitesSubject!.stream;
+  }
+
+  /// Rimuove duplicati mantenendo l'invito più recente
+  List<UnifiedInviteModel> _removeDuplicates(List<UnifiedInviteModel> invites) {
+    final seen = <String, UnifiedInviteModel>{};
+    for (final invite in invites) {
+      final key = '${invite.sourceType.name}:${invite.sourceId}:${invite.email.toLowerCase()}';
+      final existing = seen[key];
+      if (existing == null || invite.invitedAt.isAfter(existing.invitedAt)) {
+        seen[key] = invite;
+      }
+    }
+    return seen.values.toList();
   }
 
   /// Pulisce lo stream degli inviti (chiamare su logout)
@@ -105,6 +150,10 @@ class InviteAggregatorService {
   }
 
   /// Ottieni tutti gli inviti pendenti (one-shot)
+  ///
+  /// ARCHITETTURA TRANSITORIA:
+  /// - Combina inviti dalla collection unificata E dalle collection legacy
+  /// - Rimuove duplicati
   Future<List<UnifiedInviteModel>> getAllPendingInvites() async {
     final userEmail = _authService.currentUserEmail;
     if (userEmail == null) return [];
@@ -112,23 +161,30 @@ class InviteAggregatorService {
     final normalizedEmail = userEmail.toLowerCase();
     final allInvites = <UnifiedInviteModel>[];
 
-    // Fetch da tutte le sorgenti in parallelo
-    final results = await Future.wait([
-      _getEisenhowerInvites(normalizedEmail),
-      _getPlanningPokerInvites(normalizedEmail),
-      _getAgileInvites(normalizedEmail),
-      _getSmartTodoInvites(normalizedEmail),
-      _getRetroInvites(normalizedEmail),
-    ]);
+    // Fetch dalla collection unificata
+    final unifiedInvites = await _getUnifiedInvites(normalizedEmail);
+    allInvites.addAll(unifiedInvites);
 
-    for (final list in results) {
-      allInvites.addAll(list);
+    // Se non usiamo SOLO la collection unificata, aggiungi anche le legacy
+    if (!_useOnlyUnifiedCollection) {
+      final results = await Future.wait([
+        _getEisenhowerInvites(normalizedEmail),
+        _getPlanningPokerInvites(normalizedEmail),
+        _getAgileInvites(normalizedEmail),
+        _getSmartTodoInvites(normalizedEmail),
+        _getRetroInvites(normalizedEmail),
+      ]);
+
+      for (final list in results) {
+        allInvites.addAll(list);
+      }
     }
 
-    // Ordina per data invito (più recenti prima)
-    allInvites.sort((a, b) => b.invitedAt.compareTo(a.invitedAt));
+    // Rimuovi duplicati e ordina
+    final uniqueInvites = _removeDuplicates(allInvites);
+    uniqueInvites.sort((a, b) => b.invitedAt.compareTo(a.invitedAt));
 
-    return allInvites;
+    return uniqueInvites;
   }
 
   /// Conta gli inviti pendenti (per badge)
@@ -136,8 +192,234 @@ class InviteAggregatorService {
     return streamAllPendingInvites().map((invites) => invites.length);
   }
 
+  /// Ottiene TUTTI gli inviti per una specifica risorsa (unified + legacy)
+  /// Include tutti gli stati: pending, accepted, declined, expired, revoked
+  Future<List<UnifiedInviteModel>> getInvitesForSource(
+    InviteSourceType sourceType,
+    String sourceId,
+  ) async {
+    final allInvites = <UnifiedInviteModel>[];
+
+    // 1. Cerca nella collection unificata
+    try {
+      final unifiedSnapshot = await _firestore
+          .collection(_unifiedInvitesCollection)
+          .where('sourceType', isEqualTo: sourceType.name)
+          .where('sourceId', isEqualTo: sourceId)
+          .get();
+
+      for (final doc in unifiedSnapshot.docs) {
+        try {
+          allInvites.add(UnifiedInviteModel.fromFirestore(doc));
+        } catch (e) {
+          print('❌ [AGGREGATOR] Error parsing unified invite ${doc.id}: $e');
+        }
+      }
+      print('📋 [AGGREGATOR] Found ${unifiedSnapshot.docs.length} invites in unified collection');
+    } catch (e) {
+      print('❌ [AGGREGATOR] Error querying unified collection: $e');
+    }
+
+    // 2. Cerca nella collection legacy appropriata
+    try {
+      switch (sourceType) {
+        case InviteSourceType.eisenhower:
+          final legacySnapshot = await _firestore
+              .collection(_eisenhowerInvitesCollection)
+              .where('matrixId', isEqualTo: sourceId)
+              .get();
+
+          for (final doc in legacySnapshot.docs) {
+            try {
+              final invite = EisenhowerInviteModel.fromFirestore(doc);
+              // Ottieni il nome della matrice
+              String? matrixName;
+              try {
+                final matrixDoc = await _firestore.collection('eisenhower_matrices').doc(sourceId).get();
+                matrixName = matrixDoc.data()?['title'] as String?;
+              } catch (_) {}
+              allInvites.add(UnifiedInviteModel.fromEisenhower(invite, matrixName: matrixName));
+            } catch (e) {
+              print('❌ [AGGREGATOR] Error parsing eisenhower invite ${doc.id}: $e');
+            }
+          }
+          print('📋 [AGGREGATOR] Found ${legacySnapshot.docs.length} invites in eisenhower_invites');
+          break;
+
+        case InviteSourceType.estimationRoom:
+          final legacySnapshot = await _firestore
+              .collection(_estimationRoomInvitesCollection)
+              .where('sessionId', isEqualTo: sourceId)
+              .get();
+
+          for (final doc in legacySnapshot.docs) {
+            try {
+              final invite = PlanningPokerInviteModel.fromFirestore(doc);
+              // Ottieni il nome della sessione
+              String? sessionName;
+              try {
+                final sessionDoc = await _firestore.collection(_planningPokerSessionsCollection).doc(sourceId).get();
+                sessionName = sessionDoc.data()?['name'] as String?;
+              } catch (_) {}
+              allInvites.add(UnifiedInviteModel.fromPlanningPoker(invite, sessionName: sessionName));
+            } catch (e) {
+              print('❌ [AGGREGATOR] Error parsing estimation room invite ${doc.id}: $e');
+            }
+          }
+          print('📋 [AGGREGATOR] Found ${legacySnapshot.docs.length} invites in estimation_room_invites');
+          break;
+
+        case InviteSourceType.agileProject:
+          // Agile usa subcollection
+          final legacySnapshot = await _firestore
+              .collection(_agileProjectsCollection)
+              .doc(sourceId)
+              .collection('invites')
+              .get();
+
+          for (final doc in legacySnapshot.docs) {
+            try {
+              final invite = AgileInviteModel.fromFirestore(doc);
+              String? projectName;
+              try {
+                final projectDoc = await _firestore.collection(_agileProjectsCollection).doc(sourceId).get();
+                projectName = projectDoc.data()?['name'] as String?;
+              } catch (_) {}
+              allInvites.add(UnifiedInviteModel.fromAgile(invite, projectName: projectName));
+            } catch (e) {
+              print('❌ [AGGREGATOR] Error parsing agile invite ${doc.id}: $e');
+            }
+          }
+          print('📋 [AGGREGATOR] Found ${legacySnapshot.docs.length} invites in agile_projects subcollection');
+          break;
+
+        case InviteSourceType.smartTodo:
+          // SmartTodo usa subcollection
+          final legacySnapshot = await _firestore
+              .collection(_smartTodoListsCollection)
+              .doc(sourceId)
+              .collection('invites')
+              .get();
+
+          for (final doc in legacySnapshot.docs) {
+            try {
+              final invite = TodoInviteModel.fromFirestore(doc);
+              String? listName;
+              try {
+                final listDoc = await _firestore.collection(_smartTodoListsCollection).doc(sourceId).get();
+                listName = listDoc.data()?['name'] as String?;
+              } catch (_) {}
+              allInvites.add(UnifiedInviteModel.fromTodo(invite, listName: listName));
+            } catch (e) {
+              print('❌ [AGGREGATOR] Error parsing smart todo invite ${doc.id}: $e');
+            }
+          }
+          print('📋 [AGGREGATOR] Found ${legacySnapshot.docs.length} invites in smart_todo_lists subcollection');
+          break;
+
+        case InviteSourceType.retroBoard:
+          final legacySnapshot = await _firestore
+              .collection(_retroInvitesCollection)
+              .where('boardId', isEqualTo: sourceId)
+              .get();
+
+          for (final doc in legacySnapshot.docs) {
+            try {
+              final invite = RetroInviteModel.fromFirestore(doc);
+              String? boardName;
+              try {
+                final boardDoc = await _firestore.collection(_retrospectivesCollection).doc(sourceId).get();
+                boardName = boardDoc.data()?['title'] as String?;
+              } catch (_) {}
+              allInvites.add(UnifiedInviteModel.fromRetro(invite, boardName: boardName));
+            } catch (e) {
+              print('❌ [AGGREGATOR] Error parsing retro invite ${doc.id}: $e');
+            }
+          }
+          print('📋 [AGGREGATOR] Found ${legacySnapshot.docs.length} invites in retro_invites');
+          break;
+      }
+    } catch (e) {
+      print('❌ [AGGREGATOR] Error querying legacy collection: $e');
+    }
+
+    // 3. Rimuovi duplicati e ordina per data (più recenti prima)
+    final uniqueInvites = _removeDuplicates(allInvites);
+    uniqueInvites.sort((a, b) => b.invitedAt.compareTo(a.invitedAt));
+
+    print('📋 [AGGREGATOR] Total unique invites for $sourceType/$sourceId: ${uniqueInvites.length}');
+    return uniqueInvites;
+  }
+
   // ══════════════════════════════════════════════════════════════════════════════
-  // EISENHOWER INVITES
+  // UNIFIED INVITES (NUOVA COLLECTION CENTRALIZZATA)
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  /// Stream degli inviti dalla collection unificata `invitations`
+  Stream<List<UnifiedInviteModel>> _streamUnifiedInvites(String email) {
+    print('🆕 [UNIFIED INVITES] Starting stream for email: $email');
+    return _firestore
+        .collection(_unifiedInvitesCollection)
+        .where('email', isEqualTo: email)
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((snapshot) {
+      print('🆕 [UNIFIED INVITES] Received ${snapshot.docs.length} docs');
+      final invites = <UnifiedInviteModel>[];
+      final now = DateTime.now();
+
+      for (final doc in snapshot.docs) {
+        try {
+          final invite = UnifiedInviteModel.fromFirestore(doc);
+          if (invite.expiresAt.isAfter(now)) {
+            print('🆕 [UNIFIED INVITES] ✅ Adding: ${invite.sourceType.name}/${invite.sourceName}');
+            invites.add(invite);
+          } else {
+            print('🆕 [UNIFIED INVITES] ⏭️ Skipping expired: ${invite.id}');
+          }
+        } catch (e) {
+          print('🆕 [UNIFIED INVITES] ❌ Error parsing doc ${doc.id}: $e');
+        }
+      }
+      print('🆕 [UNIFIED INVITES] Returning ${invites.length} invites');
+      return invites;
+    });
+  }
+
+  /// Ottieni inviti dalla collection unificata (one-shot)
+  Future<List<UnifiedInviteModel>> _getUnifiedInvites(String email) async {
+    try {
+      print('🆕 [GET UNIFIED INVITES] Querying for email: $email');
+      final snapshot = await _firestore
+          .collection(_unifiedInvitesCollection)
+          .where('email', isEqualTo: email)
+          .where('status', isEqualTo: 'pending')
+          .get();
+
+      print('🆕 [GET UNIFIED INVITES] Found ${snapshot.docs.length} docs');
+
+      final invites = <UnifiedInviteModel>[];
+      final now = DateTime.now();
+
+      for (final doc in snapshot.docs) {
+        try {
+          final invite = UnifiedInviteModel.fromFirestore(doc);
+          if (invite.expiresAt.isAfter(now)) {
+            invites.add(invite);
+          }
+        } catch (e) {
+          print('🆕 [GET UNIFIED INVITES] ❌ Error: $e');
+        }
+      }
+      return invites;
+    } catch (e) {
+      print('⚠️ Errore getUnifiedInvites: $e');
+      return [];
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // EISENHOWER INVITES (LEGACY)
   // ══════════════════════════════════════════════════════════════════════════════
 
   Stream<List<UnifiedInviteModel>> _streamEisenhowerInvites(String email) {
@@ -211,74 +493,85 @@ class InviteAggregatorService {
 
   // ══════════════════════════════════════════════════════════════════════════════
   // PLANNING POKER (ESTIMATION ROOM) INVITES
+  // MIGRATO: Usa collection dedicata come Eisenhower (query semplici, affidabili)
   // ══════════════════════════════════════════════════════════════════════════════
 
   Stream<List<UnifiedInviteModel>> _streamPlanningPokerInvites(String email) {
-    print('🎲 [PLANNING POKER INVITES] Starting stream for email: $email');
-    // Planning Poker usa subcollection, serve collection group query
+    print('🎲 [ESTIMATION ROOM INVITES] Starting stream for email: $email');
+    // MIGRATO: Query diretta sulla collection dedicata (come Eisenhower)
     return _firestore
-        .collectionGroup('invites')
+        .collection(_estimationRoomInvitesCollection)
         .where('email', isEqualTo: email)
         .where('status', isEqualTo: 'pending')
         .snapshots()
         .asyncMap((snapshot) async {
-      print('🎲 [PLANNING POKER INVITES] Received ${snapshot.docs.length} docs');
+      print('🎲 [ESTIMATION ROOM INVITES] Found ${snapshot.docs.length} documents');
       final invites = <UnifiedInviteModel>[];
       final now = DateTime.now();
 
       for (final doc in snapshot.docs) {
-        // Verifica che sia un invito Planning Poker (controlla path)
-        final path = doc.reference.path;
-        if (!path.contains(_planningPokerSessionsCollection)) continue;
-
         try {
           final invite = PlanningPokerInviteModel.fromFirestore(doc);
+          print('🎲 [ESTIMATION ROOM INVITES] Parsed: email=${invite.email}, sessionId=${invite.sessionId}, expiresAt=${invite.expiresAt}');
+
           if (invite.expiresAt.isAfter(now)) {
             final sessionName = await _getInstanceName(
               _planningPokerSessionsCollection,
               invite.sessionId,
               'name',
             );
+            print('🎲 [ESTIMATION ROOM INVITES] ✅ Adding invite for session: $sessionName');
             invites.add(UnifiedInviteModel.fromPlanningPoker(invite, sessionName: sessionName));
+          } else {
+            print('🎲 [ESTIMATION ROOM INVITES] ⏭️ Skipping - expired');
           }
         } catch (e) {
-          // Ignora documenti che non corrispondono al modello
+          print('🎲 [ESTIMATION ROOM INVITES] ❌ Error parsing doc: $e');
           continue;
         }
       }
+      print('🎲 [ESTIMATION ROOM INVITES] Returning ${invites.length} invites');
       return invites;
     });
   }
 
   Future<List<UnifiedInviteModel>> _getPlanningPokerInvites(String email) async {
     try {
+      print('🎲 [GET ESTIMATION INVITES] Querying for email: $email');
+      // MIGRATO: Query diretta sulla collection dedicata (come Eisenhower)
       final snapshot = await _firestore
-          .collectionGroup('invites')
+          .collection(_estimationRoomInvitesCollection)
           .where('email', isEqualTo: email)
           .where('status', isEqualTo: 'pending')
           .get();
+
+      print('🎲 [GET ESTIMATION INVITES] Found ${snapshot.docs.length} docs');
 
       final invites = <UnifiedInviteModel>[];
       final now = DateTime.now();
 
       for (final doc in snapshot.docs) {
-        final path = doc.reference.path;
-        if (!path.contains(_planningPokerSessionsCollection)) continue;
-
         try {
           final invite = PlanningPokerInviteModel.fromFirestore(doc);
+          print('🎲 [GET ESTIMATION INVITES] Invite sessionId: ${invite.sessionId}');
+
           if (invite.expiresAt.isAfter(now)) {
             final sessionName = await _getInstanceName(
               _planningPokerSessionsCollection,
               invite.sessionId,
               'name',
             );
+            print('🎲 [GET ESTIMATION INVITES] ✅ Adding invite for session: $sessionName');
             invites.add(UnifiedInviteModel.fromPlanningPoker(invite, sessionName: sessionName));
+          } else {
+            print('🎲 [GET ESTIMATION INVITES] ⏭️ Skipping - expired');
           }
         } catch (e) {
+          print('🎲 [GET ESTIMATION INVITES] ❌ Error: $e');
           continue;
         }
       }
+      print('🎲 [GET ESTIMATION INVITES] Returning ${invites.length} invites');
       return invites;
     } catch (e) {
       print('⚠️ Errore getPlanningPokerInvites: $e');
@@ -538,6 +831,9 @@ class InviteAggregatorService {
   // ══════════════════════════════════════════════════════════════════════════════
 
   /// Accetta un invito
+  ///
+  /// Verifica prima se l'invito è nella collection unificata,
+  /// altrimenti usa le collection legacy
   Future<bool> acceptInvite(UnifiedInviteModel invite) async {
     final userEmail = _authService.currentUserEmail;
     final userName = _authService.currentUser?.displayName ?? userEmail?.split('@').first ?? 'User';
@@ -545,6 +841,15 @@ class InviteAggregatorService {
     if (userEmail == null) return false;
 
     try {
+      // Prima verifica se esiste nella collection unificata
+      final unifiedDoc = await _firestore.collection(_unifiedInvitesCollection).doc(invite.id).get();
+      if (unifiedDoc.exists) {
+        print('🆕 [ACCEPT] Invito trovato nella collection unificata');
+        return await _inviteService.acceptInvite(invite, accepterName: userName);
+      }
+
+      // Altrimenti usa le collection legacy
+      print('📦 [ACCEPT] Invito trovato nelle collection legacy');
       switch (invite.sourceType) {
         case InviteSourceType.eisenhower:
           return await _acceptEisenhowerInvite(invite);
@@ -564,28 +869,76 @@ class InviteAggregatorService {
   }
 
   /// Rifiuta un invito
+  ///
+  /// Verifica prima se l'invito è nella collection unificata,
+  /// altrimenti usa le collection legacy
   Future<bool> declineInvite(UnifiedInviteModel invite, {String? reason}) async {
     try {
+      print('🔴 [DECLINE] Starting decline for invite ID: ${invite.id}');
+      print('🔴 [DECLINE] Source type: ${invite.sourceType}, sourceId: ${invite.sourceId}');
+      print('🔴 [DECLINE] Email: ${invite.email}');
+
+      // Prima verifica se esiste nella collection unificata
+      // Wrap in try-catch per gestire permission-denied se il doc non è accessibile
+      bool foundInUnified = false;
+      try {
+        final unifiedDoc = await _firestore.collection(_unifiedInvitesCollection).doc(invite.id).get();
+        foundInUnified = unifiedDoc.exists;
+        print('🔍 [DECLINE] Check unified collection: exists=${unifiedDoc.exists}');
+      } catch (e) {
+        print('🔍 [DECLINE] Check unified failed (permission or not found): $e');
+        foundInUnified = false;
+      }
+
+      if (foundInUnified) {
+        print('🆕 [DECLINE] Invito trovato nella collection unificata');
+        final result = await _inviteService.declineInvite(invite.id, reason: reason);
+        print('🆕 [DECLINE] Unified decline result: $result');
+        return result;
+      }
+
+      // Altrimenti usa le collection legacy
+      print('📦 [DECLINE] Usando collection legacy per sourceType: ${invite.sourceType}');
       switch (invite.sourceType) {
         case InviteSourceType.eisenhower:
-          await _firestore.collection(_eisenhowerInvitesCollection).doc(invite.id).update({
+          print('📦 [DECLINE] Eisenhower: Updating invite in $_eisenhowerInvitesCollection/${invite.id}');
+          print('📦 [DECLINE] Eisenhower: Removing from eisenhower_matrices/${invite.sourceId} pendingEmails');
+
+          final eisenhowerBatch = _firestore.batch();
+
+          // 1. Aggiorna status invito
+          eisenhowerBatch.update(_firestore.collection(_eisenhowerInvitesCollection).doc(invite.id), {
             'status': 'declined',
             'declinedAt': Timestamp.now(),
             if (reason != null) 'declineReason': reason,
           });
+
+          // 2. Rimuovi da pendingEmails nella matrice
+          eisenhowerBatch.update(_firestore.collection('eisenhower_matrices').doc(invite.sourceId), {
+            'pendingEmails': FieldValue.arrayRemove([invite.email.toLowerCase()]),
+          });
+
+          await eisenhowerBatch.commit();
+          print('📦 [DECLINE] Eisenhower: Batch commit SUCCESS');
           return true;
 
         case InviteSourceType.estimationRoom:
-          await _firestore
-              .collection(_planningPokerSessionsCollection)
-              .doc(invite.sourceId)
-              .collection('invites')
-              .doc(invite.id)
-              .update({
+          // MIGRATO: Usa collection dedicata
+          final estimationBatch = _firestore.batch();
+
+          // 1. Aggiorna status invito nella collection dedicata
+          estimationBatch.update(_firestore.collection(_estimationRoomInvitesCollection).doc(invite.id), {
             'status': 'declined',
             'declinedAt': Timestamp.now(),
             if (reason != null) 'declineReason': reason,
           });
+
+          // 2. Rimuovi da pendingEmails nella sessione
+          estimationBatch.update(_firestore.collection(_planningPokerSessionsCollection).doc(invite.sourceId), {
+            'pendingEmails': FieldValue.arrayRemove([invite.email.toLowerCase()]),
+          });
+
+          await estimationBatch.commit();
           return true;
 
         case InviteSourceType.agileProject:
@@ -632,8 +985,9 @@ class InviteAggregatorService {
           await retroBatch.commit();
           return true;
       }
-    } catch (e) {
-      print('❌ Errore declineInvite: $e');
+    } catch (e, stackTrace) {
+      print('❌ [DECLINE] Errore declineInvite: $e');
+      print('❌ [DECLINE] Stack trace: $stackTrace');
       return false;
     }
   }
@@ -681,18 +1035,14 @@ class InviteAggregatorService {
   Future<bool> _acceptPlanningPokerInvite(UnifiedInviteModel invite, String userEmail, String userName) async {
     final batch = _firestore.batch();
 
-    // 1. Aggiorna status invito
-    final inviteRef = _firestore
-        .collection(_planningPokerSessionsCollection)
-        .doc(invite.sourceId)
-        .collection('invites')
-        .doc(invite.id);
+    // 1. Aggiorna status invito nella collection dedicata
+    final inviteRef = _firestore.collection(_estimationRoomInvitesCollection).doc(invite.id);
     batch.update(inviteRef, {
       'status': 'accepted',
       'acceptedAt': Timestamp.now(),
     });
 
-    // 2. Aggiungi come partecipante
+    // 2. Aggiungi come partecipante alla sessione
     final escapedEmail = userEmail.replaceAll('.', '_DOT_');
     final sessionRef = _firestore.collection(_planningPokerSessionsCollection).doc(invite.sourceId);
     batch.update(sessionRef, {

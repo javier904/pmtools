@@ -27,8 +27,24 @@ service cloud.firestore {
     }
 
     /// Verifica che l'utente sia nell'array participantEmails
+    /// NOTA: Gli email nel array DEVONO essere lowercase per il match
     function isParticipantByArray(resource) {
       return userEmail() in resource.data.get('participantEmails', []);
+    }
+
+    /// Verifica che l'utente sia owner tramite la mappa participants
+    /// Utile come fallback quando createdBy potrebbe non matchare
+    function isOwnerInParticipantsMap(resource) {
+      let emailKey = userEmail().replace('\\.', '_DOT_');
+      return emailKey in resource.data.get('participants', {}) &&
+             resource.data.participants[emailKey].get('role', '') == 'owner';
+    }
+
+    /// Verifica owner tramite QUALSIASI metodo (createdBy, ownerEmail, o participants map)
+    function isOwnerAnyMethod(resource) {
+      return isOwner(resource) ||
+             isOwnerByEmail(resource) ||
+             isOwnerInParticipantsMap(resource);
     }
 
     /// Verifica owner o partecipante (via participantEmails array)
@@ -41,38 +57,77 @@ service cloud.firestore {
       return userEmail() in resource.data.get('pendingEmails', []);
     }
 
+    /// Verifica se l'utente è Facilitatore (Session Owner o Ruolo Facilitator)
+    function isFacilitator(resource) {
+      let emailKey = userEmail().replace('\\.', '_DOT_');
+      return isOwner(resource) || 
+             (emailKey in resource.data.participants && resource.data.participants[emailKey].role == 'facilitator');
+    }
+
+    /// Verifica se l'utente può votare (Voter o Facilitator)
+    function isVoter(resource) {
+      let emailKey = userEmail().replace('\\.', '_DOT_');
+      return emailKey in resource.data.participants && 
+             (resource.data.participants[emailKey].role == 'voter' || resource.data.participants[emailKey].role == 'facilitator');
+    }
+
     // ════════════════════════════════════════════════════════════════════════════
     // PLANNING POKER SESSIONS
     // ════════════════════════════════════════════════════════════════════════════
 
     match /planning_poker_sessions/{sessionId} {
       // Lettura: creatore, partecipanti, o invitati (pending)
-      allow read: if isAuthenticated() && (canAccessByParticipantEmails(resource) || isPending(resource));
+      allow read: if isAuthenticated() && (isOwnerAnyMethod(resource) || canAccessByParticipantEmails(resource) || isPending(resource));
 
       // Creazione: qualsiasi utente autenticato (deve essere il creatore)
       allow create: if isAuthenticated() &&
                       request.resource.data.createdBy.lower() == userEmail();
 
-      // Aggiornamento: 
-      // 1. Creatore/Partecipanti (standard logic)
-      // 2. Pending: Self-promotion (accetta invito)
+      // Aggiornamento:
+      // 1. Facilitatore/Owner: Controllo completo (incluso pendingEmails per inviti)
+      // 2. Partecipanti: Solo presenza (heartbeat) e pendingEmails per inviti
+      // 3. Pending - ACCETTA: Self-promotion (aggiunge se stesso a participantEmails, rimuove da pending)
+      // 4. Pending - RIFIUTA: Solo rimuove se stesso da pendingEmails (senza aggiungersi a participantEmails)
       allow update: if isAuthenticated() && (
-        canAccessByParticipantEmails(resource) || 
-        (isPending(resource) && 
+        isFacilitator(resource) ||
+        isOwnerAnyMethod(resource) ||
+        // Partecipanti: heartbeat + possono aggiungere pendingEmails per creare inviti
+        (canAccessByParticipantEmails(resource) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'updatedAt', 'pendingEmails'])) ||
+        // Pending - ACCETTA: aggiunge se stesso a participantEmails e rimuove da pending
+        (isPending(resource) &&
          request.resource.data.participantEmails.hasAll(resource.data.participantEmails) &&
          request.resource.data.participantEmails.hasAll([userEmail()]) &&
-         request.resource.data.pendingEmails.size() < resource.data.pendingEmails.size())
+         request.resource.data.pendingEmails.size() < resource.data.pendingEmails.size()) ||
+        // Pending - RIFIUTA: rimuove solo se stesso da pendingEmails (participantEmails rimane invariato)
+        (isPending(resource) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pendingEmails', 'updatedAt']) &&
+         request.resource.data.pendingEmails.size() < resource.data.pendingEmails.size() &&
+         request.resource.data.participantEmails == resource.data.participantEmails)
       );
 
       // Cancellazione: solo creatore
-      allow delete: if isAuthenticated() && isOwner(resource);
+      allow delete: if isAuthenticated() && isOwnerAnyMethod(resource);
 
       // Subcollection: stories
       match /stories/{storyId} {
-        allow read, write: if isAuthenticated() &&
+        // Read: Accessibile a tutti i partecipanti
+        allow read: if isAuthenticated() &&
                       canAccessByParticipantEmails(
                         get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))
                       );
+
+        // Create/Delete: Solo Facilitatore
+        allow create, delete: if isAuthenticated() &&
+                                isFacilitator(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId)));
+
+        // Update: Facilitatore (Tutto) O Voter (Solo Voti)
+        allow update: if isAuthenticated() && (
+          isFacilitator(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))) ||
+          // Voter: può aggiornare solo se tocca 'votes' (e contatori)
+          (isVoter(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId))) &&
+           request.resource.data.diff(resource.data).affectedKeys().hasAny(['votes', 'voteCount']))
+        );
       }
 
       // Subcollection: invites (USATA DAL CODICE - planning_poker_invite_service.dart)
@@ -92,10 +147,11 @@ service cloud.firestore {
         allow create: if isAuthenticated() &&
           canAccessByParticipantEmails(get(/databases/$(database)/documents/planning_poker_sessions/$(sessionId)));
 
-        // Update: chi ha invitato o l'invitato che accetta
+        // Update: chi ha invitato o l'invitato che accetta/rifiuta
         allow update: if isAuthenticated() && (
           resource.data.invitedBy.lower() == userEmail() ||
-          (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+          ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+           resource.data.email.lower() == userEmail())
         );
 
         // Delete: chi ha invitato
@@ -123,10 +179,10 @@ service cloud.firestore {
       // Creazione: qualsiasi utente autenticato
       allow create: if isAuthenticated();
 
-      // Aggiornamento/Cancellazione: solo chi ha invitato o chi accetta (aggiornamento status)
+      // Aggiornamento/Cancellazione: solo chi ha invitato o chi accetta/rifiuta
       allow update: if isAuthenticated() && (
         resource.data.invitedBy.lower() == userEmail() ||
-        (request.resource.data.status == 'accepted' &&
+        ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
          resource.data.email.lower() == userEmail())
       );
 
@@ -140,25 +196,25 @@ service cloud.firestore {
     match /eisenhower_matrices/{matrixId} {
       // Lettura: creatore, partecipanti, o invitati (pending)
       allow read: if isAuthenticated() &&
-                    (isOwner(resource) || isParticipantByArray(resource) || isPending(resource));
+                    (isOwnerAnyMethod(resource) || isParticipantByArray(resource) || isPending(resource));
 
       // Creazione: qualsiasi utente autenticato (deve essere il creatore)
       allow create: if isAuthenticated() &&
                       request.resource.data.createdBy.lower() == userEmail();
 
       // Aggiornamento
-      // 1. Owner: controllo totale
-      // 2. Partecipanti: possono modificare
+      // 1. Owner: controllo totale (via createdBy, ownerEmail, o participants map)
+      // 2. Partecipanti: possono modificare (incluso aggiungere pendingEmails per inviti)
       // 3. Pending: possono SOLO accettare invito (self-promotion)
       allow update: if isAuthenticated() && (
-        isOwner(resource) ||
+        isOwnerAnyMethod(resource) ||
         isParticipantByArray(resource) ||
         // Self-promotion per utenti pending: aggiungono se stessi e si rimuovono da pending
         isPending(resource)
       );
 
       // Cancellazione: solo creatore
-      allow delete: if isAuthenticated() && isOwner(resource);
+      allow delete: if isAuthenticated() && isOwnerAnyMethod(resource);
 
       // Subcollection: activities
       match /activities/{activityId} {
@@ -186,9 +242,11 @@ service cloud.firestore {
       );
 
       allow create: if isAuthenticated();
+      // Update: chi ha invitato (qualsiasi modifica) O l'invitato (solo per accettare/rifiutare)
       allow update: if isAuthenticated() && (
         resource.data.invitedBy.lower() == userEmail() ||
-        (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+        ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+         resource.data.email.lower() == userEmail())
       );
       allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
     }
@@ -213,7 +271,7 @@ service cloud.firestore {
 
     match /agile_projects/{projectId} {
       // Lettura: creatore, partecipanti, o invitati (pending)
-      allow read: if isAuthenticated() && (canAccessByParticipantEmails(resource) || isPending(resource));
+      allow read: if isAuthenticated() && (isOwnerAnyMethod(resource) || canAccessByParticipantEmails(resource) || isPending(resource));
 
       // Creazione: qualsiasi utente autenticato (deve essere il creatore) + Validazione
       allow create: if isAuthenticated() &&
@@ -221,27 +279,34 @@ service cloud.firestore {
                       validateProjectData(request.resource.data);
 
       // Aggiornamento stratificato:
-      // 1. Owner: Controllo totale
-      // 2. Partecipanti: Possono modificare dati ma NON aggiungere/rimuovere membri (Anti-Spam)
-      // 3. Pending: Possono SOLO promuoversi ad attivi (accettare invito)
+      // 1. Owner: Controllo totale (incluso pendingEmails per inviti)
+      // 2. Partecipanti: Possono aggiungere a pendingEmails (per inviti) ma NON rimuovere membri
+      // 3. Pending - ACCETTA: Possono promuoversi ad attivi (accettare invito)
+      // 4. Pending - RIFIUTA: Possono solo rimuoversi da pendingEmails
       allow update: if isAuthenticated() && validateProjectData(request.resource.data) &&
         (
-          // Case 1: Owner
-          isOwner(resource) ||
-          
-          // Case 2: Partecipante esistente (non può toccare le liste utenti)
-          (isParticipantByArray(resource) && 
+          // Case 1: Owner - controllo totale
+          isOwnerAnyMethod(resource) ||
+
+          // Case 2: Partecipante esistente - può aggiungere a pendingEmails per inviti
+          (isParticipantByArray(resource) &&
            request.resource.data.participantEmails == resource.data.participantEmails &&
-           request.resource.data.get('pendingEmails', []) == resource.data.get('pendingEmails', [])) ||
-           
-          // Case 3: Utente Pending (Self-promotion: aggiunge se stesso e rimuove da pending)
-          (isPending(resource) && 
+           request.resource.data.get('pendingEmails', []).hasAll(resource.data.get('pendingEmails', []))) ||
+
+          // Case 3: Utente Pending - ACCETTA (aggiunge se stesso e rimuove da pending)
+          (isPending(resource) &&
            request.resource.data.participantEmails.hasAll(resource.data.participantEmails) &&
-           request.resource.data.participantEmails.hasAll([userEmail()]))
+           request.resource.data.participantEmails.hasAll([userEmail()])) ||
+
+          // Case 4: Utente Pending - RIFIUTA (solo rimuove se stesso da pendingEmails)
+          (isPending(resource) &&
+           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pendingEmails', 'updatedAt']) &&
+           request.resource.data.get('pendingEmails', []).size() < resource.data.get('pendingEmails', []).size() &&
+           request.resource.data.participantEmails == resource.data.participantEmails)
         );
 
       // Cancellazione: solo creatore
-      allow delete: if isAuthenticated() && isOwner(resource);
+      allow delete: if isAuthenticated() && isOwnerAnyMethod(resource);
 
       // Subcollections: stories, sprints, retrospectives, audit_logs
       match /stories/{storyId} {
@@ -299,12 +364,13 @@ service cloud.firestore {
       // Creazione: qualsiasi utente autenticato
       allow create: if isAuthenticated();
 
-      // Aggiornamento/Cancellazione: solo chi ha invitato o chi accetta
+      // Aggiornamento/Cancellazione: solo chi ha invitato o chi accetta/rifiuta
       allow update: if isAuthenticated() && (
         resource.data.invitedBy.lower() == userEmail() ||
-        (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+        ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+         resource.data.email.lower() == userEmail())
       );
-      
+
       allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
     }
 
@@ -313,9 +379,11 @@ service cloud.firestore {
     // ════════════════════════════════════════════════════════════════════════════
 
     match /smart_todo_lists/{listId} {
+      // Helper per owner di smart_todo_lists (usa ownerEmail)
       // Lettura: owner o partecipanti (via participantEmails) o pending
       allow read: if isAuthenticated() &&
                     (resource.data.get('ownerEmail', '').lower() == userEmail() ||
+                     resource.data.get('createdBy', '').lower() == userEmail() ||
                      userEmail() in resource.data.get('participantEmails', []) ||
                      isPending(resource));
 
@@ -323,19 +391,27 @@ service cloud.firestore {
       allow create: if isAuthenticated() &&
                       request.resource.data.get('ownerEmail', '').lower() == userEmail();
 
-      // Aggiornamento: owner o partecipanti o pending (self-promotion)
+      // Aggiornamento: owner o partecipanti (incluso pendingEmails per inviti) o pending (accetta/rifiuta)
       allow update: if isAuthenticated() && (
         resource.data.get('ownerEmail', '').lower() == userEmail() ||
+        resource.data.get('createdBy', '').lower() == userEmail() ||
         userEmail() in resource.data.get('participantEmails', []) ||
-        (isPending(resource) && 
+        // Pending - ACCETTA: aggiunge se stesso a participantEmails
+        (isPending(resource) &&
          request.resource.data.get('participantEmails', []).hasAll(resource.data.get('participantEmails', [])) &&
          request.resource.data.get('participantEmails', []).hasAll([userEmail()]) &&
-         request.resource.data.get('pendingEmails', []).size() < resource.data.get('pendingEmails', []).size())
+         request.resource.data.get('pendingEmails', []).size() < resource.data.get('pendingEmails', []).size()) ||
+        // Pending - RIFIUTA: solo rimuove se stesso da pendingEmails
+        (isPending(resource) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pendingEmails', 'updatedAt']) &&
+         request.resource.data.get('pendingEmails', []).size() < resource.data.get('pendingEmails', []).size() &&
+         request.resource.data.get('participantEmails', []) == resource.data.get('participantEmails', []))
       );
 
       // Cancellazione: solo owner
       allow delete: if isAuthenticated() &&
-                      resource.data.get('ownerEmail', '').lower() == userEmail();
+                      (resource.data.get('ownerEmail', '').lower() == userEmail() ||
+                       resource.data.get('createdBy', '').lower() == userEmail());
 
       // Subcollection: tasks
       match /smart_todo_tasks/{taskId} {
@@ -366,10 +442,11 @@ service cloud.firestore {
           userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', [])
         );
 
-        // Update: chi ha invitato o l'invitato che accetta
+        // Update: chi ha invitato o l'invitato che accetta/rifiuta
         allow update: if isAuthenticated() && (
           resource.data.invitedBy.lower() == userEmail() ||
-          (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+          ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+           resource.data.email.lower() == userEmail())
         );
 
         // Delete: chi ha invitato
@@ -421,10 +498,11 @@ service cloud.firestore {
       // Creazione: qualsiasi utente autenticato
       allow create: if isAuthenticated();
 
-      // Aggiornamento/Cancellazione
+      // Aggiornamento/Cancellazione: solo chi ha invitato o chi accetta/rifiuta
       allow update: if isAuthenticated() && (
         resource.data.invitedBy.lower() == userEmail() ||
-        (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail())
+        ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+         resource.data.email.lower() == userEmail())
       );
       allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
     }
@@ -434,10 +512,11 @@ service cloud.firestore {
     // ════════════════════════════════════════════════════════════════════════════
 
     match /retrospectives/{retroId} {
-      // Lettura: Owner o Partecipanti
+      // Lettura: Owner, Partecipanti, o Pending
       allow read: if isAuthenticated() && (
         resource.data.get('createdBy', '').lower() == userEmail() ||
-        userEmail() in resource.data.get('participantEmails', [])
+        userEmail() in resource.data.get('participantEmails', []) ||
+        isPending(resource)
       );
 
       // Creazione: Utente autenticato che si imposta come creatore
@@ -445,10 +524,11 @@ service cloud.firestore {
       allow create: if isAuthenticated() &&
                       request.resource.data.get('createdBy', '').lower() == userEmail();
 
-      // Aggiornamento: Owner o Partecipanti
+      // Aggiornamento: Owner o Partecipanti (incluso pendingEmails per inviti) o Pending (self-promotion)
       allow update: if isAuthenticated() && (
         resource.data.get('createdBy', '').lower() == userEmail() ||
-        userEmail() in resource.data.get('participantEmails', [])
+        userEmail() in resource.data.get('participantEmails', []) ||
+        isPending(resource)
       );
 
       // Cancellazione: Solo Owner
@@ -461,6 +541,96 @@ service cloud.firestore {
       // Questa collection è solo per scrittura (tracking retrospettive standalone)
       allow read: if false;
       allow create: if isAuthenticated();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // INVITATIONS (UNIFIED COLLECTION)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /invitations/{inviteId} {
+      // Get: Solo invitato o chi ha invitato
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
+      // List: Permette query per:
+      // 1. Inviti ricevuti (email == userEmail) - per campanella
+      // 2. Inviti per una source specifica (sourceType + sourceId) - per tab Inviti
+      // NOTA: La sicurezza è garantita dal fatto che solo owner/partecipanti
+      // possono accedere alla schermata che mostra gli inviti per una source
+      allow list: if isAuthenticated();
+
+      // Create: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Update: chi ha invitato o chi accetta (solo se cambia status)
+      allow update: if isAuthenticated() && (
+        resource.data.invitedBy.lower() == userEmail() ||
+        (request.resource.data.status == 'accepted' && resource.data.email.lower() == userEmail()) ||
+        (request.resource.data.status == 'declined' && resource.data.email.lower() == userEmail())
+      );
+
+      // Delete: chi ha invitato
+      allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // ESTIMATION ROOM INVITES (TOP-LEVEL - Era mancante!)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /estimation_room_invites/{inviteId} {
+      // Get: Solo invitato o chi ha invitato
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
+      // List: Solo inviti propri (ricevuti o inviati)
+      allow list: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
+      // Create: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Update/Delete: chi ha invitato o chi accetta/rifiuta
+      allow update: if isAuthenticated() && (
+        resource.data.invitedBy.lower() == userEmail() ||
+        ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+         resource.data.email.lower() == userEmail())
+      );
+      allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // RETRO INVITES (TOP-LEVEL - Era mancante!)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /retro_invites/{inviteId} {
+      // Get: Solo invitato o chi ha invitato
+      allow get: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
+      // List: Solo inviti propri (ricevuti o inviati)
+      allow list: if isAuthenticated() && (
+        resource.data.email.lower() == userEmail() ||
+        resource.data.invitedBy.lower() == userEmail()
+      );
+
+      // Create: qualsiasi utente autenticato
+      allow create: if isAuthenticated();
+
+      // Update/Delete: chi ha invitato o chi accetta/rifiuta
+      allow update: if isAuthenticated() && (
+        resource.data.invitedBy.lower() == userEmail() ||
+        ((request.resource.data.status == 'accepted' || request.resource.data.status == 'declined') &&
+         resource.data.email.lower() == userEmail())
+      );
+      allow delete: if isAuthenticated() && resource.data.invitedBy.lower() == userEmail();
     }
 
     // ════════════════════════════════════════════════════════════════════════════

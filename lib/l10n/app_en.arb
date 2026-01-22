@@ -369,6 +369,17 @@
   "estimationModeDotVoting": "Dot Voting",
   "estimationModeBucketSystem": "Bucket System",
   "estimationModeFiveFingers": "Five Fingers",
+  "estimationOnlineParticipants": "{online} of {total} participants online",
+  "@estimationOnlineParticipants": {
+    "placeholders": {
+      "online": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "retroTitle": "My Retrospectives",
   "retroNoRetros": "No retrospectives",
   "retroCreateNew": "Create New",
@@ -848,6 +859,14 @@
   "inviteNoInvites": "No invites sent",
   "inviteCreatedFor": "Invite created for {email}",
   "@inviteCreatedFor": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSentTo": "Invite sent via email to {email}",
+  "@inviteSentTo": {
     "placeholders": {
       "email": {
         "type": "String"
@@ -2553,6 +2572,7 @@
   "inviteAcceptedSuccess": "Invite accepted successfully!",
   "inviteAcceptedError": "Failed to accept invite",
   "inviteDeclinedSuccess": "Invite declined",
+  "inviteDeclinedError": "Failed to decline invite",
   "inviteDeclineTitle": "Decline invite?",
   "inviteDeclineMessage": "Are you sure you want to decline this invite?",
   "expiresInHours": "Expires in {hours}h",

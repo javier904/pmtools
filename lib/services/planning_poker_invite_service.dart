@@ -10,17 +10,39 @@ import '../utils/validators.dart';
 import 'subscription/subscription_limits_service.dart';
 
 /// Servizio per la gestione degli inviti alle sessioni di Planning Poker
+///
+/// Struttura Firestore (MIGRATO a collection dedicata come Eisenhower):
+/// ```
+/// estimation_room_invites/{inviteId}
+///   - sessionId: String
+///   - email: String
+///   - role: String (facilitator, voter, observer)
+///   - status: String (pending, accepted, declined, expired, revoked)
+///   - token: String (32 chars)
+///   - invitedBy: String
+///   - invitedByName: String
+///   - invitedAt: Timestamp
+///   - expiresAt: Timestamp
+///   - acceptedAt: Timestamp?
+///   - declinedAt: Timestamp?
+///   - declineReason: String?
+/// ```
 class PlanningPokerInviteService {
+  static final PlanningPokerInviteService _instance = PlanningPokerInviteService._internal();
+  factory PlanningPokerInviteService() => _instance;
+  PlanningPokerInviteService._internal() : _firestore = FirebaseFirestore.instance;
+
   final FirebaseFirestore _firestore;
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   // Collection names
   static const String _sessionsCollection = 'planning_poker_sessions';
-  static const String _invitesSubcollection = 'invites';
+  /// MIGRATO: Collection dedicata come Eisenhower invece di subcollection
+  static const String _invitesCollection = 'estimation_room_invites';
 
-  PlanningPokerInviteService({
-    FirebaseFirestore? firestore,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance;
+  /// Riferimento alla collection inviti
+  CollectionReference<Map<String, dynamic>> get _invitesRef =>
+      _firestore.collection(_invitesCollection);
 
   // ══════════════════════════════════════════════════════════════════════════
   // CRUD INVITI
@@ -53,15 +75,9 @@ class PlanningPokerInviteService {
 
     final now = DateTime.now();
     final token = _generateToken();
-    final inviteId = _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
-        .doc()
-        .id;
 
     final invite = PlanningPokerInviteModel(
-      id: inviteId,
+      id: '', // Sarà l'ID del documento
       sessionId: sessionId,
       email: email.toLowerCase(),
       role: role,
@@ -74,13 +90,9 @@ class PlanningPokerInviteService {
     );
 
     final batch = _firestore.batch();
-    
-    // 1. Crea documento invito
-    final inviteRef = _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
-        .doc(inviteId);
+
+    // 1. Crea documento invito nella collection dedicata
+    final inviteRef = _invitesRef.doc();
     batch.set(inviteRef, invite.toFirestore());
 
     // 2. Aggiungi a pendingEmails (Sessione)
@@ -92,29 +104,21 @@ class PlanningPokerInviteService {
 
     await batch.commit();
 
-    print('✅ Invito creato con Pending: ${invite.email} -> sessione $sessionId');
-    return invite;
+    print('✅ Invito creato in collection dedicata: ${invite.email} -> sessione $sessionId');
+    return invite.copyWith(id: inviteRef.id);
   }
 
   /// Ottieni un invito per ID
   Future<PlanningPokerInviteModel?> getInvite(String sessionId, String inviteId) async {
-    final doc = await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
-        .doc(inviteId)
-        .get();
-
+    final doc = await _invitesRef.doc(inviteId).get();
     if (!doc.exists) return null;
     return PlanningPokerInviteModel.fromFirestore(doc);
   }
 
-  /// Ottieni un invito per email
+  /// Ottieni un invito per email in una specifica sessione
   Future<PlanningPokerInviteModel?> getInviteByEmail(String sessionId, String email) async {
-    final query = await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
+    final query = await _invitesRef
+        .where('sessionId', isEqualTo: sessionId)
         .where('email', isEqualTo: email.toLowerCase())
         .where('status', isEqualTo: 'pending')
         .limit(1)
@@ -124,62 +128,43 @@ class PlanningPokerInviteService {
     return PlanningPokerInviteModel.fromFirestore(query.docs.first);
   }
 
-  /// Ottieni un invito per token
-  ///
-  /// OTTIMIZZATO: Usa collection group query invece di caricare tutte le sessioni.
-  /// Questo riduce drasticamente le letture Firestore (da N sessioni a 1 query).
+  /// Ottieni un invito per token (query semplice sulla collection dedicata)
   Future<PlanningPokerInviteModel?> getInviteByToken(String token) async {
     try {
-      // Collection group query: cerca in tutte le subcollection 'invites'
-      final inviteQuery = await _firestore
-          .collectionGroup(_invitesSubcollection)
+      final snapshot = await _invitesRef
           .where('token', isEqualTo: token)
           .limit(1)
           .get();
 
-      if (inviteQuery.docs.isNotEmpty) {
-        return PlanningPokerInviteModel.fromFirestore(inviteQuery.docs.first);
-      }
-      return null;
+      if (snapshot.docs.isEmpty) return null;
+      return PlanningPokerInviteModel.fromFirestore(snapshot.docs.first);
     } catch (e) {
-      // Fallback al metodo originale se collection group non funziona
-      // (es. indice mancante - verrà creato automaticamente alla prima esecuzione)
-      // Log solo in debug per non esporre dettagli in produzione
-      assert(() {
-        print('⚠️ Collection group query fallita, usando fallback: $e');
-        return true;
-      }());
-      return _getInviteByTokenFallback(token);
+      print('❌ Errore getInviteByToken: $e');
+      return null;
     }
   }
 
-  /// Fallback per getInviteByToken (metodo originale inefficiente)
-  Future<PlanningPokerInviteModel?> _getInviteByTokenFallback(String token) async {
-    final sessionsQuery = await _firestore
-        .collection(_sessionsCollection)
-        .get();
-
-    for (final sessionDoc in sessionsQuery.docs) {
-      final inviteQuery = await sessionDoc.reference
-          .collection(_invitesSubcollection)
-          .where('token', isEqualTo: token)
+  /// Ottieni un invito attivo per email (senza sessione specifica)
+  Future<PlanningPokerInviteModel?> getActiveInviteForEmail(String email) async {
+    try {
+      final snapshot = await _invitesRef
+          .where('email', isEqualTo: email.toLowerCase())
+          .where('status', isEqualTo: 'pending')
           .limit(1)
           .get();
 
-      if (inviteQuery.docs.isNotEmpty) {
-        return PlanningPokerInviteModel.fromFirestore(inviteQuery.docs.first);
-      }
+      if (snapshot.docs.isEmpty) return null;
+      return PlanningPokerInviteModel.fromFirestore(snapshot.docs.first);
+    } catch (e) {
+      print('❌ Errore getActiveInviteForEmail: $e');
+      return null;
     }
-
-    return null;
   }
 
   /// Ottieni tutti gli inviti di una sessione
   Future<List<PlanningPokerInviteModel>> getSessionInvites(String sessionId) async {
-    final query = await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
+    final query = await _invitesRef
+        .where('sessionId', isEqualTo: sessionId)
         .orderBy('invitedAt', descending: true)
         .get();
 
@@ -190,10 +175,8 @@ class PlanningPokerInviteService {
 
   /// Ottieni inviti pending di una sessione
   Future<List<PlanningPokerInviteModel>> getPendingInvites(String sessionId) async {
-    final query = await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
+    final query = await _invitesRef
+        .where('sessionId', isEqualTo: sessionId)
         .where('status', isEqualTo: 'pending')
         .orderBy('invitedAt', descending: true)
         .get();
@@ -203,12 +186,45 @@ class PlanningPokerInviteService {
         .toList();
   }
 
+  /// Ottieni gli inviti pendenti per l'utente corrente
+  Future<List<PlanningPokerInviteModel>> getMyPendingInvites(String email) async {
+    try {
+      final snapshot = await _invitesRef
+          .where('email', isEqualTo: email.toLowerCase())
+          .where('status', isEqualTo: 'pending')
+          .get();
+
+      // Filtra quelli scaduti
+      final now = DateTime.now();
+      return snapshot.docs
+          .map((doc) => PlanningPokerInviteModel.fromFirestore(doc))
+          .where((invite) => invite.expiresAt.isAfter(now))
+          .toList();
+    } catch (e) {
+      print('❌ Errore getMyPendingInvites: $e');
+      return [];
+    }
+  }
+
+  /// Stream degli inviti pendenti per un utente
+  Stream<List<PlanningPokerInviteModel>> streamMyPendingInvites(String email) {
+    return _invitesRef
+        .where('email', isEqualTo: email.toLowerCase())
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((snapshot) {
+      final now = DateTime.now();
+      return snapshot.docs
+          .map((doc) => PlanningPokerInviteModel.fromFirestore(doc))
+          .where((invite) => invite.expiresAt.isAfter(now))
+          .toList();
+    });
+  }
+
   /// Stream degli inviti di una sessione
   Stream<List<PlanningPokerInviteModel>> streamSessionInvites(String sessionId) {
-    return _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
+    return _invitesRef
+        .where('sessionId', isEqualTo: sessionId)
         .orderBy('invitedAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -238,7 +254,7 @@ class PlanningPokerInviteService {
 
     if (invite.isExpired) {
       // Aggiorna lo stato a expired
-      await _updateInviteStatus(invite.sessionId, invite.id, InviteStatus.expired);
+      await _updateInviteStatus(invite.id, InviteStatus.expired);
       throw Exception('Questo invito è scaduto');
     }
 
@@ -257,25 +273,73 @@ class PlanningPokerInviteService {
 
     final batch = _firestore.batch();
 
-    // Aggiorna la sessione con il nuovo partecipante e RIMUOVI da pending
-    // Escape dei punti nell'email per usarla come chiave Firestore
+    // 1. Aggiorna la sessione con il nuovo partecipante e RIMUOVI da pending
     final escapedEmail = acceptingUserEmail.toLowerCase().replaceAll('.', '_DOT_');
     final sessionRef = _firestore.collection(_sessionsCollection).doc(invite.sessionId);
     batch.update(sessionRef, {
       'participants.$escapedEmail': participant.toMap(),
       'participantEmails': FieldValue.arrayUnion([acceptingUserEmail.toLowerCase()]),
-      'pendingEmails': FieldValue.arrayRemove([acceptingUserEmail.toLowerCase()]), // RIMOSSO DA PENDING
+      'pendingEmails': FieldValue.arrayRemove([acceptingUserEmail.toLowerCase()]),
     });
 
-    // Aggiorna lo stato dell'invito
-    final inviteRef = sessionRef.collection(_invitesSubcollection).doc(invite.id);
-    batch.update(inviteRef, {
+    // 2. Aggiorna lo stato dell'invito nella collection dedicata
+    batch.update(_invitesRef.doc(invite.id), {
       'status': 'accepted',
       'acceptedAt': Timestamp.now(),
     });
 
     await batch.commit();
-    print('✅ Invito accettato e promosso da Pending: ${invite.email} -> sessione ${invite.sessionId}');
+    print('✅ Invito accettato: ${invite.email} -> sessione ${invite.sessionId}');
+  }
+
+  /// Accetta un invito per ID (usato da InviteAggregatorService)
+  Future<bool> acceptInviteById(String inviteId, {String? accepterName}) async {
+    try {
+      final doc = await _invitesRef.doc(inviteId).get();
+      if (!doc.exists) {
+        print('❌ Invito non trovato: $inviteId');
+        return false;
+      }
+
+      final invite = PlanningPokerInviteModel.fromFirestore(doc);
+
+      if (!invite.isPending || invite.isExpired) {
+        print('❌ Invito non valido o scaduto');
+        return false;
+      }
+
+      // Aggiungi l'utente come partecipante
+      final participant = PlanningPokerParticipantModel(
+        email: invite.email,
+        name: accepterName ?? invite.email.split('@').first,
+        role: invite.role,
+        joinedAt: DateTime.now(),
+      );
+
+      final batch = _firestore.batch();
+
+      // 1. Aggiorna status invito
+      batch.update(_invitesRef.doc(inviteId), {
+        'status': 'accepted',
+        'acceptedAt': Timestamp.now(),
+      });
+
+      // 2. Aggiungi come partecipante alla sessione
+      final escapedEmail = invite.email.replaceAll('.', '_DOT_');
+      final sessionRef = _firestore.collection(_sessionsCollection).doc(invite.sessionId);
+      batch.update(sessionRef, {
+        'participants.$escapedEmail': participant.toMap(),
+        'participantEmails': FieldValue.arrayUnion([invite.email]),
+        'pendingEmails': FieldValue.arrayRemove([invite.email]),
+      });
+
+      await batch.commit();
+      print('✅ Invito accettato: $inviteId');
+      return true;
+    } catch (e) {
+      print('❌ Errore acceptInviteById: $e');
+      return false;
+    }
   }
 
   /// Rifiuta un invito
@@ -293,12 +357,7 @@ class PlanningPokerInviteService {
       throw Exception('Questo invito non è più valido');
     }
 
-    await _firestore
-        .collection(_sessionsCollection)
-        .doc(invite.sessionId)
-        .collection(_invitesSubcollection)
-        .doc(invite.id)
-        .update({
+    await _invitesRef.doc(invite.id).update({
       'status': 'declined',
       'declinedAt': Timestamp.now(),
       if (reason != null) 'declineReason': reason,
@@ -307,9 +366,25 @@ class PlanningPokerInviteService {
     print('❌ Invito rifiutato: ${invite.email}');
   }
 
+  /// Rifiuta un invito per ID
+  Future<bool> declineInviteById(String inviteId, {String? reason}) async {
+    try {
+      await _invitesRef.doc(inviteId).update({
+        'status': 'declined',
+        'declinedAt': Timestamp.now(),
+        if (reason != null) 'declineReason': reason,
+      });
+      print('❌ Invito rifiutato: $inviteId');
+      return true;
+    } catch (e) {
+      print('❌ Errore declineInviteById: $e');
+      return false;
+    }
+  }
+
   /// Revoca un invito (solo facilitatore)
   Future<void> revokeInvite(String sessionId, String inviteId) async {
-    await _updateInviteStatus(sessionId, inviteId, InviteStatus.revoked);
+    await _updateInviteStatus(inviteId, InviteStatus.revoked);
     print('🚫 Invito revocato: $inviteId');
   }
 
@@ -324,15 +399,11 @@ class PlanningPokerInviteService {
     final now = DateTime.now();
     final newToken = _generateToken();
 
-    await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
-        .doc(inviteId)
-        .update({
+    await _invitesRef.doc(inviteId).update({
       'token': newToken,
       'expiresAt': Timestamp.fromDate(now.add(const Duration(days: 7))),
       'status': 'pending',
+      'invitedAt': Timestamp.fromDate(now),
     });
 
     print('🔄 Invito reinviato: ${invite.email}');
@@ -346,13 +417,7 @@ class PlanningPokerInviteService {
 
   /// Elimina un invito
   Future<void> deleteInvite(String sessionId, String inviteId) async {
-    await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
-        .doc(inviteId)
-        .delete();
-
+    await _invitesRef.doc(inviteId).delete();
     print('🗑️ Invito eliminato: $inviteId');
   }
 
@@ -483,13 +548,11 @@ ${base64Encode(utf8.encode(htmlBody))}
   // UTILITY
   // ══════════════════════════════════════════════════════════════════════════
 
-  /// Pulisci inviti scaduti
+  /// Pulisci inviti scaduti per una sessione
   Future<int> cleanExpiredInvites(String sessionId) async {
     final now = DateTime.now();
-    final query = await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
+    final query = await _invitesRef
+        .where('sessionId', isEqualTo: sessionId)
         .where('status', isEqualTo: 'pending')
         .get();
 
@@ -512,10 +575,51 @@ ${base64Encode(utf8.encode(htmlBody))}
     return count;
   }
 
+  /// Aggiorna gli inviti scaduti globalmente
+  Future<int> expireOldInvites() async {
+    try {
+      final now = DateTime.now();
+      final snapshot = await _invitesRef
+          .where('status', isEqualTo: 'pending')
+          .where('expiresAt', isLessThan: Timestamp.fromDate(now))
+          .get();
+
+      if (snapshot.docs.isEmpty) return 0;
+
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.update(doc.reference, {'status': 'expired'});
+      }
+      await batch.commit();
+
+      print('✅ ${snapshot.docs.length} inviti scaduti aggiornati');
+      return snapshot.docs.length;
+    } catch (e) {
+      print('❌ Errore expireOldInvites: $e');
+      return 0;
+    }
+  }
+
   /// Verifica se un utente ha un invito pending per una sessione
   Future<bool> hasUserPendingInvite(String sessionId, String email) async {
     final invite = await getInviteByEmail(sessionId, email);
     return invite != null && invite.isPending;
+  }
+
+  /// Conta gli inviti pendenti per una sessione
+  Future<int> countPendingInvites(String sessionId) async {
+    try {
+      final snapshot = await _invitesRef
+          .where('sessionId', isEqualTo: sessionId)
+          .where('status', isEqualTo: 'pending')
+          .count()
+          .get();
+
+      return snapshot.count ?? 0;
+    } catch (e) {
+      print('❌ Errore countPendingInvites: $e');
+      return 0;
+    }
   }
 
   /// Ottieni statistiche inviti per una sessione
@@ -532,6 +636,16 @@ ${base64Encode(utf8.encode(htmlBody))}
     };
   }
 
+  /// Genera il link di invito
+  /// Nuovo formato deep link: /invite/estimation-room/{sessionId}
+  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? sessionId}) {
+    if (sessionId != null) {
+      return '$baseUrl/#/invite/estimation-room/$sessionId';
+    }
+    // Fallback al formato token per retrocompatibilità
+    return '$baseUrl/#/invite/estimation-room/token/$token';
+  }
+
   // ══════════════════════════════════════════════════════════════════════════
   // PRIVATE HELPERS
   // ══════════════════════════════════════════════════════════════════════════
@@ -544,13 +658,8 @@ ${base64Encode(utf8.encode(htmlBody))}
   }
 
   /// Aggiorna lo stato di un invito
-  Future<void> _updateInviteStatus(String sessionId, String inviteId, InviteStatus status) async {
-    await _firestore
-        .collection(_sessionsCollection)
-        .doc(sessionId)
-        .collection(_invitesSubcollection)
-        .doc(inviteId)
-        .update({'status': status.name});
+  Future<void> _updateInviteStatus(String inviteId, InviteStatus status) async {
+    await _invitesRef.doc(inviteId).update({'status': status.name});
   }
 
   /// Ottieni una sessione

@@ -9,8 +9,9 @@ import '../models/eisenhower_activity_model.dart';
 import '../models/eisenhower_participant_model.dart';
 import '../models/agile_enums.dart';
 import '../services/eisenhower_firestore_service.dart';
-import '../services/eisenhower_invite_service.dart';
+import '../services/invite_service.dart';
 import '../services/eisenhower_sheets_export_service.dart';
+import '../models/unified_invite_model.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../l10n/app_localizations.dart';
@@ -65,7 +66,7 @@ class EisenhowerScreen extends StatefulWidget {
 class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   final EisenhowerFirestoreService _firestoreService = EisenhowerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
-  final EisenhowerInviteService _inviteService = EisenhowerInviteService();
+  final InviteService _inviteService = InviteService();
   final EisenhowerSheetsExportService _sheetsExportService = EisenhowerSheetsExportService();
   final AuthService _authService = AuthService();
 
@@ -2278,7 +2279,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   Future<void> _showInviteDialog() async {
     if (_selectedMatrix == null) return;
 
-    final pendingInvites = await _inviteService.getInvitesForMatrix(_selectedMatrix!.id);
+    final pendingInvites = await _inviteService.getInvitesForSource(
+      InviteSourceType.eisenhower,
+      _selectedMatrix!.id,
+    );
 
     if (!mounted) return;
 

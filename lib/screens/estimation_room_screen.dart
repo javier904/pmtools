@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'package:googleapis/gmail/v1.dart' as gmail;
+import 'package:http/http.dart' as http;
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../l10n/app_localizations.dart';
 import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_story_model.dart';
 import '../models/planning_poker_participant_model.dart';
-import '../models/planning_poker_invite_model.dart';
+import '../models/unified_invite_model.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
 import '../services/planning_poker_firestore_service.dart';
-import '../services/planning_poker_invite_service.dart';
+import '../services/invite_service.dart';
 import '../services/smart_todo_service.dart';
 import '../services/auth_service.dart';
 import '../widgets/estimation_room/session_form_dialog.dart';
@@ -23,6 +28,7 @@ import '../widgets/estimation_room/participant_list_widget.dart';
 import '../widgets/estimation_room/session_search_widget.dart';
 import '../widgets/estimation_room/estimation_input_wrapper.dart';
 import '../widgets/estimation_room/export_to_smart_todo_dialog.dart';
+import '../widgets/estimation_room/invite_tab_widget.dart';
 import '../widgets/estimation_room/export_to_agile_sprint_dialog.dart';
 import '../models/estimation_mode.dart';
 import '../models/agile_project_model.dart';
@@ -52,7 +58,8 @@ class EstimationRoomScreen extends StatefulWidget {
   State<EstimationRoomScreen> createState() => _EstimationRoomScreenState();
 }
 
-class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
+class _EstimationRoomScreenState extends State<EstimationRoomScreen>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   final PlanningPokerFirestoreService _firestoreService = PlanningPokerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final AgileFirestoreService _agileService = AgileFirestoreService();
@@ -68,7 +75,15 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   // Stream subscription per aggiornamenti real-time delle storie
   StreamSubscription<List<PlanningPokerStoryModel>>? _storiesSubscription;
 
+  // Presence tracking
+  Timer? _presenceHeartbeat;
+  static const _heartbeatInterval = Duration(seconds: 15);
+  static const _offlineThreshold = Duration(seconds: 45);
+
   bool _isDeepLink = false;
+
+  // TabController per sidebar (Partecipanti/Inviti)
+  late TabController _sidePanelTabController;
 
   // Filtri ricerca sessioni
   String _searchQuery = '';
@@ -82,12 +97,111 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _sidePanelTabController = TabController(length: 2, vsync: this);
+    _setupWebBeforeUnload();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _sidePanelTabController.dispose();
+    _stopPresenceHeartbeat();
     _storiesSubscription?.cancel();
     super.dispose();
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRESENZA ONLINE
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Setup listener per chiusura tab browser (web only)
+  void _setupWebBeforeUnload() {
+    if (kIsWeb) {
+      html.window.onBeforeUnload.listen((event) {
+        _setOfflineImmediately();
+      });
+    }
+  }
+
+  /// Imposta l'utente offline immediatamente (sincrono)
+  void _setOfflineImmediately() {
+    if (_selectedSession != null && _currentUserEmail.isNotEmpty) {
+      _firestoreService.updateParticipantOnlineStatus(
+        sessionId: _selectedSession!.id,
+        email: _currentUserEmail,
+        isOnline: false,
+      );
+      print('🔴 User $_currentUserEmail set offline immediately');
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        _setOfflineImmediately();
+        _presenceHeartbeat?.cancel();
+        break;
+      case AppLifecycleState.resumed:
+        _startPresenceHeartbeat();
+        break;
+    }
+  }
+
+  /// Avvia il tracking della presenza quando si entra in una sessione
+  void _startPresenceTracking() {
+    if (_selectedSession == null || _currentUserEmail.isEmpty) return;
+    _startPresenceHeartbeat();
+  }
+
+  /// Avvia l'heartbeat per aggiornare lo stato online periodicamente
+  void _startPresenceHeartbeat() {
+    if (_selectedSession == null || _currentUserEmail.isEmpty) return;
+
+    // Imposta subito online
+    _firestoreService.updateParticipantOnlineStatus(
+      sessionId: _selectedSession!.id,
+      email: _currentUserEmail,
+      isOnline: true,
+    );
+
+    // Cancella eventuale timer esistente
+    _presenceHeartbeat?.cancel();
+
+    // Avvia heartbeat periodico
+    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) {
+      if (_selectedSession != null && mounted) {
+        _firestoreService.updateParticipantOnlineStatus(
+          sessionId: _selectedSession!.id,
+          email: _currentUserEmail,
+          isOnline: true,
+        );
+      }
+    });
+
+    print('🟢 Presence tracking started for $_currentUserEmail in session ${_selectedSession!.id}');
+  }
+
+  /// Ferma l'heartbeat e imposta offline
+  void _stopPresenceHeartbeat() {
+    _presenceHeartbeat?.cancel();
+    _presenceHeartbeat = null;
+    _setOfflineImmediately();
+    print('🔴 Presence tracking stopped');
+  }
+
+  /// Conta i partecipanti online nella sessione corrente
+  int _countOnlineParticipants() {
+    if (_selectedSession == null) return 0;
+    final now = DateTime.now();
+    return _selectedSession!.participants.values.where((p) {
+      if (p.lastActivity == null) return p.isOnline;
+      return p.isOnline && now.difference(p.lastActivity!).inSeconds < _offlineThreshold.inSeconds;
+    }).length;
   }
 
   @override
@@ -126,6 +240,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           _selectedSession = session;
         });
         await _loadStories(session.id);
+        _startPresenceTracking(); // Avvia tracking presenza
       }
     } catch (e) {
       if (mounted) {
@@ -179,6 +294,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                   if (_isDeepLink && Navigator.of(context).canPop()) {
                     Navigator.of(context).pop();
                   } else {
+                    _stopPresenceHeartbeat();
                     _storiesSubscription?.cancel();
                     setState(() => _selectedSession = null);
                   }
@@ -238,22 +354,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       // ═══════════════════════════════════════════════════════════
       // EXPORT/INTEGRATION BUTTONS (left side)
       // ═══════════════════════════════════════════════════════════
-      // Export to Smart Todo
-      IconButton(
-        icon: const Icon(Icons.check_circle_outline_rounded),
-        tooltip: l10n.exportFromEstimation,
-        onPressed: _stories.any((s) => s.finalEstimate != null)
-            ? _showExportToSmartTodoDialog
-            : null,
-      ),
-      // Export to Agile Sprint
-      IconButton(
-        icon: const Icon(Icons.rocket_launch_rounded),
-        tooltip: l10n.exportToAgileSprint,
-        onPressed: _stories.any((s) => s.finalEstimate != null)
-            ? _showExportToAgileSprintDialog
-            : null,
-      ),
+      if (_selectedSession!.isFacilitator(_currentUserEmail)) ...[
+        // Export to Smart Todo
+        IconButton(
+          icon: const Icon(Icons.check_circle_outline_rounded),
+          tooltip: l10n.exportFromEstimation,
+          onPressed: _stories.any((s) => s.finalEstimate != null)
+              ? _showExportToSmartTodoDialog
+              : null,
+        ),
+        // Export to Agile Sprint
+        IconButton(
+          icon: const Icon(Icons.rocket_launch_rounded),
+          tooltip: l10n.exportToAgileSprint,
+          onPressed: _stories.any((s) => s.finalEstimate != null)
+              ? _showExportToAgileSprintDialog
+              : null,
+        ),
+      ],
       // ═══════════════════════════════════════════════════════════
       // SEPARATOR
       // ═══════════════════════════════════════════════════════════
@@ -270,6 +388,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       // Status badge
       _buildStatusBadge(),
       const SizedBox(width: 8),
+      // Online counter
+      _buildOnlineCounter(),
+      const SizedBox(width: 8),
       // Partecipanti
       IconButton(
         icon: Badge(
@@ -279,12 +400,13 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         tooltip: l10n.participants,
         onPressed: _showParticipantsDialog,
       ),
-      // Impostazioni
-      IconButton(
-        icon: const Icon(Icons.settings),
-        tooltip: l10n.estimationSessionSettings,
-        onPressed: _showSessionSettings,
-      ),
+      // Impostazioni (Solo Facilitator)
+      if (_selectedSession!.isFacilitator(_currentUserEmail))
+        IconButton(
+          icon: const Icon(Icons.settings),
+          tooltip: l10n.estimationSessionSettings,
+          onPressed: _showSessionSettings,
+        ),
       const SizedBox(width: 8),
       // Torna alla lista
       TextButton.icon(
@@ -292,6 +414,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
         label: Text(l10n.estimationList),
         style: TextButton.styleFrom(foregroundColor: Colors.white),
         onPressed: () {
+          _stopPresenceHeartbeat();
           _storiesSubscription?.cancel();
           setState(() {
             _selectedSession = null;
@@ -340,6 +463,81 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
           fontWeight: FontWeight.w600,
         ),
       ),
+    );
+  }
+
+  /// Widget che mostra il contatore dei partecipanti online (con StreamBuilder per aggiornamenti real-time)
+  Widget _buildOnlineCounter() {
+    if (_selectedSession == null) return const SizedBox.shrink();
+
+    return StreamBuilder<PlanningPokerSessionModel?>(
+      stream: _firestoreService.streamSession(_selectedSession!.id),
+      builder: (context, snapshot) {
+        final l10n = AppLocalizations.of(context)!;
+        final session = snapshot.data ?? _selectedSession!;
+
+        // Conta i partecipanti online dalla sessione aggiornata
+        final now = DateTime.now();
+        final onlineCount = session.participants.values.where((p) {
+          if (p.lastActivity == null) return p.isOnline;
+          return p.isOnline && now.difference(p.lastActivity!).inSeconds < _offlineThreshold.inSeconds;
+        }).length;
+        final totalCount = session.participantCount;
+
+        return Tooltip(
+          message: l10n.estimationOnlineParticipants(onlineCount, totalCount),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: onlineCount > 0
+                  ? AppColors.success.withValues(alpha: 0.15)
+                  : context.surfaceVariantColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: onlineCount > 0
+                    ? AppColors.success.withValues(alpha: 0.3)
+                    : Colors.grey.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Pallino verde/grigio con glow
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: onlineCount > 0 ? AppColors.success : Colors.grey,
+                    boxShadow: onlineCount > 0 ? [
+                      BoxShadow(
+                        color: AppColors.success.withValues(alpha: 0.5),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ] : null,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '$onlineCount/$totalCount',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: onlineCount > 0 ? AppColors.success : Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.people,
+                  size: 14,
+                  color: onlineCount > 0 ? AppColors.success : Colors.grey,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -825,6 +1023,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildMainArea(List<PlanningPokerStoryModel> stories, PlanningPokerSessionModel session) {
+    final l10n = AppLocalizations.of(context)!;
     // Usa currentStoryId dalla sessione (più affidabile) per trovare la story corrente
     PlanningPokerStoryModel? currentStory;
     if (session.currentStoryId != null && session.currentStoryId!.isNotEmpty) {
@@ -875,14 +1074,45 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
                       ),
                       const SizedBox(height: 16),
                       // Input stima basato sulla modalita' (solo se non rivelato)
+                      // Input stima basato sulla modalita' (solo se non rivelato)
                       if (!story.isRevealed)
-                        EstimationInputWrapper(
-                          mode: session.estimationMode,
-                          cardSet: session.cardSet,
-                          selectedValue: myVote,
-                          enabled: canUserVote,
-                          onVoteSubmitted: (vote) => _submitVoteModel(story.id, vote),
-                        ),
+                        canUserVote
+                            ? EstimationInputWrapper(
+                                mode: session.estimationMode,
+                                cardSet: session.cardSet,
+                                selectedValue: myVote,
+                                enabled: true,
+                                onVoteSubmitted: (vote) => _submitVoteModel(story.id, vote),
+                              )
+                            : Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.blue.withOpacity(0.2)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.visibility, size: 32, color: Colors.blue),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      l10n.participantObserver,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      l10n.participantObserver, // Using existing string or generic 'You are observing'
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: context.textMutedColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
                       // Pannello risultati (solo se rivelato)
                       if (story.isRevealed)
                         ResultsPanelWidget(
@@ -1037,13 +1267,20 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
             Row(
               children: [
                 if (!story.isRevealed)
-                  ElevatedButton.icon(
-                    onPressed: story.voteCount > 0 ? () => _revealVotes(story.id) : null,
-                    icon: const Icon(Icons.visibility),
-                    label: Text(l10n.estimationReveal),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                    ),
+                  Builder(
+                    builder: (context) {
+                      // Conta i partecipanti che possono votare (incluso facilitatore se canVote)
+                      final totalVoters = session.participants.values.where((p) => p.canVote).length;
+                      final allVoted = story.voteCount >= totalVoters && totalVoters > 0;
+                      return ElevatedButton.icon(
+                        onPressed: allVoted ? () => _revealVotes(story.id) : null,
+                        icon: const Icon(Icons.visibility),
+                        label: Text(l10n.estimationReveal),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                    },
                   ),
                 const SizedBox(width: 8),
                 IconButton(
@@ -1059,6 +1296,75 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
   }
 
   Widget _buildSidebar(List<PlanningPokerStoryModel> stories) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // TabBar Partecipanti / Inviti
+        Container(
+          color: context.surfaceColor,
+          child: TabBar(
+            controller: _sidePanelTabController,
+            indicatorColor: AppColors.warning,
+            labelColor: AppColors.warning,
+            unselectedLabelColor: context.textSecondaryColor,
+            indicatorWeight: 2,
+            labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            unselectedLabelStyle: const TextStyle(fontSize: 13),
+            tabs: [
+              Tab(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.people, size: 16),
+                    const SizedBox(width: 6),
+                    Text(l10n.participants),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.mail_outline, size: 16),
+                    const SizedBox(width: 6),
+                    Text(l10n.participantInvitesTab),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Divider(height: 1, color: context.borderColor),
+
+        // TabBarView content
+        Expanded(
+          child: TabBarView(
+            controller: _sidePanelTabController,
+            children: [
+              // Tab 0: Partecipanti e Stories
+              _buildParticipantsTabContent(stories),
+
+              // Tab 1: Inviti
+              EstimationRoomInviteTabWidget(
+                sessionId: _selectedSession!.id,
+                sessionTitle: _selectedSession!.name,
+                isFacilitator: _selectedSession!.isFacilitator(_currentUserEmail),
+                onInviteAccepted: () {
+                  // Ricarica dati quando un invito viene accettato
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Tab content per Partecipanti e Stories
+  Widget _buildParticipantsTabContent(List<PlanningPokerStoryModel> stories) {
     return Column(
       children: [
         // Header partecipanti
@@ -1100,12 +1406,12 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
               // Aggiungi manualmente
               ElevatedButton.icon(
                 onPressed: _showAddStoryDialog,
-                icon: const Icon(Icons.add_task, size: 18, color: Colors.black),
-                label: Text(l10n.estimationAddStory, style: const TextStyle(color: Colors.black, fontSize: 13)),
+                icon: const Icon(Icons.add_task, size: 18, color: Colors.white),
+                label: Text(l10n.estimationAddStory, style: const TextStyle(color: Colors.white, fontSize: 13)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  minimumSize: Size.zero,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  minimumSize: const Size(0, 44),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ),
@@ -1886,6 +2192,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       context: context,
       builder: (context) => _ParticipantsManagementDialog(
         sessionId: _selectedSession!.id,
+        sessionName: _selectedSession!.name,
         firestoreService: _firestoreService,
         currentUserEmail: _currentUserEmail,
         currentUserName: _currentUserName,
@@ -1990,6 +2297,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
       },
     );
 
+    _startPresenceTracking(); // Avvia tracking presenza
     setState(() => _isLoading = false);
   }
 
@@ -2615,6 +2923,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen> {
 
 class _ParticipantsManagementDialog extends StatefulWidget {
   final String sessionId;
+  final String sessionName;
   final PlanningPokerFirestoreService firestoreService;
   final String currentUserEmail;
   final String currentUserName;
@@ -2622,6 +2931,7 @@ class _ParticipantsManagementDialog extends StatefulWidget {
 
   const _ParticipantsManagementDialog({
     required this.sessionId,
+    required this.sessionName,
     required this.firestoreService,
     required this.currentUserEmail,
     required this.currentUserName,
@@ -2641,14 +2951,16 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
   ParticipantRole _inviteRole = ParticipantRole.voter;
   bool _isAdding = false;
   bool _isSendingInvite = false;
+  bool _sendEmailWithInvite = true; // Toggle per invio email
 
-  late PlanningPokerInviteService _inviteService;
+  late InviteService _inviteService;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _inviteService = PlanningPokerInviteService();
+    _inviteService = InviteService();
   }
 
   @override
@@ -3150,6 +3462,46 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                 ],
               ),
               const SizedBox(height: 12),
+              // Toggle invio email
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: _sendEmailWithInvite
+                      ? Colors.green.withOpacity(0.1)
+                      : Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: _sendEmailWithInvite
+                        ? Colors.green.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _sendEmailWithInvite ? Icons.email : Icons.email_outlined,
+                      size: 20,
+                      color: _sendEmailWithInvite ? Colors.green : Colors.grey,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.inviteSendEmailNotification,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: _sendEmailWithInvite ? Colors.green[700] : Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                    Switch(
+                      value: _sendEmailWithInvite,
+                      onChanged: (value) => setState(() => _sendEmailWithInvite = value),
+                      activeColor: Colors.green,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   const Spacer(),
@@ -3182,8 +3534,11 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: StreamBuilder<List<PlanningPokerInviteModel>>(
-            stream: _inviteService.streamSessionInvites(widget.sessionId),
+          child: StreamBuilder<List<UnifiedInviteModel>>(
+            stream: _inviteService.streamInvitesForSource(
+              InviteSourceType.estimationRoom,
+              widget.sessionId,
+            ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -3221,7 +3576,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     );
   }
 
-  Widget _buildInviteCard(PlanningPokerInviteModel invite) {
+  Widget _buildInviteCard(UnifiedInviteModel invite) {
     final l10n = AppLocalizations.of(context)!;
     final statusColor = _getInviteStatusColor(invite.status);
     final statusIcon = _getInviteStatusIcon(invite.status);
@@ -3255,14 +3610,14 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: _getRoleColor(invite.role).withOpacity(0.1),
+                          color: _getRoleColorFromString(invite.role).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          _getRoleName(context, invite.role),
+                          _getRoleNameFromString(context, invite.role),
                           style: TextStyle(
                             fontSize: 10,
-                            color: _getRoleColor(invite.role),
+                            color: _getRoleColorFromString(invite.role),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -3329,32 +3684,32 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     );
   }
 
-  Color _getInviteStatusColor(InviteStatus status) {
+  Color _getInviteStatusColor(UnifiedInviteStatus status) {
     switch (status) {
-      case InviteStatus.pending:
+      case UnifiedInviteStatus.pending:
         return Colors.orange;
-      case InviteStatus.accepted:
+      case UnifiedInviteStatus.accepted:
         return Colors.green;
-      case InviteStatus.declined:
+      case UnifiedInviteStatus.declined:
         return Colors.red;
-      case InviteStatus.expired:
+      case UnifiedInviteStatus.expired:
         return Colors.grey;
-      case InviteStatus.revoked:
+      case UnifiedInviteStatus.revoked:
         return Colors.red;
     }
   }
 
-  IconData _getInviteStatusIcon(InviteStatus status) {
+  IconData _getInviteStatusIcon(UnifiedInviteStatus status) {
     switch (status) {
-      case InviteStatus.pending:
+      case UnifiedInviteStatus.pending:
         return Icons.hourglass_empty;
-      case InviteStatus.accepted:
+      case UnifiedInviteStatus.accepted:
         return Icons.check_circle;
-      case InviteStatus.declined:
+      case UnifiedInviteStatus.declined:
         return Icons.cancel;
-      case InviteStatus.expired:
+      case UnifiedInviteStatus.expired:
         return Icons.timer_off;
-      case InviteStatus.revoked:
+      case UnifiedInviteStatus.revoked:
         return Icons.block;
     }
   }
@@ -3376,21 +3731,42 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     setState(() => _isSendingInvite = true);
 
     try {
-      // Crea invito (senza invio email - funzionalità rimossa per lo spinoff)
-      await _inviteService.createInvite(
-        sessionId: widget.sessionId,
+      // Crea invito
+      final invite = await _inviteService.createInvite(
+        sourceType: InviteSourceType.estimationRoom,
+        sourceId: widget.sessionId,
+        sourceName: widget.sessionName,
         email: email,
-        role: _inviteRole,
-        invitedBy: widget.currentUserEmail,
-        invitedByName: widget.currentUserName,
+        role: _inviteRole.name, // 'voter' or 'observer'
       );
+
+      if (invite == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.stateError),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      bool emailSent = false;
+
+      // Invia email se richiesto
+      if (_sendEmailWithInvite) {
+        emailSent = await _sendEmailInvite(invite);
+      }
 
       _inviteEmailController.clear();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.inviteCreatedFor(email)),
+            content: Text(_sendEmailWithInvite && emailSent
+                ? l10n.inviteSentTo(email)
+                : l10n.inviteCreatedFor(email)),
             backgroundColor: Colors.green,
           ),
         );
@@ -3411,10 +3787,170 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     }
   }
 
-  void _copyInviteLink(PlanningPokerInviteModel invite) {
+  /// Invia email di invito usando Gmail API
+  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
+    try {
+      print('📧 ============================================');
+      print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
+      print('📧 [EMAIL] Destinatario: ${invite.email}');
+      print('📧 [EMAIL] Piattaforma: ${kIsWeb ? "WEB" : "MOBILE"}');
+      print('📧 ============================================');
+
+      String? accessToken;
+      String? senderEmail;
+
+      if (kIsWeb) {
+        // ===== WEB: usa il token OAuth memorizzato da Firebase Auth =====
+        print('📧 [EMAIL] [WEB] Uso token OAuth da Firebase Auth...');
+
+        accessToken = _authService.webAccessToken;
+        senderEmail = _authService.currentUserEmail;
+
+        print('📧 [EMAIL] [WEB] Token presente: ${accessToken != null}');
+        print('📧 [EMAIL] [WEB] Email utente: $senderEmail');
+
+        if (accessToken == null) {
+          // Token non presente, richiedi re-auth
+          print('📧 [EMAIL] [WEB] Token assente - richiedo re-autenticazione...');
+
+          if (mounted) {
+            final shouldReauth = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Autorizzazione Gmail'),
+                content: const Text(
+                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\n'
+                  'Vuoi procedere?'
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: const Text('No, solo link'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: const Text('Autorizza'),
+                  ),
+                ],
+              ),
+            );
+
+            if (shouldReauth == true) {
+              accessToken = await _authService.refreshWebAccessToken();
+              print('📧 [EMAIL] [WEB] Nuovo token ottenuto: ${accessToken != null}');
+            }
+          }
+        }
+
+        if (accessToken == null || senderEmail == null) {
+          print('⚠️ [EMAIL] [WEB] FALLITO: Token o email non disponibili');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+          return false;
+        }
+
+        // Crea client con token OAuth
+        final authHeaders = {'Authorization': 'Bearer $accessToken'};
+        final authClient = _GoogleAuthClient(authHeaders);
+        final gmailApi = gmail.GmailApi(authClient);
+        final baseUrl = Uri.base.origin;
+
+        print('📧 [EMAIL] [WEB] Invio email via Gmail API...');
+        print('📧 [EMAIL] [WEB] Da: $senderEmail');
+        print('📧 [EMAIL] [WEB] A: ${invite.email}');
+
+        final result = await _inviteService.sendInviteEmail(
+          invite: invite,
+          baseUrl: baseUrl,
+          senderEmail: senderEmail,
+          gmailApi: gmailApi,
+        );
+
+        print('📧 ============================================');
+        print('📧 [EMAIL] [WEB] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
+        print('📧 ============================================');
+        return result;
+
+      } else {
+        // ===== MOBILE: usa GoogleSignIn =====
+        print('📧 [EMAIL] [MOBILE] Uso GoogleSignIn...');
+
+        var googleAccount = _authService.googleSignIn.currentUser;
+        print('📧 [EMAIL] [MOBILE] Account corrente: ${googleAccount?.email ?? "NULL"}');
+
+        if (googleAccount == null) {
+          googleAccount = await _authService.googleSignIn.signInSilently();
+          print('📧 [EMAIL] [MOBILE] Dopo signInSilently: ${googleAccount?.email ?? "NULL"}');
+        }
+
+        if (googleAccount == null) {
+          googleAccount = await _authService.googleSignIn.signIn();
+          print('📧 [EMAIL] [MOBILE] Dopo signIn: ${googleAccount?.email ?? "NULL"}');
+        }
+
+        if (googleAccount == null) {
+          print('⚠️ [EMAIL] [MOBILE] FALLITO: Nessun account Google');
+          return false;
+        }
+
+        // Verifica scope Gmail
+        final hasGmailScope = await _authService.googleSignIn.requestScopes([
+          'https://www.googleapis.com/auth/gmail.send',
+        ]);
+
+        if (!hasGmailScope) {
+          print('⚠️ [EMAIL] [MOBILE] FALLITO: Scope Gmail non autorizzato');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Permesso Gmail non concesso.'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+          return false;
+        }
+
+        final authHeaders = await googleAccount.authHeaders;
+        final authClient = _GoogleAuthClient(authHeaders);
+        final gmailApi = gmail.GmailApi(authClient);
+        final baseUrl = 'https://pm-agile-tools-app.web.app';
+        senderEmail = googleAccount.email;
+
+        print('📧 [EMAIL] [MOBILE] Invio email via Gmail API...');
+
+        final result = await _inviteService.sendInviteEmail(
+          invite: invite,
+          baseUrl: baseUrl,
+          senderEmail: senderEmail,
+          gmailApi: gmailApi,
+        );
+
+        print('📧 ============================================');
+        print('📧 [EMAIL] [MOBILE] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
+        print('📧 ============================================');
+        return result;
+      }
+    } catch (e, stack) {
+      print('❌ ============================================');
+      print('❌ [EMAIL] ECCEZIONE NON GESTITA');
+      print('❌ [EMAIL] Errore: $e');
+      print('❌ [EMAIL] Stack: $stack');
+      print('❌ ============================================');
+      return false;
+    }
+  }
+
+  void _copyInviteLink(UnifiedInviteModel invite) {
     final l10n = AppLocalizations.of(context)!;
     final baseUrl = Uri.base.origin;
-    final link = invite.generateInviteLink(baseUrl);
+    final link = _inviteService.generateInviteLink(invite, baseUrl: baseUrl);
     Clipboard.setData(ClipboardData(text: link));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -3425,7 +3961,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     );
   }
 
-  Future<void> _revokeInvite(PlanningPokerInviteModel invite) async {
+  Future<void> _revokeInvite(UnifiedInviteModel invite) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -3448,7 +3984,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
 
     if (confirmed == true) {
       try {
-        await _inviteService.revokeInvite(widget.sessionId, invite.id);
+        await _inviteService.revokeInvite(invite.id);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -3470,7 +4006,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     }
   }
 
-  Future<void> _deleteInvite(PlanningPokerInviteModel invite) async {
+  Future<void> _deleteInvite(UnifiedInviteModel invite) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -3493,7 +4029,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
 
     if (confirmed == true) {
       try {
-        await _inviteService.deleteInvite(widget.sessionId, invite.id);
+        await _inviteService.deleteInvite(invite.id);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -3526,6 +4062,20 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     }
   }
 
+  /// Versione che accetta stringa per UnifiedInviteModel
+  Color _getRoleColorFromString(String role) {
+    switch (role.toLowerCase()) {
+      case 'facilitator':
+        return Colors.amber;
+      case 'voter':
+        return Colors.green;
+      case 'observer':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
   IconData _getRoleIcon(ParticipantRole role) {
     switch (role) {
       case ParticipantRole.facilitator:
@@ -3546,6 +4096,21 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         return l10n.participantVoter;
       case ParticipantRole.observer:
         return l10n.participantObserver;
+    }
+  }
+
+  /// Versione che accetta stringa per UnifiedInviteModel
+  String _getRoleNameFromString(BuildContext context, String role) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (role.toLowerCase()) {
+      case 'facilitator':
+        return l10n.participantFacilitator;
+      case 'voter':
+        return l10n.participantVoter;
+      case 'observer':
+        return l10n.participantObserver;
+      default:
+        return role;
     }
   }
 
@@ -3689,5 +4254,23 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         );
       }
     }
+  }
+}
+
+/// Client HTTP autenticato per le API Google (Gmail)
+class _GoogleAuthClient extends http.BaseClient {
+  final Map<String, String> _headers;
+  final http.Client _client = http.Client();
+
+  _GoogleAuthClient(this._headers);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    return _client.send(request..headers.addAll(_headers));
+  }
+
+  @override
+  void close() {
+    _client.close();
   }
 }

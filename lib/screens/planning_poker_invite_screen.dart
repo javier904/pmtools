@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
-import '../models/planning_poker_invite_model.dart';
+import '../models/unified_invite_model.dart';
 import '../models/planning_poker_session_model.dart';
 import '../models/planning_poker_participant_model.dart';
-import '../services/planning_poker_invite_service.dart';
+import '../services/invite_service.dart';
 import '../services/planning_poker_firestore_service.dart';
 import '../services/auth_service.dart';
 
@@ -27,14 +27,14 @@ class PlanningPokerInviteScreen extends StatefulWidget {
 }
 
 class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
-  final _inviteService = PlanningPokerInviteService();
+  final _inviteService = InviteService();
   final _firestoreService = PlanningPokerFirestoreService();
   final _authService = AuthService();
 
   bool _isLoading = true;
   bool _isProcessing = false;
   String? _errorMessage;
-  PlanningPokerInviteModel? _invite;
+  UnifiedInviteModel? _invite;
   PlanningPokerSessionModel? _session;
 
   @override
@@ -73,7 +73,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       }
 
       // Verifica stato invito
-      if (invite.status != InviteStatus.pending) {
+      if (invite.status != UnifiedInviteStatus.pending) {
         setState(() {
           _errorMessage = 'Questo invito ${_getStatusMessage(invite.status)}'; // Keeping partial hardcode or need composite
           _isLoading = false;
@@ -81,8 +81,8 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
         return;
       }
 
-      // Verifica scadenza
-      if (invite.isExpired) {
+      // Verifica scadenza (usando isValid che controlla sia pending che non scaduto)
+      if (!invite.isValid) {
         setState(() {
           _errorMessage = l10n?.exceptionInviteCalculated ?? 'Questo invito è scaduto';
           _isLoading = false;
@@ -101,7 +101,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       }
 
       // Carica sessione per mostrare dettagli
-      final session = await _firestoreService.getSession(invite.sessionId);
+      final session = await _firestoreService.getSession(invite.sourceId);
 
       setState(() {
         _invite = invite;
@@ -116,17 +116,17 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
     }
   }
 
-  String _getStatusMessage(InviteStatus status) {
+  String _getStatusMessage(UnifiedInviteStatus status) {
     switch (status) {
-      case InviteStatus.accepted:
+      case UnifiedInviteStatus.accepted:
         return 'è già stato accettato';
-      case InviteStatus.declined:
+      case UnifiedInviteStatus.declined:
         return 'è stato rifiutato';
-      case InviteStatus.expired:
+      case UnifiedInviteStatus.expired:
         return 'è scaduto';
-      case InviteStatus.revoked:
+      case UnifiedInviteStatus.revoked:
         return 'è stato revocato';
-      case InviteStatus.pending:
+      case UnifiedInviteStatus.pending:
         return 'è in attesa';
     }
   }
@@ -137,12 +137,15 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      await _inviteService.acceptInvite(
-        token: widget.token,
-        acceptingUserEmail: _authService.currentUser!.email!,
-        acceptingUserName: _authService.currentUser?.displayName ??
+      final success = await _inviteService.acceptInvite(
+        _invite!,
+        accepterName: _authService.currentUser?.displayName ??
             _authService.currentUser!.email!.split('@').first,
       );
+
+      if (!success) {
+        throw Exception('Impossibile accettare l\'invito');
+      }
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
@@ -159,7 +162,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
         if (mounted) {
           Navigator.of(context).pushReplacementNamed(
             '/planning-poker',
-            arguments: {'session': _invite!.sessionId},
+            arguments: {'session': _invite!.sourceId},
           );
         }
       }
@@ -206,7 +209,11 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      await _inviteService.declineInvite(token: widget.token);
+      final success = await _inviteService.declineInvite(_invite!.id);
+
+      if (!success) {
+        throw Exception('Impossibile rifiutare l\'invito');
+      }
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
@@ -476,37 +483,43 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
     );
   }
 
-  Color _getRoleColor(ParticipantRole role) {
-    switch (role) {
-      case ParticipantRole.facilitator:
+  Color _getRoleColor(String role) {
+    switch (role.toLowerCase()) {
+      case 'facilitator':
         return Colors.amber;
-      case ParticipantRole.voter:
+      case 'voter':
         return Colors.green;
-      case ParticipantRole.observer:
+      case 'observer':
         return Colors.blue;
+      default:
+        return Colors.grey;
     }
   }
 
-  IconData _getRoleIcon(ParticipantRole role) {
-    switch (role) {
-      case ParticipantRole.facilitator:
+  IconData _getRoleIcon(String role) {
+    switch (role.toLowerCase()) {
+      case 'facilitator':
         return Icons.star;
-      case ParticipantRole.voter:
+      case 'voter':
         return Icons.how_to_vote;
-      case ParticipantRole.observer:
+      case 'observer':
         return Icons.visibility;
+      default:
+        return Icons.person;
     }
   }
 
-  String _getRoleName(ParticipantRole role) {
+  String _getRoleName(String role) {
     final l10n = AppLocalizations.of(context);
-    switch (role) {
-      case ParticipantRole.facilitator:
+    switch (role.toLowerCase()) {
+      case 'facilitator':
         return l10n?.participantFacilitator ?? 'Facilitatore';
-      case ParticipantRole.voter:
+      case 'voter':
         return l10n?.participantVoter ?? 'Votante';
-      case ParticipantRole.observer:
+      case 'observer':
         return l10n?.participantObserver ?? 'Osservatore';
+      default:
+        return role;
     }
   }
 }

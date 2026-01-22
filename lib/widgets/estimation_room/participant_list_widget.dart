@@ -38,7 +38,7 @@ class ParticipantListWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.people, size: 22, color: AppColors.secondary),
+              const Icon(Icons.people, size: 22, color: AppColors.warning),
               const SizedBox(width: 10),
               Text(
                 'Partecipanti (${participants.length})',
@@ -76,7 +76,7 @@ class ParticipantListWidget extends StatelessWidget {
           ],
           if (voters.isNotEmpty) ...[
             const SizedBox(height: 8),
-            _buildRoleHeader('Votanti', Icons.how_to_vote, AppColors.secondary),
+            _buildRoleHeader('Votanti', Icons.how_to_vote, AppColors.warning),
             const SizedBox(height: 4),
             ...voters.map((p) => _buildParticipantTile(context, p)),
           ],
@@ -113,6 +113,11 @@ class ParticipantListWidget extends StatelessWidget {
     final hasVoted = currentStory?.hasUserVoted(participant.email) ?? false;
     final isVoting = currentStory?.isVoting ?? false;
 
+    // Determina se online basandosi su lastActivity (threshold 45 secondi)
+    final isRecentlyActive = participant.lastActivity != null &&
+        DateTime.now().difference(participant.lastActivity!).inSeconds < 45;
+    final isOnline = participant.isOnline && isRecentlyActive;
+
     Color? statusColor;
     IconData? statusIcon;
 
@@ -130,14 +135,34 @@ class ParticipantListWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: isCurrentUser ? AppColors.secondary.withOpacity(0.05) : Colors.transparent,
+        color: isCurrentUser ? AppColors.warning.withOpacity(0.05) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: isCurrentUser
-            ? Border.all(color: AppColors.secondary.withOpacity(0.2))
+            ? Border.all(color: AppColors.warning.withOpacity(0.2))
             : null,
       ),
       child: Row(
         children: [
+          // Indicatore online
+          Tooltip(
+            message: isOnline ? 'Online' : 'Offline',
+            child: Container(
+              width: 8,
+              height: 8,
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isOnline ? AppColors.success : Colors.grey.shade400,
+                boxShadow: isOnline ? [
+                  BoxShadow(
+                    color: AppColors.success.withOpacity(0.5),
+                    blurRadius: 3,
+                    spreadRadius: 1,
+                  ),
+                ] : null,
+              ),
+            ),
+          ),
           // Avatar
           CircleAvatar(
             radius: 16,
@@ -196,7 +221,7 @@ class ParticipantListWidget extends StatelessWidget {
       case ParticipantRole.facilitator:
         return AppColors.warning;
       case ParticipantRole.voter:
-        return AppColors.secondary;
+        return AppColors.warning; // Tematico per Estimation Room
       case ParticipantRole.observer:
         return AppColors.q4Color;
     }

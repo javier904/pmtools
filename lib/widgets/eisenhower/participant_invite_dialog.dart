@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:googleapis/gmail/v1.dart' as gmail;
 import 'package:http/http.dart' as http;
-import '../../models/eisenhower_invite_model.dart';
+import '../../models/unified_invite_model.dart';
 import '../../models/eisenhower_participant_model.dart';
-import '../../services/eisenhower_invite_service.dart';
+import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -19,7 +19,7 @@ import '../../l10n/app_localizations.dart';
 class ParticipantInviteDialog extends StatefulWidget {
   final String matrixId;
   final String matrixTitle;
-  final List<EisenhowerInviteModel> pendingInvites;
+  final List<UnifiedInviteModel> pendingInvites;
 
   const ParticipantInviteDialog({
     super.key,
@@ -32,7 +32,7 @@ class ParticipantInviteDialog extends StatefulWidget {
     required BuildContext context,
     required String matrixId,
     required String matrixTitle,
-    List<EisenhowerInviteModel> pendingInvites = const [],
+    List<UnifiedInviteModel> pendingInvites = const [],
   }) {
     return showDialog<bool>(
       context: context,
@@ -51,14 +51,14 @@ class ParticipantInviteDialog extends StatefulWidget {
 class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _inviteService = EisenhowerInviteService();
+  final _inviteService = InviteService();
   final _authService = AuthService();
 
   EisenhowerParticipantRole _selectedRole = EisenhowerParticipantRole.voter;
   bool _isLoading = false;
   bool _sendEmailWithInvite = true; // Toggle per invio email
   String? _generatedLink;
-  List<EisenhowerInviteModel> _invites = [];
+  List<UnifiedInviteModel> _invites = [];
 
   @override
   void initState() {
@@ -74,7 +74,10 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
   }
 
   Future<void> _loadInvites() async {
-    final invites = await _inviteService.getInvitesForMatrix(widget.matrixId);
+    final invites = await _inviteService.getInvitesForSource(
+      InviteSourceType.eisenhower,
+      widget.matrixId,
+    );
     if (mounted) {
       setState(() => _invites = invites);
     }
@@ -87,13 +90,15 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
     try {
       final invite = await _inviteService.createInvite(
-        matrixId: widget.matrixId,
+        sourceType: InviteSourceType.eisenhower,
+        sourceId: widget.matrixId,
+        sourceName: widget.matrixTitle,
         email: _emailController.text.trim(),
-        role: _selectedRole,
+        role: _selectedRole.name, // 'voter' or 'observer'
       );
 
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token);
+        final link = _inviteService.generateInviteLink(invite);
         bool emailSent = false;
 
         // Invia email se richiesto
@@ -134,7 +139,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
   }
 
   /// Invia email di invito usando Gmail API
-  Future<bool> _sendEmailInvite(EisenhowerInviteModel invite) async {
+  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
     try {
       print('📧 ============================================');
       print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
@@ -213,7 +218,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
         final result = await _inviteService.sendInviteEmail(
           invite: invite,
-          matrixTitle: widget.matrixTitle,
           baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
@@ -274,7 +278,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
         final result = await _inviteService.sendInviteEmail(
           invite: invite,
-          matrixTitle: widget.matrixTitle,
           baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
@@ -326,7 +329,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     try {
       final invite = await _inviteService.resendInvite(inviteId);
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token);
+        final link = _inviteService.generateInviteLink(invite);
         setState(() => _generatedLink = link);
         await _loadInvites();
         if (mounted) {
@@ -572,15 +575,16 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, _invites.any((i) => i.isAccepted)),
+          onPressed: () => Navigator.pop(context, _invites.any((i) => i.status == UnifiedInviteStatus.accepted)),
           child: Text(l10n.actionClose),
         ),
       ],
     );
   }
 
-  Widget _buildInviteRow(EisenhowerInviteModel invite, AppLocalizations l10n) {
+  Widget _buildInviteRow(UnifiedInviteModel invite, AppLocalizations l10n) {
     final statusInfo = _getStatusInfo(invite.status, l10n);
+    final roleDisplayName = _getRoleDisplayName(invite.role);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -616,7 +620,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                 Row(
                   children: [
                     Text(
-                      invite.role.displayName,
+                      roleDisplayName,
                       style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                     ),
                     const SizedBox(width: 8),
@@ -642,7 +646,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
           ),
 
           // Azioni
-          if (invite.isPending) ...[
+          if (invite.status == UnifiedInviteStatus.pending) ...[
             IconButton(
               icon: const Icon(Icons.refresh, size: 18),
               onPressed: () => _resendInvite(invite.id),
@@ -659,33 +663,44 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     );
   }
 
-  _InviteStatusInfo _getStatusInfo(EisenhowerInviteStatus status, AppLocalizations l10n) {
+  String _getRoleDisplayName(String role) {
+    switch (role.toLowerCase()) {
+      case 'voter':
+        return 'Votante';
+      case 'observer':
+        return 'Osservatore';
+      default:
+        return role;
+    }
+  }
+
+  _InviteStatusInfo _getStatusInfo(UnifiedInviteStatus status, AppLocalizations l10n) {
     switch (status) {
-      case EisenhowerInviteStatus.pending:
+      case UnifiedInviteStatus.pending:
         return _InviteStatusInfo(
           label: l10n.inviteStatusPending,
           color: Colors.orange,
           icon: Icons.hourglass_empty,
         );
-      case EisenhowerInviteStatus.accepted:
+      case UnifiedInviteStatus.accepted:
         return _InviteStatusInfo(
           label: l10n.inviteStatusAccepted,
           color: Colors.green,
           icon: Icons.check_circle,
         );
-      case EisenhowerInviteStatus.declined:
+      case UnifiedInviteStatus.declined:
         return _InviteStatusInfo(
           label: l10n.inviteStatusDeclined,
           color: Colors.red,
           icon: Icons.cancel,
         );
-      case EisenhowerInviteStatus.expired:
+      case UnifiedInviteStatus.expired:
         return _InviteStatusInfo(
           label: l10n.inviteStatusExpired,
           color: Colors.grey,
           icon: Icons.timer_off,
         );
-      case EisenhowerInviteStatus.revoked:
+      case UnifiedInviteStatus.revoked:
         return _InviteStatusInfo(
           label: l10n.inviteStatusRevoked,
           color: Colors.grey,

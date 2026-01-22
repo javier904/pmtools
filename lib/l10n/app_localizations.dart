@@ -1626,6 +1626,12 @@ abstract class AppLocalizations {
   /// **'Five Fingers'**
   String get estimationModeFiveFingers;
 
+  /// No description provided for @estimationOnlineParticipants.
+  ///
+  /// In it, this message translates to:
+  /// **'{online} di {total} partecipanti online'**
+  String estimationOnlineParticipants(int online, int total);
+
   /// No description provided for @retroTitle.
   ///
   /// In it, this message translates to:
@@ -3489,6 +3495,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Invito creato per {email}'**
   String inviteCreatedFor(String email);
+
+  /// No description provided for @inviteSentTo.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito inviato via email a {email}'**
+  String inviteSentTo(String email);
 
   /// No description provided for @inviteExpiresIn.
   ///
@@ -9315,6 +9327,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Invito rifiutato'**
   String get inviteDeclinedSuccess;
+
+  /// No description provided for @inviteDeclinedError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel rifiutare l\'invito'**
+  String get inviteDeclinedError;
 
   /// No description provided for @inviteDeclineTitle.
   ///

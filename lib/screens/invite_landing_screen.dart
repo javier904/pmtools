@@ -57,17 +57,25 @@ class _InviteLandingScreenState extends State<InviteLandingScreen> {
 
   Future<void> _validateAndRedirect(User user) async {
     try {
+      print('🔍 [INVITE LANDING] Validating invite for user: ${user.email}');
+      print('🔍 [INVITE LANDING] Looking for sourceType: ${widget.sourceType}, sourceId: ${widget.sourceId}');
+
       // Cerca l'invito per questo utente
       final invites = await _inviteService.getAllPendingInvites();
+      print('🔍 [INVITE LANDING] Found ${invites.length} total pending invites');
 
       // Filtra per source type e source id
-      final matchingInvites = invites.where((invite) =>
-        invite.sourceType == widget.sourceType &&
-        invite.sourceId == widget.sourceId
-      ).toList();
+      final matchingInvites = invites.where((invite) {
+        print('🔍 [INVITE LANDING] Checking invite: sourceType=${invite.sourceType}, sourceId=${invite.sourceId}');
+        return invite.sourceType == widget.sourceType &&
+               invite.sourceId == widget.sourceId;
+      }).toList();
+
+      print('🔍 [INVITE LANDING] Matching invites: ${matchingInvites.length}');
 
       if (matchingInvites.isEmpty) {
         // Potrebbe essere già accettato o non esiste - prova ad aprire direttamente
+        print('⚠️ [INVITE LANDING] No matching invite found - navigating directly without accepting');
         _navigateToInstance();
         return;
       }

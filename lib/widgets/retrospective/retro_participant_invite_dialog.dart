@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:googleapis/gmail/v1.dart' as gmail;
 import 'package:http/http.dart' as http;
-import '../../models/retro_invite_model.dart';
-import '../../services/retro_invite_service.dart';
+import '../../models/unified_invite_model.dart';
+import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -18,7 +18,7 @@ import '../../l10n/app_localizations.dart';
 class RetroParticipantInviteDialog extends StatefulWidget {
   final String boardId;
   final String boardTitle;
-  final List<RetroInviteModel> pendingInvites;
+  final List<UnifiedInviteModel> pendingInvites;
 
   const RetroParticipantInviteDialog({
     super.key,
@@ -31,7 +31,7 @@ class RetroParticipantInviteDialog extends StatefulWidget {
     required BuildContext context,
     required String boardId,
     required String boardTitle,
-    List<RetroInviteModel> pendingInvites = const [],
+    List<UnifiedInviteModel> pendingInvites = const [],
   }) {
     return showDialog<bool>(
       context: context,
@@ -50,14 +50,14 @@ class RetroParticipantInviteDialog extends StatefulWidget {
 class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _inviteService = RetroInviteService();
+  final _inviteService = InviteService();
   final _authService = AuthService();
 
-  RetroParticipantRole _selectedRole = RetroParticipantRole.participant;
+  String _selectedRole = 'participant'; // participant, observer
   bool _isLoading = false;
   bool _sendEmailWithInvite = true;
   String? _generatedLink;
-  List<RetroInviteModel> _invites = [];
+  List<UnifiedInviteModel> _invites = [];
 
   @override
   void initState() {
@@ -73,7 +73,10 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
   }
 
   Future<void> _loadInvites() async {
-    final invites = await _inviteService.getInvitesForBoard(widget.boardId);
+    final invites = await _inviteService.getInvitesForSource(
+      InviteSourceType.retroBoard,
+      widget.boardId,
+    );
     if (mounted) {
       setState(() => _invites = invites);
     }
@@ -86,13 +89,15 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
 
     try {
       final invite = await _inviteService.createInvite(
-        boardId: widget.boardId,
+        sourceType: InviteSourceType.retroBoard,
+        sourceId: widget.boardId,
+        sourceName: widget.boardTitle,
         email: _emailController.text.trim(),
         role: _selectedRole,
       );
 
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token, boardId: widget.boardId);
+        final link = _inviteService.generateInviteLink(invite);
         bool emailSent = false;
 
         if (_sendEmailWithInvite) {
@@ -133,7 +138,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
     }
   }
 
-  Future<bool> _sendEmailInvite(RetroInviteModel invite) async {
+  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
     try {
       print('📧 [RETRO EMAIL] Inizio invio email a ${invite.email}');
 
@@ -190,12 +195,9 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
         final authHeaders = {'Authorization': 'Bearer $accessToken'};
         final authClient = _GoogleAuthClient(authHeaders);
         final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = Uri.base.origin;
 
         return await _inviteService.sendInviteEmail(
           invite: invite,
-          retroTitle: widget.boardTitle,
-          baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
         );
@@ -228,13 +230,10 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
         final authHeaders = await googleAccount.authHeaders;
         final authClient = _GoogleAuthClient(authHeaders);
         final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = 'https://pm-agile-tools-app.web.app';
         senderEmail = googleAccount.email;
 
         return await _inviteService.sendInviteEmail(
           invite: invite,
-          retroTitle: widget.boardTitle,
-          baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
         );
@@ -277,7 +276,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
     try {
       final invite = await _inviteService.resendInvite(inviteId);
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token, boardId: widget.boardId);
+        final link = _inviteService.generateInviteLink(invite);
         setState(() => _generatedLink = link);
         await _loadInvites();
         if (mounted) {
@@ -372,16 +371,16 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
                         const SizedBox(width: 8),
                         ChoiceChip(
                           label: Text(l10n?.participantRoleVoters ?? 'Partecipante'),
-                          selected: _selectedRole == RetroParticipantRole.participant,
+                          selected: _selectedRole == 'participant',
                           onSelected: (_) => setState(
-                              () => _selectedRole = RetroParticipantRole.participant),
+                              () => _selectedRole = 'participant'),
                         ),
                         const SizedBox(width: 8),
                         ChoiceChip(
                           label: Text(l10n?.participantObserver ?? 'Osservatore'),
-                          selected: _selectedRole == RetroParticipantRole.observer,
+                          selected: _selectedRole == 'observer',
                           onSelected: (_) => setState(
-                              () => _selectedRole = RetroParticipantRole.observer),
+                              () => _selectedRole = 'observer'),
                         ),
                       ],
                     ),
@@ -517,14 +516,14 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, _invites.any((i) => i.isAccepted)),
+          onPressed: () => Navigator.pop(context, _invites.any((i) => i.status == UnifiedInviteStatus.accepted)),
           child: Text(l10n?.actionClose ?? 'Chiudi'),
         ),
       ],
     );
   }
 
-  Widget _buildInviteRow(RetroInviteModel invite, AppLocalizations? l10n) {
+  Widget _buildInviteRow(UnifiedInviteModel invite, AppLocalizations? l10n) {
     final statusInfo = _getStatusInfo(invite.status, l10n);
 
     return Container(
@@ -559,7 +558,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
                 Row(
                   children: [
                     Text(
-                      invite.role.label,
+                      _getRoleLabel(invite.role),
                       style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                     ),
                     const SizedBox(width: 8),
@@ -584,7 +583,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
             ),
           ),
 
-          if (invite.isPending) ...[
+          if (invite.status == UnifiedInviteStatus.pending) ...[
             IconButton(
               icon: const Icon(Icons.refresh, size: 18),
               onPressed: () => _resendInvite(invite.id),
@@ -601,33 +600,45 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
     );
   }
 
-  _InviteStatusInfo _getStatusInfo(RetroInviteStatus status, AppLocalizations? l10n) {
+  String _getRoleLabel(String role) {
+    final l10n = AppLocalizations.of(context);
+    switch (role.toLowerCase()) {
+      case 'participant':
+        return l10n?.participantRoleVoters ?? 'Partecipante';
+      case 'observer':
+        return l10n?.participantObserver ?? 'Osservatore';
+      default:
+        return role;
+    }
+  }
+
+  _InviteStatusInfo _getStatusInfo(UnifiedInviteStatus status, AppLocalizations? l10n) {
     switch (status) {
-      case RetroInviteStatus.pending:
+      case UnifiedInviteStatus.pending:
         return _InviteStatusInfo(
           label: l10n?.inviteStatusPending ?? 'In attesa',
           color: Colors.orange,
           icon: Icons.hourglass_empty,
         );
-      case RetroInviteStatus.accepted:
+      case UnifiedInviteStatus.accepted:
         return _InviteStatusInfo(
           label: l10n?.inviteStatusAccepted ?? 'Accettato',
           color: Colors.green,
           icon: Icons.check_circle,
         );
-      case RetroInviteStatus.declined:
+      case UnifiedInviteStatus.declined:
         return _InviteStatusInfo(
           label: l10n?.inviteStatusDeclined ?? 'Rifiutato',
           color: Colors.red,
           icon: Icons.cancel,
         );
-      case RetroInviteStatus.expired:
+      case UnifiedInviteStatus.expired:
         return _InviteStatusInfo(
           label: l10n?.inviteStatusExpired ?? 'Scaduto',
           color: Colors.grey,
           icon: Icons.timer_off,
         );
-      case RetroInviteStatus.revoked:
+      case UnifiedInviteStatus.revoked:
         return _InviteStatusInfo(
           label: l10n?.inviteStatusRevoked ?? 'Revocato',
           color: Colors.grey,

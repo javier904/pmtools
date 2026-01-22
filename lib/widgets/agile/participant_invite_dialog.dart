@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:googleapis/gmail/v1.dart' as gmail;
 import 'package:http/http.dart' as http;
-import '../../models/agile_invite_model.dart';
+import '../../models/unified_invite_model.dart';
 import '../../models/agile_enums.dart';
-import '../../services/agile_invite_service.dart';
+import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
@@ -21,7 +21,7 @@ import '../../themes/app_colors.dart';
 class AgileParticipantInviteDialog extends StatefulWidget {
   final String projectId;
   final String projectName;
-  final List<AgileInviteModel> pendingInvites;
+  final List<UnifiedInviteModel> pendingInvites;
 
   const AgileParticipantInviteDialog({
     super.key,
@@ -34,7 +34,7 @@ class AgileParticipantInviteDialog extends StatefulWidget {
     required BuildContext context,
     required String projectId,
     required String projectName,
-    List<AgileInviteModel> pendingInvites = const [],
+    List<UnifiedInviteModel> pendingInvites = const [],
   }) {
     return showDialog<bool>(
       context: context,
@@ -53,7 +53,7 @@ class AgileParticipantInviteDialog extends StatefulWidget {
 class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _inviteService = AgileInviteService();
+  final _inviteService = InviteService();
   final _authService = AuthService();
 
   AgileParticipantRole _selectedParticipantRole = AgileParticipantRole.member;
@@ -61,7 +61,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   bool _isLoading = false;
   bool _sendEmailWithInvite = true;
   String? _generatedLink;
-  List<AgileInviteModel> _invites = [];
+  List<UnifiedInviteModel> _invites = [];
 
   @override
   void initState() {
@@ -77,7 +77,10 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   }
 
   Future<void> _loadInvites() async {
-    final invites = await _inviteService.getInvitesForProject(widget.projectId);
+    final invites = await _inviteService.getInvitesForSource(
+      InviteSourceType.agileProject,
+      widget.projectId,
+    );
     if (mounted) {
       setState(() => _invites = invites);
     }
@@ -90,14 +93,16 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
 
     try {
       final invite = await _inviteService.createInvite(
-        projectId: widget.projectId,
+        sourceType: InviteSourceType.agileProject,
+        sourceId: widget.projectId,
+        sourceName: widget.projectName,
         email: _emailController.text.trim(),
-        participantRole: _selectedParticipantRole,
-        teamRole: _selectedTeamRole,
+        role: _selectedParticipantRole.name, // 'member', 'admin', 'viewer'
+        teamRole: _selectedTeamRole.name, // 'developer', 'designer', etc.
       );
 
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token);
+        final link = _inviteService.generateInviteLink(invite);
         bool emailSent = false;
 
         // Invia email se richiesto
@@ -138,7 +143,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   }
 
   /// Invia email di invito usando Gmail API
-  Future<bool> _sendEmailInvite(AgileInviteModel invite) async {
+  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
     try {
       print('📧 ============================================');
       print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
@@ -217,7 +222,6 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
 
         final result = await _inviteService.sendInviteEmail(
           invite: invite,
-          projectName: widget.projectName,
           baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
@@ -278,7 +282,6 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
 
         final result = await _inviteService.sendInviteEmail(
           invite: invite,
-          projectName: widget.projectName,
           baseUrl: baseUrl,
           senderEmail: senderEmail,
           gmailApi: gmailApi,
@@ -330,7 +333,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
     try {
       final invite = await _inviteService.resendInvite(inviteId);
       if (invite != null) {
-        final link = _inviteService.generateInviteLink(invite.token);
+        final link = _inviteService.generateInviteLink(invite);
         setState(() => _generatedLink = link);
         await _loadInvites();
         if (mounted) {
@@ -605,15 +608,16 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, _invites.any((i) => i.isAccepted)),
+          onPressed: () => Navigator.pop(context, _invites.any((i) => i.status == UnifiedInviteStatus.accepted)),
           child: const Text('Chiudi'),
         ),
       ],
     );
   }
 
-  Widget _buildInviteRow(AgileInviteModel invite) {
+  Widget _buildInviteRow(UnifiedInviteModel invite) {
     final statusInfo = _getStatusInfo(invite.status);
+    final roleDisplay = _getRoleDisplay(invite);
 
     return Builder(
       builder: (context) => Container(
@@ -650,7 +654,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                   Row(
                     children: [
                       Text(
-                        '${invite.participantRole.displayName} / ${invite.teamRole.displayName}',
+                        roleDisplay,
                         style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                       ),
                       const SizedBox(width: 8),
@@ -676,7 +680,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
             ),
 
             // Azioni
-            if (invite.isPending) ...[
+            if (invite.status == UnifiedInviteStatus.pending) ...[
               IconButton(
                 icon: const Icon(Icons.refresh, size: 18),
                 onPressed: () => _resendInvite(invite.id),
@@ -694,33 +698,72 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
     );
   }
 
-  _InviteStatusInfo _getStatusInfo(AgileInviteStatus status) {
+  String _getRoleDisplay(UnifiedInviteModel invite) {
+    final participantRole = _getParticipantRoleName(invite.role);
+    final teamRole = _getTeamRoleName(invite.teamRole);
+    return '$participantRole / $teamRole';
+  }
+
+  String _getParticipantRoleName(String role) {
+    switch (role.toLowerCase()) {
+      case 'member':
+        return 'Member';
+      case 'admin':
+        return 'Admin';
+      case 'viewer':
+        return 'Viewer';
+      default:
+        return role;
+    }
+  }
+
+  String _getTeamRoleName(String? teamRole) {
+    if (teamRole == null) return 'Developer';
+    switch (teamRole.toLowerCase()) {
+      case 'developer':
+        return 'Developer';
+      case 'designer':
+        return 'Designer';
+      case 'qa':
+        return 'QA';
+      case 'productowner':
+        return 'Product Owner';
+      case 'scrummaster':
+        return 'Scrum Master';
+      case 'stakeholder':
+        return 'Stakeholder';
+      default:
+        return teamRole;
+    }
+  }
+
+  _InviteStatusInfo _getStatusInfo(UnifiedInviteStatus status) {
     switch (status) {
-      case AgileInviteStatus.pending:
+      case UnifiedInviteStatus.pending:
         return _InviteStatusInfo(
           label: 'In attesa',
           color: Colors.orange,
           icon: Icons.hourglass_empty,
         );
-      case AgileInviteStatus.accepted:
+      case UnifiedInviteStatus.accepted:
         return _InviteStatusInfo(
           label: 'Accettato',
           color: Colors.green,
           icon: Icons.check_circle,
         );
-      case AgileInviteStatus.declined:
+      case UnifiedInviteStatus.declined:
         return _InviteStatusInfo(
           label: 'Rifiutato',
           color: Colors.red,
           icon: Icons.cancel,
         );
-      case AgileInviteStatus.expired:
+      case UnifiedInviteStatus.expired:
         return _InviteStatusInfo(
           label: 'Scaduto',
           color: Colors.grey,
           icon: Icons.timer_off,
         );
-      case AgileInviteStatus.revoked:
+      case UnifiedInviteStatus.revoked:
         return _InviteStatusInfo(
           label: 'Revocato',
           color: Colors.grey,

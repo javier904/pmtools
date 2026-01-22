@@ -300,7 +300,7 @@ class PlanningPokerSessionModel {
 
   /// Verifica se un utente è facilitator
   bool isFacilitator(String email) {
-    return participants[email]?.role == ParticipantRole.facilitator;
+    return email == createdBy || participants[email]?.role == ParticipantRole.facilitator;
   }
 
   /// Verifica se un utente può votare

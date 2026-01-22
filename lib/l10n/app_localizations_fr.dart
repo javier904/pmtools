@@ -823,6 +823,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get estimationModeFiveFingers => 'Cinq doigts';
 
   @override
+  String estimationOnlineParticipants(int online, int total) {
+    return '$online sur $total participants en ligne';
+  }
+
+  @override
   String get retroTitle => 'Mes rétrospectives';
 
   @override
@@ -1839,6 +1844,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String inviteCreatedFor(String email) {
     return 'Invitation créée pour $email';
+  }
+
+  @override
+  String inviteSentTo(String email) {
+    return 'Invitation envoyée par email à $email';
   }
 
   @override
@@ -5140,6 +5150,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get inviteDeclinedSuccess => 'Invitation refusée';
+
+  @override
+  String get inviteDeclinedError => 'Échec du refus de l\'invitation';
 
   @override
   String get inviteDeclineTitle => 'Refuser l\'invitation ?';

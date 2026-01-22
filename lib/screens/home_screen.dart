@@ -10,6 +10,8 @@ import '../l10n/app_localizations.dart';
 import '../widgets/profile_menu_widget.dart';
 import '../widgets/language_selector_widget.dart';
 import '../widgets/pending_invites_button.dart';
+import '../services/user_profile_service.dart';
+import '../controllers/locale_controller.dart';
 import '../widgets/home/section_favorites.dart';
 import '../widgets/home/section_deadlines.dart';
 import '../widgets/home/section_tools.dart';
@@ -39,6 +41,36 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
   bool _includeArchived = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Inizializza lingua utente salvata su Firestore
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initUserLocale();
+    });
+  }
+
+  Future<void> _initUserLocale() async {
+    final user = _authService.currentUser;
+    if (user != null) {
+      try {
+        final profileService = UserProfileService();
+        // Usa createOrUpdateProfileFromAuth per assicurarsi di avere il profilo aggiornato
+        // e ottenere la lingua salvata
+        final profile = await profileService.createOrUpdateProfileFromAuth();
+        
+        if (profile.locale != null && mounted) {
+          final localeController = LocaleControllerProvider.of(context);
+          if (localeController.locale.languageCode != profile.locale) {
+            localeController.setLocale(profile.locale!);
+          }
+        }
+      } catch (e) {
+        debugPrint('Errore init locale utente: $e');
+      }
+    }
+  }
+
   void _performSearch(String query) async {
     if (query.trim().isEmpty) {
       setState(() {
@@ -52,9 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _searchQuery = query;
       _isLoading = true;
-      _isSearching = true;
-    });
-
     final user = _authService.currentUser;
     if (user != null) {
       final results = await _searchService.search(

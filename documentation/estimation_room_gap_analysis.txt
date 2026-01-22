@@ -1,0 +1,567 @@
+# =============================================================================
+# GAP ANALYSIS: ESTIMATION ROOM vs EISENHOWER
+# =============================================================================
+# Data: Gennaio 2025
+# Obiettivo: Identificare le funzionalità implementate in Eisenhower da
+#            replicare/adattare in Estimation Room
+# =============================================================================
+
+## EXECUTIVE SUMMARY
+
+Questa analisi identifica i GAP tra l'implementazione di Eisenhower (completa)
+e Estimation Room (parziale) per le seguenti aree:
+
+1. Sistema Presenza Online (CRITICO - Non implementato)
+2. Contatore Partecipanti Online (CRITICO - Non implementato)
+3. Indicatore Online per singolo partecipante (MEDIO - Non implementato)
+4. Coerenza Colori Tematici (MEDIO - Parzialmente implementato)
+5. Tab Inviti nel Side Panel (OK - Già implementato in dialog)
+6. Permessi UI per ruoli (DA VERIFICARE)
+7. Ordinamento Stories (DA VERIFICARE)
+
+## =============================================================================
+## 1. SISTEMA PRESENZA ONLINE
+## =============================================================================
+
+### STATO EISENHOWER: ✅ COMPLETO
+
+File: lib/screens/eisenhower_screen.dart
+
+#### Componenti implementati:
+- `WidgetsBindingObserver` mixin per lifecycle
+- `SingleTickerProviderStateMixin` per TabController
+- `Timer? _presenceHeartbeat` con intervallo 15 secondi
+- `_heartbeatInterval = Duration(seconds: 15)`
+- `_offlineThreshold = Duration(seconds: 45)`
+- `_setupWebBeforeUnload()` per gestire chiusura tab browser
+- `_setOfflineImmediately()` per set offline sincrono
+- `didChangeAppLifecycleState()` per paused/resumed/detached
+- `_startPresenceTracking()` / `_startPresenceHeartbeat()`
+- `_stopPresenceHeartbeat()`
+
+#### Codice di riferimento (Eisenhower):
+```dart
+class _EisenhowerScreenState extends State<EisenhowerScreen>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+
+  Timer? _presenceHeartbeat;
+  static const _heartbeatInterval = Duration(seconds: 15);
+  static const _offlineThreshold = Duration(seconds: 45);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _setupWebBeforeUnload();
+  }
+
+  void _setupWebBeforeUnload() {
+    if (kIsWeb) {
+      html.window.onBeforeUnload.listen((event) {
+        _setOfflineImmediately();
+      });
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        _setOfflineImmediately();
+        _presenceHeartbeat?.cancel();
+        break;
+      case AppLifecycleState.resumed:
+        _startPresenceHeartbeat();
+        break;
+    }
+  }
+
+  void _startPresenceHeartbeat() {
+    _firestoreService.updateParticipantOnlineStatus(
+      _selectedMatrix!.id,
+      _currentUserEmail,
+      true,
+    );
+    _presenceHeartbeat?.cancel();
+    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) {
+      if (_selectedMatrix != null && mounted) {
+        _firestoreService.updateParticipantOnlineStatus(
+          _selectedMatrix!.id,
+          _currentUserEmail,
+          true,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _presenceHeartbeat?.cancel();
+    // ...
+  }
+}
+```
+
+### STATO ESTIMATION ROOM: ❌ NON IMPLEMENTATO
+
+File: lib/screens/estimation_room_screen.dart
+
+#### Mancante:
+- NO `WidgetsBindingObserver` mixin
+- NO Timer heartbeat
+- NO beforeunload per web
+- NO gestione lifecycle
+- Il service method `updateParticipantOnlineStatus()` ESISTE ma NON viene chiamato
+
+#### Service già pronto (planning_poker_firestore_service.dart:405):
+```dart
+Future<void> updateParticipantOnlineStatus({
+  required String sessionId,
+  required String email,
+  required bool isOnline,
+}) async {
+  final escapedEmail = _escapeEmail(email);
+  await _sessionsCollection.doc(sessionId).update({
+    'participants.$escapedEmail.isOnline': isOnline,
+    'participants.$escapedEmail.lastActivity': Timestamp.fromDate(DateTime.now()),
+  });
+}
+```
+
+### AZIONI RICHIESTE:
+1. [ ] Aggiungere `WidgetsBindingObserver` mixin alla classe
+2. [ ] Aggiungere import `dart:html` con condizionale web
+3. [ ] Aggiungere `Timer? _presenceHeartbeat`
+4. [ ] Definire costanti `_heartbeatInterval` (15s) e `_offlineThreshold` (45s)
+5. [ ] Implementare `_setupWebBeforeUnload()`
+6. [ ] Implementare `_setOfflineImmediately()`
+7. [ ] Implementare `didChangeAppLifecycleState()`
+8. [ ] Implementare `_startPresenceTracking()` / `_startPresenceHeartbeat()`
+9. [ ] Implementare `_stopPresenceHeartbeat()`
+10. [ ] Chiamare `_startPresenceTracking()` quando si seleziona una sessione
+11. [ ] Chiamare `_stopPresenceHeartbeat()` in dispose e quando si lascia sessione
+
+## =============================================================================
+## 2. CONTATORE PARTECIPANTI ONLINE
+## =============================================================================
+
+### STATO EISENHOWER: ✅ COMPLETO
+
+Mostra badge "2/5" con pallino verde nell'AppBar quando una matrice è selezionata.
+
+#### Componenti:
+- `_countOnlineParticipants()` - conta partecipanti con lastActivity recente
+- `_buildOnlineCounter()` - widget con badge colorato
+
+#### Codice di riferimento:
+```dart
+int _countOnlineParticipants() {
+  if (_selectedMatrix == null) return 0;
+  final now = DateTime.now();
+  return _selectedMatrix!.participants.values.where((p) {
+    if (p.lastActivity == null) return p.isOnline;
+    return now.difference(p.lastActivity!).inMinutes < _offlineThreshold.inMinutes;
+  }).length;
+}
+
+Widget _buildOnlineCounter() {
+  final onlineCount = _countOnlineParticipants();
+  final totalCount = _selectedMatrix?.participants.length ?? 0;
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    decoration: BoxDecoration(
+      color: onlineCount > 0
+          ? AppColors.success.withOpacity(0.15)
+          : context.surfaceVariantColor,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: onlineCount > 0
+            ? AppColors.success.withOpacity(0.3)
+            : Colors.grey.withOpacity(0.3),
+      ),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Pallino verde/grigio con glow
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: onlineCount > 0 ? AppColors.success : Colors.grey,
+            boxShadow: onlineCount > 0 ? [
+              BoxShadow(
+                color: AppColors.success.withOpacity(0.5),
+                blurRadius: 4,
+                spreadRadius: 1,
+              ),
+            ] : null,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text('$onlineCount/$totalCount', ...),
+        Icon(Icons.people, size: 14, ...),
+      ],
+    ),
+  );
+}
+```
+
+### STATO ESTIMATION ROOM: ❌ NON IMPLEMENTATO
+
+Nessun indicatore online nell'AppBar.
+
+### AZIONI RICHIESTE:
+1. [ ] Implementare `_countOnlineParticipants()`
+2. [ ] Implementare `_buildOnlineCounter()` con colore giallo (AppColors.warning)
+3. [ ] Aggiungere widget nell'AppBar actions quando sessione selezionata
+4. [ ] Aggiungere stringa localizzata `estimationOnlineParticipants`
+
+## =============================================================================
+## 3. INDICATORE ONLINE PER SINGOLO PARTECIPANTE
+## =============================================================================
+
+### STATO EISENHOWER: ✅ COMPLETO
+
+Ogni chip partecipante mostra stato online con bordo/colore.
+
+### STATO ESTIMATION ROOM: ❌ NON IMPLEMENTATO
+
+File: lib/widgets/estimation_room/participant_list_widget.dart
+
+Il widget `_buildParticipantTile()` NON mostra lo stato isOnline del partecipante.
+Mostra solo lo stato di votazione (ha votato / in attesa).
+
+### AZIONI RICHIESTE:
+1. [ ] Aggiungere indicatore pallino verde/grigio accanto al nome
+2. [ ] Considerare lastActivity per determinare stato online
+3. [ ] Aggiungere tooltip con "Online" / "Offline"
+
+#### Implementazione suggerita:
+```dart
+Widget _buildParticipantTile(BuildContext context, PlanningPokerParticipantModel participant) {
+  // ... existing code ...
+
+  // Determina se online basandosi su lastActivity
+  final isRecentlyActive = participant.lastActivity != null &&
+      DateTime.now().difference(participant.lastActivity!).inSeconds < 45;
+  final isOnline = participant.isOnline && isRecentlyActive;
+
+  return Container(
+    child: Row(
+      children: [
+        // Indicatore online
+        Container(
+          width: 8,
+          height: 8,
+          margin: const EdgeInsets.only(right: 8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isOnline ? AppColors.success : Colors.grey.shade400,
+          ),
+        ),
+        // Avatar e resto...
+      ],
+    ),
+  );
+}
+```
+
+## =============================================================================
+## 4. COERENZA COLORI TEMATICI
+## =============================================================================
+
+### SCHEMA COLORI PER SEZIONE:
+- **Eisenhower**: Verde (AppColors.secondary) - #4CAF50
+- **Estimation Room**: Giallo/Ambra (AppColors.warning) - #FFC107
+- **Retrospective**: Blu (AppColors.primary) - vario
+- **Smart Todo**: Viola - vario
+
+### STATO ESTIMATION ROOM: ⚠️ PARZIALMENTE CORRETTO
+
+#### File con colori da verificare:
+
+**participant_list_widget.dart**:
+- Linea 41: `Icon(Icons.people, color: AppColors.secondary)` ❌ Dovrebbe essere `AppColors.warning`
+- Linea 79: `_buildRoleHeader('Votanti', Icons.how_to_vote, AppColors.secondary)` ❌
+- Linea 133: `AppColors.secondary.withOpacity(0.05)` per current user ❌
+- Linea 136: `AppColors.secondary.withOpacity(0.2)` per border ❌
+- Linea 199: `AppColors.secondary` per voter role - OK per differenziare ruoli
+
+**estimation_room_screen.dart**:
+- Linea 230: `AppColors.warning` ✅ Corretto
+
+**Altri widget da verificare**:
+- voting_board_widget.dart
+- results_panel_widget.dart
+- session_form_dialog.dart
+- story_form_dialog.dart
+- estimation_input_wrapper.dart
+
+### AZIONI RICHIESTE:
+1. [ ] Audit completo di tutti i file widgets/estimation_room/*.dart
+2. [ ] Sostituire `AppColors.secondary` con `AppColors.warning` dove appropriato
+3. [ ] Mantenere `AppColors.secondary` SOLO per i ruoli voter (per coerenza visiva ruoli)
+4. [ ] Pulsanti principali: usare `AppColors.warning`
+5. [ ] Icone header: usare `AppColors.warning`
+6. [ ] Bordi e sfondi accent: usare `AppColors.warning`
+
+## =============================================================================
+## 5. TAB INVITI NEL SIDE PANEL
+## =============================================================================
+
+### STATO EISENHOWER: ✅ APPENA IMPLEMENTATO
+
+Implementato TabBar con "Partecipanti" e "Inviti" nel side panel.
+File: lib/widgets/eisenhower/invite_tab_widget.dart
+
+### STATO ESTIMATION ROOM: ✅ GIÀ IMPLEMENTATO (ma in dialog)
+
+L'Estimation Room ha già un sistema di gestione inviti completo in
+`ParticipantManagementDialog` (linee 2636-3500 di estimation_room_screen.dart).
+
+Caratteristiche presenti:
+- TabBar con "Partecipanti" e "Inviti"
+- Form per nuovo invito con email e ruolo
+- Lista inviti con status, scadenza, azioni
+- Copia link, revoca, elimina inviti
+- Stream real-time degli inviti
+
+### DIFFERENZA ARCHITETTURALE:
+- **Eisenhower**: Tab inviti integrata nel side panel sempre visibile
+- **Estimation Room**: Tab inviti in un dialog popup separato
+
+### AZIONI SUGGERITE (OPZIONALI):
+Se si vuole uniformare:
+1. [ ] Estrarre la logica inviti in widget separato (come EisenhowerInviteTabWidget)
+2. [ ] Integrare nel layout principale invece che in dialog
+3. [ ] Oppure: mantenere come è, funziona già bene
+
+## =============================================================================
+## 6. PERMESSI UI PER RUOLI
+## =============================================================================
+
+### MATRICE PERMESSI (da estimation_room_permissions_plan.txt):
+
+| Feature                    | Observer | Voter | Facilitator |
+|----------------------------|:--------:|:-----:|:-----------:|
+| View Session/Stories       |    ✅    |  ✅   |     ✅      |
+| Vote on Stories            |    ❌    |  ✅   |     ✅      |
+| Reveal Votes               |    ❌    |  ❌   |     ✅      |
+| Reset/Revote               |    ❌    |  ❌   |     ✅      |
+| Set Final Estimate         |    ❌    |  ❌   |     ✅      |
+| Add/Edit/Delete Stories    |    ❌    |  ❌   |     ✅      |
+| Edit Session Settings      |    ❌    |  ❌   |     ✅      |
+| Manage Participants        |    ❌    |  ❌   |     ✅      |
+| Start/Stop/Skip Voting     |    ❌    |  ❌   |     ✅      |
+| Archive/Complete Session   |    ❌    |  ❌   |     ✅      |
+
+### STATO ESTIMATION ROOM: ⚠️ DA VERIFICARE IN DETTAGLIO
+
+Il model ha già:
+- `isFacilitator(email)` ✅
+- `canVote(email)` ✅
+
+### VERIFICA RICHIESTA:
+1. [ ] AppBar: Settings/Export nascosti per non-facilitator?
+2. [ ] Voting cards: disabled per Observer?
+3. [ ] Add Story button: nascosto per non-facilitator?
+4. [ ] Reveal/Skip buttons: nascosti per non-facilitator?
+5. [ ] Story menu (delete, revote): nascosto per non-facilitator?
+6. [ ] Final estimate selector: nascosto per non-facilitator?
+7. [ ] Messaggio "Stai osservando" per Observer?
+
+## =============================================================================
+## 7. ORDINAMENTO STORIES
+## =============================================================================
+
+### STATO EISENHOWER: ✅ IMPLEMENTATO
+
+Ordina attività con:
+1. Non rivelate prima delle rivelate
+2. Tra le non rivelate, quelle senza voto utente prima
+3. Tra quelle senza voto utente, quelle senza voti di nessuno prima
+
+### STATO ESTIMATION ROOM: ❓ DA VERIFICARE
+
+Le stories sono probabilmente ordinate per createdAt o per ordine aggiunta.
+
+### AZIONI SUGGERITE:
+1. [ ] Verificare ordinamento attuale
+2. [ ] Se utile, implementare ordinamento simile:
+   - Stories in voting prima
+   - Stories senza voto utente prima
+   - Stories completate dopo
+
+## =============================================================================
+## 8. FIRESTORE RULES (da estimation_room_permissions_plan.txt)
+## =============================================================================
+
+### AZIONI RICHIESTE:
+1. [ ] Aggiungere helper `isFacilitator(resource)` nelle rules
+2. [ ] Aggiungere helper `isVoter(resource)` nelle rules
+3. [ ] Limitare update sessione a facilitator (eccetto isOnline/lastActivity)
+4. [ ] Limitare create/delete stories a facilitator
+5. [ ] Limitare update stories: facilitator full, voter solo proprio voto
+6. [ ] Test negativi: Observer non può scrivere
+
+## =============================================================================
+## 9. LOCALIZZAZIONE
+## =============================================================================
+
+### STRINGHE DA AGGIUNGERE:
+
+```json
+// app_en.arb
+"estimationOnlineParticipants": "{online} of {total} participants online",
+"estimationObservingMessage": "You are observing this session",
+"estimationCannotVoteObserver": "Observers cannot vote",
+
+// app_it.arb
+"estimationOnlineParticipants": "{online} di {total} partecipanti online",
+"estimationObservingMessage": "Stai osservando questa sessione",
+"estimationCannotVoteObserver": "Gli osservatori non possono votare",
+
+// app_fr.arb
+"estimationOnlineParticipants": "{online} sur {total} participants en ligne",
+"estimationObservingMessage": "Vous observez cette session",
+"estimationCannotVoteObserver": "Les observateurs ne peuvent pas voter",
+
+// app_es.arb
+"estimationOnlineParticipants": "{online} de {total} participantes en línea",
+"estimationObservingMessage": "Estás observando esta sesión",
+"estimationCannotVoteObserver": "Los observadores no pueden votar",
+```
+
+## =============================================================================
+## PIANO DI IMPLEMENTAZIONE PRIORITIZZATO
+## =============================================================================
+
+### FASE 1 - CRITICA (Sistema Presenza) - Effort: ALTO
+1. Sistema heartbeat e lifecycle
+2. Contatore online nell'AppBar
+3. Indicatore online per partecipanti
+
+### FASE 2 - MEDIA (Coerenza Visiva) - Effort: MEDIO
+4. Audit e fix colori tematici (verde -> giallo)
+5. Verificare tutte le icone e pulsanti
+
+### FASE 3 - MEDIA (Permessi UI) - Effort: MEDIO
+6. Verificare e completare hiding elementi per Observer
+7. Messaggio "Stai osservando" per Observer
+8. Disabilitare voting cards per Observer
+
+### FASE 4 - BASSA (Miglioramenti) - Effort: BASSO
+9. Ordinamento stories (opzionale)
+10. Localizzazione nuove stringhe
+
+### FASE 5 - BACKEND (Firestore Rules) - Effort: MEDIO
+11. Aggiornare firestore.rules con permessi granulari
+12. Test di sicurezza
+
+## =============================================================================
+## CHECKLIST IMPLEMENTAZIONE
+## =============================================================================
+
+### Sistema Presenza Online
+- [ ] Aggiungere `WidgetsBindingObserver` mixin
+- [ ] Aggiungere import `dart:html` condizionale
+- [ ] Aggiungere `Timer? _presenceHeartbeat`
+- [ ] Definire `_heartbeatInterval` (15s) e `_offlineThreshold` (45s)
+- [ ] Implementare `_setupWebBeforeUnload()`
+- [ ] Implementare `_setOfflineImmediately()`
+- [ ] Override `didChangeAppLifecycleState()`
+- [ ] Implementare `_startPresenceTracking()`
+- [ ] Implementare `_startPresenceHeartbeat()`
+- [ ] Implementare `_stopPresenceHeartbeat()`
+- [ ] Chiamare tracking quando si seleziona sessione
+- [ ] Chiamare stop in dispose
+
+### Contatore Online
+- [ ] Implementare `_countOnlineParticipants()`
+- [ ] Implementare `_buildOnlineCounter()` con AppColors.warning
+- [ ] Aggiungere in AppBar quando sessione selezionata
+- [ ] Aggiungere traduzione `estimationOnlineParticipants`
+
+### Indicatore Online Partecipanti
+- [ ] Modificare `participant_list_widget.dart`
+- [ ] Aggiungere pallino verde/grigio
+- [ ] Usare logica lastActivity < 45s
+
+### Colori Tematici
+- [ ] Audit `participant_list_widget.dart` → fix secondary → warning
+- [ ] Audit `voting_board_widget.dart`
+- [ ] Audit `results_panel_widget.dart`
+- [ ] Audit `session_form_dialog.dart`
+- [ ] Audit `story_form_dialog.dart`
+- [ ] Audit `estimation_input_wrapper.dart`
+- [ ] Audit `estimation_room_screen.dart`
+
+### Permessi UI
+- [ ] Verificare AppBar settings/export per facilitator
+- [ ] Verificare Add Story button per facilitator
+- [ ] Verificare Reveal/Skip per facilitator
+- [ ] Verificare Story menu per facilitator
+- [ ] Verificare Final estimate per facilitator
+- [ ] Verificare voting disabled per Observer
+- [ ] Aggiungere messaggio Observer
+
+### Localizzazione
+- [ ] Aggiungere `estimationOnlineParticipants` in EN/IT/FR/ES
+- [ ] Aggiungere `estimationObservingMessage` in EN/IT/FR/ES
+- [ ] Aggiungere `estimationCannotVoteObserver` in EN/IT/FR/ES
+
+## =============================================================================
+## NOTE TECNICHE
+## =============================================================================
+
+### Import necessari per web beforeunload:
+```dart
+import 'package:flutter/foundation.dart' show kIsWeb;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+```
+
+### Pattern heartbeat collaudato da Eisenhower:
+```dart
+void _startPresenceHeartbeat() {
+  if (_selectedSession == null || _currentUserEmail.isEmpty) return;
+
+  _firestoreService.updateParticipantOnlineStatus(
+    sessionId: _selectedSession!.id,
+    email: _currentUserEmail,
+    isOnline: true,
+  );
+
+  _presenceHeartbeat?.cancel();
+  _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) {
+    if (_selectedSession != null && mounted) {
+      _firestoreService.updateParticipantOnlineStatus(
+        sessionId: _selectedSession!.id,
+        email: _currentUserEmail,
+        isOnline: true,
+      );
+    }
+  });
+
+  print('🟢 Presence tracking started for $_currentUserEmail');
+}
+```
+
+### Colori da usare per Estimation Room:
+- Pulsanti primari: `AppColors.warning` (giallo/ambra)
+- Icone header: `AppColors.warning`
+- Bordi accent: `AppColors.warning.withOpacity(0.3)`
+- Sfondo accent: `AppColors.warning.withOpacity(0.1)`
+- Stato online: `AppColors.success` (verde - universale per online)
+- Stato offline: `Colors.grey`
+
+## =============================================================================
+## FINE DOCUMENTO
+## =============================================================================

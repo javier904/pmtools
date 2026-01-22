@@ -519,12 +519,38 @@ class _PendingInvitesDialogState extends State<PendingInvitesDialog> {
     setState(() => _processingInvites.add(invite.id));
 
     try {
+      print('🔴 [DECLINE] Starting decline for invite: ${invite.id}');
+      print('🔴 [DECLINE] Source type: ${invite.sourceType}, sourceId: ${invite.sourceId}');
+      print('🔴 [DECLINE] Email: ${invite.email}');
+
       final success = await _inviteService.declineInvite(invite);
-      if (success && mounted) {
+
+      print('🔴 [DECLINE] Result: $success');
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.inviteDeclinedSuccess),
+              backgroundColor: AppColors.warning,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.inviteDeclinedError),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('🔴 [DECLINE] Error: $e');
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.inviteDeclinedSuccess),
-            backgroundColor: AppColors.warning,
+            content: Text('${l10n.inviteDeclinedError}: $e'),
+            backgroundColor: AppColors.error,
           ),
         );
       }

@@ -151,8 +151,15 @@ class PlanningPokerVote {
 
   /// Crea un voto decimale
   factory PlanningPokerVote.decimal(double value) {
+    // Formatta senza decimali se è un numero intero, altrimenti con max 2 decimali
+    String formattedValue;
+    if (value == value.truncateToDouble()) {
+      formattedValue = value.toInt().toString();
+    } else {
+      formattedValue = value.toStringAsFixed(2);
+    }
     return PlanningPokerVote(
-      value: value.toStringAsFixed(2),
+      value: formattedValue,
       votedAt: DateTime.now(),
       decimalValue: value,
     );
@@ -165,8 +172,15 @@ class PlanningPokerVote {
     required double pessimistic,
   }) {
     final pert = (optimistic + (4 * realistic) + pessimistic) / 6;
+    // Formatta senza decimali se è un numero intero, altrimenti con max 2 decimali
+    String formattedValue;
+    if (pert == pert.truncateToDouble()) {
+      formattedValue = pert.toInt().toString();
+    } else {
+      formattedValue = pert.toStringAsFixed(2);
+    }
     return PlanningPokerVote(
-      value: pert.toStringAsFixed(2),
+      value: formattedValue,
       votedAt: DateTime.now(),
       optimisticValue: optimistic,
       realisticValue: realistic,

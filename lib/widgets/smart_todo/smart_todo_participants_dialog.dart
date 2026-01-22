@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:googleapis/gmail/v1.dart' as gmail;
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import '../../models/smart_todo/todo_list_model.dart';
-import '../../models/smart_todo/todo_invite_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
-import '../../services/smart_todo_invite_service.dart';
+import '../../models/unified_invite_model.dart';
+import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -21,12 +19,12 @@ class SmartTodoParticipantsDialog extends StatefulWidget {
 
 class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialog> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final SmartTodoInviteService _inviteService = SmartTodoInviteService();
+  final InviteService _inviteService = InviteService();
   final AuthService _authService = AuthService();
-  
+
   // Invito form
   final _emailController = TextEditingController();
-  TodoParticipantRole _role = TodoParticipantRole.editor;
+  String _role = 'editor'; // editor, viewer
   bool _isLoading = false;
 
   @override
@@ -159,13 +157,13 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
 
   Widget _buildInvitesTab(bool isDark, Color inputBg, Color borderColor, Color textColor) {
     final l10n = AppLocalizations.of(context)!;
-    return StreamBuilder<List<TodoInviteModel>>(
-      stream: _inviteService.streamInvites(widget.list.id),
+    return StreamBuilder<List<UnifiedInviteModel>>(
+      stream: _inviteService.streamInvitesForSource(InviteSourceType.smartTodo, widget.list.id),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
         final invites = snapshot.data!;
-        final pending = invites.where((i) => i.status == TodoInviteStatus.pending).toList();
+        final pending = invites.where((i) => i.status == UnifiedInviteStatus.pending).toList();
 
         if (pending.isEmpty) {
            return Center(child: Text(l10n.smartTodoNoInvitesPending, style: TextStyle(color: isDark ? Colors.grey[400] : null)));
@@ -192,7 +190,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                    subtitle: Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
-                        Text(l10n.smartTodoRoleLabel(invite.role.name), style: TextStyle(color: isDark ? Colors.grey[400] : null)),
+                        Text(l10n.smartTodoRoleLabel(invite.role), style: TextStyle(color: isDark ? Colors.grey[400] : null)),
                         if (isExpired)
                           Text(l10n.smartTodoExpired, style: const TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold))
                         else
@@ -203,7 +201,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                      icon: Icon(Icons.more_vert, color: isDark ? Colors.grey[400] : null),
                      onSelected: (action) async {
                         if (action == 'revoke') {
-                           await _inviteService.revokeInvite(widget.list.id, invite.id);
+                           await _inviteService.revokeInvite(invite.id);
                         } else if (action == 'resend') {
                           final currentUser = _authService.currentUser;
                           if (currentUser != null && currentUser.email != null) {
@@ -271,7 +269,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                const SizedBox(width: 12),
                Expanded(
                  flex: 1,
-                 child: DropdownButtonFormField<TodoParticipantRole>(
+                 child: DropdownButtonFormField<String>(
                    value: _role,
                    dropdownColor: isDark ? const Color(0xFF2D3748) : null,
                    style: TextStyle(color: textColor, fontSize: 12),
@@ -284,10 +282,10 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                      filled: true,
                      fillColor: inputBg,
                    ),
-                   items: TodoParticipantRole.values.map((r) => DropdownMenuItem(
-                      value: r,
-                      child: Text(r.name),
-                   )).toList(),
+                   items: const [
+                      DropdownMenuItem(value: 'editor', child: Text('editor')),
+                      DropdownMenuItem(value: 'viewer', child: Text('viewer')),
+                   ],
                    onChanged: (v) => setState(() => _role = v!),
                  ),
                ),
@@ -316,12 +314,16 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
       if (currentUser == null || currentUser.email == null) return;
 
       final invite = await _inviteService.createInvite(
-        listId: widget.list.id,
+        sourceType: InviteSourceType.smartTodo,
+        sourceId: widget.list.id,
+        sourceName: widget.list.title,
         email: email,
         role: _role,
-        invitedBy: currentUser.email!,
-        invitedByName: currentUser.displayName ?? l10n.smartTodoUser,
       );
+
+      if (invite == null) {
+        throw Exception(l10n.smartTodoError('Failed to create invite'));
+      }
 
       final emailSent = await _sendEmailForInvite(invite, currentUser.email!);
 
@@ -355,7 +357,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
     }
   }
 
-  Future<bool> _sendEmailForInvite(TodoInviteModel invite, String senderEmail) async {
+  Future<bool> _sendEmailForInvite(UnifiedInviteModel invite, String senderEmail) async {
       try {
         var googleUser = _authService.googleSignIn.currentUser;
         if (googleUser == null) {
@@ -365,7 +367,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
             debugPrint('Error signing in silently: $e');
           }
         }
-        
+
         if (googleUser == null) {
           googleUser = await _authService.googleSignIn.signIn();
         }
@@ -377,7 +379,6 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
 
           return await _inviteService.sendInviteEmail(
             invite: invite,
-            listName: widget.list.title,
             senderEmail: senderEmail,
             gmailApi: gmailApi,
           );

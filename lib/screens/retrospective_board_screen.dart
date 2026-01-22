@@ -6,7 +6,8 @@ import 'package:agile_tools/widgets/retrospective/retro_board_widget.dart';
 import 'package:agile_tools/widgets/retrospective/agile_coach_overlay.dart';
 import 'package:agile_tools/widgets/retrospective/sentiment_voting_widget.dart';
 import 'package:agile_tools/widgets/retrospective/retro_participant_invite_dialog.dart';
-import 'package:agile_tools/services/retro_invite_service.dart';
+import 'package:agile_tools/services/invite_service.dart';
+import 'package:agile_tools/models/unified_invite_model.dart';
 import 'package:agile_tools/widgets/retrospective/action_items_table_widget.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/services/retrospective_sheets_export_service.dart';
@@ -455,8 +456,11 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
 
   void _showInviteDialog(RetrospectiveModel retro) async {
     // Carica gli inviti pendenti per mostrarli nel dialog
-    final inviteService = RetroInviteService();
-    final pendingInvites = await inviteService.getInvitesForBoard(retro.id);
+    final inviteService = InviteService();
+    final pendingInvites = await inviteService.getInvitesForSource(
+      InviteSourceType.retroBoard,
+      retro.id,
+    );
 
     if (!mounted) return;
 

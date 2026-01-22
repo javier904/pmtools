@@ -304,6 +304,17 @@
   "estimationModeDotVoting": "Votación por Puntos",
   "estimationModeBucketSystem": "Sistema de Cubos",
   "estimationModeFiveFingers": "Cinco Dedos",
+  "estimationOnlineParticipants": "{online} de {total} participantes en línea",
+  "@estimationOnlineParticipants": {
+    "placeholders": {
+      "online": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "retroTitle": "Mis Retrospectivas",
   "retroNoRetros": "Sin retrospectivas",
   "retroCreateNew": "Crear Nueva",
@@ -682,6 +693,14 @@
   "inviteNoInvites": "No hay invitaciones enviadas",
   "inviteCreatedFor": "Invitación creada para {email}",
   "@inviteCreatedFor": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSentTo": "Invitación enviada por email a {email}",
+  "@inviteSentTo": {
     "placeholders": {
       "email": {
         "type": "String"
@@ -2372,6 +2391,7 @@
   "inviteAcceptedSuccess": "¡Invitación aceptada con éxito!",
   "inviteAcceptedError": "Error al aceptar la invitación",
   "inviteDeclinedSuccess": "Invitación rechazada",
+  "inviteDeclinedError": "Error al rechazar la invitación",
   "inviteDeclineTitle": "¿Rechazar invitación?",
   "inviteDeclineMessage": "¿Estás seguro de que quieres rechazar esta invitación?",
   "expiresInHours": "Expira en {hours}h",

@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'eisenhower_invite_model.dart';
 import 'planning_poker_invite_model.dart';
 import 'agile_invite_model.dart';
@@ -35,6 +39,7 @@ class UnifiedInviteModel {
   final InviteSourceType sourceType;
   final String email;
   final String role;
+  final String? teamRole; // Solo per Agile Project
   final UnifiedInviteStatus status;
   final String invitedBy;
   final String invitedByName;
@@ -53,6 +58,7 @@ class UnifiedInviteModel {
     required this.sourceType,
     required this.email,
     required this.role,
+    this.teamRole,
     required this.status,
     required this.invitedBy,
     required this.invitedByName,
@@ -64,6 +70,133 @@ class UnifiedInviteModel {
     this.declineReason,
     this.isFavorite = false,
   });
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // FIRESTORE SERIALIZATION
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  /// Genera un token univoco di 32 caratteri
+  static String generateToken() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = Random.secure();
+    return List.generate(32, (_) => chars[random.nextInt(chars.length)]).join();
+  }
+
+  /// Factory da Firestore DocumentSnapshot
+  factory UnifiedInviteModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UnifiedInviteModel(
+      id: doc.id,
+      sourceType: _parseSourceType(data['sourceType'] as String?),
+      sourceId: data['sourceId'] as String? ?? '',
+      sourceName: data['sourceName'] as String? ?? '',
+      email: data['email'] as String? ?? '',
+      role: data['role'] as String? ?? '',
+      teamRole: data['teamRole'] as String?,
+      status: _parseStatus(data['status'] as String?),
+      token: data['token'] as String? ?? '',
+      invitedBy: data['invitedBy'] as String? ?? '',
+      invitedByName: data['invitedByName'] as String? ?? '',
+      invitedAt: (data['invitedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      expiresAt: (data['expiresAt'] as Timestamp?)?.toDate() ?? DateTime.now().add(const Duration(days: 7)),
+      acceptedAt: (data['acceptedAt'] as Timestamp?)?.toDate(),
+      declinedAt: (data['declinedAt'] as Timestamp?)?.toDate(),
+      declineReason: data['declineReason'] as String?,
+      isFavorite: data['isFavorite'] as bool? ?? false,
+    );
+  }
+
+  /// Factory da Map (per compatibilità)
+  factory UnifiedInviteModel.fromMap(Map<String, dynamic> data, {String? id}) {
+    return UnifiedInviteModel(
+      id: id ?? data['id'] as String? ?? '',
+      sourceType: _parseSourceType(data['sourceType'] as String?),
+      sourceId: data['sourceId'] as String? ?? '',
+      sourceName: data['sourceName'] as String? ?? '',
+      email: data['email'] as String? ?? '',
+      role: data['role'] as String? ?? '',
+      teamRole: data['teamRole'] as String?,
+      status: _parseStatus(data['status'] as String?),
+      token: data['token'] as String? ?? '',
+      invitedBy: data['invitedBy'] as String? ?? '',
+      invitedByName: data['invitedByName'] as String? ?? '',
+      invitedAt: data['invitedAt'] is Timestamp
+          ? (data['invitedAt'] as Timestamp).toDate()
+          : DateTime.tryParse(data['invitedAt']?.toString() ?? '') ?? DateTime.now(),
+      expiresAt: data['expiresAt'] is Timestamp
+          ? (data['expiresAt'] as Timestamp).toDate()
+          : DateTime.tryParse(data['expiresAt']?.toString() ?? '') ?? DateTime.now().add(const Duration(days: 7)),
+      acceptedAt: data['acceptedAt'] is Timestamp
+          ? (data['acceptedAt'] as Timestamp).toDate()
+          : DateTime.tryParse(data['acceptedAt']?.toString() ?? ''),
+      declinedAt: data['declinedAt'] is Timestamp
+          ? (data['declinedAt'] as Timestamp).toDate()
+          : DateTime.tryParse(data['declinedAt']?.toString() ?? ''),
+      declineReason: data['declineReason'] as String?,
+      isFavorite: data['isFavorite'] as bool? ?? false,
+    );
+  }
+
+  /// Converti a Map per Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'sourceType': sourceType.name,
+      'sourceId': sourceId,
+      'sourceName': sourceName,
+      'email': email.toLowerCase(),
+      'role': role,
+      if (teamRole != null) 'teamRole': teamRole,
+      'status': status.name,
+      'token': token,
+      'invitedBy': invitedBy.toLowerCase(),
+      'invitedByName': invitedByName,
+      'invitedAt': Timestamp.fromDate(invitedAt),
+      'expiresAt': Timestamp.fromDate(expiresAt),
+      if (acceptedAt != null) 'acceptedAt': Timestamp.fromDate(acceptedAt!),
+      if (declinedAt != null) 'declinedAt': Timestamp.fromDate(declinedAt!),
+      if (declineReason != null) 'declineReason': declineReason,
+      'isFavorite': isFavorite,
+    };
+  }
+
+  /// Converti a Map (alias per compatibilità)
+  Map<String, dynamic> toMap() => toFirestore();
+
+  /// Parse sourceType da stringa
+  static InviteSourceType _parseSourceType(String? value) {
+    switch (value) {
+      case 'eisenhower':
+        return InviteSourceType.eisenhower;
+      case 'estimationRoom':
+        return InviteSourceType.estimationRoom;
+      case 'agileProject':
+        return InviteSourceType.agileProject;
+      case 'smartTodo':
+        return InviteSourceType.smartTodo;
+      case 'retroBoard':
+        return InviteSourceType.retroBoard;
+      default:
+        return InviteSourceType.eisenhower;
+    }
+  }
+
+  /// Parse status da stringa
+  static UnifiedInviteStatus _parseStatus(String? value) {
+    switch (value) {
+      case 'pending':
+        return UnifiedInviteStatus.pending;
+      case 'accepted':
+        return UnifiedInviteStatus.accepted;
+      case 'declined':
+        return UnifiedInviteStatus.declined;
+      case 'expired':
+        return UnifiedInviteStatus.expired;
+      case 'revoked':
+        return UnifiedInviteStatus.revoked;
+      default:
+        return UnifiedInviteStatus.pending;
+    }
+  }
 
   /// Verifica se l'invito è ancora valido (non scaduto e pending)
   bool get isValid =>
@@ -232,6 +365,7 @@ class UnifiedInviteModel {
       sourceType: InviteSourceType.agileProject,
       email: invite.email,
       role: _agileRoleToString(invite.participantRole),
+      teamRole: _agileTeamRoleToString(invite.teamRole),
       status: _convertAgileStatus(invite.status),
       invitedBy: invite.invitedBy,
       invitedByName: invite.invitedByName,
@@ -299,6 +433,7 @@ class UnifiedInviteModel {
     InviteSourceType? sourceType,
     String? email,
     String? role,
+    String? teamRole,
     UnifiedInviteStatus? status,
     String? invitedBy,
     String? invitedByName,
@@ -317,6 +452,7 @@ class UnifiedInviteModel {
       sourceType: sourceType ?? this.sourceType,
       email: email ?? this.email,
       role: role ?? this.role,
+      teamRole: teamRole ?? this.teamRole,
       status: status ?? this.status,
       invitedBy: invitedBy ?? this.invitedBy,
       invitedByName: invitedByName ?? this.invitedByName,
@@ -426,6 +562,23 @@ class UnifiedInviteModel {
         return 'Member';
       case AgileParticipantRole.viewer:
         return 'Viewer';
+    }
+  }
+
+  static String _agileTeamRoleToString(TeamRole role) {
+    switch (role) {
+      case TeamRole.productOwner:
+        return 'Product Owner';
+      case TeamRole.scrumMaster:
+        return 'Scrum Master';
+      case TeamRole.developer:
+        return 'Developer';
+      case TeamRole.designer:
+        return 'Designer';
+      case TeamRole.qa:
+        return 'QA';
+      case TeamRole.stakeholder:
+        return 'Stakeholder';
     }
   }
 

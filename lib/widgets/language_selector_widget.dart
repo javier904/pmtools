@@ -23,6 +23,10 @@ class LanguageSelectorWidget extends StatelessWidget {
       final authService = AuthService();
       if (authService.currentUser != null) {
         final profileService = UserProfileService();
+        // Aggiorna campo locale nel profilo utente principale
+        await profileService.updateProfileFields({'locale': localeCode});
+        
+        // Aggiorna anche nei settings per coerenza
         final currentSettings = await profileService.getCurrentSettings();
         if (currentSettings != null) {
           await profileService.updateSettings(
@@ -48,7 +52,7 @@ class LanguageSelectorWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -112,6 +116,10 @@ class LanguageToggleButton extends StatelessWidget {
       final authService = AuthService();
       if (authService.currentUser != null) {
         final profileService = UserProfileService();
+        // Aggiorna campo locale nel profilo utente principale
+        await profileService.updateProfileFields({'locale': localeCode});
+        
+        // Aggiorna anche nei settings per coerenza
         final currentSettings = await profileService.getCurrentSettings();
         if (currentSettings != null) {
           await profileService.updateSettings(

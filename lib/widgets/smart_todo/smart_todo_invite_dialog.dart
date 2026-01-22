@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:googleapis/gmail/v1.dart' as gmail;
-import 'package:googleapis_auth/auth_io.dart';
-import '../../models/smart_todo/todo_participant_model.dart';
-import '../../services/smart_todo_invite_service.dart';
+import '../../models/unified_invite_model.dart';
+import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../l10n/app_localizations.dart';
 
 class SmartTodoInviteDialog extends StatefulWidget {
@@ -24,10 +22,10 @@ class SmartTodoInviteDialog extends StatefulWidget {
 
 class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
   final _emailController = TextEditingController();
-  final _inviteService = SmartTodoInviteService();
+  final _inviteService = InviteService();
   final _authService = AuthService();
-  
-  TodoParticipantRole _role = TodoParticipantRole.editor;
+
+  String _role = 'editor'; // editor, viewer
   bool _sendEmail = true;
   bool _isLoading = false;
 
@@ -49,7 +47,7 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 16),
-          DropdownButtonFormField<TodoParticipantRole>(
+          DropdownButtonFormField<String>(
             value: _role,
             decoration: InputDecoration(
               labelText: l10n?.smartTodoRole ?? 'Role',
@@ -57,8 +55,8 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
               border: const OutlineInputBorder(),
             ),
             items: [
-              DropdownMenuItem(value: TodoParticipantRole.editor, child: Text(l10n?.smartTodoEditorRole ?? 'Editor (Can edit)')),
-              DropdownMenuItem(value: TodoParticipantRole.viewer, child: Text(l10n?.smartTodoViewerRole ?? 'Viewer (View only)')),
+              DropdownMenuItem(value: 'editor', child: Text(l10n?.smartTodoEditorRole ?? 'Editor (Can edit)')),
+              DropdownMenuItem(value: 'viewer', child: Text(l10n?.smartTodoViewerRole ?? 'Viewer (View only)')),
             ],
             onChanged: (v) => setState(() => _role = v!),
           ),
@@ -104,12 +102,16 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
 
       // 1. Create Invite
       final invite = await _inviteService.createInvite(
-        listId: widget.listId,
+        sourceType: InviteSourceType.smartTodo,
+        sourceId: widget.listId,
+        sourceName: widget.listName,
         email: email,
         role: _role,
-        invitedBy: currentUser.email!,
-        invitedByName: currentUser.displayName ?? currentUser.email ?? (l10n?.smartTodoUser ?? 'User'),
       );
+
+      if (invite == null) {
+        throw Exception(l10n?.smartTodoError('Failed to create invite') ?? 'Error: Failed to create invite');
+      }
 
       // 2. Send Email if requested
       if (_sendEmail) {
@@ -118,14 +120,13 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
         if (googleUser == null) {
           throw Exception(l10n?.smartTodoGoogleLoginRequired ?? 'Google login required to send email');
         }
-        
+
         final authHeaders = await googleUser.authHeaders;
         final httpClient = _GoogleAuthClient(authHeaders);
         final gmailApi = gmail.GmailApi(httpClient);
 
         await _inviteService.sendInviteEmail(
           invite: invite,
-          listName: widget.listName,
           senderEmail: currentUser.email!,
           gmailApi: gmailApi,
         );

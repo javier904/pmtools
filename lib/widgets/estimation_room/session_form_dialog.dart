@@ -105,7 +105,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   labelText: l10n.sessionNameRequired,
                   hintText: l10n.sessionNameHint,
                   border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                  ),
                 ),
+                cursorColor: Colors.amber,
                 autofocus: true,
               ),
               const SizedBox(height: 16),
@@ -118,7 +122,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   labelText: l10n.sessionDescription,
                   hintText: l10n.formDescriptionHint,
                   border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                  ),
                 ),
+                cursorColor: Colors.amber,
                 maxLines: 2,
               ),
 
@@ -138,8 +146,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                 decoration: InputDecoration(
                   labelText: l10n.sessionEstimationMode,
                   border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                  ),
                   isDense: true,
-                  prefixIcon: Icon(_getEstimationModeIcon(_selectedEstimationMode), size: 20),
+                  prefixIcon: Icon(_getEstimationModeIcon(_selectedEstimationMode), size: 20, color: Colors.amber),
                 ),
                 items: EstimationMode.values.map((mode) => DropdownMenuItem(
                   value: mode,
@@ -181,8 +192,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   decoration: InputDecoration(
                     labelText: l10n.sessionCardSet,
                     border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                    ),
                     isDense: true,
-                    prefixIcon: const Icon(Icons.style, size: 20),
+                    prefixIcon: const Icon(Icons.style, size: 20, color: Colors.amber),
                   ),
                   items: [
                     DropdownMenuItem(
@@ -206,6 +220,8 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     child: CheckboxListTile(
                       value: _autoReveal,
                       onChanged: (value) => setState(() => _autoReveal = value!),
+                      activeColor: Colors.amber,
+                      checkColor: Colors.white,
                       title: Text(l10n.sessionAutoReveal, style: const TextStyle(fontSize: 14)),
                       subtitle: Text(l10n.sessionAutoRevealDesc, style: const TextStyle(fontSize: 11)),
                       controlAffinity: ListTileControlAffinity.leading,
@@ -217,6 +233,8 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     child: CheckboxListTile(
                       value: _allowObservers,
                       onChanged: (value) => setState(() => _allowObservers = value!),
+                      activeColor: Colors.amber,
+                      checkColor: Colors.white,
                       title: Text(l10n.sessionAllowObservers, style: const TextStyle(fontSize: 14)),
                       subtitle: Text(l10n.sessionAllowObserversDesc, style: const TextStyle(fontSize: 11)),
                       controlAffinity: ListTileControlAffinity.leading,
@@ -238,7 +256,10 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
         ),
         ElevatedButton(
           onPressed: _save,
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.amber,
+            foregroundColor: Colors.white,
+          ),
           child: Text(isEdit ? l10n.actionSave : l10n.actionCreate),
         ),
       ],

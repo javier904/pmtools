@@ -206,9 +206,9 @@ class _PokerCardWidgetState extends State<PokerCardWidget>
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: AppColors.secondaryDark,
+        color: AppColors.warningDark,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.secondary, width: 2),
+        border: Border.all(color: AppColors.warning, width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -222,13 +222,13 @@ class _PokerCardWidgetState extends State<PokerCardWidget>
           width: width * 0.7,
           height: height * 0.7,
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.secondaryLight, width: 2),
+            border: Border.all(color: AppColors.warningLight, width: 2),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Center(
             child: Icon(
               Icons.style,
-              color: AppColors.secondaryLight,
+              color: AppColors.warningLight,
               size: 32,
             ),
           ),

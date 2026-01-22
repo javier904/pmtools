@@ -103,7 +103,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
         children: [
           Row(
             children: [
-              const Icon(Icons.calculate, color: AppColors.secondary),
+              const Icon(Icons.calculate, color: AppColors.warning),
               const SizedBox(width: 8),
               Text(
                 'Stima Decimale',
@@ -154,6 +154,8 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
               ElevatedButton(
                 onPressed: widget.enabled ? _validateAndSubmit : null,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 14,
@@ -210,7 +212,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
                     color: isSelected ? Colors.white : null,
                   ),
                 ),
-                backgroundColor: isSelected ? AppColors.secondary : null,
+                backgroundColor: isSelected ? AppColors.warning : null,
                 onPressed: widget.enabled
                     ? () {
                         _controller.text = value.toStringAsFixed(1);
@@ -244,7 +246,7 @@ class DecimalVoteDisplay extends StatelessWidget {
         width: 60,
         height: 40,
         decoration: BoxDecoration(
-          color: AppColors.secondaryDark,
+          color: AppColors.warningDark,
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(Icons.help_outline, color: Colors.white),
@@ -254,15 +256,15 @@ class DecimalVoteDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withOpacity(0.1),
+        color: AppColors.warning.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.secondary.withOpacity(0.3)),
+        border: Border.all(color: AppColors.warning.withOpacity(0.3)),
       ),
       child: Text(
         value.toStringAsFixed(2),
         style: const TextStyle(
           fontWeight: FontWeight.bold,
-          color: AppColors.secondary,
+          color: AppColors.warning,
           fontSize: 16,
         ),
       ),
