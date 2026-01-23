@@ -75,7 +75,7 @@ class RetroListWidget extends StatelessWidget {
           physics: physics,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: compactCrossAxisCount,
-            childAspectRatio: 1.25,
+            childAspectRatio: 2.5,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -173,77 +173,73 @@ class RetroListWidget extends StatelessWidget {
 
     return Card(
       margin: EdgeInsets.zero,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: () => onTap(retro),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header: Icona Template + Status Badge
+              // Header: Icona Template + Titolo + Menu
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Icona template con status dot
                   Tooltip(
-                    message: retro.template.getLocalizedDisplayName(l10n),
+                    message: '${retro.template.getLocalizedDisplayName(l10n)} - $statusLabel',
                     child: Container(
-                      width: 40,
-                      height: 40,
+                      width: 26,
+                      height: 26,
                       decoration: BoxDecoration(
-                        color: AppColors.pink.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.pink.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Icon(retro.template.icon, color: AppColors.pink),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Icon(retro.template.icon, color: AppColors.pink, size: 14),
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Tooltip(
-                          message: l10n.retroStatusLabel(statusLabel),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: statusColor.withOpacity(0.3)),
-                            ),
-                            child: Text(
-                              statusLabel,
-                              style: TextStyle(
+                          Positioned(
+                            right: 1,
+                            bottom: 1,
+                            child: Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
                                 color: statusColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Theme.of(context).cardColor, width: 1),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 6),
+                  // Titolo con tooltip
+                  Expanded(
+                    child: Tooltip(
+                      message: retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
+                      child: Text(
+                        retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: retro.isArchived ? Colors.grey : null,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
                   // Badge archiviato
                   if (retro.isArchived)
                     Padding(
                       padding: const EdgeInsets.only(right: 4),
                       child: Tooltip(
-                        message: AppLocalizations.of(context)?.archiveBadge ?? 'Archived',
+                        message: l10n.archiveBadge,
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           decoration: BoxDecoration(
@@ -258,9 +254,10 @@ class RetroListWidget extends StatelessWidget {
                     resourceId: retro.id,
                     type: 'retrospective',
                     title: retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
-                    colorHex: '#E91E63', // Pink for Retros
+                    colorHex: '#E91E63',
                     size: 16,
                   ),
+                  const SizedBox(width: 4),
                   // Menu (Only for Creator)
                   if (retro.createdBy == currentUserEmail && (onEdit != null || onDelete != null || onArchive != null || onRestore != null))
                     GestureDetector(
@@ -275,59 +272,86 @@ class RetroListWidget extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
-              const Divider(height: 1),
-              const SizedBox(height: 8),
-              
-              // Metadata: Membri, Output
+              const SizedBox(height: 4),
+              // Stats compatte
               Row(
                 children: [
-                   // Partecipanti
-                   Tooltip(
-                     message: l10n.retroParticipantsLabel,
-                     child: Icon(Icons.people_outline, size: 14, color: Colors.grey[600]),
-                   ),
-                   const SizedBox(width: 4),
-                   Text(
-                     '${retro.participantEmails.length}',
-                     style: TextStyle(fontSize: 12, color: Colors.grey[800]),
-                   ),
-                   const SizedBox(width: 12),
-
-                   // Items Generator
-                   Tooltip(
-                     message: l10n.retroNotesCreated,
-                     child: Icon(Icons.sticky_note_2_outlined, size: 14, color: Colors.grey[600]),
-                   ),
-                   const SizedBox(width: 4),
-                   Text(
-                     '${retro.items.length}',
-                     style: TextStyle(fontSize: 12, color: Colors.grey[800]),
-                   ),
-                   
-                   // Action Items
-                   if (retro.actionItems.isNotEmpty) ...[
-                      const SizedBox(width: 12),
-                      Tooltip(
-                        message: AppLocalizations.of(context)!.retroActionItemsLabel,
-                        child: Icon(Icons.check_circle_outline, size: 14, color: Colors.grey[600]),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${retro.actionItems.length}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[800]),
-                      ),
-                   ],
+                  _buildCompactRetroStat(
+                    Icons.sticky_note_2_outlined,
+                    '${retro.items.length}',
+                    l10n.retroNotesCreated,
+                  ),
+                  const SizedBox(width: 12),
+                  if (retro.actionItems.isNotEmpty) ...[
+                    _buildCompactRetroStat(
+                      Icons.check_circle_outline,
+                      '${retro.actionItems.length}',
+                      l10n.retroActionItemsLabel,
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  _buildParticipantRetroStat(retro, l10n),
                 ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.retroDateLabel(_formatDate(retro.createdAt)),
-                style: TextStyle(fontSize: 11, color: Colors.grey[500]),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCompactRetroStat(IconData icon, String value, String tooltip) {
+    return Tooltip(
+      message: tooltip,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Costruisce la statistica partecipanti con tooltip dettagliato (owner + partecipanti)
+  Widget _buildParticipantRetroStat(RetrospectiveModel retro, AppLocalizations l10n) {
+    final participantLines = <String>[];
+
+    // Owner (createdBy)
+    participantLines.add('${retro.createdBy} - 👑 Owner');
+
+    // Partecipanti (non-owner)
+    for (final email in retro.participantEmails) {
+      if (email == retro.createdBy) continue;
+      participantLines.add('$email - 👥 ${l10n.retroParticipantsLabel}');
+    }
+
+    final tooltipText = '${l10n.participants}:\n${participantLines.join('\n')}';
+
+    return Tooltip(
+      message: tooltipText,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people, size: 18, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            '${retro.participantEmails.length}',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

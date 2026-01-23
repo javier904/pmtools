@@ -2400,6 +2400,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get smartTodoNoTasksInColumn => 'Sin tareas';
 
   @override
+  String smartTodoCompletionStats(int completed, int total) {
+    return '$completed/$total completadas';
+  }
+
+  @override
+  String get smartTodoCreatedDate => 'Fecha de creación';
+
+  @override
+  String get smartTodoParticipantRole => 'Participante';
+
+  @override
   String get smartTodoUnassigned => 'Sin asignar';
 
   @override

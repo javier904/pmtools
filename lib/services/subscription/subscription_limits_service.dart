@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../../models/subscription/subscription_limits_model.dart';
 import '../../models/user_profile/subscription_model.dart';
 import '../user_profile_service.dart';
@@ -17,6 +18,7 @@ class SubscriptionLimitsService {
   SubscriptionLimitsService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
   final UserProfileService _profileService = UserProfileService();
 
   // Cache
@@ -658,6 +660,56 @@ class SubscriptionLimitsService {
         currentCount: result.currentCount,
         limit: result.limit,
       );
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SERVER-SIDE VALIDATION (Cloud Function double-check)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Valida il limite di creazione lato server tramite Cloud Function.
+  /// Ritorna LimitCheckResult con il risultato della validazione server-side.
+  /// In caso di errore di rete o funzione non disponibile, permette l'operazione
+  /// (fail-open) per non bloccare l'utente se il backend non è raggiungibile.
+  ///
+  /// entityType: 'estimation', 'eisenhower', 'smart_todo', 'retrospective', 'agile_project'
+  Future<LimitCheckResult> validateServerSide(String entityType) async {
+    try {
+      final callable = _functions.httpsCallable(
+        'validateCreationLimit',
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 10)),
+      );
+
+      final result = await callable.call<Map<String, dynamic>>({
+        'entityType': entityType,
+      });
+
+      final data = result.data;
+      final allowed = data['allowed'] as bool? ?? true;
+      final currentCount = data['currentCount'] as int? ?? 0;
+      final limit = data['limit'] as int? ?? 999999;
+      final tier = data['tier'] as String? ?? 'free';
+
+      if (!allowed) {
+        final entityLabel = _getEntityLabel(entityType);
+        return LimitCheckResult.denied(
+          reason: 'Limite server: hai raggiunto il limite di $limit $entityLabel (piano $tier).',
+          currentCount: currentCount,
+          limit: limit,
+          upgradeRequired: true,
+          suggestedPlan: _getSuggestedPlanForProjects(currentCount),
+        );
+      }
+
+      return LimitCheckResult.allowed(
+        currentCount: currentCount,
+        limit: limit,
+      );
+    } catch (e) {
+      // Fail-open: se la Cloud Function non è raggiungibile, permetti l'operazione
+      // Il controllo client-side rimane come prima linea di difesa
+      print('⚠️ Server-side validation unavailable: $e');
+      return LimitCheckResult.allowed();
     }
   }
 }

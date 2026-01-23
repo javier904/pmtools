@@ -359,6 +359,19 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
       return;
     }
 
+    // Double-check server-side
+    final serverCheck = await _limitsService.validateServerSide('retrospective');
+    if (!serverCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: serverCheck,
+          entityType: 'retrospective',
+        );
+      }
+      return;
+    }
+
     final titleController = TextEditingController();
     RetroTemplate selectedTemplate = RetroTemplate.startStopContinue;
     RetroIcebreaker selectedIcebreaker = RetroIcebreaker.sentiment;

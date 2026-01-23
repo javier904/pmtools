@@ -122,9 +122,46 @@
 
 **Hosting URL**: https://pm-agile-tools-app.web.app
 
+### 13. UI Card Uniformity & Riduzione Dimensioni
+- [x] Ridurre childAspectRatio da 1.25 a 2.5 in tutti i tool (50% altezza)
+- [x] Smart Todo: icona 26x26 con check_circle verde (tutto completato) / checklist blu
+- [x] Smart Todo: progress bar real-time con streamTaskCompletionStats
+- [x] Smart Todo: criterio completamento basato su colonne con isDone=true
+- [x] Retrospective: icona 26x26 con template icon + dot stato 7x7
+- [x] Agile Process: icona 26x26 con framework icon + dot sprint 7x7
+- [x] Eisenhower: childAspectRatio aggiornato
+- [x] Estimation Room: childAspectRatio aggiornato
+
+### 14. Tooltip Ricchi Partecipanti
+- [x] Smart Todo: tooltip con 👑 Owner + 👥 Participant
+- [x] Retrospective: tooltip con 👑 Owner + 👥 Partecipante
+- [x] Agile Process: tooltip con 👑 Owner + ⭐ PO + 🛡️ SM + 💻 Developer
+
+### 15. Validazione Server-Side Limiti
+- [x] Cloud Function validateCreationLimit (functions/src/index.ts)
+- [x] Aggiunto cloud_functions package a pubspec.yaml
+- [x] Metodo validateServerSide() in subscription_limits_service.dart
+- [x] Integrazione server check in tutti e 5 gli screen di creazione
+- [x] Fail-open: se Cloud Function non raggiungibile, permette operazione
+
+### 16. Localizzazione 4 Lingue
+- [x] Supporto IT, EN, FR, ES completo
+- [x] Stringhe smartTodoCompletionStats, smartTodoCreatedDate, smartTodoParticipantRole
+- [x] Stringhe subscription limits (subscriptionLimitRetrospectives, subscriptionLimitAgileProjects)
+
+### 17. Fix Session Limits & Voting
+- [x] Fix createdBy case mismatch nel conteggio sessioni
+- [x] Fix voting mode lock (startVoting imposta status active)
+- [x] LimitReachedDialog aggiunto a tutti i tool
+
 ---
 
-## Attivita' Pendenti (Sistema Abbonamenti)
+## Attivita' Pendenti
+
+### Deploy Cloud Functions (richiede piano Blaze)
+- [ ] Upgrade progetto Firebase a piano Blaze
+- [ ] `cd functions && npm install && npm run build`
+- [ ] `firebase deploy --only functions`
 
 ### Configurazione Stripe Dashboard
 - [ ] Creare prodotti/prezzi in Stripe:
@@ -140,16 +177,6 @@
 - [ ] Aggiornare `AdsService.adClientId` in ads_service.dart
 - [ ] Creare slot ID per banner
 
-### Integrazione UI Abbonamenti
-- [ ] Aggiungere route `/subscription` in main.dart
-- [ ] Aggiungere link a SubscriptionScreen in ProfileScreen
-- [ ] Integrare ConditionalAdBanner nelle schermate principali
-- [ ] Gestire LimitExceededException con LimitReachedDialog
-
-### Deploy Cloud Functions
-- [ ] `cd functions && npm install`
-- [ ] `firebase deploy --only functions`
-
 ---
 
 ## Funzionalita' Future (PRIORITA' BASSA)
@@ -157,9 +184,10 @@
 - [ ] Implementare import attivita' da CSV
 - [ ] Implementare import attivita' da testo (copia/incolla)
 - [ ] Implementare export risultati (CSV/PDF)
-- [ ] Creare landing page pubblica (pre-login)
 - [ ] Aggiungere test automatici
 - [ ] Configurare Firestore Security Rules
+- [ ] Integrazione Slack/Teams
+- [ ] Integrazione Calendar
 
 ---
 

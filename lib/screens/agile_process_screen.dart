@@ -287,7 +287,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: compactCrossAxisCount,
-            childAspectRatio: 1.25, // Card più larghe che alte = più compatte
+            childAspectRatio: 2.5,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -309,42 +309,69 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         : 0;
 
     return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: EdgeInsets.zero,
       child: InkWell(
         onTap: () => setState(() => _selectedProject = project),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Header: Framework badge + menu
+              // Header: Icona Framework + Titolo + Menu
               Row(
                 children: [
-                  // Badge framework compatto
+                  // Icona framework con status dot (sprint attivo)
                   Tooltip(
-                    message: 'Metodologia: ${project.framework.displayName}',
+                    message: '${project.framework.displayName}${project.hasActiveSprint ? ' - Sprint in corso' : ''}',
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      width: 26,
+                      height: 26,
                       decoration: BoxDecoration(
                         color: frameworkColor.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      child: Stack(
                         children: [
-                          Icon(project.framework.icon, size: 12, color: frameworkColor),
-                          const SizedBox(width: 3),
-                          Text(
-                            project.framework.displayName,
-                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: frameworkColor),
+                          Center(
+                            child: Icon(project.framework.icon, color: frameworkColor, size: 14),
                           ),
+                          if (project.hasActiveSprint)
+                            Positioned(
+                              right: 1,
+                              bottom: 1,
+                              child: Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Theme.of(context).cardColor, width: 1),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 6),
+                  // Titolo con tooltip
+                  Expanded(
+                    child: Tooltip(
+                      message: '${project.name}${project.description.isNotEmpty ? '\n${project.description}' : ''}',
+                      child: Text(
+                        project.name,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: project.isArchived ? context.textMutedColor : context.textPrimaryColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
                   // Badge archiviato
                   if (project.isArchived)
                     Padding(
@@ -361,41 +388,11 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                         ),
                       ),
                     ),
-                  // Sprint attivo badge
-                  if (project.hasActiveSprint && !project.isArchived)
-                    Tooltip(
-                      message: 'Sprint in corso',
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 3),
-                            const Text(
-                              'ATTIVO',
-                              style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.green),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   FavoriteStar(
                     resourceId: project.id,
                     type: 'agile_project',
                     title: project.name,
-                    colorHex: '#9C27B0', // Purple for Agile
+                    colorHex: '#9C27B0',
                     size: 16,
                   ),
                   const SizedBox(width: 4),
@@ -408,97 +405,39 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                       child: SizedBox(
                         width: 24,
                         height: 24,
-                        child: Icon(Icons.more_vert, size: 18, color: context.textSecondaryColor),
+                        child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
                       ),
                     ),
                 ],
               ),
-              const SizedBox(height: 6),
-
-              // Titolo progetto
-              Text(
-                project.name,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              // Descrizione (se presente)
-              if (project.description.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(
-                  project.description,
-                  style: TextStyle(fontSize: 10, color: context.textMutedColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-
-              const SizedBox(height: 8),
-
-              // Key Roles Row con colori distintivi
-              _buildCompactRolesRow(project),
-
-              const Spacer(),
-
-              // Progress bar (se ci sono sprint)
-              if (project.sprintCount > 0) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: Tooltip(
-                        message: 'Avanzamento: ${project.completedSprintCount}/${project.sprintCount} sprint completati',
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: project.sprintCount > 0 ? project.completedSprintCount / project.sprintCount : 0,
-                            backgroundColor: context.surfaceVariantColor,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              progressPercent >= 80 ? Colors.green : progressPercent >= 50 ? Colors.orange : Colors.blue,
-                            ),
-                            minHeight: 4,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$progressPercent%',
-                      style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: context.textSecondaryColor),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-              ],
-
-              // Stats row compatto con tooltip
-              Row(
-                children: [
-                  _buildCompactStat(Icons.people_outline, '${project.participantCount}', 'Membri del team'),
-                  const SizedBox(width: 6),
-                  _buildCompactStat(Icons.assignment_outlined, '${project.backlogCount}', 'User Stories nel backlog'),
-                  if (project.sprintCount > 0) ...[
-                    const SizedBox(width: 6),
-                    _buildCompactStat(Icons.replay, '${project.sprintCount}', 'Sprint totali'),
-                  ],
-                  if (project.averageVelocity != null) ...[
-                    const SizedBox(width: 6),
-                    _buildCompactStat(Icons.speed, project.averageVelocity!.toStringAsFixed(0), 'Velocity media'),
-                  ],
-                ],
-              ),
-
               const SizedBox(height: 4),
-
-              // Data ultimo aggiornamento
+              // Progress bar (se ci sono sprint)
+              if (project.sprintCount > 0)
+                Tooltip(
+                  message: '${project.completedSprintCount}/${project.sprintCount} sprint (${progressPercent}%)',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: LinearProgressIndicator(
+                      value: project.completedSprintCount / project.sprintCount,
+                      backgroundColor: Colors.grey.withOpacity(0.2),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        progressPercent >= 80 ? Colors.green : progressPercent >= 50 ? Colors.orange : Colors.blue,
+                      ),
+                      minHeight: 2,
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 4),
+              // Stats compatte
               Row(
                 children: [
-                  Icon(Icons.update, size: 10, color: context.textMutedColor),
-                  const SizedBox(width: 3),
-                  Text(
-                    _formatTimeAgo(project.updatedAt),
-                    style: TextStyle(fontSize: 9, color: context.textMutedColor),
-                  ),
+                  _buildParticipantAgileProjectStat(project),
+                  const SizedBox(width: 12),
+                  _buildCompactStat(Icons.assignment_outlined, '${project.backlogCount}', 'User Stories'),
+                  if (project.sprintCount > 0) ...[
+                    const SizedBox(width: 12),
+                    _buildCompactStat(Icons.replay, '${project.sprintCount}', 'Sprint'),
+                  ],
                 ],
               ),
             ],
@@ -511,23 +450,63 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   Widget _buildCompactStat(IconData icon, String value, String tooltip) {
     return Tooltip(
       message: tooltip,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-        decoration: BoxDecoration(
-          color: context.surfaceVariantColor,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 11, color: context.textSecondaryColor),
-            const SizedBox(width: 2),
-            Text(
-              value,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: context.textPrimaryColor),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: context.textMutedColor),
+          const SizedBox(width: 5),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Costruisce la statistica partecipanti con tooltip dettagliato (owner + ruoli)
+  Widget _buildParticipantAgileProjectStat(AgileProjectModel project) {
+    final participantLines = <String>[];
+
+    // Owner
+    participantLines.add('${project.createdBy} - 👑 Owner');
+
+    // Partecipanti con ruoli
+    for (final entry in project.participants.entries) {
+      if (entry.key == project.createdBy) continue;
+      final member = entry.value;
+      final name = member.name.isNotEmpty ? member.name : member.email;
+      final roleLabel = switch (member.teamRole.name) {
+        'productOwner' => '⭐ Product Owner',
+        'scrumMaster' => '🛡️ Scrum Master',
+        'developer' => '💻 Developer',
+        _ => '👥 Member',
+      };
+      participantLines.add('$name - $roleLabel');
+    }
+
+    final tooltipText = 'Team:\n${participantLines.join('\n')}';
+
+    return Tooltip(
+      message: tooltipText,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people, size: 18, color: context.textMutedColor),
+          const SizedBox(width: 5),
+          Text(
+            '${project.participantCount}',
+            style: TextStyle(
+              fontSize: 14,
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -853,6 +832,19 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         LimitReachedDialog.show(
           context: context,
           limitResult: limitCheck,
+          entityType: 'agile_project',
+        );
+      }
+      return;
+    }
+
+    // Double-check server-side
+    final serverCheck = await _limitsService.validateServerSide('agile_project');
+    if (!serverCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: serverCheck,
           entityType: 'agile_project',
         );
       }

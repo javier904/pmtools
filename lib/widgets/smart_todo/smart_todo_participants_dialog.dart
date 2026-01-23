@@ -7,6 +7,7 @@ import '../../models/unified_invite_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/smart_todo_service.dart';
 
 class SmartTodoParticipantsDialog extends StatefulWidget {
   final TodoListModel list;
@@ -116,42 +117,53 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
     );
   }
 
+  final SmartTodoService _todoService = SmartTodoService();
+
   Widget _buildParticipantsTab(bool isDark, Color inputBg, Color borderColor, Color textColor) {
     final l10n = AppLocalizations.of(context)!;
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-         // Add Section (Quick Add)
-         _buildInviteForm(isDark, inputBg, borderColor, textColor),
-         Divider(height: 32, color: borderColor),
+    
+    return StreamBuilder<TodoListModel?>(
+      stream: _todoService.streamList(widget.list.id),
+      initialData: widget.list,
+      builder: (context, snapshot) {
+        final currentList = snapshot.data ?? widget.list;
+        
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+             // Add Section (Quick Add)
+             _buildInviteForm(isDark, inputBg, borderColor, textColor),
+             Divider(height: 32, color: borderColor),
 
-         Text(l10n.smartTodoMembers(widget.list.participants.length), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
-         const SizedBox(height: 16),
-         
-         ...widget.list.participants.entries.map((entry) {
-            final p = entry.value;
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue[100],
-                child: Text(p.email[0].toUpperCase(), style: const TextStyle(color: Colors.blue)),
-              ),
-              title: Text(p.displayName ?? p.email.split('@')[0], style: TextStyle(color: textColor)),
-              subtitle: Text(p.email, style: TextStyle(color: isDark ? Colors.grey[400] : null)),
-              trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  p.role.name.toUpperCase(), 
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.grey[300] : null),
-                ),
-              ),
-            );
-         }),
-      ],
+             Text(l10n.smartTodoMembers(currentList.participants.length), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
+             const SizedBox(height: 16),
+             
+             ...currentList.participants.entries.map((entry) {
+                final p = entry.value;
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blue[100],
+                    child: Text(p.email[0].toUpperCase(), style: const TextStyle(color: Colors.blue)),
+                  ),
+                  title: Text(p.displayName ?? p.email.split('@')[0], style: TextStyle(color: textColor)),
+                  subtitle: Text(p.email, style: TextStyle(color: isDark ? Colors.grey[400] : null)),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      p.role.name.toUpperCase(), 
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.grey[300] : null),
+                    ),
+                  ),
+                );
+             }),
+          ],
+        );
+      }
     );
   }
 

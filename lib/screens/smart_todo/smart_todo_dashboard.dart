@@ -41,8 +41,8 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
 
   Future<void> _checkInitialNavigation() async {
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args != null && args.containsKey('id')) {
-      final listId = args['id'] as String;
+    if (args != null && (args.containsKey('id') || args.containsKey('listId'))) {
+      final listId = (args['id'] ?? args['listId']) as String;
       // Fetch list and navigate
       try {
         final lists = await _todoService.streamLists(_currentUserEmail).first;
@@ -212,7 +212,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                       padding: const EdgeInsets.all(8),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: compactCrossAxisCount,
-                        childAspectRatio: 1.25,
+                        childAspectRatio: 2.5,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                       ),
@@ -300,16 +300,13 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   Widget _buildListCard(TodoListModel list) {
     final isOwner = list.ownerId == _currentUserEmail;
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final doneColumnIds = list.columns
+        .where((c) => c.isDone)
+        .map((c) => c.id)
+        .toSet();
 
     return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 0,
-      color: isDark ? const Color(0xFF2D3748) : Colors.white, // Explicit dark surface
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200]!),
-      ),
+      margin: EdgeInsets.zero,
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -319,134 +316,205 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             ),
           );
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              height: 6,
-              color: isOwner ? Colors.blue : Colors.green,
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            list.title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: list.isArchived ? Colors.grey : null,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+        borderRadius: BorderRadius.circular(6),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header: Icona + Titolo + Menu
+              Row(
+                children: [
+                  // Icona lista con stato completamento
+                  StreamBuilder<({int total, int completed})>(
+                    stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
+                    builder: (context, snapshot) {
+                      final stats = snapshot.data;
+                      final total = stats?.total ?? 0;
+                      final completed = stats?.completed ?? 0;
+                      final allDone = total > 0 && completed == total;
+
+                      return Tooltip(
+                        message: total == 0
+                            ? (l10n?.smartTodoNoTasks ?? 'No tasks')
+                            : '${l10n?.smartTodoCompletionStats(completed, total) ?? '$completed/$total completed'}',
+                        child: Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: (allDone ? Colors.green : Colors.blue).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Icon(
+                            allDone ? Icons.check_circle : Icons.checklist,
+                            color: allDone ? Colors.green : Colors.blue,
+                            size: 14,
                           ),
                         ),
-                        // Badge archiviato
-                        if (list.isArchived)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
-                            child: Tooltip(
-                              message: l10n?.archiveBadge ?? 'Archived',
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Icon(Icons.archive, size: 12, color: Colors.orange),
-                              ),
-                            ),
-                          ),
-                        FavoriteStar(
-                          resourceId: list.id,
-                          type: 'todo_list',
-                          title: list.title,
-                          colorHex: '#2196F3', // Default color for todo
-                          size: 20,
-                        ),
-                        const SizedBox(width: 4),
-                        if (isOwner)
-                          GestureDetector(
-                            onTapDown: (TapDownDetails details) {
-                              _showListMenuAtPosition(context, list, details.globalPosition);
-                            },
-                            child: SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
-                            ),
-                          )
-                        else
-                          const Icon(Icons.group, size: 16, color: Colors.grey),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 6),
+                  // Titolo con tooltip
+                  Expanded(
+                    child: Tooltip(
+                      message: '${list.title}${list.description.isNotEmpty ? '\n${list.description}' : ''}',
                       child: Text(
-                        list.description,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                        maxLines: 2,
+                        list.title,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: list.isArchived ? Colors.grey : null,
+                        ),
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    // Bottom Row: Date | TaskCount | Members
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today, size: 12, color: Colors.grey[400]),
-                        const SizedBox(width: 4),
-                        Text(
-                          _formatDate(list.createdAt),
-                          style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                  ),
+                  // Badge archiviato
+                  if (list.isArchived)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Tooltip(
+                        message: l10n?.archiveBadge ?? 'Archived',
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
                         ),
-                        const SizedBox(width: 8),
-                        // Task Count
-                        StreamBuilder<int>(
-                          stream: _todoService.streamTaskCountRealtime(list.id),
-                          builder: (context, snapshot) {
-                             final count = snapshot.data ?? 0;
-                             if (count == 0) return const SizedBox.shrink();
-                             return Row(
-                               children: [
-                                 Icon(Icons.check_box_outlined, size: 12, color: Colors.grey[400]),
-                                 const SizedBox(width: 4),
-                                 Text(
-                                   '$count',
-                                   style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                                 ),
-                               ],
-                             );
-                          },
-                        ),
-                        const Spacer(),
-                        if (list.participants.isNotEmpty)
-                           Flexible(
-                             child: Container(
-                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                               decoration: BoxDecoration(
-                                 color: Colors.blue.withOpacity(0.1),
-                                 borderRadius: BorderRadius.circular(10),
-                               ),
-                               child: Text(
-                                 l10n?.smartTodoMembersCount(list.participants.length) ?? '${list.participants.length} members',
-                                 style: const TextStyle(fontSize: 10, color: Colors.blue),
-                                 overflow: TextOverflow.ellipsis,
-                               ),
-                             ),
-                           ),
-                      ],
+                      ),
                     ),
-                  ],
-                ),
+                  FavoriteStar(
+                    resourceId: list.id,
+                    type: 'todo_list',
+                    title: list.title,
+                    colorHex: '#2196F3',
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  // Menu compatto
+                  if (isOwner)
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        _showListMenuAtPosition(context, list, details.globalPosition);
+                      },
+                      child: SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              // Progress bar
+              StreamBuilder<({int total, int completed})>(
+                stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
+                builder: (context, snapshot) {
+                  final stats = snapshot.data;
+                  final total = stats?.total ?? 0;
+                  final completed = stats?.completed ?? 0;
+                  final progress = total > 0 ? completed / total : 0.0;
+
+                  return Tooltip(
+                    message: l10n?.smartTodoCompletionStats(completed, total) ?? '$completed/$total completed',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(2),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Colors.grey.withOpacity(0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progress == 1.0 ? Colors.green : Colors.blue,
+                        ),
+                        minHeight: 2,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 4),
+              // Stats compatte
+              Row(
+                children: [
+                  _buildCompactListStat(
+                    Icons.calendar_today,
+                    _formatDate(list.createdAt),
+                    l10n?.smartTodoCreatedDate ?? 'Created date',
+                  ),
+                  const SizedBox(width: 12),
+                  _buildParticipantListStat(list, l10n),
+                ],
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCompactListStat(IconData icon, String value, String tooltip) {
+    return Tooltip(
+      message: tooltip,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Costruisce la statistica partecipanti con tooltip dettagliato (owner + partecipanti)
+  Widget _buildParticipantListStat(TodoListModel list, AppLocalizations? l10n) {
+    final participantLines = <String>[];
+
+    // Owner
+    final ownerParticipant = list.participants[list.ownerId];
+    final ownerName = ownerParticipant?.displayName?.isNotEmpty == true
+        ? ownerParticipant!.displayName!
+        : list.ownerId;
+    participantLines.add('$ownerName - 👑 Owner');
+
+    // Partecipanti (non-owner)
+    for (final entry in list.participants.entries) {
+      if (entry.key == list.ownerId) continue;
+      final name = entry.value.displayName?.isNotEmpty == true
+          ? entry.value.displayName!
+          : entry.value.email;
+      participantLines.add('$name - 👥 ${l10n?.smartTodoParticipantRole ?? 'Participant'}');
+    }
+
+    final tooltipText = '${l10n?.participants ?? 'Participants'}:\n${participantLines.join('\n')}';
+
+    return Tooltip(
+      message: tooltipText,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people, size: 18, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            '${list.participants.length}',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -463,6 +531,19 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         LimitReachedDialog.show(
           context: context,
           limitResult: limitCheck,
+          entityType: 'smart_todo',
+        );
+      }
+      return;
+    }
+
+    // Double-check server-side
+    final serverCheck = await _limitsService.validateServerSide('smart_todo');
+    if (!serverCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: serverCheck,
           entityType: 'smart_todo',
         );
       }

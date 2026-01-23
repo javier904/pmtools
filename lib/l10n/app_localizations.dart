@@ -4486,6 +4486,24 @@ abstract class AppLocalizations {
   /// **'Nessun task'**
   String get smartTodoNoTasksInColumn;
 
+  /// No description provided for @smartTodoCompletionStats.
+  ///
+  /// In it, this message translates to:
+  /// **'{completed}/{total} completate'**
+  String smartTodoCompletionStats(int completed, int total);
+
+  /// No description provided for @smartTodoCreatedDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data creazione'**
+  String get smartTodoCreatedDate;
+
+  /// No description provided for @smartTodoParticipantRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipante'**
+  String get smartTodoParticipantRole;
+
   /// No description provided for @smartTodoUnassigned.
   ///
   /// In it, this message translates to:

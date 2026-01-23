@@ -236,7 +236,25 @@ class SmartTodoService {
         .snapshots()
         .map((s) => s.size);
   }
-  
+
+  /// Stream che ritorna (totalTasks, completedTasks) per una lista
+  Stream<({int total, int completed})> streamTaskCompletionStats(String listId, {required Set<String> doneColumnIds}) {
+    return _firestore
+        .collection(_listsCollection)
+        .doc(listId)
+        .collection(_tasksSubcollection)
+        .snapshots()
+        .map((snapshot) {
+      final total = snapshot.size;
+      final completed = snapshot.docs.where((doc) {
+        final data = doc.data();
+        final statusId = data['statusId'] as String? ?? '';
+        return doneColumnIds.contains(statusId);
+      }).length;
+      return (total: total, completed: completed);
+    });
+  }
+
   /// Get ALL tasks assigned to the user across ALL lists (Collection Group Query)
   Stream<List<TodoTaskModel>> streamAssignments(String userEmail) {
     // Queries for both original and lowercase to handle potential inconsistencies

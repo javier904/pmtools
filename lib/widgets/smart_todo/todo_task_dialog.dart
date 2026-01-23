@@ -3,28 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/smart_todo/todo_task_model.dart';
-import '../../models/smart_todo/todo_list_model.dart';
-import 'package:pasteboard/pasteboard.dart';
-import 'dart:convert';
-import '../../services/auth_service.dart';
-import '../../l10n/app_localizations.dart';
+import '../../models/smart_todo/todo_participant_model.dart';
 
 class TodoTaskDialog extends StatefulWidget {
   final String listId;
   final TodoTaskModel? task;
-  final List<String> listParticipants;
+  final Map<String, TodoParticipant> participants; // Changed from List<String>
   final List<TodoColumn> listColumns;
-  final List<TodoLabel> listAvailableTags; // New
+  final List<TodoLabel> listAvailableTags;
   final String? initialStatusId;
 
   const TodoTaskDialog({
     super.key,
     required this.listId,
     required this.listColumns,
-    this.listAvailableTags = const [], // New
+    this.listAvailableTags = const [],
     this.task,
     this.initialStatusId,
-    this.listParticipants = const [],
+    this.participants = const {}, // Changed default
   });
 
   @override
@@ -597,15 +593,34 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       builder: (context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.smartTodoAssignTo),
-          content: SizedBox(
+           content: SizedBox(
              width: 300,
              child: SingleChildScrollView(
                child: Column(
                  mainAxisSize: MainAxisSize.min,
-                 children: widget.listParticipants.map((email) {
+                 children: widget.participants.entries.map((entry) {
+                    final email = entry.key; // This is the escaped email (ID)
+                    final participant = entry.value;
+                    // Display Name or Normalized Email
+                    String label = participant.displayName ?? email;
+                    if (label == email) {
+                      label = email.replaceAll('_dot_', '.').replaceAll('_DOT_', '.');
+                    }
+                    
                     final isSelected = _assignedTo.contains(email);
                     return CheckboxListTile(
-                      title: Text(email),
+                      // Show Avatar + Name
+                      title: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 12,
+                            backgroundColor: Colors.blue[100],
+                            child: Text(label.isNotEmpty ? label[0].toUpperCase() : '?', style: const TextStyle(fontSize: 10, color: Colors.blue)),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
+                        ],
+                      ),
                       value: isSelected,
                       onChanged: (val) {
                         setState(() {
@@ -615,11 +630,8 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                              _assignedTo.remove(email);
                           }
                         });
-                        Navigator.pop(context); // Close after select? Or keep open? Let's keep simpler: Close for now or StatefulBuilder?
-                        // If we want multiple, we need StatefulBuilder in dialog or just update parent state.
-                        // For simplicity, just update parent and recreate dialog logic or just use pop to refresh is clunky.
-                        // Let's assume standard toggle.
-                        _showAssigneeSelector(); // Re-open (simple hack) or use StatefulBuilder
+                        Navigator.pop(context); 
+                        _showAssigneeSelector(); 
                       },
                     );
                  }).toList(),

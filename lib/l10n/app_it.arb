@@ -1207,6 +1207,15 @@
   },
   "smartTodoNoTasks": "Nessuna attivita in questa lista",
   "smartTodoNoTasksInColumn": "Nessun task",
+  "smartTodoCompletionStats": "{completed}/{total} completate",
+  "@smartTodoCompletionStats": {
+    "placeholders": {
+      "completed": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "smartTodoCreatedDate": "Data creazione",
+  "smartTodoParticipantRole": "Partecipante",
   "smartTodoUnassigned": "Non Assegnati",
   "smartTodoNewTask": "Nuovo Task",
   "smartTodoEditTask": "Modifica Task",

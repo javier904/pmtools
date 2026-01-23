@@ -680,7 +680,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                           return GridView.builder(
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: compactCrossAxisCount,
-                              childAspectRatio: 1.25,
+                              childAspectRatio: 2.5,
                               crossAxisSpacing: 8,
                               mainAxisSpacing: 8,
                             ),
@@ -1719,6 +1719,19 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
       return;
     }
 
+    // Double-check server-side
+    final serverCheck = await _limitsService.validateServerSide('estimation');
+    if (!serverCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: serverCheck,
+          entityType: 'estimation',
+        );
+      }
+      return;
+    }
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => const SessionFormDialog(),
@@ -2343,6 +2356,16 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
             _currentStory = stories.currentlyVoting;
             _myVote = _currentStory?.getUserVote(_currentUserEmail)?.value;
           });
+
+          // 🤖 AUTO-REVEAL LOGIC
+          if (_selectedSession != null &&
+              _selectedSession!.autoReveal &&
+              _currentStory != null &&
+              !_currentStory!.isRevealed &&
+              _currentStory!.isEveryoneVoted(_selectedSession!.voterCount)) {
+            // Usa il microtask per evitare rebuild durante il build
+            Future.microtask(() => _revealVotes(_currentStory!.id));
+          }
         }
       },
       onError: (e) {

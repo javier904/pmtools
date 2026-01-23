@@ -792,7 +792,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         listColumns: currentList.columns,
         task: task,
         initialStatusId: initialStatusId,
-        listParticipants: currentList.participants.keys.toList(),
+        participants: currentList.participants,
         listAvailableTags: currentList.availableTags,
       ),
     );

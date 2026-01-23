@@ -666,7 +666,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                           return GridView.builder(
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: compactCrossAxisCount,
-                              childAspectRatio: 1.25,
+                              childAspectRatio: 2.5,
                               crossAxisSpacing: 8,
                               mainAxisSpacing: 8,
                             ),
@@ -1747,6 +1747,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         LimitReachedDialog.show(
           context: context,
           limitResult: limitCheck,
+          entityType: 'eisenhower',
+        );
+      }
+      return;
+    }
+
+    // Double-check server-side
+    final serverCheck = await _limitsService.validateServerSide('eisenhower');
+    if (!serverCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: serverCheck,
           entityType: 'eisenhower',
         );
       }

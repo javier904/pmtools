@@ -2,13 +2,13 @@
 
 ## Progetto
 
-**Agile Tools** è una webapp Flutter standalone per la gestione agile dei progetti, contenente:
+**Keisen** (Agile Tools) è una webapp Flutter standalone per la gestione agile dei progetti, contenente:
 
-1. **Matrice Eisenhower** - Prioritizzazione per urgenza/importanza
-2. **Estimation Room** - Sessioni di stima collaborative (Planning Poker, T-Shirt, etc.)
-3. **Agile Process Manager** - Gestione completa progetti agili (Backlog, Sprint, Kanban)
-4. **Smart Todo** - Liste intelligenti e collaborative
-5. **Retrospective Board** - Board per retrospettive di team
+1. **Smart Todo** - Liste collaborative con colonne Kanban personalizzabili e ruoli (Owner/Editor/Viewer)
+2. **Matrice Eisenhower** - Prioritizzazione 4 quadranti con scoring automatico e integrazione RACI
+3. **Estimation Room** - 7 modalità di stima (Fibonacci, T-Shirt, PERT, Dot Voting, Bucket, Decimale, Five Fingers)
+4. **Retrospective Board** - 6 template (Start/Stop/Continue, Sailboat, 4Ls, Starfish, Mad/Sad/Glad, DAKI) con fasi gestite
+5. **Agile Process Manager** - 3 framework (Scrum, Kanban, Hybrid) con backlog, sprint, burndown, velocity
 
 ## Firebase
 
@@ -20,6 +20,10 @@
 ## Stato Progetto
 
 Il progetto è **completamente funzionante** e deployed in produzione.
+
+**Nome App**: Keisen
+**Lingue Supportate**: Italiano (IT), English (EN), Français (FR), Español (ES)
+**Tema**: Dark Mode / Light Mode (con rilevamento preferenza sistema)
 
 ## Comandi Principali
 
@@ -39,44 +43,70 @@ lib/
 ├── firebase_options.dart              # Configurazione Firebase
 │
 ├── screens/
-│   ├── home_screen.dart               # Dashboard principale
+│   ├── home_screen.dart               # Dashboard principale (preferiti, scadenze, ricerca)
 │   ├── login_screen.dart              # Login Google/Email
-│   ├── landing_screen.dart            # Landing page pre-login
+│   ├── landing_screen.dart            # Landing page pre-login (marketing)
 │   ├── profile_screen.dart            # Profilo utente completo
 │   ├── eisenhower_screen.dart         # Matrice Eisenhower
-│   ├── estimation_room_screen.dart    # Sessioni di stima
+│   ├── estimation_room_screen.dart    # Sessioni di stima (7 modalità)
 │   ├── agile_process_screen.dart      # Lista progetti agili
-│   ├── agile_project_detail_screen.dart # Dettaglio progetto
+│   ├── agile_project_detail_screen.dart # Dettaglio progetto (backlog, sprint, kanban)
 │   ├── smart_todo/                    # Smart Todo module
-│   └── retrospective/                 # Retrospective module
+│   │   ├── smart_todo_dashboard.dart  # Dashboard liste
+│   │   ├── smart_todo_detail_screen.dart # Dettaglio lista Kanban
+│   │   └── smart_todo_global_view.dart   # Vista globale cross-lista
+│   ├── retrospective/                 # Retrospective module
+│   │   ├── retro_global_dashboard.dart   # Dashboard retrospettive
+│   │   └── retrospective_board_screen.dart # Board con fasi
+│   ├── subscription/                  # Gestione abbonamento
+│   └── legal/                         # GDPR, Privacy, Terms, Cookie
 │
 ├── widgets/
 │   ├── profile_menu_widget.dart       # Menu profilo per AppBar
 │   ├── eisenhower/                    # Widget Eisenhower
 │   ├── estimation_room/               # Widget Estimation Room
-│   └── agile/                         # Widget Agile Process
+│   ├── retrospective/                 # Widget Retrospective (retro_list_widget)
+│   ├── agile/                         # Widget Agile Process
+│   └── subscription/                  # Widget abbonamento (limit_reached_dialog, etc.)
 │
 ├── models/
 │   ├── user_profile/                  # Modelli gestione utente
-│   │   ├── user_profile_model.dart    # Profilo utente
-│   │   ├── subscription_model.dart    # Abbonamenti
-│   │   └── user_settings_model.dart   # Impostazioni utente
-│   ├── agile_project_model.dart       # Progetto Agile
-│   ├── user_story_model.dart          # User Story
-│   ├── sprint_model.dart              # Sprint
-│   ├── retrospective_model.dart       # Retrospettiva
-│   └── agile_enums.dart               # Enum condivisi
+│   ├── subscription/                  # Limiti abbonamento
+│   ├── smart_todo/                    # TodoListModel, TodoTaskModel, TodoColumn
+│   ├── agile_project_model.dart       # Progetto Agile (3 framework)
+│   ├── estimation_mode.dart           # 7 modalità di stima
+│   ├── retrospective_model.dart       # Retrospettiva (6 template)
+│   └── eisenhower_matrix_model.dart   # Matrice Eisenhower
 │
 ├── services/
 │   ├── auth_service.dart              # Autenticazione Firebase
 │   ├── user_profile_service.dart      # Gestione profilo/abbonamenti/settings
+│   ├── smart_todo_service.dart        # CRUD liste e task
 │   ├── agile_firestore_service.dart   # CRUD progetti agili
 │   ├── eisenhower_firestore_service.dart # CRUD matrici Eisenhower
-│   └── planning_poker_*.dart          # Servizi Estimation Room
+│   ├── planning_poker_firestore_service.dart # CRUD sessioni stima
+│   ├── retrospective_firestore_service.dart  # CRUD retrospettive
+│   ├── subscription/                  # Limiti, Stripe, Ads
+│   │   └── subscription_limits_service.dart  # Check limiti + validateServerSide()
+│   ├── invite/                        # Servizi inviti per tool
+│   ├── search_service.dart            # Ricerca globale
+│   ├── favorites_service.dart         # Preferiti
+│   └── deadline_service.dart          # Scadenze
+│
+├── l10n/                              # Localizzazione
+│   ├── app_it.arb                     # Italiano (template con @metadata)
+│   ├── app_en.arb                     # English
+│   ├── app_fr.arb                     # Français
+│   └── app_es.arb                     # Español
 │
 └── themes/
     ├── app_theme.dart                 # Definizione temi light/dark
     └── app_colors.dart                # Palette colori
+
+functions/
+├── src/index.ts                       # Cloud Functions (Stripe + validateCreationLimit)
+├── package.json                       # Dipendenze Node.js
+└── tsconfig.json                      # Config TypeScript
 ```
 
 ## Sistema Gestione Utente
@@ -131,13 +161,11 @@ users/{userId}
 
 ### Piani Abbonamento
 
-| Piano | Prezzo/mese | Trial | Descrizione |
-|-------|-------------|-------|-------------|
-| Free | €0 | - | Funzionalità base |
-| Starter | €9.99 | 7gg | Piccoli team |
-| Pro | €19.99 | 14gg | Professionisti |
-| Business | €49.99 | 14gg | Aziende |
-| Enterprise | €99.99 | 30gg | Grandi organizzazioni |
+| Piano | Prezzo | Entità/tipo | Task/entità | Inviti/entità | API | Priority Support |
+|-------|--------|-------------|-------------|---------------|-----|-----------------|
+| Free | €0 | 5 | 50 | 10 | ❌ | ❌ |
+| Premium | €4.99/m o €39.99/y | 30 | 100 | 15 | ❌ | ❌ |
+| Elite | €7.99/m o €69.99/y | ∞ | ∞ | ∞ | ✅ | ✅ |
 
 ### Componenti UI
 
@@ -226,6 +254,9 @@ themeController.toggleTheme();
 '/estimation-room' → EstimationRoomScreen
 '/agile-process'   → AgileProcessScreen
 '/smart-todo'      → SmartTodoDashboard
+'/retro'           → RetroGlobalDashboard
+'/subscription'    → SubscriptionScreen
+'/invite/:tool/:id' → Deep link inviti
 ```
 
 ---
@@ -343,6 +374,25 @@ final summary = await limitsService.getUsageSummary(userEmail);
 | `createPortalSession` | Callable | Crea sessione Stripe Billing Portal |
 | `syncSubscriptionStatus` | Callable | Sync manuale status subscription |
 | `checkTrialExpirations` | Scheduled | Check giornaliero trial in scadenza (9:00) |
+| `validateCreationLimit` | Callable | Validazione server-side limiti creazione entità |
+
+### Server-Side Limit Validation
+
+La Cloud Function `validateCreationLimit` fornisce un double-check server-side:
+
+```typescript
+// Input: { entityType: 'estimation' | 'eisenhower' | 'smart_todo' | 'retrospective' | 'agile_project' }
+// Output: { allowed: boolean, currentCount: number, limit: number, tier: string }
+
+// Limiti per tier:
+// free: 5 per tipo | premium: 30 per tipo | elite: illimitato
+```
+
+**Flusso client**: check client-side → check server-side → mostra dialog creazione
+
+**Fail-open**: Se la Cloud Function non è raggiungibile (es. piano Spark), il client permette l'operazione. Il check client-side resta come prima linea di difesa.
+
+**Nota**: Richiede piano Blaze per il deploy (`firebase deploy --only functions`).
 
 ### Configurazione Richiesta
 
@@ -500,6 +550,98 @@ Gli inviti sono soggetti ai limiti dell'abbonamento:
 | Free | 10 |
 | Premium | 15 |
 | Elite | Illimitati |
+
+---
+
+## UI Card Uniformity System
+
+### Pattern Icone (26x26 container)
+
+Tutte le card dei tool seguono lo stesso pattern visivo:
+
+```dart
+Container(
+  width: 26,
+  height: 26,
+  decoration: BoxDecoration(
+    color: iconColor.withOpacity(0.15),
+    borderRadius: BorderRadius.circular(6),
+  ),
+  child: Icon(iconData, color: iconColor, size: 14),
+)
+```
+
+### Icone per Tool
+
+| Tool | Icona Primaria | Icona Secondaria | Logica |
+|------|---------------|-----------------|--------|
+| Smart Todo | `Icons.check_circle` (verde) | `Icons.checklist` (blu) | Tutto completato vs incompleto |
+| Retrospective | Template icon (rosa) + dot stato 7x7 | - | Verde=completata, arancione=attiva, grigio=pending |
+| Agile Process | Framework icon (blue) + dot sprint 7x7 | - | Verde=sprint attivo, grigio=nessuno |
+| Estimation Room | `Icons.casino` (teal) + dot stato 7x7 | - | Verde=attiva, grigio=completata |
+| Eisenhower | `Icons.grid_4x4` (indigo) + dot stato 7x7 | - | Colore quadrante dominante |
+
+### Smart Todo - Criterio Completamento
+
+Il completamento si basa sulla colonna `isDone`:
+
+```dart
+final doneColumnIds = list.columns
+    .where((c) => c.isDone)  // Colonne con flag isDone=true
+    .map((c) => c.id)
+    .toSet();
+
+// Il task è completato se il suo statusId è in una colonna isDone
+doneColumnIds.contains(task.statusId);
+```
+
+### Dimensioni Card
+
+`childAspectRatio: 2.5` in tutti i GridView (riduzione 50% altezza rispetto a 1.25).
+
+### Rich Tooltips Partecipanti
+
+Ogni card mostra un'icona `Icons.people` (18px) con tooltip ricco:
+
+```
+Smart Todo:    👑 Owner name + 👥 Participant name (per ogni partecipante)
+Retrospective: 👑 Owner + 👥 Partecipante
+Agile Process: 👑 Owner + ⭐ Product Owner + 🛡️ Scrum Master + 💻 Developer
+```
+
+---
+
+## Localizzazione
+
+### Configurazione
+
+File: `l10n.yaml`
+- Template: `app_it.arb` (file con @metadata)
+- Output: `lib/l10n/`
+- 4 lingue: IT, EN, FR, ES
+
+### Rigenerazione
+
+```bash
+flutter gen-l10n
+```
+
+### Pattern di Utilizzo
+
+```dart
+final l10n = AppLocalizations.of(context);
+Text(l10n?.smartTodoCompletionStats(completed, total) ?? '$completed/$total');
+```
+
+### File ARB
+
+```
+lib/l10n/
+├── app_it.arb    # Template (con @metadata e placeholders)
+├── app_en.arb    # English
+├── app_fr.arb    # Français
+└── app_es.arb    # Español
+```
 
 ---
 

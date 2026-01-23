@@ -511,6 +511,136 @@ async function getCustomerIdFromUser(userId: string): Promise<string | null> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// CREATION LIMIT VALIDATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Limiti per tier per entity type
+ */
+const TIER_LIMITS: Record<string, Record<string, number>> = {
+  free: {
+    estimation: 5,
+    eisenhower: 5,
+    smart_todo: 5,
+    retrospective: 5,
+    agile_project: 5,
+  },
+  premium: {
+    estimation: 30,
+    eisenhower: 30,
+    smart_todo: 30,
+    retrospective: 30,
+    agile_project: 30,
+  },
+  elite: {
+    estimation: 999999,
+    eisenhower: 999999,
+    smart_todo: 999999,
+    retrospective: 999999,
+    agile_project: 999999,
+  },
+};
+
+/**
+ * Collection mapping per entity type
+ */
+const ENTITY_COLLECTIONS: Record<string, string> = {
+  estimation: 'planning_poker_sessions',
+  eisenhower: 'eisenhower_matrices',
+  smart_todo: 'smart_todo_lists',
+  retrospective: 'retrospectives',
+  agile_project: 'agile_projects',
+};
+
+/**
+ * Validates if a user can create a new entity based on subscription limits.
+ * Called before document creation as server-side double-check.
+ *
+ * Input: { entityType: string }
+ * Output: { allowed: boolean, currentCount: number, limit: number, tier: string }
+ */
+export const validateCreationLimit = functions.https.onCall(async (data, context) => {
+  // Verifica autenticazione
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
+  }
+
+  const { entityType } = data;
+  if (!entityType || !ENTITY_COLLECTIONS[entityType]) {
+    throw new functions.https.HttpsError('invalid-argument', `Invalid entityType: ${entityType}`);
+  }
+
+  const userId = context.auth.uid;
+  const userEmail = context.auth.token.email?.toLowerCase() || '';
+
+  try {
+    // 1. Leggi tier subscription dell'utente
+    const subscriptionDoc = await db
+      .collection('users')
+      .doc(userId)
+      .collection('subscription')
+      .doc('current')
+      .get();
+
+    const tier = subscriptionDoc.exists
+      ? (subscriptionDoc.data()?.plan || 'free')
+      : 'free';
+
+    // 2. Calcola limite per tier
+    const limits = TIER_LIMITS[tier] || TIER_LIMITS['free'];
+    const limit = limits[entityType] || 5;
+
+    // Elite = unlimited
+    if (tier === 'elite') {
+      return { allowed: true, currentCount: 0, limit: 999999, tier };
+    }
+
+    // 3. Conta documenti esistenti (non archiviati) dove l'utente è owner
+    const collection = ENTITY_COLLECTIONS[entityType];
+    let count = 0;
+
+    if (entityType === 'smart_todo') {
+      // Smart Todo usa ownerEmail
+      const snapshot = await db
+        .collection(collection)
+        .where('participantEmails', 'array-contains', userEmail)
+        .get();
+
+      count = snapshot.docs.filter(doc => {
+        const docData = doc.data();
+        const ownerEmail = (docData.ownerEmail || '').toLowerCase();
+        const createdBy = (docData.createdBy || '').toLowerCase();
+        const isArchived = docData.isArchived || false;
+        return !isArchived && (ownerEmail === userEmail || createdBy === userEmail);
+      }).length;
+    } else {
+      // Altri usano createdBy o participantEmails
+      const snapshot = await db
+        .collection(collection)
+        .where('participantEmails', 'array-contains', userEmail)
+        .get();
+
+      count = snapshot.docs.filter(doc => {
+        const docData = doc.data();
+        const createdBy = (docData.createdBy || '').toLowerCase();
+        const isArchived = docData.isArchived || false;
+        return !isArchived && createdBy === userEmail;
+      }).length;
+    }
+
+    // 4. Verifica limite
+    const allowed = count < limit;
+
+    console.log(`🔒 Limit check: user=${userEmail}, entity=${entityType}, tier=${tier}, count=${count}/${limit}, allowed=${allowed}`);
+
+    return { allowed, currentCount: count, limit, tier };
+  } catch (error) {
+    console.error('Error validating creation limit:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to validate creation limit');
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // SCHEDULED FUNCTIONS
 // ═══════════════════════════════════════════════════════════════════════════════
 

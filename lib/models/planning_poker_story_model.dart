@@ -588,6 +588,11 @@ class PlanningPokerStoryModel {
   /// Verifica se un utente ha votato
   bool hasUserVoted(String email) => votes.containsKey(email);
 
+  /// Verifica se tutti i votanti hanno espresso un voto
+  bool isEveryoneVoted(int totalVoters) {
+    return totalVoters > 0 && voteCount >= totalVoters;
+  }
+
   /// Ottiene il voto di un utente
   PlanningPokerVote? getUserVote(String email) => votes[email];
 
