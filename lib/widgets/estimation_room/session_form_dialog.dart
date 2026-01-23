@@ -73,6 +73,16 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
     return 'fibonacci';
   }
 
+  /// Verifica se la votazione è già iniziata (non si può cambiare modalità)
+  /// Blocca se: sessione active, oppure ha storie completate, oppure ha una story in votazione
+  bool get _isVotingStarted {
+    if (widget.session == null) return false;
+    final session = widget.session!;
+    return session.status == PlanningPokerSessionStatus.active ||
+        session.completedStoryCount > 0 ||
+        session.currentStoryId != null;
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -141,6 +151,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
               const SizedBox(height: 12),
 
               // Modalita di Stima
+              // Blocca il cambio modalità se la sessione è già attiva (votazione iniziata)
               DropdownButtonFormField<EstimationMode>(
                 value: _selectedEstimationMode,
                 decoration: InputDecoration(
@@ -151,6 +162,8 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   ),
                   isDense: true,
                   prefixIcon: Icon(_getEstimationModeIcon(_selectedEstimationMode), size: 20, color: Colors.amber),
+                  helperText: _isVotingStarted ? l10n.sessionEstimationModeLocked : null,
+                  helperStyle: const TextStyle(color: Colors.orange, fontSize: 11),
                 ),
                 items: EstimationMode.values.map((mode) => DropdownMenuItem(
                   value: mode,
@@ -160,13 +173,13 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                       Icon(_getEstimationModeIcon(mode), size: 18, color: Colors.grey),
                       const SizedBox(width: 8),
                       Text(
-                        mode.displayName,
+                        _getModeDisplayName(mode, l10n),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 )).toList(),
-                onChanged: (value) {
+                onChanged: _isVotingStarted ? null : (value) {
                   if (value != null) {
                     setState(() {
                       _selectedEstimationMode = value;
@@ -283,6 +296,25 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
         return Icons.inventory_2_rounded; // Bucket/box icon
       case EstimationMode.fiveFingers:
         return Icons.pan_tool;
+    }
+  }
+
+  String _getModeDisplayName(EstimationMode mode, AppLocalizations l10n) {
+    switch (mode) {
+      case EstimationMode.fibonacci:
+        return l10n.estimationModeFibonacci;
+      case EstimationMode.tshirt:
+        return l10n.estimationModeTshirt;
+      case EstimationMode.decimal:
+        return l10n.estimationModeDecimal;
+      case EstimationMode.threePoint:
+        return l10n.estimationModeThreePoint;
+      case EstimationMode.dotVoting:
+        return l10n.estimationModeDotVoting;
+      case EstimationMode.bucketSystem:
+        return l10n.estimationModeBucketSystem;
+      case EstimationMode.fiveFingers:
+        return l10n.estimationModeFiveFingers;
     }
   }
 

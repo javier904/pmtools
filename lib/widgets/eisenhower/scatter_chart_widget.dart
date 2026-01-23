@@ -4,6 +4,7 @@ import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Widget che visualizza un grafico scatter plot della matrice di Eisenhower
 ///
@@ -30,6 +31,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -51,9 +53,9 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
             children: [
               Icon(Icons.scatter_plot, color: AppColors.secondary),
               const SizedBox(width: 8),
-              const Text(
-                'Distribuzione Attività',
-                style: TextStyle(
+              Text(
+                l10n.eisenhowerChartTitle,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -110,6 +112,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
   }
 
   Widget _buildChart() {
+    final l10n = AppLocalizations.of(context)!;
     final votedActivities = widget.activities.where((a) => a.hasVotes).toList();
 
     if (votedActivities.isEmpty) {
@@ -120,12 +123,12 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
             Icon(Icons.scatter_plot, size: 48, color: context.borderColor),
             const SizedBox(height: 8),
             Text(
-              'Nessuna attività votata',
+              l10n.eisenhowerNoRatedActivities,
               style: TextStyle(color: context.textTertiaryColor),
             ),
             const SizedBox(height: 4),
             Text(
-              'Vota le attività per visualizzarle nel grafico',
+              l10n.eisenhowerVoteToSeeChart,
               style: TextStyle(fontSize: 12, color: context.textMutedColor),
             ),
           ],
@@ -164,6 +167,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                   bottomMargin: bottomMargin,
                   topMargin: topMargin,
                   rightMargin: rightMargin,
+                  l10n: l10n,
                 ),
               ),
             ),
@@ -247,7 +251,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                   show: true,
                   leftTitles: AxisTitles(
                     axisNameWidget: Text(
-                      'IMPORTANZA',
+                      l10n.eisenhowerImportance,
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -270,7 +274,7 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                   ),
                   bottomTitles: AxisTitles(
                     axisNameWidget: Text(
-                      'URGENZA',
+                      l10n.eisenhowerUrgency,
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -336,6 +340,7 @@ class _QuadrantBackgroundPainter extends CustomPainter {
   final double bottomMargin;
   final double topMargin;
   final double rightMargin;
+  final AppLocalizations l10n;
 
   _QuadrantBackgroundPainter({
     required this.threshold,
@@ -343,6 +348,7 @@ class _QuadrantBackgroundPainter extends CustomPainter {
     required this.bottomMargin,
     required this.topMargin,
     required this.rightMargin,
+    required this.l10n,
   });
 
   @override
@@ -393,28 +399,28 @@ class _QuadrantBackgroundPainter extends CustomPainter {
     );
 
     // Q1 label
-    _drawQuadrantLabel(canvas, textPainter, 'Q1 - FAI',
+    _drawQuadrantLabel(canvas, textPainter, l10n.quadrantLabelDo,
       thresholdX + (size.width - rightMargin - thresholdX) / 2,
       topMargin + (thresholdY - topMargin) / 2,
       Color(EisenhowerQuadrant.q1.colorValue),
     );
 
     // Q2 label
-    _drawQuadrantLabel(canvas, textPainter, 'Q2 - PIANIFICA',
+    _drawQuadrantLabel(canvas, textPainter, l10n.quadrantLabelPlan,
       leftMargin + (thresholdX - leftMargin) / 2,
       topMargin + (thresholdY - topMargin) / 2,
       Color(EisenhowerQuadrant.q2.colorValue),
     );
 
     // Q3 label
-    _drawQuadrantLabel(canvas, textPainter, 'Q3 - DELEGA',
+    _drawQuadrantLabel(canvas, textPainter, l10n.quadrantLabelDelegate,
       thresholdX + (size.width - rightMargin - thresholdX) / 2,
       thresholdY + (size.height - bottomMargin - thresholdY) / 2,
       Color(EisenhowerQuadrant.q3.colorValue).withOpacity(0.8),
     );
 
     // Q4 label
-    _drawQuadrantLabel(canvas, textPainter, 'Q4 - ELIMINA',
+    _drawQuadrantLabel(canvas, textPainter, l10n.quadrantLabelEliminate,
       leftMargin + (thresholdX - leftMargin) / 2,
       thresholdY + (size.height - bottomMargin - thresholdY) / 2,
       Color(EisenhowerQuadrant.q4.colorValue),
@@ -467,9 +473,9 @@ class EisenhowerScatterChartCard extends StatelessWidget {
                 children: [
                   Icon(Icons.scatter_plot, size: 18, color: AppColors.secondary),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Grafico Distribuzione',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  Text(
+                    AppLocalizations.of(context)!.eisenhowerChartCardTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
                   if (onExpandTap != null)

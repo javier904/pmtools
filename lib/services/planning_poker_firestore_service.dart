@@ -68,7 +68,7 @@ class PlanningPokerFirestoreService {
       final data = <String, dynamic>{
         'name': name,
         'description': description,
-        'createdBy': createdBy,
+        'createdBy': createdBy.toLowerCase(),
         'createdAt': Timestamp.fromDate(now),
         'updatedAt': Timestamp.fromDate(now),
         'status': 'draft',
@@ -665,6 +665,8 @@ class PlanningPokerFirestoreService {
       final sessionUpdates = <String, dynamic>{
         'currentStoryId': storyId,
         'updatedAt': Timestamp.fromDate(DateTime.now()),
+        // Imposta sessione come active quando inizia la prima votazione
+        'status': PlanningPokerSessionStatus.active.name,
       };
 
       // Se era completata, decrementa il contatore

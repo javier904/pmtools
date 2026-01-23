@@ -11,6 +11,8 @@ import '../themes/app_colors.dart';
 import 'agile_project_detail_screen.dart';
 import '../widgets/home/favorite_star.dart';
 import '../l10n/app_localizations.dart';
+import '../services/subscription/subscription_limits_service.dart';
+import '../widgets/subscription/limit_reached_dialog.dart';
 
 /// Screen principale per la gestione dei Progetti Agile
 ///
@@ -29,7 +31,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   final AgileFirestoreService _firestoreService = AgileFirestoreService();
   final AgileAuditService _auditService = AgileAuditService();
   final AuthService _authService = AuthService();
-  
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
+
   bool _hasCheckedArgs = false;
 
   // Stato
@@ -840,6 +843,22 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   // ══════════════════════════════════════════════════════════════════════════
 
   Future<void> _showCreateProjectDialog() async {
+    // Verifica limite progetti prima di mostrare il dialog
+    final limitCheck = await _limitsService.canCreateProject(
+      _currentUserEmail,
+      entityType: 'agile_project',
+    );
+    if (!limitCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: limitCheck,
+          entityType: 'agile_project',
+        );
+      }
+      return;
+    }
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => _ProjectFormDialog(

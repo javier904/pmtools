@@ -60,6 +60,9 @@ class RetrospectiveModel {
   final List<String> pendingEmails; // Emails con inviti in attesa
   final int maxVotesPerUser;
 
+  // 🟢 Online Presence Tracking
+  final Map<String, ParticipantPresence> participantPresence;
+
   const RetrospectiveModel({
     required this.id,
     this.sprintId,
@@ -89,12 +92,25 @@ class RetrospectiveModel {
     this.participantEmails = const [],
     this.pendingEmails = const [],
     this.maxVotesPerUser = 3,
+    this.participantPresence = const {},
   });
 
   // ... 
 
   factory RetrospectiveModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     return RetrospectiveModel.fromMap(doc.id, doc.data() ?? {});
+  }
+
+  /// Helper per parsare la mappa di presenza partecipanti da Firestore
+  static Map<String, ParticipantPresence> _parseParticipantPresence(dynamic data) {
+    if (data == null) return {};
+    final map = data as Map<String, dynamic>;
+    return map.map((email, presenceData) {
+      return MapEntry(
+        email,
+        ParticipantPresence.fromJson(presenceData as Map<String, dynamic>),
+      );
+    });
   }
 
   factory RetrospectiveModel.fromMap(String id, Map<String, dynamic> data) {
@@ -137,6 +153,7 @@ class RetrospectiveModel {
       activeParticipants: List<String>.from(data['activeParticipants'] ?? []),
       participantEmails: List<String>.from(data['participantEmails'] ?? []),
       pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
+      participantPresence: _parseParticipantPresence(data['participantPresence']),
       averageSentiment: (data['averageSentiment'] as num?)?.toDouble(),
       reviewData: data['reviewData'] != null ? SprintReviewData.fromMap(data['reviewData']) : null,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -181,6 +198,7 @@ class RetrospectiveModel {
       'participantEmails': participantEmails,
       'pendingEmails': pendingEmails,
       'maxVotesPerUser': maxVotesPerUser,
+      'participantPresence': participantPresence.map((email, p) => MapEntry(email, p.toJson())),
     };
   }
 
@@ -200,7 +218,8 @@ class RetrospectiveModel {
     List<String>? participantEmails,
     List<String>? pendingEmails,
     int? maxVotesPerUser,
-    // Add other fields as needed...
+    Map<String, ParticipantPresence>? participantPresence,
+    String? createdBy,
   }) {
     return RetrospectiveModel(
       id: id ?? this.id,
@@ -217,21 +236,21 @@ class RetrospectiveModel {
       sentimentVotes: sentimentVotes ?? this.sentimentVotes,
       icebreakerTemplate: icebreakerTemplate ?? this.icebreakerTemplate,
       averageSentiment: averageSentiment,
-    // ...
       reviewData: reviewData,
       createdAt: createdAt,
-      createdBy: createdBy,
+      createdBy: createdBy ?? this.createdBy,
       isCompleted: isCompleted,
       isArchived: isArchived,
       archivedAt: archivedAt,
       status: status ?? this.status,
       currentPhase: currentPhase ?? this.currentPhase,
-      template: template, 
+      template: template,
       currentWizardStep: currentWizardStep ?? this.currentWizardStep,
       activeParticipants: activeParticipants,
       participantEmails: participantEmails ?? this.participantEmails,
       pendingEmails: pendingEmails ?? this.pendingEmails,
       maxVotesPerUser: maxVotesPerUser ?? this.maxVotesPerUser,
+      participantPresence: participantPresence ?? this.participantPresence,
     );
   }
 
@@ -697,6 +716,40 @@ extension RetroTemplateExt on RetroTemplate {
 }
 
 enum RetroIcebreaker { sentiment, oneWord, weatherReport }
+
+/// Modello per tracciare la presenza online di un partecipante
+class ParticipantPresence {
+  final bool isOnline;
+  final DateTime lastActivity;
+
+  const ParticipantPresence({
+    required this.isOnline,
+    required this.lastActivity,
+  });
+
+  factory ParticipantPresence.fromJson(Map<String, dynamic> json) {
+    return ParticipantPresence(
+      isOnline: json['isOnline'] ?? false,
+      lastActivity: (json['lastActivity'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'isOnline': isOnline,
+    'lastActivity': Timestamp.fromDate(lastActivity),
+  };
+
+  /// Costanti per il sistema di presenza
+  static const int heartbeatIntervalSeconds = 15;
+  static const int offlineThresholdSeconds = 45;
+
+  /// Verifica se il partecipante è effettivamente online (considerando il threshold)
+  bool get isEffectivelyOnline {
+    if (!isOnline) return false;
+    final now = DateTime.now();
+    return now.difference(lastActivity).inSeconds < offlineThresholdSeconds;
+  }
+}
 
 extension RetroIcebreakerExt on RetroIcebreaker {
   String get displayName {

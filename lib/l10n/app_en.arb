@@ -330,6 +330,7 @@
   "cardSetFibonacci": "Fibonacci (0, 1, 2, 3, 5, 8, 13, 20, 40, 100, ?, ?)",
   "cardSetSimplified": "Simplified (1, 2, 3, 5, 8, 13, ?, ?)",
   "sessionEstimationMode": "Estimation Mode",
+  "sessionEstimationModeLocked": "Cannot change mode after voting has started",
   "sessionAutoReveal": "Auto-reveal",
   "sessionAutoRevealDesc": "Reveal when everyone votes",
   "sessionAllowObservers": "Observers",
@@ -368,7 +369,62 @@
   "estimationModeThreePoint": "Three-Point (PERT)",
   "estimationModeDotVoting": "Dot Voting",
   "estimationModeBucketSystem": "Bucket System",
+  "estimationModeFibonacci": "Fibonacci",
+  "estimationModeTshirt": "T-Shirt Sizes",
+  "estimationModeDecimal": "Decimal",
+  "estimationModeThreePoint": "Three-Point (PERT)",
+  "estimationModeDotVoting": "Dot Voting",
+  "estimationModeBucketSystem": "Bucket System",
   "estimationModeFiveFingers": "Five Fingers",
+  "estimationVotesRevealed": "Votes Revealed",
+  "estimationVotingInProgress": "Voting in Progress",
+  "estimationVotesCountFormatted": "{count}/{total} votes",
+  "@estimationVotesCountFormatted": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "estimationConsensusReached": "Consensus Reached!",
+  "estimationVotingResults": "Voting Results",
+  "estimationRevote": "Revote",
+  "estimationAverage": "Average",
+  "estimationAverageTooltip": "Arithmetic mean of numeric votes",
+  "estimationMedian": "Median",
+  "estimationMedianTooltip": "Middle value when votes are sorted",
+  "estimationMode": "Mode",
+  "estimationModeTooltip": "Most frequent vote",
+  "estimationVoters": "Voters",
+  "estimationVotersTooltip": "Total number of participants",
+  "estimationVoteDistribution": "Vote Distribution",
+  "estimationSelectFinalEstimate": "Select Final Estimate",
+  "estimationFinalEstimate": "Final Estimate",
+  "eisenhowerChartTitle": "Activity Distribution",
+  "eisenhowerImportance": "IMPORTANCE",
+  "eisenhowerUrgency": "URGENCY",
+  "quadrantLabelDo": "Q1 - DO",
+  "quadrantLabelPlan": "Q2 - PLAN",
+  "quadrantLabelDelegate": "Q3 - DELEGATE",
+  "quadrantLabelEliminate": "Q4 - ELIMINATE",
+  "eisenhowerNoRatedActivities": "No rated activities",
+  "eisenhowerVoteToSeeChart": "Vote on activities to see them on the chart",
+  "eisenhowerChartCardTitle": "Distribution Chart",
+  "raciAddColumnTitle": "Add RACI Column",
+  "raciColumnType": "Type",
+  "raciTypePerson": "Person (Participant)",
+  "raciTypeCustom": "Custom (Team/Other)",
+  "raciSelectParticipant": "Select participant",
+  "raciColumnName": "Column Name",
+  "raciColumnNameHint": "e.g. Legal Team",
+  "raciDeleteColumnTitle": "Delete Column",
+  "raciDeleteColumnConfirm": "Delete column '{name}'? Assignments will be lost.",
+  "@raciDeleteColumnConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "estimationOnlineParticipants": "{online} of {total} participants online",
   "@estimationOnlineParticipants": {
     "placeholders": {
@@ -377,6 +433,47 @@
       },
       "total": {
         "type": "int"
+      }
+    }
+  },
+  "estimationNewStoryTitle": "New Story",
+  "estimationStoryTitleLabel": "Title *",
+  "estimationStoryTitleHint": "Ex: US-123: As a user I want...",
+  "estimationStoryDescriptionLabel": "Description",
+  "estimationStoryDescriptionHint": "Acceptance criteria, notes...",
+  "estimationEnterTitleAlert": "Please enter a title",
+  "estimationParticipantsHeader": "Participants",
+  "estimationRoleFacilitator": "Facilitator",
+  "estimationRoleVoters": "Voters",
+  "estimationRoleObservers": "Observers",
+  "estimationYouSuffix": "(you)",
+  "estimationDecimalTitle": "Decimal Estimation",
+  "estimationDecimalHint": "Enter your estimate in days (e.g. 1.5, 2.25)",
+  "estimationQuickSelect": "Quick select:",
+  "estimationDaysSuffix": "days",
+  "estimationVoteValue": "Vote: {value} days",
+  "@estimationVoteValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationEnterValueAlert": "Enter a value",
+  "estimationInvalidValueAlert": "Invalid value",
+  "estimationMinAlert": "Min: {value}",
+  "@estimationMinAlert": {
+    "placeholders": {
+      "value": {
+        "type": "double"
+      }
+    }
+  },
+  "estimationMaxAlert": "Max: {value}",
+  "@estimationMaxAlert": {
+    "placeholders": {
+      "value": {
+        "type": "double"
       }
     }
   },
@@ -1942,6 +2039,8 @@
   "subscriptionLimitTasks": "You have reached the maximum number of tasks for this project. Upgrade to Premium to add more tasks.",
   "subscriptionLimitInvites": "You have reached the maximum number of invites for this project. Upgrade to Premium to invite more people.",
   "subscriptionLimitEstimations": "You have reached the maximum number of estimation sessions. Upgrade to Premium to create more.",
+  "subscriptionLimitRetrospectives": "You have reached the maximum number of retrospectives. Upgrade to Premium to create more.",
+  "subscriptionLimitAgileProjects": "You have reached the maximum number of agile projects. Upgrade to Premium to create more.",
   "subscriptionLimitDefault": "You have reached the limit of your current plan.",
   "subscriptionCurrentUsage": "Current usage",
   "subscriptionUpgradeToPremium": "Upgrade to Premium",

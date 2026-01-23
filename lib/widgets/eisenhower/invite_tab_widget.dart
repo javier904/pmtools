@@ -97,7 +97,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.inviteCreatedFor(invite.email)),
-              backgroundColor: AppColors.secondary,
+              backgroundColor: Colors.green,
             ),
           );
         }
@@ -126,7 +126,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.inviteLinkCopied),
-          backgroundColor: AppColors.secondary,
+          backgroundColor: Colors.green,
         ),
       );
     }
@@ -160,7 +160,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.inviteRevokedFor(invite.email)),
-            backgroundColor: AppColors.secondary,
+            backgroundColor: Colors.green,
           ),
         );
       }
@@ -274,7 +274,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
                   : const Icon(Icons.send, size: 18),
               label: Text(l10n.inviteCreate),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
+                backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 10),
               ),
@@ -294,11 +294,11 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.secondary.withOpacity(0.15)
+              ? Colors.green.withOpacity(0.15)
               : context.surfaceVariantColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? AppColors.secondary : context.borderColor,
+            color: isSelected ? Colors.green : context.borderColor,
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -308,7 +308,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? AppColors.secondary : context.textSecondaryColor,
+              color: isSelected ? Colors.green : context.textSecondaryColor,
             ),
             const SizedBox(width: 6),
             Text(
@@ -316,7 +316,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected ? AppColors.secondary : context.textSecondaryColor,
+                color: isSelected ? Colors.green : context.textSecondaryColor,
               ),
             ),
           ],
@@ -394,15 +394,15 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withOpacity(0.15),
+                  color: Colors.green.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   roleLabel,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.secondary,
+                    color: Colors.green,
                   ),
                 ),
               ),

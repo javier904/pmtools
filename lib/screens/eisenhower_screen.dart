@@ -18,6 +18,8 @@ import '../l10n/app_localizations.dart';
 import '../themes/app_colors.dart';
 import '../widgets/eisenhower/matrix_search_widget.dart';
 import '../widgets/eisenhower/vote_reveal_widget.dart';
+import '../services/subscription/subscription_limits_service.dart';
+import '../widgets/subscription/limit_reached_dialog.dart';
 import '../widgets/eisenhower/raci_matrix_widget.dart';
 // VoteCollectionDialog rimosso - ora si usa solo votazione indipendente
 import '../widgets/eisenhower/activity_card_widget.dart';
@@ -69,6 +71,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   final InviteService _inviteService = InviteService();
   final EisenhowerSheetsExportService _sheetsExportService = EisenhowerSheetsExportService();
   final AuthService _authService = AuthService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   // Stato
   EisenhowerMatrixModel? _selectedMatrix;
@@ -1548,7 +1551,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                         icon: const Icon(Icons.play_circle_outline, size: 16),
                         label: Text(l10n.eisenhowerStartVoting),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           textStyle: const TextStyle(fontSize: 12),
@@ -1733,6 +1736,22 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
   Future<void> _showCreateMatrixDialog() async {
     final l10n = AppLocalizations.of(context)!;
+
+    // Verifica limite matrici prima di mostrare il dialog
+    final limitCheck = await _limitsService.canCreateProject(
+      _currentUserEmail ?? '',
+      entityType: 'eisenhower',
+    );
+    if (!limitCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: limitCheck,
+          entityType: 'eisenhower',
+        );
+      }
+      return;
+    }
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,

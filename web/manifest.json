@@ -1,5 +1,5 @@
 {
-    "name": "Keisen - Strumenti Collaborativi per Team Agili",
+    "name": "Keisen - L'Ecosistema Agile Definitivo",
     "short_name": "Keisen",
     "start_url": ".",
     "display": "standalone",
@@ -8,7 +8,11 @@
     "description": "Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning e Kanban Board. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.",
     "orientation": "any",
     "prefer_related_applications": false,
-    "categories": ["productivity", "business", "utilities"],
+    "categories": [
+        "productivity",
+        "business",
+        "utilities"
+    ],
     "lang": "it",
     "scope": "/",
     "icons": [
@@ -42,28 +46,48 @@
             "short_name": "Todo",
             "description": "Liste intelligenti e collaborative",
             "url": "/smart-todo",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Matrice Eisenhower",
             "short_name": "Eisenhower",
             "description": "Prioritizza per urgenza e importanza",
             "url": "/eisenhower",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Estimation Room",
             "short_name": "Estimation",
             "description": "Planning Poker e stime collaborative",
             "url": "/estimation-room",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Agile Process Manager",
             "short_name": "Agile PM",
             "description": "Backlog, Sprint e Kanban",
             "url": "/agile-process",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ]
 }

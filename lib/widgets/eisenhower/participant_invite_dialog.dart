@@ -354,7 +354,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.person_add, color: Colors.blue),
+          const Icon(Icons.person_add, color: Colors.green),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -496,7 +496,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                             : const Icon(Icons.send),
                         label: Text(l10n.inviteSendInvite),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),

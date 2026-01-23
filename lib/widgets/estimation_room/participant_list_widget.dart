@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/planning_poker_participant_model.dart';
 import '../../models/planning_poker_story_model.dart';
 import '../../themes/app_theme.dart';
@@ -41,7 +42,7 @@ class ParticipantListWidget extends StatelessWidget {
               const Icon(Icons.people, size: 22, color: AppColors.warning),
               const SizedBox(width: 10),
               Text(
-                'Partecipanti (${participants.length})',
+                '${AppLocalizations.of(context)!.estimationParticipantsHeader} (${participants.length})',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
@@ -70,19 +71,19 @@ class ParticipantListWidget extends StatelessWidget {
           const SizedBox(height: 12),
           // Lista partecipanti raggruppati
           if (facilitators.isNotEmpty) ...[
-            _buildRoleHeader('Facilitatore', Icons.star, AppColors.warning),
+            _buildRoleHeader(AppLocalizations.of(context)!.estimationRoleFacilitator, Icons.star, AppColors.warning),
             const SizedBox(height: 4),
             ...facilitators.map((p) => _buildParticipantTile(context, p)),
           ],
           if (voters.isNotEmpty) ...[
             const SizedBox(height: 8),
-            _buildRoleHeader('Votanti', Icons.how_to_vote, AppColors.warning),
+            _buildRoleHeader(AppLocalizations.of(context)!.estimationRoleVoters, Icons.how_to_vote, AppColors.warning),
             const SizedBox(height: 4),
             ...voters.map((p) => _buildParticipantTile(context, p)),
           ],
           if (observers.isNotEmpty) ...[
             const SizedBox(height: 8),
-            _buildRoleHeader('Osservatori', Icons.visibility, AppColors.q4Color),
+            _buildRoleHeader(AppLocalizations.of(context)!.estimationRoleObservers, Icons.visibility, AppColors.q4Color),
             const SizedBox(height: 4),
             ...observers.map((p) => _buildParticipantTile(context, p)),
           ],
@@ -145,7 +146,7 @@ class ParticipantListWidget extends StatelessWidget {
         children: [
           // Indicatore online
           Tooltip(
-            message: isOnline ? 'Online' : 'Offline',
+            message: isOnline ? 'Online' : 'Offline', // Questi potrebbero rimanere così o essere tradotti se necessario
             child: Container(
               width: 8,
               height: 8,
@@ -196,7 +197,7 @@ class ParticipantListWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 6),
                         child: Text(
-                          '(tu)',
+                          AppLocalizations.of(context)!.estimationYouSuffix,
                           style: TextStyle(
                             fontSize: 12,
                             color: context.textTertiaryColor,

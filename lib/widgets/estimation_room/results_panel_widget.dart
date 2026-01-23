@@ -20,7 +20,7 @@ class ResultsPanelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = story.statistics ?? story.calculateStatistics();
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -59,8 +59,8 @@ class ResultsPanelWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 stats.consensus
-                    ? (l10n?.voteConsensus ?? 'Consenso raggiunto!')
-                    : (l10n?.voteResults ?? 'Risultati Votazione'),
+                    ? l10n.estimationConsensusReached
+                    : l10n.estimationVotingResults,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -72,7 +72,7 @@ class ResultsPanelWidget extends StatelessWidget {
                 TextButton.icon(
                   onPressed: onRevote,
                   icon: const Icon(Icons.refresh, size: 18),
-                  label: Text(l10n?.voteRevote ?? 'Rivota'),
+                  label: Text(l10n.estimationRevote),
                 ),
             ],
           ),
@@ -82,34 +82,34 @@ class ResultsPanelWidget extends StatelessWidget {
             children: [
               Expanded(child: _buildStatCard(
                 context,
-                l10n?.voteAverage ?? 'Media',
+                l10n.estimationAverage,
                 stats.numericAverage?.toStringAsFixed(1) ?? '-',
                 Colors.blue,
-                tooltip: l10n?.voteAverageTooltip ?? 'Media aritmetica dei voti numerici',
+                tooltip: l10n.estimationAverageTooltip,
               )),
               const SizedBox(width: 12),
               Expanded(child: _buildStatCard(
                 context,
-                l10n?.voteMedian ?? 'Mediana',
+                l10n.estimationMedian,
                 stats.numericMedian?.toStringAsFixed(1) ?? '-',
                 Colors.amber,
-                tooltip: l10n?.voteMedianTooltip ?? 'Valore centrale quando i voti sono ordinati',
+                tooltip: l10n.estimationMedianTooltip,
               )),
               const SizedBox(width: 12),
               Expanded(child: _buildStatCard(
                 context,
-                l10n?.voteMode ?? 'Moda',
+                l10n.estimationMode,
                 stats.mode ?? '-',
                 Colors.orange,
-                tooltip: l10n?.voteModeTooltip ?? 'Voto più frequente (il valore scelto più volte)',
+                tooltip: l10n.estimationModeTooltip,
               )),
               const SizedBox(width: 12),
               Expanded(child: _buildStatCard(
                 context,
-                l10n?.voteVoters ?? 'Votanti',
+                l10n.estimationVoters,
                 '${stats.totalVoters}',
                 Colors.purple,
-                tooltip: l10n?.voteVotersTooltip ?? 'Numero totale di partecipanti che hanno votato',
+                tooltip: l10n.estimationVotersTooltip,
               )),
             ],
           ),
@@ -117,7 +117,7 @@ class ResultsPanelWidget extends StatelessWidget {
           // Distribuzione
           if (stats.distribution.isNotEmpty) ...[
             Text(
-              l10n?.voteDistribution ?? 'Distribuzione voti',
+              l10n.estimationVoteDistribution,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
@@ -133,7 +133,7 @@ class ResultsPanelWidget extends StatelessWidget {
             Divider(color: isDark ? Colors.grey[700] : Colors.grey[300]),
             const SizedBox(height: 12),
             Text(
-              l10n?.voteSelectFinal ?? 'Seleziona stima finale',
+              l10n.estimationSelectFinalEstimate,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
@@ -157,7 +157,7 @@ class ResultsPanelWidget extends StatelessWidget {
                   const Icon(Icons.check_circle, color: Colors.amber),
                   const SizedBox(width: 8),
                   Text(
-                    '${l10n?.voteFinalEstimate ?? 'Stima finale'}:',
+                    '${l10n.estimationFinalEstimate}:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: textColor,

@@ -36,7 +36,9 @@ import '../models/sprint_model.dart';
 import '../models/user_story_model.dart';
 import '../models/agile_enums.dart' as agile;
 import '../services/agile_firestore_service.dart';
+import '../services/subscription/subscription_limits_service.dart';
 import '../widgets/home/favorite_star.dart';
+import '../widgets/subscription/limit_reached_dialog.dart';
 import 'agile_project_detail_screen.dart';
 
 /// Screen principale per l'Estimation Room
@@ -64,6 +66,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   final SmartTodoService _todoService = SmartTodoService();
   final AgileFirestoreService _agileService = AgileFirestoreService();
   final AuthService _authService = AuthService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   // Stato
   PlanningPokerSessionModel? _selectedSession;
@@ -883,18 +886,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                     '${session.storyCount}',
                     l10n.estimationStoriesTotal,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 12),
                   _buildCompactSessionStat(
                     Icons.check_circle_outline,
                     '${session.completedStoryCount}',
                     l10n.estimationStoriesCompleted,
                   ),
-                  const SizedBox(width: 6),
-                  _buildCompactSessionStat(
-                    Icons.people,
-                    '${session.participantCount}',
-                    l10n.estimationParticipantsActive,
-                  ),
+                  const SizedBox(width: 12),
+                  _buildParticipantSessionStat(session, l10n),
                 ],
               ),
             ],
@@ -910,12 +909,48 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 10, color: context.textMutedColor),
-          const SizedBox(width: 2),
+          Icon(icon, size: 18, color: context.textMutedColor),
+          const SizedBox(width: 5),
           Text(
             value,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 14,
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Costruisce la statistica partecipanti con tooltip dettagliato (nomi e ruoli)
+  Widget _buildParticipantSessionStat(PlanningPokerSessionModel session, AppLocalizations l10n) {
+    // Costruisci tooltip con nomi e ruoli
+    final participantLines = session.participants.values.map((p) {
+      final roleLabel = switch (p.role) {
+        ParticipantRole.facilitator => '👑 Facilitator',
+        ParticipantRole.voter => '🗳️ Voter',
+        ParticipantRole.observer => '👁️ Observer',
+      };
+      return '${p.name} - $roleLabel';
+    }).toList();
+
+    final tooltipText = participantLines.isNotEmpty
+        ? '${l10n.participants}:\n${participantLines.join('\n')}'
+        : l10n.participants;
+
+    return Tooltip(
+      message: tooltipText,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people, size: 18, color: context.textMutedColor),
+          const SizedBox(width: 5),
+          Text(
+            '${session.participantCount}',
+            style: TextStyle(
+              fontSize: 14,
               color: context.textSecondaryColor,
               fontWeight: FontWeight.w500,
             ),
@@ -1666,6 +1701,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   // ══════════════════════════════════════════════════════════════════════════
 
   Future<void> _showCreateSessionDialog() async {
+    // Verifica limite sessioni prima di mostrare il dialog di creazione
+    final limitCheck = await _limitsService.canCreateProject(
+      _currentUserEmail,
+      entityType: 'estimation',
+    );
+
+    if (!limitCheck.allowed) {
+      // Mostra dialog limite raggiunto
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: limitCheck,
+          entityType: 'estimation',
+        );
+      }
+      return;
+    }
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => const SessionFormDialog(),

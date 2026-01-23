@@ -360,7 +360,7 @@ class ActivityCardWidget extends StatelessWidget {
                     _buildScoreIndicator(
                       l10n.eisenhowerImportance,
                       activity.aggregatedImportance,
-                      Colors.blue,
+                      Colors.green,
                     ),
                     const Spacer(),
                     // Numero voti
@@ -515,12 +515,12 @@ class ActivityCardWidget extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.green.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '$preVoteCount pre-voti',
-                      style: TextStyle(fontSize: 10, color: Colors.blue[700]),
+                      style: TextStyle(fontSize: 10, color: Colors.green[700]),
                     ),
                   ),
                 ),
@@ -549,8 +549,8 @@ class ActivityCardWidget extends StatelessWidget {
                         icon: const Icon(Icons.how_to_vote_outlined, size: 16),
                         label: Text(l10n.eisenhowerPreVote),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.blue,
-                          side: const BorderSide(color: Colors.blue),
+                          foregroundColor: Colors.green,
+                          side: const BorderSide(color: Colors.green),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
                       ),
@@ -593,7 +593,7 @@ class ActivityCardWidget extends StatelessWidget {
                       icon: const Icon(Icons.play_arrow, size: 18),
                       label: Text(l10n.eisenhowerStartVoting),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
@@ -623,9 +623,9 @@ class ActivityCardWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
+        color: Colors.green.withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue.withOpacity(0.2)),
+        border: Border.all(color: Colors.green.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -657,7 +657,7 @@ class ActivityCardWidget extends StatelessWidget {
               minHeight: 6,
               backgroundColor: Colors.grey[200],
               valueColor: AlwaysStoppedAnimation(
-                allReady ? Colors.green : Colors.blue,
+                allReady ? Colors.green : Colors.green,
               ),
             ),
           ),
@@ -701,7 +701,7 @@ class ActivityCardWidget extends StatelessWidget {
                       icon: const Icon(Icons.how_to_vote, size: 16),
                       label: Text(l10n.eisenhowerVoteSubmit),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),

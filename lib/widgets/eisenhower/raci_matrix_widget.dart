@@ -158,7 +158,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
                 icon: const Icon(Icons.add, size: 18),
                 label: Text(l10n.raciAddActivity),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: Colors.green, // Visual upgrade requested by user
                   foregroundColor: Colors.white,
                   elevation: 0,
                 ),
@@ -170,9 +170,8 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
             label: Text(l10n.raciAddColumn),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.surfaceColor,
-              foregroundColor: AppColors.primary,
-              elevation: 0,
-              side: BorderSide(color: AppColors.primary),
+              side: const BorderSide(color: Colors.green), // Visual upgrade requested by user
+              foregroundColor: Colors.green, 
             ),
           ),
         ],
@@ -441,6 +440,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
        context: context,
        builder: (context) => _AddRaciColumnDialog(
          availableParticipants: participantNames,
+         l10n: AppLocalizations.of(context)!,
        ),
      );
 
@@ -454,11 +454,11 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Elimina Colonna"),
-        content: Text("Vuoi eliminare la colonna '${col.name}'? Le assegnazioni relative verranno perse."),
+        title: Text(AppLocalizations.of(context)!.raciDeleteColumnTitle),
+        content: Text(AppLocalizations.of(context)!.raciDeleteColumnConfirm(col.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annulla")),
-          ElevatedButton(onPressed: () => Navigator.pop(context, true), style: ElevatedButton.styleFrom(backgroundColor: AppColors.error), child: const Text("Elimina")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context)!.actionCancel)),
+          ElevatedButton(onPressed: () => Navigator.pop(context, true), style: ElevatedButton.styleFrom(backgroundColor: AppColors.error), child: Text(AppLocalizations.of(context)!.actionDelete)),
         ],
       )
     );
@@ -517,7 +517,8 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
 
 class _AddRaciColumnDialog extends StatefulWidget {
   final List<String> availableParticipants;
-  const _AddRaciColumnDialog({required this.availableParticipants});
+  final AppLocalizations l10n;
+  const _AddRaciColumnDialog({required this.availableParticipants, required this.l10n});
 
   @override
   State<_AddRaciColumnDialog> createState() => _AddRaciColumnDialogState();
@@ -531,16 +532,16 @@ class _AddRaciColumnDialogState extends State<_AddRaciColumnDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Aggiungi Colonna RACI"),
+      title: Text(widget.l10n.raciAddColumnTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           DropdownButtonFormField<RaciColumnType>(
             value: _type,
-            decoration: const InputDecoration(labelText: 'Tipo'),
-            items: const [
-              DropdownMenuItem(value: RaciColumnType.person, child: Text("Persona (Partecipante)")),
-              DropdownMenuItem(value: RaciColumnType.custom, child: Text("Personalizzato (Team/Altro)")),
+            decoration: InputDecoration(labelText: widget.l10n.raciColumnType),
+            items: [
+              DropdownMenuItem(value: RaciColumnType.person, child: Text(widget.l10n.raciTypePerson)),
+              DropdownMenuItem(value: RaciColumnType.custom, child: Text(widget.l10n.raciTypeCustom)),
             ],
             onChanged: (v) => setState(() => _type = v!),
           ),
@@ -548,22 +549,29 @@ class _AddRaciColumnDialogState extends State<_AddRaciColumnDialog> {
           if (_type == RaciColumnType.person)
             DropdownButtonFormField<String>(
               value: _selectedParticipant,
-              hint: const Text("Seleziona partecipante"),
+              hint: Text(widget.l10n.raciSelectParticipant),
               items: widget.availableParticipants.map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
               onChanged: (v) => setState(() => _selectedParticipant = v),
             )
           else
             TextField(
               controller: _customNameController,
-              decoration: const InputDecoration(labelText: "Nome Colonna", hintText: "Es. Team Legale"),
+              decoration: InputDecoration(labelText: widget.l10n.raciColumnName, hintText: widget.l10n.raciColumnNameHint),
             ),
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text("Annulla")),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(widget.l10n.actionCancel),
+        ),
         ElevatedButton(
           onPressed: _submit,
-          child: const Text("Aggiungi"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green, // Visual upgrade requested by user
+            foregroundColor: Colors.white,
+          ),
+          child: Text(widget.l10n.actionAdd),
         ),
       ],
     );

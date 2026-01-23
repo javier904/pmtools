@@ -254,6 +254,10 @@ class LimitReachedDialog extends StatelessWidget {
         return l10n.subscriptionLimitInvites;
       case 'estimation':
         return l10n.subscriptionLimitEstimations;
+      case 'retrospective':
+        return l10n.subscriptionLimitRetrospectives;
+      case 'agile_project':
+        return l10n.subscriptionLimitAgileProjects;
       default:
         return limitResult.reason ?? l10n.subscriptionLimitDefault;
     }

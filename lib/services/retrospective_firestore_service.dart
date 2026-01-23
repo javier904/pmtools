@@ -29,15 +29,17 @@ class RetrospectiveFirestoreService {
         columns = retro.template.defaultColumns;
     }
 
+    final normalizedCreatedBy = retro.createdBy.toLowerCase();
     final newRetro = retro.copyWith(
       id: docRef.id,
       columns: columns,
+      createdBy: normalizedCreatedBy,
       // Ensure timer is initialized
       timer: const RetroTimer(isRunning: false, durationMinutes: 0),
       // Ensure participants list contains creator
       participantEmails: [
         ...retro.participantEmails.map((e) => e.toLowerCase()),
-        if (!retro.participantEmails.contains(retro.createdBy)) retro.createdBy.toLowerCase()
+        if (!retro.participantEmails.map((e) => e.toLowerCase()).contains(normalizedCreatedBy)) normalizedCreatedBy
       ],
     );
     
@@ -453,6 +455,48 @@ class RetrospectiveFirestoreService {
     await docRef.update({
       'participantEmails': FieldValue.arrayUnion([email]),
     });
+  }
+
+  // =========================================================================
+  // ONLINE PRESENCE - Heartbeat System
+  // =========================================================================
+
+  /// Invia heartbeat per segnalare presenza online
+  ///
+  /// Chiamato periodicamente (ogni 15 secondi) per mantenere lo stato online.
+  /// [retroId] - ID della retrospettiva
+  /// [userEmail] - Email dell'utente che invia l'heartbeat
+  Future<void> sendHeartbeat(String retroId, String userEmail) async {
+    try {
+      final docRef = _retrosCollection.doc(retroId);
+      await docRef.update({
+        'participantPresence.$userEmail': {
+          'isOnline': true,
+          'lastActivity': FieldValue.serverTimestamp(),
+        },
+      });
+    } catch (e) {
+      print('⚠️ Errore sendHeartbeat: $e');
+      // Non rilanciare l'errore - heartbeat fallito non deve bloccare l'app
+    }
+  }
+
+  /// Marca l'utente come offline
+  ///
+  /// Chiamato quando l'utente lascia esplicitamente la retrospettiva
+  /// o quando l'app viene chiusa.
+  /// [retroId] - ID della retrospettiva
+  /// [userEmail] - Email dell'utente da marcare offline
+  Future<void> markOffline(String retroId, String userEmail) async {
+    try {
+      final docRef = _retrosCollection.doc(retroId);
+      await docRef.update({
+        'participantPresence.$userEmail.isOnline': false,
+      });
+    } catch (e) {
+      print('⚠️ Errore markOffline: $e');
+      // Non rilanciare l'errore - può fallire se la retrospettiva non esiste più
+    }
   }
 
   /// Helper per log

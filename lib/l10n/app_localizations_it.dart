@@ -539,10 +539,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get eisenhowerTeamVote => 'Voto Team';
 
   @override
-  String get eisenhowerUrgency => 'Urgenza';
+  String get eisenhowerUrgency => 'URGENZA';
 
   @override
-  String get eisenhowerImportance => 'Importanza';
+  String get eisenhowerImportance => 'IMPORTANZA';
 
   @override
   String get eisenhowerUrgencyShort => 'U:';
@@ -705,6 +705,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get sessionEstimationMode => 'Modalita di Stima';
 
   @override
+  String get sessionEstimationModeLocked =>
+      'Non è possibile cambiare modalità dopo l\'avvio della votazione';
+
+  @override
   String get sessionAutoReveal => 'Auto-reveal';
 
   @override
@@ -803,7 +807,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get estimationModeFibonacci => 'Fibonacci';
 
   @override
-  String get estimationModeTshirt => 'T-Shirt Sizes';
+  String get estimationModeTshirt => 'Taglie T-Shirt';
 
   @override
   String get estimationModeDecimal => 'Decimale';
@@ -821,8 +825,186 @@ class AppLocalizationsIt extends AppLocalizations {
   String get estimationModeFiveFingers => 'Five Fingers';
 
   @override
+  String get estimationVotesRevealed => 'Voti Rivelati';
+
+  @override
+  String get estimationVotingInProgress => 'Votazione in Corso';
+
+  @override
+  String estimationVotesCountFormatted(int count, int total) {
+    return '$count/$total voti';
+  }
+
+  @override
+  String get estimationConsensusReached => 'Consenso raggiunto!';
+
+  @override
+  String get estimationVotingResults => 'Risultati Votazione';
+
+  @override
+  String get estimationRevote => 'Rivota';
+
+  @override
+  String get estimationAverage => 'Media';
+
+  @override
+  String get estimationAverageTooltip => 'Media aritmetica dei voti numerici';
+
+  @override
+  String get estimationMedian => 'Mediana';
+
+  @override
+  String get estimationMedianTooltip =>
+      'Valore centrale quando i voti sono ordinati';
+
+  @override
+  String get estimationMode => 'Moda';
+
+  @override
+  String get estimationModeTooltip =>
+      'Voto più frequente (il valore scelto più volte)';
+
+  @override
+  String get estimationVoters => 'Votanti';
+
+  @override
+  String get estimationVotersTooltip =>
+      'Numero totale di partecipanti che hanno votato';
+
+  @override
+  String get estimationVoteDistribution => 'Distribuzione voti';
+
+  @override
+  String get estimationSelectFinalEstimate => 'Seleziona stima finale';
+
+  @override
+  String get estimationFinalEstimate => 'Stima finale';
+
+  @override
+  String get eisenhowerChartTitle => 'Distribuzione Attività';
+
+  @override
+  String get quadrantLabelDo => 'Q1 - FAI';
+
+  @override
+  String get quadrantLabelPlan => 'Q2 - PIANIFICA';
+
+  @override
+  String get quadrantLabelDelegate => 'Q3 - DELEGA';
+
+  @override
+  String get quadrantLabelEliminate => 'Q4 - ELIMINA';
+
+  @override
+  String get eisenhowerNoRatedActivities => 'Nessuna attività votata';
+
+  @override
+  String get eisenhowerVoteToSeeChart =>
+      'Vota le attività per visualizzarle nel grafico';
+
+  @override
+  String get eisenhowerChartCardTitle => 'Grafico Distribuzione';
+
+  @override
+  String get raciAddColumnTitle => 'Aggiungi Colonna RACI';
+
+  @override
+  String get raciColumnType => 'Tipo';
+
+  @override
+  String get raciTypePerson => 'Persona (Partecipante)';
+
+  @override
+  String get raciTypeCustom => 'Personalizzato (Team/Altro)';
+
+  @override
+  String get raciSelectParticipant => 'Seleziona partecipante';
+
+  @override
+  String get raciColumnName => 'Nome colonna';
+
+  @override
+  String get raciColumnNameHint => 'Es.: Team Sviluppo';
+
+  @override
+  String get raciDeleteColumnTitle => 'Elimina Colonna';
+
+  @override
+  String raciDeleteColumnConfirm(String name) {
+    return 'Vuoi eliminare la colonna \'$name\'? Le assegnazioni relative verranno perse.';
+  }
+
+  @override
   String estimationOnlineParticipants(int online, int total) {
     return '$online di $total partecipanti online';
+  }
+
+  @override
+  String get estimationNewStoryTitle => 'Nuova Story';
+
+  @override
+  String get estimationStoryTitleLabel => 'Titolo *';
+
+  @override
+  String get estimationStoryTitleHint => 'Es: US-123: Come utente voglio...';
+
+  @override
+  String get estimationStoryDescriptionLabel => 'Descrizione';
+
+  @override
+  String get estimationStoryDescriptionHint =>
+      'Criteri di accettazione, note...';
+
+  @override
+  String get estimationEnterTitleAlert => 'Inserisci un titolo';
+
+  @override
+  String get estimationParticipantsHeader => 'Partecipanti';
+
+  @override
+  String get estimationRoleFacilitator => 'Facilitatore';
+
+  @override
+  String get estimationRoleVoters => 'Votanti';
+
+  @override
+  String get estimationRoleObservers => 'Osservatori';
+
+  @override
+  String get estimationYouSuffix => '(tu)';
+
+  @override
+  String get estimationDecimalTitle => 'Stima Decimale';
+
+  @override
+  String get estimationDecimalHint =>
+      'Inserisci la tua stima in giorni (es: 1.5, 2.25)';
+
+  @override
+  String get estimationQuickSelect => 'Selezione rapida:';
+
+  @override
+  String get estimationDaysSuffix => 'giorni';
+
+  @override
+  String estimationVoteValue(String value) {
+    return 'Voto: $value giorni';
+  }
+
+  @override
+  String get estimationEnterValueAlert => 'Inserisci un valore';
+
+  @override
+  String get estimationInvalidValueAlert => 'Valore non valido';
+
+  @override
+  String estimationMinAlert(double value) {
+    return 'Min: $value';
+  }
+
+  @override
+  String estimationMaxAlert(double value) {
+    return 'Max: $value';
   }
 
   @override
@@ -3924,6 +4106,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Hai raggiunto il limite massimo di sessioni di stima. Passa a Premium per crearne di più.';
 
   @override
+  String get subscriptionLimitRetrospectives =>
+      'Hai raggiunto il limite massimo di retrospettive. Passa a Premium per crearne di più.';
+
+  @override
+  String get subscriptionLimitAgileProjects =>
+      'Hai raggiunto il limite massimo di progetti Agile. Passa a Premium per crearne di più.';
+
+  @override
   String get subscriptionLimitDefault =>
       'Hai raggiunto il limite del tuo piano attuale.';
 
@@ -5191,12 +5381,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get raciTooManyInformed => 'Troppi Informed (I): considera di ridurre';
 
   @override
-  String get raciColumnName => 'Nome colonna';
-
-  @override
-  String get raciColumnNameHint => 'Es.: Team Sviluppo';
-
-  @override
   String get raciNewColumn => 'Nuova Colonna';
 
   @override
@@ -5296,13 +5480,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get votingStatusReset => 'Reset';
-
-  @override
-  String get estimationDecimalTitle => 'Stima Decimale';
-
-  @override
-  String get estimationDecimalHint =>
-      'Inserisci la tua stima in giorni (es: 1.5, 2.25)';
 
   @override
   String get estimationDecimalHintPlaceholder => 'Es: 2.5';

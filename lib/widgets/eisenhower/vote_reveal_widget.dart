@@ -217,12 +217,12 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
         children: [
           CircleAvatar(
             radius: 12,
-            backgroundColor: isDark ? Colors.blue.withValues(alpha: 0.3) : Colors.blue.withValues(alpha: 0.2),
+            backgroundColor: isDark ? Colors.green.withValues(alpha: 0.3) : Colors.green.withValues(alpha: 0.2),
             child: Text(
               voterName.isNotEmpty ? voterName[0].toUpperCase() : '?',
               style: TextStyle(
                 fontSize: 10,
-                color: isDark ? Colors.blue[300] : Colors.blue,
+                color: isDark ? Colors.green[300] : Colors.green[800],
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -452,7 +452,7 @@ class VoteRevealDialog extends StatelessWidget {
             icon: const Icon(Icons.arrow_forward, size: 18),
             label: Text(l10n.eisenhowerNextActivity),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               foregroundColor: Colors.white,
             ),
           ),

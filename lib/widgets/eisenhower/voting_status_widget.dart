@@ -43,9 +43,9 @@ class VotingStatusWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: 0.05),
+        color: Colors.green.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+        border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +56,7 @@ class VotingStatusWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.green,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -80,7 +80,7 @@ class VotingStatusWidget extends StatelessWidget {
                 '$readyCount/$totalVoters',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: allReady ? Colors.green : Colors.blue,
+                  color: allReady ? Colors.green : Colors.green,
                 ),
               ),
             ],
@@ -95,7 +95,7 @@ class VotingStatusWidget extends StatelessWidget {
               minHeight: 8,
               backgroundColor: Colors.grey[200],
               valueColor: AlwaysStoppedAnimation(
-                allReady ? Colors.green : Colors.blue,
+                allReady ? Colors.green : Colors.green,
               ),
             ),
           ),
@@ -238,14 +238,14 @@ class VotingStatusWidget extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withValues(alpha: 0.2),
+                          color: Colors.green.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
                           'Tu',
                           style: TextStyle(
                             fontSize: 10,
-                            color: Colors.blue,
+                            color: Colors.green,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -295,7 +295,7 @@ class VotingStatusWidget extends StatelessWidget {
               icon: const Icon(Icons.how_to_vote, size: 14),
               label: Text(l10n.eisenhowerVoteSubmit),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 textStyle: const TextStyle(fontSize: 11),
@@ -380,7 +380,7 @@ class VotingStatusBadge extends StatelessWidget {
         decoration: BoxDecoration(
           color: allReady
               ? Colors.green.withValues(alpha: 0.15)
-              : Colors.blue.withValues(alpha: 0.15),
+              : Colors.green.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -389,14 +389,14 @@ class VotingStatusBadge extends StatelessWidget {
             Icon(
               allReady ? Icons.check_circle : Icons.how_to_vote,
               size: 14,
-              color: allReady ? Colors.green : Colors.blue,
+              color: allReady ? Colors.green : Colors.green,
             ),
             const SizedBox(width: 4),
             Text(
               l10n.eisenhowerVotedParticipants(readyCount, totalVoters),
               style: TextStyle(
                 fontSize: 11,
-                color: allReady ? Colors.green : Colors.blue,
+                color: allReady ? Colors.green : Colors.green,
                 fontWeight: FontWeight.w500,
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/planning_poker_story_model.dart';
 import '../../models/planning_poker_session_model.dart';
 import '../../themes/app_theme.dart';
@@ -46,7 +47,9 @@ class VotingBoardWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                isRevealed ? 'Voti Rivelati' : 'Votazione in Corso',
+                isRevealed
+                    ? AppLocalizations.of(context)!.estimationVotesRevealed
+                    : AppLocalizations.of(context)!.estimationVotingInProgress,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
@@ -61,7 +64,7 @@ class VotingBoardWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  '${story.voteCount}/${voters.length} voti',
+                  AppLocalizations.of(context)!.estimationVotesCountFormatted(story.voteCount, voters.length),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,

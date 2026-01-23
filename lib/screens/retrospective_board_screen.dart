@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:agile_tools/widgets/retrospective/retro_timer_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:agile_tools/models/retrospective_model.dart';
@@ -11,6 +12,7 @@ import 'package:agile_tools/models/unified_invite_model.dart';
 import 'package:agile_tools/widgets/retrospective/action_items_table_widget.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/services/retrospective_sheets_export_service.dart';
+import 'package:agile_tools/widgets/retrospective/participant_presence_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +37,46 @@ class RetroBoardScreen extends StatefulWidget {
 
 class _RetroBoardScreenState extends State<RetroBoardScreen> {
   final RetrospectiveFirestoreService _service = RetrospectiveFirestoreService();
-  
+
+  // 🟢 Online Presence Heartbeat
+  Timer? _heartbeatTimer;
+  static const int _heartbeatIntervalSeconds = 15;
+
+  @override
+  void initState() {
+    super.initState();
+    _startHeartbeat();
+  }
+
+  @override
+  void dispose() {
+    _heartbeatTimer?.cancel();
+    _markOffline();
+    super.dispose();
+  }
+
+  /// Avvia il timer heartbeat per segnalare presenza online
+  void _startHeartbeat() {
+    // Invia heartbeat immediato all'apertura
+    _sendHeartbeat();
+
+    // Timer periodico ogni 15 secondi
+    _heartbeatTimer = Timer.periodic(
+      const Duration(seconds: _heartbeatIntervalSeconds),
+      (_) => _sendHeartbeat(),
+    );
+  }
+
+  /// Invia un heartbeat al server
+  Future<void> _sendHeartbeat() async {
+    await _service.sendHeartbeat(widget.retroId, widget.currentUserEmail);
+  }
+
+  /// Marca l'utente come offline
+  Future<void> _markOffline() async {
+    await _service.markOffline(widget.retroId, widget.currentUserEmail);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -479,10 +520,54 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   
   void _showParticipantsDialog(RetrospectiveModel retro) {
     final l10n = AppLocalizations.of(context);
+
+    // Conta partecipanti online
+    int onlineCount = 0;
+    for (final email in retro.participantEmails) {
+      if (ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence)) {
+        onlineCount++;
+      }
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n?.retroParticipantsTitle(retro.participantEmails.length) ?? 'Participants (${retro.participantEmails.length})'),
+        title: Row(
+          children: [
+            Text(l10n?.retroParticipantsTitle(retro.participantEmails.length) ?? 'Participants (${retro.participantEmails.length})'),
+            const SizedBox(width: 12),
+            // Badge online count
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$onlineCount online',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -490,10 +575,35 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
             itemCount: retro.participantEmails.length,
             itemBuilder: (context, index) {
               final email = retro.participantEmails[index];
+              final isOnline = ParticipantPresenceIndicator.isParticipantOnline(
+                email,
+                retro.participantPresence,
+              );
+
               return ListTile(
-                leading: CircleAvatar(child: Text(email[0].toUpperCase())),
+                leading: ParticipantAvatarWithPresence(
+                  email: email,
+                  isOnline: isOnline,
+                  avatarRadius: 20,
+                ),
                 title: Text(email.split('@').first),
                 subtitle: Text(email),
+                trailing: isOnline
+                    ? const Text(
+                        'Online',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    : Text(
+                        'Offline',
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 12,
+                        ),
+                      ),
               );
             },
           ),

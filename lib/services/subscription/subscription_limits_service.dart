@@ -79,36 +79,84 @@ class SubscriptionLimitsService {
       return snapshot.count ?? 0;
     } catch (e) {
       // Fallback per backward compatibility (documenti senza isArchived)
-      final snapshot = await _firestore
-          .collection('eisenhower_matrices')
-          .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      try {
+        final snapshot = await _firestore
+            .collection('eisenhower_matrices')
+            .where('createdBy', isEqualTo: userEmail.toLowerCase())
+            .count()
+            .get();
+        return snapshot.count ?? 0;
+      } catch (e2) {
+        // Blocca creazione in caso di errore (safety measure)
+        return 999;
+      }
     }
   }
 
   /// Conta le sessioni Estimation Room attive dell'utente
-  /// Esclude le sessioni archiviate e completate
+  /// Esclude le sessioni archiviate, completate e quelle con tutte le storie stimate
+  /// Una sessione conta verso il limite solo se ha storie ancora da stimare
+  /// Usa participantEmails (sempre lowercase) per trovare sessioni dell'utente,
+  /// poi filtra client-side per createdBy (case-insensitive) per contare solo le proprie
   Future<int> countEstimationSessions(String userEmail) async {
+    final emailLower = userEmail.toLowerCase();
     try {
+      // Query tramite participantEmails (sempre stored in lowercase)
+      // Questo trova sia sessioni vecchie (createdBy mixed case) che nuove (lowercase)
       final snapshot = await _firestore
           .collection('planning_poker_sessions')
-          .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .where('status', whereIn: ['draft', 'active'])
-          .where('isArchived', isEqualTo: false)
-          .count()
+          .where('participantEmails', arrayContains: emailLower)
           .get();
-      return snapshot.count ?? 0;
+
+      int count = 0;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        // Filtra solo sessioni CREATE dall'utente (case-insensitive)
+        final createdBy = (data['createdBy'] as String?)?.toLowerCase() ?? '';
+        if (createdBy != emailLower) continue;
+
+        // Escludi archiviate
+        final isArchived = data['isArchived'] ?? false;
+        if (isArchived == true) continue;
+
+        // Escludi completate
+        final status = data['status'] ?? '';
+        if (status == 'completed') continue;
+
+        // Sessione conta verso il limite se ha storie ancora da stimare
+        final storyCount = data['storyCount'] ?? 0;
+        final completedStoryCount = data['completedStoryCount'] ?? 0;
+        if (storyCount == 0 || storyCount > completedStoryCount) {
+          count++;
+        }
+      }
+      return count;
     } catch (e) {
-      // Fallback per backward compatibility (documenti senza isArchived)
-      final snapshot = await _firestore
-          .collection('planning_poker_sessions')
-          .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .where('status', whereIn: ['draft', 'active'])
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      // Fallback: query diretta per createdBy lowercase
+      try {
+        final snapshot = await _firestore
+            .collection('planning_poker_sessions')
+            .where('createdBy', isEqualTo: emailLower)
+            .get();
+
+        int count = 0;
+        for (final doc in snapshot.docs) {
+          final data = doc.data();
+          final isArchived = data['isArchived'] ?? false;
+          if (isArchived == true) continue;
+          final status = data['status'] ?? '';
+          if (status == 'completed') continue;
+          final storyCount = data['storyCount'] ?? 0;
+          final completedStoryCount = data['completedStoryCount'] ?? 0;
+          if (storyCount == 0 || storyCount > completedStoryCount) {
+            count++;
+          }
+        }
+        return count;
+      } catch (e2) {
+        // Blocca creazione in caso di errore (safety measure)
+        return 999;
+      }
     }
   }
 
@@ -123,33 +171,67 @@ class SubscriptionLimitsService {
           .get();
       return snapshot.count ?? 0;
     } catch (e) {
-      // Collection potrebbe non esistere
-      return 0;
-    }
-  }
-
-  /// Conta le liste Smart Todo dell'utente (attive = non archiviate)
-  /// Esclude le liste archiviate
-  Future<int> countSmartTodoLists(String userEmail) async {
-    try {
-      final snapshot = await _firestore
-          .collection('smart_todo_lists')
-          .where('ownerId', isEqualTo: userEmail.toLowerCase())
-          .where('isArchived', isEqualTo: false)
-          .count()
-          .get();
-      return snapshot.count ?? 0;
-    } catch (e) {
-      // Fallback per backward compatibility (documenti senza isArchived)
+      // Fallback senza isArchived per backward compatibility
       try {
         final snapshot = await _firestore
-            .collection('smart_todo_lists')
-            .where('ownerId', isEqualTo: userEmail.toLowerCase())
+            .collection('retrospectives')
+            .where('createdBy', isEqualTo: userEmail.toLowerCase())
             .count()
             .get();
         return snapshot.count ?? 0;
       } catch (e2) {
-        return 0;
+        // Blocca creazione in caso di errore (safety measure)
+        return 999;
+      }
+    }
+  }
+
+  /// Conta le liste Smart Todo dell'utente (attive = non archiviate)
+  /// Usa participantEmails (sempre lowercase) per trovare liste dell'utente,
+  /// poi filtra client-side per ownerId (case-insensitive) per contare solo le proprie
+  Future<int> countSmartTodoLists(String userEmail) async {
+    final emailLower = userEmail.toLowerCase();
+    try {
+      // Query tramite participantEmails (sempre stored in lowercase)
+      final snapshot = await _firestore
+          .collection('smart_todo_lists')
+          .where('participantEmails', arrayContains: emailLower)
+          .get();
+
+      int count = 0;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        // Filtra solo liste CREATE dall'utente (case-insensitive)
+        final ownerId = (data['ownerId'] as String?)?.toLowerCase() ?? '';
+        final ownerEmail = (data['ownerEmail'] as String?)?.toLowerCase() ?? '';
+        if (ownerId != emailLower && ownerEmail != emailLower) continue;
+
+        // Escludi archiviate
+        final isArchived = data['isArchived'] ?? false;
+        if (isArchived == true) continue;
+
+        count++;
+      }
+      return count;
+    } catch (e) {
+      // Fallback: query diretta per ownerId
+      try {
+        final snapshot = await _firestore
+            .collection('smart_todo_lists')
+            .where('ownerId', isEqualTo: emailLower)
+            .get();
+
+        int count = 0;
+        for (final doc in snapshot.docs) {
+          final data = doc.data();
+          final isArchived = data['isArchived'] ?? false;
+          if (isArchived == true) continue;
+          count++;
+        }
+        return count;
+      } catch (e2) {
+        // Blocca creazione in caso di errore (safety measure)
+        return 999;
       }
     }
   }
@@ -361,7 +443,8 @@ class SubscriptionLimitsService {
             .get();
         return snapshot.count ?? 0;
       } catch (e2) {
-        return 0;
+        // Blocca creazione in caso di errore (safety measure)
+        return 999;
       }
     }
   }

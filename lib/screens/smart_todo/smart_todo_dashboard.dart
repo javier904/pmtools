@@ -8,6 +8,8 @@ import '../../themes/app_colors.dart';
 import 'smart_todo_detail_screen.dart';
 import 'smart_todo_global_view.dart';
 import '../../widgets/home/favorite_star.dart';
+import '../../services/subscription/subscription_limits_service.dart';
+import '../../widgets/subscription/limit_reached_dialog.dart';
 
 class SmartTodoDashboard extends StatefulWidget {
   const SmartTodoDashboard({super.key});
@@ -19,6 +21,7 @@ class SmartTodoDashboard extends StatefulWidget {
 class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   final SmartTodoService _todoService = SmartTodoService();
   final AuthService _authService = AuthService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
   
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String _viewMode = 'lists'; // 'lists', 'global'
@@ -452,7 +455,20 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _showCreateListDialog() {
+  Future<void> _showCreateListDialog() async {
+    // Verifica limite liste prima di mostrare il dialog
+    final limitCheck = await _limitsService.canCreateList(_currentUserEmail);
+    if (!limitCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: limitCheck,
+          entityType: 'smart_todo',
+        );
+      }
+      return;
+    }
+
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
     final l10n = AppLocalizations.of(context);

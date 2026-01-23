@@ -12,6 +12,8 @@ import 'package:agile_tools/models/sprint_model.dart';
 import 'package:agile_tools/services/agile_firestore_service.dart';
 import '../../themes/app_colors.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
+import 'package:agile_tools/services/subscription/subscription_limits_service.dart';
+import 'package:agile_tools/widgets/subscription/limit_reached_dialog.dart';
 
 class RetroGlobalDashboard extends StatefulWidget {
   const RetroGlobalDashboard({Key? key}) : super(key: key);
@@ -22,6 +24,7 @@ class RetroGlobalDashboard extends StatefulWidget {
 
 class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   final RetrospectiveFirestoreService _retroService = RetrospectiveFirestoreService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
   final TextEditingController _searchController = TextEditingController();
   RetroStatus? _selectedFilter; // null = All
   bool _showArchived = false;
@@ -339,7 +342,23 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
     }
   }
 
-  void _showCreateStandaloneDialog() {
+  Future<void> _showCreateStandaloneDialog() async {
+    // Verifica limite retrospettive prima di mostrare il dialog
+    final limitCheck = await _limitsService.canCreateProject(
+      _currentUserEmail,
+      entityType: 'retrospective',
+    );
+    if (!limitCheck.allowed) {
+      if (mounted) {
+        LimitReachedDialog.show(
+          context: context,
+          limitResult: limitCheck,
+          entityType: 'retrospective',
+        );
+      }
+      return;
+    }
+
     final titleController = TextEditingController();
     RetroTemplate selectedTemplate = RetroTemplate.startStopContinue;
     RetroIcebreaker selectedIcebreaker = RetroIcebreaker.sentiment;

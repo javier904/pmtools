@@ -1101,13 +1101,13 @@ abstract class AppLocalizations {
   /// No description provided for @eisenhowerUrgency.
   ///
   /// In it, this message translates to:
-  /// **'Urgenza'**
+  /// **'URGENZA'**
   String get eisenhowerUrgency;
 
   /// No description provided for @eisenhowerImportance.
   ///
   /// In it, this message translates to:
-  /// **'Importanza'**
+  /// **'IMPORTANZA'**
   String get eisenhowerImportance;
 
   /// No description provided for @eisenhowerUrgencyShort.
@@ -1398,6 +1398,12 @@ abstract class AppLocalizations {
   /// **'Modalita di Stima'**
   String get sessionEstimationMode;
 
+  /// No description provided for @sessionEstimationModeLocked.
+  ///
+  /// In it, this message translates to:
+  /// **'Non è possibile cambiare modalità dopo l\'avvio della votazione'**
+  String get sessionEstimationModeLocked;
+
   /// No description provided for @sessionAutoReveal.
   ///
   /// In it, this message translates to:
@@ -1593,7 +1599,7 @@ abstract class AppLocalizations {
   /// No description provided for @estimationModeTshirt.
   ///
   /// In it, this message translates to:
-  /// **'T-Shirt Sizes'**
+  /// **'Taglie T-Shirt'**
   String get estimationModeTshirt;
 
   /// No description provided for @estimationModeDecimal.
@@ -1626,11 +1632,335 @@ abstract class AppLocalizations {
   /// **'Five Fingers'**
   String get estimationModeFiveFingers;
 
+  /// No description provided for @estimationVotesRevealed.
+  ///
+  /// In it, this message translates to:
+  /// **'Voti Rivelati'**
+  String get estimationVotesRevealed;
+
+  /// No description provided for @estimationVotingInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'Votazione in Corso'**
+  String get estimationVotingInProgress;
+
+  /// No description provided for @estimationVotesCountFormatted.
+  ///
+  /// In it, this message translates to:
+  /// **'{count}/{total} voti'**
+  String estimationVotesCountFormatted(int count, int total);
+
+  /// No description provided for @estimationConsensusReached.
+  ///
+  /// In it, this message translates to:
+  /// **'Consenso raggiunto!'**
+  String get estimationConsensusReached;
+
+  /// No description provided for @estimationVotingResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Risultati Votazione'**
+  String get estimationVotingResults;
+
+  /// No description provided for @estimationRevote.
+  ///
+  /// In it, this message translates to:
+  /// **'Rivota'**
+  String get estimationRevote;
+
+  /// No description provided for @estimationAverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get estimationAverage;
+
+  /// No description provided for @estimationAverageTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Media aritmetica dei voti numerici'**
+  String get estimationAverageTooltip;
+
+  /// No description provided for @estimationMedian.
+  ///
+  /// In it, this message translates to:
+  /// **'Mediana'**
+  String get estimationMedian;
+
+  /// No description provided for @estimationMedianTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore centrale quando i voti sono ordinati'**
+  String get estimationMedianTooltip;
+
+  /// No description provided for @estimationMode.
+  ///
+  /// In it, this message translates to:
+  /// **'Moda'**
+  String get estimationMode;
+
+  /// No description provided for @estimationModeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto più frequente (il valore scelto più volte)'**
+  String get estimationModeTooltip;
+
+  /// No description provided for @estimationVoters.
+  ///
+  /// In it, this message translates to:
+  /// **'Votanti'**
+  String get estimationVoters;
+
+  /// No description provided for @estimationVotersTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Numero totale di partecipanti che hanno votato'**
+  String get estimationVotersTooltip;
+
+  /// No description provided for @estimationVoteDistribution.
+  ///
+  /// In it, this message translates to:
+  /// **'Distribuzione voti'**
+  String get estimationVoteDistribution;
+
+  /// No description provided for @estimationSelectFinalEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona stima finale'**
+  String get estimationSelectFinalEstimate;
+
+  /// No description provided for @estimationFinalEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima finale'**
+  String get estimationFinalEstimate;
+
+  /// No description provided for @eisenhowerChartTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Distribuzione Attività'**
+  String get eisenhowerChartTitle;
+
+  /// No description provided for @quadrantLabelDo.
+  ///
+  /// In it, this message translates to:
+  /// **'Q1 - FAI'**
+  String get quadrantLabelDo;
+
+  /// No description provided for @quadrantLabelPlan.
+  ///
+  /// In it, this message translates to:
+  /// **'Q2 - PIANIFICA'**
+  String get quadrantLabelPlan;
+
+  /// No description provided for @quadrantLabelDelegate.
+  ///
+  /// In it, this message translates to:
+  /// **'Q3 - DELEGA'**
+  String get quadrantLabelDelegate;
+
+  /// No description provided for @quadrantLabelEliminate.
+  ///
+  /// In it, this message translates to:
+  /// **'Q4 - ELIMINA'**
+  String get quadrantLabelEliminate;
+
+  /// No description provided for @eisenhowerNoRatedActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività votata'**
+  String get eisenhowerNoRatedActivities;
+
+  /// No description provided for @eisenhowerVoteToSeeChart.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota le attività per visualizzarle nel grafico'**
+  String get eisenhowerVoteToSeeChart;
+
+  /// No description provided for @eisenhowerChartCardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Grafico Distribuzione'**
+  String get eisenhowerChartCardTitle;
+
+  /// No description provided for @raciAddColumnTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Colonna RACI'**
+  String get raciAddColumnTitle;
+
+  /// No description provided for @raciColumnType.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo'**
+  String get raciColumnType;
+
+  /// No description provided for @raciTypePerson.
+  ///
+  /// In it, this message translates to:
+  /// **'Persona (Partecipante)'**
+  String get raciTypePerson;
+
+  /// No description provided for @raciTypeCustom.
+  ///
+  /// In it, this message translates to:
+  /// **'Personalizzato (Team/Altro)'**
+  String get raciTypeCustom;
+
+  /// No description provided for @raciSelectParticipant.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona partecipante'**
+  String get raciSelectParticipant;
+
+  /// No description provided for @raciColumnName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome colonna'**
+  String get raciColumnName;
+
+  /// No description provided for @raciColumnNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Es.: Team Sviluppo'**
+  String get raciColumnNameHint;
+
+  /// No description provided for @raciDeleteColumnTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Colonna'**
+  String get raciDeleteColumnTitle;
+
+  /// No description provided for @raciDeleteColumnConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare la colonna \'{name}\'? Le assegnazioni relative verranno perse.'**
+  String raciDeleteColumnConfirm(String name);
+
   /// No description provided for @estimationOnlineParticipants.
   ///
   /// In it, this message translates to:
   /// **'{online} di {total} partecipanti online'**
   String estimationOnlineParticipants(int online, int total);
+
+  /// No description provided for @estimationNewStoryTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Story'**
+  String get estimationNewStoryTitle;
+
+  /// No description provided for @estimationStoryTitleLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo *'**
+  String get estimationStoryTitleLabel;
+
+  /// No description provided for @estimationStoryTitleHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Es: US-123: Come utente voglio...'**
+  String get estimationStoryTitleHint;
+
+  /// No description provided for @estimationStoryDescriptionLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get estimationStoryDescriptionLabel;
+
+  /// No description provided for @estimationStoryDescriptionHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Criteri di accettazione, note...'**
+  String get estimationStoryDescriptionHint;
+
+  /// No description provided for @estimationEnterTitleAlert.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un titolo'**
+  String get estimationEnterTitleAlert;
+
+  /// No description provided for @estimationParticipantsHeader.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipanti'**
+  String get estimationParticipantsHeader;
+
+  /// No description provided for @estimationRoleFacilitator.
+  ///
+  /// In it, this message translates to:
+  /// **'Facilitatore'**
+  String get estimationRoleFacilitator;
+
+  /// No description provided for @estimationRoleVoters.
+  ///
+  /// In it, this message translates to:
+  /// **'Votanti'**
+  String get estimationRoleVoters;
+
+  /// No description provided for @estimationRoleObservers.
+  ///
+  /// In it, this message translates to:
+  /// **'Osservatori'**
+  String get estimationRoleObservers;
+
+  /// No description provided for @estimationYouSuffix.
+  ///
+  /// In it, this message translates to:
+  /// **'(tu)'**
+  String get estimationYouSuffix;
+
+  /// No description provided for @estimationDecimalTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima Decimale'**
+  String get estimationDecimalTitle;
+
+  /// No description provided for @estimationDecimalHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci la tua stima in giorni (es: 1.5, 2.25)'**
+  String get estimationDecimalHint;
+
+  /// No description provided for @estimationQuickSelect.
+  ///
+  /// In it, this message translates to:
+  /// **'Selezione rapida:'**
+  String get estimationQuickSelect;
+
+  /// No description provided for @estimationDaysSuffix.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni'**
+  String get estimationDaysSuffix;
+
+  /// No description provided for @estimationVoteValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto: {value} giorni'**
+  String estimationVoteValue(String value);
+
+  /// No description provided for @estimationEnterValueAlert.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un valore'**
+  String get estimationEnterValueAlert;
+
+  /// No description provided for @estimationInvalidValueAlert.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore non valido'**
+  String get estimationInvalidValueAlert;
+
+  /// No description provided for @estimationMinAlert.
+  ///
+  /// In it, this message translates to:
+  /// **'Min: {value}'**
+  String estimationMinAlert(double value);
+
+  /// No description provided for @estimationMaxAlert.
+  ///
+  /// In it, this message translates to:
+  /// **'Max: {value}'**
+  String estimationMaxAlert(double value);
 
   /// No description provided for @retroTitle.
   ///
@@ -7198,6 +7528,18 @@ abstract class AppLocalizations {
   /// **'Hai raggiunto il limite massimo di sessioni di stima. Passa a Premium per crearne di più.'**
   String get subscriptionLimitEstimations;
 
+  /// No description provided for @subscriptionLimitRetrospectives.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di retrospettive. Passa a Premium per crearne di più.'**
+  String get subscriptionLimitRetrospectives;
+
+  /// No description provided for @subscriptionLimitAgileProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite massimo di progetti Agile. Passa a Premium per crearne di più.'**
+  String get subscriptionLimitAgileProjects;
+
   /// No description provided for @subscriptionLimitDefault.
   ///
   /// In it, this message translates to:
@@ -9466,18 +9808,6 @@ abstract class AppLocalizations {
   /// **'Troppi Informed (I): considera di ridurre'**
   String get raciTooManyInformed;
 
-  /// No description provided for @raciColumnName.
-  ///
-  /// In it, this message translates to:
-  /// **'Nome colonna'**
-  String get raciColumnName;
-
-  /// No description provided for @raciColumnNameHint.
-  ///
-  /// In it, this message translates to:
-  /// **'Es.: Team Sviluppo'**
-  String get raciColumnNameHint;
-
   /// No description provided for @raciNewColumn.
   ///
   /// In it, this message translates to:
@@ -9669,18 +9999,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Reset'**
   String get votingStatusReset;
-
-  /// No description provided for @estimationDecimalTitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Stima Decimale'**
-  String get estimationDecimalTitle;
-
-  /// No description provided for @estimationDecimalHint.
-  ///
-  /// In it, this message translates to:
-  /// **'Inserisci la tua stima in giorni (es: 1.5, 2.25)'**
-  String get estimationDecimalHint;
 
   /// No description provided for @estimationDecimalHintPlaceholder.
   ///

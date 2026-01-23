@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../l10n/app_localizations.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
@@ -41,6 +42,21 @@ class _LandingScreenState extends State<LandingScreen> {
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _launchEmail(String subjectPrefix) async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'suppkesien@gmail.com',
+      query: 'subject=$subjectPrefix',
+    );
+    try {
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+      }
+    } catch (e) {
+      debugPrint('Error launching email: $e');
     }
   }
 
@@ -1948,7 +1964,49 @@ ClipRRect(
             ),
           ],
         ),
+        const SizedBox(height: 24),
+        // Support buttons
+        _buildSupportLink(
+          icon: Icons.bug_report_outlined,
+          label: l10n.localeName == 'it' ? 'Segnala Bug' : 'Report Bug',
+          onTap: () => _launchEmail(l10n.localeName == 'it' ? '[Segnalazione Bug] ' : '[Bug Report] '),
+        ),
+        const SizedBox(height: 8),
+        _buildSupportLink(
+          icon: Icons.lightbulb_outline,
+          label: l10n.localeName == 'it' ? 'Richiedi Feature' : 'Request Feature',
+          onTap: () => _launchEmail(l10n.localeName == 'it' ? '[Richiesta Feature] ' : '[Feature Request] '),
+        ),
       ],
+    );
+  }
+
+  Widget _buildSupportLink({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: context.textSecondaryColor),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: context.textSecondaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

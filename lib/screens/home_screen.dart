@@ -84,6 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _searchQuery = query;
       _isLoading = true;
+    });
+
     final user = _authService.currentUser;
     if (user != null) {
       final results = await _searchService.search(

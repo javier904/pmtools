@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/app_localizations.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 
@@ -52,23 +53,23 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
   void _validateAndSubmit() {
     final text = _controller.text.trim().replaceAll(',', '.');
     if (text.isEmpty) {
-      setState(() => _errorText = 'Inserisci un valore');
+      setState(() => _errorText = AppLocalizations.of(context)!.estimationEnterValueAlert);
       return;
     }
 
     final value = double.tryParse(text);
     if (value == null) {
-      setState(() => _errorText = 'Valore non valido');
+      setState(() => _errorText = AppLocalizations.of(context)!.estimationInvalidValueAlert);
       return;
     }
 
     if (widget.minValue != null && value < widget.minValue!) {
-      setState(() => _errorText = 'Min: ${widget.minValue}');
+      setState(() => _errorText = AppLocalizations.of(context)!.estimationMinAlert(widget.minValue!));
       return;
     }
 
     if (widget.maxValue != null && value > widget.maxValue!) {
-      setState(() => _errorText = 'Max: ${widget.maxValue}');
+      setState(() => _errorText = AppLocalizations.of(context)!.estimationMaxAlert(widget.maxValue!));
       return;
     }
 
@@ -81,6 +82,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -106,7 +108,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
               const Icon(Icons.calculate, color: AppColors.warning),
               const SizedBox(width: 8),
               Text(
-                'Stima Decimale',
+                l10n.estimationDecimalTitle,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -117,7 +119,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Inserisci la tua stima in giorni (es: 1.5, 2.25)',
+            l10n.estimationDecimalHint,
             style: TextStyle(
               color: context.textSecondaryColor,
               fontSize: 13,
@@ -145,7 +147,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
                       horizontal: 16,
                       vertical: 12,
                     ),
-                    suffixText: 'giorni',
+                    suffixText: l10n.estimationDaysSuffix,
                   ),
                   onSubmitted: (_) => _validateAndSubmit(),
                 ),
@@ -179,7 +181,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
                   const Icon(Icons.check_circle, color: AppColors.success, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'Voto: ${_currentValue!.toStringAsFixed(2)} giorni',
+                    l10n.estimationVoteValue(_currentValue!.toStringAsFixed(2)),
                     style: const TextStyle(
                       color: AppColors.success,
                       fontWeight: FontWeight.w500,
@@ -192,7 +194,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
           // Quick select buttons
           const SizedBox(height: 16),
           Text(
-            'Selezione rapida:',
+            l10n.estimationQuickSelect,
             style: TextStyle(
               fontSize: 12,
               color: context.textTertiaryColor,

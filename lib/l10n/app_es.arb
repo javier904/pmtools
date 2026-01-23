@@ -265,6 +265,7 @@
   "cardSetFibonacci": "Fibonacci (0, 1, 2, 3, 5, 8, 13, 20, 40, 100, ?, ?)",
   "cardSetSimplified": "Simplificado (1, 2, 3, 5, 8, 13, ?, ?)",
   "sessionEstimationMode": "Modo de Estimación",
+  "sessionEstimationModeLocked": "No se puede cambiar el modo después de iniciar la votación",
   "sessionAutoReveal": "Revelar automáticamente",
   "sessionAutoRevealDesc": "Revelar cuando todos voten",
   "sessionAllowObservers": "Observadores",
@@ -304,7 +305,97 @@
   "estimationModeDotVoting": "Votación por Puntos",
   "estimationModeBucketSystem": "Sistema de Cubos",
   "estimationModeFiveFingers": "Cinco Dedos",
+  "estimationNewStoryTitle": "Nueva Historia",
+  "estimationStoryTitleLabel": "Título *",
+  "estimationStoryTitleHint": "Ej: HU-123: Como usuario quiero...",
+  "estimationStoryDescriptionLabel": "Descripción",
+  "estimationStoryDescriptionHint": "Criterios de aceptación, notas...",
+  "estimationEnterTitleAlert": "Introduce un título",
+  "estimationParticipantsHeader": "Participantes",
+  "estimationRoleFacilitator": "Facilitador",
+  "estimationRoleVoters": "Votantes",
+  "estimationRoleObservers": "Observadores",
+  "estimationYouSuffix": "(tú)",
+  "estimationDecimalTitle": "Estimación Decimal",
+  "estimationDecimalHint": "Introduce tu estimación en días (ej: 1.5, 2.25)",
+  "estimationQuickSelect": "Selección rápida:",
+  "estimationDaysSuffix": "días",
+  "estimationVoteValue": "Voto: {value} días",
+  "@estimationVoteValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationEnterValueAlert": "Introduce un valor",
+  "estimationInvalidValueAlert": "Valor inválido",
+  "estimationMinAlert": "Mín: {value}",
+  "@estimationMinAlert": {
+    "placeholders": {
+      "value": {
+        "type": "double"
+      }
+    }
+  },
+  "estimationMaxAlert": "Máx: {value}",
+  "@estimationMaxAlert": {
+    "placeholders": {
+      "value": {
+        "type": "double"
+      }
+    }
+  },
+  "estimationVotesRevealed": "Votos Revelados",
+  "estimationVotingInProgress": "Votación en Curso",
+  "estimationVotesCountFormatted": "{count}/{total} votos",
+  "@estimationVotesCountFormatted": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "estimationConsensusReached": "¡Consenso alcanzado!",
+  "estimationVotingResults": "Resultados de la Votación",
+  "estimationRevote": "Votar de nuevo",
+  "estimationAverage": "Promedio",
+  "estimationAverageTooltip": "Media aritmética de los votos numéricos",
+  "estimationMedian": "Mediana",
+  "estimationMedianTooltip": "Valor central cuando los votos están ordenados",
+  "estimationMode": "Moda",
+  "estimationModeTooltip": "Voto más frecuente (el valor elegido más veces)",
+  "estimationVoters": "Votantes",
+  "estimationVotersTooltip": "Número total de participantes",
+  "estimationVoteDistribution": "Distribución de Votos",
+  "estimationSelectFinalEstimate": "Seleccionar Estimación Final",
+  "estimationFinalEstimate": "Estimación Final",
   "estimationOnlineParticipants": "{online} de {total} participantes en línea",
+  "eisenhowerChartTitle": "Distribución de Actividades",
+  "eisenhowerImportance": "IMPORTANCIA",
+  "eisenhowerUrgency": "URGENCIA",
+  "quadrantLabelDo": "Q1 - HACER",
+  "quadrantLabelPlan": "Q2 - PLANIFICAR",
+  "quadrantLabelDelegate": "Q3 - DELEGAR",
+  "quadrantLabelEliminate": "Q4 - ELIMINAR",
+  "eisenhowerNoRatedActivities": "Sin actividades votadas",
+  "eisenhowerVoteToSeeChart": "Vota actividades para verlas en el gráfico",
+  "eisenhowerChartCardTitle": "Gráfico de Distribución",
+  "raciAddColumnTitle": "Añadir Columna RACI",
+  "raciColumnType": "Tipo",
+  "raciTypePerson": "Persona (Participante)",
+  "raciTypeCustom": "Personalizado (Equipo/Otro)",
+  "raciSelectParticipant": "Seleccionar participante",
+  "raciColumnName": "Nombre de la Columna",
+  "raciColumnNameHint": "Ej. Equipo Legal",
+  "raciDeleteColumnTitle": "Eliminar Columna",
+  "raciDeleteColumnConfirm": "¿Eliminar columna '{name}'? Se perderán las asignaciones.",
+  "@raciDeleteColumnConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "@estimationOnlineParticipants": {
     "placeholders": {
       "online": {
@@ -1750,6 +1841,8 @@
   "subscriptionLimitTasks": "Has alcanzado el número máximo de tareas para este proyecto. Mejora a Premium para añadir más tareas.",
   "subscriptionLimitInvites": "Has alcanzado el número máximo de invitaciones para este proyecto. Mejora a Premium para invitar a más personas.",
   "subscriptionLimitEstimations": "Has alcanzado el número máximo de sesiones de estimación. Mejora a Premium para crear más.",
+  "subscriptionLimitRetrospectives": "Has alcanzado el número máximo de retrospectivas. Mejora a Premium para crear más.",
+  "subscriptionLimitAgileProjects": "Has alcanzado el número máximo de proyectos Agile. Mejora a Premium para crear más.",
   "subscriptionLimitDefault": "Has alcanzado el límite de tu plan actual.",
   "subscriptionCurrentUsage": "Uso actual",
   "subscriptionUpgradeToPremium": "Mejorar a Premium",

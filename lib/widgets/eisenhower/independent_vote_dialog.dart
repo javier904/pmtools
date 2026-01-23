@@ -59,7 +59,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.how_to_vote, color: Colors.blue),
+          const Icon(Icons.how_to_vote, color: Colors.green),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -90,14 +90,14 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 16,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.green,
                     child: Text(
                       widget.voterName.isNotEmpty
                           ? widget.voterName[0].toUpperCase()
@@ -163,7 +163,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
           icon: const Icon(Icons.check),
           label: const Text('Conferma Voto'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
             foregroundColor: Colors.white,
           ),
         ),

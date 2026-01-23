@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Dialog per creare una nuova story
 class StoryFormDialog extends StatefulWidget {
@@ -21,8 +22,9 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Nuova Story'),
+      title: Text(l10n.estimationNewStoryTitle),
       content: SizedBox(
         width: 450,
         child: Column(
@@ -30,20 +32,20 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Titolo *',
-                hintText: 'Es: US-123: Come utente voglio...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.estimationStoryTitleLabel,
+                hintText: l10n.estimationStoryTitleHint,
+                border: const OutlineInputBorder(),
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Descrizione',
-                hintText: 'Criteri di accettazione, note...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.estimationStoryDescriptionLabel,
+                hintText: l10n.estimationStoryDescriptionHint,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 4,
             ),
@@ -53,13 +55,13 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton(
           onPressed: () {
             if (_titleController.text.trim().isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Inserisci un titolo')),
+                SnackBar(content: Text(l10n.estimationEnterTitleAlert)),
               );
               return;
             }
@@ -68,8 +70,11 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
               'description': _descriptionController.text.trim(),
             });
           },
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: const Text('Aggiungi'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.amber,
+            foregroundColor: Colors.white,
+          ),
+          child: Text(l10n.actionAdd),
         ),
       ],
     );
