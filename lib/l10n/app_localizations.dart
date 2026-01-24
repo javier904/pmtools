@@ -4762,6 +4762,18 @@ abstract class AppLocalizations {
   /// **'Ordinamento'**
   String get smartTodoSortBy;
 
+  /// No description provided for @smartTodoSortDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Recenti'**
+  String get smartTodoSortDate;
+
+  /// No description provided for @smartTodoSortManual.
+  ///
+  /// In it, this message translates to:
+  /// **'Manuale'**
+  String get smartTodoSortManual;
+
   /// No description provided for @smartTodoColumnSortTitle.
   ///
   /// In it, this message translates to:

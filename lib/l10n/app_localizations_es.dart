@@ -2543,6 +2543,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get smartTodoSortBy => 'Ordenar por';
 
   @override
+  String get smartTodoSortDate => 'Recientes';
+
+  @override
+  String get smartTodoSortManual => 'Manual';
+
+  @override
   String get smartTodoColumnSortTitle => 'Ordenar Columna';
 
   @override

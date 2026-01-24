@@ -45,7 +45,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   TodoViewMode? _viewMode = TodoViewMode.kanban;
   final TextEditingController _searchController = TextEditingController();
   List<String>? _assigneeFilters;
-  bool _filterToday = false; // New state
+  bool _filterToday = false; 
+  bool _sortByDate = false; // Default: Manual/Global Rank
   
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
@@ -242,6 +243,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      return dueDay.isAtSameMomentAs(today) || dueDay.isBefore(today);
                   }).toList();
                 }
+
+                // Sorting (Client-side override)
+                if (_sortByDate) {
+                  tasks.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+                }
+                // Else: Service already provides 'position' sort by default
+
   
                 // Defensive check for hot reload and null state
                 final TodoViewMode safeMode = _viewMode ?? TodoViewMode.kanban; 
@@ -263,7 +271,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       list: currentList,
                       tasks: tasks,
                       onTaskTap: (t) => _editTask(t, currentList),
-                      onTaskMoved: (t, s) => _handleTaskMoved(t, s, currentList),
+                      onTaskMoved: (t, s, [pos]) => _handleTaskMoved(t, s, currentList, pos), // Supports reorder
                       onAssigneeChanged: (t, u) => _handleAssigneeChanged(t, u, currentList),
                     );
                     break;
@@ -402,40 +410,72 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
              
              const SizedBox(width: 12),
              
-             // Today Filter Toggle
+              // Today Filter Toggle
+              InkWell(
+                onTap: () => setState(() => _filterToday = !_filterToday),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: !_filterToday ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: !_filterToday ? (isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)) : Colors.orange.withOpacity(0.3)
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today, 
+                        size: 16, 
+                        color: !_filterToday ? (isDark ? Colors.grey[400] : Colors.grey) : Colors.orange[800]
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        AppLocalizations.of(context)?.smartTodoFilterToday ?? "Today",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: !_filterToday ? (isDark ? Colors.grey[300] : Colors.black) : Colors.orange[800],
+                          fontWeight: !_filterToday ? FontWeight.normal : FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+             const SizedBox(width: 12),
+             
+             // Sort Toggle (Manual / Date)
              InkWell(
-               onTap: () => setState(() => _filterToday = !_filterToday),
+               onTap: () => setState(() => _sortByDate = !_sortByDate),
                borderRadius: BorderRadius.circular(20),
                child: Container(
                  padding: const EdgeInsets.symmetric(horizontal: 16),
                  height: 40,
                  decoration: BoxDecoration(
-                   color: !_filterToday ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.orange.withOpacity(0.1),
+                   color: isDark ? const Color(0xFF1E2633) : Colors.white,
                    borderRadius: BorderRadius.circular(20),
-                   border: Border.all(
-                     color: !_filterToday ? (isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)) : Colors.orange.withOpacity(0.3)
-                   ),
+                   border: Border.all(color: isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)),
                  ),
                  child: Row(
                    children: [
                      Icon(
-                       Icons.calendar_today, 
+                       _sortByDate ? Icons.access_time : Icons.sort, 
                        size: 16, 
-                       color: !_filterToday ? (isDark ? Colors.grey[400] : Colors.grey) : Colors.orange[800]
+                       color: isDark ? Colors.grey[400] : Colors.grey
                      ),
                      const SizedBox(width: 8),
                      Text(
-                       AppLocalizations.of(context)?.smartTodoFilterToday ?? "Today",
+                       _sortByDate 
+                         ? (AppLocalizations.of(context)?.smartTodoSortDate ?? "Recent")
+                         : (AppLocalizations.of(context)?.smartTodoSortManual ?? "Manual"),
                        style: TextStyle(
                          fontSize: 14,
-                         color: !_filterToday ? (isDark ? Colors.grey[300] : Colors.black) : Colors.orange[800],
-                         fontWeight: !_filterToday ? FontWeight.normal : FontWeight.bold,
+                         color: isDark ? Colors.grey[300] : Colors.black,
                        ),
                      ),
-                     if (_filterToday) ...[
-                        const SizedBox(width: 6),
-                        Icon(Icons.close, size: 14, color: Colors.orange[800]),
-                     ],
                    ],
                  ),
                ),
@@ -449,6 +489,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   void _handleTaskMoved(TodoTaskModel task, String newStatusId, TodoListModel currentList, [double? newPosition]) {
     if (!_canEditTask(task, currentList)) return;
     
+    // If only position changed (reorder in resource view)
+    if (newStatusId.isEmpty && newPosition != null) {
+      _todoService.updateTaskPosition(currentList.id, task.id, newPosition);
+      return;
+    }
+
     var updatedTask = task.copyWith(statusId: newStatusId);
     if (newPosition != null) {
       updatedTask = updatedTask.copyWith(position: newPosition);

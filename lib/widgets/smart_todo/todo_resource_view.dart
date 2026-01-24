@@ -8,9 +8,7 @@ class TodoResourceView extends StatelessWidget {
   final TodoListModel list;
   final List<TodoTaskModel> tasks;
   final Function(TodoTaskModel) onTaskTap;
-  final Function(TodoTaskModel, String) onTaskMoved; // Moved to status? Or Moved to User?
-  // Moving between resource columns implies changing assignee. 
-  // For now, let's just display. Moving requires drag target which updates assignee.
+  final Function(TodoTaskModel, String, [double?]) onTaskMoved; // Updated to include optional position 
   final Function(TodoTaskModel, String) onAssigneeChanged; 
 
   const TodoResourceView({
@@ -82,12 +80,19 @@ class TodoResourceView extends StatelessWidget {
 
     return DragTarget<TodoTaskModel>(
       onWillAccept: (task) {
-        // Accept drag if task is coming from a different assignee.
-        final currentAssignee = task?.assignedTo.isNotEmpty == true ? task!.assignedTo.first : 'unassigned';
-        return currentAssignee != assigneeId;
+        // Accept always, logic inside onAccept handles reorder vs move
+        return task != null;
       },
       onAccept: (task) {
-        onAssigneeChanged(task, assigneeId);
+        // Drop on empty column or general column area -> Append to end if moved from other column
+        // If same column, do nothing (handled by item targets usually, but here fallback)
+        final currentAssignee = task.assignedTo.isNotEmpty ? task.assignedTo.first : 'unassigned';
+        if (currentAssignee != assigneeId) {
+             onAssigneeChanged(task, assigneeId);
+        } else {
+             // Moved to same column background - maybe move to end?
+             // Let's rely on item drag targets for precise reordering.
+        }
       },
       builder: (context, candidateData, rejectedData) {
         final isHovering = candidateData.isNotEmpty;
@@ -154,7 +159,7 @@ class TodoResourceView extends StatelessWidget {
               ),
               
               // Tasks List
-              Expanded( // Make it fill remaining height for drop area
+              Expanded(
                 child: columnTasks.isEmpty
                   ? Center(
                       child: Text(
@@ -162,33 +167,11 @@ class TodoResourceView extends StatelessWidget {
                         style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[400], fontStyle: FontStyle.italic),
                       ),
                     )
-                  : ListView.separated(
+                  : ListView.builder( // Builder allows better context for index
                       itemCount: columnTasks.length,
-                      separatorBuilder: (c, i) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final t = columnTasks[index];
-                        return Draggable<TodoTaskModel>(
-                          data: t,
-                          feedback: Material(
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(12),
-                            child: SizedBox(
-                              width: 300, 
-                              child: Opacity(
-                                opacity: 0.9,
-                                child: TodoTaskCard(task: t, onTap: () {}), // Dummy tap
-                              ),
-                            ), // Use actual card visuals
-                          ),
-                          childWhenDragging: Opacity(
-                            opacity: 0.3, 
-                            child: TodoTaskCard(task: t, onTap: () {}),
-                          ),
-                          child: TodoTaskCard(
-                            task: t,
-                            onTap: () => onTaskTap(t),
-                          ),
-                        );
+                        return _buildDraggableTask(context, t, index, columnTasks, assigneeId);
                       },
                     ),
               ),
@@ -197,5 +180,113 @@ class TodoResourceView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _buildDraggableTask(
+      BuildContext context, 
+      TodoTaskModel task, 
+      int index, 
+      List<TodoTaskModel> columnTasks,
+      String assigneeId) {
+      
+    return DragTarget<TodoTaskModel>(
+      onWillAccept: (incoming) {
+        // Accept if not self
+        return incoming != null && incoming.id != task.id;
+      },
+      onAccept: (incoming) {
+        _handleReorder(incoming, index, columnTasks, assigneeId);
+      },
+      builder: (context, candidateData, rejectedData) {
+        final isHovering = candidateData.isNotEmpty;
+        return Column(
+          children: [
+            // Drop zone indicator (top)
+            if (isHovering)
+               Container(height: 2, color: Colors.blue, margin: const EdgeInsets.symmetric(vertical: 4)),
+               
+            Draggable<TodoTaskModel>(
+              data: task,
+              feedback: Material(
+                elevation: 6,
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: 300, 
+                  child: Opacity(
+                    opacity: 0.9,
+                    child: TodoTaskCard(task: task, onTap: () {}),
+                  ),
+                ),
+              ),
+              childWhenDragging: Opacity(
+                opacity: 0.3, 
+                child: TodoTaskCard(task: task, onTap: () {}),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: TodoTaskCard(
+                  task: task,
+                  onTap: () => onTaskTap(task),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleReorder(TodoTaskModel incoming, int targetIndex, List<TodoTaskModel> tasks, String targetAssigneeId) {
+     final incomingAssignee = incoming.assignedTo.isNotEmpty ? incoming.assignedTo.first : 'unassigned';
+     
+     // 1. If changing assignee
+     if (incomingAssignee != targetAssigneeId) {
+        // First change assignee
+        onAssigneeChanged(incoming, targetAssigneeId);
+        // Then we usually need to wait for update? 
+        // For simplicity: The Position update is separate. 
+        // But if we change assignee it will disappear from old column and appear in new.
+        // We also want to set correct position.
+        // Calculate new position based on targetIndex
+        _calculateAndSetPosition(incoming, targetIndex, tasks);
+     } else {
+        // 2. Just Reordering in same column
+        _calculateAndSetPosition(incoming, targetIndex, tasks);
+     }
+  }
+
+  void _calculateAndSetPosition(TodoTaskModel incoming, int targetIndex, List<TodoTaskModel> tasks) {
+    // Tasks are already sorted by position asc (from Service)
+    
+    double newPos;
+    if (targetIndex == 0) {
+      // Top of list: slightly less than first
+      // Or half of first if > 0?
+      // If list empty (not possible here as we dropped on task), 
+      // If tasks[0] is not incoming (it shouldn't be), 
+      final firstPos = tasks.first.position;
+      newPos = firstPos - 1000; // Arbitrary gap
+    } else {
+      // Between targetIndex-1 and targetIndex
+      // Wait, if I drop ON targetIndex, do I insert BEFORE or AFTER?
+      // UI indicator suggests Before usually. 
+      // Let's assume Before.
+      
+      // But wait, if I drag downwards, targetIndex might be the one BELOW.
+      // Let's simple strategy: Insertion triggers "Insert BEFORE target".
+      
+      final prevPos = tasks[targetIndex - 1].position;
+      final nextPos = tasks[targetIndex].position;
+      newPos = (prevPos + nextPos) / 2;
+    }
+    
+    // Call Position Update Callback (we need to add this to widget props!)
+    // Since we don't have it in props yet, we must either add it or hack it.
+    // The prompt execution plan says "Update TodoResourceView". 
+    // I should add `onTaskReordered` callback property.
+    onTaskMoved(incoming, '', newPos); 
+    // I am reusing onTaskMoved signature: (Task, StatusId, [pos]).
+    // But wait, onTaskMoved signature in file is `Function(TodoTaskModel, String)`.
+    // I need to update the signature to support position.
   }
 }

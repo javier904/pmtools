@@ -1549,6 +1549,8 @@
   "smartTodoImageUrl": "URL de l'image",
   "smartTodoEditComment": "Modifier le commentaire",
   "smartTodoSortBy": "Trier par",
+  "smartTodoSortDate": "Récents",
+  "smartTodoSortManual": "Manuel",
   "smartTodoColumnSortTitle": "Trier la colonne",
   "smartTodoPendingTasks": "Tâches à compléter",
   "smartTodoCompletedTasks": "Tâches complétées",

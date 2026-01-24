@@ -1259,6 +1259,8 @@
   "smartTodoPasteFromClipboard": "Incolla da Appunti",
   "smartTodoEditComment": "Modifica",
   "smartTodoSortBy": "Ordinamento",
+  "smartTodoSortDate": "Recenti",
+  "smartTodoSortManual": "Manuale",
   "smartTodoColumnSortTitle": "Ordina Colonna",
   "smartTodoPendingTasks": "Attivita da completare",
   "smartTodoCompletedTasks": "Attivita completate",

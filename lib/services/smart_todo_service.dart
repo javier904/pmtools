@@ -155,8 +155,13 @@ class SmartTodoService {
           final tasks = snapshot.docs
             .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
             .toList();
-          // Client-side sort by updatedAt descending
-          tasks.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+          // Client-side sort by position ascending (Mock Global Rank)
+          tasks.sort((a, b) {
+             // Default to 0 if null (though model has default)
+             final posA = a.position;
+             final posB = b.position;
+             return posA.compareTo(posB);
+          });
           return tasks;
         });
   }
@@ -177,7 +182,7 @@ class SmartTodoService {
     // Using timestamp ensures chronologial order by default for "manual" sort
     final taskWithId = task.copyWith(
       id: docRef.id,
-      position: DateTime.now().millisecondsSinceEpoch.toDouble(),
+      position: task.position != 0 ? task.position : DateTime.now().millisecondsSinceEpoch.toDouble(),
     );
 
     await docRef.set(taskWithId.toMap());
@@ -206,6 +211,16 @@ class SmartTodoService {
         .collection(_tasksSubcollection)
         .doc(task.id)
         .update(task.toMap());
+  }
+  
+  /// Aggiorna la posizione di un task (Global Rank)
+  Future<void> updateTaskPosition(String listId, String taskId, double newPosition) async {
+     await _firestore
+        .collection(_listsCollection)
+        .doc(listId)
+        .collection(_tasksSubcollection)
+        .doc(taskId)
+        .update({'position': newPosition, 'updatedAt': Timestamp.now()});
   }
 
   Future<void> deleteTask(String listId, String taskId) async {
