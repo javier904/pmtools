@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/smart_todo/todo_list_model.dart';
+import '../../models/smart_todo/todo_participant_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../services/smart_todo_service.dart';
@@ -67,6 +68,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       initialData: widget.list,
       builder: (context, listSnapshot) {
         final currentList = listSnapshot.data ?? widget.list;
+        
+        // Check if current user is pending and needs promotion (to capture DisplayName)
+        _checkAndPromoteUser(currentList);
         
         return PopScope(
           canPop: _allowPop,
@@ -326,6 +330,49 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     final newAssignees = userId == 'unassigned' ? <String>[] : [userId];
     
     _todoService.updateTask(currentList.id, task.copyWith(assignedTo: newAssignees));
+  }
+
+
+
+  void _checkAndPromoteUser(TodoListModel list) {
+    if (_currentUserEmail.isEmpty) return;
+    
+    // Check if user is in pending list
+    if (list.pendingEmails.contains(_currentUserEmail)) {
+      // User is pending. Promote to active and update DisplayName!
+      final displayName = _authService.currentUserName ?? _currentUserEmail.split('@').first;
+      
+      final participant = TodoParticipant(
+        email: _currentUserEmail,
+        displayName: displayName,
+        role: TodoParticipantRole.editor, // Default role for promoted users? Or Viewer? User requested "same as owner permissions".
+        joinedAt: DateTime.now(),
+      );
+      
+      _todoService.promotePendingToActive(list.id, participant).then((_) {
+        print('✅ User promoted to active: $_currentUserEmail with name: $displayName');
+      }).catchError((e) {
+        print('❌ Error promoting user: $e');
+      });
+    }
+    
+    // Also check if user is already active but missing DisplayName (Legacy fix)
+    // Only if it's ME (I can only update my own name ideally, or system does it)
+    else if (list.participants.containsKey(_currentUserEmail)) {
+       final me = list.participants[_currentUserEmail]!;
+       // If display name is null or empty, and we have a name now, update it.
+       if ((me.displayName == null || me.displayName!.isEmpty) && _authService.currentUserName != null) {
+          // We need a method to just update participant details. 
+          // Re-using promotePendingToActive logic partially or just manual update?
+          // promotePendingToActive handles participant map update correctly.
+          // Let's use it? No, it removes from pending. 
+          // But pending remove is safe if not present.
+          // Actually, let's create a specific update or just use promote (it does upsert on participants map).
+          
+          final updatedMe = me.copyWith(displayName: _authService.currentUserName);
+           _todoService.promotePendingToActive(list.id, updatedMe); // Updates map and ensures consistency
+       }
+    }
   }
 
   Widget _buildFilterBar(TodoListModel currentList) {

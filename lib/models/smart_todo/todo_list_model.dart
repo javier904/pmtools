@@ -86,7 +86,9 @@ class TodoListModel {
       'description': description,
       'ownerId': ownerId,
       'createdAt': createdAt.toIso8601String(),
-      'participants': participants.map((key, value) => MapEntry(key, value.toMap())),
+      // Escape email keys for Firestore Map
+      'participants': participants.map((key, value) => MapEntry(key.replaceAll('.', '_DOT_'), value.toMap())),
+      // Use clean emails for Query Array
       'columns': columns.map((c) => c.toMap()).toList(),
       'availableTags': availableTags.map((t) => t.toMap()).toList(),
       'participantEmails': participants.keys.map((e) => e.toLowerCase()).toList(),
@@ -104,7 +106,8 @@ class TodoListModel {
       ownerId: map['ownerId'] ?? '',
       createdAt: _parseDate(map['createdAt']),
       participants: (map['participants'] as Map<String, dynamic>?)?.map(
-            (key, value) => MapEntry(key, TodoParticipant.fromMap(value)),
+            // Unescape keys from Firestore
+            (key, value) => MapEntry(key.replaceAll('_DOT_', '.'), TodoParticipant.fromMap(value)),
           ) ??
           {},
       columns: (map['columns'] as List?)

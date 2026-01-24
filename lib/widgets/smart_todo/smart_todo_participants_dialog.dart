@@ -172,6 +172,9 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
     return StreamBuilder<List<UnifiedInviteModel>>(
       stream: _inviteService.streamInvitesForSource(InviteSourceType.smartTodo, widget.list.id),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red[300])));
+        }
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
         final invites = snapshot.data!;
