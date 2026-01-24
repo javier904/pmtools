@@ -1,6 +1,10 @@
 # Firebase deployment state
 .firebase/
 
+# Firebase Functions build artifacts
+functions/node_modules/
+functions/lib/
+
 # Claude Code internal files
 .claude/
 
