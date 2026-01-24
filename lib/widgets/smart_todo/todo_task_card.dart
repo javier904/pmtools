@@ -21,7 +21,10 @@ class TodoTaskCard extends StatelessWidget {
     this.onDelete,
     this.onStatusChanged,
     this.list,
+    this.showStatus = false, // Default false (Hidden in Kanban)
   });
+
+  final bool showStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -86,17 +89,17 @@ class TodoTaskCard extends StatelessWidget {
                     const SizedBox(width: 8),
 
                     // Status Pill (New)
-                    if (list != null)
+                    if (showStatus && list != null)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200],
+                          color: _getStatusColor(task.statusId).withOpacity(isDark ? 0.2 : 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          _getStatusName(task.statusId),
+                          _getStatusName(task.statusId).toUpperCase(),
                           style: TextStyle(
-                            color: isDark ? Colors.grey[300] : Colors.grey[700],
+                            color: _getStatusColor(task.statusId),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
@@ -263,16 +266,14 @@ class TodoTaskCard extends StatelessWidget {
 
                     // Attachments (Clickable Link)
                     if (task.attachments.isNotEmpty) ...[
-                      InkWell(
+                      GestureDetector(
                         onTap: () async {
-                           // Open first attachment or show list mechanism?
-                           // For now, launch first valid URL
                            final url = Uri.parse(task.attachments.first.url);
                            if (await canLaunchUrl(url)) {
                              launchUrl(url);
                            }
                         },
-                        borderRadius: BorderRadius.circular(4),
+                        behavior: HitTestBehavior.opaque,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           child: _buildMetaIcon(Icons.attach_file_rounded, '${task.attachments.length}', color: isDark ? Colors.blue[300]! : Colors.blue[600]!),
@@ -381,6 +382,15 @@ class TodoTaskCard extends StatelessWidget {
     final cleanEmail = email.replaceAll('_DOT_', '.');
     final participant = list!.participants[cleanEmail];
     return participant?.displayName ?? cleanEmail;
+  }
+
+  Color _getStatusColor(String statusId) {
+    if (list == null) return Colors.grey;
+    final column = list!.columns.firstWhere(
+      (c) => c.id == statusId,
+      orElse: () => TodoColumn(id: statusId, title: statusId, colorValue: Colors.grey.value)
+    );
+    return Color(column.colorValue);
   }
 
   String _getStatusName(String statusId) {

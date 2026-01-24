@@ -211,22 +211,23 @@ class TodoResourceView extends StatelessWidget {
                 elevation: 6,
                 borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
-                  width: 300, 
+                  width: 300,
                   child: Opacity(
                     opacity: 0.9,
-                    child: TodoTaskCard(task: task, list: list, onTap: () {}),
+                    child: TodoTaskCard(task: task, list: list, showStatus: true, onTap: () {}),
                   ),
                 ),
               ),
               childWhenDragging: Opacity(
-                opacity: 0.3, 
-                child: TodoTaskCard(task: task, list: list, onTap: () {}),
+                opacity: 0.3,
+                child: TodoTaskCard(task: task, list: list, showStatus: true, onTap: () {}),
               ),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: TodoTaskCard(
                   task: task,
                   list: list,
+                  showStatus: true,
                   onTap: () => onTaskTap(task),
                 ),
               ),
