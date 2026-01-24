@@ -78,6 +78,7 @@ class TodoListModel {
   final List<TodoColumn> columns;
   final List<TodoLabel> availableTags;
   final List<String> pendingEmails; // New: Pending invites
+  final Map<String, List<String>> assigneeFilters; // UserEmail -> List of filtered emails
 
   // 🗄️ Archiviazione
   final bool isArchived;
@@ -93,11 +94,15 @@ class TodoListModel {
     this.columns = const [],
     this.availableTags = const [],
     this.pendingEmails = const [],
+    this.assigneeFilters = const {},
     this.isArchived = false,
     this.archivedAt,
   });
 
   Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+
     return {
       'id': id,
       'title': title,
@@ -111,6 +116,7 @@ class TodoListModel {
       'availableTags': availableTags.map((t) => t.toMap()).toList(),
       'participantEmails': participants.keys.map((e) => e.toLowerCase()).toList(),
       'pendingEmails': pendingEmails,
+      'assigneeFilters': assigneeFilters,
       'isArchived': isArchived,
       if (archivedAt != null) 'archivedAt': archivedAt!.toIso8601String(),
     };
@@ -140,6 +146,9 @@ class TodoListModel {
           ?.map((item) => TodoLabel.fromMap(item))
           .toList() ?? [],
       pendingEmails: List<String>.from(map['pendingEmails'] ?? []),
+      assigneeFilters: (map['assigneeFilters'] as Map<String, dynamic>?)?.map(
+        (k, v) => MapEntry(k, List<String>.from(v)),
+      ) ?? const {},
       isArchived: map['isArchived'] ?? false,
       archivedAt: map['archivedAt'] != null ? _parseDate(map['archivedAt']) : null,
     );
@@ -164,6 +173,7 @@ class TodoListModel {
     List<TodoColumn>? columns,
     List<TodoLabel>? availableTags,
     List<String>? pendingEmails,
+    Map<String, List<String>>? assigneeFilters,
     bool? isArchived,
     DateTime? archivedAt,
   }) {
@@ -177,6 +187,7 @@ class TodoListModel {
       columns: columns ?? this.columns,
       availableTags: availableTags ?? this.availableTags,
       pendingEmails: pendingEmails ?? this.pendingEmails,
+      assigneeFilters: assigneeFilters ?? this.assigneeFilters,
       isArchived: isArchived ?? this.isArchived,
       archivedAt: archivedAt ?? this.archivedAt,
     );

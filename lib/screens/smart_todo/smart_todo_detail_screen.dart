@@ -1126,10 +1126,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                 AppLocalizations.of(context)?.smartTodoAllPeople ?? 'All people',
                                 style: TextStyle(color: textColor),
                               ),
-                              trailing: safeAssigneeFilters.isEmpty ? const Icon(Icons.check, color: Colors.blue) : null,
+                              // Visual feedback: If clicked, it clears filters.
+                              // If no filters are selected, show a checkmark to indicate "Everyone is shown"
+                              trailing: safeAssigneeFilters.isEmpty 
+                                  ? const Icon(Icons.check, color: Colors.blue) 
+                                  : (isDark ? Icon(Icons.refresh, size: 18, color: Colors.grey[600]) : Icon(Icons.refresh, size: 18, color: Colors.grey[400])),
                               onTap: () {
-                                 this.setState(() => _assigneeFilters = []); 
-                                 Navigator.pop(context);
+                                 setState(() => safeAssigneeFilters.clear());
                               },
                             ),
                             Divider(height: 1, color: dividerColor),
@@ -1208,9 +1211,22 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          const SizedBox(width: 12),
                          ElevatedButton(
                            onPressed: () {
+                               // Apply Logic
                                this.setState(() {
-                                 _assigneeFilters = safeAssigneeFilters;
-                               }); 
+                                 _assigneeFilters = safeAssigneeFilters.isEmpty ? null : safeAssigneeFilters;
+                               });
+                               
+                               // Persistence Logic
+                               // Update the list model's assigneeFilters map for this user
+                               final newFiltersMap = Map<String, List<String>>.from(currentList.assigneeFilters);
+                               if (safeAssigneeFilters.isEmpty) {
+                                 newFiltersMap.remove(_currentUserEmail);
+                               } else {
+                                 newFiltersMap[_currentUserEmail] = safeAssigneeFilters;
+                               }
+                               
+                               _todoService.updateList(currentList.copyWith(assigneeFilters: newFiltersMap));
+                               
                                Navigator.pop(context);
                            },
                            style: ElevatedButton.styleFrom(
