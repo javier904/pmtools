@@ -189,15 +189,15 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
               home: const AuthWrapper(),
               routes: {
                 '/login': (context) => const LoginScreen(),
-                '/home': (context) => const HomeScreen(),
-                '/profile': (context) => const ProfileScreen(),
+                '/home': (context) => const _AuthGuard(child: HomeScreen()),
+                '/profile': (context) => const _AuthGuard(child: ProfileScreen()),
                 // '/eisenhower' gestito in onGenerateRoute per supportare arguments
                 // '/estimation-room' gestito in onGenerateRoute per supportare arguments
-                '/agile-process': (context) => const AgileProcessScreen(),
-                '/agile-project': (context) => const AgileProjectLoaderScreen(),
-                '/retrospective-list': (context) => const RetroGlobalDashboard(),
-                '/retrospective-board': (context) => const RetroBoardLoaderScreen(),
-                '/smart-todo': (context) => const SmartTodoDashboard(),
+                '/agile-process': (context) => const _AuthGuard(child: AgileProcessScreen()),
+                '/agile-project': (context) => const _AuthGuard(child: AgileProjectLoaderScreen()),
+                '/retrospective-list': (context) => const _AuthGuard(child: RetroGlobalDashboard()),
+                '/retrospective-board': (context) => const _AuthGuard(child: RetroBoardLoaderScreen()),
+                '/smart-todo': (context) => const _AuthGuard(child: SmartTodoDashboard()),
                 '/privacy': (context) => const PrivacyPolicyScreen(),
                 '/terms': (context) => const TermsOfServiceScreen(),
                 '/cookies': (context) => const CookiePolicyScreen(),
@@ -211,8 +211,10 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 if (settings.name == '/eisenhower') {
                   final matrixId = args?['matrixId'] as String?;
                   return MaterialPageRoute(
-                    builder: (context) => EisenhowerScreen(
-                      initialMatrixId: matrixId,
+                    builder: (context) => _AuthGuard(
+                      child: EisenhowerScreen(
+                        initialMatrixId: matrixId,
+                      ),
                     ),
                     settings: settings,
                   );
@@ -222,8 +224,10 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 if (settings.name == '/estimation-room') {
                   final sessionId = args?['sessionId'] as String?;
                   return MaterialPageRoute(
-                    builder: (context) => EstimationRoomScreen(
-                      initialSessionId: sessionId,
+                    builder: (context) => _AuthGuard(
+                      child: EstimationRoomScreen(
+                        initialSessionId: sessionId,
+                      ),
                     ),
                     settings: settings,
                   );
@@ -287,6 +291,31 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
           },
         ),
       ),
+    );
+  }
+}
+
+/// Guard che reindirizza alla LandingScreen se non autenticato
+class _AuthGuard extends StatelessWidget {
+  final Widget child;
+
+  const _AuthGuard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasData) {
+          return child;
+        }
+        return const LandingScreen();
+      },
     );
   }
 }

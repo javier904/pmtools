@@ -948,10 +948,18 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   }
 
   void _showMultiSelectAssigneeDialog(TodoListModel currentList) {
+    // Current Selection
+    var safeAssigneeFilters = List<String>.from(_assigneeFilters ?? []);
+    
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final bgColor = isDark ? const Color(0xFF1E2633) : Colors.white;
+          final textColor = isDark ? Colors.white : Colors.black87;
+          final dividerColor = isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200];
+          
           return Dialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             elevation: 0,
@@ -960,9 +968,16 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                width: 350,
                padding: EdgeInsets.zero,
                decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: bgColor,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 20, spreadRadius: 5)],
+                  boxShadow: [
+                     BoxShadow(
+                        color: Colors.black.withOpacity(isDark ? 0.4 : 0.12), 
+                        blurRadius: 20, 
+                        spreadRadius: 5
+                     )
+                  ],
+                  border: isDark ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
                ),
                child: Column(
                  mainAxisSize: MainAxisSize.min,
@@ -971,25 +986,28 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                    Container(
                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                      decoration: BoxDecoration(
-                       border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+                       border: Border(bottom: BorderSide(color: dividerColor!)),
                      ),
                      child: Row(
                        children: [
                          Container(
                            padding: const EdgeInsets.all(8),
-                           decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(8)),
+                           decoration: BoxDecoration(
+                              color: isDark ? Colors.blue.withOpacity(0.2) : Colors.blue[50], 
+                              borderRadius: BorderRadius.circular(8)
+                           ),
                            child: const Icon(Icons.filter_list_rounded, color: Colors.blue, size: 20),
                          ),
                          const SizedBox(width: 16),
                          Text(
                            AppLocalizations.of(context)?.smartTodoFilterByPerson ?? 'Filter by Person',
-                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                          ),
                          const Spacer(),
                          IconButton(
-                           icon: const Icon(Icons.close_rounded),
+                           icon: Icon(Icons.close_rounded, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                            onPressed: () => Navigator.pop(context),
-                           style: IconButton.styleFrom(backgroundColor: Colors.grey[100]),
+                           style: IconButton.styleFrom(backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100]),
                          ),
                        ],
                      ),
@@ -1002,41 +1020,69 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                        child: Column(
                          children: [
                             ListTile(
-                              leading: const Icon(Icons.people_outline),
-                              title: Text(AppLocalizations.of(context)?.smartTodoAllPeople ?? 'All people'),
+                              leading: Icon(Icons.people_outline, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                              title: Text(
+                                AppLocalizations.of(context)?.smartTodoAllPeople ?? 'All people',
+                                style: TextStyle(color: textColor),
+                              ),
                               trailing: safeAssigneeFilters.isEmpty ? const Icon(Icons.check, color: Colors.blue) : null,
                               onTap: () {
                                  this.setState(() => _assigneeFilters = []); 
                                  Navigator.pop(context);
                               },
                             ),
-                            const Divider(height: 1),
+                            Divider(height: 1, color: dividerColor),
                             ...currentList.participants.values.map((p) {
                               final isSelected = safeAssigneeFilters.contains(p.email);
+                              
+                              // Correctly resolve Display Name
+                              // If p.displayName is corrupted (e.g. from partial invite), try to use "Me" logic or split email
+                              // But logic provided in prompt was "Non vengono mostrati i display name".
+                              // We use the same logic as elsewhere: p.displayName ?? split
+                              final displayName = (p.displayName != null && p.displayName!.isNotEmpty) 
+                                                  ? p.displayName! 
+                                                  : p.email.split('@')[0];
+                              
+                              // Color for avatar
+                              final avatarColor = Colors.primaries[p.email.hashCode % Colors.primaries.length];
+                              
                               return CheckboxListTile(
                                 activeColor: Colors.blue,
+                                checkColor: Colors.white,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                                 title: Row(
                                    children: [
-                                     CircleAvatar(
-                                       radius: 12, 
-                                       backgroundColor: Colors.blue[100],
-                                       child: Text(p.email[0].toUpperCase(), style: const TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold)),
+                                     Container(
+                                       width: 24, height: 24,
+                                       decoration: BoxDecoration(
+                                          color: avatarColor.withOpacity(0.2),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.2) : Colors.transparent),
+                                       ),
+                                       alignment: Alignment.center,
+                                       child: Text(
+                                         p.email[0].toUpperCase(), 
+                                         style: TextStyle(fontSize: 10, color: avatarColor, fontWeight: FontWeight.bold)
+                                       ),
                                      ),
                                      const SizedBox(width: 12),
-                                     Expanded(child: Text(p.displayName ?? p.email.split('@')[0], overflow: TextOverflow.ellipsis)),
+                                     Expanded(
+                                       child: Text(
+                                         displayName, 
+                                         overflow: TextOverflow.ellipsis,
+                                         style: TextStyle(color: textColor),
+                                       )
+                                     ),
                                    ],
                                 ),
                                 value: isSelected,
+                                side: BorderSide(color: isDark ? Colors.grey[600]! : Colors.grey[400]!),
                                 onChanged: (val) {
                                   setState(() {
-                                    // Ensure initialized
-                                    if (_assigneeFilters == null) _assigneeFilters = []; 
-                                    
                                     if (val == true) {
-                                      _assigneeFilters!.add(p.email);
+                                      safeAssigneeFilters.add(p.email);
                                     } else {
-                                      _assigneeFilters!.remove(p.email);
+                                      safeAssigneeFilters.remove(p.email);
                                     }
                                   });
                                 },
@@ -1055,13 +1101,15 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                        children: [
                          TextButton(
                            onPressed: () => Navigator.pop(context),
-                           style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+                           style: TextButton.styleFrom(foregroundColor: isDark ? Colors.grey[400] : Colors.grey[600]),
                            child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')
                          ),
                          const SizedBox(width: 12),
                          ElevatedButton(
                            onPressed: () {
-                               this.setState(() {}); // Apply
+                               this.setState(() {
+                                 _assigneeFilters = safeAssigneeFilters;
+                               }); 
                                Navigator.pop(context);
                            },
                            style: ElevatedButton.styleFrom(
@@ -1086,8 +1134,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   }
 
   bool _canEditTask(TodoTaskModel task, TodoListModel currentList) {
-    if (currentList.isOwner(_currentUserEmail)) return true;
-    return task.assignedTo.contains(_currentUserEmail);
+    // Allow any participant (Owner, Editor, Viewer-if-allowed) to edit.
+    // The model's canEdit() now returns true for any participant.
+    return currentList.canEdit(_currentUserEmail);
   }
 
   void _createTask(TodoListModel currentList, {String? initialStatusId}) async {
