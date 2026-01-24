@@ -69,29 +69,32 @@ class SubscriptionLimitsService {
   // ═══════════════════════════════════════════════════════════════════════════
 
   /// Conta le matrici Eisenhower dell'utente (come creatore)
-  /// Esclude le matrici archiviate
+  /// Esclude le matrici archiviate e quelle con tutte le attivita' completate
   Future<int> countEisenhowerMatrices(String userEmail) async {
     try {
       final snapshot = await _firestore
           .collection('eisenhower_matrices')
           .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .where('isArchived', isEqualTo: false)
-          .count()
           .get();
-      return snapshot.count ?? 0;
-    } catch (e) {
-      // Fallback per backward compatibility (documenti senza isArchived)
-      try {
-        final snapshot = await _firestore
-            .collection('eisenhower_matrices')
-            .where('createdBy', isEqualTo: userEmail.toLowerCase())
-            .count()
-            .get();
-        return snapshot.count ?? 0;
-      } catch (e2) {
-        // Blocca creazione in caso di errore (safety measure)
-        return 999;
+
+      int count = 0;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        // Escludi archiviate
+        final isArchived = data['isArchived'] ?? false;
+        if (isArchived == true) continue;
+
+        // Escludi completate (tutte le attivita' votate)
+        final activityCount = data['activityCount'] ?? 0;
+        final votedActivityCount = data['votedActivityCount'] ?? 0;
+        if (activityCount > 0 && votedActivityCount >= activityCount) continue;
+
+        count++;
       }
+      return count;
+    } catch (e) {
+      // Blocca creazione in caso di errore (safety measure)
+      return 999;
     }
   }
 
@@ -163,28 +166,31 @@ class SubscriptionLimitsService {
   }
 
   /// Conta le retrospettive dell'utente
+  /// Esclude le retrospettive archiviate e quelle completate
   Future<int> countRetrospectives(String userEmail) async {
     try {
       final snapshot = await _firestore
           .collection('retrospectives')
           .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .where('isArchived', isEqualTo: false)
-          .count()
           .get();
-      return snapshot.count ?? 0;
-    } catch (e) {
-      // Fallback senza isArchived per backward compatibility
-      try {
-        final snapshot = await _firestore
-            .collection('retrospectives')
-            .where('createdBy', isEqualTo: userEmail.toLowerCase())
-            .count()
-            .get();
-        return snapshot.count ?? 0;
-      } catch (e2) {
-        // Blocca creazione in caso di errore (safety measure)
-        return 999;
+
+      int count = 0;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        // Escludi archiviate
+        final isArchived = data['isArchived'] ?? false;
+        if (isArchived == true) continue;
+
+        // Escludi completate
+        final status = data['status'] ?? '';
+        if (status == 'completed') continue;
+
+        count++;
       }
+      return count;
+    } catch (e) {
+      // Blocca creazione in caso di errore (safety measure)
+      return 999;
     }
   }
 
@@ -425,29 +431,32 @@ class SubscriptionLimitsService {
   }
 
   /// Conta i progetti Agile dell'utente
-  /// Esclude i progetti archiviati
+  /// Esclude i progetti archiviati e quelli con tutti gli sprint completati
   Future<int> _countAgileProjects(String userEmail) async {
     try {
       final snapshot = await _firestore
           .collection('agile_projects')
           .where('createdBy', isEqualTo: userEmail.toLowerCase())
-          .where('isArchived', isEqualTo: false)
-          .count()
           .get();
-      return snapshot.count ?? 0;
-    } catch (e) {
-      // Fallback per backward compatibility (documenti senza isArchived)
-      try {
-        final snapshot = await _firestore
-            .collection('agile_projects')
-            .where('createdBy', isEqualTo: userEmail.toLowerCase())
-            .count()
-            .get();
-        return snapshot.count ?? 0;
-      } catch (e2) {
-        // Blocca creazione in caso di errore (safety measure)
-        return 999;
+
+      int count = 0;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        // Escludi archiviati
+        final isArchived = data['isArchived'] ?? false;
+        if (isArchived == true) continue;
+
+        // Escludi completati (tutti gli sprint completati)
+        final sprintCount = data['sprintCount'] ?? 0;
+        final completedSprintCount = data['completedSprintCount'] ?? 0;
+        if (sprintCount > 0 && completedSprintCount >= sprintCount) continue;
+
+        count++;
       }
+      return count;
+    } catch (e) {
+      // Blocca creazione in caso di errore (safety measure)
+      return 999;
     }
   }
 

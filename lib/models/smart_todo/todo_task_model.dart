@@ -166,6 +166,9 @@ class TodoTaskModel {
   final bool isArchived;
   final DateTime? archivedAt;
 
+  // 📊 Ordinamento
+  final double position;
+
   const TodoTaskModel({
     required this.id,
     required this.listId,
@@ -185,6 +188,7 @@ class TodoTaskModel {
     required this.updatedAt,
     this.isArchived = false,
     this.archivedAt,
+    this.position = 0.0, // Default 0.0 (will be set on creation)
   });
 
   // Helpers
@@ -212,6 +216,7 @@ class TodoTaskModel {
       'updatedAt': updatedAt.toIso8601String(),
       'isArchived': isArchived,
       if (archivedAt != null) 'archivedAt': archivedAt!.toIso8601String(),
+      'position': position,
     };
   }
 
@@ -242,11 +247,24 @@ class TodoTaskModel {
       comments: (map['comments'] as List?)
           ?.map((item) => TodoComment.fromMap(item))
           .toList() ?? [],
-      createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(map['updatedAt'] ?? '') ?? DateTime.now(),
+      createdAt: _parseDate(map['createdAt']),
+      updatedAt: _parseDate(map['updatedAt']),
       isArchived: map['isArchived'] ?? false,
-      archivedAt: map['archivedAt'] != null ? DateTime.tryParse(map['archivedAt']) : null,
+      archivedAt: map['archivedAt'] != null ? _parseDate(map['archivedAt']) : null,
+      // Default to timestamp if missing to ensure stable order for legacy tasks
+      position: (map['position'] as num?)?.toDouble() ?? DateTime.now().millisecondsSinceEpoch.toDouble(),
     );
+  }
+
+  static DateTime _parseDate(dynamic value) {
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+    // Handle Firestore Timestamp if imported, or dynamic check
+    // Since we might not want to depend on cloud_firestore in pure model, we check runtime type via dynamic
+    if (value != null && value.runtimeType.toString() == 'Timestamp') {
+       return (value as dynamic).toDate(); 
+    }
+    return DateTime.now();
   }
 
   TodoTaskModel copyWith({
@@ -266,6 +284,7 @@ class TodoTaskModel {
     DateTime? updatedAt,
     bool? isArchived,
     DateTime? archivedAt,
+    double? position,
   }) {
     return TodoTaskModel(
       id: id ?? this.id,
@@ -286,6 +305,7 @@ class TodoTaskModel {
       updatedAt: updatedAt ?? DateTime.now(),
       isArchived: isArchived ?? this.isArchived,
       archivedAt: archivedAt ?? this.archivedAt,
+      position: position ?? this.position,
     );
   }
 }

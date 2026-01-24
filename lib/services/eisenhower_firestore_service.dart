@@ -937,6 +937,7 @@ class EisenhowerFirestoreService {
       });
 
       await _matricesRef.doc(matrixId).update({
+        'votedActivityCount': FieldValue.increment(1),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
@@ -951,6 +952,10 @@ class EisenhowerFirestoreService {
   /// Resetta la sessione di votazione (torna allo stato iniziale)
   Future<bool> resetVotingSession(String matrixId, String activityId) async {
     try {
+      // Controlla se l'attivita' era gia' rivelata per decrementare il contatore
+      final activity = await getActivity(matrixId, activityId);
+      final wasRevealed = activity?.isRevealed ?? false;
+
       await _activitiesRef(matrixId).doc(activityId).update({
         'isVotingActive': false,
         'isRevealed': false,
@@ -965,6 +970,7 @@ class EisenhowerFirestoreService {
       });
 
       await _matricesRef.doc(matrixId).update({
+        if (wasRevealed) 'votedActivityCount': FieldValue.increment(-1),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
@@ -1465,6 +1471,7 @@ class EisenhowerFirestoreService {
       });
 
       await _matricesRef.doc(matrixId).update({
+        'completedActivityCount': FieldValue.increment(1),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
@@ -1488,6 +1495,7 @@ class EisenhowerFirestoreService {
       });
 
       await _matricesRef.doc(matrixId).update({
+        'completedActivityCount': FieldValue.increment(-1),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 

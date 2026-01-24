@@ -3,6 +3,7 @@ import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_participant_model.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_colors.dart';
 import 'voting_status_widget.dart';
 
 /// Card per visualizzare una singola attività nella matrice
@@ -539,7 +540,7 @@ class ActivityCardWidget extends StatelessWidget {
             // Facilitatore o Voter: possono pre-votare e facilitatore può avviare
             Row(
               children: [
-                // Pre-voto (voter e facilitatore)
+                  // Pre-voto (voter e facilitatore)
                 if (_canVote && !_hasCurrentUserVoted && onSubmitIndependentVote != null)
                   Expanded(
                     child: Tooltip(
@@ -549,8 +550,8 @@ class ActivityCardWidget extends StatelessWidget {
                         icon: const Icon(Icons.how_to_vote_outlined, size: 16),
                         label: Text(l10n.eisenhowerPreVote),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.green,
-                          side: const BorderSide(color: Colors.green),
+                          foregroundColor: AppColors.success,
+                          side: BorderSide(color: AppColors.success),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
                       ),
@@ -562,19 +563,19 @@ class ActivityCardWidget extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.green.withOpacity(0.3)),
+                        border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
+                          Icon(Icons.check_circle_outline, size: 16, color: AppColors.success),
                           const SizedBox(width: 6),
                           Text(
                             l10n.eisenhowerPreVoted,
                             style: TextStyle(
-                              color: Colors.green[700],
+                              color: AppColors.successDark,
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                             ),
@@ -593,7 +594,7 @@ class ActivityCardWidget extends StatelessWidget {
                       icon: const Icon(Icons.play_arrow, size: 18),
                       label: Text(l10n.eisenhowerStartVoting),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: AppColors.success,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),

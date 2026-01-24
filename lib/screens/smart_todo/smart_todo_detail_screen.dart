@@ -270,9 +270,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   case TodoViewMode.kanban:
                   default: // Default case handles null
                     content = TodoKanbanView(
-                      list: currentList, 
+                      list: currentList,
                       tasks: tasks,
-                      onTaskMoved: (t, s) => _handleTaskMoved(t, s, currentList),
+                      onTaskMoved: (t, s, [double? pos]) => _handleTaskMoved(t, s, currentList, pos),
                       onTaskTap: (t) => _editTask(t, currentList),
                       onTaskDelete: (t) => _deleteTask(t, currentList),
                       onColumnAction: (a, c) => _handleColumnAction(a, c, currentList),
@@ -446,10 +446,15 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     );
   }
 
-  void _handleTaskMoved(TodoTaskModel task, String newStatusId, TodoListModel currentList) {
+  void _handleTaskMoved(TodoTaskModel task, String newStatusId, TodoListModel currentList, [double? newPosition]) {
     if (!_canEditTask(task, currentList)) return;
-    _todoService.updateTask(currentList.id, task.copyWith(statusId: newStatusId));
-    // Audit Log could go here
+    
+    var updatedTask = task.copyWith(statusId: newStatusId);
+    if (newPosition != null) {
+      updatedTask = updatedTask.copyWith(position: newPosition);
+    }
+    
+    _todoService.updateTask(currentList.id, updatedTask);
   }
 
   void _handleColumnAction(String action, String columnId, TodoListModel currentList) async {
@@ -458,6 +463,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     } else if (action == 'rename') {
       final col = currentList.columns.firstWhere((c) => c.id == columnId);
       _showColumnDialog(column: col, currentList: currentList);
+    } else if (action == 'sort') {
+      final col = currentList.columns.firstWhere((c) => c.id == columnId);
+      _showColumnSortDialog(col, currentList);
     } else if (action == 'delete') {
       final confirm = await showDialog<bool>(
         context: context,
@@ -481,6 +489,45 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         await _todoService.updateList(currentList.copyWith(columns: newColumns));
       }
     }
+  }
+
+  void _showColumnSortDialog(TodoColumn col, TodoListModel currentList) {
+    final sortOptions = TodoColumnSort.values;
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Ordinamento Colonna'),
+        children: sortOptions.map((sort) {
+          final isSelected = col.sortBy == sort;
+          return SimpleDialogOption(
+            onPressed: () async {
+              Navigator.pop(context);
+              final newColumns = List<TodoColumn>.from(currentList.columns);
+              final index = newColumns.indexWhere((c) => c.id == col.id);
+              if (index != -1) {
+                newColumns[index] = TodoColumn(
+                  id: col.id,
+                  title: col.title,
+                  colorValue: col.colorValue,
+                  isDone: col.isDone,
+                  sortBy: sort,
+                  sortAscending: col.sortAscending,
+                );
+                await _todoService.updateList(currentList.copyWith(columns: newColumns));
+              }
+            },
+            child: Row(
+              children: [
+                if (isSelected) const Icon(Icons.check, size: 18, color: Colors.blue),
+                if (!isSelected) const SizedBox(width: 18),
+                const SizedBox(width: 8),
+                Text(sort.name[0].toUpperCase() + sort.name.substring(1)),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 
   void _showColumnDialog({TodoColumn? column, required TodoListModel currentList}) {
@@ -713,7 +760,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               _showTagsDialog(currentList);
             },
           ),
-          if (currentList.isOwner(_currentUserEmail))
+          if (currentList.canEdit(_currentUserEmail))
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
               title: Text(AppLocalizations.of(context)?.smartTodoDeleteList ?? 'Elimina Lista', style: const TextStyle(color: Colors.red)),

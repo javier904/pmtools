@@ -8,7 +8,7 @@ class TodoKanbanView extends StatelessWidget {
   final TodoListModel list;
   final List<TodoTaskModel> tasks;
   final Function(TodoTaskModel) onTaskTap;
-  final Function(TodoTaskModel, String) onTaskMoved;
+  final Function(TodoTaskModel, String, [double?]) onTaskMoved; // Updated signature
   final Function(TodoTaskModel) onTaskDelete;
   final Function(String, String) onColumnAction; // action, columnId
   final Function(String) onQuickAdd; 
@@ -121,6 +121,7 @@ class TodoKanbanView extends StatelessWidget {
                       itemBuilder: (context) {
                         final l10n = AppLocalizations.of(context)!;
                         return [
+                          const PopupMenuItem(value: 'sort', child: Text('Ordinamento')),
                           PopupMenuItem(value: 'rename', child: Text(l10n.smartTodoRename)),
                           PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete, style: const TextStyle(color: Colors.red))),
                         ];
@@ -133,35 +134,74 @@ class TodoKanbanView extends StatelessWidget {
               // Task List (Scrollable within column)
               Container(
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.65, // Adjust based on screen
+                  maxHeight: MediaQuery.of(context).size.height * 0.65, 
                 ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 12), // Inner padding for cards
-                  itemCount: columnTasks.length,
-                  itemBuilder: (context, index) {
-                    final task = columnTasks[index];
-                    return Draggable<TodoTaskModel>(
-                      data: task,
-                      feedback: SizedBox(
-                        width: 320,
-                        child: Opacity(
-                          opacity: 0.9,
-                          child: Transform.scale(
-                            scale: 1.05,
-                            child: TodoTaskCard(task: task),
-                          ),
-                        ),
-                      ),
-                      childWhenDragging: Opacity(opacity: 0.3, child: TodoTaskCard(task: task)),
-                      child: TodoTaskCard(
-                        task: task, 
-                        isCompleted: col.isDone, // Pass completion status from column
-                        onTap: () => onTaskTap(task),
-                        onDelete: onTaskDelete,
-                      ),
+                child: Builder(
+                  builder: (context) {
+                    // 1. Sort Tasks Client-Side
+                    final sortedTasks = List<TodoTaskModel>.from(columnTasks);
+                    sortedTasks.sort((a, b) {
+                      switch (col.sortBy) {
+                        case TodoColumnSort.manual:
+                          return a.position.compareTo(b.position);
+                        case TodoColumnSort.priority:
+                          // High (index 2) > Low (index 0). Descending.
+                          return b.priority.index.compareTo(a.priority.index);
+                        case TodoColumnSort.dueDate:
+                          if (a.dueDate == null) return 1;
+                          if (b.dueDate == null) return -1;
+                          return a.dueDate!.compareTo(b.dueDate!);
+                        case TodoColumnSort.createdAt:
+                          return b.createdAt.compareTo(a.createdAt);
+                      }
+                    });
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: sortedTasks.length,
+                      itemBuilder: (context, index) {
+                        final task = sortedTasks[index];
+                        
+                        // 2. Wrap in DragTarget for "Insert Before" behavior (Manual Mode Only)
+                        // If sorting is automatic, we just drop on column (handled by outer target)
+                        if (col.sortBy != TodoColumnSort.manual) {
+                           return _buildDraggableCard(task, col, null);
+                        }
+
+                        return DragTarget<TodoTaskModel>(
+                          onWillAccept: (draggedTask) => draggedTask != null && draggedTask.id != task.id,
+                          onAccept: (draggedTask) {
+                             // Dropped on 'task'. Insert 'draggedTask' BEFORE 'task'.
+                             // New Position = (ReviewTask.pos + CurrentTask.pos) / 2
+                             // If index == 0, we need to be smaller than current.
+                             
+                             double newPos;
+                             if (index == 0) {
+                               newPos = task.position - 1000.0;
+                             } else {
+                               final prevTask = sortedTasks[index - 1];
+                               newPos = (prevTask.position + task.position) / 2;
+                             }
+                             
+                             onTaskMoved(draggedTask, col.id, newPos);
+                          },
+                          builder: (context, candidateData, rejectedData) {
+                            // Visual feedback for insertion point?
+                            final isHovered = candidateData.isNotEmpty;
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isHovered) 
+                                  Container(height: 4, margin: const EdgeInsets.symmetric(vertical: 4), color: Colors.blue, width: 100),
+                                _buildDraggableCard(task, col, null), // don't pass onTaskMoved here as it's for dropping *onto* card
+                              ],
+                            );
+                          },
+                        );
+                      },
                     );
-                  },
+                  }
                 ),
               ),
               
@@ -217,6 +257,28 @@ class TodoKanbanView extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+  Widget _buildDraggableCard(TodoTaskModel task, TodoColumn col, Function(TodoTaskModel, String, double?)? onDrop) {
+    return Draggable<TodoTaskModel>(
+      data: task,
+      feedback: SizedBox(
+        width: 320,
+        child: Opacity(
+          opacity: 0.9,
+          child: Transform.scale(
+            scale: 1.05,
+            child: TodoTaskCard(task: task),
+          ),
+        ),
+      ),
+      childWhenDragging: Opacity(opacity: 0.3, child: TodoTaskCard(task: task)),
+      child: TodoTaskCard(
+        task: task,
+        isCompleted: col.isDone,
+        onTap: () => onTaskTap(task),
+        onDelete: onTaskDelete,
       ),
     );
   }

@@ -810,14 +810,42 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
               Row(
                 children: [
                   _buildCompactMatrixStat(
-                    Icons.task_alt,
-                    '$activityCount',
-                    l10n.eisenhowerTotalActivities,
+                    Icons.how_to_vote_outlined,
+                    '${matrix.votedActivityCount}',
+                    l10n.eisenhowerVotedActivities,
+                    iconColor: AppColors.success,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
+                  if (activityCount - matrix.votedActivityCount > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: _buildCompactMatrixStat(
+                        Icons.pending_actions,
+                        '${activityCount - matrix.votedActivityCount}',
+                        l10n.eisenhowerPendingVoting,
+                        iconColor: AppColors.warning,
+                      ),
+                    ),
                   _buildParticipantStat(matrix, l10n),
                 ],
               ),
+              // Progress bar
+              if (activityCount > 0) ...[
+                const SizedBox(height: 4),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    value: matrix.votedActivityCount / activityCount,
+                    minHeight: 2,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      matrix.votedActivityCount >= activityCount
+                          ? Colors.green
+                          : AppColors.success.withOpacity(0.6),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -825,13 +853,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     );
   }
 
-  Widget _buildCompactMatrixStat(IconData icon, String value, String tooltip) {
+  Widget _buildCompactMatrixStat(IconData icon, String value, String tooltip, {Color? iconColor}) {
     return Tooltip(
       message: tooltip,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: context.textMutedColor),
+          Icon(icon, size: 18, color: iconColor ?? context.textMutedColor),
           const SizedBox(width: 5),
           Text(
             value,
@@ -1551,7 +1579,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                         icon: const Icon(Icons.play_circle_outline, size: 16),
                         label: Text(l10n.eisenhowerStartVoting),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: AppColors.success,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           textStyle: const TextStyle(fontSize: 12),

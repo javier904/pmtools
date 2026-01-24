@@ -433,6 +433,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eisenhowerTotalActivities => 'Total activities in matrix';
 
   @override
+  String get eisenhowerVotedActivities => 'Voted activities';
+
+  @override
+  String get eisenhowerPendingVoting => 'Activities to vote';
+
+  @override
   String get eisenhowerStartVoting => 'Start Independent Voting';
 
   @override
@@ -2516,6 +2522,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smartTodoEditComment => 'Edit';
+
+  @override
+  String get smartTodoSortBy => 'Sort by';
+
+  @override
+  String get smartTodoColumnSortTitle => 'Sort Column';
+
+  @override
+  String get smartTodoPendingTasks => 'Tasks to complete';
+
+  @override
+  String get smartTodoCompletedTasks => 'Completed tasks';
 
   @override
   String get smartTodoEnterTitle => 'Enter a title';

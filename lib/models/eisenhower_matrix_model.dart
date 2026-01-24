@@ -24,6 +24,8 @@ class EisenhowerMatrixModel {
   final Map<String, EisenhowerParticipantModel> participants;
 
   final int activityCount; // Contatore attività (denormalizzato per lista)
+  final int completedActivityCount; // Contatore attività completate (denormalizzato)
+  final int votedActivityCount; // Contatore attività votate/rivelate (denormalizzato)
   final List<String> pendingEmails; // New: Pending invites
 
   // Colonne RACI
@@ -51,6 +53,8 @@ class EisenhowerMatrixModel {
     required this.updatedAt,
     this.participants = const {},
     this.activityCount = 0,
+    this.completedActivityCount = 0,
+    this.votedActivityCount = 0,
     this.raciColumns = const [],
     this.pendingEmails = const [],
     this.teamId,
@@ -117,6 +121,8 @@ class EisenhowerMatrixModel {
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       participants: participantsMap,
       activityCount: data['activityCount'] ?? 0,
+      completedActivityCount: data['completedActivityCount'] ?? 0,
+      votedActivityCount: data['votedActivityCount'] ?? 0,
       raciColumns: raciColumnsList,
       pendingEmails: List<String>.from(data['pendingEmails'] ?? []),
       // 🆕 Integrazioni
@@ -152,6 +158,8 @@ class EisenhowerMatrixModel {
       'updatedAt': Timestamp.fromDate(updatedAt),
       'participants': participantsData,
       'activityCount': activityCount,
+      'completedActivityCount': completedActivityCount,
+      'votedActivityCount': votedActivityCount,
       'raciColumns': raciColumnsData,
       'pendingEmails': pendingEmails,
       // 🆕 Integrazioni (solo se valorizzati)
@@ -162,6 +170,8 @@ class EisenhowerMatrixModel {
       if (projectId != null) 'projectId': projectId,
       if (projectName != null) 'projectName': projectName,
       if (projectCode != null) 'projectCode': projectCode,
+      // 🔎 Query fields
+      'participantEmails': participants.keys.toList(),
       // 🗄️ Archiviazione
       'isArchived': isArchived,
       if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
@@ -178,6 +188,8 @@ class EisenhowerMatrixModel {
     DateTime? updatedAt,
     Map<String, EisenhowerParticipantModel>? participants,
     int? activityCount,
+    int? completedActivityCount,
+    int? votedActivityCount,
     List<RaciColumn>? raciColumns,
     List<String>? pendingEmails,
     String? teamId,
@@ -199,6 +211,8 @@ class EisenhowerMatrixModel {
       updatedAt: updatedAt ?? this.updatedAt,
       participants: participants ?? this.participants,
       activityCount: activityCount ?? this.activityCount,
+      completedActivityCount: completedActivityCount ?? this.completedActivityCount,
+      votedActivityCount: votedActivityCount ?? this.votedActivityCount,
       raciColumns: raciColumns ?? this.raciColumns,
       pendingEmails: pendingEmails ?? this.pendingEmails,
       teamId: teamId ?? this.teamId,

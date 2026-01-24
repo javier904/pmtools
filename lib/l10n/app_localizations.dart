@@ -906,6 +906,18 @@ abstract class AppLocalizations {
   /// **'Attivita totali nella matrice'**
   String get eisenhowerTotalActivities;
 
+  /// No description provided for @eisenhowerVotedActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivita votate'**
+  String get eisenhowerVotedActivities;
+
+  /// No description provided for @eisenhowerPendingVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivita da votare'**
+  String get eisenhowerPendingVoting;
+
   /// No description provided for @eisenhowerStartVoting.
   ///
   /// In it, this message translates to:
@@ -4743,6 +4755,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Modifica'**
   String get smartTodoEditComment;
+
+  /// No description provided for @smartTodoSortBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordinamento'**
+  String get smartTodoSortBy;
+
+  /// No description provided for @smartTodoColumnSortTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordina Colonna'**
+  String get smartTodoColumnSortTitle;
+
+  /// No description provided for @smartTodoPendingTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivita da completare'**
+  String get smartTodoPendingTasks;
+
+  /// No description provided for @smartTodoCompletedTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivita completate'**
+  String get smartTodoCompletedTasks;
 
   /// No description provided for @smartTodoEnterTitle.
   ///

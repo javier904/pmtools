@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+// import 'package:pasteboard/pasteboard.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
+import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class TodoTaskDialog extends StatefulWidget {
   final String listId;
@@ -864,6 +869,8 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     }
 
     // 2. Try Pasteboard for image data
+    // SKIP: Pasteboard package not supported on Web.
+    /*
     try {
       final imageBytes = await Pasteboard.image;
       if (imageBytes != null) {
@@ -876,6 +883,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     } catch (e) {
       debugPrint('Pasteboard error: $e');
     }
+    */
   }
 
   void _promptToAddImage(String imageSource, {bool isDataUri = false}) {

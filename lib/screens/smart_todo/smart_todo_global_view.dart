@@ -397,10 +397,9 @@ class _SmartTodoGlobalViewState extends State<SmartTodoGlobalView> {
       builder: (context) => TodoTaskDialog(
         task: task,
         listId: task.listId,
-        // Removed todoService and userEmail as they are not accepted
-        listParticipants: list.participants.keys.toList(), 
-        listColumns: list.columns,          
-        listAvailableTags: list.availableTags, 
+        participants: list.participants,
+        listColumns: list.columns,
+        listAvailableTags: list.availableTags,
       ),
     );
 

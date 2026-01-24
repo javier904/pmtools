@@ -293,11 +293,43 @@ class RetroListWidget extends StatelessWidget {
                   _buildParticipantRetroStat(retro, l10n),
                 ],
               ),
+              // Progress bar (phase-based)
+              const SizedBox(height: 4),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: LinearProgressIndicator(
+                  value: _getPhaseProgress(retro.currentPhase),
+                  minHeight: 2,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    retro.currentPhase == RetroPhase.completed
+                        ? Colors.green
+                        : AppColors.pink.withOpacity(0.6),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  double _getPhaseProgress(RetroPhase phase) {
+    switch (phase) {
+      case RetroPhase.setup:
+        return 0.0;
+      case RetroPhase.icebreaker:
+        return 0.2;
+      case RetroPhase.writing:
+        return 0.4;
+      case RetroPhase.voting:
+        return 0.6;
+      case RetroPhase.discuss:
+        return 0.8;
+      case RetroPhase.completed:
+        return 1.0;
+    }
   }
 
   Widget _buildCompactRetroStat(IconData icon, String value, String tooltip) {

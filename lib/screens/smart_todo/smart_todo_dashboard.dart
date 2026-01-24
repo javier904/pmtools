@@ -438,16 +438,46 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
               ),
               const SizedBox(height: 4),
               // Stats compatte
-              Row(
-                children: [
-                  _buildCompactListStat(
-                    Icons.calendar_today,
-                    _formatDate(list.createdAt),
-                    l10n?.smartTodoCreatedDate ?? 'Created date',
-                  ),
-                  const SizedBox(width: 12),
-                  _buildParticipantListStat(list, l10n),
-                ],
+              StreamBuilder<({int total, int completed})>(
+                stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
+                builder: (context, statsSnapshot) {
+                  final statsData = statsSnapshot.data;
+                  final totalTasks = statsData?.total ?? 0;
+                  final completedTasks = statsData?.completed ?? 0;
+                  final pendingTasks = totalTasks - completedTasks;
+
+                  return Row(
+                    children: [
+                      if (pendingTasks > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: _buildCompactListStat(
+                            Icons.radio_button_unchecked,
+                            '$pendingTasks',
+                            l10n?.smartTodoPendingTasks ?? 'Tasks to complete',
+                            iconColor: AppColors.warning,
+                          ),
+                        ),
+                      if (completedTasks > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: _buildCompactListStat(
+                            Icons.check_circle_outline,
+                            '$completedTasks',
+                            l10n?.smartTodoCompletedTasks ?? 'Completed tasks',
+                            iconColor: AppColors.success,
+                          ),
+                        ),
+                      _buildCompactListStat(
+                        Icons.calendar_today,
+                        _formatDate(list.createdAt),
+                        l10n?.smartTodoCreatedDate ?? 'Created date',
+                      ),
+                      const SizedBox(width: 10),
+                      _buildParticipantListStat(list, l10n),
+                    ],
+                  );
+                },
               ),
             ],
           ),
@@ -456,13 +486,13 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
     );
   }
 
-  Widget _buildCompactListStat(IconData icon, String value, String tooltip) {
+  Widget _buildCompactListStat(IconData icon, String value, String tooltip, {Color? iconColor}) {
     return Tooltip(
       message: tooltip,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: Colors.grey),
+          Icon(icon, size: 18, color: iconColor ?? Colors.grey),
           const SizedBox(width: 5),
           Text(
             value,

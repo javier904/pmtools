@@ -173,7 +173,14 @@ class SmartTodoService {
         .collection(_tasksSubcollection)
         .doc();
 
-    await docRef.set(task.copyWith(id: docRef.id).toMap());
+    // Assign default position (timestamp) if not set (though model defaults it too)
+    // Using timestamp ensures chronologial order by default for "manual" sort
+    final taskWithId = task.copyWith(
+      id: docRef.id,
+      position: DateTime.now().millisecondsSinceEpoch.toDouble(),
+    );
+
+    await docRef.set(taskWithId.toMap());
     return docRef.id;
   }
 
