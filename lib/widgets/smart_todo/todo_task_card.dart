@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart'; // Added for attachments
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../services/auth_service.dart';
@@ -60,7 +61,7 @@ class TodoTaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 1. Top Row: Priority Indicator & Assignee
+                // 1. Top Row: Priority Indicator, Status & Assignee
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,6 +82,27 @@ class TodoTaskCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    
+                    const SizedBox(width: 8),
+
+                    // Status Pill (New)
+                    if (list != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          _getStatusName(task.statusId),
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[300] : Colors.grey[700],
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+
                     const Spacer(),
                     // Assignee Avatar
                     if (task.assignedTo.isNotEmpty)
@@ -108,6 +130,31 @@ class TodoTaskCard extends StatelessWidget {
                       : (isDark ? Colors.white : const Color(0xFF2D3748)),
                   ),
                 ),
+
+                // 2.5 Description (New)
+                if (task.description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Tooltip(
+                    message: task.description,
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF333333), // Readable dark bg
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    textStyle: const TextStyle(color: Colors.white, fontSize: 13), // Readable text
+                    child: Text(
+                      task.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
 
                 // 3. Tags
                 if (task.tags.isNotEmpty) ...[
@@ -214,32 +261,56 @@ class TodoTaskCard extends StatelessWidget {
 
                     const Spacer(),
 
-                    // Attachments
+                    // Attachments (Clickable Link)
                     if (task.attachments.isNotEmpty) ...[
-                      _buildMetaIcon(Icons.attach_file_rounded, '${task.attachments.length}', color: isDark ? Colors.grey[400]! : Colors.grey[600]!),
+                      InkWell(
+                        onTap: () async {
+                           // Open first attachment or show list mechanism?
+                           // For now, launch first valid URL
+                           final url = Uri.parse(task.attachments.first.url);
+                           if (await canLaunchUrl(url)) {
+                             launchUrl(url);
+                           }
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: _buildMetaIcon(Icons.attach_file_rounded, '${task.attachments.length}', color: isDark ? Colors.blue[300]! : Colors.blue[600]!),
+                        ),
+                      ),
                       const SizedBox(width: 8),
                     ],
 
-                    // Comments
+                    // Comments (Improved Tooltip)
                     if (task.comments.isNotEmpty) ...[
                       Tooltip(
                         message: task.comments.map((c) => '${c.authorName}: ${c.text}').join('\n'),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.8),
+                          color: const Color(0xFF333333),
                           borderRadius: BorderRadius.circular(8),
                         ),
+                        textStyle: const TextStyle(color: Colors.white, fontSize: 12),
                         child: _buildMetaIcon(Icons.chat_bubble_outline_rounded, '${task.comments.length}', color: isDark ? Colors.grey[400]! : Colors.grey[600]!),
                       ),
                       const SizedBox(width: 8),
                     ],
                     
-                    // Subtasks
+                    // Subtasks (Checklist Tooltip)
                     if (task.subtasks.isNotEmpty) ...[
-                      _buildMetaIcon(
-                        Icons.check_circle_outline_rounded, 
-                        '${task.completedSubtasks}/${task.subtasks.length}',
-                        color: task.completedSubtasks == task.subtasks.length ? Colors.green : (isDark ? Colors.grey[400]! : Colors.grey[600]!)
+                      Tooltip(
+                        message: task.subtasks.map((s) => '${s.isCompleted ? '✅' : '⬜'} ${s.title}').join('\n'),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF333333),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+                        child: _buildMetaIcon(
+                          Icons.check_circle_outline_rounded, 
+                          '${task.completedSubtasks}/${task.subtasks.length}',
+                          color: task.completedSubtasks == task.subtasks.length ? Colors.green : (isDark ? Colors.grey[400]! : Colors.grey[600]!)
+                        ),
                       ),
                     ],
                   ],
@@ -310,5 +381,14 @@ class TodoTaskCard extends StatelessWidget {
     final cleanEmail = email.replaceAll('_DOT_', '.');
     final participant = list!.participants[cleanEmail];
     return participant?.displayName ?? cleanEmail;
+  }
+
+  String _getStatusName(String statusId) {
+    if (list == null) return statusId;
+    final column = list!.columns.firstWhere(
+      (c) => c.id == statusId, 
+      orElse: () => TodoColumn(id: statusId, title: statusId, colorValue: 0)
+    );
+    return column.title;
   }
 }

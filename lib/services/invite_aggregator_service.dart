@@ -202,10 +202,12 @@ class InviteAggregatorService {
 
     // 1. Cerca nella collection unificata
     try {
+      print('📋 [AGGREGATOR] Querying unified collection: sourceType=${sourceType.name}, sourceId=$sourceId');
       final unifiedSnapshot = await _firestore
           .collection(_unifiedInvitesCollection)
           .where('sourceType', isEqualTo: sourceType.name)
           .where('sourceId', isEqualTo: sourceId)
+          .orderBy('invitedAt', descending: true)
           .get();
 
       for (final doc in unifiedSnapshot.docs) {
