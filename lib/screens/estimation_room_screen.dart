@@ -3616,6 +3616,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
               widget.sessionId,
             ),
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red[300])));
+              }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
