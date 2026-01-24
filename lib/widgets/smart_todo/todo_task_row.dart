@@ -7,12 +7,14 @@ class TodoTaskRow extends StatelessWidget {
   final TodoTaskModel task;
   final TodoColumn? column; // To display status color/name
   final VoidCallback? onTap;
+  final TodoListModel? list; // Added
   
   const TodoTaskRow({
     super.key,
     required this.task,
     this.column,
     this.onTap,
+    this.list,
   });
 
   @override
@@ -161,19 +163,29 @@ class TodoTaskRow extends StatelessWidget {
 
   Widget _buildTinyAvatar(String email, bool isDark) {
     final color = Colors.primaries[email.hashCode % Colors.primaries.length];
-    return Container(
-      width: 20,
-      height: 20,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        shape: BoxShape.circle,
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.2) : Colors.white, width: 1.5),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        email[0].toUpperCase(),
-        style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold),
+    return Tooltip(
+      message: _getAssigneeName(email),
+      child: Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.2),
+          shape: BoxShape.circle,
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.2) : Colors.white, width: 1.5),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          email[0].toUpperCase(),
+          style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold),
+        ),
       ),
     );
+  }
+
+  String _getAssigneeName(String email) {
+    if (list == null) return email;
+    final cleanEmail = email.replaceAll('_DOT_', '.');
+    final participant = list!.participants[cleanEmail];
+    return participant?.displayName ?? cleanEmail;
   }
 }

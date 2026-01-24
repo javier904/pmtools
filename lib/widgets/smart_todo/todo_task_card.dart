@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../services/auth_service.dart';
 
@@ -8,7 +9,8 @@ class TodoTaskCard extends StatelessWidget {
   final bool isCompleted; // Passed from parent based on column definition
   final VoidCallback? onTap;
   final Function(TodoTaskModel)? onDelete;
-  final Function(String)? onStatusChanged; 
+  final Function(String)? onStatusChanged;
+  final TodoListModel? list; // Added to lookup participant names
 
   const TodoTaskCard({
     super.key,
@@ -17,6 +19,7 @@ class TodoTaskCard extends StatelessWidget {
     this.onTap,
     this.onDelete,
     this.onStatusChanged,
+    this.list,
   });
 
   @override
@@ -82,7 +85,7 @@ class TodoTaskCard extends StatelessWidget {
                     // Assignee Avatar
                     if (task.assignedTo.isNotEmpty)
                       Tooltip(
-                        message: task.assignedTo.join(', '),
+                        message: _getAssigneeName(task.assignedTo.first),
                         child: _buildAvatar(task.assignedTo.first, isDark),
                       ),
                   ],
@@ -299,5 +302,13 @@ class TodoTaskCard extends StatelessWidget {
       case TodoTaskPriority.medium: return const Color(0xFFDD6B20); // Orange 600
       case TodoTaskPriority.low: return const Color(0xFF3182CE); // Blue 600
     }
+  }
+
+  String _getAssigneeName(String email) {
+    if (list == null) return email;
+    // Handle potential escaped email if it was already in task
+    final cleanEmail = email.replaceAll('_DOT_', '.');
+    final participant = list!.participants[cleanEmail];
+    return participant?.displayName ?? cleanEmail;
   }
 }

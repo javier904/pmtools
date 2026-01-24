@@ -5,6 +5,7 @@ import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../models/unified_invite_model.dart';
 import '../../services/invite_service.dart';
+import '../../services/invite_aggregator_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/smart_todo_service.dart';
@@ -21,17 +22,34 @@ class SmartTodoParticipantsDialog extends StatefulWidget {
 class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialog> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final InviteService _inviteService = InviteService();
+  final InviteAggregatorService _inviteAggregator = InviteAggregatorService();
   final AuthService _authService = AuthService();
 
   // Invito form
   final _emailController = TextEditingController();
   String _role = 'editor'; // editor, viewer
   bool _isLoading = false;
+  List<UnifiedInviteModel> _invites = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadInvites();
+  }
+
+  Future<void> _loadInvites() async {
+    try {
+      final invites = await _inviteAggregator.getInvitesForSource(
+        InviteSourceType.smartTodo,
+        widget.list.id,
+      );
+      if (mounted) {
+        setState(() => _invites = invites);
+      }
+    } catch (e) {
+      print('Error loading invites: $e');
+    }
   }
 
   @override
@@ -169,84 +187,107 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
 
   Widget _buildInvitesTab(bool isDark, Color inputBg, Color borderColor, Color textColor) {
     final l10n = AppLocalizations.of(context)!;
-    return StreamBuilder<List<UnifiedInviteModel>>(
-      stream: _inviteService.streamInvitesForSource(InviteSourceType.smartTodo, widget.list.id),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red[300])));
-        }
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
-        final invites = snapshot.data!;
-        final pending = invites.where((i) => i.status == UnifiedInviteStatus.pending).toList();
+    if (_invites.isEmpty) {
+      return Center(child: Text(l10n.smartTodoNoInvitesPending, style: TextStyle(color: isDark ? Colors.grey[400] : null)));
+    }
 
-        if (pending.isEmpty) {
-           return Center(child: Text(l10n.smartTodoNoInvitesPending, style: TextStyle(color: isDark ? Colors.grey[400] : null)));
-        }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _invites.length,
+      itemBuilder: (context, index) {
+        final invite = _invites[index];
+        final isPending = invite.status == UnifiedInviteStatus.pending;
+        final isExpired = DateTime.now().isAfter(invite.expiresAt);
+        final statusInfo = _getInviteStatusInfo(invite.status, isExpired);
 
-        return ListView.builder(
-           padding: const EdgeInsets.all(16),
-           itemCount: pending.length,
-           itemBuilder: (context, index) {
-              final invite = pending[index];
-              final isExpired = DateTime.now().isAfter(invite.expiresAt);
-
-              return Card(
-                elevation: 0,
-                color: isDark ? const Color(0xFF2D3748) : null,
-                margin: const EdgeInsets.only(bottom: 8),
-                shape: RoundedRectangleBorder(
-                   borderRadius: BorderRadius.circular(12),
-                   side: BorderSide(color: borderColor),
+        return Card(
+          elevation: 0,
+          color: isDark ? const Color(0xFF2D3748) : null,
+          margin: const EdgeInsets.only(bottom: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: borderColor),
+          ),
+          child: ListTile(
+            leading: Icon(statusInfo.$3, color: statusInfo.$2, size: 22),
+            title: Text(invite.email, style: TextStyle(color: textColor, fontSize: 13)),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: statusInfo.$2.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        statusInfo.$1,
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: statusInfo.$2),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(invite.role, style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey)),
+                  ],
                 ),
-                child: ListTile(
-                   leading: const Icon(Icons.mail, color: Colors.orange),
-                   title: Text(invite.email, style: TextStyle(color: textColor)),
-                   subtitle: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                        Text(l10n.smartTodoRoleLabel(invite.role), style: TextStyle(color: isDark ? Colors.grey[400] : null)),
-                        if (isExpired)
-                          Text(l10n.smartTodoExpired, style: const TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold))
-                        else
-                          Text(l10n.smartTodoSentBy(invite.invitedByName), style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[500] : Colors.grey)),
-                     ],
-                   ),
-                   trailing: PopupMenuButton<String>(
-                     icon: Icon(Icons.more_vert, color: isDark ? Colors.grey[400] : null),
-                     onSelected: (action) async {
-                        if (action == 'revoke') {
-                           await _inviteService.revokeInvite(invite.id);
-                        } else if (action == 'resend') {
-                          final currentUser = _authService.currentUser;
-                          if (currentUser != null && currentUser.email != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoSendingEmail)));
-                            final success = await _sendEmailForInvite(invite, currentUser.email!);
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(success ? l10n.smartTodoEmailResent : l10n.smartTodoEmailSendError),
-                                  backgroundColor: success ? Colors.green : Colors.red,
-                                )
-                              );
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoInvalidSession)));
+                const SizedBox(height: 2),
+                Text(l10n.smartTodoSentBy(invite.invitedByName), style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[500] : Colors.grey)),
+              ],
+            ),
+            trailing: isPending && !isExpired
+                ? PopupMenuButton<String>(
+                    icon: Icon(Icons.more_vert, color: isDark ? Colors.grey[400] : null),
+                    onSelected: (action) async {
+                      if (action == 'revoke') {
+                        await _inviteService.revokeInvite(invite.id);
+                        await _loadInvites();
+                      } else if (action == 'resend') {
+                        final currentUser = _authService.currentUser;
+                        if (currentUser != null && currentUser.email != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoSendingEmail)));
+                          final success = await _sendEmailForInvite(invite, currentUser.email!);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(success ? l10n.smartTodoEmailResent : l10n.smartTodoEmailSendError),
+                                backgroundColor: success ? Colors.green : Colors.red,
+                              ),
+                            );
                           }
                         }
-                     },
-                     itemBuilder: (context) => [
-                        PopupMenuItem(value: 'resend', child: Text(l10n.smartTodoResendEmail)),
-                        PopupMenuItem(value: 'revoke', child: Text(l10n.smartTodoRevoke, style: const TextStyle(color: Colors.red))),
-                     ],
-                   ),
-                ),
-              );
-           }
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(value: 'resend', child: Text(l10n.smartTodoResendEmail)),
+                      PopupMenuItem(value: 'revoke', child: Text(l10n.smartTodoRevoke, style: const TextStyle(color: Colors.red))),
+                    ],
+                  )
+                : null,
+          ),
         );
       },
     );
+  }
+
+  (String, Color, IconData) _getInviteStatusInfo(UnifiedInviteStatus status, bool isExpired) {
+    if (isExpired && status == UnifiedInviteStatus.pending) {
+      return ('Expired', Colors.grey, Icons.timer_off);
+    }
+    switch (status) {
+      case UnifiedInviteStatus.pending:
+        return ('Pending', Colors.orange, Icons.hourglass_empty);
+      case UnifiedInviteStatus.accepted:
+        return ('Accepted', Colors.green, Icons.check_circle);
+      case UnifiedInviteStatus.declined:
+        return ('Declined', Colors.red, Icons.cancel);
+      case UnifiedInviteStatus.expired:
+        return ('Expired', Colors.grey, Icons.timer_off);
+      case UnifiedInviteStatus.revoked:
+        return ('Revoked', Colors.grey, Icons.block);
+    }
   }
 
   Widget _buildInviteForm(bool isDark, Color inputBg, Color borderColor, Color textColor) {
@@ -356,6 +397,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
           )
         );
         _emailController.clear();
+        await _loadInvites();
         _tabController.animateTo(1);
       }
 

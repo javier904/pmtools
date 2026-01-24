@@ -265,6 +265,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     content = TodoListView(
                       tasks: tasks,
                       columns: currentList.columns,
+                      list: currentList,
                       onTaskTap: (t) => _editTask(t, currentList),
                       onTaskMoved: (t, s) => _handleTaskMoved(t, s, currentList),
                       onTaskDelete: (t) => _deleteTask(t, currentList),

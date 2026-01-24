@@ -269,13 +269,14 @@ class TodoKanbanView extends StatelessWidget {
           opacity: 0.9,
           child: Transform.scale(
             scale: 1.05,
-            child: TodoTaskCard(task: task),
+            child: TodoTaskCard(task: task, list: list),
           ),
         ),
       ),
       childWhenDragging: Opacity(opacity: 0.3, child: TodoTaskCard(task: task)),
       child: TodoTaskCard(
         task: task,
+        list: list,
         isCompleted: col.isDone,
         onTap: () => onTaskTap(task),
         onDelete: onTaskDelete,

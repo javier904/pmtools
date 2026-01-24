@@ -10,6 +10,7 @@ class TodoListView extends StatelessWidget {
   final Function(TodoTaskModel) onTaskTap;
   final Function(TodoTaskModel, String)? onTaskMoved; 
   final Function(TodoTaskModel) onTaskDelete;
+  final TodoListModel list; // Added
 
   const TodoListView({
     super.key,
@@ -18,6 +19,7 @@ class TodoListView extends StatelessWidget {
     required this.onTaskTap,
     this.onTaskMoved,
     required this.onTaskDelete,
+    required this.list,
   });
 
   @override
@@ -58,6 +60,7 @@ class TodoListView extends StatelessWidget {
         return TodoTaskRow(
           task: task,
           column: column,
+          list: list,
           onTap: () => onTaskTap(task),
         );
       },

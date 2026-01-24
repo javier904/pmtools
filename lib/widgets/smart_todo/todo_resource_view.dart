@@ -214,18 +214,19 @@ class TodoResourceView extends StatelessWidget {
                   width: 300, 
                   child: Opacity(
                     opacity: 0.9,
-                    child: TodoTaskCard(task: task, onTap: () {}),
+                    child: TodoTaskCard(task: task, list: list, onTap: () {}),
                   ),
                 ),
               ),
               childWhenDragging: Opacity(
                 opacity: 0.3, 
-                child: TodoTaskCard(task: task, onTap: () {}),
+                child: TodoTaskCard(task: task, list: list, onTap: () {}),
               ),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: TodoTaskCard(
                   task: task,
+                  list: list,
                   onTap: () => onTaskTap(task),
                 ),
               ),
