@@ -8,7 +8,7 @@ class TodoKanbanView extends StatelessWidget {
   final TodoListModel list;
   final List<TodoTaskModel> tasks;
   final Function(TodoTaskModel) onTaskTap;
-  final Function(TodoTaskModel, String, [double?]) onTaskMoved; // Updated signature
+  final Function(TodoTaskModel, String, [TodoTaskModel?]) onTaskMoved; // task, newStatusId, insertBeforeTask
   final Function(TodoTaskModel) onTaskDelete;
   final Function(String, String) onColumnAction; // action, columnId
   final Function(String) onQuickAdd; 
@@ -163,28 +163,11 @@ class TodoKanbanView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final task = sortedTasks[index];
                         
-                        // 2. Wrap in DragTarget for "Insert Before" behavior (Manual Mode Only)
-                        // If sorting is automatic, we just drop on column (handled by outer target)
-                        if (col.sortBy != TodoColumnSort.manual) {
-                           return _buildDraggableCard(task, col, null);
-                        }
-
                         return DragTarget<TodoTaskModel>(
                           onWillAccept: (draggedTask) => draggedTask != null && draggedTask.id != task.id,
                           onAccept: (draggedTask) {
                              // Dropped on 'task'. Insert 'draggedTask' BEFORE 'task'.
-                             // New Position = (ReviewTask.pos + CurrentTask.pos) / 2
-                             // If index == 0, we need to be smaller than current.
-                             
-                             double newPos;
-                             if (index == 0) {
-                               newPos = task.position - 1000.0;
-                             } else {
-                               final prevTask = sortedTasks[index - 1];
-                               newPos = (prevTask.position + task.position) / 2;
-                             }
-                             
-                             onTaskMoved(draggedTask, col.id, newPos);
+                             onTaskMoved(draggedTask, col.id, task);
                           },
                           builder: (context, candidateData, rejectedData) {
                             // Visual feedback for insertion point?
@@ -194,7 +177,7 @@ class TodoKanbanView extends StatelessWidget {
                               children: [
                                 if (isHovered) 
                                   Container(height: 4, margin: const EdgeInsets.symmetric(vertical: 4), color: Colors.blue, width: 100),
-                                _buildDraggableCard(task, col, null), // don't pass onTaskMoved here as it's for dropping *onto* card
+                                _buildDraggableCard(task, col, null), 
                               ],
                             );
                           },

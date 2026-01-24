@@ -42,10 +42,28 @@ class TodoColumn {
       colorValue: map['colorValue'] ?? 0xFF2196F3,
       isDone: map['isDone'] ?? false,
       sortBy: TodoColumnSort.values.firstWhere(
-        (e) => e.name == map['sortBy'], 
+        (e) => e.name == map['sortBy'],
         orElse: () => TodoColumnSort.manual
       ),
       sortAscending: map['sortAscending'] ?? true,
+    );
+  }
+
+  TodoColumn copyWith({
+    String? id,
+    String? title,
+    int? colorValue,
+    bool? isDone,
+    TodoColumnSort? sortBy,
+    bool? sortAscending,
+  }) {
+    return TodoColumn(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      colorValue: colorValue ?? this.colorValue,
+      isDone: isDone ?? this.isDone,
+      sortBy: sortBy ?? this.sortBy,
+      sortAscending: sortAscending ?? this.sortAscending,
     );
   }
 }

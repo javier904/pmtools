@@ -1442,6 +1442,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 matrixId: _selectedMatrix!.id,
                 matrixTitle: _selectedMatrix!.title,
                 isFacilitator: _isFacilitator,
+                participants: _selectedMatrix!.participants,
+                currentUserEmail: _currentUserEmail,
                 onInviteAccepted: () {
                   // Ricarica dati quando un invito viene accettato
                   _loadActivities(_selectedMatrix!.id);

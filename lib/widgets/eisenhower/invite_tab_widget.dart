@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/unified_invite_model.dart';
+import '../../models/eisenhower_participant_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/invite_aggregator_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -17,6 +18,8 @@ class EisenhowerInviteTabWidget extends StatefulWidget {
   final String matrixTitle;
   final bool isFacilitator;
   final VoidCallback? onInviteAccepted;
+  final Map<String, EisenhowerParticipantModel> participants;
+  final String? currentUserEmail;
 
   const EisenhowerInviteTabWidget({
     super.key,
@@ -24,6 +27,8 @@ class EisenhowerInviteTabWidget extends StatefulWidget {
     required this.matrixTitle,
     required this.isFacilitator,
     this.onInviteAccepted,
+    this.participants = const {},
+    this.currentUserEmail,
   });
 
   @override
@@ -326,6 +331,22 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
   }
 
   Widget _buildInvitesList(AppLocalizations l10n) {
+    // Find participants that don't have a matching invite record
+    final invitedEmails = _invites.map((i) => i.email.toLowerCase()).toSet();
+    final membersWithoutInvites = widget.participants.entries
+        .where((entry) {
+          final email = entry.key.toLowerCase();
+          // Skip current user (the facilitator viewing this tab)
+          if (widget.currentUserEmail != null &&
+              email == widget.currentUserEmail!.toLowerCase()) {
+            return false;
+          }
+          return !invitedEmails.contains(email);
+        })
+        .toList();
+
+    final hasContent = _invites.isNotEmpty || membersWithoutInvites.isNotEmpty;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -339,7 +360,7 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
         ),
         const SizedBox(height: 8),
 
-        if (_invites.isEmpty)
+        if (!hasContent)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -357,9 +378,99 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
               ],
             ),
           )
-        else
+        else ...[
+          // Show invite records
           ..._invites.map((invite) => _buildInviteRow(invite, l10n)),
+          // Show participants without invite records as "Members"
+          ...membersWithoutInvites.map((entry) => _buildMemberRow(entry.value, l10n)),
+        ],
       ],
+    );
+  }
+
+  Widget _buildMemberRow(EisenhowerParticipantModel participant, AppLocalizations l10n) {
+    final roleLabel = participant.role == EisenhowerParticipantRole.voter
+        ? l10n.participantVoter
+        : participant.role == EisenhowerParticipantRole.observer
+            ? l10n.participantObserver
+            : 'Facilitator';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: context.surfaceVariantColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: context.borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Email and role badge
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  participant.email,
+                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  roleLabel,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+
+          // Status: Member (joined directly)
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.person, size: 12, color: AppColors.success),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Member',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (participant.name.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Text(
+                  participant.name,
+                  style: TextStyle(fontSize: 11, color: context.textMutedColor),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 

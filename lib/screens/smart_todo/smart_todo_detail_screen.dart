@@ -267,7 +267,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       columns: currentList.columns,
                       list: currentList,
                       onTaskTap: (t) => _editTask(t, currentList),
-                      onTaskMoved: (t, s) => _handleTaskMoved(t, s, currentList),
+                      onTaskMoved: (t, s) => _handleTaskMoved(t, s, currentList, tasks),
                       onTaskDelete: (t) => _deleteTask(t, currentList),
                     );
                     break;
@@ -276,7 +276,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       list: currentList,
                       tasks: tasks,
                       onTaskTap: (t) => _editTask(t, currentList),
-                      onTaskMoved: (t, s, [pos]) => _handleTaskMoved(t, s, currentList, pos), // Supports reorder
+                      onTaskMoved: (t, s, [pos]) => _handleTaskMoved(t, s, currentList, tasks, pos), // Supports reorder
                       onAssigneeChanged: (t, u) => _handleAssigneeChanged(t, u, currentList),
                     );
                     break;
@@ -285,7 +285,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     content = TodoKanbanView(
                       list: currentList,
                       tasks: tasks,
-                      onTaskMoved: (t, s, [double? pos]) => _handleTaskMoved(t, s, currentList, pos),
+                      onTaskMoved: (t, s, [TodoTaskModel? prev]) => _handleTaskMoved(t, s, currentList, tasks, prev),
                       onTaskTap: (t) => _editTask(t, currentList),
                       onTaskDelete: (t) => _deleteTask(t, currentList),
                       onColumnAction: (a, c) => _handleColumnAction(a, c, currentList),
@@ -534,21 +534,122 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     );
   }
 
-  void _handleTaskMoved(TodoTaskModel task, String newStatusId, TodoListModel currentList, [double? newPosition]) {
+  void _handleTaskMoved(TodoTaskModel task, String newStatusId, TodoListModel currentList, List<TodoTaskModel> allTasks, [dynamic positionContext]) {
     if (!_canEditTask(task, currentList)) return;
-    
-    // If only position changed (reorder in resource view)
-    if (newStatusId.isEmpty && newPosition != null) {
-      _todoService.updateTaskPosition(currentList.id, task.id, newPosition);
-      return;
-    }
 
-    var updatedTask = task.copyWith(statusId: newStatusId);
-    if (newPosition != null) {
-      updatedTask = updatedTask.copyWith(position: newPosition);
+    // Handle Resource View / Simple Position Update (positionContext is double)
+    if (positionContext is double) {
+       // ... existing logic for direct position update (e.g. from Resource View)
+       _todoService.updateTaskPosition(currentList.id, task.id, positionContext);
+       // Also update status if changed
+       if (newStatusId.isNotEmpty && newStatusId != task.statusId) {
+          _todoService.updateTask(currentList.id, task.copyWith(statusId: newStatusId, position: positionContext));
+       }
+       return;
     }
     
-    _todoService.updateTask(currentList.id, updatedTask);
+    // Handle Kanban Drop (positionContext is TodoTaskModel? insertBeforeTask)
+    final insertBeforeTask = positionContext as TodoTaskModel?;
+    
+    // 1. Get Target Column
+    final targetCol = currentList.columns.firstWhere((c) => c.id == newStatusId, 
+        orElse: () => TodoColumn(id: newStatusId, title: 'Unknown', colorValue: 0));
+        
+    // 2. Needs explicit manual switch?
+    bool needsManualSwitch = targetCol.sortBy != TodoColumnSort.manual;
+    
+    if (needsManualSwitch) {
+       // IMPLICIT SWITCH: Freeze current order
+       // A. Get all tasks in this column from passed list
+       final tasksInCol = allTasks
+           .where((t) => t.statusId == newStatusId && t.id != task.id) // Exclude moving task
+           .toList();
+           
+       // B. Sort them by CURRENT sort criteria
+       tasksInCol.sort((a, b) {
+          switch (targetCol.sortBy) {
+            case TodoColumnSort.priority: return b.priority.index.compareTo(a.priority.index);
+            case TodoColumnSort.dueDate: 
+               if (a.dueDate == null) return 1;
+               if (b.dueDate == null) return -1;
+               return a.dueDate!.compareTo(b.dueDate!);
+            case TodoColumnSort.createdAt: return b.createdAt.compareTo(a.createdAt);
+            default: return 0;
+          }
+       });
+       
+       // C. Assign frozen positions (spaced by 10000)
+       double currentPos = 10000.0;
+       for (var t in tasksInCol) {
+          _todoService.updateTaskPosition(currentList.id, t.id, currentPos);
+          currentPos += 10000.0;
+       }
+       
+       // D. Update Column to Manual
+       final newColumns = List<TodoColumn>.from(currentList.columns);
+       final colIndex = newColumns.indexWhere((c) => c.id == newStatusId);
+       if (colIndex != -1) {
+          newColumns[colIndex] = newColumns[colIndex].copyWith(sortBy: TodoColumnSort.manual);
+          _todoService.updateList(currentList.copyWith(columns: newColumns));
+       }
+       
+       // E. Calculate New Position for Moved Task
+       double newTaskPos;
+       if (insertBeforeTask == null) {
+          // Append to end
+          newTaskPos = currentPos + 10000.0; 
+       } else {
+          // Find insertBeforeTask's new frozen position?
+          // Since we just renamed positions, we need to infer based on index in simple sorted list
+          final index = tasksInCol.indexWhere((t) => t.id == insertBeforeTask.id);
+          if (index == -1) {
+             newTaskPos = currentPos; 
+          } else if (index == 0) {
+             newTaskPos = 5000.0; 
+          } else {
+             final posAfter = (index + 1) * 10000.0;
+             final posBefore = index * 10000.0;
+             newTaskPos = (posBefore + posAfter) / 2;
+          }
+       }
+       
+       _todoService.updateTask(currentList.id, task.copyWith(
+          statusId: newStatusId,
+          position: newTaskPos
+       ));
+       
+    } else {
+       // ALREADY MANUAL: Standard Insert Logic
+       // Use passed allTasks instead of fetching
+       final tasksInCol = allTasks
+           .where((t) => t.statusId == newStatusId && t.id != task.id)
+           .toList();
+       tasksInCol.sort((a, b) => a.position.compareTo(b.position));
+       
+       double newPos;
+       if (insertBeforeTask == null) {
+          final last = tasksInCol.isNotEmpty ? tasksInCol.last.position : 0.0;
+          newPos = last + 10000.0;
+       } else {
+          final afterTask = tasksInCol.firstWhere((t) => t.id == insertBeforeTask.id, orElse: () => insertBeforeTask!);
+          final index = tasksInCol.indexOf(afterTask); 
+          
+          if (index == -1) {
+             newPos = (tasksInCol.lastOrNull?.position ?? 0) + 10000.0;
+          } else if (index == 0) {
+             newPos = afterTask.position / 2;
+             if (newPos < 1) newPos = afterTask.position - 100.0; 
+          } else {
+             final prev = tasksInCol[index - 1];
+             newPos = (prev.position + afterTask.position) / 2;
+          }
+       }
+       
+       _todoService.updateTask(currentList.id, task.copyWith(
+          statusId: newStatusId,
+          position: newPos
+       ));
+    }
   }
 
   void _handleColumnAction(String action, String columnId, TodoListModel currentList) async {
