@@ -77,6 +77,94 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
     await _service.markOffline(widget.retroId, widget.currentUserEmail);
   }
 
+  /// Conta i partecipanti online
+  int _countOnlineParticipants(RetrospectiveModel retro) {
+    int count = 0;
+    for (final email in retro.participantEmails) {
+      if (ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence)) {
+        count++;
+      }
+    }
+    return count;
+  }
+  
+  List<String> _getOnlineParticipants(RetrospectiveModel retro) {
+    return retro.participantEmails.where((email) => 
+      ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence)
+    ).toList();
+  }
+
+  Widget _buildOnlineCounter(RetrospectiveModel retro) {
+    final onlineCount = _countOnlineParticipants(retro);
+    final totalCount = retro.participantEmails.length;
+    final l10n = AppLocalizations.of(context);
+    
+    return Tooltip(
+      richMessage: TextSpan(
+        children: [
+          TextSpan(
+            text: '${l10n?.retroParticipantsTitle(totalCount) ?? "Participants ($totalCount)"}\n\n',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          ...retro.participantEmails.map((email) {
+             final isOnline = ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence);
+             // Try to get display name from participants list if available in model? 
+             // RetroModel doesn't have full Participant objects usually, just emails. 
+             // We'll show email/name split.
+             final name = email.split('@').first;
+             return TextSpan(
+               text: '$name ${isOnline ? "●" : "○"}\n',
+               style: TextStyle(color: isOnline ? Colors.greenAccent : Colors.white70),
+             );
+          }),
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+           BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: onlineCount > 0 ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: onlineCount > 0 ? Colors.green.withOpacity(0.3) : Colors.grey.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: onlineCount > 0 ? Colors.green : Colors.grey,
+                boxShadow: onlineCount > 0 ? [
+                  BoxShadow(color: Colors.green.withOpacity(0.5), blurRadius: 4, spreadRadius: 1),
+                ] : null,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$onlineCount / $totalCount',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: onlineCount > 0 ? Colors.green : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -108,16 +196,15 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                ),
                const SizedBox(width: 8),
 
-                IconButton(
-                icon: const Icon(Icons.person_add),
-                tooltip: l10n?.inviteSendNew ?? 'Invite',
-                onPressed: () => _showInviteDialog(retro),
-              ),
-              IconButton(
-                icon: const Icon(Icons.people),
-                tooltip: l10n?.participants ?? 'Participants',
-                onPressed: () => _showParticipantsDialog(retro),
-              ),
+               IconButton(
+                 icon: const Icon(Icons.person_add),
+                 tooltip: l10n?.inviteSendNew ?? 'Invite',
+                 onPressed: () => _showInviteDialog(retro),
+               ),
+               const SizedBox(width: 8),
+               // Online Presence Counter (Replaces old participants dialog)
+               _buildOnlineCounter(retro),
+               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: CircleAvatar(
@@ -518,102 +605,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   // But I will proceed with retroId and list, a common pattern.
   // Wait, if it takes named parameters.
   
-  void _showParticipantsDialog(RetrospectiveModel retro) {
-    final l10n = AppLocalizations.of(context);
 
-    // Conta partecipanti online
-    int onlineCount = 0;
-    for (final email in retro.participantEmails) {
-      if (ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence)) {
-        onlineCount++;
-      }
-    }
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Text(l10n?.retroParticipantsTitle(retro.participantEmails.length) ?? 'Participants (${retro.participantEmails.length})'),
-            const SizedBox(width: 12),
-            // Badge online count
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$onlineCount online',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: retro.participantEmails.length,
-            itemBuilder: (context, index) {
-              final email = retro.participantEmails[index];
-              final isOnline = ParticipantPresenceIndicator.isParticipantOnline(
-                email,
-                retro.participantPresence,
-              );
-
-              return ListTile(
-                leading: ParticipantAvatarWithPresence(
-                  email: email,
-                  isOnline: isOnline,
-                  avatarRadius: 20,
-                ),
-                title: Text(email.split('@').first),
-                subtitle: Text(email),
-                trailing: isOnline
-                    ? const Text(
-                        'Online',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
-                    : Text(
-                        'Offline',
-                        style: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontSize: 12,
-                        ),
-                      ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n?.actionClose ?? 'Chiudi')),
-        ],
-      ),
-    );
-  }
 
   Future<void> _regressPhase(RetrospectiveModel retro) async {
     final prevPhaseIndex = retro.currentPhase.index - 1;

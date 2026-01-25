@@ -5,13 +5,16 @@ import 'package:googleapis/gmail/v1.dart' as gmail;
 import '../models/smart_todo/todo_invite_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
 import '../models/smart_todo/todo_list_model.dart';
+import '../models/smart_todo/smart_todo_audit_log_model.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import '../utils/validators.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'smart_todo_audit_service.dart';
 
 class SmartTodoInviteService {
   final FirebaseFirestore _firestore;
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
+  final SmartTodoAuditService _auditService = SmartTodoAuditService();
 
   static const String _listsCollection = 'smart_todo_lists';
   static const String _invitesSubcollection = 'invites';
@@ -82,6 +85,19 @@ class SmartTodoInviteService {
     });
 
     await batch.commit();
+
+    // 📋 Audit log
+    _auditService.log(
+      listId: listId,
+      entityType: TodoAuditEntityType.invite,
+      entityId: docRef.id,
+      entityName: email,
+      action: TodoAuditAction.invite,
+      performedBy: invitedBy,
+      performedByName: invitedByName,
+      description: 'Invitato $email come ${role.name}',
+    );
+
     return invite;
   }
 
@@ -97,13 +113,27 @@ class SmartTodoInviteService {
             .toList());
   }
 
-  Future<void> revokeInvite(String listId, String inviteId) async {
+  Future<void> revokeInvite(String listId, String inviteId, {String? inviteEmail, String? performedBy, String? performedByName}) async {
     await _firestore
         .collection(_listsCollection)
         .doc(listId)
         .collection(_invitesSubcollection)
         .doc(inviteId)
         .update({'status': 'revoked'});
+
+    // 📋 Audit log
+    if (performedBy != null) {
+      _auditService.log(
+        listId: listId,
+        entityType: TodoAuditEntityType.invite,
+        entityId: inviteId,
+        entityName: inviteEmail,
+        action: TodoAuditAction.revoke,
+        performedBy: performedBy,
+        performedByName: performedByName ?? performedBy.split('@').first,
+        description: 'Invito revocato per ${inviteEmail ?? inviteId}',
+      );
+    }
   }
 
   // ══════════════════════════════════════════════════════════════════════════════
@@ -185,6 +215,18 @@ class SmartTodoInviteService {
         'participantEmails': emails,
       });
     });
+
+    // 📋 Audit log
+    _auditService.log(
+      listId: listId,
+      entityType: TodoAuditEntityType.participant,
+      entityId: userEmail,
+      entityName: userDisplayName ?? userEmail,
+      action: TodoAuditAction.join,
+      performedBy: userEmail,
+      performedByName: userDisplayName ?? userEmail.split('@').first,
+      description: '${userDisplayName ?? userEmail} ha accettato l\'invito',
+    );
   }
 
   // Implementation of email sending (Gmail API)

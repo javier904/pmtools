@@ -420,6 +420,18 @@ service cloud.firestore {
                               userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', []));
       }
 
+      // Subcollection: audit_logs (owner-only read, participants write)
+      match /audit_logs/{logId} {
+        // Lettura: solo owner della lista
+        allow read: if isAuthenticated() &&
+                      get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail();
+
+        // Scrittura: owner o partecipanti (il service scrive gli audit per tutte le azioni)
+        allow write: if isAuthenticated() &&
+                       (get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+                        userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', []));
+      }
+
       // Subcollection: invites (USATA DAL CODICE - smart_todo_invite_service.dart)
       match /invites/{inviteId} {
         // Get: invitato, chi ha invitato, o owner/partecipanti della lista

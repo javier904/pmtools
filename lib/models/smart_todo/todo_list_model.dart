@@ -102,9 +102,6 @@ class TodoListModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-
-    return {
-      'id': id,
       'title': title,
       'description': description,
       'ownerId': ownerId,

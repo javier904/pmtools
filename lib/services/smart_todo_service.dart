@@ -4,12 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
+import '../models/smart_todo/smart_todo_audit_log_model.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'smart_todo_audit_service.dart';
 
 class SmartTodoService {
   final FirebaseFirestore _firestore;
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
+  final SmartTodoAuditService _auditService = SmartTodoAuditService();
 
   static const String _listsCollection = 'smart_todo_lists';
   static const String _tasksSubcollection = 'smart_todo_tasks';
@@ -60,7 +63,7 @@ class SmartTodoService {
 
   /// Crea una nuova lista
   /// Lancia [LimitExceededException] se il limite liste e' raggiunto
-  Future<String> createList(TodoListModel list, String userEmail) async {
+  Future<String> createList(TodoListModel list, String userEmail, {String? performedByName}) async {
     // 🔒 CHECK LIMITE LISTE
     await _limitsService.enforceListLimit(userEmail.toLowerCase());
 
@@ -74,17 +77,62 @@ class SmartTodoService {
     data['participantEmails'] = list.participants.keys.map((e) => e.toLowerCase()).toList();
 
     await docRef.set(data);
+
+    // 📋 Audit log
+    _auditService.log(
+      listId: docRef.id,
+      entityType: TodoAuditEntityType.list,
+      entityId: docRef.id,
+      entityName: list.title,
+      action: TodoAuditAction.create,
+      performedBy: userEmail.toLowerCase(),
+      performedByName: performedByName ?? userEmail.split('@').first,
+      description: 'Lista "${list.title}" creata',
+    );
+
     return docRef.id;
   }
 
-  Future<void> updateList(TodoListModel list) async {
+  Future<void> updateList(TodoListModel list, {TodoListModel? previousList, String? performedBy, String? performedByName}) async {
     final data = list.toMap();
     data['participantEmails'] = list.participants.keys.map((e) => e.toLowerCase()).toList();
     await _firestore.collection(_listsCollection).doc(list.id).update(data);
+
+    // 📋 Audit log
+    if (performedBy != null && previousList != null) {
+      final changes = _auditService.detectListChanges(previousList, list);
+      if (changes.isNotEmpty) {
+        _auditService.log(
+          listId: list.id,
+          entityType: TodoAuditEntityType.list,
+          entityId: list.id,
+          entityName: list.title,
+          action: TodoAuditAction.update,
+          performedBy: performedBy,
+          performedByName: performedByName ?? performedBy.split('@').first,
+          changes: changes,
+          description: 'Modificato: ${changes.map((c) => c.fieldDisplayName).join(', ')}',
+        );
+      }
+    }
   }
 
-  Future<void> deleteList(String listId) async {
+  Future<void> deleteList(String listId, {String? listTitle, String? performedBy, String? performedByName}) async {
     await _firestore.collection(_listsCollection).doc(listId).delete();
+
+    // 📋 Audit log
+    if (performedBy != null) {
+      _auditService.log(
+        listId: listId,
+        entityType: TodoAuditEntityType.list,
+        entityId: listId,
+        entityName: listTitle,
+        action: TodoAuditAction.delete,
+        performedBy: performedBy,
+        performedByName: performedByName ?? performedBy.split('@').first,
+        description: 'Lista "${listTitle ?? listId}" eliminata',
+      );
+    }
   }
 
   Future<TodoListModel?> getList(String listId) async {
@@ -94,22 +142,36 @@ class SmartTodoService {
   }
 
   /// Add a user to pending invites
-  Future<void> addPendingParticipant(String listId, String email) async {
+  Future<void> addPendingParticipant(String listId, String email, {String? performedBy, String? performedByName}) async {
     await _firestore.collection(_listsCollection).doc(listId).update({
       'pendingEmails': FieldValue.arrayUnion([email]),
     });
+
+    // 📋 Audit log
+    if (performedBy != null) {
+      _auditService.log(
+        listId: listId,
+        entityType: TodoAuditEntityType.participant,
+        entityId: email,
+        entityName: email,
+        action: TodoAuditAction.invite,
+        performedBy: performedBy,
+        performedByName: performedByName ?? performedBy.split('@').first,
+        description: 'Invitato $email',
+      );
+    }
   }
 
   /// Promote pending user to active participant via Transaction
   Future<void> promotePendingToActive(String listId, TodoParticipant participant) async {
     final docRef = _firestore.collection(_listsCollection).doc(listId);
-    
+
     await _firestore.runTransaction((transaction) async {
       final snapshot = await transaction.get(docRef);
       if (!snapshot.exists) throw Exception("List not found");
 
       final data = snapshot.data()!;
-      
+
       // 1. Update Participants Map
       final participants = Map<String, dynamic>.from(data['participants'] ?? {});
       participants[participant.email] = participant.toMap();
@@ -130,6 +192,18 @@ class SmartTodoService {
         'participantEmails': emails,
       });
     });
+
+    // 📋 Audit log
+    _auditService.log(
+      listId: listId,
+      entityType: TodoAuditEntityType.participant,
+      entityId: participant.email,
+      entityName: participant.displayName ?? participant.email,
+      action: TodoAuditAction.join,
+      performedBy: participant.email,
+      performedByName: participant.displayName ?? participant.email.split('@').first,
+      description: '${participant.displayName ?? participant.email} entrato come ${participant.role.name}',
+    );
   }
 
   Stream<TodoListModel?> streamList(String listId) {
@@ -168,7 +242,7 @@ class SmartTodoService {
 
   /// Crea un nuovo task in una lista
   /// Lancia [LimitExceededException] se il limite task per entita' e' raggiunto
-  Future<String> createTask(String listId, TodoTaskModel task) async {
+  Future<String> createTask(String listId, TodoTaskModel task, {String? performedBy, String? performedByName}) async {
     // 🔒 CHECK LIMITE TASK PER ENTITA'
     await _limitsService.enforceTaskLimit(entityType: 'smart_todo', entityId: listId);
 
@@ -186,10 +260,25 @@ class SmartTodoService {
     );
 
     await docRef.set(taskWithId.toMap());
+
+    // 📋 Audit log
+    if (performedBy != null) {
+      _auditService.log(
+        listId: listId,
+        entityType: TodoAuditEntityType.task,
+        entityId: docRef.id,
+        entityName: task.title,
+        action: TodoAuditAction.create,
+        performedBy: performedBy,
+        performedByName: performedByName ?? performedBy.split('@').first,
+        description: 'Task "${task.title}" creato',
+      );
+    }
+
     return docRef.id;
   }
 
-  Future<void> batchCreateTasks(String listId, List<TodoTaskModel> tasks) async {
+  Future<void> batchCreateTasks(String listId, List<TodoTaskModel> tasks, {String? performedBy, String? performedByName}) async {
     final batch = _firestore.batch();
     final colRef = _firestore
         .collection(_listsCollection)
@@ -202,34 +291,99 @@ class SmartTodoService {
     }
 
     await batch.commit();
+
+    // 📋 Audit log
+    if (performedBy != null) {
+      _auditService.log(
+        listId: listId,
+        entityType: TodoAuditEntityType.task,
+        entityId: listId,
+        entityName: '${tasks.length} task',
+        action: TodoAuditAction.batchCreate,
+        performedBy: performedBy,
+        performedByName: performedByName ?? performedBy.split('@').first,
+        description: 'Importati ${tasks.length} task: ${tasks.take(5).map((t) => t.title).join(', ')}${tasks.length > 5 ? '...' : ''}',
+        metadata: {'count': tasks.length, 'titles': tasks.map((t) => t.title).toList()},
+      );
+    }
   }
 
-  Future<void> updateTask(String listId, TodoTaskModel task) async {
+  Future<void> updateTask(String listId, TodoTaskModel task, {TodoTaskModel? previousTask, String? performedBy, String? performedByName}) async {
     await _firestore
         .collection(_listsCollection)
         .doc(listId)
         .collection(_tasksSubcollection)
         .doc(task.id)
         .update(task.toMap());
+
+    // 📋 Audit log (delta detection)
+    if (performedBy != null && previousTask != null) {
+      final changes = _auditService.detectTaskChanges(previousTask, task);
+      if (changes.isNotEmpty) {
+        final action = _auditService.determineTaskAction(changes);
+        String desc;
+        switch (action) {
+          case TodoAuditAction.move:
+            final statusChange = changes.firstWhere((c) => c.field == 'statusId');
+            desc = 'Spostato "${task.title}" da ${statusChange.previousValue} a ${statusChange.newValue}';
+            break;
+          case TodoAuditAction.assign:
+            final assignChange = changes.firstWhere((c) => c.field == 'assignedTo');
+            desc = 'Assegnato "${task.title}" a ${assignChange.newValue}';
+            break;
+          default:
+            desc = 'Modificato "${task.title}": ${changes.map((c) => c.fieldDisplayName).join(', ')}';
+        }
+
+        _auditService.log(
+          listId: listId,
+          entityType: TodoAuditEntityType.task,
+          entityId: task.id,
+          entityName: task.title,
+          action: action,
+          performedBy: performedBy,
+          performedByName: performedByName ?? performedBy.split('@').first,
+          changes: changes,
+          description: desc,
+        );
+      }
+    }
   }
   
   /// Aggiorna la posizione di un task (Global Rank)
-  Future<void> updateTaskPosition(String listId, String taskId, double newPosition) async {
+  Future<void> updateTaskPosition(String listId, String taskId, double newPosition, {String? taskTitle, String? performedBy, String? performedByName}) async {
      await _firestore
         .collection(_listsCollection)
         .doc(listId)
         .collection(_tasksSubcollection)
         .doc(taskId)
         .update({'position': newPosition, 'updatedAt': Timestamp.now()});
+
+    // 📋 Audit log (solo per riordini espliciti, non per intermediate drag states)
+    // Nota: non logghiamo ogni singolo reorder per evitare spam
   }
 
-  Future<void> deleteTask(String listId, String taskId) async {
+  Future<void> deleteTask(String listId, String taskId, {String? taskTitle, String? performedBy, String? performedByName}) async {
     await _firestore
         .collection(_listsCollection)
         .doc(listId)
         .collection(_tasksSubcollection)
         .doc(taskId)
         .delete();
+
+    // 📋 Audit log
+    if (performedBy != null) {
+      _auditService.log(
+        listId: listId,
+        entityType: TodoAuditEntityType.task,
+        entityId: taskId,
+        entityName: taskTitle,
+        action: TodoAuditAction.delete,
+        performedBy: performedBy,
+        performedByName: performedByName ?? performedBy.split('@').first,
+        description: 'Task "${taskTitle ?? taskId}" eliminato',
+      );
+    }
   }
   // ══════════════════════════════════════════════════════════════════════════════
   // GLOBAL / MACRO VIEW OPERATIONS
@@ -373,13 +527,28 @@ class SmartTodoService {
   ///
   /// Le liste archiviate sono escluse dai conteggi subscription
   /// e non appaiono nelle liste di default
-  Future<bool> archiveList(String listId) async {
+  Future<bool> archiveList(String listId, {String? listTitle, String? performedBy, String? performedByName}) async {
     try {
       await _firestore.collection(_listsCollection).doc(listId).update({
         'isArchived': true,
         'archivedAt': DateTime.now().toIso8601String(),
       });
       print('🗄️ Lista archiviata: $listId');
+
+      // 📋 Audit log
+      if (performedBy != null) {
+        _auditService.log(
+          listId: listId,
+          entityType: TodoAuditEntityType.list,
+          entityId: listId,
+          entityName: listTitle,
+          action: TodoAuditAction.archive,
+          performedBy: performedBy,
+          performedByName: performedByName ?? performedBy.split('@').first,
+          description: 'Lista "${listTitle ?? listId}" archiviata',
+        );
+      }
+
       return true;
     } catch (e) {
       print('❌ Errore archiveList: $e');
@@ -390,13 +559,28 @@ class SmartTodoService {
   /// Ripristina una lista archiviata
   ///
   /// [listId] - ID della lista da ripristinare
-  Future<bool> restoreList(String listId) async {
+  Future<bool> restoreList(String listId, {String? listTitle, String? performedBy, String? performedByName}) async {
     try {
       await _firestore.collection(_listsCollection).doc(listId).update({
         'isArchived': false,
         'archivedAt': null,
       });
       print('📦 Lista ripristinata: $listId');
+
+      // 📋 Audit log
+      if (performedBy != null) {
+        _auditService.log(
+          listId: listId,
+          entityType: TodoAuditEntityType.list,
+          entityId: listId,
+          entityName: listTitle,
+          action: TodoAuditAction.restore,
+          performedBy: performedBy,
+          performedByName: performedByName ?? performedBy.split('@').first,
+          description: 'Lista "${listTitle ?? listId}" ripristinata',
+        );
+      }
+
       return true;
     } catch (e) {
       print('❌ Errore restoreList: $e');
@@ -443,7 +627,7 @@ class SmartTodoService {
   ///
   /// [listId] - ID della lista
   /// [taskId] - ID del task da archiviare
-  Future<bool> archiveTask(String listId, String taskId) async {
+  Future<bool> archiveTask(String listId, String taskId, {String? taskTitle, String? performedBy, String? performedByName}) async {
     try {
       await _firestore
           .collection(_listsCollection)
@@ -455,6 +639,21 @@ class SmartTodoService {
         'archivedAt': DateTime.now().toIso8601String(),
       });
       print('🗄️ Task archiviato: $taskId');
+
+      // 📋 Audit log
+      if (performedBy != null) {
+        _auditService.log(
+          listId: listId,
+          entityType: TodoAuditEntityType.task,
+          entityId: taskId,
+          entityName: taskTitle,
+          action: TodoAuditAction.archive,
+          performedBy: performedBy,
+          performedByName: performedByName ?? performedBy.split('@').first,
+          description: 'Task "${taskTitle ?? taskId}" archiviato',
+        );
+      }
+
       return true;
     } catch (e) {
       print('❌ Errore archiveTask: $e');
@@ -466,7 +665,7 @@ class SmartTodoService {
   ///
   /// [listId] - ID della lista
   /// [taskId] - ID del task da ripristinare
-  Future<bool> restoreTask(String listId, String taskId) async {
+  Future<bool> restoreTask(String listId, String taskId, {String? taskTitle, String? performedBy, String? performedByName}) async {
     try {
       await _firestore
           .collection(_listsCollection)
@@ -478,6 +677,21 @@ class SmartTodoService {
         'archivedAt': null,
       });
       print('📦 Task ripristinato: $taskId');
+
+      // 📋 Audit log
+      if (performedBy != null) {
+        _auditService.log(
+          listId: listId,
+          entityType: TodoAuditEntityType.task,
+          entityId: taskId,
+          entityName: taskTitle,
+          action: TodoAuditAction.restore,
+          performedBy: performedBy,
+          performedByName: performedByName ?? performedBy.split('@').first,
+          description: 'Task "${taskTitle ?? taskId}" ripristinato',
+        );
+      }
+
       return true;
     } catch (e) {
       print('❌ Errore restoreTask: $e');

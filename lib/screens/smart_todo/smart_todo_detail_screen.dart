@@ -25,6 +25,7 @@ import '../../l10n/app_localizations.dart';
 import '../estimation_room_screen.dart';
 import '../eisenhower_screen.dart';
 import '../agile_project_detail_screen.dart';
+import 'smart_todo_audit_log_screen.dart';
 
 enum TodoViewMode { kanban, list, resource }
 
@@ -170,6 +171,15 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     _buildViewIcon(TodoViewMode.resource, Icons.people_outline, AppLocalizations.of(context)?.smartTodoViewResource ?? 'Per Risorsa'),
                   ],
                 ),
+                if (currentList.isOwner(_currentUserEmail))
+                  IconButton(
+                    icon: const Icon(Icons.history),
+                    tooltip: 'Audit Log',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)),
+                    ),
+                  ),
                 IconButton(
                   icon: const Icon(Icons.person_add),
                   tooltip: AppLocalizations.of(context)?.smartTodoInviteTooltip ?? 'Invita',
@@ -324,13 +334,16 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
 
   void _handleAssigneeChanged(TodoTaskModel task, String userId, TodoListModel currentList) {
     if (!_canEditTask(task, currentList)) return;
-    
-    // If userId is 'unassigned', clear the list.
-    // Otherwise, set the list to just [userId] (single assignee for drag-drop simplicity).
-    // If we wanted to ADD to assignees, logic would be different.
+
     final newAssignees = userId == 'unassigned' ? <String>[] : [userId];
-    
-    _todoService.updateTask(currentList.id, task.copyWith(assignedTo: newAssignees));
+
+    _todoService.updateTask(
+      currentList.id,
+      task.copyWith(assignedTo: newAssignees),
+      previousTask: task,
+      performedBy: _currentUserEmail,
+      performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+    );
   }
 
 
@@ -539,11 +552,16 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
 
     // Handle Resource View / Simple Position Update (positionContext is double)
     if (positionContext is double) {
-       // ... existing logic for direct position update (e.g. from Resource View)
        _todoService.updateTaskPosition(currentList.id, task.id, positionContext);
        // Also update status if changed
        if (newStatusId.isNotEmpty && newStatusId != task.statusId) {
-          _todoService.updateTask(currentList.id, task.copyWith(statusId: newStatusId, position: positionContext));
+          _todoService.updateTask(
+            currentList.id,
+            task.copyWith(statusId: newStatusId, position: positionContext),
+            previousTask: task,
+            performedBy: _currentUserEmail,
+            performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+          );
        }
        return;
     }
@@ -613,11 +631,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           }
        }
        
-       _todoService.updateTask(currentList.id, task.copyWith(
-          statusId: newStatusId,
-          position: newTaskPos
-       ));
-       
+       _todoService.updateTask(
+          currentList.id,
+          task.copyWith(statusId: newStatusId, position: newTaskPos),
+          previousTask: task,
+          performedBy: _currentUserEmail,
+          performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+       );
+
     } else {
        // ALREADY MANUAL: Standard Insert Logic
        // Use passed allTasks instead of fetching
@@ -645,10 +666,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           }
        }
        
-       _todoService.updateTask(currentList.id, task.copyWith(
-          statusId: newStatusId,
-          position: newPos
-       ));
+       _todoService.updateTask(
+          currentList.id,
+          task.copyWith(statusId: newStatusId, position: newPos),
+          previousTask: task,
+          performedBy: _currentUserEmail,
+          performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+       );
     }
   }
 
@@ -681,7 +705,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       if (confirm == true) {
         final newColumns = List<TodoColumn>.from(currentList.columns)
           ..removeWhere((c) => c.id == columnId);
-        await _todoService.updateList(currentList.copyWith(columns: newColumns));
+        await _todoService.updateList(
+          currentList.copyWith(columns: newColumns),
+          previousList: currentList,
+          performedBy: _currentUserEmail,
+          performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+        );
       }
     }
   }
@@ -708,7 +737,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   sortBy: sort,
                   sortAscending: col.sortAscending,
                 );
-                await _todoService.updateList(currentList.copyWith(columns: newColumns));
+                await _todoService.updateList(
+                  currentList.copyWith(columns: newColumns),
+                  previousList: currentList,
+                  performedBy: _currentUserEmail,
+                  performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                );
               }
             },
             child: Row(
@@ -908,7 +942,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                 );
                               }
                             }
-                            await _todoService.updateList(currentList.copyWith(columns: newColumns));
+                            await _todoService.updateList(
+                              currentList.copyWith(columns: newColumns),
+                              previousList: currentList,
+                              performedBy: _currentUserEmail,
+                              performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
@@ -985,7 +1024,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                _todoService.updateList(currentList.copyWith(title: controller.text));
+                _todoService.updateList(
+                  currentList.copyWith(title: controller.text),
+                  previousList: currentList,
+                  performedBy: _currentUserEmail,
+                  performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                );
                 Navigator.pop(context);
               }
             },
@@ -1008,7 +1052,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             onPressed: () async {
               Navigator.pop(context); // Close dialog
-              await _todoService.deleteList(currentList.id);
+              await _todoService.deleteList(
+                currentList.id,
+                listTitle: currentList.title,
+                performedBy: _currentUserEmail,
+                performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+              );
               if (mounted) Navigator.pop(context); // Go back to dashboard
             },
             child: Text(AppLocalizations.of(context)?.actionDelete ?? 'Elimina'),
@@ -1040,10 +1089,22 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     );
 
     if (result != null) {
+      final userName = _authService.currentUserName ?? _currentUserEmail.split('@').first;
       if (task == null) {
-        await _todoService.createTask(currentList.id, result);
+        await _todoService.createTask(
+          currentList.id,
+          result,
+          performedBy: _currentUserEmail,
+          performedByName: userName,
+        );
       } else {
-        await _todoService.updateTask(currentList.id, result);
+        await _todoService.updateTask(
+          currentList.id,
+          result,
+          previousTask: task,
+          performedBy: _currentUserEmail,
+          performedByName: userName,
+        );
       }
     }
   }
@@ -1285,7 +1346,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              _todoService.deleteTask(currentList.id, task.id); 
+              _todoService.deleteTask(
+                currentList.id,
+                task.id,
+                taskTitle: task.title,
+                performedBy: _currentUserEmail,
+                performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+              );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             child: const Text('Elimina'),
@@ -1390,9 +1457,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                               icon: const Icon(Icons.delete_outline, size: 20),
                               onPressed: () async {
                                 final newTags = List<TodoLabel>.from(list.availableTags)..removeAt(index);
-                                await _todoService.updateList(list.copyWith(availableTags: newTags));
+                                await _todoService.updateList(
+                                  list.copyWith(availableTags: newTags),
+                                  previousList: list,
+                                  performedBy: _currentUserEmail,
+                                  performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                                );
                                 Navigator.pop(context);
-                                _showTagsDialog(list.copyWith(availableTags: newTags)); 
+                                _showTagsDialog(list.copyWith(availableTags: newTags));
                               },
                             ),
                           );
@@ -1468,7 +1540,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     colorValue: selectedColor,
                   );
                   final newTags = List<TodoLabel>.from(list.availableTags)..add(newTag);
-                  await _todoService.updateList(list.copyWith(availableTags: newTags));
+                  await _todoService.updateList(
+                    list.copyWith(availableTags: newTags),
+                    previousList: list,
+                    performedBy: _currentUserEmail,
+                    performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                  );
 
                   if (context.mounted) {
                      Navigator.pop(context); // Close Add Dialog

@@ -667,9 +667,9 @@ extension RetroTemplateExt on RetroTemplate {
       switch (this) {
           case RetroTemplate.startStopContinue:
           return [
-            RetroColumn(id: 'start', title: 'Start', description: 'Quali nuove attività o processi dovremmo iniziare per migliorare?', colorHex: '#BBDEFB', iconCode: 0xe037),
-            RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non sta portando valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: 0xe047),
-            RetroColumn(id: 'continue', title: 'Continue', description: 'Cosa sta funzionando bene e dobbiamo continuare a fare?', colorHex: '#C8E6C9', iconCode: 0xe038),
+            RetroColumn(id: 'start', title: 'Start', description: 'Quali nuove attività o processi dovremmo iniziare per migliorare?', colorHex: '#BBDEFB', iconCode: Icons.play_circle_outline.codePoint),
+            RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non sta portando valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: Icons.stop_circle_outlined.codePoint),
+            RetroColumn(id: 'continue', title: 'Continue', description: 'Cosa sta funzionando bene e dobbiamo continuare a fare?', colorHex: '#C8E6C9', iconCode: Icons.fast_forward_rounded.codePoint),
           ];
         case RetroTemplate.sailboat:
             return [

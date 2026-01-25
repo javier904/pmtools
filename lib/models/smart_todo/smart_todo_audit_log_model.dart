@@ -271,7 +271,7 @@ class SmartTodoAuditLogFilter {
   bool matches(SmartTodoAuditLogModel log) {
     if (entityType != null && log.entityType != entityType) return false;
     if (action != null && log.action != action) return false;
-    if (performedBy != null && log.performedBy != performedBy) return false;
+    if (performedBy != null && log.performedByName != performedBy) return false;
     if (fromDate != null && log.timestamp.isBefore(fromDate!)) return false;
     if (toDate != null && log.timestamp.isAfter(toDate!.add(const Duration(days: 1)))) return false;
 
