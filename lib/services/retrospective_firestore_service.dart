@@ -9,6 +9,13 @@ import '../models/user_story_model.dart';
 class RetrospectiveFirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  /// Escape dei punti nell'email per usarla come chiave Firestore
+  /// (i punti in Firestore indicano accesso a campi nidificati)
+  static String _escapeEmailKey(String email) => email.replaceAll('.', '_DOT_');
+
+  /// Unescape dei punti nell'email (per leggere chiavi Firestore)
+  static String unescapeEmailKey(String key) => key.replaceAll('_DOT_', '.');
+
   CollectionReference<Map<String, dynamic>> get _retrosCollection =>
       _db.collection('retrospectives');
 
@@ -476,8 +483,9 @@ class RetrospectiveFirestoreService {
   Future<void> sendHeartbeat(String retroId, String userEmail) async {
     try {
       final docRef = _retrosCollection.doc(retroId);
+      final escapedEmail = _escapeEmailKey(userEmail.toLowerCase());
       await docRef.update({
-        'participantPresence.$userEmail': {
+        'participantPresence.$escapedEmail': {
           'isOnline': true,
           'lastActivity': FieldValue.serverTimestamp(),
         },
@@ -497,9 +505,9 @@ class RetrospectiveFirestoreService {
   Future<void> markOffline(String retroId, String userEmail) async {
     try {
       final docRef = _retrosCollection.doc(retroId);
-      // Use FieldPath explicitly to handle dots in emails
+      final escapedEmail = _escapeEmailKey(userEmail.toLowerCase());
       await docRef.update({
-        FieldPath(['participantPresence', userEmail, 'isOnline']): false,
+        'participantPresence.$escapedEmail.isOnline': false,
       });
     } catch (e) {
       print('⚠️ Errore markOffline: $e');

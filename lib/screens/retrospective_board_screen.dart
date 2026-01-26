@@ -204,11 +204,6 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                  tooltip: l10n?.inviteSendNew ?? 'Invite',
                  onPressed: () => _showInviteDialog(retro),
                ),
-               IconButton(
-                 icon: const Icon(Icons.person_add),
-                 tooltip: l10n?.inviteSendNew ?? 'Invite',
-                 onPressed: () => _showInviteDialog(retro),
-               ),
                if (isFacilitator)
                  IconButton(
                    icon: Icon(retro.showAuthorNames ? Icons.visibility : Icons.visibility_off),

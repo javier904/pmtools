@@ -106,10 +106,15 @@ class RetrospectiveModel {
   }
 
   /// Helper per parsare la mappa di presenza partecipanti da Firestore
+  /// Unescape dei punti nell'email (chiavi Firestore usano _DOT_ per i punti)
+  static String _unescapeEmailKey(String key) => key.replaceAll('_DOT_', '.');
+
   static Map<String, ParticipantPresence> _parseParticipantPresence(dynamic data) {
     if (data == null) return {};
     final map = data as Map<String, dynamic>;
-    return map.map((email, presenceData) {
+    return map.map((escapedEmail, presenceData) {
+      // Unescape l'email per avere la chiave corretta
+      final email = _unescapeEmailKey(escapedEmail);
       return MapEntry(
         email,
         ParticipantPresence.fromJson(presenceData as Map<String, dynamic>),
