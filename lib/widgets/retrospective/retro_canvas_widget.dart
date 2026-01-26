@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +20,23 @@ class RetroCanvasWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    // Starfish template requires 5 columns
+    if (retro.template == RetroTemplate.starfish) {
+      if (retro.columns.length < 5) {
+        return Center(child: Text(l10n.retroCanvasMinColumns));
+      }
+      return _buildStarfishLayout(context);
+    }
+
+    // Sailboat template requires 4 columns
     if (retro.columns.length < 4) {
       return Center(child: Text(l10n.retroCanvasMinColumns));
     }
+    return _buildSailboatLayout(context);
+  }
 
-    // Expected Sailboat Columns Order (mapped by template default)
-    // 0: Wind, 1: Anchor, 2: Rocks, 3: Island
-    // We'll rely on index or ID matching if standard.
-    // Assuming standard order from RetroTemplateExt.defaultColumns for Sailboat.
+  Widget _buildSailboatLayout(BuildContext context) {
+    // Expected Sailboat Columns Order: 0: Wind, 1: Anchor, 2: Rocks, 3: Island
     final windCol = retro.columns[0];
     final anchorCol = retro.columns[1];
     final rockCol = retro.columns[2];
@@ -39,7 +49,7 @@ class RetroCanvasWidget extends StatelessWidget {
 
         return Stack(
           children: [
-            // 1. Background Painting
+            // Background Painting
             Positioned.fill(
               child: CustomPaint(
                 painter: SailboatPainter(
@@ -50,18 +60,12 @@ class RetroCanvasWidget extends StatelessWidget {
               ),
             ),
 
-            // 2. Zones (Quadrants)
-            // Top-Right: Island (Goal/Sun)
-            // Top-Left: Wind (Propels)
-            // Bottom-Left: Anchors (Deep)
-            // Bottom-Right: Rocks (Danger)
-
             // Wind (Top-Left)
             Positioned(
               top: 0,
               left: 0,
               width: w / 2,
-              height: h / 2 - 50, // Leave space for boat
+              height: h / 2 - 50,
               child: _buildZone(context, windCol, Alignment.topLeft),
             ),
             // Island (Top-Right)
@@ -87,6 +91,82 @@ class RetroCanvasWidget extends StatelessWidget {
               width: w / 2,
               height: h / 2,
               child: _buildZone(context, rockCol, Alignment.bottomRight),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildStarfishLayout(BuildContext context) {
+    // Starfish 5 columns: Keep, More, Less, Stop, Start
+    // Arranged as star points: top, top-right, bottom-right, bottom-left, top-left
+    final keepCol = retro.columns[0];    // Top center
+    final moreCol = retro.columns[1];    // Top right
+    final lessCol = retro.columns[2];    // Bottom right
+    final stopCol = retro.columns[3];    // Bottom left
+    final startCol = retro.columns[4];   // Top left
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final h = constraints.maxHeight;
+        final centerX = w / 2;
+        final centerY = h / 2;
+        final zoneWidth = w * 0.35;
+        final zoneHeight = h * 0.4;
+
+        return Stack(
+          children: [
+            // Background Starfish
+            Positioned.fill(
+              child: CustomPaint(
+                painter: StarfishPainter(
+                  starColor: Colors.orange.withOpacity(0.15),
+                  centerColor: Colors.orange.withOpacity(0.05),
+                ),
+              ),
+            ),
+
+            // Keep - Top Center
+            Positioned(
+              top: 8,
+              left: centerX - zoneWidth / 2,
+              width: zoneWidth,
+              height: zoneHeight * 0.8,
+              child: _buildZone(context, keepCol, Alignment.topCenter),
+            ),
+            // More - Top Right
+            Positioned(
+              top: h * 0.25,
+              right: 8,
+              width: zoneWidth,
+              height: zoneHeight,
+              child: _buildZone(context, moreCol, Alignment.topRight),
+            ),
+            // Less - Bottom Right
+            Positioned(
+              bottom: h * 0.1,
+              right: w * 0.15,
+              width: zoneWidth,
+              height: zoneHeight,
+              child: _buildZone(context, lessCol, Alignment.bottomRight),
+            ),
+            // Stop - Bottom Left
+            Positioned(
+              bottom: h * 0.1,
+              left: w * 0.15,
+              width: zoneWidth,
+              height: zoneHeight,
+              child: _buildZone(context, stopCol, Alignment.bottomLeft),
+            ),
+            // Start - Top Left
+            Positioned(
+              top: h * 0.25,
+              left: 8,
+              width: zoneWidth,
+              height: zoneHeight,
+              child: _buildZone(context, startCol, Alignment.topLeft),
             ),
           ],
         );
@@ -236,6 +316,57 @@ class RetroCanvasWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class StarfishPainter extends CustomPainter {
+  final Color starColor;
+  final Color centerColor;
+
+  StarfishPainter({required this.starColor, required this.centerColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final centerX = w / 2;
+    final centerY = h / 2;
+    final outerRadius = (w < h ? w : h) * 0.42;
+    final innerRadius = outerRadius * 0.4;
+
+    final paint = Paint()
+      ..color = starColor
+      ..style = PaintingStyle.fill;
+
+    // Draw 5-pointed star
+    final starPath = Path();
+    for (int i = 0; i < 5; i++) {
+      // Outer point (start from top, -90 degrees)
+      final outerAngle = (i * 72 - 90) * math.pi / 180;
+      final outerX = centerX + outerRadius * math.cos(outerAngle);
+      final outerY = centerY + outerRadius * math.sin(outerAngle);
+
+      // Inner point
+      final innerAngle = ((i * 72) + 36 - 90) * math.pi / 180;
+      final innerX = centerX + innerRadius * math.cos(innerAngle);
+      final innerY = centerY + innerRadius * math.sin(innerAngle);
+
+      if (i == 0) {
+        starPath.moveTo(outerX, outerY);
+      } else {
+        starPath.lineTo(outerX, outerY);
+      }
+      starPath.lineTo(innerX, innerY);
+    }
+    starPath.close();
+    canvas.drawPath(starPath, paint);
+
+    // Center circle
+    paint.color = centerColor;
+    canvas.drawCircle(Offset(centerX, centerY), innerRadius * 0.6, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class SailboatPainter extends CustomPainter {

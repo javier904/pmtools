@@ -25,49 +25,29 @@ class RetroLinearBoardWidget extends StatelessWidget {
       return Center(child: Text(l10n.retroNoColumnsConfigured));
     }
 
-    final bool useScrollable = retro.columns.length > 3;
-
-    if (useScrollable) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: retro.columns.map((col) {
-            return Container(
-              width: 320,
-              margin: const EdgeInsets.only(right: 16),
-              child: RetroColumnWidget(
-                retro: retro,
-                column: col,
-                currentUserEmail: currentUserEmail,
-                currentUserName: currentUserName,
-                showAuthorNames: showAuthorNames,
-              ),
-            );
-          }).toList(),
-        ),
-      );
-    } else {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: retro.columns.map((col) {
-          return Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
-              ),
-              child: RetroColumnWidget(
-                retro: retro,
-                column: col,
-                currentUserEmail: currentUserEmail,
-                currentUserName: currentUserName,
-                showAuthorNames: showAuthorNames,
+    // Columns always expand to fill available width dynamically
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: retro.columns.map((col) {
+        return Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(
+                  color: Theme.of(context).dividerColor.withOpacity(0.3),
+                ),
               ),
             ),
-          );
-        }).toList(),
-      );
-    }
+            child: RetroColumnWidget(
+              retro: retro,
+              column: col,
+              currentUserEmail: currentUserEmail,
+              currentUserName: currentUserName,
+              showAuthorNames: showAuthorNames,
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }

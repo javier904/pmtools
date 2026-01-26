@@ -32,8 +32,14 @@ class RetrospectiveModel {
   final Map<String, int> phaseDurations; // New: Configured minutes per phase
 
   // Team sentiment (1-5)
-  final Map<String, int> sentimentVotes; 
+  final Map<String, int> sentimentVotes;
   final double? averageSentiment;
+
+  // One Word icebreaker
+  final Map<String, String> oneWordVotes;
+
+  // Weather icebreaker
+  final Map<String, String> weatherVotes;
 
   // Sprint Review data
   final SprintReviewData? reviewData;
@@ -80,6 +86,8 @@ class RetrospectiveModel {
     this.actionItems = const [],
     this.phaseDurations = const {}, // Default empty
     this.sentimentVotes = const {},
+    this.oneWordVotes = const {},
+    this.weatherVotes = const {},
     this.icebreakerTemplate,
     this.averageSentiment,
     this.reviewData,
@@ -158,6 +166,8 @@ class RetrospectiveModel {
       actionItems: (data['actionItems'] as List? ?? []).map((i) => ActionItem.fromMap(i)).toList(),
       phaseDurations: Map<String, int>.from(data['phaseDurations'] ?? {}),
       sentimentVotes: Map<String, int>.from(data['sentimentVotes'] ?? {}),
+      oneWordVotes: Map<String, String>.from(data['oneWordVotes'] ?? {}),
+      weatherVotes: Map<String, String>.from(data['weatherVotes'] ?? {}),
       icebreakerTemplate: data['icebreakerTemplate'] != null 
           ? RetroIcebreaker.values.firstWhere((e) => e.name == data['icebreakerTemplate'], orElse: () => RetroIcebreaker.sentiment)
           : null,
@@ -195,6 +205,8 @@ class RetrospectiveModel {
       'actionItems': actionItems.map((item) => item.toMap()).toList(),
       'phaseDurations': phaseDurations,
       'sentimentVotes': sentimentVotes,
+      'oneWordVotes': oneWordVotes,
+      'weatherVotes': weatherVotes,
       if (icebreakerTemplate != null) 'icebreakerTemplate': icebreakerTemplate!.name,
       'currentPhase': currentPhase.name,
       'template': template.name,
@@ -226,6 +238,8 @@ class RetrospectiveModel {
     List<ActionItem>? actionItems,
     Map<String, int>? phaseDurations,
     Map<String, int>? sentimentVotes,
+    Map<String, String>? oneWordVotes,
+    Map<String, String>? weatherVotes,
     RetroIcebreaker? icebreakerTemplate,
     RetroPhase? currentPhase,
     RetroStatus? status,
@@ -251,6 +265,8 @@ class RetrospectiveModel {
       actionItems: actionItems ?? this.actionItems,
       phaseDurations: phaseDurations ?? this.phaseDurations,
       sentimentVotes: sentimentVotes ?? this.sentimentVotes,
+      oneWordVotes: oneWordVotes ?? this.oneWordVotes,
+      weatherVotes: weatherVotes ?? this.weatherVotes,
       icebreakerTemplate: icebreakerTemplate ?? this.icebreakerTemplate,
       averageSentiment: averageSentiment,
       reviewData: reviewData,
@@ -328,27 +344,65 @@ class RetroColumn {
 
   String getLocalizedTitle(AppLocalizations l10n) {
     switch (id) {
-      case 'start': return l10n.retroPhaseStart ?? 'Start';
-      case 'stop': return l10n.retroPhaseStop ?? 'Stop';
-      case 'continue': return l10n.retroPhaseContinue ?? 'Continue';
-      case 'wind': return 'Wind (Spinge)';
-      case 'anchor': return 'Anchors (Frena)';
-      case 'rock': return 'Rocks (Rischi)';
-      case 'goal': return 'Island (Obiettivi)';
-      case 'liked': return 'Liked';
-      case 'learned': return 'Learned';
-      case 'lacked': return 'Lacked';
-      case 'longed': return 'Longed For';
-      case 'keep': return 'Keep';
-      case 'more': return 'More';
-      case 'less': return 'Less';
-      case 'mad': return 'Mad';
-      case 'sad': return 'Sad';
-      case 'glad': return 'Glad';
-      case 'drop': return 'Drop';
-      case 'add': return 'Add';
-      case 'improve': return 'Improve';
+      // DAKI template
+      case 'drop': return l10n.retroColumnDrop;
+      case 'add': return l10n.retroColumnAdd;
+      case 'keep': return l10n.retroColumnKeep;
+      case 'improve': return l10n.retroColumnImprove;
+      // Start Stop Continue template
+      case 'start': return l10n.retroColumnStart;
+      case 'stop': return l10n.retroColumnStop;
+      case 'continue': return l10n.retroColumnContinue;
+      // 4 Ls template
+      case 'liked': return l10n.retroColumnLiked;
+      case 'learned': return l10n.retroColumnLearned;
+      case 'lacked': return l10n.retroColumnLacked;
+      case 'longed': return l10n.retroColumnLongedFor;
+      // Mad Sad Glad template
+      case 'mad': return l10n.retroColumnMad;
+      case 'sad': return l10n.retroColumnSad;
+      case 'glad': return l10n.retroColumnGlad;
+      // Sailboat template
+      case 'wind': return l10n.retroColumnWind;
+      case 'anchor': return l10n.retroColumnAnchor;
+      case 'rock': return l10n.retroColumnRock;
+      case 'goal': return l10n.retroColumnGoal;
+      // Starfish template extras
+      case 'more': return l10n.retroColumnMore;
+      case 'less': return l10n.retroColumnLess;
       default: return title;
+    }
+  }
+
+  String getLocalizedDescription(AppLocalizations l10n) {
+    switch (id) {
+      // DAKI template
+      case 'drop': return l10n.retroColumnDropDesc;
+      case 'add': return l10n.retroColumnAddDesc;
+      case 'keep': return l10n.retroColumnKeepDesc;
+      case 'improve': return l10n.retroColumnImproveDesc;
+      // Start Stop Continue template
+      case 'start': return l10n.retroColumnStartDesc;
+      case 'stop': return l10n.retroColumnStopDesc;
+      case 'continue': return l10n.retroColumnContinueDesc;
+      // 4 Ls template
+      case 'liked': return l10n.retroColumnLikedDesc;
+      case 'learned': return l10n.retroColumnLearnedDesc;
+      case 'lacked': return l10n.retroColumnLackedDesc;
+      case 'longed': return l10n.retroColumnLongedForDesc;
+      // Mad Sad Glad template
+      case 'mad': return l10n.retroColumnMadDesc;
+      case 'sad': return l10n.retroColumnSadDesc;
+      case 'glad': return l10n.retroColumnGladDesc;
+      // Sailboat template
+      case 'wind': return l10n.retroColumnWindDesc;
+      case 'anchor': return l10n.retroColumnAnchorDesc;
+      case 'rock': return l10n.retroColumnRockDesc;
+      case 'goal': return l10n.retroColumnGoalDesc;
+      // Starfish template extras
+      case 'more': return l10n.retroColumnMoreDesc;
+      case 'less': return l10n.retroColumnLessDesc;
+      default: return description;
     }
   }
 }
@@ -703,10 +757,10 @@ extension RetroTemplateExt on RetroTemplate {
           ];
         case RetroTemplate.sailboat:
             return [
-                RetroColumn(id: 'wind', title: 'Wind (Spinge)', description: 'Cosa ci ha spinto in avanti? Punti di forza e aiuti.', colorHex: '#E8F5E9', iconCode: 0xe0c8), 
-                RetroColumn(id: 'anchor', title: 'Anchors (Frena)', description: 'Cosa ci ha rallentato? Ostacoli e blocchi.', colorHex: '#FFEBEE', iconCode: 0xf1cd), 
-                RetroColumn(id: 'rock', title: 'Rocks (Rischi)', description: 'Quali rischi futuri vediamo all\'orizzonte?', colorHex: '#FFF3E0', iconCode: 0xe6e1), 
-                RetroColumn(id: 'goal', title: 'Island (Obiettivi)', description: 'Qual è la nostra destinazione ideale?', colorHex: '#E3F2FD', iconCode: 0xe24e), 
+                RetroColumn(id: 'wind', title: 'Wind', description: 'What pushed us forward? Strengths and support.', colorHex: '#E8F5E9', iconCode: 0xe0c8),
+                RetroColumn(id: 'anchor', title: 'Anchors', description: 'What slowed us down? Obstacles and blockers.', colorHex: '#FFEBEE', iconCode: 0xf1cd),
+                RetroColumn(id: 'rock', title: 'Rocks', description: 'What future risks do we see on the horizon?', colorHex: '#FFF3E0', iconCode: 0xe6e1),
+                RetroColumn(id: 'goal', title: 'Island', description: 'What is our ideal destination?', colorHex: '#E3F2FD', iconCode: 0xe24e),
             ]; 
         case RetroTemplate.fourLs:
           return [
@@ -731,10 +785,10 @@ extension RetroTemplateExt on RetroTemplate {
           ];
         case RetroTemplate.daki:
             return [
-              RetroColumn(id: 'drop', title: 'Drop (Elimina)', description: 'Cosa non porta valore e va eliminato immediatamente?', colorHex: '#FFCDD2', iconCode: 0xe92e), // remove_circle_outline
-              RetroColumn(id: 'add', title: 'Add (Aggiungi)', description: 'Quali nuove pratiche o strumenti dovremmo introdurre?', colorHex: '#BBDEFB', iconCode: 0xe148), // add_circle_outline
-              RetroColumn(id: 'keep', title: 'Keep (Mantieni)', description: 'Cosa funziona bene e va mantenuto?', colorHex: '#C8E6C9', iconCode: 0xe15a), // check_circle_outline
-              RetroColumn(id: 'improve', title: 'Improve (Migliora)', description: 'Cosa facciamo già ma possiamo fare meglio?', colorHex: '#FFE0B2', iconCode: 0xe6e3), // trending_up
+              RetroColumn(id: 'drop', title: 'Drop', description: 'What brings no value and should be eliminated?', colorHex: '#FFCDD2', iconCode: 0xe92e),
+              RetroColumn(id: 'add', title: 'Add', description: 'What new practices should we introduce?', colorHex: '#BBDEFB', iconCode: 0xe148),
+              RetroColumn(id: 'keep', title: 'Keep', description: 'What is working well and should continue?', colorHex: '#C8E6C9', iconCode: 0xe15a),
+              RetroColumn(id: 'improve', title: 'Improve', description: 'What can we do better?', colorHex: '#FFE0B2', iconCode: 0xe6e3),
           ];
         default:
             return [

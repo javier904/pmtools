@@ -49,27 +49,89 @@ class ActionItemsTableWidget extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: DataTable(
         columnSpacing: 24,
+        dividerThickness: 0, // Remove row dividers
+        border: TableBorder.all(color: Colors.transparent, width: 0), // Remove all borders
+        headingRowColor: WidgetStateProperty.all(Colors.transparent),
+        dataRowColor: WidgetStateProperty.all(Colors.transparent),
         columns: [
-          DataColumn(label: Text(l10n.retroTableRef)),
-          DataColumn(label: Text(l10n.retroTableDescription)),
-          DataColumn(label: Text(l10n.retroTableOwner)),
-          DataColumn(label: Text(l10n.retroActionPriority)),
-          DataColumn(label: Text(l10n.retroActionDueDate)),
-          DataColumn(label: Text(l10n.retroTableActions)),
-        ],
+            DataColumn(label: Text(l10n.retroTableRef)),
+            DataColumn(label: Text(l10n.retroTableDescription)), // Context from linked card
+            DataColumn(label: Text(l10n.retroTableOwner)),
+            DataColumn(label: Text(l10n.retroActionPriority)),
+            DataColumn(label: Text(l10n.retroActionDueDate)),
+            DataColumn(label: Text(l10n.retroTableActions)), // What needs to be done
+            if (!readOnly) const DataColumn(label: SizedBox(width: 80)), // Edit/delete buttons
+          ],
         rows: actionItems.map((item) {
           final String refText = item.sourceRefContent != null && item.sourceRefContent!.isNotEmpty
-              ? (item.sourceRefContent!.length > 20 ? '${item.sourceRefContent!.substring(0, 18)}..' : item.sourceRefContent!)
+              ? (item.sourceRefContent!.length > 15 ? '${item.sourceRefContent!.substring(0, 13)}...' : item.sourceRefContent!)
               : '-';
-          
+
           return DataRow(
             cells: [
-               DataCell(
+              // Ref - linked retro card (abbreviated)
+              DataCell(
                 Tooltip(
                   message: item.sourceRefContent ?? '',
-                  child: Text(refText, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                  child: Text(
+                    refText,
+                    style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: context.textMutedColor),
+                  ),
                 ),
               ),
+              // Description - full context from linked card
+              DataCell(
+                SizedBox(
+                  width: 180,
+                  child: Tooltip(
+                    message: item.sourceRefContent ?? '',
+                    child: Text(
+                      item.sourceRefContent ?? '-',
+                      style: const TextStyle(fontSize: 13),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ),
+              // Owner
+              DataCell(
+                Row(
+                  children: [
+                    const Icon(Icons.person, size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(item.assigneeEmail?.split('@').first ?? l10n.retroUnassigned),
+                  ],
+                ),
+              ),
+              // Priority
+              DataCell(
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getPriorityColor(item.priority).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _getPriorityColor(item.priority).withValues(alpha: 0.5)),
+                  ),
+                  child: Text(
+                    item.priority.displayName.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: _getPriorityColor(item.priority),
+                    ),
+                  ),
+                ),
+              ),
+              // Due Date
+              DataCell(
+                Text(
+                  item.dueDate != null
+                      ? '${item.dueDate!.day}/${item.dueDate!.month}/${item.dueDate!.year}'
+                      : '-',
+                ),
+              ),
+              // Actions - what needs to be done
               DataCell(
                 SizedBox(
                   width: 200,
@@ -84,12 +146,11 @@ class ActionItemsTableWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (item.resources?.isNotEmpty ?? false)
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
                           child: Text(
                             '${l10n.retroActionResourcesShort}: ${item.resources}',
-                            style: TextStyle(
-                                fontSize: 10, color: context.textMutedColor),
+                            style: TextStyle(fontSize: 10, color: context.textMutedColor),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -98,61 +159,28 @@ class ActionItemsTableWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              DataCell(
-                Row(
-                  children: [
-                    const Icon(Icons.person, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(item.assigneeEmail?.split('@').first ?? l10n.retroUnassigned),
-                  ],
-                ),
-              ),
-              DataCell(
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getPriorityColor(item.priority).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: _getPriorityColor(item.priority).withOpacity(0.5)),
-                  ),
-                  child: Text(
-                    item.priority.displayName.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: _getPriorityColor(item.priority),
-                    ),
-                  ),
-                ),
-              ),
-              DataCell(
-                Text(
-                  item.dueDate != null
-                      ? '${item.dueDate!.day}/${item.dueDate!.month}/${item.dueDate!.year}'
-                      : '-',
-                ),
-              ),
-              DataCell(
-                readOnly
-                    ? const SizedBox()
-                    : Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, size: 20),
-                            onPressed: () => _editItem(context, item),
-                            tooltip: l10n.actionEdit,
-                          ),
-                          if (isFacilitator)
-                            IconButton(
-                              icon: const Icon(Icons.delete,
-                                  size: 20, color: Colors.red),
-                              onPressed: () => _deleteItem(context, item),
-                              tooltip: l10n.actionDelete,
-                            ),
-                        ],
+              // Edit/Delete buttons
+              if (!readOnly)
+                DataCell(
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined, size: 18),
+                        onPressed: () => _editItem(context, item),
+                        tooltip: l10n.actionEdit,
+                        visualDensity: VisualDensity.compact,
                       ),
-              ),
+                      if (isFacilitator)
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                          onPressed: () => _deleteItem(context, item),
+                          tooltip: l10n.actionDelete,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                    ],
+                  ),
+                ),
             ],
           );
         }).toList(),

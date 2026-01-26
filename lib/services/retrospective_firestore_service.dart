@@ -357,6 +357,22 @@ class RetrospectiveFirestoreService {
     });
   }
 
+  /// Invia una parola (Icebreaker One Word)
+  Future<void> submitOneWord(String retroId, String userEmail, String word) async {
+    final docRef = _retrosCollection.doc(retroId);
+    await docRef.update({
+      'oneWordVotes.$userEmail': word,
+    });
+  }
+
+  /// Invia un meteo (Icebreaker Weather)
+  Future<void> submitWeather(String retroId, String userEmail, String weather) async {
+    final docRef = _retrosCollection.doc(retroId);
+    await docRef.update({
+      'weatherVotes.$userEmail': weather,
+    });
+  }
+
   /// Aggiunge un Action Item
   Future<void> addActionItem(String retroId, ActionItem item) async {
     final docRef = _retrosCollection.doc(retroId);

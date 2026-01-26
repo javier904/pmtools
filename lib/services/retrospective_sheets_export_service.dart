@@ -43,25 +43,79 @@ class RetrospectiveSheetsExportService {
     }
   }
 
-  /// Exports the retrospective to a new Google Sheet
-  Future<String?> exportToGoogleSheets(RetrospectiveModel retro) async {
+  /// Exports the retrospective to a new Google Sheet or updates an existing one
+  Future<String?> exportToGoogleSheets(RetrospectiveModel retro, {String? existingUrl}) async {
     try {
       if (!await _authenticate()) throw Exception('Authentication failed');
 
-      final spreadsheet = await _createSpreadsheet(retro.sprintName.isNotEmpty ? retro.sprintName : 'Retrospective');
-      final spreadsheetId = spreadsheet.spreadsheetId!;
+      String spreadsheetId;
+      String url;
 
-      await _populateOverviewSheet(spreadsheetId, retro);
-      await _populateActionItemsSheet(spreadsheetId, retro);
-      await _populateBoardSheet(spreadsheetId, retro);
-      await _applyFormatting(spreadsheetId, retro);
+      if (existingUrl != null && existingUrl.isNotEmpty) {
+        // Update existing spreadsheet
+        spreadsheetId = _extractSpreadsheetId(existingUrl);
+        print('📄 [RetroExport] Updating existing spreadsheet: $spreadsheetId');
+        await _clearAndUpdateSheets(spreadsheetId, retro);
+        url = existingUrl;
+      } else {
+        // Create new spreadsheet
+        final spreadsheet = await _createSpreadsheet(retro.sprintName.isNotEmpty ? retro.sprintName : 'Retrospective');
+        spreadsheetId = spreadsheet.spreadsheetId!;
 
-      final url = 'https://docs.google.com/spreadsheets/d/$spreadsheetId';
+        await _populateOverviewSheet(spreadsheetId, retro);
+        await _populateActionItemsSheet(spreadsheetId, retro);
+        await _populateBoardSheet(spreadsheetId, retro);
+        await _applyFormatting(spreadsheetId, retro);
+
+        url = 'https://docs.google.com/spreadsheets/d/$spreadsheetId';
+      }
+
       print('✅ [RetroExport] Export complete: $url');
       return url;
     } catch (e) {
       print('❌ [RetroExport] Export error: $e');
       return null;
+    }
+  }
+
+  /// Extracts spreadsheet ID from a Google Sheets URL
+  String _extractSpreadsheetId(String url) {
+    final regex = RegExp(r'/d/([a-zA-Z0-9-_]+)');
+    final match = regex.firstMatch(url);
+    if (match != null) {
+      return match.group(1)!;
+    }
+    throw Exception('URL spreadsheet non valido');
+  }
+
+  /// Clears existing sheets and repopulates with updated data
+  Future<void> _clearAndUpdateSheets(String spreadsheetId, RetrospectiveModel retro) async {
+    try {
+      // Clear existing data from all sheets
+      await _sheetsApi!.spreadsheets.values.clear(
+        sheets.ClearValuesRequest(),
+        spreadsheetId,
+        'Overview!A:Z',
+      );
+      await _sheetsApi!.spreadsheets.values.clear(
+        sheets.ClearValuesRequest(),
+        spreadsheetId,
+        'Action Items!A:Z',
+      );
+      await _sheetsApi!.spreadsheets.values.clear(
+        sheets.ClearValuesRequest(),
+        spreadsheetId,
+        'Board Items!A:Z',
+      );
+
+      // Repopulate with updated data
+      await _populateOverviewSheet(spreadsheetId, retro);
+      await _populateActionItemsSheet(spreadsheetId, retro);
+      await _populateBoardSheet(spreadsheetId, retro);
+      await _applyFormatting(spreadsheetId, retro);
+    } catch (e) {
+      print('❌ [RetroExport] Error updating spreadsheet: $e');
+      rethrow;
     }
   }
 
@@ -103,9 +157,10 @@ class RetrospectiveSheetsExportService {
 
   Future<void> _populateActionItemsSheet(String spreadsheetId, RetrospectiveModel retro) async {
     final values = [
-      ['Description', 'Owner', 'Assignee', 'Priority', 'Due Date', 'Status'],
+      ['Description', 'Linked Card', 'Owner', 'Assignee', 'Priority', 'Due Date', 'Status'],
       ...retro.actionItems.map((item) => [
         item.description,
+        item.sourceRefContent ?? '-',
         item.ownerEmail,
         item.assigneeEmail ?? '-',
         item.priority.name,
@@ -114,7 +169,7 @@ class RetrospectiveSheetsExportService {
       ])
     ];
 
-    if (values.length == 1) values.add(['No action items', '', '', '', '', '']);
+    if (values.length == 1) values.add(['No action items', '', '', '', '', '', '']);
 
     await _sheetsApi!.spreadsheets.values.update(
       sheets.ValueRange()..values = values,
@@ -174,9 +229,9 @@ class RetrospectiveSheetsExportService {
       // Overview Title
       requests.add(_boldCellRequest(0, 0, 0, 0, 1));
       
-      // Action Items Header (Green)
+      // Action Items Header (Green) - 7 columns with Linked Card
       requests.add(_headerFormatRequest(
-        1, 0, 1, 0, 6, 
+        1, 0, 1, 0, 7,
         sheets.Color()..red=0.2..green=0.6..blue=0.2
       )); 
       

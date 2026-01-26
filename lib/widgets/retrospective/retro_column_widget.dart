@@ -22,6 +22,8 @@ class RetroColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     // Get items for this column
     final items = retro.getItemsForColumn(column.id);
     
@@ -42,7 +44,7 @@ class RetroColumnWidget extends StatelessWidget {
         children: [
           // Header
           Tooltip(
-            message: column.description.isNotEmpty ? column.description : column.title,
+            message: column.getLocalizedDescription(l10n),
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8), // Compact header
               decoration: BoxDecoration(
@@ -76,7 +78,7 @@ class RetroColumnWidget extends StatelessWidget {
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
-                          column.title.toUpperCase(),
+                          column.getLocalizedTitle(l10n).toUpperCase(),
                           style: const TextStyle(
                             fontWeight: FontWeight.w900,
                             fontSize: 13, // Smaller font
@@ -98,17 +100,17 @@ class RetroColumnWidget extends StatelessWidget {
             ),
           ),
 
-          // Items List (Grid)
+          // Items List (Grid) - Card size optimized for ~70 characters visibility
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.fromLTRB(8, 12, 8, 80),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 Cards per row
-                childAspectRatio: 2.8, // More compact (shorter)
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 220, // Larger cards for 70+ chars (~18 chars x 4 lines)
+                childAspectRatio: 1.4, // Taller cards for more text
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
-              itemCount: items.length + 1, 
+              itemCount: items.length + 1,
               itemBuilder: (context, index) {
                 if (index == items.length) {
                   return _buildAddButton(context, column);
@@ -128,12 +130,13 @@ class RetroColumnWidget extends StatelessWidget {
     // Drag Enable: Discuss phase OR if Action Panel is explicitly visible (e.g. for creating action items)
     final bool isDraggable = retro.currentPhase == RetroPhase.discuss || retro.isActionItemsVisible;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    // Edit Enable: Writing phase AND own card
+    final bool canEdit = retro.currentPhase == RetroPhase.writing && isMine;
 
     final cardContent = Container(
-      // ... existing decoration ...
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(8), 
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
@@ -145,18 +148,53 @@ class RetroColumnWidget extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-           // ... existing children ...
            Positioned.fill(
             child: Container(
               color: column.color.withValues(alpha: isDark ? 0.05 : 0.03),
             ),
           ),
           Positioned(
-            left: 0, top: 0, bottom: 0, width: 3, 
+            left: 0, top: 0, bottom: 0, width: 3,
             child: Container(color: column.color),
           ),
+          // Edit button for own cards in writing phase
+          if (canEdit)
+            Positioned(
+              top: 4,
+              right: 4,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () => _showEditDialog(context, item),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: column.color.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.edit, size: 14, color: column.color),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  InkWell(
+                    onTap: () => _showDeleteConfirmation(context, item),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.delete, size: 14, color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Padding(
-            padding: const EdgeInsets.all(10), // Reduced padding
+            padding: EdgeInsets.fromLTRB(10, canEdit ? 28 : 10, 10, 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -165,7 +203,7 @@ class RetroColumnWidget extends StatelessWidget {
                    ? Text(
                       item.content,
                       style: TextStyle(
-                        fontSize: 15, // Larger font
+                        fontSize: 15,
                         height: 1.3,
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.grey[200] : Colors.grey[800],
@@ -181,7 +219,7 @@ class RetroColumnWidget extends StatelessWidget {
                   children: [
                     if (isContentVisible && showAuthorNames)
                         Expanded(child: _buildAuthorBadge(context, item, column, isDark))
-                    else 
+                    else
                        const Spacer(),
                     _buildVoteWidget(context, item)
                   ],
@@ -404,6 +442,72 @@ class RetroColumnWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, RetroItem item) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: item.content);
+    showDialog(
+      context: context,
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          primaryColor: AppColors.retroPrimary,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.retroPrimary,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+             style: ElevatedButton.styleFrom(
+               backgroundColor: AppColors.retroPrimary,
+               foregroundColor: Colors.white,
+             ),
+          ),
+        ),
+        child: AlertDialog(
+          title: Text(l10n.actionEdit),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(hintText: l10n.retroAddCardHint),
+            maxLines: 3,
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  final updatedItem = item.copyWith(content: controller.text.trim());
+                  RetrospectiveFirestoreService().updateRetroItem(retro.id, updatedItem);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(l10n.actionSave),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, RetroItem item) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.actionDelete),
+        content: Text(l10n.confirmDeleteMessage),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.no)),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              RetrospectiveFirestoreService().deleteRetroItem(retro.id, item.id);
+              Navigator.pop(context);
+            },
+            child: Text(l10n.actionDelete),
+          ),
+        ],
       ),
     );
   }

@@ -65,11 +65,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           primary: AppColors.retroPrimary,
           secondary: AppColors.retroPrimary,
         ),
-        appBarTheme: Theme.of(context).appBarTheme.copyWith(
-          backgroundColor: AppColors.retroPrimary,
-          foregroundColor: Colors.white,
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
+        // Removed appBarTheme to allow default (Dark/Black) to propagate
         floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
           backgroundColor: AppColors.retroPrimary,
           foregroundColor: Colors.white,

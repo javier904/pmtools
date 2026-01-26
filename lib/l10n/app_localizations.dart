@@ -4132,6 +4132,84 @@ abstract class AppLocalizations {
   /// **'Eccellente'**
   String get retroMoodExcellent;
 
+  /// No description provided for @actionSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia'**
+  String get actionSubmit;
+
+  /// No description provided for @retroIcebreakerOneWordTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Icebreaker: Una Parola'**
+  String get retroIcebreakerOneWordTitle;
+
+  /// No description provided for @retroIcebreakerOneWordQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrivi questo sprint con UNA sola parola'**
+  String get retroIcebreakerOneWordQuestion;
+
+  /// No description provided for @retroIcebreakerOneWordHint.
+  ///
+  /// In it, this message translates to:
+  /// **'La tua parola...'**
+  String get retroIcebreakerOneWordHint;
+
+  /// No description provided for @retroIcebreakerSubmitted.
+  ///
+  /// In it, this message translates to:
+  /// **'Inviato!'**
+  String get retroIcebreakerSubmitted;
+
+  /// No description provided for @retroIcebreakerWordsSubmitted.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} parole inviate'**
+  String retroIcebreakerWordsSubmitted(int count);
+
+  /// No description provided for @retroIcebreakerWeatherTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Icebreaker: Meteo'**
+  String get retroIcebreakerWeatherTitle;
+
+  /// No description provided for @retroIcebreakerWeatherQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale meteo rappresenta meglio come ti senti riguardo a questo sprint?'**
+  String get retroIcebreakerWeatherQuestion;
+
+  /// No description provided for @retroWeatherSunny.
+  ///
+  /// In it, this message translates to:
+  /// **'Soleggiato'**
+  String get retroWeatherSunny;
+
+  /// No description provided for @retroWeatherPartlyCloudy.
+  ///
+  /// In it, this message translates to:
+  /// **'Parz. nuvoloso'**
+  String get retroWeatherPartlyCloudy;
+
+  /// No description provided for @retroWeatherCloudy.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuvoloso'**
+  String get retroWeatherCloudy;
+
+  /// No description provided for @retroWeatherRainy.
+  ///
+  /// In it, this message translates to:
+  /// **'Piovoso'**
+  String get retroWeatherRainy;
+
+  /// No description provided for @retroWeatherStormy.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempestoso'**
+  String get retroWeatherStormy;
+
   /// No description provided for @retroAgileCoach.
   ///
   /// In it, this message translates to:
@@ -9238,6 +9316,12 @@ abstract class AppLocalizations {
   /// **'Export completato!'**
   String get retroExportSuccess;
 
+  /// No description provided for @retroExportSuccessMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'La tua retrospettiva è stata esportata su Google Sheets.'**
+  String get retroExportSuccessMessage;
+
   /// No description provided for @retroExportError.
   ///
   /// In it, this message translates to:
@@ -11613,6 +11697,246 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Invito creato e inviato'**
   String get smartTodoInviteCreatedAndSent;
+
+  /// No description provided for @retroColumnDrop.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get retroColumnDrop;
+
+  /// No description provided for @retroColumnDropDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa non porta valore e dovrebbe essere eliminato?'**
+  String get retroColumnDropDesc;
+
+  /// No description provided for @retroColumnAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get retroColumnAdd;
+
+  /// No description provided for @retroColumnAddDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali nuove pratiche dovremmo introdurre?'**
+  String get retroColumnAddDesc;
+
+  /// No description provided for @retroColumnKeep.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantieni'**
+  String get retroColumnKeep;
+
+  /// No description provided for @retroColumnKeepDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa sta funzionando bene e dovrebbe continuare?'**
+  String get retroColumnKeepDesc;
+
+  /// No description provided for @retroColumnImprove.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliora'**
+  String get retroColumnImprove;
+
+  /// No description provided for @retroColumnImproveDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa possiamo fare meglio?'**
+  String get retroColumnImproveDesc;
+
+  /// No description provided for @retroColumnStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia'**
+  String get retroColumnStart;
+
+  /// No description provided for @retroColumnStartDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali nuove attività o processi dovremmo iniziare per migliorare?'**
+  String get retroColumnStartDesc;
+
+  /// No description provided for @retroColumnStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Ferma'**
+  String get retroColumnStop;
+
+  /// No description provided for @retroColumnStopDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa non sta portando valore e dovremmo smettere di fare?'**
+  String get retroColumnStopDesc;
+
+  /// No description provided for @retroColumnContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Continua'**
+  String get retroColumnContinue;
+
+  /// No description provided for @retroColumnContinueDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa sta funzionando bene e dobbiamo continuare a fare?'**
+  String get retroColumnContinueDesc;
+
+  /// No description provided for @retroColumnLiked.
+  ///
+  /// In it, this message translates to:
+  /// **'Piaciuto'**
+  String get retroColumnLiked;
+
+  /// No description provided for @retroColumnLearned.
+  ///
+  /// In it, this message translates to:
+  /// **'Imparato'**
+  String get retroColumnLearned;
+
+  /// No description provided for @retroColumnLacked.
+  ///
+  /// In it, this message translates to:
+  /// **'Mancato'**
+  String get retroColumnLacked;
+
+  /// No description provided for @retroColumnLongedFor.
+  ///
+  /// In it, this message translates to:
+  /// **'Desiderato'**
+  String get retroColumnLongedFor;
+
+  /// No description provided for @retroColumnMad.
+  ///
+  /// In it, this message translates to:
+  /// **'Arrabbiato'**
+  String get retroColumnMad;
+
+  /// No description provided for @retroColumnSad.
+  ///
+  /// In it, this message translates to:
+  /// **'Triste'**
+  String get retroColumnSad;
+
+  /// No description provided for @retroColumnGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Felice'**
+  String get retroColumnGlad;
+
+  /// No description provided for @retroColumnWind.
+  ///
+  /// In it, this message translates to:
+  /// **'Vento'**
+  String get retroColumnWind;
+
+  /// No description provided for @retroColumnAnchor.
+  ///
+  /// In it, this message translates to:
+  /// **'Ancore'**
+  String get retroColumnAnchor;
+
+  /// No description provided for @retroColumnRock.
+  ///
+  /// In it, this message translates to:
+  /// **'Scogli'**
+  String get retroColumnRock;
+
+  /// No description provided for @retroColumnGoal.
+  ///
+  /// In it, this message translates to:
+  /// **'Isola'**
+  String get retroColumnGoal;
+
+  /// No description provided for @retroColumnMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Di Più'**
+  String get retroColumnMore;
+
+  /// No description provided for @retroColumnLess.
+  ///
+  /// In it, this message translates to:
+  /// **'Di Meno'**
+  String get retroColumnLess;
+
+  /// No description provided for @retroColumnLikedDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti è piaciuto di questo sprint?'**
+  String get retroColumnLikedDesc;
+
+  /// No description provided for @retroColumnLearnedDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa hai imparato di nuovo?'**
+  String get retroColumnLearnedDesc;
+
+  /// No description provided for @retroColumnLackedDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa è mancato in questo sprint?'**
+  String get retroColumnLackedDesc;
+
+  /// No description provided for @retroColumnLongedForDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa desidereresti avere nel prossimo futuro?'**
+  String get retroColumnLongedForDesc;
+
+  /// No description provided for @retroColumnMadDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha fatto arrabbiare o frustrare?'**
+  String get retroColumnMadDesc;
+
+  /// No description provided for @retroColumnSadDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha deluso o reso triste?'**
+  String get retroColumnSadDesc;
+
+  /// No description provided for @retroColumnGladDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha reso felice o soddisfatto?'**
+  String get retroColumnGladDesc;
+
+  /// No description provided for @retroColumnWindDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ci ha spinto avanti? Punti di forza e supporto.'**
+  String get retroColumnWindDesc;
+
+  /// No description provided for @retroColumnAnchorDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ci ha rallentato? Ostacoli e blocchi.'**
+  String get retroColumnAnchorDesc;
+
+  /// No description provided for @retroColumnRockDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali rischi futuri vediamo all\'orizzonte?'**
+  String get retroColumnRockDesc;
+
+  /// No description provided for @retroColumnGoalDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Qual è la nostra destinazione ideale?'**
+  String get retroColumnGoalDesc;
+
+  /// No description provided for @retroColumnMoreDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo fare di più?'**
+  String get retroColumnMoreDesc;
+
+  /// No description provided for @retroColumnLessDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo fare di meno?'**
+  String get retroColumnLessDesc;
 }
 
 class _AppLocalizationsDelegate

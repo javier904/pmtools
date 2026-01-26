@@ -2197,6 +2197,49 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroMoodExcellent => 'Excelente';
 
   @override
+  String get actionSubmit => 'Invia';
+
+  @override
+  String get retroIcebreakerOneWordTitle => 'Icebreaker: Una Parola';
+
+  @override
+  String get retroIcebreakerOneWordQuestion =>
+      'Descrivi questo sprint con UNA sola parola';
+
+  @override
+  String get retroIcebreakerOneWordHint => 'La tua parola...';
+
+  @override
+  String get retroIcebreakerSubmitted => 'Inviato!';
+
+  @override
+  String retroIcebreakerWordsSubmitted(int count) {
+    return '$count parole inviate';
+  }
+
+  @override
+  String get retroIcebreakerWeatherTitle => 'Icebreaker: Meteo';
+
+  @override
+  String get retroIcebreakerWeatherQuestion =>
+      'Quale meteo rappresenta meglio come ti senti riguardo a questo sprint?';
+
+  @override
+  String get retroWeatherSunny => 'Soleggiato';
+
+  @override
+  String get retroWeatherPartlyCloudy => 'Parz. nuvoloso';
+
+  @override
+  String get retroWeatherCloudy => 'Nuvoloso';
+
+  @override
+  String get retroWeatherRainy => 'Piovoso';
+
+  @override
+  String get retroWeatherStormy => 'Tempestoso';
+
+  @override
   String get retroAgileCoach => 'Coach Ágil';
 
   @override
@@ -5055,6 +5098,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroExportSuccess => '¡Exportación completada!';
 
   @override
+  String get retroExportSuccessMessage =>
+      'Tu retrospectiva ha sido exportada a Google Sheets.';
+
+  @override
   String get retroExportError => 'Error al exportar a Sheets.';
 
   @override
@@ -6379,4 +6426,131 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get smartTodoInviteCreatedAndSent => 'Invitación creada y enviada';
+
+  @override
+  String get retroColumnDrop => 'Eliminar';
+
+  @override
+  String get retroColumnDropDesc =>
+      '¿Qué no aporta valor y debería eliminarse?';
+
+  @override
+  String get retroColumnAdd => 'Añadir';
+
+  @override
+  String get retroColumnAddDesc =>
+      '¿Qué nuevas prácticas deberíamos introducir?';
+
+  @override
+  String get retroColumnKeep => 'Mantener';
+
+  @override
+  String get retroColumnKeepDesc => '¿Qué funciona bien y debería continuar?';
+
+  @override
+  String get retroColumnImprove => 'Mejorar';
+
+  @override
+  String get retroColumnImproveDesc => '¿Qué podemos hacer mejor?';
+
+  @override
+  String get retroColumnStart => 'Comenzar';
+
+  @override
+  String get retroColumnStartDesc =>
+      '¿Qué nuevas actividades deberíamos comenzar?';
+
+  @override
+  String get retroColumnStop => 'Detener';
+
+  @override
+  String get retroColumnStopDesc => '¿Qué deberíamos dejar de hacer?';
+
+  @override
+  String get retroColumnContinue => 'Continuar';
+
+  @override
+  String get retroColumnContinueDesc => '¿Qué deberíamos seguir haciendo?';
+
+  @override
+  String get retroColumnLiked => 'Gustado';
+
+  @override
+  String get retroColumnLearned => 'Aprendido';
+
+  @override
+  String get retroColumnLacked => 'Faltado';
+
+  @override
+  String get retroColumnLongedFor => 'Deseado';
+
+  @override
+  String get retroColumnMad => 'Enfadado';
+
+  @override
+  String get retroColumnSad => 'Triste';
+
+  @override
+  String get retroColumnGlad => 'Contento';
+
+  @override
+  String get retroColumnWind => 'Viento';
+
+  @override
+  String get retroColumnAnchor => 'Anclas';
+
+  @override
+  String get retroColumnRock => 'Rocas';
+
+  @override
+  String get retroColumnGoal => 'Isla';
+
+  @override
+  String get retroColumnMore => 'Más';
+
+  @override
+  String get retroColumnLess => 'Menos';
+
+  @override
+  String get retroColumnLikedDesc => 'Cosa ti è piaciuto di questo sprint?';
+
+  @override
+  String get retroColumnLearnedDesc => 'Cosa hai imparato di nuovo?';
+
+  @override
+  String get retroColumnLackedDesc => 'Cosa è mancato in questo sprint?';
+
+  @override
+  String get retroColumnLongedForDesc =>
+      'Cosa desidereresti avere nel prossimo futuro?';
+
+  @override
+  String get retroColumnMadDesc => 'Cosa ti ha fatto arrabbiare o frustrare?';
+
+  @override
+  String get retroColumnSadDesc => 'Cosa ti ha deluso o reso triste?';
+
+  @override
+  String get retroColumnGladDesc => 'Cosa ti ha reso felice o soddisfatto?';
+
+  @override
+  String get retroColumnWindDesc =>
+      'Cosa ci ha spinto avanti? Punti di forza e supporto.';
+
+  @override
+  String get retroColumnAnchorDesc =>
+      'Cosa ci ha rallentato? Ostacoli e blocchi.';
+
+  @override
+  String get retroColumnRockDesc =>
+      'Quali rischi futuri vediamo all\'orizzonte?';
+
+  @override
+  String get retroColumnGoalDesc => 'Qual è la nostra destinazione ideale?';
+
+  @override
+  String get retroColumnMoreDesc => 'Cosa dovremmo fare di più?';
+
+  @override
+  String get retroColumnLessDesc => 'Cosa dovremmo fare di meno?';
 }

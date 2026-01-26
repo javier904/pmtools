@@ -8,6 +8,8 @@ import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/widgets/retrospective/retro_board_widget.dart';
 import 'package:agile_tools/widgets/retrospective/agile_coach_overlay.dart';
 import 'package:agile_tools/widgets/retrospective/sentiment_voting_widget.dart';
+import 'package:agile_tools/widgets/retrospective/one_word_icebreaker_widget.dart';
+import 'package:agile_tools/widgets/retrospective/weather_icebreaker_widget.dart';
 import 'package:agile_tools/widgets/retrospective/retro_participant_invite_dialog.dart';
 import 'package:agile_tools/services/invite_service.dart';
 import 'package:agile_tools/models/unified_invite_model.dart';
@@ -248,11 +250,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
               secondary: AppColors.retroPrimary,
               onPrimary: Colors.white,
             ),
-            appBarTheme: Theme.of(context).appBarTheme.copyWith(
-              backgroundColor: AppColors.retroPrimary,
-              foregroundColor: Colors.white,
-              iconTheme: const IconThemeData(color: Colors.white),
-            ),
+            // Removed appBarTheme to allow default (Dark/Black) to propagate
             floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
               backgroundColor: AppColors.retroPrimary,
               foregroundColor: Colors.white,
@@ -358,10 +356,6 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                 onPressed: () => _regressPhase(retro),
                 icon: const Icon(Icons.arrow_back),
                 label: Text('Prev: ${_getPrevPhaseName(retro.currentPhase)}'), 
-                style: FilledButton.styleFrom(
-                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                   foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                ),
               )
             else
               const SizedBox(width: 100),
@@ -457,18 +451,42 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
         content = _buildSetupView(retro);
         break;
       case RetroPhase.icebreaker:
-        content = SentimentVotingWidget(
-          retroId: retro.id,
-          currentUserEmail: widget.currentUserEmail,
-          currentVotes: retro.sentimentVotes,
-          isFacilitator: isFacilitator,
-          onPhaseComplete: () => _service.updatePhase(
-            retro.id, 
-            RetroPhase.writing, 
-            widget.currentUserEmail,
-            widget.currentUserName,
-          ),
+        final onComplete = () => _service.updatePhase(
+          retro.id,
+          RetroPhase.writing,
+          widget.currentUserEmail,
+          widget.currentUserName,
         );
+
+        switch (retro.icebreakerTemplate ?? RetroIcebreaker.sentiment) {
+          case RetroIcebreaker.oneWord:
+            content = OneWordIcebreakerWidget(
+              retroId: retro.id,
+              currentUserEmail: widget.currentUserEmail,
+              currentWords: retro.oneWordVotes,
+              isFacilitator: isFacilitator,
+              onPhaseComplete: onComplete,
+            );
+            break;
+          case RetroIcebreaker.weatherReport:
+            content = WeatherIcebreakerWidget(
+              retroId: retro.id,
+              currentUserEmail: widget.currentUserEmail,
+              currentWeather: retro.weatherVotes,
+              isFacilitator: isFacilitator,
+              onPhaseComplete: onComplete,
+            );
+            break;
+          case RetroIcebreaker.sentiment:
+          default:
+            content = SentimentVotingWidget(
+              retroId: retro.id,
+              currentUserEmail: widget.currentUserEmail,
+              currentVotes: retro.sentimentVotes,
+              isFacilitator: isFacilitator,
+              onPhaseComplete: onComplete,
+            );
+        }
         break;
       case RetroPhase.writing:
       case RetroPhase.voting:
@@ -878,9 +896,10 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
           ),
           const SizedBox(height: 16),
           Container(
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).dividerColor),
-              borderRadius: BorderRadius.circular(8),
+              color: const Color(0xFF1A237E).withValues(alpha: 0.15), // Dark blue background
+              borderRadius: BorderRadius.circular(12),
             ),
             child: ActionItemsTableWidget(
               actionItems: retro.actionItems,
@@ -888,7 +907,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
               isFacilitator: isFacilitator,
               participants: retro.participantEmails,
               currentUserEmail: widget.currentUserEmail,
-              readOnly: true, 
+              readOnly: true,
             ),
           ),
         ],
@@ -898,31 +917,108 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
 
   Future<void> _exportToGoogleSheets(RetrospectiveModel retro) async {
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n?.retroGeneratingSheet ?? 'Generazione Google Sheet in corso...')),
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(l10n?.retroGeneratingSheet ?? 'Generating Google Sheet...'),
+          ],
+        ),
+      ),
     );
 
     final url = await RetrospectiveSheetsExportService().exportToGoogleSheets(retro);
 
     if (mounted) {
-       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-       if (url != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n?.retroExportSuccess ?? 'Export completato!'),
-              action: SnackBarAction(
-                label: (l10n?.eisenhowerOpen ?? 'APRI').toUpperCase(),
-                onPressed: () => launchUrl(Uri.parse(url)),
-                textColor: Colors.white,
+      Navigator.of(context).pop(); // Close loading dialog
+
+      if (url != null) {
+        // Show success dialog with copy/open options
+        _showExportSuccessDialog(url);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n?.retroExportError ?? 'Error exporting to Sheets.')),
+        );
+      }
+    }
+  }
+
+  void _showExportSuccessDialog(String url) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 28),
+            const SizedBox(width: 12),
+            Text(l10n?.retroExportSuccess ?? 'Export Complete!'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n?.retroExportSuccessMessage ?? 'Your retrospective has been exported to Google Sheets.'),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      url,
+                      style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.copy, size: 20),
+                    tooltip: l10n?.actionCopy ?? 'Copy',
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: url));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n?.linkCopied ?? 'Link copied to clipboard'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-          );
-       } else {
-         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n?.retroExportError ?? 'Errore durante l\'export su Sheets.')),
-         );
-       }
-    }
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n?.actionClose ?? 'Close'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              launchUrl(Uri.parse(url));
+            },
+            icon: const Icon(Icons.open_in_new),
+            label: Text(l10n?.actionOpen ?? 'Open'),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F9D58)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _exportData(RetrospectiveModel retro) async {
