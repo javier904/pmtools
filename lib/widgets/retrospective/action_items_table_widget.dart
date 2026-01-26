@@ -49,204 +49,227 @@ class ActionItemsTableWidget extends StatelessWidget {
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        columnSpacing: 24,
-        dividerThickness: 0, // Remove row dividers
-        border: TableBorder.all(color: Colors.transparent, width: 0), // Remove all borders
-        headingRowColor: WidgetStateProperty.all(Colors.transparent),
-        dataRowColor: WidgetStateProperty.all(Colors.transparent),
-        columns: [
-            DataColumn(label: Text(l10n.retroTableSourceColumn)), // Source column
-            DataColumn(label: Text(l10n.retroTableDescription)), // Context from linked card
-            DataColumn(label: Text(l10n.retroActionType)), // Action type badge
-            DataColumn(label: Text(l10n.retroTableOwner)),
-            DataColumn(label: Text(l10n.retroActionPriority)),
-            DataColumn(label: Text(l10n.retroActionDueDate)),
-            DataColumn(label: Text(l10n.retroSupportResources)), // Support resources
-            DataColumn(label: Text(l10n.retroMonitoringMethod)), // Monitoring method
-            DataColumn(label: Text(l10n.retroTableActions)), // What needs to be done
-            if (!readOnly) const DataColumn(label: SizedBox(width: 80)), // Edit/delete buttons
-          ],
-        rows: actionItems.map((item) {
-          return DataRow(
-            cells: [
-              // Source Column - which column the card came from
-              DataCell(
-                _buildSourceColumnBadge(context, item, l10n),
-              ),
-              // Description - full context from linked card
-              DataCell(
-                SizedBox(
-                  width: 180,
-                  child: Tooltip(
-                    message: item.sourceRefContent ?? '',
-                    child: Text(
-                      item.sourceRefContent ?? '-',
-                      style: const TextStyle(fontSize: 13),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
-              // Action Type Badge
-              DataCell(
-                item.actionType != null
-                    ? Tooltip(
-                        message: item.actionType!.getLocalizedName(l10n),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: item.actionType!.color.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: item.actionType!.color.withValues(alpha: 0.5)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(item.actionType!.icon, size: 14, color: item.actionType!.color),
-                              const SizedBox(width: 4),
-                              Text(
-                                item.actionType!.getLocalizedName(l10n),
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: item.actionType!.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Text('-', style: TextStyle(color: context.textMutedColor)),
-              ),
-              // Owner
-              DataCell(
-                Row(
-                  children: [
-                    const Icon(Icons.person, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(item.assigneeEmail?.split('@').first ?? l10n.retroUnassigned),
-                  ],
-                ),
-              ),
-              // Priority
-              DataCell(
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getPriorityColor(item.priority).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _getPriorityColor(item.priority).withValues(alpha: 0.5)),
-                  ),
-                  child: Text(
-                    item.priority.displayName.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: _getPriorityColor(item.priority),
-                    ),
-                  ),
-                ),
-              ),
-              // Due Date
-              DataCell(
-                Text(
-                  item.dueDate != null
-                      ? '${item.dueDate!.day}/${item.dueDate!.month}/${item.dueDate!.year}'
-                      : '-',
-                ),
-              ),
-              // Support Resources
-              DataCell(
-                SizedBox(
-                  width: 140,
-                  child: item.resources?.isNotEmpty ?? false
-                    ? Tooltip(
-                        message: item.resources!,
-                        child: Row(
-                          children: [
-                            Icon(Icons.build_outlined, size: 14, color: Colors.blueGrey),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                item.resources!,
-                                style: const TextStyle(fontSize: 12),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Text('-', style: TextStyle(color: context.textMutedColor)),
-                ),
-              ),
-              // Monitoring Method
-              DataCell(
-                SizedBox(
-                  width: 140,
-                  child: item.monitoring?.isNotEmpty ?? false
-                    ? Tooltip(
-                        message: item.monitoring!,
-                        child: Row(
-                          children: [
-                            Icon(Icons.visibility_outlined, size: 14, color: Colors.blueGrey),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                item.monitoring!,
-                                style: const TextStyle(fontSize: 12),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Text('-', style: TextStyle(color: context.textMutedColor)),
-                ),
-              ),
-              // Actions - what needs to be done
-              DataCell(
-                SizedBox(
-                  width: 180,
-                  child: Text(
-                    item.description,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              // Edit/Delete buttons
-              if (!readOnly)
-                DataCell(
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined, size: 18),
-                        onPressed: () => _editItem(context, item),
-                        tooltip: l10n.actionEdit,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      if (isFacilitator)
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                          onPressed: () => _deleteItem(context, item),
-                          tooltip: l10n.actionDelete,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                    ],
-                  ),
-                ),
+    return Column(
+      children: [
+        // Header Row
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+             border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor.withValues(alpha: 0.1))),
+          ),
+          child: Row(
+            children: [
+              SizedBox(width: 90, child: Text(l10n.retroTableSourceColumn, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              Expanded(flex: 2, child: Text(l10n.retroTableDescription, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              SizedBox(width: 90, child: Text(l10n.retroActionType, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              SizedBox(width: 110, child: Text(l10n.retroTableOwner, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              SizedBox(width: 90, child: Text(l10n.retroActionPriority, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              SizedBox(width: 90, child: Text(l10n.retroActionDueDate, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              Expanded(flex: 2, child: Text(l10n.retroSupportResources, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              Expanded(flex: 2, child: Text(l10n.retroMonitoringMethod, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              Expanded(flex: 2, child: Text(l10n.retroTableActions, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              if (!readOnly) const SizedBox(width: 80, child: SizedBox.shrink()), // Space for actions
             ],
-          );
-        }).toList(),
-      ),
+          ),
+        ),
+        
+        // Data Rows
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(), // Scroll handled by parent or page
+          itemCount: actionItems.length,
+          itemBuilder: (context, index) {
+            final item = actionItems[index];
+            return Container(
+               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+               decoration: BoxDecoration(
+                 border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor.withValues(alpha: 0.05))),
+                 color: index % 2 == 0 ? Colors.transparent : Theme.of(context).cardColor.withValues(alpha: 0.3), // Zebra striping
+               ),
+               child: Row(
+                 children: [
+                   // Source
+                   SizedBox(
+                     width: 90, 
+                     child: Align(
+                       alignment: Alignment.centerLeft,
+                       child: _buildSourceColumnBadge(context, item, l10n),
+                     ),
+                   ),
+                   // Context (Description from card)
+                   Expanded(
+                     flex: 2, 
+                     child: Padding(
+                       padding: const EdgeInsets.only(right: 8.0),
+                       child: Tooltip(
+                         message: item.sourceRefContent ?? '',
+                         child: Text(
+                           item.sourceRefContent ?? '-',
+                           style: const TextStyle(fontSize: 12),
+                           maxLines: 2,
+                           overflow: TextOverflow.ellipsis,
+                         ),
+                       ),
+                     ),
+                   ),
+                   // Action Type
+                   SizedBox(
+                     width: 90,
+                     child: Align(
+                       alignment: Alignment.centerLeft,
+                       child: item.actionType != null
+                        ? Tooltip(
+                            message: item.actionType!.getLocalizedName(l10n),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: item.actionType!.color.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: item.actionType!.color.withValues(alpha: 0.5)),
+                              ),
+                              child: Text(
+                                item.actionType!.getLocalizedName(l10n),
+                                style: TextStyle( fontSize: 10, fontWeight: FontWeight.bold, color: item.actionType!.color),
+                                maxLines: 1, overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                        : Text('-', style: TextStyle(color: context.textMutedColor)),
+                     ),
+                   ),
+                   // Owner
+                   SizedBox(
+                     width: 110,
+                     child: Padding(
+                       padding: const EdgeInsets.only(right: 8.0),
+                       child: Row(
+                        children: [
+                          const Icon(Icons.person, size: 14, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              item.assigneeEmail?.split('@').first ?? l10n.retroUnassigned,
+                              style: const TextStyle(fontSize: 12),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                       ),
+                     ),
+                   ),
+                   // Priority
+                   SizedBox(
+                     width: 90,
+                     child: Align(
+                       alignment: Alignment.centerLeft,
+                       child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _getPriorityColor(item.priority).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: _getPriorityColor(item.priority).withValues(alpha: 0.5)),
+                        ),
+                        child: Text(
+                          item.priority.displayName.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: _getPriorityColor(item.priority),
+                          ),
+                        ),
+                       ),
+                     ),
+                   ),
+                   // Due Date
+                   SizedBox(
+                     width: 90,
+                     child: Text(
+                        item.dueDate != null ? '${item.dueDate!.day}/${item.dueDate!.month}/${item.dueDate!.year}' : '-',
+                        style: const TextStyle(fontSize: 12),
+                     ),
+                   ),
+                   // Resources
+                   Expanded(
+                     flex: 2,
+                     child: Padding(
+                       padding: const EdgeInsets.only(right: 8.0),
+                       child: item.resources?.isNotEmpty ?? false
+                        ? Tooltip(
+                            message: item.resources!,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.build_outlined, size: 14, color: Colors.blueGrey),
+                                const SizedBox(width: 4),
+                                Expanded(child: Text(item.resources!, style: const TextStyle(fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                              ],
+                            ),
+                          )
+                        : Text('-', style: TextStyle(color: context.textMutedColor, fontSize: 12)),
+                     ),
+                   ),
+                   // Monitoring
+                   Expanded(
+                     flex: 2,
+                     child: Padding(
+                       padding: const EdgeInsets.only(right: 8.0),
+                       child: item.monitoring?.isNotEmpty ?? false
+                        ? Tooltip(
+                            message: item.monitoring!,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.visibility_outlined, size: 14, color: Colors.blueGrey),
+                                const SizedBox(width: 4),
+                                Expanded(child: Text(item.monitoring!, style: const TextStyle(fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                              ],
+                            ),
+                          )
+                        : Text('-', style: TextStyle(color: context.textMutedColor, fontSize: 12)),
+                     ),
+                   ),
+                   // Action Description
+                   Expanded(
+                     flex: 2,
+                     child: Padding(
+                       padding: const EdgeInsets.only(right: 8.0),
+                       child: Text(
+                         item.description,
+                         style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                         maxLines: 2,
+                         overflow: TextOverflow.ellipsis,
+                       ),
+                     ),
+                   ),
+                   // Actions Buttons (Fixed Width)
+                   if (!readOnly)
+                     SizedBox(
+                       width: 80,
+                       child: Row(
+                         mainAxisAlignment: MainAxisAlignment.end,
+                         children: [
+                           IconButton(
+                             icon: const Icon(Icons.edit_outlined, size: 18),
+                             onPressed: () => _editItem(context, item),
+                             tooltip: l10n.actionEdit,
+                             visualDensity: VisualDensity.compact,
+                             padding: EdgeInsets.zero,
+                           ),
+                           if (isFacilitator)
+                             IconButton(
+                               icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                               onPressed: () => _deleteItem(context, item),
+                               tooltip: l10n.actionDelete,
+                               visualDensity: VisualDensity.compact,
+                               padding: EdgeInsets.zero,
+                             ),
+                         ],
+                       ),
+                     ),
+                 ],
+               ),
+            );
+          },
+        ),
+      ],
     );
   }
 

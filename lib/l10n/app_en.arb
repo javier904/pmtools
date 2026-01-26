@@ -562,6 +562,7 @@
   "retroPhaseVoting": "Voting",
   "retroPhaseDiscuss": "Discuss",
   "retroActionItemsLabel": "Action Items",
+  "retroActionDragToCreate": "Drag a card here to create a linked Action Item",
   "retroPhaseStart": "Start",
   "retroPhaseStop": "Stop",
   "retroPhaseContinue": "Continue",

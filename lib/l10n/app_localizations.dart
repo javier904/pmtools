@@ -2328,6 +2328,12 @@ abstract class AppLocalizations {
   /// **'Action Items'**
   String get retroActionItemsLabel;
 
+  /// No description provided for @retroActionDragToCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascina qui una card per creare un Action Item collegato'**
+  String get retroActionDragToCreate;
+
   /// No description provided for @retroPhaseStart.
   ///
   /// In it, this message translates to:

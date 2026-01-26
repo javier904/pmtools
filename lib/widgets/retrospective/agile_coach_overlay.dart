@@ -27,22 +27,31 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
     final bgColor = Theme.of(context).colorScheme.primary;
     final fgColor = Theme.of(context).colorScheme.onPrimary;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: _isExpanded ? 300 : 60,
-      height: _isExpanded ? 160 : 60,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
-      ),
-      child: _isExpanded ? _buildExpandedContent(fgColor) : _buildCollapsedContent(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Defensive check: if constraints are too tight (e.g. accidentally placed in a small slot), don't render
+        if (constraints.maxWidth < 50 && constraints.maxWidth != double.infinity) {
+          return const SizedBox.shrink();
+        }
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          width: _isExpanded ? 300 : 36,
+          height: _isExpanded ? 150 : 36,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: _isExpanded ? _buildExpandedContent(fgColor) : _buildCollapsedContent(),
+        );
+      },
     );
   }
 
@@ -50,7 +59,7 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
     return InkWell(
       onTap: () => setState(() => _isExpanded = true),
       child: const Center(
-        child: Icon(Icons.lightbulb_outline, color: Colors.amberAccent, size: 30),
+        child: Icon(Icons.lightbulb_outline, color: Colors.amberAccent, size: 20),
       ),
     );
   }
@@ -58,44 +67,54 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
   Widget _buildExpandedContent(Color fgColor) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 8,
-          right: 8,
-          child: InkWell(
-            onTap: () => setState(() => _isExpanded = false),
-            child: Icon(Icons.close, color: fgColor.withOpacity(0.7), size: 20),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: OverflowBox(
+        maxWidth: 300,
+        minWidth: 300,
+        maxHeight: 150,
+        minHeight: 150,
+        alignment: Alignment.topLeft,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 8,
+              right: 8,
+              child: InkWell(
+                onTap: () => setState(() => _isExpanded = false),
+                child: Icon(Icons.close, color: fgColor.withOpacity(0.7), size: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.person_outline, color: fgColor),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.retroAgileCoach,
-                    style: TextStyle(color: fgColor, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Icon(Icons.person_outline, color: fgColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.retroAgileCoach,
+                        style: TextStyle(color: fgColor, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _getCoachMessage(l10n),
+                        style: TextStyle(color: fgColor.withOpacity(0.9), fontSize: 13),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Text(
-                    _getCoachMessage(l10n),
-                    style: TextStyle(color: fgColor.withOpacity(0.9), fontSize: 13),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

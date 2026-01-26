@@ -233,17 +233,17 @@ class ActionCollectionGuideWidget extends StatelessWidget {
             if (isRequired && !hasAction) ...[
               const SizedBox(width: 4),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.red, // Solid red for better visibility
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(
+                child: const Text(
                   '!',
                   style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red.shade700,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white, // White text for contrast
                   ),
                 ),
               ),
@@ -276,7 +276,8 @@ class ActionCollectionGuideWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       '${l10n.facilitatorGuideNextColumn} ',

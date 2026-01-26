@@ -1201,6 +1201,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroActionItemsLabel => 'Action Items';
 
   @override
+  String get retroActionDragToCreate =>
+      'Drag a card here to create a linked Action Item';
+
+  @override
   String get retroPhaseStart => 'Start';
 
   @override

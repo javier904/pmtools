@@ -265,7 +265,64 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
           ),
           child: Scaffold(
             appBar: AppBar(
-            title: Text(retro.sprintName.isNotEmpty ? retro.sprintName : (l10n?.favTypeRetro ?? 'Retrospective')),
+            title: Row(
+              children: [
+                Text(retro.sprintName.isNotEmpty ? retro.sprintName : (l10n?.favTypeRetro ?? 'Retrospective')),
+                const SizedBox(width: 32),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: RetroPhase.values.map((p) {
+                        final isActive = p == retro.currentPhase;
+                        final isCompleted = p.index < retro.currentPhase.index;
+                        final theme = Theme.of(context);
+                        
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isActive 
+                                  ? theme.primaryColor 
+                                  : isCompleted ? Colors.green.withOpacity(0.1) : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: isActive 
+                                  ? Border.all(color: theme.primaryColor) 
+                                  : isCompleted ? Border.all(color: Colors.green) : Border.all(color: theme.disabledColor.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isCompleted) 
+                                  const Icon(Icons.check_circle, size: 14, color: Colors.green)
+                                else if (isActive)
+                                  Icon(Icons.play_circle_fill, size: 14, color: theme.colorScheme.onPrimary)
+                                else
+                                  Icon(Icons.radio_button_unchecked, size: 14, color: theme.disabledColor),
+                                
+                                const SizedBox(width: 6),
+                                Text(
+                                  p.name.toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                                    color: isActive 
+                                        ? theme.colorScheme.onPrimary 
+                                        : isCompleted ? Colors.green : theme.disabledColor,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             centerTitle: false,
             elevation: 0,
             actions: [
@@ -317,7 +374,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
           ),
           body: Column(
             children: [
-              _buildPhaseBar(retro),
+
               Expanded(
                 child: _buildPhaseContent(retro, isFacilitator),
               ),
@@ -515,7 +572,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              height: retro.isActionItemsVisible ? 450 : 50, // Synced visibility (facilitator-controlled)
+              height: retro.isActionItemsVisible ? 320 : 56, // Synced visibility (facilitator-controlled)
               child: _buildActionItemsSection(retro, isFacilitator),
             ),
           ],
@@ -571,8 +628,12 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Left Group: Title & Lock
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
+                          Icon(Icons.playlist_add_check, size: 18, color: Theme.of(context).primaryColor),
+                          const SizedBox(width: 8),
                           Text(
                             'Action Items',
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -583,117 +644,116 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                           ],
                         ],
                       ),
-                      Icon(
-                        retro.isActionItemsVisible ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
-                        size: 20,
-                        color: isFacilitator ? Theme.of(context).iconTheme.color : Theme.of(context).disabledColor,
+                      
+                      // Center Group: Drop Hint (Expanded to take available space and center content)
+                      Expanded(
+                        child: Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.swipe_down, size: 14, color: Theme.of(context).disabledColor),
+                              const SizedBox(width: 4),
+                              Flexible( // Flexible to allow text wrapping if needed on small screens
+                                child: Text(
+                                  l10n?.retroActionDragToCreate ?? 'Drag card here to create Action Item',
+                                  style: TextStyle(
+                                    color: Theme.of(context).disabledColor,
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Right Group: Add Button + Arrow
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                           if (isFacilitator)
+                             Padding(
+                               padding: const EdgeInsets.only(right: 12),
+                               child: SizedBox(
+                                 height: 28,
+                                 child: ElevatedButton.icon(
+                                  onPressed: () { 
+                                     // Prevent header toggle by handling tap here
+                                     _openCreateActionItemDialog(retro);
+                                  },
+                                  icon: const Icon(Icons.add, size: 14),
+                                  label: Text(l10n?.actionAdd ?? 'Add', style: const TextStyle(fontSize: 12)),
+                                  style: ElevatedButton.styleFrom(
+                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                     visualDensity: VisualDensity.compact,
+                                  ),
+                                 ),
+                               ),
+                             ),
+                          Icon(
+                            retro.isActionItemsVisible ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                            size: 20,
+                            color: isFacilitator ? Theme.of(context).iconTheme.color : Theme.of(context).disabledColor,
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
+
               
               if (retro.isActionItemsVisible)
                Expanded(
                  child: SingleChildScrollView( // Scrollable content when expanded
                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1200),
+                      constraints: const BoxConstraints(maxWidth: 1800),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                      Row(
-                        children: [
-                          Icon(Icons.playlist_add_check, color: Theme.of(context).primaryColor),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Action Items', 
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          if (isHovering) ...[
-                            const SizedBox(width: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(12),
+                  // Main Content Area: Guide (Left) + Table (Right)
+
+                  // Main Content Area: Guide (Left) + Table (Right)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Facilitator Action Collection Guide - Side Panel
+                      if (isFacilitator && retro.currentPhase == RetroPhase.discuss)
+                         Container(
+                           width: 300, 
+                           margin: const EdgeInsets.only(right: 16, bottom: 16),
+                           child: ActionCollectionGuideWidget(retro: retro),
+                         ),
+
+                      // Action Items List / Limitless Table
+                      Expanded(
+                        child: retro.actionItems.isEmpty && !isHovering
+                            ? SizedBox(
+                                height: 200,
+                                child: Center(
+                                  child: Text(
+                                    'Nessun action item presente', // localized string logic handled in previous placeholder or parent
+                                    style: TextStyle(color: Colors.grey.withOpacity(0.5)),
+                                  ),
+                                ),
+                            )
+                            : ActionItemsTableWidget(
+                                actionItems: retro.actionItems,
+                                retroId: retro.id,
+                                isFacilitator: isFacilitator,
+                                participants: retro.participantEmails,
+                                currentUserEmail: widget.currentUserEmail,
+                                items: retro.items,
+                                template: retro.template,
+                                columns: retro.columns,
                               ),
-                              child: Text(l10n?.actionCreate ?? 'Drop to Create', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                            ),
-                          ],
-                        ],
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () => _openCreateActionItemDialog(retro),
-                        icon: const Icon(Icons.add, size: 18),
-                        label: Text(l10n?.actionAdd ?? 'Add Item'),
-                        style: ElevatedButton.styleFrom(
-                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  
-                  // Permanent Drop Zone Visual Hint
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).disabledColor.withOpacity(0.3),
-                        style: BorderStyle.none, // Trick: we use a custom decoration or just a dashed border if available, but for now simple style
-                      ),
-                      // Improving visual: Dashed border simulation or just a distinct background
-                       color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-                       borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.swipe_down, size: 20, color: Theme.of(context).disabledColor),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Trascina qui una card per creare un Action Item collegato',
-                          style: TextStyle(
-                            color: Theme.of(context).disabledColor,
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Facilitator Action Collection Guide - shows coverage and suggestions
-                  if (isFacilitator && retro.currentPhase == RetroPhase.discuss)
-                    ActionCollectionGuideWidget(retro: retro),
-
-                  if (retro.actionItems.isEmpty && !isHovering)
-                    Expanded(
-                      child: Center(
-                         // Simplified empty state as we have the top banner now
-                        child: Text(
-                          'Nessun action item presente',
-                          style: TextStyle(color: Colors.grey.withOpacity(0.5)),
-                        ),
-                      ),
-                    )
-                  else
-                    ActionItemsTableWidget(
-                        actionItems: retro.actionItems,
-                        retroId: retro.id,
-                        isFacilitator: isFacilitator,
-                        participants: retro.participantEmails,
-                        currentUserEmail: widget.currentUserEmail,
-                        items: retro.items,
-                        template: retro.template,
-                        columns: retro.columns,
-                      ),
                 ],
               ),
             ),

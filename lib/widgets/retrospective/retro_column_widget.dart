@@ -526,6 +526,7 @@ class RetroColumnWidget extends StatelessWidget {
     );
 
     return Container(
+      height: 72.0, // Fixed height to align columns
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: column.color.withOpacity(0.08),
@@ -534,8 +535,12 @@ class RetroColumnWidget extends StatelessWidget {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // Align to top for better reading
         children: [
-          Icon(Icons.chat_bubble_outline, size: 16, color: column.color),
+          Padding(
+            padding: const EdgeInsets.only(top: 2), // Align icon with first line of text
+            child: Icon(Icons.chat_bubble_outline, size: 16, color: column.color),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -544,7 +549,9 @@ class RetroColumnWidget extends StatelessWidget {
                 fontSize: 12,
                 fontStyle: FontStyle.italic,
                 color: column.color.withOpacity(0.9),
+                overflow: TextOverflow.ellipsis, // Ellipsis if it exceeds the fixed height
               ),
+              maxLines: 4, // Max lines that fit in 72px
             ),
           ),
         ],
