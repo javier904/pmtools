@@ -25,18 +25,20 @@ class RetroBoardWidget extends StatelessWidget {
     // Strategy Dispatcher
     switch (retro.template) {
       case RetroTemplate.sailboat:
-      case RetroTemplate.starfish: // Assuming Starfish also uses Canvas logic or similar
+        // Only Sailboat uses canvas visual (boat metaphor)
         return RetroCanvasWidget(
           retro: retro,
           currentUserEmail: currentUserEmail,
           currentUserName: currentUserName,
         );
 
+      case RetroTemplate.starfish:
       case RetroTemplate.fourLs:
       case RetroTemplate.madSadGlad:
       case RetroTemplate.startStopContinue:
+      case RetroTemplate.daki:
       default:
-        // Standard Column-based templates
+        // Standard Column-based templates (including Starfish with 5 columns)
         return RetroLinearBoardWidget(
           retro: retro,
           currentUserEmail: currentUserEmail,
