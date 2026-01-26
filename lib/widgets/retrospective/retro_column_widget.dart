@@ -1,6 +1,7 @@
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
+import 'package:agile_tools/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class RetroColumnWidget extends StatelessWidget {
@@ -360,35 +361,49 @@ class RetroColumnWidget extends StatelessWidget {
     final controller = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.retroAddTo(column.title)),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(hintText: l10n.retroAddCardHint),
-          maxLines: 3,
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
-          ElevatedButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                final newItem = RetroItem(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  columnId: column.id,
-                  content: controller.text.trim(),
-                  authorEmail: currentUserEmail,
-                  authorName: currentUserName,
-                  createdAt: DateTime.now(),
-                );
-
-                RetrospectiveFirestoreService().addRetroItem(retro.id, newItem);
-                Navigator.pop(context);
-              }
-            },
-            child: Text(l10n.retroAddCard),
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          primaryColor: AppColors.retroPrimary,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.retroPrimary,
           ),
-        ],
+          elevatedButtonTheme: ElevatedButtonThemeData(
+             style: ElevatedButton.styleFrom(
+               backgroundColor: AppColors.retroPrimary,
+               foregroundColor: Colors.white,
+             ),
+          ),
+        ),
+        child: AlertDialog(
+          title: Text(l10n.retroAddTo(column.title)),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(hintText: l10n.retroAddCardHint),
+            maxLines: 3,
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  final newItem = RetroItem(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    columnId: column.id,
+                    content: controller.text.trim(),
+                    authorEmail: currentUserEmail,
+                    authorName: currentUserName,
+                    createdAt: DateTime.now(),
+                  );
+  
+                  RetrospectiveFirestoreService().addRetroItem(retro.id, newItem);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(l10n.retroAddCard),
+            ),
+          ],
+        ),
       ),
     );
   }

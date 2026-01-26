@@ -7,6 +7,7 @@ import '../../models/unified_invite_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_colors.dart';
 
 /// Dialog per invitare partecipanti a una Retrospective
 ///
@@ -35,10 +36,24 @@ class RetroParticipantInviteDialog extends StatefulWidget {
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (context) => RetroParticipantInviteDialog(
-        boardId: boardId,
-        boardTitle: boardTitle,
-        pendingInvites: pendingInvites,
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          primaryColor: AppColors.retroPrimary,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.retroPrimary,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+             style: ElevatedButton.styleFrom(
+               backgroundColor: AppColors.retroPrimary,
+               foregroundColor: Colors.white,
+             ),
+          ),
+        ),
+        child: RetroParticipantInviteDialog(
+          boardId: boardId,
+          boardTitle: boardTitle,
+          pendingInvites: pendingInvites,
+        ),
       ),
     );
   }

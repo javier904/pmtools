@@ -101,6 +101,7 @@ class AppColors {
   // ══════════════════════════════════════════════════════════════════════════
 
   static const scrumColor = Color(0xFF0984E3);     // Blu
+  static const retroPrimary = Color(0xFFFD79A8);   // Pink (Retrospective)
   static const kanbanColor = Color(0xFF00B894);    // Verde
   static const hybridColor = Color(0xFF6C5CE7);    // Viola
 

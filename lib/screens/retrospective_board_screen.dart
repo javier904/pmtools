@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:agile_tools/widgets/retrospective/retro_timer_widget.dart';
+import 'package:agile_tools/themes/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:agile_tools/models/retrospective_model.dart';
@@ -43,8 +44,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
   Timer? _heartbeatTimer;
   static const int _heartbeatIntervalSeconds = 15;
 
-  // UX State
-  bool _isActionPanelExpanded = true;
+  // UX State - Action Items visibility is synced via retro.isActionItemsVisible
 
   @override
   void initState() {
@@ -240,8 +240,32 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
         final isFacilitator = retro.createdBy == widget.currentUserEmail || 
                             (retro.participantEmails.isNotEmpty && retro.participantEmails.first == widget.currentUserEmail);
 
-        return Scaffold(
-          appBar: AppBar(
+        return Theme(
+          data: Theme.of(context).copyWith(
+            primaryColor: AppColors.retroPrimary,
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: AppColors.retroPrimary,
+              secondary: AppColors.retroPrimary,
+              onPrimary: Colors.white,
+            ),
+            appBarTheme: Theme.of(context).appBarTheme.copyWith(
+              backgroundColor: AppColors.retroPrimary,
+              foregroundColor: Colors.white,
+              iconTheme: const IconThemeData(color: Colors.white),
+            ),
+            floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
+              backgroundColor: AppColors.retroPrimary,
+              foregroundColor: Colors.white,
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: AppColors.retroPrimary,
+                 foregroundColor: Colors.white,
+               ),
+            ),
+          ),
+          child: Scaffold(
+            appBar: AppBar(
             title: Text(retro.sprintName.isNotEmpty ? retro.sprintName : (l10n?.favTypeRetro ?? 'Retrospective')),
             centerTitle: false,
             elevation: 0,
@@ -301,7 +325,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             ],
           ),
           bottomNavigationBar: _buildBottomControls(retro, isFacilitator),
-        );
+        ));
       },
     );
   }
@@ -472,7 +496,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              height: _isActionPanelExpanded ? 350 : 50, // Collapsible height
+              height: retro.isActionItemsVisible ? 350 : 50, // Synced visibility (facilitator-controlled)
               child: _buildActionItemsSection(retro, isFacilitator),
             ),
           ],
@@ -666,21 +690,35 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
   }) async {
       final newItem = await showDialog<ActionItem>(
         context: context,
-        builder: (context) => ActionItemDialog(
-          participants: retro.participantEmails,
-          currentUserEmail: widget.currentUserEmail,
-          availableCards: retro.items,
-          initialSourceRefId: initialSourceRefId,
-          item: item ?? (initialDescription != null 
-              ? ActionItem(
-                  id: '', 
-                  description: initialDescription, 
-                  ownerEmail: widget.currentUserEmail, 
-                  createdAt: DateTime.now(),
-                  sourceRefId: initialSourceRefId,
-                  sourceRefContent: initialDescription,
-                )
-              : null),
+        builder: (context) => Theme(
+          data: Theme.of(context).copyWith(
+            primaryColor: AppColors.retroPrimary,
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: AppColors.retroPrimary,
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: AppColors.retroPrimary,
+                 foregroundColor: Colors.white,
+               ),
+            ),
+          ),
+          child: ActionItemDialog(
+            participants: retro.participantEmails,
+            currentUserEmail: widget.currentUserEmail,
+            availableCards: retro.items,
+            initialSourceRefId: initialSourceRefId,
+            item: item ?? (initialDescription != null 
+                ? ActionItem(
+                    id: '', 
+                    description: initialDescription, 
+                    ownerEmail: widget.currentUserEmail, 
+                    createdAt: DateTime.now(),
+                    sourceRefId: initialSourceRefId,
+                    sourceRefContent: initialDescription,
+                  )
+                : null),
+          ),
         ),
       );
       if (newItem != null) {

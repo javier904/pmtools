@@ -58,7 +58,24 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Theme(
+      data: Theme.of(context).copyWith(
+        primaryColor: AppColors.retroPrimary,
+        colorScheme: Theme.of(context).colorScheme.copyWith(
+          primary: AppColors.retroPrimary,
+          secondary: AppColors.retroPrimary,
+        ),
+        appBarTheme: Theme.of(context).appBarTheme.copyWith(
+          backgroundColor: AppColors.retroPrimary,
+          foregroundColor: Colors.white,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
+          backgroundColor: AppColors.retroPrimary,
+          foregroundColor: Colors.white,
+        ),
+      ),
+      child: Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
@@ -91,10 +108,18 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
             tooltip: AppLocalizations.of(context)!.retroGuidance,
             onPressed: () => showDialog(
               context: context,
-              builder: (context) => RetroMethodologyDialog(
-                onSelect: (template) {
-                  setState(() => selectedTemplate = template);
-                },
+              builder: (context) => Theme(
+                data: Theme.of(context).copyWith(
+                  primaryColor: AppColors.retroPrimary,
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: AppColors.retroPrimary,
+                  ),
+                ),
+                child: RetroMethodologyDialog(
+                  onSelect: (template) {
+                    setState(() => selectedTemplate = template);
+                  },
+                ),
               ),
             ),
           ),
@@ -184,7 +209,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         backgroundColor: AppColors.pink,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-    );
+    ));
   }
 
   Widget _buildSearchFilterSection() {
@@ -286,40 +311,54 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   void _confirmDeleteRetro(RetrospectiveModel retro) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.retroDeleteTitle),
-        content: Text(
-            AppLocalizations.of(context)!.retroDeleteConfirm(retro.sprintName)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          primaryColor: AppColors.retroPrimary,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.retroPrimary,
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              final messenger = ScaffoldMessenger.of(context);
-              final l10n = AppLocalizations.of(context)!;
-              Navigator.pop(context); // Close dialog
-              
-              try {
-                await _retroService.deleteRetrospective(retro.id);
-                if (mounted) {
-                  messenger.showSnackBar(
-                    SnackBar(content: Text(l10n.retroDeleteSuccess)),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  messenger.showSnackBar(
-                    SnackBar(content: Text(l10n.retroDeleteError(e.toString()))),
-                  );
-                }
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.retroDeleteConfirmAction, style: const TextStyle(color: Colors.white)),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+             style: ElevatedButton.styleFrom(
+               backgroundColor: AppColors.retroPrimary,
+               foregroundColor: Colors.white,
+             ),
           ),
-        ],
+        ),
+        child: AlertDialog(
+          title: Text(AppLocalizations.of(context)!.retroDeleteTitle),
+          content: Text(
+              AppLocalizations.of(context)!.retroDeleteConfirm(retro.sprintName)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final l10n = AppLocalizations.of(context)!;
+                Navigator.pop(context); // Close dialog
+                
+                try {
+                  await _retroService.deleteRetrospective(retro.id);
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      SnackBar(content: Text(l10n.retroDeleteSuccess)),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      SnackBar(content: Text(l10n.retroDeleteError(e.toString()))),
+                    );
+                  }
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.retroDeleteConfirmAction, style: const TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -412,356 +451,370 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          
-          // Initial Load Trigger (One time hack)
-          if (userProjects.isEmpty && loadingProjects) {
-            agileService.getUserProjects(_currentUserEmail).then((p) {
-              if (context.mounted) {
-                setDialogState(() {
-                  userProjects = p;
-                  loadingProjects = false;
-                });
-              }
-            });
-          }
-
-          return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.retroNewRetroTitle),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Standalone / Linked Toggle
-                Row(
-                  children: [
-                    Text(AppLocalizations.of(context)!.retroLinkToSprint),
-                    const Spacer(),
-                    Switch(
-                      value: linkToProject, 
-                      onChanged: (val) {
-                        setDialogState(() => linkToProject = val);
-                        if (!val) {
-                          selectedProject = null;
-                          selectedSprint = null;
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const Divider(),
-                
-                if (linkToProject) ...[
-                  if (loadingProjects)
-                    const Center(child: CircularProgressIndicator())
-                  else if (userProjects.isEmpty)
-                     Text(AppLocalizations.of(context)!.retroNoProjectFound, style: const TextStyle(color: Colors.red))
-                  else
-                    DropdownButtonFormField<AgileProjectModel>(
-                      value: selectedProject,
-                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroSelectProject),
-                      items: userProjects.map((p) => DropdownMenuItem(
-                        value: p,
-                        child: Text(p.name),
-                      )).toList(),
-                      onChanged: (p) {
-                         setDialogState(() {
-                           selectedProject = p;
-                           selectedSprint = null;
-                           loadingSprints = true;
-                         });
-                         if (p != null) {
-                           agileService.getProjectSprints(p.id).then((sprints) {
-                             if (context.mounted) {
-                               setDialogState(() {
-                                 projectSprints = sprints;
-                                 loadingSprints = false;
-                               });
-                             }
-                           });
-                         }
-                      },
-                    ),
-                  const SizedBox(height: 16),
-                  
-                  if (selectedProject != null) ...[
-                    if (loadingSprints)
-                      const Center(child: Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator()))
-                    else 
-                      DropdownButtonFormField<SprintModel>(
-                        value: selectedSprint,
-                        decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroSelectSprint),
-                         items: projectSprints.map((s) => DropdownMenuItem(
-                          value: s,
-                          child: Text(AppLocalizations.of(context)!.retroSprintLabel(s.number, s.name)),
-                        )).toList(),
-                        onChanged: (s) {
-                          setDialogState(() {
-                            selectedSprint = s;
-                            if (s != null) {
-                              titleController.text = s.name; // Auto-fill title
-                            }
-                          });
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          primaryColor: AppColors.retroPrimary,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.retroPrimary,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+             style: ElevatedButton.styleFrom(
+               backgroundColor: AppColors.retroPrimary,
+               foregroundColor: Colors.white,
+             ),
+          ),
+        ),
+        child: StatefulBuilder(
+          builder: (context, setDialogState) {
+            
+            // Initial Load Trigger (One time hack)
+            if (userProjects.isEmpty && loadingProjects) {
+              agileService.getUserProjects(_currentUserEmail).then((p) {
+                if (context.mounted) {
+                  setDialogState(() {
+                    userProjects = p;
+                    loadingProjects = false;
+                  });
+                }
+              });
+            }
+  
+            return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.retroNewRetroTitle),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Standalone / Linked Toggle
+                  Row(
+                    children: [
+                      Text(AppLocalizations.of(context)!.retroLinkToSprint),
+                      const Spacer(),
+                      Switch(
+                        value: linkToProject, 
+                        onChanged: (val) {
+                          setDialogState(() => linkToProject = val);
+                          if (!val) {
+                            selectedProject = null;
+                            selectedSprint = null;
+                          }
                         },
                       ),
-                  ]
-                ],
-
-                if (!linkToProject || selectedSprint == null)
-                  TextField(
-                    controller: titleController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.retroSessionTitle,
-                      hintText: AppLocalizations.of(context)!.retroSessionTitleHint,
-                    ),
-                    autofocus: !linkToProject,
+                    ],
                   ),
-
-                const SizedBox(height: 16),
-                DropdownButtonFormField<RetroTemplate>(
-                  value: selectedTemplate,
-                  decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroTemplateLabel),
-                  isExpanded: true, // Ensure proper layout for long text
-                  selectedItemBuilder: (BuildContext context) {
-                    return RetroTemplate.values.map<Widget>((RetroTemplate t) {
-                      return Text(
-                        t.getLocalizedDisplayName(AppLocalizations.of(context)!),
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    }).toList();
-                  },
-                  items: RetroTemplate.values.map((t) {
-                    return DropdownMenuItem(
-                      value: t,
-                      child: Row(
-                        children: [
-                          Icon(t.icon, size: 20), // Uses default theme color (visible in dark mode)
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  t.getLocalizedDisplayName(AppLocalizations.of(context)!), 
-                                  style: const TextStyle(fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  t.getLocalizedUsageSuggestion(AppLocalizations.of(context)!),
-                                  style: TextStyle(
-                                    fontSize: 11, 
-                                    color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
-                                    fontStyle: FontStyle.italic
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                  const Divider(),
+                  
+                  if (linkToProject) ...[
+                    if (loadingProjects)
+                      const Center(child: CircularProgressIndicator())
+                    else if (userProjects.isEmpty)
+                       Text(AppLocalizations.of(context)!.retroNoProjectFound, style: const TextStyle(color: Colors.red))
+                    else
+                      DropdownButtonFormField<AgileProjectModel>(
+                        value: selectedProject,
+                        decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroSelectProject),
+                        items: userProjects.map((p) => DropdownMenuItem(
+                          value: p,
+                          child: Text(p.name),
+                        )).toList(),
+                        onChanged: (p) {
+                           setDialogState(() {
+                             selectedProject = p;
+                             selectedSprint = null;
+                             loadingSprints = true;
+                           });
+                           if (p != null) {
+                             agileService.getProjectSprints(p.id).then((sprints) {
+                               if (context.mounted) {
+                                 setDialogState(() {
+                                   projectSprints = sprints;
+                                   loadingSprints = false;
+                                 });
+                               }
+                             });
+                           }
+                        },
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      setDialogState(() => selectedTemplate = val);
-                    }
-                  },
-                ),
-                const SizedBox(height: 12),
-                
-                // Configurazione Voti
-                Row(
-                   children: [
-                      Text(AppLocalizations.of(context)!.retroVotesPerUser, style: const TextStyle(fontWeight: FontWeight.w500)),
-                      const SizedBox(width: 16),
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle_outline),
-                        onPressed: maxVotes > 1 ? () => setDialogState(() => maxVotes--) : null,
-                      ),
-                      Text('$maxVotes', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline),
-                        onPressed: maxVotes < 10 ? () => setDialogState(() => maxVotes++) : null,
-                      ),
-                   ],
-                ),
-                const SizedBox(height: 8),
-
-                // Template Description Box
-                Tooltip(
-                  message: 'Description and usage of selected template',
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue.shade100),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.info_outline, size: 20, color: Colors.blue),
-                            const SizedBox(width: 8),
-                            Text(selectedTemplate.getLocalizedDisplayName(AppLocalizations.of(context)!), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          selectedTemplate.getLocalizedDescription(AppLocalizations.of(context)!),
-                          style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          selectedTemplate.getLocalizedUsageSuggestion(AppLocalizations.of(context)!),
-                          style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.blue.shade800),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // Icebreaker Configuration
-                Text(AppLocalizations.of(context)!.retroIcebreakerSectionTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Tooltip(
-                        message: AppLocalizations.of(context)!.retroSelectIcebreakerTooltip,
-                        child: DropdownButtonFormField<RetroIcebreaker>(
-                          value: selectedIcebreaker,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.retroIcebreakerLabel,
-                            border: const OutlineInputBorder(),
-                            isDense: true,
-                          ),
-                          items: RetroIcebreaker.values.map((i) {
-                             return DropdownMenuItem(
-                                value: i,
-                                child: Text(i.getLocalizedDisplayName(AppLocalizations.of(context)!)),
-                             );
-                          }).toList(),
-                          onChanged: (val) {
-                             if (val != null) {
-                               setDialogState(() => selectedIcebreaker = val);
-                             }
+                    const SizedBox(height: 16),
+                    
+                    if (selectedProject != null) ...[
+                      if (loadingSprints)
+                        const Center(child: Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator()))
+                      else 
+                        DropdownButtonFormField<SprintModel>(
+                          value: selectedSprint,
+                          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroSelectSprint),
+                           items: projectSprints.map((s) => DropdownMenuItem(
+                            value: s,
+                            child: Text(AppLocalizations.of(context)!.retroSprintLabel(s.number, s.name)),
+                          )).toList(),
+                          onChanged: (s) {
+                            setDialogState(() {
+                              selectedSprint = s;
+                              if (s != null) {
+                                titleController.text = s.name; // Auto-fill title
+                              }
+                            });
                           },
                         ),
-                      ),
-                    ),
+                    ]
                   ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                   selectedIcebreaker.getLocalizedDescription(AppLocalizations.of(context)!),
-                   style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
-                ),
-                const SizedBox(height: 24),
-                
-                // Phase Timers Configuration
-                ExpansionTile(
-                  title: Text(AppLocalizations.of(context)!.retroTimePhasesOptional, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                  tilePadding: EdgeInsets.zero,
-                  children: [
-                    Text(AppLocalizations.of(context)!.retroTimePhasesDesc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                    const SizedBox(height: 8),
-                    ...[
-                      RetroPhase.icebreaker,
-                      RetroPhase.writing,
-                      RetroPhase.voting,
-                      RetroPhase.discuss
-                    ].map((phase) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
+  
+                  if (!linkToProject || selectedSprint == null)
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.retroSessionTitle,
+                        hintText: AppLocalizations.of(context)!.retroSessionTitleHint,
+                      ),
+                      autofocus: !linkToProject,
+                    ),
+  
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<RetroTemplate>(
+                    value: selectedTemplate,
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroTemplateLabel),
+                    isExpanded: true, // Ensure proper layout for long text
+                    selectedItemBuilder: (BuildContext context) {
+                      return RetroTemplate.values.map<Widget>((RetroTemplate t) {
+                        return Text(
+                          t.getLocalizedDisplayName(AppLocalizations.of(context)!),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      }).toList();
+                    },
+                    items: RetroTemplate.values.map((t) {
+                      return DropdownMenuItem(
+                        value: t,
                         child: Row(
                           children: [
-                            SizedBox(
-                              width: 100, 
-                              child: Text(_getPhaseName(phase, AppLocalizations.of(context)!), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-                            ),
+                            Icon(t.icon, size: 20), // Uses default theme color (visible in dark mode)
+                            const SizedBox(width: 12),
                             Expanded(
-                              child: TextFormField(
-                                initialValue: phaseDurations[phase.name]?.toString(),
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  border: OutlineInputBorder(),
-                                  suffixText: 'min',
-                                ),
-                                onChanged: (val) {
-                                  final mins = int.tryParse(val);
-                                  if (mins != null) {
-                                    phaseDurations[phase.name] = mins;
-                                  }
-                                },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    t.getLocalizedDisplayName(AppLocalizations.of(context)!), 
+                                    style: const TextStyle(fontWeight: FontWeight.w500),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    t.getLocalizedUsageSuggestion(AppLocalizations.of(context)!),
+                                    style: TextStyle(
+                                      fontSize: 11, 
+                                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                                      fontStyle: FontStyle.italic
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       );
                     }).toList(),
-                  ],
-                ),
-              ],
+                    onChanged: (val) {
+                      if (val != null) {
+                        setDialogState(() => selectedTemplate = val);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Configurazione Voti
+                  Row(
+                     children: [
+                        Text(AppLocalizations.of(context)!.retroVotesPerUser, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        const SizedBox(width: 16),
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle_outline),
+                          onPressed: maxVotes > 1 ? () => setDialogState(() => maxVotes--) : null,
+                        ),
+                        Text('$maxVotes', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline),
+                          onPressed: maxVotes < 10 ? () => setDialogState(() => maxVotes++) : null,
+                        ),
+                     ],
+                  ),
+                  const SizedBox(height: 8),
+  
+                  // Template Description Box
+                  Tooltip(
+                    message: 'Description and usage of selected template',
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.blue.shade100),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.info_outline, size: 20, color: Colors.blue),
+                              const SizedBox(width: 8),
+                              Text(selectedTemplate.getLocalizedDisplayName(AppLocalizations.of(context)!), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            selectedTemplate.getLocalizedDescription(AppLocalizations.of(context)!),
+                            style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            selectedTemplate.getLocalizedUsageSuggestion(AppLocalizations.of(context)!),
+                            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.blue.shade800),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Icebreaker Configuration
+                  Text(AppLocalizations.of(context)!.retroIcebreakerSectionTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Tooltip(
+                          message: AppLocalizations.of(context)!.retroSelectIcebreakerTooltip,
+                          child: DropdownButtonFormField<RetroIcebreaker>(
+                            value: selectedIcebreaker,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.retroIcebreakerLabel,
+                              border: const OutlineInputBorder(),
+                              isDense: true,
+                            ),
+                            items: RetroIcebreaker.values.map((i) {
+                               return DropdownMenuItem(
+                                  value: i,
+                                  child: Text(i.getLocalizedDisplayName(AppLocalizations.of(context)!)),
+                               );
+                            }).toList(),
+                            onChanged: (val) {
+                               if (val != null) {
+                                 setDialogState(() => selectedIcebreaker = val);
+                               }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                     selectedIcebreaker.getLocalizedDescription(AppLocalizations.of(context)!),
+                     style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Phase Timers Configuration
+                  ExpansionTile(
+                    title: Text(AppLocalizations.of(context)!.retroTimePhasesOptional, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    tilePadding: EdgeInsets.zero,
+                    children: [
+                      Text(AppLocalizations.of(context)!.retroTimePhasesDesc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      const SizedBox(height: 8),
+                      ...[
+                        RetroPhase.icebreaker,
+                        RetroPhase.writing,
+                        RetroPhase.voting,
+                        RetroPhase.discuss
+                      ].map((phase) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 100, 
+                                child: Text(_getPhaseName(phase, AppLocalizations.of(context)!), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  initialValue: phaseDurations[phase.name]?.toString(),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    border: OutlineInputBorder(),
+                                    suffixText: 'min',
+                                  ),
+                                  onChanged: (val) {
+                                    final mins = int.tryParse(val);
+                                    if (mins != null) {
+                                      phaseDurations[phase.name] = mins;
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final title = titleController.text.trim();
-                
-                if (title.isNotEmpty || (linkToProject && selectedSprint != null)) {
-                  final retroTitle = title.isEmpty && selectedSprint != null 
-                      ? selectedSprint!.name 
-                      : title;
-
-                  // Crea modello
-                  final newRetro = RetrospectiveModel(
-                    id: '', // Sarà generato dal service
-                    sprintName: retroTitle,
-                    template: selectedTemplate,
-                    createdAt: DateTime.now(),
-                    createdBy: _currentUserEmail,
-                    participantEmails: [_currentUserEmail],
-                    projectId: selectedProject?.id,
-                    sprintId: selectedSprint?.id,
-                    sprintNumber: selectedSprint?.number ?? 0,
-                    timer: const RetroTimer(isRunning: false), // Start stopped
-                    phaseDurations: phaseDurations,
-                    icebreakerTemplate: selectedIcebreaker, // Added Icebreaker
-                    maxVotesPerUser: maxVotes,
-                  );
-
-                  // Salva
-                  final id = await _retroService.createRetrospective(newRetro);
-
-                   if (mounted) {
-                    Navigator.pop(context);
-                    // Naviga direttamente alla board
-                    _navigateToBoard(newRetro.copyWith(id: id));
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final title = titleController.text.trim();
+                  
+                  if (title.isNotEmpty || (linkToProject && selectedSprint != null)) {
+                    final retroTitle = title.isEmpty && selectedSprint != null 
+                        ? selectedSprint!.name 
+                        : title;
+  
+                    // Crea modello
+                    final newRetro = RetrospectiveModel(
+                      id: '', // Sarà generato dal service
+                      sprintName: retroTitle,
+                      template: selectedTemplate,
+                      createdAt: DateTime.now(),
+                      createdBy: _currentUserEmail,
+                      participantEmails: [_currentUserEmail],
+                      projectId: selectedProject?.id,
+                      sprintId: selectedSprint?.id,
+                      sprintNumber: selectedSprint?.number ?? 0,
+                      timer: const RetroTimer(isRunning: false), // Start stopped
+                      phaseDurations: phaseDurations,
+                      icebreakerTemplate: selectedIcebreaker, // Added Icebreaker
+                      maxVotesPerUser: maxVotes,
+                    );
+  
+                    // Salva
+                    final id = await _retroService.createRetrospective(newRetro);
+  
+                     if (mounted) {
+                      Navigator.pop(context);
+                      // Naviga direttamente alla board
+                      _navigateToBoard(newRetro.copyWith(id: id));
+                    }
                   }
-                }
-              },
-              child: Text(AppLocalizations.of(context)!.retroActionCreate),
-            ),
-          ],
-        );
-        }
+                },
+                child: Text(AppLocalizations.of(context)!.retroActionCreate),
+              ),
+            ],
+          );
+          }
+        ),
       ),
     );
   }
