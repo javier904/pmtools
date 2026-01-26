@@ -132,6 +132,13 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             }),
           ),
           const SizedBox(width: 16),
+          // Home button - sempre ultimo a destra
+          IconButton(
+            icon: const Icon(Icons.home_rounded),
+            tooltip: l10n?.navHome ?? 'Home',
+            color: const Color(0xFF8B5CF6), // Viola come icona app
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+          ),
         ],
       ),
       body: StreamBuilder<List<TodoListModel>>(

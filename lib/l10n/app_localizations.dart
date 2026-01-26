@@ -4855,7 +4855,7 @@ abstract class AppLocalizations {
   /// No description provided for @smartTodoImportPasteExample.
   ///
   /// In it, this message translates to:
-  /// **'Esempio:\nComprare il latte, High, @mario\nFare report, Medium, @luigi'**
+  /// **'es. Comprare il latte\nChiamare Mario\nFinire il report'**
   String get smartTodoImportPasteExample;
 
   /// No description provided for @smartTodoImportSelectFile.
@@ -4905,6 +4905,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Trovati {count} task validi. Controlla prima di importare.'**
   String smartTodoImportFoundTasks(int count);
+
+  /// No description provided for @smartTodoImportDestinationColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Destinazione:'**
+  String get smartTodoImportDestinationColumn;
 
   /// No description provided for @smartTodoImportBack.
   ///
@@ -4959,6 +4965,450 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Errore Impossibile: {error}'**
   String smartTodoImportError(String error);
+
+  /// No description provided for @smartTodoImportHelpTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Come importare le attività?'**
+  String get smartTodoImportHelpTitle;
+
+  /// No description provided for @smartTodoImportHelpSimpleTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista semplice (un\'attività per riga)'**
+  String get smartTodoImportHelpSimpleTitle;
+
+  /// No description provided for @smartTodoImportHelpSimpleDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Incolla una lista semplice con un titolo per riga. Ogni riga diventa un\'attività.'**
+  String get smartTodoImportHelpSimpleDesc;
+
+  /// No description provided for @smartTodoImportHelpSimpleExample.
+  ///
+  /// In it, this message translates to:
+  /// **'Comprare il latte\nChiamare Mario\nFinire il report'**
+  String get smartTodoImportHelpSimpleExample;
+
+  /// No description provided for @smartTodoImportHelpCsvTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Formato CSV (con colonne)'**
+  String get smartTodoImportHelpCsvTitle;
+
+  /// No description provided for @smartTodoImportHelpCsvDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa valori separati da virgola con una riga di intestazione. La prima riga definisce le colonne.'**
+  String get smartTodoImportHelpCsvDesc;
+
+  /// No description provided for @smartTodoImportHelpCsvExample.
+  ///
+  /// In it, this message translates to:
+  /// **'title,priority,assignee\nComprare latte,high,mario@email.com\nChiamare Mario,medium,'**
+  String get smartTodoImportHelpCsvExample;
+
+  /// No description provided for @smartTodoImportHelpFieldsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Campi disponibili:'**
+  String get smartTodoImportHelpFieldsTitle;
+
+  /// No description provided for @smartTodoImportHelpFieldTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo attività (obbligatorio)'**
+  String get smartTodoImportHelpFieldTitle;
+
+  /// No description provided for @smartTodoImportHelpFieldDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione attività'**
+  String get smartTodoImportHelpFieldDesc;
+
+  /// No description provided for @smartTodoImportHelpFieldPriority.
+  ///
+  /// In it, this message translates to:
+  /// **'high, medium, low (oppure alta, media, bassa)'**
+  String get smartTodoImportHelpFieldPriority;
+
+  /// No description provided for @smartTodoImportHelpFieldStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome colonna (es. Da fare, In corso)'**
+  String get smartTodoImportHelpFieldStatus;
+
+  /// No description provided for @smartTodoImportHelpFieldAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Email utente'**
+  String get smartTodoImportHelpFieldAssignee;
+
+  /// No description provided for @smartTodoImportHelpFieldEffort.
+  ///
+  /// In it, this message translates to:
+  /// **'Ore (numero)'**
+  String get smartTodoImportHelpFieldEffort;
+
+  /// No description provided for @smartTodoImportStatusHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Colonne disponibili per STATUS: {columns}'**
+  String smartTodoImportStatusHint(String columns);
+
+  /// No description provided for @smartTodoImportEmptyColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'(colonna vuota)'**
+  String get smartTodoImportEmptyColumn;
+
+  /// No description provided for @smartTodoImportFieldIgnore.
+  ///
+  /// In it, this message translates to:
+  /// **'-- Ignora --'**
+  String get smartTodoImportFieldIgnore;
+
+  /// No description provided for @smartTodoImportFieldTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo'**
+  String get smartTodoImportFieldTitle;
+
+  /// No description provided for @smartTodoImportFieldDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get smartTodoImportFieldDescription;
+
+  /// No description provided for @smartTodoImportFieldPriority.
+  ///
+  /// In it, this message translates to:
+  /// **'Priorità'**
+  String get smartTodoImportFieldPriority;
+
+  /// No description provided for @smartTodoImportFieldStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato (Colonna)'**
+  String get smartTodoImportFieldStatus;
+
+  /// No description provided for @smartTodoImportFieldAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnatario'**
+  String get smartTodoImportFieldAssignee;
+
+  /// No description provided for @smartTodoImportFieldEffort.
+  ///
+  /// In it, this message translates to:
+  /// **'Effort'**
+  String get smartTodoImportFieldEffort;
+
+  /// No description provided for @smartTodoDeleteTaskTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Attività'**
+  String get smartTodoDeleteTaskTitle;
+
+  /// No description provided for @smartTodoDeleteTaskContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare questa attività? Questa azione non può essere annullata.'**
+  String get smartTodoDeleteTaskContent;
+
+  /// No description provided for @smartTodoDeleteNoPermission.
+  ///
+  /// In it, this message translates to:
+  /// **'Non hai i permessi per eliminare questa attività'**
+  String get smartTodoDeleteNoPermission;
+
+  /// No description provided for @smartTodoSheetsExportTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Export Google Sheets'**
+  String get smartTodoSheetsExportTitle;
+
+  /// No description provided for @smartTodoSheetsExportExists.
+  ///
+  /// In it, this message translates to:
+  /// **'Esiste già un documento Google Sheets per questa lista.'**
+  String get smartTodoSheetsExportExists;
+
+  /// No description provided for @smartTodoSheetsOpen.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri'**
+  String get smartTodoSheetsOpen;
+
+  /// No description provided for @smartTodoSheetsUpdate.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorna'**
+  String get smartTodoSheetsUpdate;
+
+  /// No description provided for @smartTodoSheetsUpdating.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiornamento Google Sheets in corso...'**
+  String get smartTodoSheetsUpdating;
+
+  /// No description provided for @smartTodoSheetsCreating.
+  ///
+  /// In it, this message translates to:
+  /// **'Creazione Google Sheets in corso...'**
+  String get smartTodoSheetsCreating;
+
+  /// No description provided for @smartTodoSheetsUpdated.
+  ///
+  /// In it, this message translates to:
+  /// **'Google Sheets aggiornato!'**
+  String get smartTodoSheetsUpdated;
+
+  /// No description provided for @smartTodoSheetsCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'Google Sheets creato!'**
+  String get smartTodoSheetsCreated;
+
+  /// No description provided for @smartTodoSheetsError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'export (vedi log)'**
+  String get smartTodoSheetsError;
+
+  /// No description provided for @error.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore'**
+  String get error;
+
+  /// No description provided for @smartTodoAuditLogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Audit Log - {title}'**
+  String smartTodoAuditLogTitle(String title);
+
+  /// No description provided for @smartTodoAuditFilterUser.
+  ///
+  /// In it, this message translates to:
+  /// **'Utente'**
+  String get smartTodoAuditFilterUser;
+
+  /// No description provided for @smartTodoAuditFilterType.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo'**
+  String get smartTodoAuditFilterType;
+
+  /// No description provided for @smartTodoAuditFilterAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Azione'**
+  String get smartTodoAuditFilterAction;
+
+  /// No description provided for @smartTodoAuditFilterSearch.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca'**
+  String get smartTodoAuditFilterSearch;
+
+  /// No description provided for @smartTodoAuditFilterAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get smartTodoAuditFilterAll;
+
+  /// No description provided for @smartTodoAuditFilterAllFemale.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte'**
+  String get smartTodoAuditFilterAllFemale;
+
+  /// No description provided for @smartTodoAuditClearFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulisci Filtri'**
+  String get smartTodoAuditClearFilters;
+
+  /// No description provided for @smartTodoAuditViewTimeline.
+  ///
+  /// In it, this message translates to:
+  /// **'Vista Timeline'**
+  String get smartTodoAuditViewTimeline;
+
+  /// No description provided for @smartTodoAuditViewColumns.
+  ///
+  /// In it, this message translates to:
+  /// **'Vista Colonne'**
+  String get smartTodoAuditViewColumns;
+
+  /// No description provided for @smartTodoAuditNoActivity.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività registrata'**
+  String get smartTodoAuditNoActivity;
+
+  /// No description provided for @smartTodoAuditNoResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato per i filtri selezionati'**
+  String get smartTodoAuditNoResults;
+
+  /// No description provided for @smartTodoAuditActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} attività'**
+  String smartTodoAuditActivities(int count);
+
+  /// No description provided for @smartTodoAuditNoUserActivity.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività'**
+  String get smartTodoAuditNoUserActivity;
+
+  /// No description provided for @smartTodoAuditLoadMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Carica altri 50...'**
+  String get smartTodoAuditLoadMore;
+
+  /// No description provided for @smartTodoAuditEmptyValue.
+  ///
+  /// In it, this message translates to:
+  /// **'(vuoto)'**
+  String get smartTodoAuditEmptyValue;
+
+  /// No description provided for @smartTodoAuditEntityList.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista'**
+  String get smartTodoAuditEntityList;
+
+  /// No description provided for @smartTodoAuditEntityTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Task'**
+  String get smartTodoAuditEntityTask;
+
+  /// No description provided for @smartTodoAuditEntityInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito'**
+  String get smartTodoAuditEntityInvite;
+
+  /// No description provided for @smartTodoAuditEntityParticipant.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipante'**
+  String get smartTodoAuditEntityParticipant;
+
+  /// No description provided for @smartTodoAuditEntityColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Colonna'**
+  String get smartTodoAuditEntityColumn;
+
+  /// No description provided for @smartTodoAuditEntityTag.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag'**
+  String get smartTodoAuditEntityTag;
+
+  /// No description provided for @smartTodoAuditActionCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Creato'**
+  String get smartTodoAuditActionCreate;
+
+  /// No description provided for @smartTodoAuditActionUpdate.
+  ///
+  /// In it, this message translates to:
+  /// **'Modificato'**
+  String get smartTodoAuditActionUpdate;
+
+  /// No description provided for @smartTodoAuditActionDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminato'**
+  String get smartTodoAuditActionDelete;
+
+  /// No description provided for @smartTodoAuditActionArchive.
+  ///
+  /// In it, this message translates to:
+  /// **'Archiviato'**
+  String get smartTodoAuditActionArchive;
+
+  /// No description provided for @smartTodoAuditActionRestore.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristinato'**
+  String get smartTodoAuditActionRestore;
+
+  /// No description provided for @smartTodoAuditActionMove.
+  ///
+  /// In it, this message translates to:
+  /// **'Spostato'**
+  String get smartTodoAuditActionMove;
+
+  /// No description provided for @smartTodoAuditActionAssign.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnato'**
+  String get smartTodoAuditActionAssign;
+
+  /// No description provided for @smartTodoAuditActionInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Invitato'**
+  String get smartTodoAuditActionInvite;
+
+  /// No description provided for @smartTodoAuditActionJoin.
+  ///
+  /// In it, this message translates to:
+  /// **'Entrato'**
+  String get smartTodoAuditActionJoin;
+
+  /// No description provided for @smartTodoAuditActionRevoke.
+  ///
+  /// In it, this message translates to:
+  /// **'Revocato'**
+  String get smartTodoAuditActionRevoke;
+
+  /// No description provided for @smartTodoAuditActionReorder.
+  ///
+  /// In it, this message translates to:
+  /// **'Riordinato'**
+  String get smartTodoAuditActionReorder;
+
+  /// No description provided for @smartTodoAuditActionBatchCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Import'**
+  String get smartTodoAuditActionBatchCreate;
+
+  /// No description provided for @smartTodoAuditTimeNow.
+  ///
+  /// In it, this message translates to:
+  /// **'Adesso'**
+  String get smartTodoAuditTimeNow;
+
+  /// No description provided for @smartTodoAuditTimeMinutesAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} min fa'**
+  String smartTodoAuditTimeMinutesAgo(int count);
+
+  /// No description provided for @smartTodoAuditTimeHoursAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} ore fa'**
+  String smartTodoAuditTimeHoursAgo(int count);
+
+  /// No description provided for @smartTodoAuditTimeDaysAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} giorni fa'**
+  String smartTodoAuditTimeDaysAgo(int count);
 
   /// No description provided for @smartTodoNewTaskDefault.
   ///

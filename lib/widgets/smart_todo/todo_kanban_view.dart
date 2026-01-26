@@ -26,6 +26,8 @@ class TodoKanbanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Note: Browser back gesture on macOS trackpad is prevented via CSS
+    // overscroll-behavior-x: contain in index.html
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(16),

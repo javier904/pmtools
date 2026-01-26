@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart'; // Added for attachments
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class TodoTaskCard extends StatelessWidget {
   final TodoTaskModel task;
@@ -64,31 +65,60 @@ class TodoTaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 1. Top Row: Priority Indicator, Status & Assignee
+                // 1. Top Row: Tags, Priority, Status & Assignee
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Priority Pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: priorityColor.withOpacity(isDark ? 0.2 : 0.1),
-                        borderRadius: BorderRadius.circular(6),
+                    // Tags (moved here from below)
+                    if (task.tags.isNotEmpty) ...[
+                      Flexible(
+                        child: Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: task.tags.map((tag) => Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Color(tag.colorValue).withOpacity(isDark ? 0.25 : 0.15),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              tag.name,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: isDark ? Color(tag.colorValue).withOpacity(0.9) : Color(tag.colorValue),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )).toList(),
+                        ),
                       ),
-                      child: Text(
-                        task.priority.name.toUpperCase(),
-                        style: TextStyle(
-                          color: priorityColor,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                      const SizedBox(width: 6),
+                    ],
+
+                    // Priority Pill (only initial with tooltip)
+                    Tooltip(
+                      message: _getPriorityLabel(task.priority),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: priorityColor.withOpacity(isDark ? 0.2 : 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          task.priority.name[0].toUpperCase(),
+                          style: TextStyle(
+                            color: priorityColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ),
-                    
-                    const SizedBox(width: 8),
 
-                    // Status Pill (New)
+                    const SizedBox(width: 6),
+
+                    // Status Pill
                     if (showStatus && list != null)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -108,10 +138,19 @@ class TodoTaskCard extends StatelessWidget {
 
                     const Spacer(),
                     // Assignee Avatar
-                    if (task.assignedTo.isNotEmpty)
+                    if (task.assignedTo.isNotEmpty) ...[
                       Tooltip(
                         message: _getAssigneeName(task.assignedTo.first),
                         child: _buildAvatar(task.assignedTo.first, isDark),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    // More options menu (delete)
+                    if (onDelete != null)
+                      _TaskCardPopupMenu(
+                        task: task,
+                        onDelete: onDelete!,
+                        isDark: isDark,
                       ),
                   ],
                 ),
@@ -159,31 +198,7 @@ class TodoTaskCard extends StatelessWidget {
                   ),
                 ],
 
-                // 3. Tags
-                if (task.tags.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: task.tags.map((tag) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Color(tag.colorValue).withOpacity(isDark ? 0.25 : 0.15), // Higher opacity in dark mode
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        tag.name,
-                        style: TextStyle(
-                          fontSize: 10, 
-                          color: isDark ? Color(tag.colorValue).withOpacity(0.9) : Color(tag.colorValue),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )).toList(),
-                  ),
-                ],
-                
-                // 3.5 Images Preview
+                // 3. Images Preview
                 Builder(
                   builder: (context) {
                     final List<String> images = [];
@@ -264,20 +279,11 @@ class TodoTaskCard extends StatelessWidget {
 
                     const Spacer(),
 
-                    // Attachments (Clickable Link)
+                    // Attachments (Clickable Link with menu for multiple)
                     if (task.attachments.isNotEmpty) ...[
-                      GestureDetector(
-                        onTap: () async {
-                           final url = Uri.parse(task.attachments.first.url);
-                           if (await canLaunchUrl(url)) {
-                             launchUrl(url);
-                           }
-                        },
-                        behavior: HitTestBehavior.opaque,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          child: _buildMetaIcon(Icons.attach_file_rounded, '${task.attachments.length}', color: isDark ? Colors.blue[300]! : Colors.blue[600]!),
-                        ),
+                      _AttachmentLinkButton(
+                        attachments: task.attachments,
+                        isDark: isDark,
                       ),
                       const SizedBox(width: 8),
                     ],
@@ -376,6 +382,14 @@ class TodoTaskCard extends StatelessWidget {
     }
   }
 
+  String _getPriorityLabel(TodoTaskPriority priority) {
+    switch (priority) {
+      case TodoTaskPriority.high: return 'High';
+      case TodoTaskPriority.medium: return 'Medium';
+      case TodoTaskPriority.low: return 'Low';
+    }
+  }
+
   String _getAssigneeName(String email) {
     if (list == null) return email;
     // Handle potential escaped email if it was already in task
@@ -396,9 +410,201 @@ class TodoTaskCard extends StatelessWidget {
   String _getStatusName(String statusId) {
     if (list == null) return statusId;
     final column = list!.columns.firstWhere(
-      (c) => c.id == statusId, 
+      (c) => c.id == statusId,
       orElse: () => TodoColumn(id: statusId, title: statusId, colorValue: 0)
     );
     return column.title;
+  }
+}
+
+/// Popup menu for task card actions (delete, etc.)
+class _TaskCardPopupMenu extends StatelessWidget {
+  final TodoTaskModel task;
+  final Function(TodoTaskModel) onDelete;
+  final bool isDark;
+
+  const _TaskCardPopupMenu({
+    required this.task,
+    required this.onDelete,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: PopupMenuButton<String>(
+        padding: EdgeInsets.zero,
+        icon: Icon(
+          Icons.more_vert,
+          size: 18,
+          color: isDark ? Colors.grey[400] : Colors.grey[500],
+        ),
+        tooltip: '',
+        onSelected: (value) {
+          if (value == 'delete') {
+            _showDeleteConfirmation(context);
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  l10n?.actionDelete ?? 'Delete',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n?.smartTodoDeleteTaskTitle ?? 'Delete Task'),
+        content: Text(l10n?.smartTodoDeleteTaskContent ?? 'Are you sure you want to delete this task?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n?.actionCancel ?? 'Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onDelete(task);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l10n?.actionDelete ?? 'Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Attachment link button with menu for multiple attachments
+class _AttachmentLinkButton extends StatelessWidget {
+  final List<TodoAttachment> attachments;
+  final bool isDark;
+
+  const _AttachmentLinkButton({
+    required this.attachments,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDark ? Colors.blue[300]! : Colors.blue[600]!;
+
+    // Single attachment: direct click to open
+    if (attachments.length == 1) {
+      return GestureDetector(
+        onTap: () => _openLink(attachments.first.url),
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          child: _buildMetaIcon(Icons.attach_file_rounded, '1', color: color),
+        ),
+      );
+    }
+
+    // Multiple attachments: show menu
+    return PopupMenuButton<String>(
+      padding: EdgeInsets.zero,
+      tooltip: '',
+      onSelected: (url) => _openLink(url),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: _buildMetaIcon(Icons.attach_file_rounded, '${attachments.length}', color: color),
+      ),
+      itemBuilder: (context) => attachments.map((attachment) {
+        IconData icon = _getAttachmentIcon(attachment);
+        return PopupMenuItem<String>(
+          value: attachment.url,
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  attachment.name.isNotEmpty ? attachment.name : _getShortUrl(attachment.url),
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.open_in_new, size: 14, color: Colors.blue.shade400),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildMetaIcon(IconData icon, String text, {Color color = const Color(0xFF718096)}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  IconData _getAttachmentIcon(TodoAttachment attachment) {
+    final url = attachment.url.toLowerCase();
+    if (url.contains('docs.google.com') || url.contains('drive.google.com')) {
+      return Icons.insert_drive_file;
+    } else if (url.contains('sheets.google.com')) {
+      return Icons.table_chart;
+    } else if (url.contains('slides.google.com')) {
+      return Icons.slideshow;
+    } else if (url.endsWith('.pdf')) {
+      return Icons.picture_as_pdf;
+    } else if (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.jpeg')) {
+      return Icons.image;
+    } else {
+      return Icons.link;
+    }
+  }
+
+  String _getShortUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      return uri.host + (uri.path.length > 20 ? uri.path.substring(0, 20) + '...' : uri.path);
+    } catch (_) {
+      return url.length > 30 ? '${url.substring(0, 30)}...' : url;
+    }
+  }
+
+  Future<void> _openLink(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }

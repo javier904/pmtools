@@ -514,6 +514,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 onPressed: _leaveMatrix,
               ),
             ],
+            // Home button - sempre ultimo a destra
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.home_rounded),
+              tooltip: l10n.navHome,
+              color: const Color(0xFF8B5CF6), // Viola come icona app
+              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+            ),
           ],
         ),
         body: _selectedMatrix == null ? _buildMatrixList() : _buildMatrixDetail(),

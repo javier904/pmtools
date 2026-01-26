@@ -98,6 +98,14 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
               ),
             ),
           ),
+          const SizedBox(width: 8),
+          // Home button - sempre ultimo a destra
+          IconButton(
+            icon: const Icon(Icons.home_rounded),
+            tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
+            color: const Color(0xFF8B5CF6), // Viola come icona app
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+          ),
         ],
       ),
       body: Column(

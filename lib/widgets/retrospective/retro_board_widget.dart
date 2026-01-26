@@ -9,6 +9,7 @@ class RetroBoardWidget extends StatelessWidget {
   final String currentUserEmail;
   final String currentUserName;
   final bool isIncognito; 
+  final bool showAuthorNames; // New Parameter
 
   const RetroBoardWidget({
     Key? key,
@@ -16,6 +17,7 @@ class RetroBoardWidget extends StatelessWidget {
     required this.currentUserEmail,
     required this.currentUserName,
     required this.isIncognito,
+    this.showAuthorNames = true, // Default true
   }) : super(key: key);
 
   @override
@@ -39,6 +41,7 @@ class RetroBoardWidget extends StatelessWidget {
           retro: retro,
           currentUserEmail: currentUserEmail,
           currentUserName: currentUserName,
+          showAuthorNames: showAuthorNames,
         );
     }
   }

@@ -84,6 +84,9 @@ class TodoListModel {
   final bool isArchived;
   final DateTime? archivedAt;
 
+  // 📊 Google Sheets Export
+  final String? googleSheetsUrl;
+
   const TodoListModel({
     required this.id,
     required this.title,
@@ -97,6 +100,7 @@ class TodoListModel {
     this.assigneeFilters = const {},
     this.isArchived = false,
     this.archivedAt,
+    this.googleSheetsUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -116,6 +120,7 @@ class TodoListModel {
       'assigneeFilters': assigneeFilters,
       'isArchived': isArchived,
       if (archivedAt != null) 'archivedAt': archivedAt!.toIso8601String(),
+      if (googleSheetsUrl != null) 'googleSheetsUrl': googleSheetsUrl,
     };
   }
 
@@ -148,6 +153,7 @@ class TodoListModel {
       ) ?? const {},
       isArchived: map['isArchived'] ?? false,
       archivedAt: map['archivedAt'] != null ? _parseDate(map['archivedAt']) : null,
+      googleSheetsUrl: map['googleSheetsUrl'],
     );
   }
   
@@ -173,6 +179,7 @@ class TodoListModel {
     Map<String, List<String>>? assigneeFilters,
     bool? isArchived,
     DateTime? archivedAt,
+    String? googleSheetsUrl,
   }) {
     return TodoListModel(
       id: id ?? this.id,
@@ -187,6 +194,7 @@ class TodoListModel {
       assigneeFilters: assigneeFilters ?? this.assigneeFilters,
       isArchived: isArchived ?? this.isArchived,
       archivedAt: archivedAt ?? this.archivedAt,
+      googleSheetsUrl: googleSheetsUrl ?? this.googleSheetsUrl,
     );
   }
 

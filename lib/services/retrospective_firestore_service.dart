@@ -555,21 +555,13 @@ class RetrospectiveFirestoreService {
     required String userEmail,
     bool includeArchived = false,
   }) {
-    // Query base senza filtro isArchived (per compatibilità con documenti esistenti)
-    return _retrosCollection
-        .where('participantEmails', arrayContains: userEmail.toLowerCase())
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      var retros = snapshot.docs
-          .map((doc) => RetrospectiveModel.fromFirestore(doc))
-          .toList();
-
-      // Filtro client-side per isArchived (gestisce documenti senza il campo)
+    // Reuse the robust streamUserRetrospectives which handles both 
+    // participantEmails and createdBy, ensuring we show everything the user owns.
+    return streamUserRetrospectives(userEmail).map((retros) {
+       // Filter client-side for isArchived
       if (!includeArchived) {
-        retros = retros.where((r) => r.isArchived != true).toList();
+        return retros.where((r) => r.isArchived != true).toList();
       }
-
       return retros;
     });
   }

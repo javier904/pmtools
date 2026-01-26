@@ -332,6 +332,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   List<Widget> _buildAppBarActions() {
     final l10n = AppLocalizations.of(context)!;
 
+    // Home button - always last on the right with app color
+    final homeButton = IconButton(
+      icon: const Icon(Icons.home_rounded),
+      tooltip: l10n.navHome,
+      color: const Color(0xFF8B5CF6), // Viola come icona app
+      onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+    );
+
     // Se siamo nella lista sessioni, mostra solo il toggle archivio
     if (_selectedSession == null) {
       return [
@@ -349,7 +357,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           selectedColor: AppColors.warning.withValues(alpha: 0.2),
           showCheckmark: false,
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
+        homeButton,
       ];
     }
 
@@ -426,6 +435,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
             _myVote = null;
           });
         },
+      ),
+      const SizedBox(width: 8),
+      // Home button - sempre ultimo a destra
+      IconButton(
+        icon: const Icon(Icons.home_rounded),
+        tooltip: l10n.navHome,
+        color: const Color(0xFF8B5CF6), // Viola come icona app
+        onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
       ),
     ];
   }

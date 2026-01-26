@@ -59,10 +59,11 @@ class SmartTodoSheetsExportService {
     }
   }
 
-  /// Esporta la lista su un nuovo Google Sheets
+  /// Esporta la lista su un nuovo Google Sheets o aggiorna uno esistente
   Future<String?> exportTodoListToGoogleSheets({
     required TodoListModel list,
     required List<TodoTaskModel> tasks,
+    String? existingUrl,
   }) async {
     try {
       print('📊 [SmartTodoExport] Iniziando export per: ${list.title}');
@@ -72,25 +73,75 @@ class SmartTodoSheetsExportService {
         throw Exception('Autenticazione fallita');
       }
 
-      // Crea nuovo spreadsheet
-      final spreadsheet = await _createSpreadsheet(list.title);
-      final spreadsheetId = spreadsheet.spreadsheetId!;
+      String spreadsheetId;
+      String url;
 
-      print('📄 [SmartTodoExport] Spreadsheet creato: $spreadsheetId');
+      // Se esiste già un URL, aggiorna lo spreadsheet esistente
+      if (existingUrl != null && existingUrl.isNotEmpty) {
+        spreadsheetId = _extractSpreadsheetId(existingUrl);
+        print('📄 [SmartTodoExport] Aggiornando spreadsheet esistente: $spreadsheetId');
 
-      // Popola i fogli
-      await _populateTasksSheet(spreadsheetId, list, tasks);
-      
-      // Applica formattazione
-      await _applyFormatting(spreadsheetId);
+        // Pulisci i dati esistenti e riscrivi
+        await _clearAndUpdateSheet(spreadsheetId, list, tasks);
+        url = existingUrl;
+      } else {
+        // Crea nuovo spreadsheet
+        final spreadsheet = await _createSpreadsheet(list.title);
+        spreadsheetId = spreadsheet.spreadsheetId!;
+        print('📄 [SmartTodoExport] Spreadsheet creato: $spreadsheetId');
 
-      final url = 'https://docs.google.com/spreadsheets/d/$spreadsheetId';
+        // Popola i fogli
+        await _populateTasksSheet(spreadsheetId, list, tasks);
+
+        // Applica formattazione
+        await _applyFormatting(spreadsheetId);
+
+        url = 'https://docs.google.com/spreadsheets/d/$spreadsheetId';
+      }
+
       print('✅ [SmartTodoExport] Export completato: $url');
-
       return url;
     } catch (e) {
       print('❌ [SmartTodoExport] Errore export: $e');
       return null;
+    }
+  }
+
+  /// Estrae l'ID dello spreadsheet dall'URL
+  String _extractSpreadsheetId(String url) {
+    // URL format: https://docs.google.com/spreadsheets/d/{spreadsheetId}/...
+    final regex = RegExp(r'/d/([a-zA-Z0-9-_]+)');
+    final match = regex.firstMatch(url);
+    if (match != null) {
+      return match.group(1)!;
+    }
+    throw Exception('URL spreadsheet non valido');
+  }
+
+  /// Pulisce e aggiorna i dati di uno spreadsheet esistente
+  Future<void> _clearAndUpdateSheet(
+    String spreadsheetId,
+    TodoListModel list,
+    List<TodoTaskModel> tasks,
+  ) async {
+    try {
+      // Prima pulisci i dati esistenti
+      await _sheetsApi!.spreadsheets.values.clear(
+        ClearValuesRequest(),
+        spreadsheetId,
+        'Tasks!A:H',
+      );
+
+      // Poi riscrivi i nuovi dati
+      await _populateTasksSheet(spreadsheetId, list, tasks);
+
+      // Riapplica la formattazione
+      await _applyFormatting(spreadsheetId);
+
+      print('✅ [SmartTodoExport] Spreadsheet aggiornato con successo');
+    } catch (e) {
+      print('❌ [SmartTodoExport] Errore aggiornamento: $e');
+      rethrow;
     }
   }
 

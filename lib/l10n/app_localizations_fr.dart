@@ -2602,7 +2602,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get smartTodoImportPasteExample =>
-      'Esempio:\nComprare il latte, High, @mario\nFare report, Medium, @luigi';
+      'ex. Acheter du lait\nAppeler Marie\nFinir le rapport';
 
   @override
   String get smartTodoImportSelectFile => 'Sélectionner un fichier CSV';
@@ -2640,6 +2640,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get smartTodoImportDestinationColumn => 'Destination :';
+
+  @override
   String get smartTodoImportBack => 'Retour';
 
   @override
@@ -2674,6 +2677,251 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String smartTodoImportError(String error) {
     return 'Erreur d\'import : $error';
+  }
+
+  @override
+  String get smartTodoImportHelpTitle => 'Comment importer des tâches ?';
+
+  @override
+  String get smartTodoImportHelpSimpleTitle =>
+      'Liste simple (une tâche par ligne)';
+
+  @override
+  String get smartTodoImportHelpSimpleDesc =>
+      'Collez une liste simple avec un titre par ligne. Chaque ligne devient une tâche.';
+
+  @override
+  String get smartTodoImportHelpSimpleExample =>
+      'Acheter du lait\nAppeler Mario\nFinir le rapport';
+
+  @override
+  String get smartTodoImportHelpCsvTitle => 'Format CSV (avec colonnes)';
+
+  @override
+  String get smartTodoImportHelpCsvDesc =>
+      'Utilisez des valeurs séparées par des virgules avec une ligne d\'en-tête. La première ligne définit les colonnes.';
+
+  @override
+  String get smartTodoImportHelpCsvExample =>
+      'title,priority,assignee\nAcheter lait,high,mario@email.com\nAppeler Mario,medium,';
+
+  @override
+  String get smartTodoImportHelpFieldsTitle => 'Champs disponibles :';
+
+  @override
+  String get smartTodoImportHelpFieldTitle => 'Titre de la tâche (obligatoire)';
+
+  @override
+  String get smartTodoImportHelpFieldDesc => 'Description de la tâche';
+
+  @override
+  String get smartTodoImportHelpFieldPriority =>
+      'high, medium, low (ou haute, moyenne, basse)';
+
+  @override
+  String get smartTodoImportHelpFieldStatus =>
+      'Nom de la colonne (ex: À faire, En cours)';
+
+  @override
+  String get smartTodoImportHelpFieldAssignee => 'Email de l\'utilisateur';
+
+  @override
+  String get smartTodoImportHelpFieldEffort => 'Heures (nombre)';
+
+  @override
+  String smartTodoImportStatusHint(String columns) {
+    return 'Colonnes disponibles pour STATUS: $columns';
+  }
+
+  @override
+  String get smartTodoImportEmptyColumn => '(colonne vide)';
+
+  @override
+  String get smartTodoImportFieldIgnore => '-- Ignorer --';
+
+  @override
+  String get smartTodoImportFieldTitle => 'Titre';
+
+  @override
+  String get smartTodoImportFieldDescription => 'Description';
+
+  @override
+  String get smartTodoImportFieldPriority => 'Priorité';
+
+  @override
+  String get smartTodoImportFieldStatus => 'Statut (Colonne)';
+
+  @override
+  String get smartTodoImportFieldAssignee => 'Assigné';
+
+  @override
+  String get smartTodoImportFieldEffort => 'Effort';
+
+  @override
+  String get smartTodoDeleteTaskTitle => 'Supprimer la tâche';
+
+  @override
+  String get smartTodoDeleteTaskContent =>
+      'Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action ne peut pas être annulée.';
+
+  @override
+  String get smartTodoDeleteNoPermission =>
+      'Vous n\'avez pas la permission de supprimer cette tâche';
+
+  @override
+  String get smartTodoSheetsExportTitle => 'Export Google Sheets';
+
+  @override
+  String get smartTodoSheetsExportExists =>
+      'Un document Google Sheets existe déjà pour cette liste.';
+
+  @override
+  String get smartTodoSheetsOpen => 'Ouvrir';
+
+  @override
+  String get smartTodoSheetsUpdate => 'Mettre à jour';
+
+  @override
+  String get smartTodoSheetsUpdating => 'Mise à jour de Google Sheets...';
+
+  @override
+  String get smartTodoSheetsCreating => 'Création de Google Sheets...';
+
+  @override
+  String get smartTodoSheetsUpdated => 'Google Sheets mis à jour !';
+
+  @override
+  String get smartTodoSheetsCreated => 'Google Sheets créé !';
+
+  @override
+  String get smartTodoSheetsError => 'Erreur lors de l\'export (voir log)';
+
+  @override
+  String get error => 'Erreur';
+
+  @override
+  String smartTodoAuditLogTitle(String title) {
+    return 'Journal d\'audit - $title';
+  }
+
+  @override
+  String get smartTodoAuditFilterUser => 'Utilisateur';
+
+  @override
+  String get smartTodoAuditFilterType => 'Type';
+
+  @override
+  String get smartTodoAuditFilterAction => 'Action';
+
+  @override
+  String get smartTodoAuditFilterSearch => 'Rechercher';
+
+  @override
+  String get smartTodoAuditFilterAll => 'Tous';
+
+  @override
+  String get smartTodoAuditFilterAllFemale => 'Toutes';
+
+  @override
+  String get smartTodoAuditClearFilters => 'Effacer les filtres';
+
+  @override
+  String get smartTodoAuditViewTimeline => 'Vue chronologique';
+
+  @override
+  String get smartTodoAuditViewColumns => 'Vue colonnes';
+
+  @override
+  String get smartTodoAuditNoActivity => 'Aucune activité enregistrée';
+
+  @override
+  String get smartTodoAuditNoResults =>
+      'Aucun résultat pour les filtres sélectionnés';
+
+  @override
+  String smartTodoAuditActivities(int count) {
+    return '$count activités';
+  }
+
+  @override
+  String get smartTodoAuditNoUserActivity => 'Aucune activité';
+
+  @override
+  String get smartTodoAuditLoadMore => 'Charger 50 de plus...';
+
+  @override
+  String get smartTodoAuditEmptyValue => '(vide)';
+
+  @override
+  String get smartTodoAuditEntityList => 'Liste';
+
+  @override
+  String get smartTodoAuditEntityTask => 'Tâche';
+
+  @override
+  String get smartTodoAuditEntityInvite => 'Invitation';
+
+  @override
+  String get smartTodoAuditEntityParticipant => 'Participant';
+
+  @override
+  String get smartTodoAuditEntityColumn => 'Colonne';
+
+  @override
+  String get smartTodoAuditEntityTag => 'Étiquette';
+
+  @override
+  String get smartTodoAuditActionCreate => 'Créé';
+
+  @override
+  String get smartTodoAuditActionUpdate => 'Modifié';
+
+  @override
+  String get smartTodoAuditActionDelete => 'Supprimé';
+
+  @override
+  String get smartTodoAuditActionArchive => 'Archivé';
+
+  @override
+  String get smartTodoAuditActionRestore => 'Restauré';
+
+  @override
+  String get smartTodoAuditActionMove => 'Déplacé';
+
+  @override
+  String get smartTodoAuditActionAssign => 'Assigné';
+
+  @override
+  String get smartTodoAuditActionInvite => 'Invité';
+
+  @override
+  String get smartTodoAuditActionJoin => 'Rejoint';
+
+  @override
+  String get smartTodoAuditActionRevoke => 'Révoqué';
+
+  @override
+  String get smartTodoAuditActionReorder => 'Réordonné';
+
+  @override
+  String get smartTodoAuditActionBatchCreate => 'Import';
+
+  @override
+  String get smartTodoAuditTimeNow => 'Maintenant';
+
+  @override
+  String smartTodoAuditTimeMinutesAgo(int count) {
+    return 'Il y a $count min';
+  }
+
+  @override
+  String smartTodoAuditTimeHoursAgo(int count) {
+    return 'Il y a $count heures';
+  }
+
+  @override
+  String smartTodoAuditTimeDaysAgo(int count) {
+    return 'Il y a $count jours';
   }
 
   @override

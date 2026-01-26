@@ -1321,6 +1321,7 @@
       }
     }
   },
+  "smartTodoImportDestinationColumn": "Destinazione:",
   "smartTodoImportBack": "Indietro",
   "smartTodoImportNext": "Avanti",
   "smartTodoImportButton": "Importa {count} Task",
@@ -1358,6 +1359,118 @@
       }
     }
   },
+  "smartTodoImportHelpTitle": "Come importare le attività?",
+  "smartTodoImportHelpSimpleTitle": "Lista semplice (un'attività per riga)",
+  "smartTodoImportHelpSimpleDesc": "Incolla una lista semplice con un titolo per riga. Ogni riga diventa un'attività.",
+  "smartTodoImportHelpSimpleExample": "Comprare il latte\nChiamare Mario\nFinire il report",
+  "smartTodoImportHelpCsvTitle": "Formato CSV (con colonne)",
+  "smartTodoImportHelpCsvDesc": "Usa valori separati da virgola con una riga di intestazione. La prima riga definisce le colonne.",
+  "smartTodoImportHelpCsvExample": "title,priority,assignee\nComprare latte,high,mario@email.com\nChiamare Mario,medium,",
+  "smartTodoImportHelpFieldsTitle": "Campi disponibili:",
+  "smartTodoImportHelpFieldTitle": "Titolo attività (obbligatorio)",
+  "smartTodoImportHelpFieldDesc": "Descrizione attività",
+  "smartTodoImportHelpFieldPriority": "high, medium, low (oppure alta, media, bassa)",
+  "smartTodoImportHelpFieldStatus": "Nome colonna (es. Da fare, In corso)",
+  "smartTodoImportHelpFieldAssignee": "Email utente",
+  "smartTodoImportHelpFieldEffort": "Ore (numero)",
+  "smartTodoImportStatusHint": "Colonne disponibili per STATUS: {columns}",
+  "@smartTodoImportStatusHint": {
+    "placeholders": {
+      "columns": { "type": "String" }
+    }
+  },
+  "smartTodoImportEmptyColumn": "(colonna vuota)",
+  "smartTodoImportFieldIgnore": "-- Ignora --",
+  "smartTodoImportFieldTitle": "Titolo",
+  "smartTodoImportFieldDescription": "Descrizione",
+  "smartTodoImportFieldPriority": "Priorità",
+  "smartTodoImportFieldStatus": "Stato (Colonna)",
+  "smartTodoImportFieldAssignee": "Assegnatario",
+  "smartTodoImportFieldEffort": "Effort",
+  "smartTodoImportPasteExample": "es. Comprare il latte\nChiamare Mario\nFinire il report",
+
+  "smartTodoDeleteTaskTitle": "Elimina Attività",
+  "smartTodoDeleteTaskContent": "Sei sicuro di voler eliminare questa attività? Questa azione non può essere annullata.",
+  "smartTodoDeleteNoPermission": "Non hai i permessi per eliminare questa attività",
+
+  "smartTodoSheetsExportTitle": "Export Google Sheets",
+  "smartTodoSheetsExportExists": "Esiste già un documento Google Sheets per questa lista.",
+  "smartTodoSheetsOpen": "Apri",
+  "smartTodoSheetsUpdate": "Aggiorna",
+  "smartTodoSheetsUpdating": "Aggiornamento Google Sheets in corso...",
+  "smartTodoSheetsCreating": "Creazione Google Sheets in corso...",
+  "smartTodoSheetsUpdated": "Google Sheets aggiornato!",
+  "smartTodoSheetsCreated": "Google Sheets creato!",
+  "smartTodoSheetsError": "Errore durante l'export (vedi log)",
+  "error": "Errore",
+
+  "smartTodoAuditLogTitle": "Audit Log - {title}",
+  "@smartTodoAuditLogTitle": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "smartTodoAuditFilterUser": "Utente",
+  "smartTodoAuditFilterType": "Tipo",
+  "smartTodoAuditFilterAction": "Azione",
+  "smartTodoAuditFilterSearch": "Cerca",
+  "smartTodoAuditFilterAll": "Tutti",
+  "smartTodoAuditFilterAllFemale": "Tutte",
+  "smartTodoAuditClearFilters": "Pulisci Filtri",
+  "smartTodoAuditViewTimeline": "Vista Timeline",
+  "smartTodoAuditViewColumns": "Vista Colonne",
+  "smartTodoAuditNoActivity": "Nessuna attività registrata",
+  "smartTodoAuditNoResults": "Nessun risultato per i filtri selezionati",
+  "smartTodoAuditActivities": "{count} attività",
+  "@smartTodoAuditActivities": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoAuditNoUserActivity": "Nessuna attività",
+  "smartTodoAuditLoadMore": "Carica altri 50...",
+  "smartTodoAuditEmptyValue": "(vuoto)",
+
+  "smartTodoAuditEntityList": "Lista",
+  "smartTodoAuditEntityTask": "Task",
+  "smartTodoAuditEntityInvite": "Invito",
+  "smartTodoAuditEntityParticipant": "Partecipante",
+  "smartTodoAuditEntityColumn": "Colonna",
+  "smartTodoAuditEntityTag": "Tag",
+
+  "smartTodoAuditActionCreate": "Creato",
+  "smartTodoAuditActionUpdate": "Modificato",
+  "smartTodoAuditActionDelete": "Eliminato",
+  "smartTodoAuditActionArchive": "Archiviato",
+  "smartTodoAuditActionRestore": "Ripristinato",
+  "smartTodoAuditActionMove": "Spostato",
+  "smartTodoAuditActionAssign": "Assegnato",
+  "smartTodoAuditActionInvite": "Invitato",
+  "smartTodoAuditActionJoin": "Entrato",
+  "smartTodoAuditActionRevoke": "Revocato",
+  "smartTodoAuditActionReorder": "Riordinato",
+  "smartTodoAuditActionBatchCreate": "Import",
+
+  "smartTodoAuditTimeNow": "Adesso",
+  "smartTodoAuditTimeMinutesAgo": "{count} min fa",
+  "@smartTodoAuditTimeMinutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoAuditTimeHoursAgo": "{count} ore fa",
+  "@smartTodoAuditTimeHoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoAuditTimeDaysAgo": "{count} giorni fa",
+  "@smartTodoAuditTimeDaysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
   "smartTodoNewTaskDefault": "Nuovo Task",
   "smartTodoRename": "Rinomina",
   "smartTodoAddActivity": "Aggiungi un'attivita",

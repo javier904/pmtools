@@ -42,6 +42,10 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   Timer? _heartbeatTimer;
   static const int _heartbeatIntervalSeconds = 15;
 
+  // UX State
+  bool _showAuthorNames = true;
+  bool _isActionPanelExpanded = true;
+
   @override
   void initState() {
     super.initState();
@@ -190,8 +194,8 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
             actions: [
                // Timer
                RetroTimerWidget(
-                 retroId: retro.id, 
-                 timer: retro.timer, 
+                 retroId: retro.id,
+                 timer: retro.timer,
                  isFacilitator: isFacilitator
                ),
                const SizedBox(width: 8),
@@ -200,6 +204,11 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                  icon: const Icon(Icons.person_add),
                  tooltip: l10n?.inviteSendNew ?? 'Invite',
                  onPressed: () => _showInviteDialog(retro),
+               ),
+               IconButton(
+                 icon: Icon(_showAuthorNames ? Icons.visibility : Icons.visibility_off),
+                 tooltip: _showAuthorNames ? 'Hide Names' : 'Show Names',
+                 onPressed: () => setState(() => _showAuthorNames = !_showAuthorNames),
                ),
                const SizedBox(width: 8),
                // Online Presence Counter (Replaces old participants dialog)
@@ -215,6 +224,14 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                     style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
+              ),
+              const SizedBox(width: 8),
+              // Home button - sempre ultimo a destra
+              IconButton(
+                icon: const Icon(Icons.home_rounded),
+                tooltip: l10n?.navHome ?? 'Home',
+                color: const Color(0xFF8B5CF6), // Viola come icona app
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
               ),
             ],
           ),
@@ -379,23 +396,26 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
           currentUserEmail: widget.currentUserEmail,
           currentUserName: widget.currentUserName,
           isIncognito: isIncognito,
+          showAuthorNames: _showAuthorNames,
         );
         break;
       case RetroPhase.discuss:
         content = Column(
           children: [
             Expanded(
-              flex: 2,
               child: RetroBoardWidget(
                 retro: retro,
                 currentUserEmail: widget.currentUserEmail,
                 currentUserName: widget.currentUserName,
                 isIncognito: false,
+                showAuthorNames: _showAuthorNames,
               ),
             ),
             const Divider(height: 1, thickness: 1),
-            Expanded(
-              flex: 1,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              height: _isActionPanelExpanded ? 350 : 50, // Collapsible height
               child: _buildActionItemsSection(retro, isFacilitator),
             ),
           ],
@@ -437,17 +457,45 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
           color: isHovering 
               ? Theme.of(context).primaryColor.withOpacity(0.1) 
               : Theme.of(context).cardColor,
-          padding: const EdgeInsets.all(16),
           width: double.infinity,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1000), 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          child: Column(
+            children: [
+              // Header Toggle Bar
+              InkWell(
+                onTap: () => setState(() => _isActionPanelExpanded = !_isActionPanelExpanded),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  color: Theme.of(context).canvasColor.withOpacity(0.5), // Slight highlight
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Text(
+                        'Action Items',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      Icon(
+                        _isActionPanelExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                        size: 20,
+                        color: Theme.of(context).disabledColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              if (_isActionPanelExpanded)
+               Expanded(
+                 child: SingleChildScrollView( // Scrollable content when expanded
+                   padding: const EdgeInsets.all(16),
+                   child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1000), 
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                       Row(
                         children: [
                           Icon(Icons.playlist_add_check, color: Theme.of(context).primaryColor),
@@ -523,8 +571,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                       ),
                     )
                   else
-                    Expanded(
-                      child: ActionItemsTableWidget(
+                    ActionItemsTableWidget(
                         actionItems: retro.actionItems,
                         retroId: retro.id,
                         isFacilitator: isFacilitator,
@@ -532,12 +579,15 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                         currentUserEmail: widget.currentUserEmail,
                         items: retro.items,
                       ),
-                    ),
                 ],
               ),
             ),
           ),
-        );
+        ),
+       ),
+      ],
+     ),
+    );
       },
     );
   }

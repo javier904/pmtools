@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../models/smart_todo/smart_todo_audit_log_model.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../services/smart_todo_audit_service.dart';
+import '../../l10n/app_localizations.dart';
+
+enum AuditViewMode { timeline, columns }
 
 class SmartTodoAuditLogScreen extends StatefulWidget {
   final TodoListModel list;
@@ -21,6 +24,9 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   bool _hasMore = true;
   DocumentSnapshot? _lastDocument;
   SmartTodoAuditLogFilter _filter = const SmartTodoAuditLogFilter();
+
+  // View mode toggle
+  AuditViewMode _viewMode = AuditViewMode.timeline;
 
   // Expanded rows tracking
   final Set<String> _expandedRows = {};
@@ -84,19 +90,52 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Audit Log - ${widget.list.title}'),
+        title: Text(l10n?.smartTodoAuditLogTitle(widget.list.title) ?? 'Audit Log - ${widget.list.title}'),
         actions: [
+          // View mode toggle
+          SegmentedButton<AuditViewMode>(
+            segments: [
+              ButtonSegment(
+                value: AuditViewMode.timeline,
+                icon: const Icon(Icons.view_list, size: 18),
+                tooltip: l10n?.smartTodoAuditViewTimeline ?? 'Timeline View',
+              ),
+              ButtonSegment(
+                value: AuditViewMode.columns,
+                icon: const Icon(Icons.view_column, size: 18),
+                tooltip: l10n?.smartTodoAuditViewColumns ?? 'Columns View',
+              ),
+            ],
+            selected: {_viewMode},
+            onSelectionChanged: (selected) {
+              setState(() => _viewMode = selected.first);
+            },
+            style: const ButtonStyle(
+              visualDensity: VisualDensity.compact,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+          const SizedBox(width: 8),
           if (!_filter.isEmpty)
             TextButton.icon(
               onPressed: _clearFilters,
               icon: const Icon(Icons.clear, size: 18),
-              label: const Text('Pulisci Filtri'),
+              label: Text(l10n?.smartTodoAuditClearFilters ?? 'Clear Filters'),
             ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => _loadLogs(reset: true),
+          ),
+          const SizedBox(width: 8),
+          // Home button - sempre ultimo a destra
+          IconButton(
+            icon: const Icon(Icons.home_rounded),
+            tooltip: l10n?.navHome ?? 'Home',
+            color: const Color(0xFF8B5CF6), // Viola come icona app
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
           ),
         ],
       ),
@@ -104,7 +143,11 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
         children: [
           _buildFilterBar(),
           const Divider(height: 1),
-          Expanded(child: _buildLogsList()),
+          Expanded(
+            child: _viewMode == AuditViewMode.timeline
+                ? _buildLogsList()
+                : _buildColumnsView(),
+          ),
         ],
       ),
     );
@@ -115,6 +158,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildFilterBar() {
+    final l10n = AppLocalizations.of(context);
     final participants = widget.list.participants.entries.toList();
 
     return Container(
@@ -126,17 +170,17 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
         children: [
           // Filter by user
           SizedBox(
-            width: 180,
+            width: 160,
             child: DropdownButtonFormField<String?>(
               value: _filter.performedBy,
-              decoration: const InputDecoration(
-                labelText: 'Utente',
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterUser ?? 'User',
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Tutti')),
+                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
                 ...participants.map((p) {
                   final displayName = p.value.displayName ?? p.key.split('@').first;
                   return DropdownMenuItem(
@@ -157,20 +201,20 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
 
           // Filter by entity type
           SizedBox(
-            width: 140,
+            width: 160,
             child: DropdownButtonFormField<TodoAuditEntityType?>(
               value: _filter.entityType,
-              decoration: const InputDecoration(
-                labelText: 'Tipo',
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterType ?? 'Type',
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Tutti')),
+                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
                 ...TodoAuditEntityType.values.map((t) => DropdownMenuItem(
                   value: t,
-                  child: Text(t.displayName),
+                  child: Text(_getLocalizedEntityType(t)),
                 )),
               ],
               onChanged: (val) {
@@ -185,20 +229,20 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
 
           // Filter by action
           SizedBox(
-            width: 140,
+            width: 160,
             child: DropdownButtonFormField<TodoAuditAction?>(
               value: _filter.action,
-              decoration: const InputDecoration(
-                labelText: 'Azione',
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterAction ?? 'Action',
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Tutte')),
+                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAllFemale ?? 'All')),
                 ...TodoAuditAction.values.map((a) => DropdownMenuItem(
                   value: a,
-                  child: Text(a.displayName),
+                  child: Text(_getLocalizedAction(a)),
                 )),
               ],
               onChanged: (val) {
@@ -213,14 +257,14 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
 
           // Search
           SizedBox(
-            width: 200,
+            width: 160,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Cerca',
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterSearch ?? 'Search',
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search, size: 18),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search, size: 18),
               ),
               onSubmitted: (val) {
                 _applyFilter(_filter.copyWith(searchQuery: val.isEmpty ? '' : val));
@@ -237,6 +281,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildLogsList() {
+    final l10n = AppLocalizations.of(context);
     if (_isLoading && _logs.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -249,7 +294,9 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
             Icon(Icons.history, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             Text(
-              _filter.isEmpty ? 'Nessuna attività registrata' : 'Nessun risultato per i filtri selezionati',
+              _filter.isEmpty
+                  ? (l10n?.smartTodoAuditNoActivity ?? 'No activity recorded')
+                  : (l10n?.smartTodoAuditNoResults ?? 'No results for selected filters'),
               style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
             ),
           ],
@@ -267,6 +314,348 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
       },
     );
   }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COLUMNS VIEW
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  Widget _buildColumnsView() {
+    final l10n = AppLocalizations.of(context);
+    if (_isLoading && _logs.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_logs.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.history, size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(
+              _filter.isEmpty
+                  ? (l10n?.smartTodoAuditNoActivity ?? 'No activity recorded')
+                  : (l10n?.smartTodoAuditNoResults ?? 'No results for selected filters'),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Get unique participants from the list
+    final participants = widget.list.participants.entries.toList();
+
+    // Group logs by performer
+    final logsByUser = <String, List<SmartTodoAuditLogModel>>{};
+    for (final log in _logs) {
+      logsByUser.putIfAbsent(log.performedByName, () => []).add(log);
+    }
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final columnWidth = 280.0;
+
+    return Column(
+      children: [
+        // Horizontal scrollable columns
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: participants.map((entry) {
+                final email = entry.key;
+                final participant = entry.value;
+                final displayName = participant.displayName ?? email.split('@').first;
+                final userLogs = logsByUser[displayName] ?? [];
+
+                return _buildUserColumn(
+                  displayName: displayName,
+                  email: email,
+                  logs: userLogs,
+                  columnWidth: columnWidth,
+                  isDark: isDark,
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+        // Load more button at bottom
+        if (_hasMore) _buildLoadMoreButton(),
+      ],
+    );
+  }
+
+  Widget _buildUserColumn({
+    required String displayName,
+    required String email,
+    required List<SmartTodoAuditLogModel> logs,
+    required double columnWidth,
+    required bool isDark,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      width: columnWidth,
+      margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+        ),
+      ),
+      child: Column(
+        children: [
+          // Column header with user info
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey.shade800 : Colors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: _getUserColor(displayName),
+                  child: Text(
+                    displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        l10n?.smartTodoAuditActivities(logs.length) ?? '${logs.length} activities',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Logs list for this user
+          Expanded(
+            child: logs.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        l10n?.smartTodoAuditNoUserActivity ?? 'No activity',
+                        style: TextStyle(
+                          color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: logs.length,
+                    itemBuilder: (context, index) => _buildCompactLogEntry(logs[index], isDark),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactLogEntry(SmartTodoAuditLogModel log, bool isDark) {
+    final hasChanges = log.changes.isNotEmpty;
+    final isExpanded = _expandedRows.contains(log.id);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 6),
+      elevation: 0,
+      color: isDark ? Colors.grey.shade800 : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(
+          color: isDark ? Colors.grey.shade700 : Colors.grey.shade200,
+        ),
+      ),
+      child: InkWell(
+        onTap: hasChanges ? () {
+          setState(() {
+            if (isExpanded) {
+              _expandedRows.remove(log.id);
+            } else {
+              _expandedRows.add(log.id);
+            }
+          });
+        } : null,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Action chip + entity type
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: log.action.color.withOpacity(isDark ? 0.25 : 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(log.action.icon, size: 12, color: log.action.color),
+                        const SizedBox(width: 3),
+                        Text(
+                          _getLocalizedAction(log.action),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: log.action.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey.shade700 : Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      _getLocalizedEntityType(log.entityType),
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  if (hasChanges)
+                    Icon(
+                      isExpanded ? Icons.expand_less : Icons.expand_more,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              // Entity name
+              Text(
+                log.entityName ?? log.entityId,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              // Timestamp
+              Text(
+                _getLocalizedTimestamp(log.timestamp),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                ),
+              ),
+              // Expanded changes
+              if (isExpanded && hasChanges) ...[
+                const Divider(height: 12),
+                _buildCompactChangesDetail(log.changes, isDark),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactChangesDetail(List<TodoAuditFieldChange> changes, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: changes.map((change) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                change.fieldDisplayName,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              if (change.previousValue != null)
+                Text(
+                  _formatValue(change.previousValue),
+                  style: TextStyle(
+                    fontSize: 10,
+                    decoration: TextDecoration.lineThrough,
+                    color: isDark ? Colors.red.shade300 : Colors.red.shade700,
+                  ),
+                ),
+              Text(
+                _formatValue(change.newValue),
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.green.shade300 : Colors.green.shade700,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Color _getUserColor(String name) {
+    final colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.teal,
+      Colors.pink,
+      Colors.indigo,
+      Colors.amber,
+    ];
+    final hash = name.hashCode.abs();
+    return colors[hash % colors.length];
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIMELINE VIEW (existing)
+  // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildLogRow(SmartTodoAuditLogModel log) {
     final isExpanded = _expandedRows.contains(log.id);
@@ -307,7 +696,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                         Icon(log.action.icon, size: 14, color: log.action.color),
                         const SizedBox(width: 4),
                         Text(
-                          log.action.displayName,
+                          _getLocalizedAction(log.action),
                           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: log.action.color),
                         ),
                       ],
@@ -323,7 +712,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      log.entityType.displayName,
+                      _getLocalizedEntityType(log.entityType),
                       style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade300 : Colors.grey.shade700),
                     ),
                   ),
@@ -362,7 +751,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                   Icon(Icons.access_time, size: 14, color: subtitleColor),
                   const SizedBox(width: 4),
                   Text(
-                    log.formattedTimestamp,
+                    _getLocalizedTimestamp(log.timestamp),
                     style: TextStyle(fontSize: 12, color: subtitleColor),
                   ),
                 ],
@@ -449,12 +838,14 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   }
 
   String _formatValue(dynamic value) {
-    if (value == null) return '(vuoto)';
+    final l10n = AppLocalizations.of(context);
+    if (value == null) return l10n?.smartTodoAuditEmptyValue ?? '(empty)';
     if (value is List) return value.join(', ');
     return value.toString();
   }
 
   Widget _buildLoadMoreButton() {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Center(
@@ -463,9 +854,74 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
             : ElevatedButton.icon(
                 onPressed: () => _loadLogs(),
                 icon: const Icon(Icons.expand_more),
-                label: const Text('Carica altri 50...'),
+                label: Text(l10n?.smartTodoAuditLoadMore ?? 'Load more 50...'),
               ),
       ),
     );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LOCALIZATION HELPERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  String _getLocalizedEntityType(TodoAuditEntityType type) {
+    final l10n = AppLocalizations.of(context);
+    switch (type) {
+      case TodoAuditEntityType.list:
+        return l10n?.smartTodoAuditEntityList ?? 'List';
+      case TodoAuditEntityType.task:
+        return l10n?.smartTodoAuditEntityTask ?? 'Task';
+      case TodoAuditEntityType.invite:
+        return l10n?.smartTodoAuditEntityInvite ?? 'Invite';
+      case TodoAuditEntityType.participant:
+        return l10n?.smartTodoAuditEntityParticipant ?? 'Participant';
+      case TodoAuditEntityType.column:
+        return l10n?.smartTodoAuditEntityColumn ?? 'Column';
+      case TodoAuditEntityType.tag:
+        return l10n?.smartTodoAuditEntityTag ?? 'Tag';
+    }
+  }
+
+  String _getLocalizedAction(TodoAuditAction action) {
+    final l10n = AppLocalizations.of(context);
+    switch (action) {
+      case TodoAuditAction.create:
+        return l10n?.smartTodoAuditActionCreate ?? 'Created';
+      case TodoAuditAction.update:
+        return l10n?.smartTodoAuditActionUpdate ?? 'Updated';
+      case TodoAuditAction.delete:
+        return l10n?.smartTodoAuditActionDelete ?? 'Deleted';
+      case TodoAuditAction.archive:
+        return l10n?.smartTodoAuditActionArchive ?? 'Archived';
+      case TodoAuditAction.restore:
+        return l10n?.smartTodoAuditActionRestore ?? 'Restored';
+      case TodoAuditAction.move:
+        return l10n?.smartTodoAuditActionMove ?? 'Moved';
+      case TodoAuditAction.assign:
+        return l10n?.smartTodoAuditActionAssign ?? 'Assigned';
+      case TodoAuditAction.invite:
+        return l10n?.smartTodoAuditActionInvite ?? 'Invited';
+      case TodoAuditAction.join:
+        return l10n?.smartTodoAuditActionJoin ?? 'Joined';
+      case TodoAuditAction.revoke:
+        return l10n?.smartTodoAuditActionRevoke ?? 'Revoked';
+      case TodoAuditAction.reorder:
+        return l10n?.smartTodoAuditActionReorder ?? 'Reordered';
+      case TodoAuditAction.batchCreate:
+        return l10n?.smartTodoAuditActionBatchCreate ?? 'Import';
+    }
+  }
+
+  String _getLocalizedTimestamp(DateTime timestamp) {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final diff = now.difference(timestamp);
+
+    if (diff.inMinutes < 1) return l10n?.smartTodoAuditTimeNow ?? 'Now';
+    if (diff.inMinutes < 60) return l10n?.smartTodoAuditTimeMinutesAgo(diff.inMinutes) ?? '${diff.inMinutes} min ago';
+    if (diff.inHours < 24) return l10n?.smartTodoAuditTimeHoursAgo(diff.inHours) ?? '${diff.inHours} hours ago';
+    if (diff.inDays < 7) return l10n?.smartTodoAuditTimeDaysAgo(diff.inDays) ?? '${diff.inDays} days ago';
+
+    return '${timestamp.day.toString().padLeft(2, '0')}/${timestamp.month.toString().padLeft(2, '0')}/${timestamp.year} ${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 }

@@ -7,12 +7,14 @@ class RetroLinearBoardWidget extends StatelessWidget {
   final RetrospectiveModel retro;
   final String currentUserEmail;
   final String currentUserName;
+  final bool showAuthorNames;
 
   const RetroLinearBoardWidget({
     Key? key,
     required this.retro,
     required this.currentUserEmail,
     required this.currentUserName,
+    this.showAuthorNames = true,
   }) : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class RetroLinearBoardWidget extends StatelessWidget {
                 column: col,
                 currentUserEmail: currentUserEmail,
                 currentUserName: currentUserName,
+                showAuthorNames: showAuthorNames,
               ),
             );
           }).toList(),
@@ -59,6 +62,7 @@ class RetroLinearBoardWidget extends StatelessWidget {
                 column: col,
                 currentUserEmail: currentUserEmail,
                 currentUserName: currentUserName,
+                showAuthorNames: showAuthorNames,
               ),
             ),
           );

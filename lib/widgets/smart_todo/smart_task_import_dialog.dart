@@ -28,15 +28,15 @@ class SmartTaskImportDialog extends StatefulWidget {
 class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   int _currentStep = 0;
   final TextEditingController _textInputController = TextEditingController();
-  
+
   // Parsed Data
   List<List<dynamic>> _rawRows = [];
   String? _fileName;
-  
+
   // Mapping
   // Index of column -> Field Name (e.g. 0 -> 'title')
   Map<int, String> _columnMapping = {};
-  
+
   final List<String> _mappableFields = [
     'ignore',
     'title',
@@ -49,6 +49,11 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
 
   bool _isLoading = false;
   String? _error;
+  bool _showHelp = false;
+  bool _isSimpleList = false; // Track if input is a simple list (skip mapping step)
+
+  // Destination column for all imported tasks
+  String? _selectedDestinationColumn;
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +116,10 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   }
 
   String _getStepTitle(AppLocalizations l10n) {
+    // Always skip mapping step: Step 1 = Input, Step 2 = Review & Confirm
     switch (_currentStep) {
       case 0: return l10n.smartTodoImportStep1;
-      case 1: return l10n.smartTodoImportStep2;
-      case 2: return l10n.smartTodoImportStep3;
+      case 1: return l10n.smartTodoImportStep3; // Directly to review
       default: return '';
     }
   }
@@ -142,10 +147,10 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
       );
     }
 
+    // Always skip mapping step - go directly from input to review
     switch (_currentStep) {
       case 0: return _buildInputStep(isDark, inputBg, borderColor, textColor);
-      case 1: return _buildMappingStep(isDark, textColor);
-      case 2: return _buildReviewStep(isDark, inputBg, textColor);
+      case 1: return _buildReviewStep(isDark, inputBg, textColor);
       default: return const SizedBox.shrink();
     }
   }
@@ -156,6 +161,9 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
       length: 2,
       child: Column(
         children: [
+          // Help Section
+          _buildHelpCard(isDark, textColor),
+          const SizedBox(height: 8),
           TabBar(
             labelColor: Colors.blue,
             unselectedLabelColor: isDark ? Colors.grey[400] : Colors.grey,
@@ -227,6 +235,163 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
     );
   }
 
+  Widget _buildHelpCard(bool isDark, Color textColor) {
+    final l10n = AppLocalizations.of(context)!;
+    return Card(
+      color: isDark ? Colors.blue.withOpacity(0.15) : Colors.blue.shade50,
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ExpansionTile(
+        leading: Icon(Icons.help_outline, color: Colors.blue.shade400, size: 20),
+        title: Text(
+          l10n.smartTodoImportHelpTitle,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.blue.shade700,
+          ),
+        ),
+        initiallyExpanded: _showHelp,
+        onExpansionChanged: (expanded) => setState(() => _showHelp = expanded),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 200),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHelpSection(
+                    l10n.smartTodoImportHelpSimpleTitle,
+                    l10n.smartTodoImportHelpSimpleDesc,
+                    l10n.smartTodoImportHelpSimpleExample,
+                    isDark,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildHelpSection(
+                    l10n.smartTodoImportHelpCsvTitle,
+                    l10n.smartTodoImportHelpCsvDesc,
+                    l10n.smartTodoImportHelpCsvExample,
+                    isDark,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildFieldsHelp(isDark),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHelpSection(String title, String description, String example, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          description,
+          style: TextStyle(
+            fontSize: 12,
+            color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black26 : Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade300),
+          ),
+          child: Text(
+            example,
+            style: TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 11,
+              color: isDark ? Colors.green.shade300 : Colors.green.shade800,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFieldsHelp(bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.smartTodoImportHelpFieldsTitle,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 6),
+        _buildFieldRow('title', l10n.smartTodoImportHelpFieldTitle, isDark, required: true),
+        _buildFieldRow('description', l10n.smartTodoImportHelpFieldDesc, isDark),
+        _buildFieldRow('priority', l10n.smartTodoImportHelpFieldPriority, isDark),
+        _buildFieldRow('status', l10n.smartTodoImportHelpFieldStatus, isDark),
+        _buildFieldRow('assignee', l10n.smartTodoImportHelpFieldAssignee, isDark),
+        _buildFieldRow('effort', l10n.smartTodoImportHelpFieldEffort, isDark),
+      ],
+    );
+  }
+
+  Widget _buildFieldRow(String field, String description, bool isDark, {bool required = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 80,
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            decoration: BoxDecoration(
+              color: required
+                  ? (isDark ? Colors.orange.withOpacity(0.2) : Colors.orange.shade100)
+                  : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              field.toUpperCase(),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: required
+                    ? Colors.orange.shade700
+                    : (isDark ? Colors.grey.shade300 : Colors.grey.shade700),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              description,
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _pickCsvFile() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -277,6 +442,28 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
             style: TextStyle(fontSize: 14, color: isDark ? Colors.grey[400] : Colors.grey),
           ),
         ),
+        // Show available columns for STATUS field reference
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, size: 18, color: Colors.blue.shade400),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.smartTodoImportStatusHint(widget.availableColumns.map((c) => c.title).join(', ')),
+                  style: TextStyle(fontSize: 12, color: isDark ? Colors.blue.shade200 : Colors.blue.shade700),
+                ),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: ListView.separated(
             itemCount: headerRow.length,
@@ -286,8 +473,30 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
               final sampleValue = index < sampleRow.length ? sampleRow[index].toString() : '-';
 
               return ListTile(
-                title: Text(l10n.smartTodoImportColumnLabel(index + 1, cellValue), style: TextStyle(color: textColor)),
-                subtitle: Text(l10n.smartTodoImportSampleValue(sampleValue), style: TextStyle(color: isDark ? Colors.grey[400] : null)),
+                leading: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                title: Text(
+                  cellValue.isNotEmpty ? '"$cellValue"' : l10n.smartTodoImportEmptyColumn,
+                  style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+                ),
+                subtitle: Text(
+                  l10n.smartTodoImportSampleValue(sampleValue),
+                  style: TextStyle(color: isDark ? Colors.grey[400] : null, fontSize: 12),
+                ),
                 trailing: DropdownButton<String>(
                   value: _columnMapping[index] ?? 'ignore',
                   dropdownColor: isDark ? const Color(0xFF2D3748) : null,
@@ -295,7 +504,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
                   items: _mappableFields.map((field) {
                     return DropdownMenuItem(
                       value: field,
-                      child: Text(field.toUpperCase()),
+                      child: Text(_getFieldDisplayName(field, l10n)),
                     );
                   }).toList(),
                   onChanged: (val) {
@@ -316,19 +525,97 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
     );
   }
 
+  String _getFieldDisplayName(String field, AppLocalizations l10n) {
+    switch (field) {
+      case 'ignore': return l10n.smartTodoImportFieldIgnore;
+      case 'title': return l10n.smartTodoImportFieldTitle;
+      case 'description': return l10n.smartTodoImportFieldDescription;
+      case 'priority': return l10n.smartTodoImportFieldPriority;
+      case 'status': return l10n.smartTodoImportFieldStatus;
+      case 'assignee': return l10n.smartTodoImportFieldAssignee;
+      case 'effort': return l10n.smartTodoImportFieldEffort;
+      default: return field.toUpperCase();
+    }
+  }
+
   Widget _buildReviewStep(bool isDark, Color? inputBg, Color textColor) {
     final l10n = AppLocalizations.of(context)!;
     // Generate Preview Models
     final previewTasks = _generateTasksFromMapping();
 
+    // Initialize selected column if not set
+    _selectedDestinationColumn ??= widget.availableColumns.first.id;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Header with task count and column selector
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Text(
-            l10n.smartTodoImportFoundTasks(previewTasks.length),
-            style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.smartTodoImportFoundTasks(previewTasks.length),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                ),
+              ),
+              // Column selector dropdown
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.smartTodoImportDestinationColumn ?? 'Destination:',
+                    style: TextStyle(fontSize: 13, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.blue.withOpacity(0.15) : Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedDestinationColumn,
+                        isDense: true,
+                        dropdownColor: isDark ? const Color(0xFF2D3748) : Colors.white,
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.blue.shade400),
+                        items: widget.availableColumns.map((col) {
+                          return DropdownMenuItem<String>(
+                            value: col.id,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: Color(col.colorValue),
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(col.title),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) setState(() => _selectedDestinationColumn = val);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -349,10 +636,10 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
                   subtitle: Text(
                     '${task.description.isNotEmpty ? "${task.description} • " : ""}'
                     'Priority: ${task.priority.name} • '
-                    'Status: ${_getStatusName(task.statusId)}',
+                    'Status: ${_getStatusName(_selectedDestinationColumn ?? task.statusId)}',
                     style: TextStyle(color: isDark ? Colors.grey[400] : null),
                   ),
-                  trailing: task.assignedTo.isNotEmpty 
+                  trailing: task.assignedTo.isNotEmpty
                     ? CircleAvatar(child: Text(task.assignedTo.first[0].toUpperCase()), radius: 12)
                     : null,
                 ),
@@ -381,6 +668,11 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
 
   Widget _buildFooter() {
     final l10n = AppLocalizations.of(context)!;
+
+    // Step 0 = Input, Step 1 = Review/Import (final step)
+    final isFinalStep = _currentStep == 1;
+    final taskCount = _rawRows.length > 1 ? _rawRows.length - 1 : 0;
+
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -397,15 +689,31 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
           ElevatedButton(
             onPressed: _onNextPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: _currentStep == 2 ? Colors.green : Colors.blue,
+              backgroundColor: Colors.blue, // Always blue to match icon
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: Text(_currentStep == 2 ? l10n.smartTodoImportButton(_rawRows.length - 1) : l10n.smartTodoImportNext),
+            child: Text(isFinalStep ? l10n.smartTodoImportButton(taskCount) : l10n.smartTodoImportNext),
           ),
         ],
       ),
     );
+  }
+
+  // Check if row looks like a CSV header (contains known field names)
+  bool _isLikelyHeader(List<dynamic> row) {
+    final knownFields = ['title', 'titolo', 'desc', 'description', 'descrizione',
+                         'priority', 'priorità', 'status', 'stato', 'assignee',
+                         'assegnato', 'effort', 'user', 'name', 'nome'];
+    final rowLower = row.map((e) => e.toString().toLowerCase().trim()).toList();
+
+    // If any cell contains a known field name, it's likely a header
+    for (var cell in rowLower) {
+      for (var field in knownFields) {
+        if (cell.contains(field)) return true;
+      }
+    }
+    return false;
   }
 
   void _onNextPressed() async {
@@ -430,18 +738,27 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
 
         if (rows.isEmpty) throw l10n.smartTodoImportNoValidRows;
 
+        // Check if this is a simple list (single column, no header)
+        final isSimpleList = rows.every((r) => r.length == 1) && !_isLikelyHeader(rows.first);
+
+        if (isSimpleList) {
+          // Simple list mode: each row is a task title
+          // Add a fake header row so mapping step works correctly
+          final dataRows = List<List<dynamic>>.from(rows);
+          rows = [['title'], ...dataRows]; // Prepend header
+        }
+
         setState(() {
           _rawRows = rows;
           _isLoading = false;
-          _currentStep = 1;
+          _currentStep = 1; // Go directly to review step
           _error = null;
+          _isSimpleList = isSimpleList;
 
-          // Auto-guess mapping?
-          // Simple heuristic:
-          // If 'title' in header -> map to title
-          // If 'desc' in header -> map to description
-          // etc.
+          // Auto-guess mapping based on header
+          _columnMapping.clear();
           final header = rows.first.map((e) => e.toString().toLowerCase()).toList();
+
           for (int i = 0; i < header.length; i++) {
              if (header[i].contains('titolo') || header[i].contains('title')) _columnMapping[i] = 'title';
              else if (header[i].contains('bio') || header[i].contains('desc')) _columnMapping[i] = 'description';
@@ -449,7 +766,8 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
              else if (header[i].contains('stato') || header[i].contains('status')) _columnMapping[i] = 'status';
              else if (header[i].contains('user') || header[i].contains('assign')) _columnMapping[i] = 'assignee';
           }
-           // Fallback if no title mapped: Map first column to title
+
+          // Fallback if no title mapped: Map first column to title
           if (!_columnMapping.containsValue('title')) {
             _columnMapping[0] = 'title';
           }
@@ -461,16 +779,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         });
       }
     } else if (_currentStep == 1) {
-      if (!_columnMapping.containsValue('title')) {
-        setState(() => _error = l10n.smartTodoImportMapTitle);
-        return;
-      }
-      setState(() {
-        _currentStep = 2;
-        _error = null;
-      });
-    } else if (_currentStep == 2) {
-      // Execute Import
+      // Step 1 = Review - Execute Import
       setState(() => _isLoading = true);
       try {
         final tasks = _generateTasksFromMapping();
@@ -492,11 +801,13 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
     final dataRows = _rawRows.skip(1);
     final List<TodoTaskModel> tasks = [];
 
+    // Use selected destination column, or fallback to first column
+    final destinationStatusId = _selectedDestinationColumn ?? widget.availableColumns.first.id;
+
     for (var row in dataRows) {
       String title = l10n.smartTodoNewTaskDefault;
       String desc = '';
       TodoTaskPriority priority = TodoTaskPriority.medium;
-      String statusId = widget.availableColumns.first.id;
       List<String> assignedTo = [];
       int? effort;
 
@@ -511,19 +822,13 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         switch (field) {
           case 'title': title = val; break;
           case 'description': desc = val; break;
-          case 'priority': 
+          case 'priority':
             final v = val.toLowerCase();
             if (v.contains('high') || v.contains('alta')) priority = TodoTaskPriority.high;
             if (v.contains('low') || v.contains('bassa')) priority = TodoTaskPriority.low;
             break;
           case 'status':
-            // Try match Column Name
-            try {
-              final col = widget.availableColumns.firstWhere(
-                (c) => c.title.toLowerCase() == val.toLowerCase(),
-              );
-              statusId = col.id;
-            } catch (_) {}
+            // Status from CSV is ignored - user selects destination column
             break;
           case 'assignee':
             if (val.contains('@')) assignedTo.add(val); // Simple check
@@ -533,14 +838,14 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
             break;
         }
       }
-      
+
       tasks.add(TodoTaskModel(
         id: '', // Auto-generated later or empty for new
         listId: widget.listId,
         title: title,
         description: desc,
         priority: priority,
-        statusId: statusId,
+        statusId: destinationStatusId, // Use selected destination column
         assignedTo: assignedTo,
         effort: effort,
         createdAt: DateTime.now(),

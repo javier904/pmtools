@@ -1777,6 +1777,7 @@
       }
     }
   },
+  "smartTodoImportDestinationColumn": "Destination:",
   "smartTodoImportBack": "Back",
   "smartTodoImportNext": "Next",
   "smartTodoImportButton": "Import {count} Tasks",
@@ -1861,6 +1862,118 @@
       }
     }
   },
+  "smartTodoImportHelpTitle": "How to import tasks?",
+  "smartTodoImportHelpSimpleTitle": "Simple list (one task per line)",
+  "smartTodoImportHelpSimpleDesc": "Paste a simple list with one task title per line. Each line becomes a task.",
+  "smartTodoImportHelpSimpleExample": "Buy milk\nCall Mario\nFinish report",
+  "smartTodoImportHelpCsvTitle": "CSV format (with columns)",
+  "smartTodoImportHelpCsvDesc": "Use comma-separated values with a header row. The first row defines the columns.",
+  "smartTodoImportHelpCsvExample": "title,priority,assignee\nBuy milk,high,mario@email.com\nCall Mario,medium,",
+  "smartTodoImportHelpFieldsTitle": "Available fields:",
+  "smartTodoImportHelpFieldTitle": "Task title (required)",
+  "smartTodoImportHelpFieldDesc": "Task description",
+  "smartTodoImportHelpFieldPriority": "high, medium, low",
+  "smartTodoImportHelpFieldStatus": "Column name (e.g. To Do, In Progress)",
+  "smartTodoImportHelpFieldAssignee": "User email",
+  "smartTodoImportHelpFieldEffort": "Hours (number)",
+  "smartTodoImportStatusHint": "Available columns for STATUS: {columns}",
+  "@smartTodoImportStatusHint": {
+    "placeholders": {
+      "columns": { "type": "String" }
+    }
+  },
+  "smartTodoImportEmptyColumn": "(empty column)",
+  "smartTodoImportFieldIgnore": "-- Ignore --",
+  "smartTodoImportFieldTitle": "Title",
+  "smartTodoImportFieldDescription": "Description",
+  "smartTodoImportFieldPriority": "Priority",
+  "smartTodoImportFieldStatus": "Status (Column)",
+  "smartTodoImportFieldAssignee": "Assignee",
+  "smartTodoImportFieldEffort": "Effort",
+  "smartTodoImportPasteExample": "e.g. Buy milk\nCall Mario\nFinish report",
+
+  "smartTodoDeleteTaskTitle": "Delete Task",
+  "smartTodoDeleteTaskContent": "Are you sure you want to delete this task? This action cannot be undone.",
+  "smartTodoDeleteNoPermission": "You don't have permission to delete this task",
+
+  "smartTodoSheetsExportTitle": "Google Sheets Export",
+  "smartTodoSheetsExportExists": "A Google Sheets document already exists for this list.",
+  "smartTodoSheetsOpen": "Open",
+  "smartTodoSheetsUpdate": "Update",
+  "smartTodoSheetsUpdating": "Updating Google Sheets...",
+  "smartTodoSheetsCreating": "Creating Google Sheets...",
+  "smartTodoSheetsUpdated": "Google Sheets updated!",
+  "smartTodoSheetsCreated": "Google Sheets created!",
+  "smartTodoSheetsError": "Error during export (see log)",
+  "error": "Error",
+
+  "smartTodoAuditLogTitle": "Audit Log - {title}",
+  "@smartTodoAuditLogTitle": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "smartTodoAuditFilterUser": "User",
+  "smartTodoAuditFilterType": "Type",
+  "smartTodoAuditFilterAction": "Action",
+  "smartTodoAuditFilterSearch": "Search",
+  "smartTodoAuditFilterAll": "All",
+  "smartTodoAuditFilterAllFemale": "All",
+  "smartTodoAuditClearFilters": "Clear Filters",
+  "smartTodoAuditViewTimeline": "Timeline View",
+  "smartTodoAuditViewColumns": "Columns View",
+  "smartTodoAuditNoActivity": "No activity recorded",
+  "smartTodoAuditNoResults": "No results for selected filters",
+  "smartTodoAuditActivities": "{count} activities",
+  "@smartTodoAuditActivities": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoAuditNoUserActivity": "No activity",
+  "smartTodoAuditLoadMore": "Load more 50...",
+  "smartTodoAuditEmptyValue": "(empty)",
+
+  "smartTodoAuditEntityList": "List",
+  "smartTodoAuditEntityTask": "Task",
+  "smartTodoAuditEntityInvite": "Invite",
+  "smartTodoAuditEntityParticipant": "Participant",
+  "smartTodoAuditEntityColumn": "Column",
+  "smartTodoAuditEntityTag": "Tag",
+
+  "smartTodoAuditActionCreate": "Created",
+  "smartTodoAuditActionUpdate": "Updated",
+  "smartTodoAuditActionDelete": "Deleted",
+  "smartTodoAuditActionArchive": "Archived",
+  "smartTodoAuditActionRestore": "Restored",
+  "smartTodoAuditActionMove": "Moved",
+  "smartTodoAuditActionAssign": "Assigned",
+  "smartTodoAuditActionInvite": "Invited",
+  "smartTodoAuditActionJoin": "Joined",
+  "smartTodoAuditActionRevoke": "Revoked",
+  "smartTodoAuditActionReorder": "Reordered",
+  "smartTodoAuditActionBatchCreate": "Import",
+
+  "smartTodoAuditTimeNow": "Now",
+  "smartTodoAuditTimeMinutesAgo": "{count} min ago",
+  "@smartTodoAuditTimeMinutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoAuditTimeHoursAgo": "{count} hours ago",
+  "@smartTodoAuditTimeHoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "smartTodoAuditTimeDaysAgo": "{count} days ago",
+  "@smartTodoAuditTimeDaysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
   "smartTodoNewTaskDefault": "New Task",
   "smartTodoRename": "Rename",
   "smartTodoParticipantManagement": "Participant Management",
