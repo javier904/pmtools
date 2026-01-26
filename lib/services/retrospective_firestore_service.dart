@@ -238,6 +238,7 @@ class RetrospectiveFirestoreService {
   }
 
   /// Rivela le card a tutti (fine fase Writing)
+  Future<void> revealCards(String retroId) async {
     await _retrosCollection.doc(retroId).update({
         'areTeamCardsVisible': true,
     });
@@ -476,7 +477,7 @@ class RetrospectiveFirestoreService {
     try {
       final docRef = _retrosCollection.doc(retroId);
       await docRef.update({
-        FieldPath(const ['participantPresence', userEmail]): {
+        'participantPresence.$userEmail': {
           'isOnline': true,
           'lastActivity': FieldValue.serverTimestamp(),
         },
