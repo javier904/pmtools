@@ -15,6 +15,7 @@ import 'package:agile_tools/services/invite_service.dart';
 import 'package:agile_tools/models/unified_invite_model.dart';
 import 'package:agile_tools/widgets/retrospective/action_items_table_widget.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
+import 'package:agile_tools/widgets/retrospective/action_collection_guide_widget.dart';
 import 'package:agile_tools/services/retrospective_sheets_export_service.dart';
 import 'package:agile_tools/widgets/retrospective/participant_presence_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -514,7 +515,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              height: retro.isActionItemsVisible ? 350 : 50, // Synced visibility (facilitator-controlled)
+              height: retro.isActionItemsVisible ? 450 : 50, // Synced visibility (facilitator-controlled)
               child: _buildActionItemsSection(retro, isFacilitator),
             ),
           ],
@@ -532,7 +533,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
           Positioned(
             bottom: 80,
             right: 20,
-            child: AgileCoachOverlay(phase: retro.currentPhase),
+            child: AgileCoachOverlay(phase: retro.currentPhase, template: retro.template),
           ),
       ],
     );
@@ -595,10 +596,9 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
               if (retro.isActionItemsVisible)
                Expanded(
                  child: SingleChildScrollView( // Scrollable content when expanded
-                   padding: const EdgeInsets.all(16),
-                   child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1000), 
+                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                   child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -669,6 +669,10 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                     ),
                   ),
 
+                  // Facilitator Action Collection Guide - shows coverage and suggestions
+                  if (isFacilitator && retro.currentPhase == RetroPhase.discuss)
+                    ActionCollectionGuideWidget(retro: retro),
+
                   if (retro.actionItems.isEmpty && !isHovering)
                     Expanded(
                       child: Center(
@@ -687,13 +691,14 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                         participants: retro.participantEmails,
                         currentUserEmail: widget.currentUserEmail,
                         items: retro.items,
+                        template: retro.template,
+                        columns: retro.columns,
                       ),
                 ],
               ),
             ),
           ),
         ),
-       ),
       ],
      ),
     );
@@ -726,11 +731,13 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             currentUserEmail: widget.currentUserEmail,
             availableCards: retro.items,
             initialSourceRefId: initialSourceRefId,
-            item: item ?? (initialDescription != null 
+            template: retro.template,
+            columns: retro.columns,
+            item: item ?? (initialDescription != null
                 ? ActionItem(
-                    id: '', 
-                    description: initialDescription, 
-                    ownerEmail: widget.currentUserEmail, 
+                    id: '',
+                    description: initialDescription,
+                    ownerEmail: widget.currentUserEmail,
                     createdAt: DateTime.now(),
                     sourceRefId: initialSourceRefId,
                     sourceRefContent: initialDescription,
@@ -908,6 +915,8 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
               participants: retro.participantEmails,
               currentUserEmail: widget.currentUserEmail,
               readOnly: true,
+              template: retro.template,
+              columns: retro.columns,
             ),
           ),
         ],
@@ -1030,11 +1039,31 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
     buffer.writeln('');
     
     buffer.writeln('--- Action Items ---');
-    buffer.writeln('Description,Owner,Priority,Due Date');
-    for (var item in retro.actionItems) {
-      final assignee = item.assigneeEmail ?? 'Unassigned';
-      final date = item.dueDate != null ? item.dueDate.toString().split(' ')[0] : '';
-      buffer.writeln('"${item.description}",$assignee,${item.priority.name},$date');
+    buffer.writeln('Action Type,Description,Owner,Priority,Due Date');
+
+    // Group action items by action type
+    final groupedItems = <ActionType?, List<ActionItem>>{};
+    for (final item in retro.actionItems) {
+      groupedItems.putIfAbsent(item.actionType, () => []).add(item);
+    }
+
+    // Sort by action type (items with type first, then null types)
+    final sortedKeys = groupedItems.keys.toList()
+      ..sort((a, b) {
+        if (a == null && b == null) return 0;
+        if (a == null) return 1;
+        if (b == null) return -1;
+        return a.displayName.compareTo(b.displayName);
+      });
+
+    for (final actionType in sortedKeys) {
+      final items = groupedItems[actionType]!;
+      for (final item in items) {
+        final assignee = item.assigneeEmail ?? 'Unassigned';
+        final date = item.dueDate != null ? item.dueDate.toString().split(' ')[0] : '';
+        final typeName = item.actionType?.displayName ?? '-';
+        buffer.writeln('$typeName,"${item.description}",$assignee,${item.priority.name},$date');
+      }
     }
 
     buffer.writeln('');

@@ -2310,6 +2310,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroActionNone => 'Ninguna';
 
   @override
+  String get retroActionType => 'Tipo de acción';
+
+  @override
+  String get retroActionNoType => 'Sin tipo específico';
+
+  @override
   String get retroActionAssignee => 'Responsable';
 
   @override
@@ -2348,6 +2354,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroTableRef => 'Ref.';
 
   @override
+  String get retroTableSourceColumn => 'Columna';
+
+  @override
   String get retroTableDescription => 'Descripción';
 
   @override
@@ -2367,6 +2376,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroTableActions => 'Acciones';
+
+  @override
+  String get retroSupportResources => 'Recursos de Soporte';
+
+  @override
+  String get retroMonitoringMethod => 'Método de Monitoreo';
 
   @override
   String get retroUnassigned => 'Sin asignar';
@@ -6512,45 +6527,925 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroColumnLess => 'Menos';
 
   @override
-  String get retroColumnLikedDesc => 'Cosa ti è piaciuto di questo sprint?';
+  String get retroColumnLikedDesc => '¿Qué te gustó de este sprint?';
 
   @override
-  String get retroColumnLearnedDesc => 'Cosa hai imparato di nuovo?';
+  String get retroColumnLearnedDesc => '¿Qué aprendiste de nuevo?';
 
   @override
-  String get retroColumnLackedDesc => 'Cosa è mancato in questo sprint?';
+  String get retroColumnLackedDesc => '¿Qué faltó en este sprint?';
 
   @override
-  String get retroColumnLongedForDesc =>
-      'Cosa desidereresti avere nel prossimo futuro?';
+  String get retroColumnLongedForDesc => '¿Qué desearías tener en el futuro?';
 
   @override
-  String get retroColumnMadDesc => 'Cosa ti ha fatto arrabbiare o frustrare?';
+  String get retroColumnMadDesc => '¿Qué te hizo enojar o frustrar?';
 
   @override
-  String get retroColumnSadDesc => 'Cosa ti ha deluso o reso triste?';
+  String get retroColumnSadDesc => '¿Qué te decepcionó o entristeció?';
 
   @override
-  String get retroColumnGladDesc => 'Cosa ti ha reso felice o soddisfatto?';
+  String get retroColumnGladDesc => '¿Qué te hizo feliz o satisfecho?';
 
   @override
-  String get retroColumnWindDesc =>
-      'Cosa ci ha spinto avanti? Punti di forza e supporto.';
+  String get retroColumnWindDesc => '¿Qué nos impulsó? Fortalezas y apoyo.';
 
   @override
   String get retroColumnAnchorDesc =>
-      'Cosa ci ha rallentato? Ostacoli e blocchi.';
+      '¿Qué nos ralentizó? Obstáculos y bloqueos.';
 
   @override
   String get retroColumnRockDesc =>
-      'Quali rischi futuri vediamo all\'orizzonte?';
+      '¿Qué riesgos futuros vemos en el horizonte?';
 
   @override
-  String get retroColumnGoalDesc => 'Qual è la nostra destinazione ideale?';
+  String get retroColumnGoalDesc => '¿Cuál es nuestro destino ideal?';
 
   @override
-  String get retroColumnMoreDesc => 'Cosa dovremmo fare di più?';
+  String get retroColumnMoreDesc => '¿Qué deberíamos hacer más?';
 
   @override
-  String get retroColumnLessDesc => 'Cosa dovremmo fare di meno?';
+  String get retroColumnLessDesc => '¿Qué deberíamos hacer menos?';
+
+  @override
+  String get actionTypeMaintain => 'Mantener';
+
+  @override
+  String get actionTypeStop => 'Detener';
+
+  @override
+  String get actionTypeBegin => 'Comenzar';
+
+  @override
+  String get actionTypeIncrease => 'Aumentar';
+
+  @override
+  String get actionTypeDecrease => 'Disminuir';
+
+  @override
+  String get actionTypePrevent => 'Prevenir';
+
+  @override
+  String get actionTypeCelebrate => 'Celebrar';
+
+  @override
+  String get actionTypeReplicate => 'Replicar';
+
+  @override
+  String get actionTypeShare => 'Compartir';
+
+  @override
+  String get actionTypeProvide => 'Proveer';
+
+  @override
+  String get actionTypePlan => 'Planificar';
+
+  @override
+  String get actionTypeLeverage => 'Aprovechar';
+
+  @override
+  String get actionTypeRemove => 'Eliminar';
+
+  @override
+  String get actionTypeMitigate => 'Mitigar';
+
+  @override
+  String get actionTypeAlign => 'Alinear';
+
+  @override
+  String get actionTypeEliminate => 'Eliminar';
+
+  @override
+  String get actionTypeImplement => 'Implementar';
+
+  @override
+  String get actionTypeEnhance => 'Mejorar';
+
+  @override
+  String get coachTipSSCWriting =>
+      'Enfócate en comportamientos concretos y observables. Cada elemento debe ser algo sobre lo que el equipo pueda actuar directamente. Evita declaraciones vagas.';
+
+  @override
+  String get coachTipSSCVoting =>
+      'Vota basándote en el impacto y la viabilidad. Los elementos más votados se convertirán en compromisos del sprint.';
+
+  @override
+  String get coachTipSSCDiscuss =>
+      'Para cada elemento más votado, define QUIÉN hará QUÉ para CUÁNDO. Transforma las ideas en acciones específicas.';
+
+  @override
+  String get coachTipMSGWriting =>
+      'Crea un espacio seguro para las emociones. Todos los sentimientos son válidos. Enfócate en la situación, no en la persona. Usa declaraciones \'Me siento...\'.';
+
+  @override
+  String get coachTipMSGVoting =>
+      'Vota para identificar experiencias compartidas. Los patrones emocionales revelan dinámicas del equipo que necesitan atención.';
+
+  @override
+  String get coachTipMSGDiscuss =>
+      'Reconoce las emociones antes de resolver problemas. Pregunta \'¿Qué ayudaría?\' en lugar de saltar a soluciones. Escucha activamente.';
+
+  @override
+  String get coachTip4LsWriting =>
+      'Reflexiona sobre aprendizajes, no solo eventos. Piensa en qué insights llevarás contigo. Cada L representa una perspectiva diferente.';
+
+  @override
+  String get coachTip4LsVoting =>
+      'Prioriza los aprendizajes que podrían mejorar futuros sprints. Enfócate en conocimiento transferible.';
+
+  @override
+  String get coachTip4LsDiscuss =>
+      'Transforma los aprendizajes en documentación o cambios de proceso. Pregunta \'¿Cómo podemos compartir este conocimiento con otros?\'';
+
+  @override
+  String get coachTipSailboatWriting =>
+      'Usa la metáfora: el Viento nos empuja (facilitadores), las Anclas nos frenan (bloqueantes), las Rocas son riesgos futuros, la Isla es nuestra meta.';
+
+  @override
+  String get coachTipSailboatVoting =>
+      'Prioriza según el impacto del riesgo y el potencial de los facilitadores. Equilibra entre abordar bloqueantes y aprovechar fortalezas.';
+
+  @override
+  String get coachTipSailboatDiscuss =>
+      'Crea un registro de riesgos para las rocas. Define estrategias de mitigación. Aprovecha los vientos para superar las anclas.';
+
+  @override
+  String get coachTipDAKIWriting =>
+      'Sé decisivo: Elimina lo que desperdicia tiempo, Agrega lo que falta, Mantén lo que funciona, Mejora lo que podría ser mejor.';
+
+  @override
+  String get coachTipDAKIVoting =>
+      'Vota pragmáticamente. Enfócate en cambios que tendrán impacto inmediato y medible.';
+
+  @override
+  String get coachTipDAKIDiscuss =>
+      'Toma decisiones claras como equipo. Para cada elemento, comprométete con una acción específica o decide explícitamente no actuar.';
+
+  @override
+  String get coachTipStarfishWriting =>
+      'Usa gradaciones: Mantener (como está), Más (aumentar), Menos (disminuir), Stop (eliminar), Start (comenzar). Esto permite feedback matizado.';
+
+  @override
+  String get coachTipStarfishVoting =>
+      'Considera el esfuerzo vs el impacto. Los elementos \'Más\' y \'Menos\' pueden ser más fáciles de implementar que \'Start\' y \'Stop\'.';
+
+  @override
+  String get coachTipStarfishDiscuss =>
+      'Define métricas específicas para \'más\' y \'menos\'. ¿Cuánto más? ¿Cómo mediremos? Establece objetivos de calibración claros.';
+
+  @override
+  String get discussPromptSSCStart =>
+      '¿Qué nueva práctica deberíamos comenzar? Piensa en brechas en nuestro proceso que un nuevo hábito podría llenar.';
+
+  @override
+  String get discussPromptSSCStop =>
+      '¿Qué desperdicia nuestro tiempo o energía? Considera actividades que no entregan valor proporcional a su costo.';
+
+  @override
+  String get discussPromptSSCContinue =>
+      '¿Qué está funcionando bien? Reconoce y refuerza las prácticas efectivas.';
+
+  @override
+  String get discussPromptMSGMad =>
+      '¿Qué te frustró? Recuerda, estamos discutiendo situaciones, no culpando individuos.';
+
+  @override
+  String get discussPromptMSGSad =>
+      '¿Qué te decepcionó? ¿Qué expectativas no se cumplieron?';
+
+  @override
+  String get discussPromptMSGGlad =>
+      '¿Qué te hizo feliz? ¿Qué momentos te dieron satisfacción este sprint?';
+
+  @override
+  String get discussPrompt4LsLiked =>
+      '¿Qué disfrutaste? ¿Qué hizo el trabajo agradable?';
+
+  @override
+  String get discussPrompt4LsLearned =>
+      '¿Qué nueva habilidad, insight o conocimiento adquiriste?';
+
+  @override
+  String get discussPrompt4LsLacked =>
+      '¿Qué faltó? ¿Qué recursos, apoyo o claridad hubieran ayudado?';
+
+  @override
+  String get discussPrompt4LsLonged =>
+      '¿Qué deseas? ¿Qué haría mejores los futuros sprints?';
+
+  @override
+  String get discussPromptSailboatWind =>
+      '¿Qué nos impulsó hacia adelante? ¿Cuáles son nuestras fortalezas y apoyo externo?';
+
+  @override
+  String get discussPromptSailboatAnchor =>
+      '¿Qué nos frenó? ¿Qué obstáculos internos o externos nos retrasaron?';
+
+  @override
+  String get discussPromptSailboatRock =>
+      '¿Qué riesgos vemos adelante? ¿Qué podría descarrilarnos si no se aborda?';
+
+  @override
+  String get discussPromptSailboatGoal =>
+      '¿Cuál es nuestro destino? ¿Estamos alineados sobre hacia dónde vamos?';
+
+  @override
+  String get discussPromptDAKIDrop =>
+      '¿Qué deberíamos eliminar? ¿Qué no aporta valor?';
+
+  @override
+  String get discussPromptDAKIAdd =>
+      '¿Qué deberíamos introducir? ¿Qué falta en nuestro toolkit?';
+
+  @override
+  String get discussPromptDAKIKeep =>
+      '¿Qué debemos preservar? ¿Qué es esencial para nuestro éxito?';
+
+  @override
+  String get discussPromptDAKIImprove =>
+      '¿Qué podría ser mejor? ¿Dónde podemos mejorar?';
+
+  @override
+  String get discussPromptStarfishKeep =>
+      '¿Qué deberíamos mantener exactamente como está?';
+
+  @override
+  String get discussPromptStarfishMore =>
+      '¿Qué deberíamos aumentar? ¿Hacer más?';
+
+  @override
+  String get discussPromptStarfishLess =>
+      '¿Qué deberíamos reducir? ¿Hacer menos?';
+
+  @override
+  String get discussPromptStarfishStop =>
+      '¿Qué deberíamos eliminar completamente?';
+
+  @override
+  String get discussPromptStarfishStart =>
+      '¿Qué nueva cosa deberíamos comenzar?';
+
+  @override
+  String get discussPromptGeneric =>
+      '¿Qué insights emergieron de esta columna? ¿Qué patrones ves?';
+
+  @override
+  String get smartPromptSSCStartQuestion =>
+      '¿Qué nueva práctica específica comenzarás, y cómo medirás su adopción?';
+
+  @override
+  String get smartPromptSSCStartExample =>
+      'ej., \'Comenzar standup diario de 15 min a las 9:30, rastrear asistencia por 2 semanas\'';
+
+  @override
+  String get smartPromptSSCStartPlaceholder =>
+      'Comenzaremos [práctica específica] para [fecha], medida por [métrica]';
+
+  @override
+  String get smartPromptSSCStopQuestion =>
+      '¿Qué dejarás de hacer, y qué harás en su lugar?';
+
+  @override
+  String get smartPromptSSCStopExample =>
+      'ej., \'Dejar de enviar actualizaciones por email, usar el canal Slack #updates en su lugar\'';
+
+  @override
+  String get smartPromptSSCStopPlaceholder =>
+      'Dejaremos de hacer [práctica] y en su lugar [alternativa]';
+
+  @override
+  String get smartPromptSSCContinueQuestion =>
+      '¿Qué práctica continuarás, y cómo te asegurarás de que no desaparezca?';
+
+  @override
+  String get smartPromptSSCContinueExample =>
+      'ej., \'Continuar code reviews en menos de 4 horas, agregar a Definition of Done\'';
+
+  @override
+  String get smartPromptSSCContinuePlaceholder =>
+      'Continuaremos [práctica], reforzada por [mecanismo]';
+
+  @override
+  String get smartPromptMSGMadQuestion =>
+      '¿Qué acción abordaría esta frustración y quién la liderará?';
+
+  @override
+  String get smartPromptMSGMadExample =>
+      'ej., \'Programar reunión con PM para clarificar proceso de requisitos - María para el viernes\'';
+
+  @override
+  String get smartPromptMSGMadPlaceholder =>
+      '[Acción para abordar frustración], responsable: [nombre], para: [fecha]';
+
+  @override
+  String get smartPromptMSGSadQuestion =>
+      '¿Qué cambio evitaría que esta decepción se repita?';
+
+  @override
+  String get smartPromptMSGSadExample =>
+      'ej., \'Crear checklist de comunicación para actualizaciones a stakeholders - revisión semanal\'';
+
+  @override
+  String get smartPromptMSGSadPlaceholder =>
+      '[Acción preventiva], rastreada vía [método]';
+
+  @override
+  String get smartPromptMSGGladQuestion =>
+      '¿Cómo podemos replicar o amplificar lo que nos hizo felices?';
+
+  @override
+  String get smartPromptMSGGladExample =>
+      'ej., \'Documentar formato de sesión de pairing y compartir con otros equipos para fin de semana\'';
+
+  @override
+  String get smartPromptMSGGladPlaceholder =>
+      '[Acción para replicar/amplificar], compartir con [audiencia]';
+
+  @override
+  String get smartPrompt4LsLikedQuestion =>
+      '¿Cómo podemos asegurar que esta experiencia positiva continúe?';
+
+  @override
+  String get smartPrompt4LsLikedExample =>
+      'ej., \'Hacer de la sesión de mob programming un evento semanal recurrente\'';
+
+  @override
+  String get smartPrompt4LsLikedPlaceholder =>
+      '[Acción para preservar experiencia positiva]';
+
+  @override
+  String get smartPrompt4LsLearnedQuestion =>
+      '¿Cómo documentarás y compartirás este aprendizaje?';
+
+  @override
+  String get smartPrompt4LsLearnedExample =>
+      'ej., \'Escribir artículo wiki sobre nuevo enfoque de testing, presentar en tech talk el próximo mes\'';
+
+  @override
+  String get smartPrompt4LsLearnedPlaceholder =>
+      'Documentar en [ubicación], compartir vía [método] para [fecha]';
+
+  @override
+  String get smartPrompt4LsLackedQuestion =>
+      '¿Qué recursos o apoyo específicos solicitarás y a quién?';
+
+  @override
+  String get smartPrompt4LsLackedExample =>
+      'ej., \'Solicitar presupuesto de capacitación CI/CD al manager - enviar antes del próximo planning\'';
+
+  @override
+  String get smartPrompt4LsLackedPlaceholder =>
+      'Solicitar [recurso] a [persona/equipo], deadline: [fecha]';
+
+  @override
+  String get smartPrompt4LsLongedQuestion =>
+      '¿Qué primer paso concreto te acercará a este deseo?';
+
+  @override
+  String get smartPrompt4LsLongedExample =>
+      'ej., \'Redactar propuesta para 20% de tiempo para proyectos personales - compartir con team lead el lunes\'';
+
+  @override
+  String get smartPrompt4LsLongedPlaceholder =>
+      'Primer paso hacia [deseo]: [acción] para [fecha]';
+
+  @override
+  String get smartPromptSailboatWindQuestion =>
+      '¿Cómo aprovecharás este facilitador para acelerar el progreso?';
+
+  @override
+  String get smartPromptSailboatWindExample =>
+      'ej., \'Usar fuerte expertise en QA para mentorear juniors - programar primera sesión esta semana\'';
+
+  @override
+  String get smartPromptSailboatWindPlaceholder =>
+      'Aprovechar [facilitador] con [acción específica]';
+
+  @override
+  String get smartPromptSailboatAnchorQuestion =>
+      '¿Qué acción específica eliminará o reducirá este bloqueante?';
+
+  @override
+  String get smartPromptSailboatAnchorExample =>
+      'ej., \'Escalar problema de infraestructura al CTO - preparar brief para el miércoles\'';
+
+  @override
+  String get smartPromptSailboatAnchorPlaceholder =>
+      'Eliminar [bloqueante] con [acción], escalar a [persona] si es necesario';
+
+  @override
+  String get smartPromptSailboatRockQuestion =>
+      '¿Qué estrategia de mitigación implementarás para este riesgo?';
+
+  @override
+  String get smartPromptSailboatRockExample =>
+      'ej., \'Agregar plan de respaldo para dependencia de proveedor - documentar alternativas para fin de sprint\'';
+
+  @override
+  String get smartPromptSailboatRockPlaceholder =>
+      'Mitigar [riesgo] con [estrategia], trigger: [condición]';
+
+  @override
+  String get smartPromptSailboatGoalQuestion =>
+      '¿Qué hito confirmará el progreso hacia este objetivo?';
+
+  @override
+  String get smartPromptSailboatGoalExample =>
+      'ej., \'Demo MVP a stakeholders para el 15 feb, recolectar feedback vía encuesta\'';
+
+  @override
+  String get smartPromptSailboatGoalPlaceholder =>
+      'Hito hacia [objetivo]: [entregable] para [fecha]';
+
+  @override
+  String get smartPromptDAKIDropQuestion =>
+      '¿Qué eliminarás y cómo te asegurarás de que no regrese?';
+
+  @override
+  String get smartPromptDAKIDropExample =>
+      'ej., \'Eliminar pasos de deployment manuales - automatizar para fin de sprint\'';
+
+  @override
+  String get smartPromptDAKIDropPlaceholder =>
+      'Eliminar [práctica], prevenir regreso con [mecanismo]';
+
+  @override
+  String get smartPromptDAKIAddQuestion =>
+      '¿Qué nueva práctica introducirás y cómo validarás que funciona?';
+
+  @override
+  String get smartPromptDAKIAddExample =>
+      'ej., \'Agregar sistema de feature flags - probar en 2 features, revisar resultados en 2 semanas\'';
+
+  @override
+  String get smartPromptDAKIAddPlaceholder =>
+      'Agregar [práctica], validar éxito vía [métrica]';
+
+  @override
+  String get smartPromptDAKIKeepQuestion =>
+      '¿Cómo protegerás esta práctica de ser despriorizada?';
+
+  @override
+  String get smartPromptDAKIKeepExample =>
+      'ej., \'Mantener estándares de code review - agregar al team charter, auditoría mensual\'';
+
+  @override
+  String get smartPromptDAKIKeepPlaceholder =>
+      'Proteger [práctica] con [mecanismo]';
+
+  @override
+  String get smartPromptDAKIImproveQuestion =>
+      '¿Qué mejora específica harás y cómo medirás la mejora?';
+
+  @override
+  String get smartPromptDAKIImproveExample =>
+      'ej., \'Mejorar cobertura de tests del 60% al 80% - focus en módulo de pagos primero\'';
+
+  @override
+  String get smartPromptDAKIImprovePlaceholder =>
+      'Mejorar [práctica] de [actual] a [objetivo] para [fecha]';
+
+  @override
+  String get smartPromptStarfishKeepQuestion =>
+      '¿Qué práctica mantendrás y quién es responsable de asegurar consistencia?';
+
+  @override
+  String get smartPromptStarfishKeepExample =>
+      'ej., \'Mantener demos del viernes - Tom se asegura de reservar sala, agenda compartida para el jueves\'';
+
+  @override
+  String get smartPromptStarfishKeepPlaceholder =>
+      'Mantener [práctica], responsable: [nombre]';
+
+  @override
+  String get smartPromptStarfishMoreQuestion => '¿Qué aumentarás y cuánto?';
+
+  @override
+  String get smartPromptStarfishMoreExample =>
+      'ej., \'Aumentar pair programming de 2h a 6h por semana por desarrollador\'';
+
+  @override
+  String get smartPromptStarfishMorePlaceholder =>
+      'Aumentar [práctica] de [nivel actual] a [nivel objetivo]';
+
+  @override
+  String get smartPromptStarfishLessQuestion => '¿Qué reducirás y cuánto?';
+
+  @override
+  String get smartPromptStarfishLessExample =>
+      'ej., \'Reducir reuniones de 10h a 6h por semana - cancelar review recurrente\'';
+
+  @override
+  String get smartPromptStarfishLessPlaceholder =>
+      'Reducir [práctica] de [nivel actual] a [nivel objetivo]';
+
+  @override
+  String get smartPromptStarfishStopQuestion =>
+      '¿Qué dejarás de hacer completamente y qué lo reemplaza (si algo)?';
+
+  @override
+  String get smartPromptStarfishStopExample =>
+      'ej., \'Dejar tracking de tiempo detallado en tareas - estimaciones basadas en confianza en su lugar\'';
+
+  @override
+  String get smartPromptStarfishStopPlaceholder =>
+      'Dejar [práctica], reemplazar con [alternativa] o nada';
+
+  @override
+  String get smartPromptStarfishStartQuestion =>
+      '¿Qué nueva práctica comenzarás y cuándo será la primera ocurrencia?';
+
+  @override
+  String get smartPromptStarfishStartExample =>
+      'ej., \'Comenzar tech debt Tuesday - primera sesión la próxima semana, 2h de tiempo protegido\'';
+
+  @override
+  String get smartPromptStarfishStartPlaceholder =>
+      'Comenzar [práctica], primera ocurrencia: [fecha/hora]';
+
+  @override
+  String get smartPromptGenericQuestion =>
+      '¿Qué acción específica abordará este elemento?';
+
+  @override
+  String get smartPromptGenericExample =>
+      'ej., \'Definir acción específica con responsable, deadline, y criterios de éxito\'';
+
+  @override
+  String get smartPromptGenericPlaceholder =>
+      '[Acción], responsable: [nombre], para: [fecha]';
+
+  @override
+  String get methodologyFocusAction =>
+      'Orientado a la acción: se enfoca en cambios de comportamiento concretos';
+
+  @override
+  String get methodologyFocusEmotion =>
+      'Enfocado en emociones: explora los sentimientos del equipo para construir seguridad psicológica';
+
+  @override
+  String get methodologyFocusLearning =>
+      'Reflexivo sobre aprendizaje: enfatiza la captura y compartición del conocimiento';
+
+  @override
+  String get methodologyFocusRisk =>
+      'Riesgo y Objetivo: equilibra facilitadores, bloqueantes, riesgos y objetivos';
+
+  @override
+  String get methodologyFocusCalibration =>
+      'Calibración: usa gradaciones (más/menos) para ajustes matizados';
+
+  @override
+  String get methodologyFocusDecision =>
+      'Decisional: impulsa decisiones claras del equipo sobre prácticas';
+
+  @override
+  String get exportSheetOverview => 'Resumen';
+
+  @override
+  String get exportSheetActionItems => 'Acciones';
+
+  @override
+  String get exportSheetBoardItems => 'Elementos del Board';
+
+  @override
+  String get exportSheetTeamHealth => 'Salud del Equipo';
+
+  @override
+  String get exportSheetLessonsLearned => 'Lecciones Aprendidas';
+
+  @override
+  String get exportSheetRiskRegister => 'Registro de Riesgos';
+
+  @override
+  String get exportSheetCalibrationMatrix => 'Matriz de Calibración';
+
+  @override
+  String get exportSheetDecisionLog => 'Registro de Decisiones';
+
+  @override
+  String get exportHeaderRetrospectiveReport => 'INFORME RETROSPECTIVA';
+
+  @override
+  String get exportHeaderTitle => 'Título:';
+
+  @override
+  String get exportHeaderDate => 'Fecha:';
+
+  @override
+  String get exportHeaderTemplate => 'Plantilla:';
+
+  @override
+  String get exportHeaderMethodology => 'Enfoque Metodológico:';
+
+  @override
+  String get exportHeaderSentiments => 'Sentimientos (Prom.):';
+
+  @override
+  String get exportHeaderParticipants => 'PARTICIPANTES';
+
+  @override
+  String get exportHeaderSummary => 'RESUMEN';
+
+  @override
+  String get exportHeaderTotalItems => 'Total Elementos:';
+
+  @override
+  String get exportHeaderActionItems => 'Acciones:';
+
+  @override
+  String get exportHeaderSuggestedFollowUp => 'Seguimiento Sugerido:';
+
+  @override
+  String get exportTeamHealthTitle => 'ANÁLISIS SALUD DEL EQUIPO';
+
+  @override
+  String get exportTeamHealthEmotionalDistribution => 'Distribución Emocional';
+
+  @override
+  String get exportTeamHealthMadCount => 'Elementos Mad:';
+
+  @override
+  String get exportTeamHealthSadCount => 'Elementos Sad:';
+
+  @override
+  String get exportTeamHealthGladCount => 'Elementos Glad:';
+
+  @override
+  String get exportTeamHealthMadItems => 'FRUSTRACIONES (Mad)';
+
+  @override
+  String get exportTeamHealthSadItems => 'DECEPCIONES (Sad)';
+
+  @override
+  String get exportTeamHealthGladItems => 'CELEBRACIONES (Glad)';
+
+  @override
+  String get exportTeamHealthRecommendation => 'Recomendación Salud Equipo:';
+
+  @override
+  String get exportTeamHealthHighFrustration =>
+      'Alto nivel de frustración detectado. Considera facilitar una sesión enfocada en resolución de problemas.';
+
+  @override
+  String get exportTeamHealthBalanced =>
+      'Estado emocional equilibrado. El equipo muestra capacidades de reflexión saludables.';
+
+  @override
+  String get exportTeamHealthPositive =>
+      'Moral del equipo positivo. Aprovecha esta energía para mejoras desafiantes.';
+
+  @override
+  String get exportLessonsLearnedTitle => 'REGISTRO DE LECCIONES APRENDIDAS';
+
+  @override
+  String get exportLessonsLearnedWhatWorked => 'LO QUE FUNCIONÓ (Liked)';
+
+  @override
+  String get exportLessonsLearnedNewSkills =>
+      'NUEVAS HABILIDADES E INSIGHTS (Learned)';
+
+  @override
+  String get exportLessonsLearnedGaps =>
+      'BRECHAS Y ELEMENTOS FALTANTES (Lacked)';
+
+  @override
+  String get exportLessonsLearnedWishes => 'ASPIRACIONES FUTURAS (Longed For)';
+
+  @override
+  String get exportLessonsLearnedKnowledgeActions =>
+      'Acciones de Compartir Conocimiento';
+
+  @override
+  String get exportLessonsLearnedDocumentationNeeded =>
+      'Documentación Necesaria:';
+
+  @override
+  String get exportLessonsLearnedTrainingNeeded =>
+      'Capacitación/Compartir Necesario:';
+
+  @override
+  String get exportRiskRegisterTitle => 'REGISTRO DE RIESGOS Y FACILITADORES';
+
+  @override
+  String get exportRiskRegisterEnablers => 'FACILITADORES (Viento)';
+
+  @override
+  String get exportRiskRegisterBlockers => 'BLOQUEANTES (Ancla)';
+
+  @override
+  String get exportRiskRegisterRisks => 'RIESGOS (Rocas)';
+
+  @override
+  String get exportRiskRegisterGoals => 'OBJETIVOS (Isla)';
+
+  @override
+  String get exportRiskRegisterRiskItem => 'Riesgo';
+
+  @override
+  String get exportRiskRegisterImpact => 'Impacto Potencial';
+
+  @override
+  String get exportRiskRegisterMitigation => 'Acción de Mitigación';
+
+  @override
+  String get exportRiskRegisterStatus => 'Estado';
+
+  @override
+  String get exportRiskRegisterGoalAlignment =>
+      'Verificación Alineación Objetivos:';
+
+  @override
+  String get exportRiskRegisterGoalAlignmentNote =>
+      'Verificar si las acciones actuales están alineadas con los objetivos declarados.';
+
+  @override
+  String get exportCalibrationTitle => 'MATRIZ DE CALIBRACIÓN';
+
+  @override
+  String get exportCalibrationKeepDoing => 'SEGUIR HACIENDO';
+
+  @override
+  String get exportCalibrationDoMore => 'HACER MÁS';
+
+  @override
+  String get exportCalibrationDoLess => 'HACER MENOS';
+
+  @override
+  String get exportCalibrationStopDoing => 'DEJAR DE HACER';
+
+  @override
+  String get exportCalibrationStartDoing => 'EMPEZAR A HACER';
+
+  @override
+  String get exportCalibrationPractice => 'Práctica';
+
+  @override
+  String get exportCalibrationCurrentState => 'Estado Actual';
+
+  @override
+  String get exportCalibrationTargetState => 'Estado Objetivo';
+
+  @override
+  String get exportCalibrationAdjustment => 'Ajuste';
+
+  @override
+  String get exportCalibrationNote =>
+      'La calibración se enfoca en afinar las prácticas existentes en lugar de cambios radicales.';
+
+  @override
+  String get exportDecisionLogTitle => 'REGISTRO DE DECISIONES';
+
+  @override
+  String get exportDecisionLogDrop => 'DECISIONES A ABANDONAR';
+
+  @override
+  String get exportDecisionLogAdd => 'DECISIONES A AGREGAR';
+
+  @override
+  String get exportDecisionLogKeep => 'DECISIONES A MANTENER';
+
+  @override
+  String get exportDecisionLogImprove => 'DECISIONES A MEJORAR';
+
+  @override
+  String get exportDecisionLogDecision => 'Decisión';
+
+  @override
+  String get exportDecisionLogRationale => 'Justificación';
+
+  @override
+  String get exportDecisionLogOwner => 'Responsable';
+
+  @override
+  String get exportDecisionLogDeadline => 'Fecha Límite';
+
+  @override
+  String get exportDecisionLogPrioritizationNote => 'Recomendación Prioridad:';
+
+  @override
+  String get exportDecisionLogPrioritizationHint =>
+      'Enfocarse primero en decisiones DROP para liberar capacidad, luego agregar nuevas prácticas.';
+
+  @override
+  String get exportNoItems => 'Sin elementos registrados';
+
+  @override
+  String get exportNoActionItems => 'Sin acciones';
+
+  @override
+  String get exportNotApplicable => 'N/A';
+
+  @override
+  String get facilitatorGuideTitle => 'Guía de Recolección de Acciones';
+
+  @override
+  String get facilitatorGuideCoverage => 'Cobertura';
+
+  @override
+  String get facilitatorGuideComplete => 'Completa';
+
+  @override
+  String get facilitatorGuideIncomplete => 'Incompleta';
+
+  @override
+  String get facilitatorGuideSuggestedOrder => 'Orden Sugerido:';
+
+  @override
+  String get facilitatorGuideNextColumn => 'Siguiente: Recoger acción de';
+
+  @override
+  String get facilitatorGuideMissingRequired => 'Faltan acciones requeridas';
+
+  @override
+  String get facilitatorGuideAllCovered =>
+      '¡Todas las columnas requeridas cubiertas!';
+
+  @override
+  String get facilitatorGuideColumnHasAction => 'Tiene acción';
+
+  @override
+  String get facilitatorGuideColumnNoAction => 'Sin acción';
+
+  @override
+  String get facilitatorGuideRequired => 'Requerido';
+
+  @override
+  String get facilitatorGuideOptional => 'Opcional';
+
+  @override
+  String get collectionRationaleSSC =>
+      'Primero Stop para remover bloqueantes, luego Start nuevas prácticas, finalmente Continue lo que funciona.';
+
+  @override
+  String get collectionRationaleMSG =>
+      'Primero abordar las frustraciones, luego las decepciones, luego celebrar los éxitos.';
+
+  @override
+  String get collectionRationale4Ls =>
+      'Primero llenar vacíos, luego planificar aspiraciones futuras, mantener lo que funciona, compartir aprendizajes.';
+
+  @override
+  String get collectionRationaleSailboat =>
+      'Primero mitigar riesgos, remover bloqueantes, luego aprovechar facilitadores y alinearse a objetivos.';
+
+  @override
+  String get collectionRationaleStarfish =>
+      'Detener malas prácticas, reducir otras, mantener las buenas, aumentar las valiosas, iniciar nuevas.';
+
+  @override
+  String get collectionRationaleDAKI =>
+      'Drop para liberar capacidad, Add nuevas prácticas, Improve existentes, Keep lo que funciona.';
+
+  @override
+  String get missingSuggestionSSCStop =>
+      'Considera qué práctica está bloqueando al equipo y debería detenerse.';
+
+  @override
+  String get missingSuggestionSSCStart =>
+      'Piensa en qué nueva práctica podría ayudar al equipo a mejorar.';
+
+  @override
+  String get missingSuggestionMSGMad =>
+      'Aborda las frustraciones del equipo - ¿qué está causando enojo?';
+
+  @override
+  String get missingSuggestionMSGSad =>
+      'Resuelve las decepciones - ¿qué entristeció al equipo?';
+
+  @override
+  String get missingSuggestion4LsLacked =>
+      '¿Qué faltaba que el equipo necesitaba?';
+
+  @override
+  String get missingSuggestion4LsLonged =>
+      '¿Qué desea el equipo para el futuro?';
+
+  @override
+  String get missingSuggestionSailboatRock =>
+      '¿Qué riesgos amenazan el progreso del equipo?';
+
+  @override
+  String get missingSuggestionSailboatAnchor =>
+      '¿Qué está impidiendo al equipo alcanzar sus objetivos?';
+
+  @override
+  String get missingSuggestionStarfishStop =>
+      '¿Qué práctica debería el equipo dejar de hacer completamente?';
+
+  @override
+  String get missingSuggestionStarfishStart =>
+      '¿Qué nueva práctica debería comenzar el equipo?';
+
+  @override
+  String get missingSuggestionDAKIDrop =>
+      '¿Qué debería el equipo decidir eliminar?';
+
+  @override
+  String get missingSuggestionDAKIAdd =>
+      '¿Qué nueva decisión debería tomar el equipo?';
+
+  @override
+  String get missingSuggestionGeneric =>
+      'Considera crear una acción desde esta columna.';
 }

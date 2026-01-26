@@ -1,4 +1,5 @@
 import 'package:agile_tools/models/retrospective_model.dart';
+import 'package:agile_tools/models/retro_methodology_guide.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:agile_tools/themes/app_colors.dart';
@@ -99,6 +100,10 @@ class RetroColumnWidget extends StatelessWidget {
               ),
             ),
           ),
+
+          // Discussion Prompt - shown only during discuss phase
+          if (retro.currentPhase == RetroPhase.discuss)
+            _buildDiscussionPrompt(l10n),
 
           // Items List (Grid) - Card size optimized for ~70 characters visibility
           Expanded(
@@ -506,6 +511,41 @@ class RetroColumnWidget extends StatelessWidget {
               Navigator.pop(context);
             },
             child: Text(l10n.actionDelete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the discussion prompt widget for the discuss phase
+  Widget _buildDiscussionPrompt(AppLocalizations l10n) {
+    final discussionPrompt = RetroMethodologyGuide.getDiscussionPrompt(
+      l10n,
+      retro.template,
+      column.id,
+    );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: column.color.withOpacity(0.08),
+        border: Border(
+          bottom: BorderSide(color: column.color.withOpacity(0.2)),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.chat_bubble_outline, size: 16, color: column.color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              discussionPrompt,
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+                color: column.color.withOpacity(0.9),
+              ),
+            ),
           ),
         ],
       ),

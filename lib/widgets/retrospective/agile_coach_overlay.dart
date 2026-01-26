@@ -1,12 +1,18 @@
 import 'package:agile_tools/models/retrospective_model.dart';
+import 'package:agile_tools/models/retro_methodology_guide.dart';
 import 'package:agile_tools/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 
 class AgileCoachOverlay extends StatefulWidget {
   final RetroPhase phase;
+  final RetroTemplate? template;
 
-  const AgileCoachOverlay({Key? key, required this.phase}) : super(key: key);
+  const AgileCoachOverlay({
+    Key? key,
+    required this.phase,
+    this.template,
+  }) : super(key: key);
 
   @override
   State<AgileCoachOverlay> createState() => _AgileCoachOverlayState();
@@ -94,6 +100,15 @@ class _AgileCoachOverlayState extends State<AgileCoachOverlay> {
   }
 
   String _getCoachMessage(AppLocalizations l10n) {
+    // For writing, voting, discuss phases: use template-specific tips if template is available
+    if (widget.template != null &&
+        (widget.phase == RetroPhase.writing ||
+         widget.phase == RetroPhase.voting ||
+         widget.phase == RetroPhase.discuss)) {
+      return RetroMethodologyGuide.getCoachTip(l10n, widget.template!, widget.phase);
+    }
+
+    // For other phases: use generic phase tips
     switch (widget.phase) {
       case RetroPhase.setup:
         return l10n.retroCoachSetup;

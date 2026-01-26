@@ -4324,6 +4324,18 @@ abstract class AppLocalizations {
   /// **'Nessuna'**
   String get retroActionNone;
 
+  /// No description provided for @retroActionType.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo Azione'**
+  String get retroActionType;
+
+  /// No description provided for @retroActionNoType.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun tipo specifico'**
+  String get retroActionNoType;
+
   /// No description provided for @retroActionAssignee.
   ///
   /// In it, this message translates to:
@@ -4396,6 +4408,12 @@ abstract class AppLocalizations {
   /// **'Rif.'**
   String get retroTableRef;
 
+  /// No description provided for @retroTableSourceColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Colonna'**
+  String get retroTableSourceColumn;
+
   /// No description provided for @retroTableDescription.
   ///
   /// In it, this message translates to:
@@ -4437,6 +4455,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Azioni'**
   String get retroTableActions;
+
+  /// No description provided for @retroSupportResources.
+  ///
+  /// In it, this message translates to:
+  /// **'Risorse di Supporto'**
+  String get retroSupportResources;
+
+  /// No description provided for @retroMonitoringMethod.
+  ///
+  /// In it, this message translates to:
+  /// **'Metodo di Monitoraggio'**
+  String get retroMonitoringMethod;
 
   /// No description provided for @retroUnassigned.
   ///
@@ -11937,6 +11967,1470 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Cosa dovremmo fare di meno?'**
   String get retroColumnLessDesc;
+
+  /// No description provided for @actionTypeMaintain.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantenere'**
+  String get actionTypeMaintain;
+
+  /// No description provided for @actionTypeStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Fermare'**
+  String get actionTypeStop;
+
+  /// No description provided for @actionTypeBegin.
+  ///
+  /// In it, this message translates to:
+  /// **'Iniziare'**
+  String get actionTypeBegin;
+
+  /// No description provided for @actionTypeIncrease.
+  ///
+  /// In it, this message translates to:
+  /// **'Aumentare'**
+  String get actionTypeIncrease;
+
+  /// No description provided for @actionTypeDecrease.
+  ///
+  /// In it, this message translates to:
+  /// **'Diminuire'**
+  String get actionTypeDecrease;
+
+  /// No description provided for @actionTypePrevent.
+  ///
+  /// In it, this message translates to:
+  /// **'Prevenire'**
+  String get actionTypePrevent;
+
+  /// No description provided for @actionTypeCelebrate.
+  ///
+  /// In it, this message translates to:
+  /// **'Celebrare'**
+  String get actionTypeCelebrate;
+
+  /// No description provided for @actionTypeReplicate.
+  ///
+  /// In it, this message translates to:
+  /// **'Replicare'**
+  String get actionTypeReplicate;
+
+  /// No description provided for @actionTypeShare.
+  ///
+  /// In it, this message translates to:
+  /// **'Condividere'**
+  String get actionTypeShare;
+
+  /// No description provided for @actionTypeProvide.
+  ///
+  /// In it, this message translates to:
+  /// **'Fornire'**
+  String get actionTypeProvide;
+
+  /// No description provided for @actionTypePlan.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianificare'**
+  String get actionTypePlan;
+
+  /// No description provided for @actionTypeLeverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Sfruttare'**
+  String get actionTypeLeverage;
+
+  /// No description provided for @actionTypeRemove.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovere'**
+  String get actionTypeRemove;
+
+  /// No description provided for @actionTypeMitigate.
+  ///
+  /// In it, this message translates to:
+  /// **'Mitigare'**
+  String get actionTypeMitigate;
+
+  /// No description provided for @actionTypeAlign.
+  ///
+  /// In it, this message translates to:
+  /// **'Allineare'**
+  String get actionTypeAlign;
+
+  /// No description provided for @actionTypeEliminate.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare'**
+  String get actionTypeEliminate;
+
+  /// No description provided for @actionTypeImplement.
+  ///
+  /// In it, this message translates to:
+  /// **'Implementare'**
+  String get actionTypeImplement;
+
+  /// No description provided for @actionTypeEnhance.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliorare'**
+  String get actionTypeEnhance;
+
+  /// No description provided for @coachTipSSCWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'Concentrati su comportamenti concreti e osservabili. Ogni elemento deve essere qualcosa su cui il team può agire direttamente. Evita affermazioni vaghe.'**
+  String get coachTipSSCWriting;
+
+  /// No description provided for @coachTipSSCVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota in base all\'impatto e alla fattibilità. Gli elementi più votati diventeranno gli impegni del prossimo sprint.'**
+  String get coachTipSSCVoting;
+
+  /// No description provided for @coachTipSSCDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'Per ogni elemento più votato, definisci CHI farà COSA entro QUANDO. Trasforma le intuizioni in azioni specifiche.'**
+  String get coachTipSSCDiscuss;
+
+  /// No description provided for @coachTipMSGWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea uno spazio sicuro per le emozioni. Tutti i sentimenti sono validi. Concentrati sulla situazione, non sulla persona. Usa affermazioni tipo \'Mi sento...\'.'**
+  String get coachTipMSGWriting;
+
+  /// No description provided for @coachTipMSGVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota per identificare esperienze condivise. I pattern nelle emozioni rivelano dinamiche di team che richiedono attenzione.'**
+  String get coachTipMSGVoting;
+
+  /// No description provided for @coachTipMSGDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'Riconosci le emozioni prima di risolvere i problemi. Chiedi \'Cosa aiuterebbe?\' invece di saltare alle soluzioni. Ascolta attivamente.'**
+  String get coachTipMSGDiscuss;
+
+  /// No description provided for @coachTip4LsWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifletti sugli apprendimenti, non solo sugli eventi. Pensa a quali intuizioni porterai avanti. Ogni L rappresenta una prospettiva diversa.'**
+  String get coachTip4LsWriting;
+
+  /// No description provided for @coachTip4LsVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Prioritizza gli apprendimenti che potrebbero migliorare gli sprint futuri. Concentrati sulla conoscenza trasferibile.'**
+  String get coachTip4LsVoting;
+
+  /// No description provided for @coachTip4LsDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'Trasforma gli apprendimenti in documentazione o modifiche ai processi. Chiedi \'Come possiamo condividere questa conoscenza con altri?\''**
+  String get coachTip4LsDiscuss;
+
+  /// No description provided for @coachTipSailboatWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa la metafora: il Vento ci spinge avanti (abilitatori), le Ancore ci rallentano (bloccanti), gli Scogli sono rischi futuri, l\'Isola è il nostro obiettivo.'**
+  String get coachTipSailboatWriting;
+
+  /// No description provided for @coachTipSailboatVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Prioritizza in base all\'impatto del rischio e al potenziale degli abilitatori. Bilancia l\'affrontare i bloccanti con lo sfruttare i punti di forza.'**
+  String get coachTipSailboatVoting;
+
+  /// No description provided for @coachTipSailboatDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea un registro rischi per gli scogli. Definisci strategie di mitigazione. Sfrutta i venti per superare le ancore.'**
+  String get coachTipSailboatDiscuss;
+
+  /// No description provided for @coachTipDAKIWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'Sii decisivo: Elimina ciò che spreca tempo, Aggiungi ciò che manca, Mantieni ciò che funziona, Migliora ciò che potrebbe essere meglio.'**
+  String get coachTipDAKIWriting;
+
+  /// No description provided for @coachTipDAKIVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Vota pragmaticamente. Concentrati sui cambiamenti che avranno un impatto immediato e misurabile.'**
+  String get coachTipDAKIVoting;
+
+  /// No description provided for @coachTipDAKIDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'Prendi decisioni chiare come team. Per ogni elemento, impegnati in un\'azione specifica o decidi esplicitamente di non agire.'**
+  String get coachTipDAKIDiscuss;
+
+  /// No description provided for @coachTipStarfishWriting.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa le gradazioni: Mantieni (come è), Di Più (aumenta), Di Meno (diminuisci), Stop (elimina), Start (inizia). Questo permette feedback sfumati.'**
+  String get coachTipStarfishWriting;
+
+  /// No description provided for @coachTipStarfishVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Considera lo sforzo vs l\'impatto. Gli elementi \'Di Più\' e \'Di Meno\' potrebbero essere più facili da implementare di \'Start\' e \'Stop\'.'**
+  String get coachTipStarfishVoting;
+
+  /// No description provided for @coachTipStarfishDiscuss.
+  ///
+  /// In it, this message translates to:
+  /// **'Definisci metriche specifiche per \'di più\' e \'di meno\'. Quanto di più? Come misureremo? Stabilisci obiettivi di calibrazione chiari.'**
+  String get coachTipStarfishDiscuss;
+
+  /// No description provided for @discussPromptSSCStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova pratica dovremmo iniziare? Pensa alle lacune nel nostro processo che una nuova abitudine potrebbe colmare.'**
+  String get discussPromptSSCStart;
+
+  /// No description provided for @discussPromptSSCStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa spreca il nostro tempo o energia? Considera le attività che non portano valore proporzionato al loro costo.'**
+  String get discussPromptSSCStop;
+
+  /// No description provided for @discussPromptSSCContinue.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa sta funzionando bene? Riconosci e rafforza le pratiche efficaci.'**
+  String get discussPromptSSCContinue;
+
+  /// No description provided for @discussPromptMSGMad.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha frustrato? Ricorda, stiamo discutendo situazioni, non incolpando individui.'**
+  String get discussPromptMSGMad;
+
+  /// No description provided for @discussPromptMSGSad.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha deluso? Quali aspettative non sono state soddisfatte?'**
+  String get discussPromptMSGSad;
+
+  /// No description provided for @discussPromptMSGGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha reso felice? Quali momenti ti hanno dato soddisfazione questo sprint?'**
+  String get discussPromptMSGGlad;
+
+  /// No description provided for @discussPrompt4LsLiked.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti è piaciuto? Cosa ha reso il lavoro piacevole?'**
+  String get discussPrompt4LsLiked;
+
+  /// No description provided for @discussPrompt4LsLearned.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova competenza, intuizione o conoscenza hai acquisito?'**
+  String get discussPrompt4LsLearned;
+
+  /// No description provided for @discussPrompt4LsLacked.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa è mancato? Quali risorse, supporto o chiarezza avrebbero aiutato?'**
+  String get discussPrompt4LsLacked;
+
+  /// No description provided for @discussPrompt4LsLonged.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa desideri? Cosa renderebbe migliori gli sprint futuri?'**
+  String get discussPrompt4LsLonged;
+
+  /// No description provided for @discussPromptSailboatWind.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ci ha spinto avanti? Quali sono i nostri punti di forza e supporto esterno?'**
+  String get discussPromptSailboatWind;
+
+  /// No description provided for @discussPromptSailboatAnchor.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ci ha rallentato? Quali ostacoli interni o esterni ci hanno frenato?'**
+  String get discussPromptSailboatAnchor;
+
+  /// No description provided for @discussPromptSailboatRock.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali rischi vediamo all\'orizzonte? Cosa potrebbe deragliarci se non affrontato?'**
+  String get discussPromptSailboatRock;
+
+  /// No description provided for @discussPromptSailboatGoal.
+  ///
+  /// In it, this message translates to:
+  /// **'Qual è la nostra destinazione? Siamo allineati su dove stiamo andando?'**
+  String get discussPromptSailboatGoal;
+
+  /// No description provided for @discussPromptDAKIDrop.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo eliminare? Cosa non porta valore?'**
+  String get discussPromptDAKIDrop;
+
+  /// No description provided for @discussPromptDAKIAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo introdurre? Cosa manca dal nostro toolkit?'**
+  String get discussPromptDAKIAdd;
+
+  /// No description provided for @discussPromptDAKIKeep.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dobbiamo preservare? Cosa è essenziale per il nostro successo?'**
+  String get discussPromptDAKIKeep;
+
+  /// No description provided for @discussPromptDAKIImprove.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa potrebbe essere migliore? Dove possiamo migliorare?'**
+  String get discussPromptDAKIImprove;
+
+  /// No description provided for @discussPromptStarfishKeep.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo mantenere esattamente così com\'è?'**
+  String get discussPromptStarfishKeep;
+
+  /// No description provided for @discussPromptStarfishMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo aumentare? Fare di più?'**
+  String get discussPromptStarfishMore;
+
+  /// No description provided for @discussPromptStarfishLess.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo ridurre? Fare di meno?'**
+  String get discussPromptStarfishLess;
+
+  /// No description provided for @discussPromptStarfishStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovremmo eliminare completamente?'**
+  String get discussPromptStarfishStop;
+
+  /// No description provided for @discussPromptStarfishStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova cosa dovremmo iniziare?'**
+  String get discussPromptStarfishStart;
+
+  /// No description provided for @discussPromptGeneric.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali intuizioni sono emerse da questa colonna? Quali pattern vedi?'**
+  String get discussPromptGeneric;
+
+  /// No description provided for @smartPromptSSCStartQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale specifica nuova pratica inizierai, e come misurerai la sua adozione?'**
+  String get smartPromptSSCStartQuestion;
+
+  /// No description provided for @smartPromptSSCStartExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Iniziare standup giornaliero di 15 min alle 9:30, tracciare presenze per 2 settimane\''**
+  String get smartPromptSSCStartExample;
+
+  /// No description provided for @smartPromptSSCStartPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizieremo [pratica specifica] entro [data], misurata da [metrica]'**
+  String get smartPromptSSCStartPlaceholder;
+
+  /// No description provided for @smartPromptSSCStopQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa smetterai di fare, e cosa farai invece?'**
+  String get smartPromptSSCStopQuestion;
+
+  /// No description provided for @smartPromptSSCStopExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Smettere di inviare aggiornamenti status via email, usare il canale Slack #updates invece\''**
+  String get smartPromptSSCStopExample;
+
+  /// No description provided for @smartPromptSSCStopPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Smetteremo di fare [pratica] e invece [alternativa]'**
+  String get smartPromptSSCStopPlaceholder;
+
+  /// No description provided for @smartPromptSSCContinueQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale pratica continuerai, e come ti assicurerai che non svanisca?'**
+  String get smartPromptSSCContinueQuestion;
+
+  /// No description provided for @smartPromptSSCContinueExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Continuare code review entro 4 ore, aggiungere alla Definition of Done\''**
+  String get smartPromptSSCContinueExample;
+
+  /// No description provided for @smartPromptSSCContinuePlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Continueremo [pratica], rafforzata da [meccanismo]'**
+  String get smartPromptSSCContinuePlaceholder;
+
+  /// No description provided for @smartPromptMSGMadQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale azione affronterebbe questa frustrazione e chi la guiderà?'**
+  String get smartPromptMSGMadQuestion;
+
+  /// No description provided for @smartPromptMSGMadExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Programmare meeting con PM per chiarire processo requisiti - Maria entro venerdì\''**
+  String get smartPromptMSGMadExample;
+
+  /// No description provided for @smartPromptMSGMadPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'[Azione per affrontare frustrazione], owner: [nome], entro: [data]'**
+  String get smartPromptMSGMadPlaceholder;
+
+  /// No description provided for @smartPromptMSGSadQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale cambiamento impedirebbe a questa delusione di ripetersi?'**
+  String get smartPromptMSGSadQuestion;
+
+  /// No description provided for @smartPromptMSGSadExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Creare checklist comunicazione per aggiornamenti stakeholder - revisione settimanale\''**
+  String get smartPromptMSGSadExample;
+
+  /// No description provided for @smartPromptMSGSadPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'[Azione preventiva], tracciata via [metodo]'**
+  String get smartPromptMSGSadPlaceholder;
+
+  /// No description provided for @smartPromptMSGGladQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Come possiamo replicare o amplificare ciò che ci ha resi felici?'**
+  String get smartPromptMSGGladQuestion;
+
+  /// No description provided for @smartPromptMSGGladExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Documentare formato sessione pairing e condividere con altri team entro fine settimana\''**
+  String get smartPromptMSGGladExample;
+
+  /// No description provided for @smartPromptMSGGladPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'[Azione per replicare/amplificare], condividere con [audience]'**
+  String get smartPromptMSGGladPlaceholder;
+
+  /// No description provided for @smartPrompt4LsLikedQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Come possiamo assicurare che questa esperienza positiva continui?'**
+  String get smartPrompt4LsLikedQuestion;
+
+  /// No description provided for @smartPrompt4LsLikedExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Rendere la sessione mob programming un evento ricorrente settimanale sul calendario\''**
+  String get smartPrompt4LsLikedExample;
+
+  /// No description provided for @smartPrompt4LsLikedPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'[Azione per preservare esperienza positiva]'**
+  String get smartPrompt4LsLikedPlaceholder;
+
+  /// No description provided for @smartPrompt4LsLearnedQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Come documenterai e condividerai questo apprendimento?'**
+  String get smartPrompt4LsLearnedQuestion;
+
+  /// No description provided for @smartPrompt4LsLearnedExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Scrivere articolo wiki sul nuovo approccio testing, presentare in tech talk il mese prossimo\''**
+  String get smartPrompt4LsLearnedExample;
+
+  /// No description provided for @smartPrompt4LsLearnedPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Documentare in [posizione], condividere via [metodo] entro [data]'**
+  String get smartPrompt4LsLearnedPlaceholder;
+
+  /// No description provided for @smartPrompt4LsLackedQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali specifiche risorse o supporto richiederai e a chi?'**
+  String get smartPrompt4LsLackedQuestion;
+
+  /// No description provided for @smartPrompt4LsLackedExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Richiedere budget formazione CI/CD al manager - inviare entro prossimo planning\''**
+  String get smartPrompt4LsLackedExample;
+
+  /// No description provided for @smartPrompt4LsLackedPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiedere [risorsa] da [persona/team], deadline: [data]'**
+  String get smartPrompt4LsLackedPlaceholder;
+
+  /// No description provided for @smartPrompt4LsLongedQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale primo passo concreto ti avvicinerà a questo desiderio?'**
+  String get smartPrompt4LsLongedQuestion;
+
+  /// No description provided for @smartPrompt4LsLongedExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Bozza proposta per 20% tempo per progetti side - condividere con team lead lunedì\''**
+  String get smartPrompt4LsLongedExample;
+
+  /// No description provided for @smartPrompt4LsLongedPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Primo passo verso [desiderio]: [azione] entro [data]'**
+  String get smartPrompt4LsLongedPlaceholder;
+
+  /// No description provided for @smartPromptSailboatWindQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Come sfrutterai questo abilitatore per accelerare il progresso?'**
+  String get smartPromptSailboatWindQuestion;
+
+  /// No description provided for @smartPromptSailboatWindExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Usare forte competenza QA per fare mentoring ai junior - programmare prima sessione questa settimana\''**
+  String get smartPromptSailboatWindExample;
+
+  /// No description provided for @smartPromptSailboatWindPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Sfruttare [abilitatore] con [azione specifica]'**
+  String get smartPromptSailboatWindPlaceholder;
+
+  /// No description provided for @smartPromptSailboatAnchorQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale azione specifica rimuoverà o ridurrà questo bloccante?'**
+  String get smartPromptSailboatAnchorQuestion;
+
+  /// No description provided for @smartPromptSailboatAnchorExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Escalare problema infrastruttura al CTO - preparare brief entro mercoledì\''**
+  String get smartPromptSailboatAnchorExample;
+
+  /// No description provided for @smartPromptSailboatAnchorPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovere [bloccante] con [azione], escalare a [persona] se necessario'**
+  String get smartPromptSailboatAnchorPlaceholder;
+
+  /// No description provided for @smartPromptSailboatRockQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale strategia di mitigazione implementerai per questo rischio?'**
+  String get smartPromptSailboatRockQuestion;
+
+  /// No description provided for @smartPromptSailboatRockExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Aggiungere piano fallback per dipendenza vendor - documentare alternative entro fine sprint\''**
+  String get smartPromptSailboatRockExample;
+
+  /// No description provided for @smartPromptSailboatRockPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Mitigare [rischio] con [strategia], trigger: [condizione]'**
+  String get smartPromptSailboatRockPlaceholder;
+
+  /// No description provided for @smartPromptSailboatGoalQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale milestone confermerà il progresso verso questo obiettivo?'**
+  String get smartPromptSailboatGoalQuestion;
+
+  /// No description provided for @smartPromptSailboatGoalExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Demo MVP agli stakeholder entro 15 Feb, raccogliere feedback via survey\''**
+  String get smartPromptSailboatGoalExample;
+
+  /// No description provided for @smartPromptSailboatGoalPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Milestone verso [obiettivo]: [deliverable] entro [data]'**
+  String get smartPromptSailboatGoalPlaceholder;
+
+  /// No description provided for @smartPromptDAKIDropQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa eliminerai e come ti assicurerai che non ritorni?'**
+  String get smartPromptDAKIDropQuestion;
+
+  /// No description provided for @smartPromptDAKIDropExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Rimuovere step deployment manuali - automatizzare entro fine sprint\''**
+  String get smartPromptDAKIDropExample;
+
+  /// No description provided for @smartPromptDAKIDropPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare [pratica], prevenire ritorno con [meccanismo]'**
+  String get smartPromptDAKIDropPlaceholder;
+
+  /// No description provided for @smartPromptDAKIAddQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova pratica introdurrai e come validerai che funziona?'**
+  String get smartPromptDAKIAddQuestion;
+
+  /// No description provided for @smartPromptDAKIAddExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Aggiungere sistema feature flag - provare su 2 feature, rivedere risultati in 2 settimane\''**
+  String get smartPromptDAKIAddExample;
+
+  /// No description provided for @smartPromptDAKIAddPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungere [pratica], validare successo via [metrica]'**
+  String get smartPromptDAKIAddPlaceholder;
+
+  /// No description provided for @smartPromptDAKIKeepQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Come proteggerai questa pratica dall\'essere deprioritizzata?'**
+  String get smartPromptDAKIKeepQuestion;
+
+  /// No description provided for @smartPromptDAKIKeepExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Mantenere standard code review - aggiungere a team charter, audit mensile\''**
+  String get smartPromptDAKIKeepExample;
+
+  /// No description provided for @smartPromptDAKIKeepPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Proteggere [pratica] con [meccanismo]'**
+  String get smartPromptDAKIKeepPlaceholder;
+
+  /// No description provided for @smartPromptDAKIImproveQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale specifico miglioramento farai e come misurerai il miglioramento?'**
+  String get smartPromptDAKIImproveQuestion;
+
+  /// No description provided for @smartPromptDAKIImproveExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Migliorare copertura test dal 60% al 80% - focus su modulo pagamenti prima\''**
+  String get smartPromptDAKIImproveExample;
+
+  /// No description provided for @smartPromptDAKIImprovePlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliorare [pratica] da [attuale] a [target] entro [data]'**
+  String get smartPromptDAKIImprovePlaceholder;
+
+  /// No description provided for @smartPromptStarfishKeepQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale pratica manterrai e chi è owner per garantire coerenza?'**
+  String get smartPromptStarfishKeepQuestion;
+
+  /// No description provided for @smartPromptStarfishKeepExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Mantenere demo del venerdì - Tom si assicura sala prenotata, agenda condivisa entro giovedì\''**
+  String get smartPromptStarfishKeepExample;
+
+  /// No description provided for @smartPromptStarfishKeepPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantenere [pratica], owner: [nome]'**
+  String get smartPromptStarfishKeepPlaceholder;
+
+  /// No description provided for @smartPromptStarfishMoreQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa aumenterai e di quanto?'**
+  String get smartPromptStarfishMoreQuestion;
+
+  /// No description provided for @smartPromptStarfishMoreExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Aumentare pair programming da 2h a 6h a settimana per sviluppatore\''**
+  String get smartPromptStarfishMoreExample;
+
+  /// No description provided for @smartPromptStarfishMorePlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Aumentare [pratica] da [livello attuale] a [livello target]'**
+  String get smartPromptStarfishMorePlaceholder;
+
+  /// No description provided for @smartPromptStarfishLessQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ridurrai e di quanto?'**
+  String get smartPromptStarfishLessQuestion;
+
+  /// No description provided for @smartPromptStarfishLessExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Ridurre meeting da 10h a 6h a settimana - cancellare review ricorrente\''**
+  String get smartPromptStarfishLessExample;
+
+  /// No description provided for @smartPromptStarfishLessPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Ridurre [pratica] da [livello attuale] a [livello target]'**
+  String get smartPromptStarfishLessPlaceholder;
+
+  /// No description provided for @smartPromptStarfishStopQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa smetterai completamente di fare e cosa lo sostituisce (se qualcosa)?'**
+  String get smartPromptStarfishStopQuestion;
+
+  /// No description provided for @smartPromptStarfishStopExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Smettere tracking tempo dettagliato sui task - stime basate su fiducia invece\''**
+  String get smartPromptStarfishStopExample;
+
+  /// No description provided for @smartPromptStarfishStopPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Smettere [pratica], sostituire con [alternativa] o niente'**
+  String get smartPromptStarfishStopPlaceholder;
+
+  /// No description provided for @smartPromptStarfishStartQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova pratica inizierai e quando sarà la prima occorrenza?'**
+  String get smartPromptStarfishStartQuestion;
+
+  /// No description provided for @smartPromptStarfishStartExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Iniziare tech debt Tuesday - prima sessione prossima settimana, 2h tempo protetto\''**
+  String get smartPromptStarfishStartExample;
+
+  /// No description provided for @smartPromptStarfishStartPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Iniziare [pratica], prima occorrenza: [data/ora]'**
+  String get smartPromptStarfishStartPlaceholder;
+
+  /// No description provided for @smartPromptGenericQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale azione specifica affronterà questo elemento?'**
+  String get smartPromptGenericQuestion;
+
+  /// No description provided for @smartPromptGenericExample.
+  ///
+  /// In it, this message translates to:
+  /// **'es., \'Definire azione specifica con owner, deadline, e criteri di successo\''**
+  String get smartPromptGenericExample;
+
+  /// No description provided for @smartPromptGenericPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'[Azione], owner: [nome], entro: [data]'**
+  String get smartPromptGenericPlaceholder;
+
+  /// No description provided for @methodologyFocusAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Orientato all\'azione: si concentra su cambiamenti comportamentali concreti'**
+  String get methodologyFocusAction;
+
+  /// No description provided for @methodologyFocusEmotion.
+  ///
+  /// In it, this message translates to:
+  /// **'Focalizzato sulle emozioni: esplora i sentimenti del team per costruire sicurezza psicologica'**
+  String get methodologyFocusEmotion;
+
+  /// No description provided for @methodologyFocusLearning.
+  ///
+  /// In it, this message translates to:
+  /// **'Riflessivo sull\'apprendimento: enfatizza la cattura e condivisione della conoscenza'**
+  String get methodologyFocusLearning;
+
+  /// No description provided for @methodologyFocusRisk.
+  ///
+  /// In it, this message translates to:
+  /// **'Rischio e Obiettivo: bilancia abilitatori, bloccanti, rischi e obiettivi'**
+  String get methodologyFocusRisk;
+
+  /// No description provided for @methodologyFocusCalibration.
+  ///
+  /// In it, this message translates to:
+  /// **'Calibrazione: usa gradazioni (più/meno) per aggiustamenti sfumati'**
+  String get methodologyFocusCalibration;
+
+  /// No description provided for @methodologyFocusDecision.
+  ///
+  /// In it, this message translates to:
+  /// **'Decisionale: guida decisioni chiare del team sulle pratiche'**
+  String get methodologyFocusDecision;
+
+  /// No description provided for @exportSheetOverview.
+  ///
+  /// In it, this message translates to:
+  /// **'Panoramica'**
+  String get exportSheetOverview;
+
+  /// No description provided for @exportSheetActionItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Azioni'**
+  String get exportSheetActionItems;
+
+  /// No description provided for @exportSheetBoardItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Board'**
+  String get exportSheetBoardItems;
+
+  /// No description provided for @exportSheetTeamHealth.
+  ///
+  /// In it, this message translates to:
+  /// **'Salute del Team'**
+  String get exportSheetTeamHealth;
+
+  /// No description provided for @exportSheetLessonsLearned.
+  ///
+  /// In it, this message translates to:
+  /// **'Lezioni Apprese'**
+  String get exportSheetLessonsLearned;
+
+  /// No description provided for @exportSheetRiskRegister.
+  ///
+  /// In it, this message translates to:
+  /// **'Registro Rischi'**
+  String get exportSheetRiskRegister;
+
+  /// No description provided for @exportSheetCalibrationMatrix.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice Calibrazione'**
+  String get exportSheetCalibrationMatrix;
+
+  /// No description provided for @exportSheetDecisionLog.
+  ///
+  /// In it, this message translates to:
+  /// **'Registro Decisioni'**
+  String get exportSheetDecisionLog;
+
+  /// No description provided for @exportHeaderRetrospectiveReport.
+  ///
+  /// In it, this message translates to:
+  /// **'REPORT RETROSPETTIVA'**
+  String get exportHeaderRetrospectiveReport;
+
+  /// No description provided for @exportHeaderTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo:'**
+  String get exportHeaderTitle;
+
+  /// No description provided for @exportHeaderDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data:'**
+  String get exportHeaderDate;
+
+  /// No description provided for @exportHeaderTemplate.
+  ///
+  /// In it, this message translates to:
+  /// **'Template:'**
+  String get exportHeaderTemplate;
+
+  /// No description provided for @exportHeaderMethodology.
+  ///
+  /// In it, this message translates to:
+  /// **'Focus Metodologico:'**
+  String get exportHeaderMethodology;
+
+  /// No description provided for @exportHeaderSentiments.
+  ///
+  /// In it, this message translates to:
+  /// **'Sentimenti (Media):'**
+  String get exportHeaderSentiments;
+
+  /// No description provided for @exportHeaderParticipants.
+  ///
+  /// In it, this message translates to:
+  /// **'PARTECIPANTI'**
+  String get exportHeaderParticipants;
+
+  /// No description provided for @exportHeaderSummary.
+  ///
+  /// In it, this message translates to:
+  /// **'RIEPILOGO'**
+  String get exportHeaderSummary;
+
+  /// No description provided for @exportHeaderTotalItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Totali:'**
+  String get exportHeaderTotalItems;
+
+  /// No description provided for @exportHeaderActionItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Azioni:'**
+  String get exportHeaderActionItems;
+
+  /// No description provided for @exportHeaderSuggestedFollowUp.
+  ///
+  /// In it, this message translates to:
+  /// **'Follow-up Suggerito:'**
+  String get exportHeaderSuggestedFollowUp;
+
+  /// No description provided for @exportTeamHealthTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'ANALISI SALUTE DEL TEAM'**
+  String get exportTeamHealthTitle;
+
+  /// No description provided for @exportTeamHealthEmotionalDistribution.
+  ///
+  /// In it, this message translates to:
+  /// **'Distribuzione Emotiva'**
+  String get exportTeamHealthEmotionalDistribution;
+
+  /// No description provided for @exportTeamHealthMadCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Mad:'**
+  String get exportTeamHealthMadCount;
+
+  /// No description provided for @exportTeamHealthSadCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Sad:'**
+  String get exportTeamHealthSadCount;
+
+  /// No description provided for @exportTeamHealthGladCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Glad:'**
+  String get exportTeamHealthGladCount;
+
+  /// No description provided for @exportTeamHealthMadItems.
+  ///
+  /// In it, this message translates to:
+  /// **'FRUSTRAZIONI (Mad)'**
+  String get exportTeamHealthMadItems;
+
+  /// No description provided for @exportTeamHealthSadItems.
+  ///
+  /// In it, this message translates to:
+  /// **'DELUSIONI (Sad)'**
+  String get exportTeamHealthSadItems;
+
+  /// No description provided for @exportTeamHealthGladItems.
+  ///
+  /// In it, this message translates to:
+  /// **'CELEBRAZIONI (Glad)'**
+  String get exportTeamHealthGladItems;
+
+  /// No description provided for @exportTeamHealthRecommendation.
+  ///
+  /// In it, this message translates to:
+  /// **'Raccomandazione Salute Team:'**
+  String get exportTeamHealthRecommendation;
+
+  /// No description provided for @exportTeamHealthHighFrustration.
+  ///
+  /// In it, this message translates to:
+  /// **'Alto livello di frustrazione rilevato. Considera di facilitare una sessione focalizzata sulla risoluzione dei problemi.'**
+  String get exportTeamHealthHighFrustration;
+
+  /// No description provided for @exportTeamHealthBalanced.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato emotivo equilibrato. Il team mostra sane capacità di riflessione.'**
+  String get exportTeamHealthBalanced;
+
+  /// No description provided for @exportTeamHealthPositive.
+  ///
+  /// In it, this message translates to:
+  /// **'Morale del team positivo. Sfrutta questa energia per miglioramenti sfidanti.'**
+  String get exportTeamHealthPositive;
+
+  /// No description provided for @exportLessonsLearnedTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'REGISTRO LEZIONI APPRESE'**
+  String get exportLessonsLearnedTitle;
+
+  /// No description provided for @exportLessonsLearnedWhatWorked.
+  ///
+  /// In it, this message translates to:
+  /// **'COSA HA FUNZIONATO (Liked)'**
+  String get exportLessonsLearnedWhatWorked;
+
+  /// No description provided for @exportLessonsLearnedNewSkills.
+  ///
+  /// In it, this message translates to:
+  /// **'NUOVE COMPETENZE E INTUIZIONI (Learned)'**
+  String get exportLessonsLearnedNewSkills;
+
+  /// No description provided for @exportLessonsLearnedGaps.
+  ///
+  /// In it, this message translates to:
+  /// **'LACUNE E ELEMENTI MANCANTI (Lacked)'**
+  String get exportLessonsLearnedGaps;
+
+  /// No description provided for @exportLessonsLearnedWishes.
+  ///
+  /// In it, this message translates to:
+  /// **'ASPIRAZIONI FUTURE (Longed For)'**
+  String get exportLessonsLearnedWishes;
+
+  /// No description provided for @exportLessonsLearnedKnowledgeActions.
+  ///
+  /// In it, this message translates to:
+  /// **'Azioni di Condivisione Conoscenza'**
+  String get exportLessonsLearnedKnowledgeActions;
+
+  /// No description provided for @exportLessonsLearnedDocumentationNeeded.
+  ///
+  /// In it, this message translates to:
+  /// **'Documentazione Necessaria:'**
+  String get exportLessonsLearnedDocumentationNeeded;
+
+  /// No description provided for @exportLessonsLearnedTrainingNeeded.
+  ///
+  /// In it, this message translates to:
+  /// **'Formazione/Condivisione Necessaria:'**
+  String get exportLessonsLearnedTrainingNeeded;
+
+  /// No description provided for @exportRiskRegisterTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'REGISTRO RISCHI E ABILITATORI'**
+  String get exportRiskRegisterTitle;
+
+  /// No description provided for @exportRiskRegisterEnablers.
+  ///
+  /// In it, this message translates to:
+  /// **'ABILITATORI (Vento)'**
+  String get exportRiskRegisterEnablers;
+
+  /// No description provided for @exportRiskRegisterBlockers.
+  ///
+  /// In it, this message translates to:
+  /// **'BLOCCANTI (Ancora)'**
+  String get exportRiskRegisterBlockers;
+
+  /// No description provided for @exportRiskRegisterRisks.
+  ///
+  /// In it, this message translates to:
+  /// **'RISCHI (Scogli)'**
+  String get exportRiskRegisterRisks;
+
+  /// No description provided for @exportRiskRegisterGoals.
+  ///
+  /// In it, this message translates to:
+  /// **'OBIETTIVI (Isola)'**
+  String get exportRiskRegisterGoals;
+
+  /// No description provided for @exportRiskRegisterRiskItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Rischio'**
+  String get exportRiskRegisterRiskItem;
+
+  /// No description provided for @exportRiskRegisterImpact.
+  ///
+  /// In it, this message translates to:
+  /// **'Impatto Potenziale'**
+  String get exportRiskRegisterImpact;
+
+  /// No description provided for @exportRiskRegisterMitigation.
+  ///
+  /// In it, this message translates to:
+  /// **'Azione di Mitigazione'**
+  String get exportRiskRegisterMitigation;
+
+  /// No description provided for @exportRiskRegisterStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato'**
+  String get exportRiskRegisterStatus;
+
+  /// No description provided for @exportRiskRegisterGoalAlignment.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica Allineamento Obiettivi:'**
+  String get exportRiskRegisterGoalAlignment;
+
+  /// No description provided for @exportRiskRegisterGoalAlignmentNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Verificare se le azioni correnti sono allineate con gli obiettivi dichiarati.'**
+  String get exportRiskRegisterGoalAlignmentNote;
+
+  /// No description provided for @exportCalibrationTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'MATRICE DI CALIBRAZIONE'**
+  String get exportCalibrationTitle;
+
+  /// No description provided for @exportCalibrationKeepDoing.
+  ///
+  /// In it, this message translates to:
+  /// **'CONTINUARE A FARE'**
+  String get exportCalibrationKeepDoing;
+
+  /// No description provided for @exportCalibrationDoMore.
+  ///
+  /// In it, this message translates to:
+  /// **'FARE DI PIÙ'**
+  String get exportCalibrationDoMore;
+
+  /// No description provided for @exportCalibrationDoLess.
+  ///
+  /// In it, this message translates to:
+  /// **'FARE DI MENO'**
+  String get exportCalibrationDoLess;
+
+  /// No description provided for @exportCalibrationStopDoing.
+  ///
+  /// In it, this message translates to:
+  /// **'SMETTERE DI FARE'**
+  String get exportCalibrationStopDoing;
+
+  /// No description provided for @exportCalibrationStartDoing.
+  ///
+  /// In it, this message translates to:
+  /// **'INIZIARE A FARE'**
+  String get exportCalibrationStartDoing;
+
+  /// No description provided for @exportCalibrationPractice.
+  ///
+  /// In it, this message translates to:
+  /// **'Pratica'**
+  String get exportCalibrationPractice;
+
+  /// No description provided for @exportCalibrationCurrentState.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato Attuale'**
+  String get exportCalibrationCurrentState;
+
+  /// No description provided for @exportCalibrationTargetState.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato Obiettivo'**
+  String get exportCalibrationTargetState;
+
+  /// No description provided for @exportCalibrationAdjustment.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiustamento'**
+  String get exportCalibrationAdjustment;
+
+  /// No description provided for @exportCalibrationNote.
+  ///
+  /// In it, this message translates to:
+  /// **'La calibrazione si concentra sulla messa a punto delle pratiche esistenti piuttosto che su cambiamenti radicali.'**
+  String get exportCalibrationNote;
+
+  /// No description provided for @exportDecisionLogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'REGISTRO DECISIONI'**
+  String get exportDecisionLogTitle;
+
+  /// No description provided for @exportDecisionLogDrop.
+  ///
+  /// In it, this message translates to:
+  /// **'DECISIONI DA ABBANDONARE'**
+  String get exportDecisionLogDrop;
+
+  /// No description provided for @exportDecisionLogAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'DECISIONI DA AGGIUNGERE'**
+  String get exportDecisionLogAdd;
+
+  /// No description provided for @exportDecisionLogKeep.
+  ///
+  /// In it, this message translates to:
+  /// **'DECISIONI DA MANTENERE'**
+  String get exportDecisionLogKeep;
+
+  /// No description provided for @exportDecisionLogImprove.
+  ///
+  /// In it, this message translates to:
+  /// **'DECISIONI DA MIGLIORARE'**
+  String get exportDecisionLogImprove;
+
+  /// No description provided for @exportDecisionLogDecision.
+  ///
+  /// In it, this message translates to:
+  /// **'Decisione'**
+  String get exportDecisionLogDecision;
+
+  /// No description provided for @exportDecisionLogRationale.
+  ///
+  /// In it, this message translates to:
+  /// **'Motivazione'**
+  String get exportDecisionLogRationale;
+
+  /// No description provided for @exportDecisionLogOwner.
+  ///
+  /// In it, this message translates to:
+  /// **'Responsabile'**
+  String get exportDecisionLogOwner;
+
+  /// No description provided for @exportDecisionLogDeadline.
+  ///
+  /// In it, this message translates to:
+  /// **'Scadenza'**
+  String get exportDecisionLogDeadline;
+
+  /// No description provided for @exportDecisionLogPrioritizationNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Raccomandazione Priorità:'**
+  String get exportDecisionLogPrioritizationNote;
+
+  /// No description provided for @exportDecisionLogPrioritizationHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Concentrarsi prima sulle decisioni DROP per liberare capacità, poi aggiungere nuove pratiche.'**
+  String get exportDecisionLogPrioritizationHint;
+
+  /// No description provided for @exportNoItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun elemento registrato'**
+  String get exportNoItems;
+
+  /// No description provided for @exportNoActionItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna azione'**
+  String get exportNoActionItems;
+
+  /// No description provided for @exportNotApplicable.
+  ///
+  /// In it, this message translates to:
+  /// **'N/D'**
+  String get exportNotApplicable;
+
+  /// No description provided for @facilitatorGuideTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida Raccolta Azioni'**
+  String get facilitatorGuideTitle;
+
+  /// No description provided for @facilitatorGuideCoverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Copertura'**
+  String get facilitatorGuideCoverage;
+
+  /// No description provided for @facilitatorGuideComplete.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa'**
+  String get facilitatorGuideComplete;
+
+  /// No description provided for @facilitatorGuideIncomplete.
+  ///
+  /// In it, this message translates to:
+  /// **'Incompleta'**
+  String get facilitatorGuideIncomplete;
+
+  /// No description provided for @facilitatorGuideSuggestedOrder.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordine Suggerito:'**
+  String get facilitatorGuideSuggestedOrder;
+
+  /// No description provided for @facilitatorGuideNextColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Prossimo: Raccogli azione da'**
+  String get facilitatorGuideNextColumn;
+
+  /// No description provided for @facilitatorGuideMissingRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Azioni richieste mancanti'**
+  String get facilitatorGuideMissingRequired;
+
+  /// No description provided for @facilitatorGuideAllCovered.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le colonne richieste coperte!'**
+  String get facilitatorGuideAllCovered;
+
+  /// No description provided for @facilitatorGuideColumnHasAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Ha azione'**
+  String get facilitatorGuideColumnHasAction;
+
+  /// No description provided for @facilitatorGuideColumnNoAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna azione'**
+  String get facilitatorGuideColumnNoAction;
+
+  /// No description provided for @facilitatorGuideRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiesto'**
+  String get facilitatorGuideRequired;
+
+  /// No description provided for @facilitatorGuideOptional.
+  ///
+  /// In it, this message translates to:
+  /// **'Opzionale'**
+  String get facilitatorGuideOptional;
+
+  /// No description provided for @collectionRationaleSSC.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima Stop per rimuovere bloccanti, poi Start nuove pratiche, infine Continue ciò che funziona.'**
+  String get collectionRationaleSSC;
+
+  /// No description provided for @collectionRationaleMSG.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima affrontare le frustrazioni, poi le delusioni, poi celebrare i successi.'**
+  String get collectionRationaleMSG;
+
+  /// No description provided for @collectionRationale4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima colmare le lacune, poi pianificare aspirazioni future, mantenere ciò che funziona, condividere apprendimenti.'**
+  String get collectionRationale4Ls;
+
+  /// No description provided for @collectionRationaleSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima mitigare i rischi, rimuovere bloccanti, poi sfruttare gli abilitatori e allinearsi agli obiettivi.'**
+  String get collectionRationaleSailboat;
+
+  /// No description provided for @collectionRationaleStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Fermare pratiche negative, ridurne altre, mantenere quelle buone, aumentare quelle di valore, iniziarne di nuove.'**
+  String get collectionRationaleStarfish;
+
+  /// No description provided for @collectionRationaleDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'Drop per liberare capacità, Add nuove pratiche, Improve quelle esistenti, Keep ciò che funziona.'**
+  String get collectionRationaleDAKI;
+
+  /// No description provided for @missingSuggestionSSCStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Considera quale pratica sta bloccando il team e dovrebbe essere fermata.'**
+  String get missingSuggestionSSCStop;
+
+  /// No description provided for @missingSuggestionSSCStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Pensa a quale nuova pratica potrebbe aiutare il team a migliorare.'**
+  String get missingSuggestionSSCStart;
+
+  /// No description provided for @missingSuggestionMSGMad.
+  ///
+  /// In it, this message translates to:
+  /// **'Affronta le frustrazioni del team - cosa sta causando rabbia?'**
+  String get missingSuggestionMSGMad;
+
+  /// No description provided for @missingSuggestionMSGSad.
+  ///
+  /// In it, this message translates to:
+  /// **'Risolvi le delusioni - cosa ha reso triste il team?'**
+  String get missingSuggestionMSGSad;
+
+  /// No description provided for @missingSuggestion4LsLacked.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa mancava di cui il team aveva bisogno?'**
+  String get missingSuggestion4LsLacked;
+
+  /// No description provided for @missingSuggestion4LsLonged.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa desidera il team per il futuro?'**
+  String get missingSuggestion4LsLonged;
+
+  /// No description provided for @missingSuggestionSailboatRock.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali rischi minacciano il progresso del team?'**
+  String get missingSuggestionSailboatRock;
+
+  /// No description provided for @missingSuggestionSailboatAnchor.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa sta trattenendo il team dal raggiungere gli obiettivi?'**
+  String get missingSuggestionSailboatAnchor;
+
+  /// No description provided for @missingSuggestionStarfishStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale pratica il team dovrebbe completamente smettere di fare?'**
+  String get missingSuggestionStarfishStop;
+
+  /// No description provided for @missingSuggestionStarfishStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova pratica il team dovrebbe iniziare?'**
+  String get missingSuggestionStarfishStart;
+
+  /// No description provided for @missingSuggestionDAKIDrop.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovrebbe il team decidere di eliminare?'**
+  String get missingSuggestionDAKIDrop;
+
+  /// No description provided for @missingSuggestionDAKIAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova decisione dovrebbe prendere il team?'**
+  String get missingSuggestionDAKIAdd;
+
+  /// No description provided for @missingSuggestionGeneric.
+  ///
+  /// In it, this message translates to:
+  /// **'Considera di creare un\'azione da questa colonna.'**
+  String get missingSuggestionGeneric;
 }
 
 class _AppLocalizationsDelegate

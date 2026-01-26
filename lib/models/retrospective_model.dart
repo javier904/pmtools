@@ -533,12 +533,16 @@ class ActionItem {
   final bool isCompleted;
   final DateTime? completedAt;
   final ActionPriority priority;
-  
+
   // V2 Fields
   final String? resources; // e.g., "Budget: 500$"
   final String? monitoring; // e.g., "Check weekly"
   final String? sourceRefId; // ID della card retro da cui deriva
   final String? sourceRefContent; // Contenuto della card retro da cui deriva
+  final String? sourceColumnId; // ID della colonna da cui deriva
+
+  // V3 Fields - Methodology-Driven Action Types
+  final ActionType? actionType; // Tipo azione suggerito dalla metodologia
 
   String get title => description; // Legacy compatibility
 
@@ -557,6 +561,8 @@ class ActionItem {
     this.monitoring,
     this.sourceRefId,
     this.sourceRefContent,
+    this.sourceColumnId,
+    this.actionType,
   });
 
   factory ActionItem.fromMap(Map<String, dynamic> data) {
@@ -578,6 +584,13 @@ class ActionItem {
       monitoring: data['monitoring'],
       sourceRefId: data['sourceRefId'],
       sourceRefContent: data['sourceRefContent'],
+      sourceColumnId: data['sourceColumnId'],
+      actionType: data['actionType'] != null
+          ? ActionType.values.firstWhere(
+              (t) => t.name == data['actionType'],
+              orElse: () => ActionType.begin,
+            )
+          : null,
     );
   }
 
@@ -596,6 +609,8 @@ class ActionItem {
     String? monitoring,
     String? sourceRefId,
     String? sourceRefContent,
+    String? sourceColumnId,
+    ActionType? actionType,
   }) {
     return ActionItem(
       id: id ?? this.id,
@@ -612,6 +627,8 @@ class ActionItem {
       monitoring: monitoring ?? this.monitoring,
       sourceRefId: sourceRefId ?? this.sourceRefId,
       sourceRefContent: sourceRefContent ?? this.sourceRefContent,
+      sourceColumnId: sourceColumnId ?? this.sourceColumnId,
+      actionType: actionType ?? this.actionType,
     );
   }
 
@@ -631,14 +648,211 @@ class ActionItem {
       'monitoring': monitoring,
       'sourceRefId': sourceRefId,
       'sourceRefContent': sourceRefContent,
+      if (sourceColumnId != null) 'sourceColumnId': sourceColumnId,
+      if (actionType != null) 'actionType': actionType!.name,
     };
   }
 }
 
 enum ActionPriority { low, medium, high, critical }
 extension ActionPriorityExt on ActionPriority {
-     String get displayName => name; 
+     String get displayName => name;
      // simplified for brevity, assume original logic or UI handles it
+}
+
+/// Tipo di azione derivato dalla metodologia retrospettiva
+enum ActionType {
+  // Universal
+  maintain,   // Keep doing (Continue, Keep)
+  stop,       // Stop doing completely
+  begin,      // Start doing something new
+
+  // Nuanced (Starfish)
+  increase,   // Do more of
+  decrease,   // Do less of
+
+  // Emotional (Mad/Sad/Glad)
+  prevent,    // Prevent frustration
+  celebrate,  // Celebrate success
+
+  // Learning (4Ls)
+  replicate,  // Replicate what worked
+  share,      // Share knowledge learned
+  provide,    // Provide what was lacking
+  plan,       // Plan for what's longed for
+
+  // Risk (Sailboat)
+  leverage,   // Leverage enablers (Wind)
+  remove,     // Remove blockers (Anchors)
+  mitigate,   // Mitigate risks (Rocks)
+  align,      // Align on goals (Island)
+
+  // DAKI specific
+  eliminate,  // Eliminate (Drop)
+  implement,  // Implement new (Add)
+  enhance,    // Enhance existing (Improve)
+}
+
+extension ActionTypeExt on ActionType {
+  String get displayName {
+    switch (this) {
+      case ActionType.maintain: return 'Maintain';
+      case ActionType.stop: return 'Stop';
+      case ActionType.begin: return 'Begin';
+      case ActionType.increase: return 'Increase';
+      case ActionType.decrease: return 'Decrease';
+      case ActionType.prevent: return 'Prevent';
+      case ActionType.celebrate: return 'Celebrate';
+      case ActionType.replicate: return 'Replicate';
+      case ActionType.share: return 'Share';
+      case ActionType.provide: return 'Provide';
+      case ActionType.plan: return 'Plan';
+      case ActionType.leverage: return 'Leverage';
+      case ActionType.remove: return 'Remove';
+      case ActionType.mitigate: return 'Mitigate';
+      case ActionType.align: return 'Align';
+      case ActionType.eliminate: return 'Eliminate';
+      case ActionType.implement: return 'Implement';
+      case ActionType.enhance: return 'Enhance';
+    }
+  }
+
+  String getLocalizedName(AppLocalizations l10n) {
+    switch (this) {
+      case ActionType.maintain: return l10n.actionTypeMaintain;
+      case ActionType.stop: return l10n.actionTypeStop;
+      case ActionType.begin: return l10n.actionTypeBegin;
+      case ActionType.increase: return l10n.actionTypeIncrease;
+      case ActionType.decrease: return l10n.actionTypeDecrease;
+      case ActionType.prevent: return l10n.actionTypePrevent;
+      case ActionType.celebrate: return l10n.actionTypeCelebrate;
+      case ActionType.replicate: return l10n.actionTypeReplicate;
+      case ActionType.share: return l10n.actionTypeShare;
+      case ActionType.provide: return l10n.actionTypeProvide;
+      case ActionType.plan: return l10n.actionTypePlan;
+      case ActionType.leverage: return l10n.actionTypeLeverage;
+      case ActionType.remove: return l10n.actionTypeRemove;
+      case ActionType.mitigate: return l10n.actionTypeMitigate;
+      case ActionType.align: return l10n.actionTypeAlign;
+      case ActionType.eliminate: return l10n.actionTypeEliminate;
+      case ActionType.implement: return l10n.actionTypeImplement;
+      case ActionType.enhance: return l10n.actionTypeEnhance;
+    }
+  }
+
+  /// Colore associato al tipo di azione
+  Color get color {
+    switch (this) {
+      case ActionType.maintain:
+      case ActionType.replicate:
+      case ActionType.leverage:
+        return const Color(0xFF4CAF50); // Green - keep/leverage
+      case ActionType.stop:
+      case ActionType.eliminate:
+      case ActionType.remove:
+        return const Color(0xFFF44336); // Red - stop/remove
+      case ActionType.begin:
+      case ActionType.implement:
+      case ActionType.plan:
+        return const Color(0xFF2196F3); // Blue - start/new
+      case ActionType.increase:
+        return const Color(0xFF8BC34A); // Light green - more
+      case ActionType.decrease:
+        return const Color(0xFFFF9800); // Orange - less
+      case ActionType.prevent:
+        return const Color(0xFFE91E63); // Pink - prevent
+      case ActionType.celebrate:
+        return const Color(0xFFFFEB3B); // Yellow - celebrate
+      case ActionType.share:
+        return const Color(0xFF9C27B0); // Purple - share knowledge
+      case ActionType.provide:
+        return const Color(0xFF00BCD4); // Cyan - provide
+      case ActionType.mitigate:
+        return const Color(0xFFFF5722); // Deep orange - risk
+      case ActionType.align:
+        return const Color(0xFF3F51B5); // Indigo - align
+      case ActionType.enhance:
+        return const Color(0xFF009688); // Teal - improve
+    }
+  }
+
+  /// Icona associata al tipo di azione
+  IconData get icon {
+    switch (this) {
+      case ActionType.maintain: return Icons.check_circle;
+      case ActionType.stop: return Icons.cancel;
+      case ActionType.begin: return Icons.play_circle;
+      case ActionType.increase: return Icons.trending_up;
+      case ActionType.decrease: return Icons.trending_down;
+      case ActionType.prevent: return Icons.shield;
+      case ActionType.celebrate: return Icons.celebration;
+      case ActionType.replicate: return Icons.copy_all;
+      case ActionType.share: return Icons.share;
+      case ActionType.provide: return Icons.add_box;
+      case ActionType.plan: return Icons.event;
+      case ActionType.leverage: return Icons.speed;
+      case ActionType.remove: return Icons.delete_sweep;
+      case ActionType.mitigate: return Icons.warning;
+      case ActionType.align: return Icons.flag;
+      case ActionType.eliminate: return Icons.remove_circle;
+      case ActionType.implement: return Icons.add_circle;
+      case ActionType.enhance: return Icons.auto_fix_high;
+    }
+  }
+}
+
+/// Suggerisce il tipo di azione basato su template e colonna
+ActionType? suggestActionType(RetroTemplate template, String columnId) {
+  switch (template) {
+    case RetroTemplate.startStopContinue:
+      switch (columnId) {
+        case 'start': return ActionType.begin;
+        case 'stop': return ActionType.stop;
+        case 'continue': return ActionType.maintain;
+      }
+      break;
+    case RetroTemplate.madSadGlad:
+      switch (columnId) {
+        case 'mad': return ActionType.prevent;
+        case 'sad': return ActionType.enhance; // improve the situation
+        case 'glad': return ActionType.celebrate;
+      }
+      break;
+    case RetroTemplate.fourLs:
+      switch (columnId) {
+        case 'liked': return ActionType.replicate;
+        case 'learned': return ActionType.share;
+        case 'lacked': return ActionType.provide;
+        case 'longed': return ActionType.plan;
+      }
+      break;
+    case RetroTemplate.sailboat:
+      switch (columnId) {
+        case 'wind': return ActionType.leverage;
+        case 'anchor': return ActionType.remove;
+        case 'rock': return ActionType.mitigate;
+        case 'goal': return ActionType.align;
+      }
+      break;
+    case RetroTemplate.daki:
+      switch (columnId) {
+        case 'drop': return ActionType.eliminate;
+        case 'add': return ActionType.implement;
+        case 'keep': return ActionType.maintain;
+        case 'improve': return ActionType.enhance;
+      }
+      break;
+    case RetroTemplate.starfish:
+      switch (columnId) {
+        case 'keep': return ActionType.maintain;
+        case 'more': return ActionType.increase;
+        case 'less': return ActionType.decrease;
+        case 'stop': return ActionType.stop;
+        case 'start': return ActionType.begin;
+      }
+      break;
+  }
+  return null;
 }
 
 class SprintReviewData {

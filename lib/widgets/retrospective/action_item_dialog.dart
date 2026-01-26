@@ -1,5 +1,6 @@
 
 import 'package:agile_tools/models/retrospective_model.dart';
+import 'package:agile_tools/models/retro_methodology_guide.dart';
 import 'package:agile_tools/themes/app_theme.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ class ActionItemDialog extends StatefulWidget {
   final String currentUserEmail;
   final List<RetroItem> availableCards; // New: For linking
   final String? initialSourceRefId; // New: For drag & drop
+  final RetroTemplate template; // New: For action type suggestion
+  final List<RetroColumn> columns; // New: For column lookup
 
   const ActionItemDialog({
     Key? key,
@@ -18,6 +21,8 @@ class ActionItemDialog extends StatefulWidget {
     required this.currentUserEmail,
     this.availableCards = const [],
     this.initialSourceRefId,
+    required this.template,
+    required this.columns,
   }) : super(key: key);
 
   @override
@@ -29,11 +34,12 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
   final _descController = TextEditingController();
   final _resourcesController = TextEditingController();
   final _monitoringController = TextEditingController();
-  
+
   String? _assigneeEmail;
   DateTime? _dueDate;
   ActionPriority _priority = ActionPriority.medium;
   String? _selectedSourceRefId;
+  ActionType? _actionType;
 
   @override
   void initState() {
@@ -46,9 +52,29 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
       _dueDate = widget.item!.dueDate;
       _priority = widget.item!.priority;
       _selectedSourceRefId = widget.item!.sourceRefId;
+      _actionType = widget.item!.actionType;
     } else {
       _selectedSourceRefId = widget.initialSourceRefId;
+      // Auto-suggest action type based on initial source card
+      if (widget.initialSourceRefId != null) {
+        _updateActionTypeSuggestion(widget.initialSourceRefId);
+      }
     }
+  }
+
+  /// Aggiorna il tipo azione suggerito in base alla card sorgente selezionata
+  void _updateActionTypeSuggestion(String? sourceRefId) {
+    if (sourceRefId == null) {
+      // No source card, no suggestion
+      return;
+    }
+    try {
+      final card = widget.availableCards.firstWhere((c) => c.id == sourceRefId);
+      final suggestedType = suggestActionType(widget.template, card.columnId);
+      if (suggestedType != null) {
+        setState(() => _actionType = suggestedType);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -73,12 +99,15 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // SMART Action Helper - shows guiding question when source card selected
+                _buildSmartPromptHelper(l10n),
+
                 // Description
                 TextFormField(
                   controller: _descController,
                   decoration: InputDecoration(
                     labelText: l10n.retroActionWhatToDo,
-                    hintText: l10n.retroActionDescriptionHint,
+                    hintText: _getSmartPlaceholder(l10n),
                     border: const OutlineInputBorder(),
                   ),
                   maxLines: 2,
@@ -99,8 +128,8 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                   items: [
                     DropdownMenuItem(value: null, child: Text(l10n.retroActionNone)),
                     ...widget.availableCards.where((c) => c.content.isNotEmpty).map((card) {
-                      final shortText = card.content.length > 50 
-                          ? '${card.content.substring(0, 50)}...' 
+                      final shortText = card.content.length > 50
+                          ? '${card.content.substring(0, 50)}...'
                           : card.content;
                       return DropdownMenuItem(
                         value: card.id,
@@ -108,7 +137,10 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                       );
                     }).toList()
                   ],
-                  onChanged: (val) => setState(() => _selectedSourceRefId = val),
+                  onChanged: (val) {
+                    setState(() => _selectedSourceRefId = val);
+                    _updateActionTypeSuggestion(val);
+                  },
                   selectedItemBuilder: (context) {
                     final l10n = AppLocalizations.of(context)!;
                     return [
@@ -119,6 +151,50 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                              : card.content;
                          return Text(shortText, overflow: TextOverflow.ellipsis);
                        })
+                    ];
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // Action Type Selection with suggested badge
+                DropdownButtonFormField<ActionType>(
+                  value: _actionType,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: l10n.retroActionType,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      _actionType?.icon ?? Icons.category_outlined,
+                      color: _actionType?.color,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  ),
+                  items: [
+                    DropdownMenuItem<ActionType>(value: null, child: Text(l10n.retroActionNoType)),
+                    ...ActionType.values.map((type) => DropdownMenuItem(
+                      value: type,
+                      child: Row(
+                        children: [
+                          Icon(type.icon, color: type.color, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(type.getLocalizedName(l10n), overflow: TextOverflow.ellipsis)),
+                        ],
+                      ),
+                    )).toList()
+                  ],
+                  onChanged: (val) => setState(() => _actionType = val),
+                  selectedItemBuilder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return [
+                      Text(l10n.retroActionNoType),
+                      ...ActionType.values.map((type) => Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(type.icon, color: type.color, size: 18),
+                          const SizedBox(width: 6),
+                          Flexible(child: Text(type.getLocalizedName(l10n), overflow: TextOverflow.ellipsis)),
+                        ],
+                      )).toList()
                     ];
                   },
                 ),
@@ -250,21 +326,22 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
 
   void _save() {
     if (_formKey.currentState!.validate()) {
-       // Find content for selected card
+      // Find content and columnId for selected card
       String? sourceContent;
+      String? sourceColumnId;
       if (_selectedSourceRefId != null) {
         try {
           final card = widget.availableCards.firstWhere((c) => c.id == _selectedSourceRefId);
           sourceContent = card.content;
+          sourceColumnId = card.columnId;
         } catch (_) {}
       }
 
       final newItem = ActionItem(
         id: widget.item?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
         description: _descController.text.trim(),
-        ownerEmail: widget.currentUserEmail, // Added this line
+        ownerEmail: widget.currentUserEmail,
         assigneeEmail: _assigneeEmail,
-        // assigneeName: look up name if possible, or leave null to update later
         createdAt: widget.item?.createdAt ?? DateTime.now(),
         dueDate: _dueDate,
         priority: _priority,
@@ -274,9 +351,86 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
         completedAt: widget.item?.completedAt,
         sourceRefId: _selectedSourceRefId,
         sourceRefContent: sourceContent ?? widget.item?.sourceRefContent,
+        sourceColumnId: sourceColumnId ?? widget.item?.sourceColumnId,
+        actionType: _actionType,
       );
-      
+
       Navigator.pop(context, newItem);
     }
+  }
+
+  /// Gets the columnId of the selected source card
+  String? _getSelectedColumnId() {
+    if (_selectedSourceRefId == null) return null;
+    try {
+      final card = widget.availableCards.firstWhere((c) => c.id == _selectedSourceRefId);
+      return card.columnId;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Gets the SMART placeholder for the description field
+  String _getSmartPlaceholder(AppLocalizations l10n) {
+    final columnId = _getSelectedColumnId();
+    if (columnId == null) return l10n.retroActionDescriptionHint;
+
+    final smartPrompt = RetroMethodologyGuide.getSmartActionPrompt(l10n, widget.template, columnId);
+    return smartPrompt.placeholderText;
+  }
+
+  /// Builds the SMART prompt helper card showing guiding question and example
+  Widget _buildSmartPromptHelper(AppLocalizations l10n) {
+    final columnId = _getSelectedColumnId();
+    if (columnId == null) return const SizedBox.shrink();
+
+    final smartPrompt = RetroMethodologyGuide.getSmartActionPrompt(l10n, widget.template, columnId);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'SMART Action',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber.shade800,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            smartPrompt.guidingQuestion,
+            style: TextStyle(
+              color: context.textPrimaryColor,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            smartPrompt.exampleAction,
+            style: TextStyle(
+              color: context.textMutedColor,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -14,6 +14,8 @@ class ActionItemsTableWidget extends StatelessWidget {
   final String currentUserEmail;
   final bool readOnly;
   final List<RetroItem> items; // New: For editing context
+  final RetroTemplate template; // New: For action type suggestion
+  final List<RetroColumn> columns; // New: For column lookup
 
   const ActionItemsTableWidget({
     Key? key,
@@ -24,6 +26,8 @@ class ActionItemsTableWidget extends StatelessWidget {
     required this.currentUserEmail,
     this.readOnly = false,
     this.items = const [],
+    required this.template,
+    required this.columns,
   }) : super(key: key);
 
   @override
@@ -54,30 +58,23 @@ class ActionItemsTableWidget extends StatelessWidget {
         headingRowColor: WidgetStateProperty.all(Colors.transparent),
         dataRowColor: WidgetStateProperty.all(Colors.transparent),
         columns: [
-            DataColumn(label: Text(l10n.retroTableRef)),
+            DataColumn(label: Text(l10n.retroTableSourceColumn)), // Source column
             DataColumn(label: Text(l10n.retroTableDescription)), // Context from linked card
+            DataColumn(label: Text(l10n.retroActionType)), // Action type badge
             DataColumn(label: Text(l10n.retroTableOwner)),
             DataColumn(label: Text(l10n.retroActionPriority)),
             DataColumn(label: Text(l10n.retroActionDueDate)),
+            DataColumn(label: Text(l10n.retroSupportResources)), // Support resources
+            DataColumn(label: Text(l10n.retroMonitoringMethod)), // Monitoring method
             DataColumn(label: Text(l10n.retroTableActions)), // What needs to be done
             if (!readOnly) const DataColumn(label: SizedBox(width: 80)), // Edit/delete buttons
           ],
         rows: actionItems.map((item) {
-          final String refText = item.sourceRefContent != null && item.sourceRefContent!.isNotEmpty
-              ? (item.sourceRefContent!.length > 15 ? '${item.sourceRefContent!.substring(0, 13)}...' : item.sourceRefContent!)
-              : '-';
-
           return DataRow(
             cells: [
-              // Ref - linked retro card (abbreviated)
+              // Source Column - which column the card came from
               DataCell(
-                Tooltip(
-                  message: item.sourceRefContent ?? '',
-                  child: Text(
-                    refText,
-                    style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: context.textMutedColor),
-                  ),
-                ),
+                _buildSourceColumnBadge(context, item, l10n),
               ),
               // Description - full context from linked card
               DataCell(
@@ -93,6 +90,37 @@ class ActionItemsTableWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              // Action Type Badge
+              DataCell(
+                item.actionType != null
+                    ? Tooltip(
+                        message: item.actionType!.getLocalizedName(l10n),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: item.actionType!.color.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: item.actionType!.color.withValues(alpha: 0.5)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(item.actionType!.icon, size: 14, color: item.actionType!.color),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.actionType!.getLocalizedName(l10n),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: item.actionType!.color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Text('-', style: TextStyle(color: context.textMutedColor)),
               ),
               // Owner
               DataCell(
@@ -131,31 +159,65 @@ class ActionItemsTableWidget extends StatelessWidget {
                       : '-',
                 ),
               ),
+              // Support Resources
+              DataCell(
+                SizedBox(
+                  width: 140,
+                  child: item.resources?.isNotEmpty ?? false
+                    ? Tooltip(
+                        message: item.resources!,
+                        child: Row(
+                          children: [
+                            Icon(Icons.build_outlined, size: 14, color: Colors.blueGrey),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.resources!,
+                                style: const TextStyle(fontSize: 12),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Text('-', style: TextStyle(color: context.textMutedColor)),
+                ),
+              ),
+              // Monitoring Method
+              DataCell(
+                SizedBox(
+                  width: 140,
+                  child: item.monitoring?.isNotEmpty ?? false
+                    ? Tooltip(
+                        message: item.monitoring!,
+                        child: Row(
+                          children: [
+                            Icon(Icons.visibility_outlined, size: 14, color: Colors.blueGrey),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.monitoring!,
+                                style: const TextStyle(fontSize: 12),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Text('-', style: TextStyle(color: context.textMutedColor)),
+                ),
+              ),
               // Actions - what needs to be done
               DataCell(
                 SizedBox(
-                  width: 200,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        item.description,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (item.resources?.isNotEmpty ?? false)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            '${l10n.retroActionResourcesShort}: ${item.resources}',
-                            style: TextStyle(fontSize: 10, color: context.textMutedColor),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                    ],
+                  width: 180,
+                  child: Text(
+                    item.description,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
@@ -201,6 +263,39 @@ class ActionItemsTableWidget extends StatelessWidget {
     }
   }
 
+  /// Builds a badge showing the source column name with its color
+  Widget _buildSourceColumnBadge(BuildContext context, ActionItem item, AppLocalizations l10n) {
+    if (item.sourceColumnId == null || item.sourceColumnId!.isEmpty) {
+      return Text('-', style: TextStyle(color: context.textMutedColor));
+    }
+
+    // Find the column by ID
+    final column = columns.where((c) => c.id == item.sourceColumnId).firstOrNull;
+    if (column == null) {
+      return Text(item.sourceColumnId!, style: TextStyle(fontSize: 11, color: context.textMutedColor));
+    }
+
+    return Tooltip(
+      message: column.title,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: column.color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: column.color.withValues(alpha: 0.5)),
+        ),
+        child: Text(
+          column.title.length > 12 ? '${column.title.substring(0, 10)}...' : column.title,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: column.color,
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _editItem(BuildContext context, ActionItem item) async {
     final updatedItem = await showDialog<ActionItem>(
       context: context,
@@ -208,7 +303,9 @@ class ActionItemsTableWidget extends StatelessWidget {
         item: item,
         participants: participants,
         currentUserEmail: currentUserEmail,
-        availableCards: items, // Pass items
+        availableCards: items,
+        template: template,
+        columns: columns,
       ),
     );
 
