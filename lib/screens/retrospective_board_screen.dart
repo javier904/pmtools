@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:agile_tools/widgets/retrospective/retro_timer_widget.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import 'package:agile_tools/widgets/retrospective/retro_board_widget.dart';
@@ -16,8 +17,8 @@ import 'package:agile_tools/widgets/retrospective/participant_presence_indicator
 import 'package:url_launcher/url_launcher.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-
-// ... existing imports ...
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html if (dart.library.io) 'dart:io';
 
 class RetroBoardScreen extends StatefulWidget {
   final String retroId;
@@ -35,7 +36,7 @@ class RetroBoardScreen extends StatefulWidget {
   State<RetroBoardScreen> createState() => _RetroBoardScreenState();
 }
 
-class _RetroBoardScreenState extends State<RetroBoardScreen> {
+class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBindingObserver {
   final RetrospectiveFirestoreService _service = RetrospectiveFirestoreService();
 
   // 🟢 Online Presence Heartbeat
@@ -48,36 +49,90 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _setupWebBeforeUnload();
     _startHeartbeat();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _heartbeatTimer?.cancel();
-    _markOffline();
+    _setOfflineImmediately();
     super.dispose();
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LIFECYCLE & PRESENCE SYNC
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Setup listener per chiusura tab browser (web only)
+  void _setupWebBeforeUnload() {
+    if (kIsWeb) {
+      html.window.onBeforeUnload.listen((event) {
+        _setOfflineImmediately();
+      });
+    }
+  }
+
+  /// Imposta lo stato offline immediatamente (sincrono per beforeunload)
+  void _setOfflineImmediately() {
+    if (widget.currentUserEmail.isNotEmpty) {
+      _service.markOffline(widget.retroId, widget.currentUserEmail);
+      print('🔴 [Retro] User ${widget.currentUserEmail} set offline immediately');
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        // App in background o chiusa - imposta offline
+        _setOfflineImmediately();
+        _heartbeatTimer?.cancel();
+        break;
+      case AppLifecycleState.resumed:
+        // App tornata in primo piano - riavvia heartbeat con burst iniziale
+        _startHeartbeat();
+        break;
+    }
+  }
+
   /// Avvia il timer heartbeat per segnalare presenza online
+  /// Usa "burst" iniziale per propagazione rapida: 0s, 1s, 3s, poi 15s
   void _startHeartbeat() {
-    // Invia heartbeat immediato all'apertura
+    // Cancella eventuale timer esistente
+    _heartbeatTimer?.cancel();
+
+    // Heartbeat immediato
     _sendHeartbeat();
+    print('🟢 [Retro] Initial heartbeat sent for ${widget.currentUserEmail}');
+
+    // Burst di heartbeat rapidi per sincronizzazione veloce
+    Timer(const Duration(seconds: 1), () {
+      if (mounted) _sendHeartbeat();
+    });
+    Timer(const Duration(seconds: 3), () {
+      if (mounted) _sendHeartbeat();
+    });
 
     // Timer periodico ogni 15 secondi
     _heartbeatTimer = Timer.periodic(
       const Duration(seconds: _heartbeatIntervalSeconds),
-      (_) => _sendHeartbeat(),
+      (_) {
+        if (mounted) _sendHeartbeat();
+      },
     );
   }
 
   /// Invia un heartbeat al server
   Future<void> _sendHeartbeat() async {
     await _service.sendHeartbeat(widget.retroId, widget.currentUserEmail);
-  }
-
-  /// Marca l'utente come offline
-  Future<void> _markOffline() async {
-    await _service.markOffline(widget.retroId, widget.currentUserEmail);
   }
 
   /// Conta i partecipanti online
@@ -199,11 +254,12 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                ),
                const SizedBox(width: 8),
 
-               IconButton(
-                 icon: const Icon(Icons.person_add),
-                 tooltip: l10n?.inviteSendNew ?? 'Invite',
-                 onPressed: () => _showInviteDialog(retro),
-               ),
+               if (isFacilitator)
+                 IconButton(
+                   icon: const Icon(Icons.person_add),
+                   tooltip: l10n?.inviteSendNew ?? 'Invite',
+                   onPressed: () => _showInviteDialog(retro),
+                 ),
                if (isFacilitator)
                  IconButton(
                    icon: Icon(retro.showAuthorNames ? Icons.visibility : Icons.visibility_off),
@@ -463,28 +519,38 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
             children: [
               // Header Toggle Bar
               InkWell(
-                onTap: () => setState(() => _isActionPanelExpanded = !_isActionPanelExpanded),
+                onTap: isFacilitator 
+                  ? () => _service.toggleActionItemsVisibility(retro.id, !retro.isActionItemsVisible)
+                  : null, // Only facilitator can toggle
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   color: Theme.of(context).canvasColor.withOpacity(0.5), // Slight highlight
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Action Items',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          Text(
+                            'Action Items',
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          if (!isFacilitator) ...[ // Visual hint for non-facilitators
+                            const SizedBox(width: 8),
+                            Icon(Icons.lock, size: 12, color: Theme.of(context).disabledColor),
+                          ],
+                        ],
                       ),
                       Icon(
-                        _isActionPanelExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                        retro.isActionItemsVisible ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
                         size: 20,
-                        color: Theme.of(context).disabledColor,
+                        color: isFacilitator ? Theme.of(context).iconTheme.color : Theme.of(context).disabledColor,
                       ),
                     ],
                   ),
                 ),
               ),
               
-              if (_isActionPanelExpanded)
+              if (retro.isActionItemsVisible)
                Expanded(
                  child: SingleChildScrollView( // Scrollable content when expanded
                    padding: const EdgeInsets.all(16),

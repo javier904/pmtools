@@ -65,6 +65,7 @@ class RetrospectiveModel {
   
   // UX Settings (Synced)
   final bool showAuthorNames;
+  final bool isActionItemsVisible;
 
   const RetrospectiveModel({
     required this.id,
@@ -97,6 +98,7 @@ class RetrospectiveModel {
     this.maxVotesPerUser = 3,
     this.participantPresence = const {},
     this.showAuthorNames = true,
+    this.isActionItemsVisible = true,
   });
 
   // ... 
@@ -176,6 +178,7 @@ class RetrospectiveModel {
       currentWizardStep: data['currentWizardStep'] ?? 0,
       maxVotesPerUser: data['maxVotesPerUser'] ?? 3,
       showAuthorNames: data['showAuthorNames'] ?? true,
+      isActionItemsVisible: data['isActionItemsVisible'] ?? true,
     );
   }
 
@@ -210,6 +213,7 @@ class RetrospectiveModel {
       'maxVotesPerUser': maxVotesPerUser,
       'participantPresence': participantPresence.map((email, p) => MapEntry(email, p.toJson())),
       'showAuthorNames': showAuthorNames,
+      'isActionItemsVisible': isActionItemsVisible,
     };
   }
 
@@ -231,6 +235,8 @@ class RetrospectiveModel {
     int? maxVotesPerUser,
     Map<String, ParticipantPresence>? participantPresence,
     String? createdBy,
+    bool? showAuthorNames,
+    bool? isActionItemsVisible,
   }) {
     return RetrospectiveModel(
       id: id ?? this.id,
@@ -263,12 +269,24 @@ class RetrospectiveModel {
       maxVotesPerUser: maxVotesPerUser ?? this.maxVotesPerUser,
       participantPresence: participantPresence ?? this.participantPresence,
       showAuthorNames: showAuthorNames ?? this.showAuthorNames,
+      isActionItemsVisible: isActionItemsVisible ?? this.isActionItemsVisible,
     );
   }
 
   // Helpers
   List<RetroItem> getItemsForColumn(String columnId) {
-    return items.where((i) => i.columnId == columnId).toList();
+    final colItems = items.where((i) => i.columnId == columnId).toList();
+    
+    // Sort by votes (Descending) during Discuss phase or later
+    if (currentPhase.index >= RetroPhase.discuss.index) {
+      colItems.sort((a, b) {
+        final voteDiff = b.votes.compareTo(a.votes);
+        if (voteDiff != 0) return voteDiff;
+        return a.createdAt.compareTo(b.createdAt); // Fallback to creation time
+      });
+    }
+    
+    return colItems;
   }
 }
 

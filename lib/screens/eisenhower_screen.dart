@@ -239,19 +239,15 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   }
 
   /// Avvia il tracking della presenza (estratto per riutilizzo in didChangeAppLifecycleState)
+  /// Usa "burst" iniziale per propagazione rapida: 0s, 1s, 3s, poi 15s
   void _startPresenceHeartbeat() {
     if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
 
-    // Imposta subito online
-    _firestoreService.updateParticipantOnlineStatus(
-      _selectedMatrix!.id,
-      _currentUserEmail,
-      true,
-    );
-
-    // Avvia heartbeat periodico
+    // Cancella eventuale timer esistente
     _presenceHeartbeat?.cancel();
-    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) {
+
+    // Helper per inviare heartbeat
+    void sendHeartbeat() {
       if (_selectedMatrix != null && mounted) {
         _firestoreService.updateParticipantOnlineStatus(
           _selectedMatrix!.id,
@@ -259,9 +255,24 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           true,
         );
       }
+    }
+
+    // Heartbeat immediato
+    sendHeartbeat();
+    print('🟢 [Eisenhower] Initial heartbeat sent for $_currentUserEmail');
+
+    // Burst di heartbeat rapidi per sincronizzazione veloce
+    Timer(const Duration(seconds: 1), () {
+      if (mounted && _selectedMatrix != null) sendHeartbeat();
+    });
+    Timer(const Duration(seconds: 3), () {
+      if (mounted && _selectedMatrix != null) sendHeartbeat();
     });
 
-    print('🟢 Presence tracking started for ${_currentUserEmail}');
+    // Avvia heartbeat periodico
+    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) => sendHeartbeat());
+
+    print('🟢 Presence tracking started for $_currentUserEmail');
   }
 
   /// Ferma il tracking della presenza

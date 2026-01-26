@@ -162,21 +162,15 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   }
 
   /// Avvia l'heartbeat per aggiornare lo stato online periodicamente
+  /// Usa "burst" iniziale per propagazione rapida: 0s, 1s, 3s, poi 15s
   void _startPresenceHeartbeat() {
     if (_selectedSession == null || _currentUserEmail.isEmpty) return;
-
-    // Imposta subito online
-    _firestoreService.updateParticipantOnlineStatus(
-      sessionId: _selectedSession!.id,
-      email: _currentUserEmail,
-      isOnline: true,
-    );
 
     // Cancella eventuale timer esistente
     _presenceHeartbeat?.cancel();
 
-    // Avvia heartbeat periodico
-    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) {
+    // Helper per inviare heartbeat
+    void sendHeartbeat() {
       if (_selectedSession != null && mounted) {
         _firestoreService.updateParticipantOnlineStatus(
           sessionId: _selectedSession!.id,
@@ -184,7 +178,22 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           isOnline: true,
         );
       }
+    }
+
+    // Heartbeat immediato
+    sendHeartbeat();
+    print('🟢 [EstimationRoom] Initial heartbeat sent for $_currentUserEmail');
+
+    // Burst di heartbeat rapidi per sincronizzazione veloce
+    Timer(const Duration(seconds: 1), () {
+      if (mounted && _selectedSession != null) sendHeartbeat();
     });
+    Timer(const Duration(seconds: 3), () {
+      if (mounted && _selectedSession != null) sendHeartbeat();
+    });
+
+    // Avvia heartbeat periodico
+    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) => sendHeartbeat());
 
     print('🟢 Presence tracking started for $_currentUserEmail in session ${_selectedSession!.id}');
   }

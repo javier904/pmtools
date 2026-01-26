@@ -124,13 +124,15 @@ class RetroColumnWidget extends StatelessWidget {
   Widget _buildItemCard(BuildContext context, RetroItem item) {
     final bool isMine = item.authorEmail == currentUserEmail;
     final bool isContentVisible = isMine || retro.areTeamCardsVisible || retro.currentPhase != RetroPhase.writing;
-    final bool isDraggable = retro.currentPhase == RetroPhase.discuss;
+    // Drag Enable: Discuss phase OR if Action Panel is explicitly visible (e.g. for creating action items)
+    final bool isDraggable = retro.currentPhase == RetroPhase.discuss || retro.isActionItemsVisible;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final cardContent = Container(
+      // ... existing decoration ...
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(8), // Smaller radius
+        borderRadius: BorderRadius.circular(8), 
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
@@ -142,22 +144,16 @@ class RetroColumnWidget extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // Background Tint
-          Positioned.fill(
+           // ... existing children ...
+           Positioned.fill(
             child: Container(
               color: column.color.withValues(alpha: isDark ? 0.05 : 0.03),
             ),
           ),
-          
-          // Left Accent Bar
           Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: 3, // Thinner bar
+            left: 0, top: 0, bottom: 0, width: 3, 
             child: Container(color: column.color),
           ),
-
           Padding(
             padding: const EdgeInsets.all(10), // Reduced padding
             child: Column(
@@ -178,49 +174,14 @@ class RetroColumnWidget extends StatelessWidget {
                     )
                    : _buildBlurredContent(context),
                 ),
-
                 const SizedBox(height: 8),
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Author Badge (Conditional)
                     if (isContentVisible && showAuthorNames)
-                        Expanded(
-                          child: Row(
-                              children: [
-                                  CircleAvatar(
-                                      radius: 8, // Smaller avatar
-                                      backgroundColor: column.color.withValues(alpha: 0.2),
-                                      child: Text(
-                                        item.authorName.isNotEmpty ? item.authorName[0].toUpperCase() : '?', 
-                                        style: TextStyle(
-                                          fontSize: 9, 
-                                          fontWeight: FontWeight.bold,
-                                          color: column.color,
-                                        ),
-                                      ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                        item.authorName,
-                                        style: TextStyle(
-                                          fontSize: 10, 
-                                          fontWeight: FontWeight.w600,
-                                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                              ],
-                          ),
-                        )
+                        Expanded(child: _buildAuthorBadge(context, item, column, isDark))
                     else 
                        const Spacer(),
-
-                    // Vote Widget (Restricted)
                     _buildVoteWidget(context, item)
                   ],
                 ),
@@ -232,23 +193,48 @@ class RetroColumnWidget extends StatelessWidget {
     );
 
     if (isDraggable) {
-      return LongPressDraggable<RetroItem>( // Use LongPressDraggable for grid interaction
+      return Draggable<RetroItem>( // Switched from LongPressDraggable to Draggable for easier interaction
         data: item,
         feedback: Material(
-          elevation: 4,
+          elevation: 6, // Higher elevation for feedback
           borderRadius: BorderRadius.circular(8),
           color: Colors.transparent,
           child: SizedBox(
-            width: 200, // Fixed width feedback
+            width: 200,
             height: 120,
-            child: cardContent,
+            child: Opacity(opacity: 0.8, child: cardContent), // Slight opacity
           ),
         ),
-        childWhenDragging: Opacity(opacity: 0.5, child: cardContent),
+        childWhenDragging: Opacity(opacity: 0.3, child: cardContent),
         child: cardContent,
       );
     }
     return cardContent;
+  }
+  
+  // Helper for reused badge logic to keep build method clean
+  Widget _buildAuthorBadge(BuildContext context, RetroItem item, RetroColumn column, bool isDark) {
+      return Row(
+          children: [
+              CircleAvatar(
+                  radius: 8, 
+                  backgroundColor: column.color.withValues(alpha: 0.2),
+                  child: Text(
+                    item.authorName.isNotEmpty ? item.authorName[0].toUpperCase() : '?', 
+                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: column.color),
+                  ),
+              ),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                    item.authorName,
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+      );
   }
 
   Widget _buildBlurredContent(BuildContext context) {

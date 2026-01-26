@@ -257,6 +257,12 @@ class RetrospectiveFirestoreService {
       'showAuthorNames': isVisible,
     });
   }
+
+  Future<void> toggleActionItemsVisibility(String retroId, bool isVisible) async {
+    await _retrosCollection.doc(retroId).update({
+      'isActionItemsVisible': isVisible,
+    });
+  }
   
   /// Aggiunge un item alla retrospettiva (Supporta V2 Columns)
   Future<void> addRetroItem(String retroId, RetroItem item) async {
