@@ -482,6 +482,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                       ),
                       const SizedBox(width: 10),
                       _buildParticipantListStat(list, l10n),
+                      if (list.availableTags.isNotEmpty) ...[
+                        const SizedBox(width: 10),
+                        _buildTagsListStat(list, l10n),
+                      ],
                     ],
                   );
                 },
@@ -545,6 +549,31 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           const SizedBox(width: 5),
           Text(
             '${list.participants.length}',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Costruisce la statistica tags con tooltip della lista completa
+  Widget _buildTagsListStat(TodoListModel list, AppLocalizations? l10n) {
+    final tagNames = list.availableTags.map((tag) => '🏷️ ${tag.name}').toList();
+    final tooltipText = 'Tags:\n${tagNames.join('\n')}';
+
+    return Tooltip(
+      message: tooltipText,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.local_offer, size: 18, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            '${list.availableTags.length}',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[700],

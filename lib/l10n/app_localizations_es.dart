@@ -2717,6 +2717,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get smartTodoImportHelpFieldEffort => 'Horas (número)';
 
   @override
+  String get smartTodoImportHelpFieldTags =>
+      'Etiquetas (#tag o separadas por coma)';
+
+  @override
   String smartTodoImportStatusHint(String columns) {
     return 'Columnas disponibles para STATUS: $columns';
   }
@@ -2744,6 +2748,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get smartTodoImportFieldEffort => 'Esfuerzo';
+
+  @override
+  String get smartTodoImportFieldTags => 'Etiquetas';
 
   @override
   String get smartTodoDeleteTaskTitle => 'Eliminar tarea';
@@ -2802,6 +2809,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get smartTodoAuditFilterAction => 'Acción';
 
   @override
+  String get smartTodoAuditFilterTag => 'Etiqueta';
+
+  @override
   String get smartTodoAuditFilterSearch => 'Buscar';
 
   @override
@@ -2809,6 +2819,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get smartTodoAuditFilterAllFemale => 'Todas';
+
+  @override
+  String get smartTodoAuditPremiumRequired =>
+      'Premium requerido para historial extendido';
+
+  @override
+  String smartTodoAuditLastDays(int days) {
+    return 'Últimos $days días';
+  }
 
   @override
   String get smartTodoAuditClearFilters => 'Limpiar filtros';
@@ -2911,6 +2930,221 @@ class AppLocalizationsEs extends AppLocalizations {
   String smartTodoAuditTimeDaysAgo(int count) {
     return 'Hace $count días';
   }
+
+  @override
+  String get smartTodoCfdTitle => 'CFD Analytics';
+
+  @override
+  String get smartTodoCfdTooltip => 'CFD Analytics';
+
+  @override
+  String get smartTodoCfdDateRange => 'Periodo:';
+
+  @override
+  String get smartTodoCfd7Days => '7 dias';
+
+  @override
+  String get smartTodoCfd14Days => '14 dias';
+
+  @override
+  String get smartTodoCfd30Days => '30 dias';
+
+  @override
+  String get smartTodoCfd90Days => '90 dias';
+
+  @override
+  String get smartTodoCfdError => 'Error al cargar';
+
+  @override
+  String get smartTodoCfdRetry => 'Actualizar';
+
+  @override
+  String get smartTodoCfdNoData => 'No hay datos disponibles';
+
+  @override
+  String get smartTodoCfdNoDataHint =>
+      'Los movimientos de tareas se rastrearan aqui';
+
+  @override
+  String get smartTodoCfdKeyMetrics => 'Metricas Clave';
+
+  @override
+  String get smartTodoCfdLeadTime => 'Lead Time';
+
+  @override
+  String get smartTodoCfdLeadTimeTooltip =>
+      'Tiempo desde creacion hasta completar';
+
+  @override
+  String get smartTodoCfdCycleTime => 'Cycle Time';
+
+  @override
+  String get smartTodoCfdCycleTimeTooltip =>
+      'Tiempo desde inicio del trabajo hasta completar';
+
+  @override
+  String get smartTodoCfdThroughput => 'Rendimiento';
+
+  @override
+  String get smartTodoCfdThroughputTooltip => 'Tareas completadas por semana';
+
+  @override
+  String get smartTodoCfdWip => 'TEP';
+
+  @override
+  String get smartTodoCfdWipTooltip => 'Trabajo en progreso';
+
+  @override
+  String get smartTodoCfdLimit => 'Limite';
+
+  @override
+  String get smartTodoCfdCompleted => 'completadas';
+
+  @override
+  String get smartTodoCfdFlowAnalysis => 'Analisis de Flujo';
+
+  @override
+  String get smartTodoCfdArrived => 'Llegados';
+
+  @override
+  String get smartTodoCfdBacklogShrinking => 'Backlog disminuyendo';
+
+  @override
+  String get smartTodoCfdBacklogGrowing => 'Backlog creciendo';
+
+  @override
+  String get smartTodoCfdBottlenecks => 'Deteccion de Cuellos de Botella';
+
+  @override
+  String get smartTodoCfdNoBottlenecks => 'Sin cuellos de botella';
+
+  @override
+  String get smartTodoCfdTasks => 'tareas';
+
+  @override
+  String get smartTodoCfdAvgAge => 'Edad prom';
+
+  @override
+  String get smartTodoCfdAgingWip => 'Trabajos en Progreso Envejecidos';
+
+  @override
+  String get smartTodoCfdTask => 'Tarea';
+
+  @override
+  String get smartTodoCfdColumn => 'Columna';
+
+  @override
+  String get smartTodoCfdAge => 'Edad';
+
+  @override
+  String get smartTodoCfdDays => 'dias';
+
+  @override
+  String get smartTodoCfdHowCalculated => 'Como se calcula?';
+
+  @override
+  String get smartTodoCfdMedian => 'Mediana';
+
+  @override
+  String get smartTodoCfdP85 => 'P85';
+
+  @override
+  String get smartTodoCfdP95 => 'P95';
+
+  @override
+  String get smartTodoCfdMin => 'Min';
+
+  @override
+  String get smartTodoCfdMax => 'Max';
+
+  @override
+  String get smartTodoCfdSample => 'Muestra';
+
+  @override
+  String get smartTodoCfdVsPrevious => 'vs periodo anterior';
+
+  @override
+  String get smartTodoCfdArrivalRate => 'Tasa de Llegada';
+
+  @override
+  String get smartTodoCfdCompletionRate => 'Tasa de Finalizacion';
+
+  @override
+  String get smartTodoCfdNetFlow => 'Flujo Neto';
+
+  @override
+  String get smartTodoCfdPerDay => '/dia';
+
+  @override
+  String get smartTodoCfdPerWeek => '/semana';
+
+  @override
+  String get smartTodoCfdSeverity => 'Severidad';
+
+  @override
+  String get smartTodoCfdAssignee => 'Asignado';
+
+  @override
+  String get smartTodoCfdUnassigned => 'Sin asignar';
+
+  @override
+  String get smartTodoCfdLeadTimeExplanation =>
+      'El Lead Time mide el tiempo total desde que se crea una tarea hasta que se completa.\n\n**Formula:**\nLead Time = Fecha de Completado - Fecha de Creacion\n\n**Metricas:**\n- **Promedio**: Media de todos los lead times\n- **Mediana**: Valor central (menos sensible a valores atipicos)\n- **P85**: El 85% de las tareas se completan en este tiempo\n- **P95**: El 95% de las tareas se completan en este tiempo\n\n**Por que es importante:**\nEl Lead Time representa la experiencia del cliente - el tiempo total de espera. Usa P85 para dar estimaciones de entrega a los clientes.';
+
+  @override
+  String get smartTodoCfdCycleTimeExplanation =>
+      'El Cycle Time mide el tiempo desde que el trabajo comienza realmente (la tarea sale de \'Por Hacer\') hasta su finalizacion.\n\n**Formula:**\nCycle Time = Fecha de Completado - Fecha de Inicio del Trabajo\n\n**Diferencia con Lead Time:**\n- **Lead Time** = Perspectiva del cliente (incluye espera)\n- **Cycle Time** = Perspectiva del equipo (solo trabajo activo)\n\n**Como se detecta \'Inicio del Trabajo\':**\nLa primera vez que una tarea sale de la columna \'Por Hacer\' se registra como fecha de inicio del trabajo.';
+
+  @override
+  String get smartTodoCfdThroughputExplanation =>
+      'El Throughput mide cuantas tareas se completan por unidad de tiempo.\n\n**Formulas:**\n- Promedio Diario = Tareas Completadas / Dias en el Periodo\n- Promedio Semanal = Promedio Diario x 7\n\n**Como usarlo:**\nPronosticar fechas de entrega:\nTareas Restantes / Throughput Semanal = Semanas para Completar\n\n**Ejemplo:**\n30 tareas restantes, throughput de 10/semana = ~3 semanas';
+
+  @override
+  String get smartTodoCfdWipExplanation =>
+      'El WIP (Work In Progress) cuenta las tareas actualmente en progreso - no en \'Por Hacer\' y no en \'Hecho\'.\n\n**Formula:**\nWIP = Total Tareas - Tareas Por Hacer - Tareas Hechas\n\n**Ley de Little:**\nLead Time = WIP / Throughput\n\nReducir el WIP reduce directamente el Lead Time!\n\n**Limite WIP Sugerido:**\nTamano del Equipo x 2 (mejores practicas Kanban)\n\n**Estado:**\n- Saludable: WIP <= Limite\n- Atencion: WIP > Limite x 1.25\n- Critico: WIP > Limite x 1.5';
+
+  @override
+  String get smartTodoCfdFlowExplanation =>
+      'El Analisis de Flujo compara la tasa de llegada de nuevas tareas vs tareas completadas.\n\n**Formulas:**\n- Tasa de Llegada = Nuevas Tareas Creadas / Dias\n- Tasa de Finalizacion = Tareas Completadas / Dias\n- Flujo Neto = Completadas - Llegadas\n\n**Interpretacion del estado:**\n- **Vaciando** (Finalizacion > Llegada): WIP disminuyendo - bien!\n- **Equilibrado** (dentro de +/-10%): Flujo estable\n- **Llenando** (Llegada > Finalizacion): WIP aumentando - accion necesaria';
+
+  @override
+  String get smartTodoCfdBottleneckExplanation =>
+      'La Deteccion de Cuellos de Botella identifica columnas donde las tareas se acumulan o permanecen demasiado tiempo.\n\n**Algoritmo:**\nSeveridad = (Score Conteo + Score Edad) / 2\n\nDonde:\n- Score Conteo = Tareas en Columna / 10\n- Score Edad = Edad Promedio / 7 dias\n\n**Senalado cuando:**\n- 2+ tareas en la columna, O\n- Edad promedio > 2 dias\n\n**Niveles de severidad:**\n- Bajo (< 0.3): Monitorear\n- Medio (0.3-0.6): Investigar\n- Alto (> 0.6): Actuar';
+
+  @override
+  String get smartTodoCfdAgingExplanation =>
+      'Aging WIP muestra las tareas actualmente en progreso, ordenadas por cuanto tiempo han estado en trabajo.\n\n**Formula:**\nEdad = Hora Actual - Fecha de Inicio del Trabajo (en dias)\n\n**Estado por edad:**\n- Fresco (< 3 dias): Normal\n- Atencion (3-7 dias): Puede necesitar atencion\n- Critico (> 7 dias): Probablemente bloqueado - investigar!\n\nLas tareas antiguas a menudo indican bloqueos, requisitos poco claros o crecimiento del alcance.';
+
+  @override
+  String get smartTodoCfdTeamBalance => 'Equilibrio del Equipo';
+
+  @override
+  String get smartTodoCfdTeamBalanceExplanation =>
+      'El Equilibrio del Equipo muestra la distribucion de tareas entre los miembros.\n\n**Puntuacion de Equilibrio:**\nCalculado usando el coeficiente de variacion (CV).\nPuntuacion = 1 / (1 + CV)\n\n**Estado:**\n- Equilibrado (≥80%): Trabajo distribuido equitativamente\n- Desigual (50-80%): Algun desequilibrio\n- Desequilibrado (<50%): Disparidad significativa\n\n**Columnas:**\n- Por Hacer: Tareas en espera\n- WIP: Tareas en progreso\n- Hecho: Tareas completadas';
+
+  @override
+  String get smartTodoCfdBalanced => 'Equilibrado';
+
+  @override
+  String get smartTodoCfdUneven => 'Desigual';
+
+  @override
+  String get smartTodoCfdImbalanced => 'Desequilibrado';
+
+  @override
+  String get smartTodoCfdMember => 'Miembro';
+
+  @override
+  String get smartTodoCfdTotal => 'Total';
+
+  @override
+  String get smartTodoCfdToDo => 'Por Hacer';
+
+  @override
+  String get smartTodoCfdInProgress => 'En Progreso';
+
+  @override
+  String get smartTodoCfdDone => 'Hecho';
 
   @override
   String get smartTodoNewTaskDefault => 'Nueva Tarea';
@@ -3123,6 +3357,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get smartTodoApplyFilters => 'Aplicar Filtros';
+
+  @override
+  String get smartTodoAllTags => 'Todas las etiquetas';
+
+  @override
+  String smartTodoTagsCount(int count) {
+    return '$count etiquetas';
+  }
+
+  @override
+  String get smartTodoFilterByTag => 'Filtrar por etiqueta';
+
+  @override
+  String get smartTodoTagAlreadyExists => 'Etiqueta ya existente';
 
   @override
   String smartTodoError(String error) {

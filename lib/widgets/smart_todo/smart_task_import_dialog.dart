@@ -12,12 +12,14 @@ import '../../l10n/app_localizations.dart';
 class SmartTaskImportDialog extends StatefulWidget {
   final String listId;
   final List<TodoColumn> availableColumns;
+  final List<TodoLabel> availableTags;
   final SmartTodoService todoService;
 
   const SmartTaskImportDialog({
-    super.key, 
-    required this.listId, 
+    super.key,
+    required this.listId,
     required this.availableColumns,
+    required this.availableTags,
     required this.todoService,
   });
 
@@ -45,6 +47,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
     'status', // Column Name or ID
     'assignee', // Email
     'effort', // Int
+    'tags', // Tag names (comma-separated or #hashtag format)
   ];
 
   bool _isLoading = false;
@@ -54,6 +57,9 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
 
   // Destination column for all imported tasks
   String? _selectedDestinationColumn;
+
+  // Track newly created tags during import
+  final List<TodoLabel> _newTagsToCreate = [];
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +223,8 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
                         icon: const Icon(Icons.folder_open),
                         label: Text(l10n.smartTodoImportSelectFile),
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                         ),
                       ),
@@ -347,6 +355,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         _buildFieldRow('status', l10n.smartTodoImportHelpFieldStatus, isDark),
         _buildFieldRow('assignee', l10n.smartTodoImportHelpFieldAssignee, isDark),
         _buildFieldRow('effort', l10n.smartTodoImportHelpFieldEffort, isDark),
+        _buildFieldRow('tags', l10n.smartTodoImportHelpFieldTags ?? 'Tags (#tag or comma-separated)', isDark),
       ],
     );
   }
@@ -534,6 +543,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
       case 'status': return l10n.smartTodoImportFieldStatus;
       case 'assignee': return l10n.smartTodoImportFieldAssignee;
       case 'effort': return l10n.smartTodoImportFieldEffort;
+      case 'tags': return l10n.smartTodoImportFieldTags ?? 'Tags';
       default: return field.toUpperCase();
     }
   }
@@ -704,7 +714,8 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
   bool _isLikelyHeader(List<dynamic> row) {
     final knownFields = ['title', 'titolo', 'desc', 'description', 'descrizione',
                          'priority', 'priorità', 'status', 'stato', 'assignee',
-                         'assegnato', 'effort', 'user', 'name', 'nome'];
+                         'assegnato', 'effort', 'user', 'name', 'nome',
+                         'tag', 'tags', 'label', 'labels', 'etichetta', 'etichette'];
     final rowLower = row.map((e) => e.toString().toLowerCase().trim()).toList();
 
     // If any cell contains a known field name, it's likely a header
@@ -765,6 +776,7 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
              else if (header[i].contains('prio')) _columnMapping[i] = 'priority';
              else if (header[i].contains('stato') || header[i].contains('status')) _columnMapping[i] = 'status';
              else if (header[i].contains('user') || header[i].contains('assign')) _columnMapping[i] = 'assignee';
+             else if (header[i].contains('tag') || header[i].contains('label') || header[i].contains('etich')) _columnMapping[i] = 'tags';
           }
 
           // Fallback if no title mapped: Map first column to title
@@ -783,6 +795,18 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
       setState(() => _isLoading = true);
       try {
         final tasks = _generateTasksFromMapping();
+
+        // If there are new tags, update the list first
+        if (_newTagsToCreate.isNotEmpty) {
+          final currentList = await widget.todoService.getList(widget.listId);
+          if (currentList != null) {
+            final updatedTags = [...currentList.availableTags, ..._newTagsToCreate];
+            await widget.todoService.updateList(
+              currentList.copyWith(availableTags: updatedTags),
+            );
+          }
+        }
+
         await widget.todoService.batchCreateTasks(widget.listId, tasks);
         if (mounted) Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoImportSuccess(tasks.length))));
@@ -801,8 +825,14 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
     final dataRows = _rawRows.skip(1);
     final List<TodoTaskModel> tasks = [];
 
+    // Clear any previously created tags
+    _newTagsToCreate.clear();
+
     // Use selected destination column, or fallback to first column
     final destinationStatusId = _selectedDestinationColumn ?? widget.availableColumns.first.id;
+
+    // Build a combined list of existing + new tags for matching
+    List<TodoLabel> allTags = List.from(widget.availableTags);
 
     for (var row in dataRows) {
       String title = l10n.smartTodoNewTaskDefault;
@@ -810,6 +840,8 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
       TodoTaskPriority priority = TodoTaskPriority.medium;
       List<String> assignedTo = [];
       int? effort;
+      List<TodoLabel> taskTags = [];
+      String? rawTagsValue;
 
       // Apply Mapping in index order
       // Iterate over cells in row (up to mapping bounds)
@@ -836,7 +868,36 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
           case 'effort':
             effort = int.tryParse(val);
             break;
+          case 'tags':
+            rawTagsValue = val;
+            break;
         }
+      }
+
+      // Parse tags from CSV column (comma-separated or space-separated)
+      if (rawTagsValue != null && rawTagsValue.isNotEmpty) {
+        final tagNames = _parseTagNames(rawTagsValue);
+        for (final tagName in tagNames) {
+          final tag = _findOrCreateTag(tagName, allTags);
+          if (!taskTags.any((t) => t.id == tag.id)) {
+            taskTags.add(tag);
+          }
+        }
+      }
+
+      // Parse #hashtags from title (e.g., "Fix bug #FG2555 #urgent")
+      final hashtagMatches = RegExp(r'#(\w+)').allMatches(title);
+      for (final match in hashtagMatches) {
+        final tagName = match.group(1)!;
+        final tag = _findOrCreateTag(tagName, allTags);
+        if (!taskTags.any((t) => t.id == tag.id)) {
+          taskTags.add(tag);
+        }
+      }
+
+      // Remove hashtags from title for cleaner display
+      if (hashtagMatches.isNotEmpty) {
+        title = title.replaceAll(RegExp(r'\s*#\w+'), '').trim();
       }
 
       tasks.add(TodoTaskModel(
@@ -848,10 +909,85 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
         statusId: destinationStatusId, // Use selected destination column
         assignedTo: assignedTo,
         effort: effort,
+        tags: taskTags,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       ));
     }
     return tasks;
+  }
+
+  /// Parse tag names from a string (comma-separated, space-separated, or #hashtag format)
+  List<String> _parseTagNames(String input) {
+    final result = <String>[];
+
+    // First, extract any #hashtags
+    final hashtagMatches = RegExp(r'#(\w+)').allMatches(input);
+    for (final match in hashtagMatches) {
+      result.add(match.group(1)!);
+    }
+
+    // Remove hashtags from input for further parsing
+    String remaining = input.replaceAll(RegExp(r'#\w+'), '');
+
+    // Split by comma or semicolon
+    final parts = remaining.split(RegExp(r'[,;]'));
+    for (final part in parts) {
+      final trimmed = part.trim();
+      if (trimmed.isNotEmpty) {
+        result.add(trimmed);
+      }
+    }
+
+    return result;
+  }
+
+  /// Find existing tag by exact title match (case-insensitive) or create a new one
+  TodoLabel _findOrCreateTag(String tagName, List<TodoLabel> allTags) {
+    // Try to find existing tag (case-insensitive)
+    final existing = allTags.where(
+      (t) => t.title.toLowerCase() == tagName.toLowerCase()
+    ).firstOrNull;
+
+    if (existing != null) {
+      return existing;
+    }
+
+    // Check if we already created this tag in this import session
+    final alreadyCreated = _newTagsToCreate.where(
+      (t) => t.title.toLowerCase() == tagName.toLowerCase()
+    ).firstOrNull;
+
+    if (alreadyCreated != null) {
+      return alreadyCreated;
+    }
+
+    // Create new tag with auto-generated color
+    final newTag = TodoLabel(
+      id: DateTime.now().millisecondsSinceEpoch.toString() + '_${tagName.hashCode}',
+      title: tagName,
+      colorValue: _generateTagColor(tagName),
+    );
+
+    // Track for later persistence
+    _newTagsToCreate.add(newTag);
+    allTags.add(newTag); // Add to local list for subsequent matching
+
+    return newTag;
+  }
+
+  /// Generate a consistent color based on tag name
+  int _generateTagColor(String tagName) {
+    final colors = [
+      0xFF2196F3, // Blue
+      0xFF4CAF50, // Green
+      0xFFFF9800, // Orange
+      0xFF9C27B0, // Purple
+      0xFFE91E63, // Pink
+      0xFF00BCD4, // Cyan
+      0xFF795548, // Brown
+      0xFF607D8B, // Blue Grey
+    ];
+    return colors[tagName.hashCode.abs() % colors.length];
   }
 }

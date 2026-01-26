@@ -43,7 +43,6 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
   static const int _heartbeatIntervalSeconds = 15;
 
   // UX State
-  bool _showAuthorNames = true;
   bool _isActionPanelExpanded = true;
 
   @override
@@ -108,7 +107,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
         children: [
           TextSpan(
             text: '${l10n?.retroParticipantsTitle(totalCount) ?? "Participants ($totalCount)"}\n\n',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           ...retro.participantEmails.map((email) {
              final isOnline = ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence);
@@ -206,10 +205,17 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                  onPressed: () => _showInviteDialog(retro),
                ),
                IconButton(
-                 icon: Icon(_showAuthorNames ? Icons.visibility : Icons.visibility_off),
-                 tooltip: _showAuthorNames ? 'Hide Names' : 'Show Names',
-                 onPressed: () => setState(() => _showAuthorNames = !_showAuthorNames),
+                 icon: const Icon(Icons.person_add),
+                 tooltip: l10n?.inviteSendNew ?? 'Invite',
+                 onPressed: () => _showInviteDialog(retro),
                ),
+               if (isFacilitator)
+                 IconButton(
+                   icon: Icon(retro.showAuthorNames ? Icons.visibility : Icons.visibility_off),
+                   tooltip: retro.showAuthorNames ? 'Hide Names' : 'Show Names',
+                   onPressed: () => _service.toggleAuthorNames(retro.id, !retro.showAuthorNames),
+                 ),
+               const SizedBox(width: 8),
                const SizedBox(width: 8),
                // Online Presence Counter (Replaces old participants dialog)
                _buildOnlineCounter(retro),
@@ -396,7 +402,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
           currentUserEmail: widget.currentUserEmail,
           currentUserName: widget.currentUserName,
           isIncognito: isIncognito,
-          showAuthorNames: _showAuthorNames,
+          showAuthorNames: retro.showAuthorNames,
         );
         break;
       case RetroPhase.discuss:
@@ -408,7 +414,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> {
                 currentUserEmail: widget.currentUserEmail,
                 currentUserName: widget.currentUserName,
                 isIncognito: false,
-                showAuthorNames: _showAuthorNames,
+                showAuthorNames: retro.showAuthorNames,
               ),
             ),
             const Divider(height: 1, thickness: 1),

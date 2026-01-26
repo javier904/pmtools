@@ -36,15 +36,21 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final savedThemeMode = prefs.getString('themeMode') ?? 'dark';
   
-  // Rilevamento lingua: 1. Preferenza salvata, 2. Lingua sistema, 3. Default 'en'
+  // Rilevamento lingua: 1. Preferenza salvata, 2. Lingua sistema (solo se loggato), 3. Default 'en'
   String initialLocale = prefs.getString('locale') ?? '';
   if (initialLocale.isEmpty) {
-    final systemLocale = PlatformDispatcher.instance.locale.languageCode;
-    // Verifica se la lingua di sistema è supportata, altrimenti 'en'
-    if (['it', 'en', 'fr', 'es'].contains(systemLocale)) {
-      initialLocale = systemLocale;
-    } else {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    // Se non loggato, default 'en'. Se loggato, prova lingua di sistema.
+    if (currentUser == null) {
       initialLocale = 'en';
+    } else {
+      final systemLocale = PlatformDispatcher.instance.locale.languageCode;
+      // Verifica se la lingua di sistema è supportata, altrimenti 'en'
+      if (['it', 'en', 'fr', 'es'].contains(systemLocale)) {
+        initialLocale = systemLocale;
+      } else {
+        initialLocale = 'en';
+      }
     }
   }
 

@@ -5050,6 +5050,12 @@ abstract class AppLocalizations {
   /// **'Ore (numero)'**
   String get smartTodoImportHelpFieldEffort;
 
+  /// No description provided for @smartTodoImportHelpFieldTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag (#tag o separati da virgola)'**
+  String get smartTodoImportHelpFieldTags;
+
   /// No description provided for @smartTodoImportStatusHint.
   ///
   /// In it, this message translates to:
@@ -5103,6 +5109,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Effort'**
   String get smartTodoImportFieldEffort;
+
+  /// No description provided for @smartTodoImportFieldTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag'**
+  String get smartTodoImportFieldTags;
 
   /// No description provided for @smartTodoDeleteTaskTitle.
   ///
@@ -5206,6 +5218,12 @@ abstract class AppLocalizations {
   /// **'Azione'**
   String get smartTodoAuditFilterAction;
 
+  /// No description provided for @smartTodoAuditFilterTag.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag'**
+  String get smartTodoAuditFilterTag;
+
   /// No description provided for @smartTodoAuditFilterSearch.
   ///
   /// In it, this message translates to:
@@ -5223,6 +5241,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Tutte'**
   String get smartTodoAuditFilterAllFemale;
+
+  /// No description provided for @smartTodoAuditPremiumRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Premium richiesto per storico esteso'**
+  String get smartTodoAuditPremiumRequired;
+
+  /// No description provided for @smartTodoAuditLastDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Ultimi {days} giorni'**
+  String smartTodoAuditLastDays(int days);
 
   /// No description provided for @smartTodoAuditClearFilters.
   ///
@@ -5409,6 +5439,414 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{count} giorni fa'**
   String smartTodoAuditTimeDaysAgo(int count);
+
+  /// No description provided for @smartTodoCfdTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'CFD Analytics'**
+  String get smartTodoCfdTitle;
+
+  /// No description provided for @smartTodoCfdTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'CFD Analytics'**
+  String get smartTodoCfdTooltip;
+
+  /// No description provided for @smartTodoCfdDateRange.
+  ///
+  /// In it, this message translates to:
+  /// **'Periodo:'**
+  String get smartTodoCfdDateRange;
+
+  /// No description provided for @smartTodoCfd7Days.
+  ///
+  /// In it, this message translates to:
+  /// **'7 giorni'**
+  String get smartTodoCfd7Days;
+
+  /// No description provided for @smartTodoCfd14Days.
+  ///
+  /// In it, this message translates to:
+  /// **'14 giorni'**
+  String get smartTodoCfd14Days;
+
+  /// No description provided for @smartTodoCfd30Days.
+  ///
+  /// In it, this message translates to:
+  /// **'30 giorni'**
+  String get smartTodoCfd30Days;
+
+  /// No description provided for @smartTodoCfd90Days.
+  ///
+  /// In it, this message translates to:
+  /// **'90 giorni'**
+  String get smartTodoCfd90Days;
+
+  /// No description provided for @smartTodoCfdError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento'**
+  String get smartTodoCfdError;
+
+  /// No description provided for @smartTodoCfdRetry.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorna'**
+  String get smartTodoCfdRetry;
+
+  /// No description provided for @smartTodoCfdNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato disponibile'**
+  String get smartTodoCfdNoData;
+
+  /// No description provided for @smartTodoCfdNoDataHint.
+  ///
+  /// In it, this message translates to:
+  /// **'I movimenti dei task saranno tracciati qui'**
+  String get smartTodoCfdNoDataHint;
+
+  /// No description provided for @smartTodoCfdKeyMetrics.
+  ///
+  /// In it, this message translates to:
+  /// **'Metriche Chiave'**
+  String get smartTodoCfdKeyMetrics;
+
+  /// No description provided for @smartTodoCfdLeadTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Lead Time'**
+  String get smartTodoCfdLeadTime;
+
+  /// No description provided for @smartTodoCfdLeadTimeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempo dalla creazione al completamento'**
+  String get smartTodoCfdLeadTimeTooltip;
+
+  /// No description provided for @smartTodoCfdCycleTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Cycle Time'**
+  String get smartTodoCfdCycleTime;
+
+  /// No description provided for @smartTodoCfdCycleTimeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempo dall\'inizio lavoro al completamento'**
+  String get smartTodoCfdCycleTimeTooltip;
+
+  /// No description provided for @smartTodoCfdThroughput.
+  ///
+  /// In it, this message translates to:
+  /// **'Throughput'**
+  String get smartTodoCfdThroughput;
+
+  /// No description provided for @smartTodoCfdThroughputTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Task completati a settimana'**
+  String get smartTodoCfdThroughputTooltip;
+
+  /// No description provided for @smartTodoCfdWip.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP'**
+  String get smartTodoCfdWip;
+
+  /// No description provided for @smartTodoCfdWipTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Lavoro in corso'**
+  String get smartTodoCfdWipTooltip;
+
+  /// No description provided for @smartTodoCfdLimit.
+  ///
+  /// In it, this message translates to:
+  /// **'Limite'**
+  String get smartTodoCfdLimit;
+
+  /// No description provided for @smartTodoCfdCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'completati'**
+  String get smartTodoCfdCompleted;
+
+  /// No description provided for @smartTodoCfdFlowAnalysis.
+  ///
+  /// In it, this message translates to:
+  /// **'Analisi Flusso'**
+  String get smartTodoCfdFlowAnalysis;
+
+  /// No description provided for @smartTodoCfdArrived.
+  ///
+  /// In it, this message translates to:
+  /// **'Arrivati'**
+  String get smartTodoCfdArrived;
+
+  /// No description provided for @smartTodoCfdBacklogShrinking.
+  ///
+  /// In it, this message translates to:
+  /// **'Backlog in diminuzione'**
+  String get smartTodoCfdBacklogShrinking;
+
+  /// No description provided for @smartTodoCfdBacklogGrowing.
+  ///
+  /// In it, this message translates to:
+  /// **'Backlog in aumento'**
+  String get smartTodoCfdBacklogGrowing;
+
+  /// No description provided for @smartTodoCfdBottlenecks.
+  ///
+  /// In it, this message translates to:
+  /// **'Rilevamento Colli di Bottiglia'**
+  String get smartTodoCfdBottlenecks;
+
+  /// No description provided for @smartTodoCfdNoBottlenecks.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun collo di bottiglia'**
+  String get smartTodoCfdNoBottlenecks;
+
+  /// No description provided for @smartTodoCfdTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'task'**
+  String get smartTodoCfdTasks;
+
+  /// No description provided for @smartTodoCfdAvgAge.
+  ///
+  /// In it, this message translates to:
+  /// **'Eta media'**
+  String get smartTodoCfdAvgAge;
+
+  /// No description provided for @smartTodoCfdAgingWip.
+  ///
+  /// In it, this message translates to:
+  /// **'Lavori in Corso Invecchiati'**
+  String get smartTodoCfdAgingWip;
+
+  /// No description provided for @smartTodoCfdTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Task'**
+  String get smartTodoCfdTask;
+
+  /// No description provided for @smartTodoCfdColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Colonna'**
+  String get smartTodoCfdColumn;
+
+  /// No description provided for @smartTodoCfdAge.
+  ///
+  /// In it, this message translates to:
+  /// **'Eta'**
+  String get smartTodoCfdAge;
+
+  /// No description provided for @smartTodoCfdDays.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni'**
+  String get smartTodoCfdDays;
+
+  /// No description provided for @smartTodoCfdHowCalculated.
+  ///
+  /// In it, this message translates to:
+  /// **'Come viene calcolato?'**
+  String get smartTodoCfdHowCalculated;
+
+  /// No description provided for @smartTodoCfdMedian.
+  ///
+  /// In it, this message translates to:
+  /// **'Mediana'**
+  String get smartTodoCfdMedian;
+
+  /// No description provided for @smartTodoCfdP85.
+  ///
+  /// In it, this message translates to:
+  /// **'P85'**
+  String get smartTodoCfdP85;
+
+  /// No description provided for @smartTodoCfdP95.
+  ///
+  /// In it, this message translates to:
+  /// **'P95'**
+  String get smartTodoCfdP95;
+
+  /// No description provided for @smartTodoCfdMin.
+  ///
+  /// In it, this message translates to:
+  /// **'Min'**
+  String get smartTodoCfdMin;
+
+  /// No description provided for @smartTodoCfdMax.
+  ///
+  /// In it, this message translates to:
+  /// **'Max'**
+  String get smartTodoCfdMax;
+
+  /// No description provided for @smartTodoCfdSample.
+  ///
+  /// In it, this message translates to:
+  /// **'Campione'**
+  String get smartTodoCfdSample;
+
+  /// No description provided for @smartTodoCfdVsPrevious.
+  ///
+  /// In it, this message translates to:
+  /// **'vs periodo precedente'**
+  String get smartTodoCfdVsPrevious;
+
+  /// No description provided for @smartTodoCfdArrivalRate.
+  ///
+  /// In it, this message translates to:
+  /// **'Tasso Arrivo'**
+  String get smartTodoCfdArrivalRate;
+
+  /// No description provided for @smartTodoCfdCompletionRate.
+  ///
+  /// In it, this message translates to:
+  /// **'Tasso Completamento'**
+  String get smartTodoCfdCompletionRate;
+
+  /// No description provided for @smartTodoCfdNetFlow.
+  ///
+  /// In it, this message translates to:
+  /// **'Flusso Netto'**
+  String get smartTodoCfdNetFlow;
+
+  /// No description provided for @smartTodoCfdPerDay.
+  ///
+  /// In it, this message translates to:
+  /// **'/giorno'**
+  String get smartTodoCfdPerDay;
+
+  /// No description provided for @smartTodoCfdPerWeek.
+  ///
+  /// In it, this message translates to:
+  /// **'/settimana'**
+  String get smartTodoCfdPerWeek;
+
+  /// No description provided for @smartTodoCfdSeverity.
+  ///
+  /// In it, this message translates to:
+  /// **'Severita'**
+  String get smartTodoCfdSeverity;
+
+  /// No description provided for @smartTodoCfdAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnatario'**
+  String get smartTodoCfdAssignee;
+
+  /// No description provided for @smartTodoCfdUnassigned.
+  ///
+  /// In it, this message translates to:
+  /// **'Non assegnato'**
+  String get smartTodoCfdUnassigned;
+
+  /// No description provided for @smartTodoCfdLeadTimeExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Lead Time misura il tempo totale dalla creazione di un task al suo completamento.\n\n**Formula:**\nLead Time = Data Completamento - Data Creazione\n\n**Metriche:**\n- **Media**: Media di tutti i lead time\n- **Mediana**: Valore centrale (meno sensibile agli outlier)\n- **P85**: L\'85% dei task viene completato entro questo tempo\n- **P95**: Il 95% dei task viene completato entro questo tempo\n\n**Perche e importante:**\nIl Lead Time rappresenta l\'esperienza del cliente - il tempo totale di attesa. Usa il P85 per dare stime di consegna ai clienti.'**
+  String get smartTodoCfdLeadTimeExplanation;
+
+  /// No description provided for @smartTodoCfdCycleTimeExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Cycle Time misura il tempo da quando il lavoro inizia effettivamente (il task esce da \'Da Fare\') fino al completamento.\n\n**Formula:**\nCycle Time = Data Completamento - Data Inizio Lavoro\n\n**Differenza dal Lead Time:**\n- **Lead Time** = Prospettiva cliente (include attesa)\n- **Cycle Time** = Prospettiva team (solo lavoro attivo)\n\n**Come viene rilevato \'Inizio Lavoro\':**\nLa prima volta che un task esce dalla colonna \'Da Fare\' viene registrata come data di inizio lavoro.'**
+  String get smartTodoCfdCycleTimeExplanation;
+
+  /// No description provided for @smartTodoCfdThroughputExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Throughput misura quanti task vengono completati per unita di tempo.\n\n**Formule:**\n- Media Giornaliera = Task Completati / Giorni nel Periodo\n- Media Settimanale = Media Giornaliera x 7\n\n**Come usarlo:**\nPrevisione date di consegna:\nTask Rimanenti / Throughput Settimanale = Settimane per Completare\n\n**Esempio:**\n30 task rimanenti, throughput di 10/settimana = ~3 settimane'**
+  String get smartTodoCfdThroughputExplanation;
+
+  /// No description provided for @smartTodoCfdWipExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Il WIP (Work In Progress) conta i task attualmente in lavorazione - non in \'Da Fare\' e non in \'Fatto\'.\n\n**Formula:**\nWIP = Task Totali - Task in Da Fare - Task in Fatto\n\n**Legge di Little:**\nLead Time = WIP / Throughput\n\nRidurre il WIP riduce direttamente il Lead Time!\n\n**Limite WIP Suggerito:**\nDimensione Team x 2 (best practice Kanban)\n\n**Stato:**\n- Sano: WIP <= Limite\n- Attenzione: WIP > Limite x 1.25\n- Critico: WIP > Limite x 1.5'**
+  String get smartTodoCfdWipExplanation;
+
+  /// No description provided for @smartTodoCfdFlowExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'Analisi del Flusso confronta il tasso di arrivo nuovi task vs task completati.\n\n**Formule:**\n- Tasso Arrivo = Nuovi Task Creati / Giorni\n- Tasso Completamento = Task Completati / Giorni\n- Flusso Netto = Completati - Arrivati\n\n**Interpretazione stato:**\n- **In Svuotamento** (Completamento > Arrivo): WIP in diminuzione - bene!\n- **Bilanciato** (entro +/-10%): Flusso stabile\n- **In Riempimento** (Arrivo > Completamento): WIP in aumento - azione necessaria'**
+  String get smartTodoCfdFlowExplanation;
+
+  /// No description provided for @smartTodoCfdBottleneckExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Rilevamento Colli di Bottiglia identifica le colonne dove i task si accumulano o rimangono troppo a lungo.\n\n**Algoritmo:**\nSeverita = (Score Conteggio + Score Eta) / 2\n\nDove:\n- Score Conteggio = Task nella Colonna / 10\n- Score Eta = Eta Media / 7 giorni\n\n**Segnalato quando:**\n- 2+ task nella colonna, OPPURE\n- Eta media > 2 giorni\n\n**Livelli di severita:**\n- Basso (< 0.3): Monitorare\n- Medio (0.3-0.6): Investigare\n- Alto (> 0.6): Intervenire'**
+  String get smartTodoCfdBottleneckExplanation;
+
+  /// No description provided for @smartTodoCfdAgingExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Aging WIP mostra i task attualmente in lavorazione, ordinati per quanto tempo sono stati lavorati.\n\n**Formula:**\nEta = Ora Attuale - Data Inizio Lavoro (in giorni)\n\n**Stato per eta:**\n- Fresco (< 3 giorni): Normale\n- Attenzione (3-7 giorni): Potrebbe richiedere attenzione\n- Critico (> 7 giorni): Probabilmente bloccato - investigare!\n\nI task vecchi spesso indicano blocchi, requisiti poco chiari o scope creep.'**
+  String get smartTodoCfdAgingExplanation;
+
+  /// No description provided for @smartTodoCfdTeamBalance.
+  ///
+  /// In it, this message translates to:
+  /// **'Bilanciamento Team'**
+  String get smartTodoCfdTeamBalance;
+
+  /// No description provided for @smartTodoCfdTeamBalanceExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Bilanciamento Team mostra la distribuzione dei task tra i membri.\n\n**Punteggio Bilanciamento:**\nCalcolato usando il coefficiente di variazione (CV).\nPunteggio = 1 / (1 + CV)\n\n**Stato:**\n- Bilanciato (≥80%): Lavoro distribuito equamente\n- Disomogeneo (50-80%): Qualche squilibrio\n- Sbilanciato (<50%): Disparita significativa\n\n**Colonne:**\n- Da Fare: Task in attesa\n- WIP: Task in lavorazione\n- Fatto: Task completati'**
+  String get smartTodoCfdTeamBalanceExplanation;
+
+  /// No description provided for @smartTodoCfdBalanced.
+  ///
+  /// In it, this message translates to:
+  /// **'Bilanciato'**
+  String get smartTodoCfdBalanced;
+
+  /// No description provided for @smartTodoCfdUneven.
+  ///
+  /// In it, this message translates to:
+  /// **'Disomogeneo'**
+  String get smartTodoCfdUneven;
+
+  /// No description provided for @smartTodoCfdImbalanced.
+  ///
+  /// In it, this message translates to:
+  /// **'Sbilanciato'**
+  String get smartTodoCfdImbalanced;
+
+  /// No description provided for @smartTodoCfdMember.
+  ///
+  /// In it, this message translates to:
+  /// **'Membro'**
+  String get smartTodoCfdMember;
+
+  /// No description provided for @smartTodoCfdTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Totale'**
+  String get smartTodoCfdTotal;
+
+  /// No description provided for @smartTodoCfdToDo.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Fare'**
+  String get smartTodoCfdToDo;
+
+  /// No description provided for @smartTodoCfdInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso'**
+  String get smartTodoCfdInProgress;
+
+  /// No description provided for @smartTodoCfdDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatto'**
+  String get smartTodoCfdDone;
 
   /// No description provided for @smartTodoNewTaskDefault.
   ///
@@ -5793,6 +6231,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Applica Filtri'**
   String get smartTodoApplyFilters;
+
+  /// No description provided for @smartTodoAllTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i tag'**
+  String get smartTodoAllTags;
+
+  /// No description provided for @smartTodoTagsCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} tag'**
+  String smartTodoTagsCount(int count);
+
+  /// No description provided for @smartTodoFilterByTag.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per tag'**
+  String get smartTodoFilterByTag;
+
+  /// No description provided for @smartTodoTagAlreadyExists.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag già esistente'**
+  String get smartTodoTagAlreadyExists;
 
   /// No description provided for @smartTodoError.
   ///

@@ -1876,6 +1876,7 @@
   "smartTodoImportHelpFieldStatus": "Column name (e.g. To Do, In Progress)",
   "smartTodoImportHelpFieldAssignee": "User email",
   "smartTodoImportHelpFieldEffort": "Hours (number)",
+  "smartTodoImportHelpFieldTags": "Tags (#tag or comma-separated)",
   "smartTodoImportStatusHint": "Available columns for STATUS: {columns}",
   "@smartTodoImportStatusHint": {
     "placeholders": {
@@ -1890,6 +1891,7 @@
   "smartTodoImportFieldStatus": "Status (Column)",
   "smartTodoImportFieldAssignee": "Assignee",
   "smartTodoImportFieldEffort": "Effort",
+  "smartTodoImportFieldTags": "Tags",
   "smartTodoImportPasteExample": "e.g. Buy milk\nCall Mario\nFinish report",
 
   "smartTodoDeleteTaskTitle": "Delete Task",
@@ -1916,9 +1918,17 @@
   "smartTodoAuditFilterUser": "User",
   "smartTodoAuditFilterType": "Type",
   "smartTodoAuditFilterAction": "Action",
+  "smartTodoAuditFilterTag": "Tag",
   "smartTodoAuditFilterSearch": "Search",
   "smartTodoAuditFilterAll": "All",
   "smartTodoAuditFilterAllFemale": "All",
+  "smartTodoAuditPremiumRequired": "Premium required for extended history",
+  "smartTodoAuditLastDays": "Last {days} days",
+  "@smartTodoAuditLastDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
   "smartTodoAuditClearFilters": "Clear Filters",
   "smartTodoAuditViewTimeline": "Timeline View",
   "smartTodoAuditViewColumns": "Columns View",
@@ -1973,6 +1983,75 @@
       "count": { "type": "int" }
     }
   },
+
+  "smartTodoCfdTitle": "CFD Analytics",
+  "smartTodoCfdTooltip": "CFD Analytics",
+  "smartTodoCfdDateRange": "Date Range:",
+  "smartTodoCfd7Days": "7 days",
+  "smartTodoCfd14Days": "14 days",
+  "smartTodoCfd30Days": "30 days",
+  "smartTodoCfd90Days": "90 days",
+  "smartTodoCfdError": "Error loading analytics",
+  "smartTodoCfdRetry": "Refresh",
+  "smartTodoCfdNoData": "No data available",
+  "smartTodoCfdNoDataHint": "Task movements will be tracked here",
+  "smartTodoCfdKeyMetrics": "Key Metrics",
+  "smartTodoCfdLeadTime": "Lead Time",
+  "smartTodoCfdLeadTimeTooltip": "Time from task creation to completion",
+  "smartTodoCfdCycleTime": "Cycle Time",
+  "smartTodoCfdCycleTimeTooltip": "Time from work start to completion",
+  "smartTodoCfdThroughput": "Throughput",
+  "smartTodoCfdThroughputTooltip": "Tasks completed per week",
+  "smartTodoCfdWip": "WIP",
+  "smartTodoCfdWipTooltip": "Work in progress",
+  "smartTodoCfdLimit": "Limit",
+  "smartTodoCfdCompleted": "completed",
+  "smartTodoCfdFlowAnalysis": "Flow Analysis",
+  "smartTodoCfdArrived": "Arrived",
+  "smartTodoCfdBacklogShrinking": "Backlog shrinking",
+  "smartTodoCfdBacklogGrowing": "Backlog growing",
+  "smartTodoCfdBottlenecks": "Bottleneck Detection",
+  "smartTodoCfdNoBottlenecks": "No bottlenecks detected",
+  "smartTodoCfdTasks": "tasks",
+  "smartTodoCfdAvgAge": "Avg age",
+  "smartTodoCfdAgingWip": "Aging Work in Progress",
+  "smartTodoCfdTask": "Task",
+  "smartTodoCfdColumn": "Column",
+  "smartTodoCfdAge": "Age",
+  "smartTodoCfdDays": "days",
+  "smartTodoCfdHowCalculated": "How is it calculated?",
+  "smartTodoCfdMedian": "Median",
+  "smartTodoCfdP85": "P85",
+  "smartTodoCfdP95": "P95",
+  "smartTodoCfdMin": "Min",
+  "smartTodoCfdMax": "Max",
+  "smartTodoCfdSample": "Sample",
+  "smartTodoCfdVsPrevious": "vs previous period",
+  "smartTodoCfdArrivalRate": "Arrival Rate",
+  "smartTodoCfdCompletionRate": "Completion Rate",
+  "smartTodoCfdNetFlow": "Net Flow",
+  "smartTodoCfdPerDay": "/day",
+  "smartTodoCfdPerWeek": "/week",
+  "smartTodoCfdSeverity": "Severity",
+  "smartTodoCfdAssignee": "Assignee",
+  "smartTodoCfdUnassigned": "Unassigned",
+  "smartTodoCfdLeadTimeExplanation": "Lead Time measures the total time from when a task is created until it is completed.\n\n**Formula:**\nLead Time = Completion Date - Creation Date\n\n**Metrics:**\n- **Average**: Mean of all lead times\n- **Median**: Middle value (less sensitive to outliers)\n- **P85**: 85% of tasks complete within this time\n- **P95**: 95% of tasks complete within this time\n\n**Why it matters:**\nLead Time represents what the customer experiences - the total wait time. Use P85 when giving delivery estimates to clients.",
+  "smartTodoCfdCycleTimeExplanation": "Cycle Time measures the time from when work actually starts (task leaves 'To Do') until completion.\n\n**Formula:**\nCycle Time = Completion Date - First Work Start Date\n\n**Difference from Lead Time:**\n- **Lead Time** = Customer perspective (includes waiting)\n- **Cycle Time** = Team perspective (active work only)\n\n**How 'Work Start' is detected:**\nThe first time a task moves out of the 'To Do' column is recorded as the work start date.",
+  "smartTodoCfdThroughputExplanation": "Throughput measures how many tasks are completed per unit of time.\n\n**Formulas:**\n- Daily Average = Completed Tasks / Days in Period\n- Weekly Average = Daily Average × 7\n\n**How to use it:**\nForecast delivery dates:\nRemaining Tasks / Weekly Throughput = Weeks to Complete\n\n**Example:**\n30 tasks remaining, throughput of 10/week = ~3 weeks",
+  "smartTodoCfdWipExplanation": "WIP (Work In Progress) counts tasks currently being worked on - not in 'To Do' and not in 'Done'.\n\n**Formula:**\nWIP = Total Tasks - Tasks in To Do - Tasks in Done\n\n**Little's Law:**\nLead Time = WIP / Throughput\n\nReducing WIP directly reduces Lead Time!\n\n**Suggested WIP Limit:**\nTeam Size × 2 (Kanban best practice)\n\n**Status:**\n- Healthy: WIP ≤ Limit\n- Warning: WIP > Limit × 1.25\n- Critical: WIP > Limit × 1.5",
+  "smartTodoCfdFlowExplanation": "Flow Analysis compares the rate of new tasks arriving vs tasks being completed.\n\n**Formulas:**\n- Arrival Rate = New Tasks Created / Days\n- Completion Rate = Tasks Completed / Days\n- Net Flow = Completed - Arrived\n\n**Status interpretation:**\n- **Draining** (Completion > Arrival): WIP decreasing - good!\n- **Balanced** (within ±10%): Stable flow\n- **Filling** (Arrival > Completion): WIP increasing - action needed",
+  "smartTodoCfdBottleneckExplanation": "Bottleneck Detection identifies columns where tasks accumulate or stay too long.\n\n**Algorithm:**\nSeverity = (Count Score + Age Score) / 2\n\nWhere:\n- Count Score = Tasks in Column / 10\n- Age Score = Average Age / 7 days\n\n**Flagged when:**\n- 2+ tasks in column, OR\n- Average age > 2 days\n\n**Severity levels:**\n- Low (< 0.3): Monitor\n- Medium (0.3-0.6): Investigate\n- High (> 0.6): Take action",
+  "smartTodoCfdAgingExplanation": "Aging WIP shows tasks currently in progress, sorted by how long they've been worked on.\n\n**Formula:**\nAge = Current Time - Work Start Date (in days)\n\n**Status by age:**\n- Fresh (< 3 days): Normal\n- Warning (3-7 days): May need attention\n- Critical (> 7 days): Likely blocked - investigate!\n\nOld tasks often indicate blockers, unclear requirements, or scope creep.",
+  "smartTodoCfdTeamBalance": "Team Balance",
+  "smartTodoCfdTeamBalanceExplanation": "Team Balance shows task distribution across team members.\n\n**Balance Score:**\nCalculated using coefficient of variation (CV).\nScore = 1 / (1 + CV)\n\n**Status:**\n- Balanced (≥80%): Work evenly distributed\n- Uneven (50-80%): Some imbalance\n- Imbalanced (<50%): Significant disparity\n\n**Columns:**\n- To Do: Tasks waiting to start\n- WIP: Tasks in progress\n- Done: Completed tasks",
+  "smartTodoCfdBalanced": "Balanced",
+  "smartTodoCfdUneven": "Uneven",
+  "smartTodoCfdImbalanced": "Imbalanced",
+  "smartTodoCfdMember": "Member",
+  "smartTodoCfdTotal": "Total",
+  "smartTodoCfdToDo": "To Do",
+  "smartTodoCfdInProgress": "In Progress",
+  "smartTodoCfdDone": "Done",
 
   "smartTodoNewTaskDefault": "New Task",
   "smartTodoRename": "Rename",
@@ -2072,6 +2151,17 @@
   },
   "smartTodoFilterByPerson": "Filter by Person",
   "smartTodoApplyFilters": "Apply Filters",
+  "smartTodoAllTags": "All tags",
+  "smartTodoTagsCount": "{count} tags",
+  "@smartTodoTagsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smartTodoFilterByTag": "Filter by Tag",
+  "smartTodoTagAlreadyExists": "Tag already exists",
   "@smartTodoNoSearchResults": {
     "placeholders": {
       "query": {

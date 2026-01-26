@@ -89,7 +89,7 @@ enum TodoAuditAction {
       case TodoAuditAction.delete: return const Color(0xFFE53935);
       case TodoAuditAction.archive: return const Color(0xFF9E9E9E);
       case TodoAuditAction.restore: return const Color(0xFF43A047);
-      case TodoAuditAction.move: return const Color(0xFF7B1FA2);
+      case TodoAuditAction.move: return const Color(0xFF29B6F6); // Light blue - più leggibile
       case TodoAuditAction.assign: return const Color(0xFFFB8C00);
       case TodoAuditAction.invite: return const Color(0xFF1976D2);
       case TodoAuditAction.join: return const Color(0xFF43A047);
@@ -249,6 +249,7 @@ class SmartTodoAuditLogFilter {
   final DateTime? fromDate;
   final DateTime? toDate;
   final String? searchQuery;
+  final Set<String> tagIds; // Multi-select: filter by tasks that have these tags
 
   const SmartTodoAuditLogFilter({
     this.entityType,
@@ -257,6 +258,7 @@ class SmartTodoAuditLogFilter {
     this.fromDate,
     this.toDate,
     this.searchQuery,
+    this.tagIds = const {},
   });
 
   bool get isEmpty =>
@@ -265,15 +267,25 @@ class SmartTodoAuditLogFilter {
       performedBy == null &&
       fromDate == null &&
       toDate == null &&
+      tagIds.isEmpty &&
       (searchQuery == null || searchQuery!.isEmpty);
 
   /// Verifica se un log passa il filtro (client-side)
-  bool matches(SmartTodoAuditLogModel log) {
+  /// taskTagsMap: mappa taskId -> Set<tagId> per filtrare per tag delle card
+  bool matches(SmartTodoAuditLogModel log, {Map<String, Set<String>>? taskTagsMap}) {
     if (entityType != null && log.entityType != entityType) return false;
     if (action != null && log.action != action) return false;
     if (performedBy != null && log.performedByName != performedBy) return false;
     if (fromDate != null && log.timestamp.isBefore(fromDate!)) return false;
     if (toDate != null && log.timestamp.isAfter(toDate!.add(const Duration(days: 1)))) return false;
+
+    // Filter by tags: check if the task (entityId) has ANY of the selected tags
+    if (tagIds.isNotEmpty && taskTagsMap != null) {
+      final taskTags = taskTagsMap[log.entityId] ?? {};
+      // Check if the task has at least one of the selected tags
+      final hasMatchingTag = tagIds.any((tagId) => taskTags.contains(tagId));
+      if (!hasMatchingTag) return false;
+    }
 
     if (searchQuery != null && searchQuery!.isNotEmpty) {
       final query = searchQuery!.toLowerCase();
@@ -293,11 +305,13 @@ class SmartTodoAuditLogFilter {
     DateTime? fromDate,
     DateTime? toDate,
     String? searchQuery,
+    Set<String>? tagIds,
     bool clearEntityType = false,
     bool clearAction = false,
     bool clearPerformedBy = false,
     bool clearFromDate = false,
     bool clearToDate = false,
+    bool clearTagIds = false,
   }) {
     return SmartTodoAuditLogFilter(
       entityType: clearEntityType ? null : (entityType ?? this.entityType),
@@ -306,6 +320,7 @@ class SmartTodoAuditLogFilter {
       fromDate: clearFromDate ? null : (fromDate ?? this.fromDate),
       toDate: clearToDate ? null : (toDate ?? this.toDate),
       searchQuery: searchQuery ?? this.searchQuery,
+      tagIds: clearTagIds ? {} : (tagIds ?? this.tagIds),
     );
   }
 }

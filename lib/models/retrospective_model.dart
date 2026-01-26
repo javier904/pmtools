@@ -62,6 +62,9 @@ class RetrospectiveModel {
 
   // 🟢 Online Presence Tracking
   final Map<String, ParticipantPresence> participantPresence;
+  
+  // UX Settings (Synced)
+  final bool showAuthorNames;
 
   const RetrospectiveModel({
     required this.id,
@@ -93,6 +96,7 @@ class RetrospectiveModel {
     this.pendingEmails = const [],
     this.maxVotesPerUser = 3,
     this.participantPresence = const {},
+    this.showAuthorNames = true,
   });
 
   // ... 
@@ -166,6 +170,7 @@ class RetrospectiveModel {
       template: RetroTemplate.values.firstWhere((e) => e.name == data['template'], orElse: () => RetroTemplate.startStopContinue),
       currentWizardStep: data['currentWizardStep'] ?? 0,
       maxVotesPerUser: data['maxVotesPerUser'] ?? 3,
+      showAuthorNames: data['showAuthorNames'] ?? true,
     );
   }
 
@@ -199,6 +204,7 @@ class RetrospectiveModel {
       'pendingEmails': pendingEmails,
       'maxVotesPerUser': maxVotesPerUser,
       'participantPresence': participantPresence.map((email, p) => MapEntry(email, p.toJson())),
+      'showAuthorNames': showAuthorNames,
     };
   }
 
@@ -251,6 +257,7 @@ class RetrospectiveModel {
       pendingEmails: pendingEmails ?? this.pendingEmails,
       maxVotesPerUser: maxVotesPerUser ?? this.maxVotesPerUser,
       participantPresence: participantPresence ?? this.participantPresence,
+      showAuthorNames: showAuthorNames ?? this.showAuthorNames,
     );
   }
 

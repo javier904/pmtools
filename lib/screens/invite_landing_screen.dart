@@ -137,7 +137,7 @@ class _InviteLandingScreenState extends State<InviteLandingScreen> {
       case InviteSourceType.smartTodo:
         return {'listId': widget.sourceId};
       case InviteSourceType.retroBoard:
-        return {'boardId': widget.sourceId};
+        return {'id': widget.sourceId};
     }
   }
 

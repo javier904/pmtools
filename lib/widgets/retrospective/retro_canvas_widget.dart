@@ -127,12 +127,14 @@ class RetroCanvasWidget extends StatelessWidget {
                   Icon(column.icon, size: 16, color: Colors.grey[700]),
                   const SizedBox(width: 4),
                   Text(column.title.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700])),
-                  IconButton(
-                    icon: const Icon(Icons.add_circle, size: 18),
-                    onPressed: () => _showAddDialog(context, column),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  )
+                  // RESTRICTION: Only allow adding cards in 'Writing' phase.
+                  if (retro.currentPhase == RetroPhase.writing)
+                    IconButton(
+                      icon: const Icon(Icons.add_circle, size: 18),
+                      onPressed: () => _showAddDialog(context, column),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    )
                 ],
               ),
               const SizedBox(height: 8),

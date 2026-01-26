@@ -1695,6 +1695,7 @@
   "smartTodoImportHelpFieldStatus": "Nom de la colonne (ex: À faire, En cours)",
   "smartTodoImportHelpFieldAssignee": "Email de l'utilisateur",
   "smartTodoImportHelpFieldEffort": "Heures (nombre)",
+  "smartTodoImportHelpFieldTags": "Tags (#tag ou séparés par virgule)",
   "smartTodoImportStatusHint": "Colonnes disponibles pour STATUS: {columns}",
   "@smartTodoImportStatusHint": {
     "placeholders": {
@@ -1709,6 +1710,7 @@
   "smartTodoImportFieldStatus": "Statut (Colonne)",
   "smartTodoImportFieldAssignee": "Assigné",
   "smartTodoImportFieldEffort": "Effort",
+  "smartTodoImportFieldTags": "Tags",
   "smartTodoImportPasteExample": "ex. Acheter du lait\nAppeler Marie\nFinir le rapport",
 
   "smartTodoDeleteTaskTitle": "Supprimer la tâche",
@@ -1735,9 +1737,17 @@
   "smartTodoAuditFilterUser": "Utilisateur",
   "smartTodoAuditFilterType": "Type",
   "smartTodoAuditFilterAction": "Action",
+  "smartTodoAuditFilterTag": "Tag",
   "smartTodoAuditFilterSearch": "Rechercher",
   "smartTodoAuditFilterAll": "Tous",
   "smartTodoAuditFilterAllFemale": "Toutes",
+  "smartTodoAuditPremiumRequired": "Premium requis pour l'historique étendu",
+  "smartTodoAuditLastDays": "{days} derniers jours",
+  "@smartTodoAuditLastDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
   "smartTodoAuditClearFilters": "Effacer les filtres",
   "smartTodoAuditViewTimeline": "Vue chronologique",
   "smartTodoAuditViewColumns": "Vue colonnes",
@@ -1792,6 +1802,75 @@
       "count": { "type": "int" }
     }
   },
+
+  "smartTodoCfdTitle": "CFD Analytics",
+  "smartTodoCfdTooltip": "CFD Analytics",
+  "smartTodoCfdDateRange": "Periode:",
+  "smartTodoCfd7Days": "7 jours",
+  "smartTodoCfd14Days": "14 jours",
+  "smartTodoCfd30Days": "30 jours",
+  "smartTodoCfd90Days": "90 jours",
+  "smartTodoCfdError": "Erreur de chargement",
+  "smartTodoCfdRetry": "Actualiser",
+  "smartTodoCfdNoData": "Aucune donnee disponible",
+  "smartTodoCfdNoDataHint": "Les mouvements des taches seront suivis ici",
+  "smartTodoCfdKeyMetrics": "Metriques Cles",
+  "smartTodoCfdLeadTime": "Lead Time",
+  "smartTodoCfdLeadTimeTooltip": "Temps de creation a l'achevement",
+  "smartTodoCfdCycleTime": "Cycle Time",
+  "smartTodoCfdCycleTimeTooltip": "Temps du debut de travail a l'achevement",
+  "smartTodoCfdThroughput": "Debit",
+  "smartTodoCfdThroughputTooltip": "Taches terminees par semaine",
+  "smartTodoCfdWip": "TEC",
+  "smartTodoCfdWipTooltip": "Travail en cours",
+  "smartTodoCfdLimit": "Limite",
+  "smartTodoCfdCompleted": "termines",
+  "smartTodoCfdFlowAnalysis": "Analyse du Flux",
+  "smartTodoCfdArrived": "Arrives",
+  "smartTodoCfdBacklogShrinking": "Backlog en diminution",
+  "smartTodoCfdBacklogGrowing": "Backlog en augmentation",
+  "smartTodoCfdBottlenecks": "Detection des Goulots",
+  "smartTodoCfdNoBottlenecks": "Aucun goulot detecte",
+  "smartTodoCfdTasks": "taches",
+  "smartTodoCfdAvgAge": "Age moy",
+  "smartTodoCfdAgingWip": "Travaux en Cours Vieillissants",
+  "smartTodoCfdTask": "Tache",
+  "smartTodoCfdColumn": "Colonne",
+  "smartTodoCfdAge": "Age",
+  "smartTodoCfdDays": "jours",
+  "smartTodoCfdHowCalculated": "Comment est-il calcule?",
+  "smartTodoCfdMedian": "Mediane",
+  "smartTodoCfdP85": "P85",
+  "smartTodoCfdP95": "P95",
+  "smartTodoCfdMin": "Min",
+  "smartTodoCfdMax": "Max",
+  "smartTodoCfdSample": "Echantillon",
+  "smartTodoCfdVsPrevious": "vs periode precedente",
+  "smartTodoCfdArrivalRate": "Taux d'arrivee",
+  "smartTodoCfdCompletionRate": "Taux d'achevement",
+  "smartTodoCfdNetFlow": "Flux Net",
+  "smartTodoCfdPerDay": "/jour",
+  "smartTodoCfdPerWeek": "/semaine",
+  "smartTodoCfdSeverity": "Severite",
+  "smartTodoCfdAssignee": "Assignataire",
+  "smartTodoCfdUnassigned": "Non assigne",
+  "smartTodoCfdLeadTimeExplanation": "Le Lead Time mesure le temps total de la creation d'une tache jusqu'a son achevement.\n\n**Formule:**\nLead Time = Date d'achevement - Date de creation\n\n**Metriques:**\n- **Moyenne**: Moyenne de tous les lead times\n- **Mediane**: Valeur centrale (moins sensible aux valeurs aberrantes)\n- **P85**: 85% des taches sont terminees dans ce delai\n- **P95**: 95% des taches sont terminees dans ce delai\n\n**Pourquoi c'est important:**\nLe Lead Time represente l'experience client - le temps d'attente total. Utilisez P85 pour les estimations de livraison aux clients.",
+  "smartTodoCfdCycleTimeExplanation": "Le Cycle Time mesure le temps depuis le debut reel du travail (la tache quitte 'A faire') jusqu'a l'achevement.\n\n**Formule:**\nCycle Time = Date d'achevement - Date de debut du travail\n\n**Difference avec Lead Time:**\n- **Lead Time** = Perspective client (inclut l'attente)\n- **Cycle Time** = Perspective equipe (travail actif uniquement)\n\n**Comment 'Debut du travail' est detecte:**\nLa premiere fois qu'une tache quitte la colonne 'A faire' est enregistree comme date de debut du travail.",
+  "smartTodoCfdThroughputExplanation": "Le Throughput mesure combien de taches sont terminees par unite de temps.\n\n**Formules:**\n- Moyenne quotidienne = Taches terminees / Jours dans la periode\n- Moyenne hebdomadaire = Moyenne quotidienne x 7\n\n**Comment l'utiliser:**\nPrevoir les dates de livraison:\nTaches restantes / Throughput hebdomadaire = Semaines pour terminer\n\n**Exemple:**\n30 taches restantes, throughput de 10/semaine = ~3 semaines",
+  "smartTodoCfdWipExplanation": "Le WIP (Work In Progress) compte les taches actuellement en cours - pas dans 'A faire' et pas dans 'Termine'.\n\n**Formule:**\nWIP = Total Taches - Taches A faire - Taches Terminees\n\n**Loi de Little:**\nLead Time = WIP / Throughput\n\nReduire le WIP reduit directement le Lead Time!\n\n**Limite WIP suggeree:**\nTaille de l'equipe x 2 (meilleure pratique Kanban)\n\n**Statut:**\n- Sain: WIP <= Limite\n- Attention: WIP > Limite x 1.25\n- Critique: WIP > Limite x 1.5",
+  "smartTodoCfdFlowExplanation": "L'Analyse de Flux compare le taux d'arrivee des nouvelles taches vs les taches terminees.\n\n**Formules:**\n- Taux d'arrivee = Nouvelles taches creees / Jours\n- Taux d'achevement = Taches terminees / Jours\n- Flux Net = Terminees - Arrivees\n\n**Interpretation du statut:**\n- **Vidange** (Achevement > Arrivee): WIP en diminution - bien!\n- **Equilibre** (dans +/-10%): Flux stable\n- **Remplissage** (Arrivee > Achevement): WIP en augmentation - action necessaire",
+  "smartTodoCfdBottleneckExplanation": "La Detection des Goulots d'etranglement identifie les colonnes ou les taches s'accumulent ou restent trop longtemps.\n\n**Algorithme:**\nSeverite = (Score Comptage + Score Age) / 2\n\nOu:\n- Score Comptage = Taches dans la colonne / 10\n- Score Age = Age moyen / 7 jours\n\n**Signale quand:**\n- 2+ taches dans la colonne, OU\n- Age moyen > 2 jours\n\n**Niveaux de severite:**\n- Faible (< 0.3): Surveiller\n- Moyen (0.3-0.6): Enqueter\n- Eleve (> 0.6): Agir",
+  "smartTodoCfdAgingExplanation": "Aging WIP montre les taches actuellement en cours, triees par duree de travail.\n\n**Formule:**\nAge = Heure actuelle - Date de debut du travail (en jours)\n\n**Statut par age:**\n- Frais (< 3 jours): Normal\n- Attention (3-7 jours): Peut necessiter attention\n- Critique (> 7 jours): Probablement bloque - enqueter!\n\nLes vieilles taches indiquent souvent des blocages, des exigences peu claires ou une derive du scope.",
+  "smartTodoCfdTeamBalance": "Equilibre de l'Equipe",
+  "smartTodoCfdTeamBalanceExplanation": "L'Equilibre de l'Equipe montre la distribution des taches entre les membres.\n\n**Score d'Equilibre:**\nCalcule avec le coefficient de variation (CV).\nScore = 1 / (1 + CV)\n\n**Statut:**\n- Equilibre (≥80%): Travail distribue equitablement\n- Inegal (50-80%): Quelque desequilibre\n- Desequilibre (<50%): Disparite significative\n\n**Colonnes:**\n- A Faire: Taches en attente\n- WIP: Taches en cours\n- Fait: Taches terminees",
+  "smartTodoCfdBalanced": "Equilibre",
+  "smartTodoCfdUneven": "Inegal",
+  "smartTodoCfdImbalanced": "Desequilibre",
+  "smartTodoCfdMember": "Membre",
+  "smartTodoCfdTotal": "Total",
+  "smartTodoCfdToDo": "A Faire",
+  "smartTodoCfdInProgress": "En Cours",
+  "smartTodoCfdDone": "Fait",
 
   "smartTodoNewTaskDefault": "Nouvelle tâche",
   "smartTodoRename": "Renommer",
@@ -1891,6 +1970,17 @@
   },
   "smartTodoFilterByPerson": "Filtrer par personne",
   "smartTodoApplyFilters": "Appliquer les Filtres",
+  "smartTodoAllTags": "Tous les tags",
+  "smartTodoTagsCount": "{count} tags",
+  "@smartTodoTagsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smartTodoFilterByTag": "Filtrer par tag",
+  "smartTodoTagAlreadyExists": "Tag déjà existant",
   "@smartTodoNoSearchResults": {
     "placeholders": {
       "query": {

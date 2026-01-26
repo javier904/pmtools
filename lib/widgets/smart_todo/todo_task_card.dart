@@ -69,13 +69,15 @@ class TodoTaskCard extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Tags (moved here from below)
-                    if (task.tags.isNotEmpty) ...[
-                      Flexible(
-                        child: Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: task.tags.map((tag) => Container(
+                    // Left side: Tags, Priority, Status (expandable)
+                    Expanded(
+                      child: Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          // Tags
+                          ...task.tags.map((tag) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                             decoration: BoxDecoration(
                               color: Color(tag.colorValue).withOpacity(isDark ? 0.25 : 0.15),
@@ -89,69 +91,63 @@ class TodoTaskCard extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          )).toList(),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                    ],
-
-                    // Priority Pill (only initial with tooltip)
-                    Tooltip(
-                      message: _getPriorityLabel(task.priority),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: priorityColor.withOpacity(isDark ? 0.2 : 0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          task.priority.name[0].toUpperCase(),
-                          style: TextStyle(
-                            color: priorityColor,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
+                          )),
+                          // Priority Pill
+                          Tooltip(
+                            message: _getPriorityLabel(task.priority),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: priorityColor.withOpacity(isDark ? 0.2 : 0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                task.priority.name[0].toUpperCase(),
+                                style: TextStyle(
+                                  color: priorityColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          // Status Pill
+                          if (showStatus && list != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(task.statusId).withOpacity(isDark ? 0.2 : 0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                _getStatusName(task.statusId).toUpperCase(),
+                                style: TextStyle(
+                                  color: _getStatusColor(task.statusId),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(width: 6),
-
-                    // Status Pill
-                    if (showStatus && list != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(task.statusId).withOpacity(isDark ? 0.2 : 0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          _getStatusName(task.statusId).toUpperCase(),
-                          style: TextStyle(
-                            color: _getStatusColor(task.statusId),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-
-                    const Spacer(),
-                    // Assignee Avatar
+                    // Right side: Assignee + Menu (fixed position)
                     if (task.assignedTo.isNotEmpty) ...[
+                      const SizedBox(width: 8),
                       Tooltip(
                         message: _getAssigneeName(task.assignedTo.first),
                         child: _buildAvatar(task.assignedTo.first, isDark),
                       ),
-                      const SizedBox(width: 4),
                     ],
-                    // More options menu (delete)
-                    if (onDelete != null)
+                    if (onDelete != null) ...[
+                      const SizedBox(width: 4),
                       _TaskCardPopupMenu(
                         task: task,
                         onDelete: onDelete!,
                         isDark: isDark,
                       ),
+                    ],
                   ],
                 ),
                 
@@ -512,19 +508,31 @@ class _AttachmentLinkButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isDark ? Colors.blue[300]! : Colors.blue[600]!;
 
-    // Single attachment: direct click to open
+    // Single attachment: show link icon with name if it's a URL
     if (attachments.length == 1) {
-      return GestureDetector(
-        onTap: () => _openLink(attachments.first.url),
-        behavior: HitTestBehavior.opaque,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-          child: _buildMetaIcon(Icons.attach_file_rounded, '1', color: color),
+      final attachment = attachments.first;
+      final fullName = attachment.name.isNotEmpty
+          ? attachment.name
+          : _getShortUrl(attachment.url);
+      // Limit to 12 characters with ellipsis
+      final displayName = fullName.length > 12
+          ? '${fullName.substring(0, 12)}...'
+          : fullName;
+
+      return Tooltip(
+        message: fullName,
+        child: GestureDetector(
+          onTap: () => _openLink(attachment.url),
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: _buildMetaIcon(Icons.link_rounded, displayName, color: color),
+          ),
         ),
       );
     }
 
-    // Multiple attachments: show menu
+    // Multiple attachments: show menu with clip icon
     return PopupMenuButton<String>(
       padding: EdgeInsets.zero,
       tooltip: '',

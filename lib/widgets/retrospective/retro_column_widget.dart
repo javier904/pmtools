@@ -103,7 +103,7 @@ class RetroColumnWidget extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 12, 8, 80),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // 2 Cards per row
-                childAspectRatio: 1.4, // Adjust for compact aspect
+                childAspectRatio: 2.8, // More compact (shorter)
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
               ),
@@ -168,7 +168,7 @@ class RetroColumnWidget extends StatelessWidget {
                    ? Text(
                       item.content,
                       style: TextStyle(
-                        fontSize: 13, // Smaller font
+                        fontSize: 15, // Larger font
                         height: 1.3,
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.grey[200] : Colors.grey[800],
@@ -290,11 +290,11 @@ class RetroColumnWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: hasVoted 
-              ? Colors.red.withValues(alpha: 0.15) 
+              ? Colors.blue.withValues(alpha: 0.15) 
               : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100]),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: hasVoted ? Colors.red.withValues(alpha: 0.4) : Colors.transparent,
+            color: hasVoted ? Colors.blue.withValues(alpha: 0.4) : Colors.transparent,
             width: 1,
           ),
         ),
@@ -302,18 +302,21 @@ class RetroColumnWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              hasVoted ? Icons.favorite : (isVotingPhase ? Icons.favorite_border : Icons.favorite), // Show full heart if read-only
+              hasVoted ? Icons.thumb_up : (isVotingPhase ? Icons.thumb_up_outlined : Icons.thumb_up), 
               size: 14,
-              color: hasVoted ? Colors.red : (isDark ? Colors.grey[400] : Colors.grey[500]),
+              color: hasVoted ? Colors.blue : (isDark ? Colors.grey[400] : Colors.grey[500]),
             ),
-            if (item.votes > 0 || isVotingPhase) ...[
+            // Show count ONLY if NOT voting phase or (it's my vote and I want to see I voted? No user said hidden).
+            // User: "must be hidden, and shown only when reveal is done".
+            // So during Voting Phase -> Hide Count completely.
+            if (!isVotingPhase && item.votes > 0) ...[
                 const SizedBox(width: 4),
                 Text(
                   '${item.votes}', 
                   style: TextStyle(
                     fontSize: 11, 
                     fontWeight: FontWeight.w800, 
-                    color: hasVoted ? Colors.red : (isDark ? Colors.grey[300] : Colors.grey[700]),
+                    color: hasVoted ? Colors.blue : (isDark ? Colors.grey[300] : Colors.grey[700]),
                   ),
                 ),
             ]
@@ -325,7 +328,9 @@ class RetroColumnWidget extends StatelessWidget {
 
   Widget _buildAddButton(BuildContext context, RetroColumn column) {
     final l10n = AppLocalizations.of(context)!;
-    final bool canAdd = retro.currentPhase == RetroPhase.writing || retro.currentPhase == RetroPhase.discuss;
+    // RESTRICTION: Only allow adding cards in 'Writing' phase. 
+    // 'Discuss' phase is for discussion only.
+    final bool canAdd = retro.currentPhase == RetroPhase.writing;
     if (!canAdd) return const SizedBox.shrink();
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 

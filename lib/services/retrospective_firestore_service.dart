@@ -238,9 +238,15 @@ class RetrospectiveFirestoreService {
   }
 
   /// Rivela le card a tutti (fine fase Writing)
-  Future<void> revealCards(String retroId) async {
     await _retrosCollection.doc(retroId).update({
         'areTeamCardsVisible': true,
+    });
+  }
+
+  /// Toggle author names visibility (Facilitator only)
+  Future<void> toggleAuthorNames(String retroId, bool isVisible) async {
+    await _retrosCollection.doc(retroId).update({
+      'showAuthorNames': isVisible,
     });
   }
   
@@ -470,7 +476,7 @@ class RetrospectiveFirestoreService {
     try {
       final docRef = _retrosCollection.doc(retroId);
       await docRef.update({
-        'participantPresence.$userEmail': {
+        FieldPath(const ['participantPresence', userEmail]): {
           'isOnline': true,
           'lastActivity': FieldValue.serverTimestamp(),
         },
@@ -490,8 +496,9 @@ class RetrospectiveFirestoreService {
   Future<void> markOffline(String retroId, String userEmail) async {
     try {
       final docRef = _retrosCollection.doc(retroId);
+      // Use FieldPath explicitly to handle dots in emails
       await docRef.update({
-        'participantPresence.$userEmail.isOnline': false,
+        FieldPath(['participantPresence', userEmail, 'isOnline']): false,
       });
     } catch (e) {
       print('⚠️ Errore markOffline: $e');

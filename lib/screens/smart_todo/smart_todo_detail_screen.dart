@@ -27,6 +27,7 @@ import '../estimation_room_screen.dart';
 import '../eisenhower_screen.dart';
 import '../agile_project_detail_screen.dart';
 import 'smart_todo_audit_log_screen.dart';
+import 'smart_todo_cfd_screen.dart';
 
 enum TodoViewMode { kanban, list, resource }
 
@@ -48,14 +49,16 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   TodoViewMode? _viewMode = TodoViewMode.kanban;
   final TextEditingController _searchController = TextEditingController();
   List<String>? _assigneeFilters;
-  bool _filterToday = false; 
+  List<String>? _tagFilters; // Filter by tag IDs
+  bool _filterToday = false;
   bool _sortByDate = false; // Default: Manual/Global Rank
-  
+
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
   bool _allowPop = false;
 
   List<String> get safeAssigneeFilters => _assigneeFilters ?? [];
+  List<String> get safeTagFilters => _tagFilters ?? [];
 
   @override
   void dispose() {
@@ -181,6 +184,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)),
                     ),
                   ),
+                // CFD Chart - Owner only
+                if (currentList.isOwner(_currentUserEmail))
+                  IconButton(
+                    icon: const Icon(Icons.stacked_line_chart),
+                    tooltip: AppLocalizations.of(context)?.smartTodoCfdTooltip ?? 'Cumulative Flow Diagram',
+                    onPressed: () => _showCfdChart(currentList),
+                  ),
                 IconButton(
                   icon: const Icon(Icons.person_add),
                   tooltip: AppLocalizations.of(context)?.smartTodoInviteTooltip ?? 'Invita',
@@ -251,9 +261,18 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 if (safeAssigneeFilters.isNotEmpty) {
                   // Filter: Show task if ANY of its assignees is in the filter list
                   tasks = tasks.where((t) {
-                    if (t.assignedTo.isEmpty) return false; // Or should we have a "Unassigned" filter? 
+                    if (t.assignedTo.isEmpty) return false; // Or should we have a "Unassigned" filter?
                     // For now, simple intersection
                     return t.assignedTo.any((a) => safeAssigneeFilters.contains(a));
+                  }).toList();
+                }
+
+                // Tag Filter
+                if (safeTagFilters.isNotEmpty) {
+                  // Filter: Show task if ANY of its tags is in the filter list
+                  tasks = tasks.where((t) {
+                    if (t.tags.isEmpty) return false;
+                    return t.tags.any((tag) => safeTagFilters.contains(tag.id));
                   }).toList();
                 }
 
@@ -473,17 +492,63 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      ),
                      const SizedBox(width: 8),
                      Icon(
-                       Icons.keyboard_arrow_down, 
-                       size: 18, 
+                       Icons.keyboard_arrow_down,
+                       size: 18,
                        color: safeAssigneeFilters.isEmpty ? (isDark ? Colors.grey[400] : Colors.grey) : Colors.blue
                      ),
                    ],
                  ),
                ),
              ),
-             
+
              const SizedBox(width: 12),
-             
+
+             // Tag Filter Pill (Multi-select)
+             if (currentList.availableTags.isNotEmpty)
+               InkWell(
+                 onTap: () => _showMultiSelectTagDialog(currentList),
+                 borderRadius: BorderRadius.circular(20),
+                 child: Container(
+                   padding: const EdgeInsets.symmetric(horizontal: 16),
+                   height: 40,
+                   decoration: BoxDecoration(
+                     color: safeTagFilters.isEmpty ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.blue.withOpacity(0.1),
+                     borderRadius: BorderRadius.circular(20),
+                     border: Border.all(
+                       color: safeTagFilters.isEmpty ? (isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)) : Colors.blue.withOpacity(0.3)
+                     ),
+                   ),
+                   child: Row(
+                     children: [
+                       Icon(
+                         Icons.label_outline,
+                         size: 18,
+                         color: safeTagFilters.isEmpty ? (isDark ? Colors.grey[400] : Colors.grey) : Colors.blue
+                       ),
+                       const SizedBox(width: 8),
+                       Text(
+                         safeTagFilters.isEmpty
+                           ? (AppLocalizations.of(context)?.smartTodoAllTags ?? "All tags")
+                           : (AppLocalizations.of(context)?.smartTodoTagsCount(safeTagFilters.length) ?? "${safeTagFilters.length} tags"),
+                         style: TextStyle(
+                           fontSize: 14,
+                           color: safeTagFilters.isEmpty ? (isDark ? Colors.grey[300] : Colors.black) : Colors.blue,
+                           fontWeight: safeTagFilters.isEmpty ? FontWeight.normal : FontWeight.bold,
+                         ),
+                       ),
+                       const SizedBox(width: 8),
+                       Icon(
+                         Icons.keyboard_arrow_down,
+                         size: 18,
+                         color: safeTagFilters.isEmpty ? (isDark ? Colors.grey[400] : Colors.grey) : Colors.blue
+                       ),
+                     ],
+                   ),
+                 ),
+               ),
+
+             const SizedBox(width: 12),
+
               // Today Filter Toggle
               InkWell(
                 onTap: () => setState(() => _filterToday = !_filterToday),
@@ -1324,6 +1389,180 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     );
   }
 
+  void _showMultiSelectTagDialog(TodoListModel currentList) {
+    // Current Selection
+    var selectedTagIds = List<String>.from(_tagFilters ?? []);
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final bgColor = isDark ? const Color(0xFF1E2633) : Colors.white;
+          final textColor = isDark ? Colors.white : Colors.black87;
+          final dividerColor = isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200];
+
+          return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Container(
+               width: 350,
+               padding: EdgeInsets.zero,
+               decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                     BoxShadow(
+                        color: Colors.black.withOpacity(isDark ? 0.4 : 0.12),
+                        blurRadius: 20,
+                        spreadRadius: 5
+                     )
+                  ],
+                  border: isDark ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
+               ),
+               child: Column(
+                 mainAxisSize: MainAxisSize.min,
+                 children: [
+                   // Header
+                   Padding(
+                     padding: const EdgeInsets.fromLTRB(24, 20, 16, 16),
+                     child: Row(
+                       children: [
+                         Container(
+                           padding: const EdgeInsets.all(8),
+                           decoration: BoxDecoration(
+                             color: Colors.blue.withOpacity(isDark ? 0.2 : 0.1),
+                             borderRadius: BorderRadius.circular(8),
+                           ),
+                           child: const Icon(Icons.label, color: Colors.blue, size: 20),
+                         ),
+                         const SizedBox(width: 12),
+                         Text(
+                           AppLocalizations.of(context)?.smartTodoFilterByTag ?? 'Filter by Tag',
+                           style: TextStyle(
+                             fontSize: 18,
+                             fontWeight: FontWeight.bold,
+                             color: textColor,
+                           ),
+                         ),
+                         const Spacer(),
+                         IconButton(
+                           icon: Icon(Icons.close, color: isDark ? Colors.grey[400] : Colors.grey[600], size: 20),
+                           onPressed: () => Navigator.pop(context),
+                         ),
+                       ],
+                     ),
+                   ),
+
+                   Divider(height: 1, color: dividerColor),
+
+                   // Tag List
+                   ConstrainedBox(
+                     constraints: const BoxConstraints(maxHeight: 300),
+                     child: SingleChildScrollView(
+                       child: Column(
+                         children: [
+                            // "All tags" option
+                            ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                              leading: Icon(Icons.label_outline, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                              title: Text(
+                                AppLocalizations.of(context)?.smartTodoAllTags ?? 'All tags',
+                                style: TextStyle(color: textColor),
+                              ),
+                              trailing: selectedTagIds.isEmpty
+                                  ? const Icon(Icons.check, color: Colors.blue)
+                                  : (isDark ? Icon(Icons.refresh, size: 18, color: Colors.grey[600]) : Icon(Icons.refresh, size: 18, color: Colors.grey[400])),
+                              onTap: () {
+                                 setState(() => selectedTagIds.clear());
+                              },
+                            ),
+                            Divider(height: 1, color: dividerColor),
+                            ...currentList.availableTags.map((tag) {
+                              final isSelected = selectedTagIds.contains(tag.id);
+
+                              return CheckboxListTile(
+                                activeColor: Colors.blue,
+                                checkColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                                secondary: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Color(tag.colorValue).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Icon(Icons.label, color: Color(tag.colorValue), size: 14),
+                                ),
+                                title: Text(
+                                  tag.title,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                                value: isSelected,
+                                onChanged: (checked) {
+                                  setState(() {
+                                    if (checked == true) {
+                                      selectedTagIds.add(tag.id);
+                                    } else {
+                                      selectedTagIds.remove(tag.id);
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
+                         ],
+                       ),
+                     ),
+                   ),
+
+                   Divider(height: 1, color: dividerColor),
+
+                   // Footer
+                   Padding(
+                     padding: const EdgeInsets.all(24),
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.end,
+                       children: [
+                         TextButton(
+                           onPressed: () => Navigator.pop(context),
+                           style: TextButton.styleFrom(foregroundColor: isDark ? Colors.grey[400] : Colors.grey[600]),
+                           child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')
+                         ),
+                         const SizedBox(width: 12),
+                         ElevatedButton(
+                           onPressed: () {
+                               // Apply Logic
+                               this.setState(() {
+                                 _tagFilters = selectedTagIds.isEmpty ? null : selectedTagIds;
+                               });
+
+                               Navigator.pop(context);
+                           },
+                           style: ElevatedButton.styleFrom(
+                             backgroundColor: Colors.blue,
+                             foregroundColor: Colors.white,
+                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                             elevation: 0,
+                           ),
+                           child: Text(AppLocalizations.of(context)?.smartTodoApplyFilters ?? 'Apply Filters'),
+                         ),
+                       ],
+                     ),
+                   ),
+                 ],
+               ),
+            ),
+          );
+        }
+      ),
+    );
+  }
+
   bool _canEditTask(TodoTaskModel task, TodoListModel currentList) {
     // Allow any participant (Owner, Editor, Viewer-if-allowed) to edit.
     // The model's canEdit() now returns true for any participant.
@@ -1392,6 +1631,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       builder: (context) => SmartTaskImportDialog(
         listId: list.id,
         availableColumns: list.columns,
+        availableTags: list.availableTags,
         todoService: _todoService,
       ),
     );
@@ -1656,9 +1896,25 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               ElevatedButton(
                 onPressed: () async {
                   if (textCtrl.text.isEmpty) return;
+
+                  // Check for duplicate tag (case-insensitive)
+                  final tagExists = list.availableTags.any(
+                    (tag) => tag.title.toLowerCase() == textCtrl.text.trim().toLowerCase()
+                  );
+
+                  if (tagExists) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)?.smartTodoTagAlreadyExists ?? 'Tag already exists'),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                    return;
+                  }
+
                   final newTag = TodoLabel(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    title: textCtrl.text,
+                    title: textCtrl.text.trim(),
                     colorValue: selectedColor,
                   );
                   final newTags = List<TodoLabel>.from(list.availableTags)..add(newTag);
@@ -1681,6 +1937,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           );
         }
       ),
+    );
+  }
+
+  /// Show Cumulative Flow Diagram analytics page
+  void _showCfdChart(TodoListModel list) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => SmartTodoCfdScreen(list: list)),
     );
   }
 

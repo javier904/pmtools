@@ -2,7 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../models/smart_todo/smart_todo_audit_log_model.dart';
 import '../../models/smart_todo/todo_list_model.dart';
+import '../../models/smart_todo/todo_task_model.dart';
+import '../../models/user_profile/subscription_model.dart';
 import '../../services/smart_todo_audit_service.dart';
+import '../../services/smart_todo_service.dart';
+import '../../services/subscription/subscription_limits_service.dart';
 import '../../l10n/app_localizations.dart';
 
 enum AuditViewMode { timeline, columns }
@@ -18,6 +22,8 @@ class SmartTodoAuditLogScreen extends StatefulWidget {
 
 class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   final SmartTodoAuditService _auditService = SmartTodoAuditService();
+  final SmartTodoService _todoService = SmartTodoService();
+  final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
   List<SmartTodoAuditLogModel> _logs = [];
   bool _isLoading = true;
@@ -31,10 +37,64 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   // Expanded rows tracking
   final Set<String> _expandedRows = {};
 
+  // Date range filter
+  int _selectedDays = 1; // Default 1 day (24h)
+  int _maxAllowedDays = 7; // Free plan default
+  bool _isPremium = false;
+
+  // Search controller
+  final TextEditingController _searchController = TextEditingController();
+
+  // Task tags mapping: taskId -> Set<tagId>
+  Map<String, Set<String>> _taskTagsMap = {};
+  Set<String> _selectedTagIds = {};
+
   @override
   void initState() {
     super.initState();
-    _loadLogs();
+    _initializeWithSubscription();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeWithSubscription() async {
+    // Check subscription plan
+    final plan = await _limitsService.getCurrentPlan();
+    setState(() {
+      _isPremium = plan != SubscriptionPlan.free;
+      _maxAllowedDays = _isPremium ? 90 : 7; // Premium: 90 days, Free: 7 days
+      _selectedDays = 1; // Always start with 1 day
+    });
+
+    // Load tasks to build tag mapping
+    await _loadTaskTagsMap();
+
+    // Apply default date filter and load
+    _applyDateFilter(_selectedDays);
+  }
+
+  /// Carica i task e costruisce la mappa taskId -> tagIds
+  Future<void> _loadTaskTagsMap() async {
+    try {
+      final tasks = await _todoService.streamTasks(widget.list.id).first;
+      final Map<String, Set<String>> tagsMap = {};
+
+      for (final task in tasks) {
+        if (task.tags.isNotEmpty) {
+          tagsMap[task.id] = task.tags.map((t) => t.id).toSet();
+        }
+      }
+
+      setState(() {
+        _taskTagsMap = tagsMap;
+      });
+    } catch (e) {
+      print('Error loading task tags map: $e');
+    }
   }
 
   Future<void> _loadLogs({bool reset = false}) async {
@@ -84,8 +144,139 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
     _loadLogs(reset: true);
   }
 
+  void _applyDateFilter(int days) {
+    final now = DateTime.now();
+    final fromDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: days - 1));
+    final toDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+    setState(() {
+      _selectedDays = days;
+      _filter = _filter.copyWith(fromDate: fromDate, toDate: toDate);
+    });
+    _loadLogs(reset: true);
+  }
+
   void _clearFilters() {
-    _applyFilter(const SmartTodoAuditLogFilter());
+    _searchController.clear();
+    setState(() {
+      _selectedDays = 1;
+      _selectedTagIds = {};
+      _filter = _filter.copyWith(clearTagIds: true);
+    });
+    _applyDateFilter(1); // Reset to default 1 day with date filter
+  }
+
+  /// Mostra dialog per selezione multipla tag
+  void _showTagMultiSelectDialog() {
+    final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Copia locale per gestire selezione nel dialog
+    final tempSelection = Set<String>.from(_selectedTagIds);
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l10n?.smartTodoAuditFilterTag ?? 'Filter by Tag'),
+          content: SizedBox(
+            width: 280,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Clear all option
+                ListTile(
+                  dense: true,
+                  leading: Icon(
+                    tempSelection.isEmpty ? Icons.check_circle : Icons.radio_button_unchecked,
+                    color: tempSelection.isEmpty ? Colors.blue : Colors.grey,
+                  ),
+                  title: Text(l10n?.smartTodoAuditFilterAll ?? 'All'),
+                  onTap: () {
+                    setDialogState(() => tempSelection.clear());
+                  },
+                ),
+                const Divider(height: 1),
+                // Tag list
+                ...widget.list.availableTags.map((tag) {
+                  final isSelected = tempSelection.contains(tag.id);
+                  return ListTile(
+                    dense: true,
+                    leading: Checkbox(
+                      value: isSelected,
+                      onChanged: (val) {
+                        setDialogState(() {
+                          if (val == true) {
+                            tempSelection.add(tag.id);
+                          } else {
+                            tempSelection.remove(tag.id);
+                          }
+                        });
+                      },
+                    ),
+                    title: Row(
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: Color(tag.colorValue),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(tag.title, overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      setDialogState(() {
+                        if (isSelected) {
+                          tempSelection.remove(tag.id);
+                        } else {
+                          tempSelection.add(tag.id);
+                        }
+                      });
+                    },
+                  );
+                }),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n?.cancel ?? 'Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                setState(() {
+                  _selectedTagIds = tempSelection;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text(l10n?.actionConfirm ?? 'Apply'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Getter per i log filtrati per tags (client-side)
+  List<SmartTodoAuditLogModel> get _filteredLogs {
+    if (_selectedTagIds.isEmpty) {
+      return _logs;
+    }
+    return _logs.where((log) {
+      // Solo log di tipo task
+      if (log.entityType != TodoAuditEntityType.task) return true;
+
+      // Controlla se il task ha almeno uno dei tag selezionati
+      final taskTags = _taskTagsMap[log.entityId] ?? {};
+      return _selectedTagIds.any((tagId) => taskTags.contains(tagId));
+    }).toList();
   }
 
   @override
@@ -124,6 +315,9 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
               onPressed: _clearFilters,
               icon: const Icon(Icons.clear, size: 18),
               label: Text(l10n?.smartTodoAuditClearFilters ?? 'Clear Filters'),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF00BCD4), // Cyan - colore della sezione
+              ),
             ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -160,115 +354,231 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   Widget _buildFilterBar() {
     final l10n = AppLocalizations.of(context);
     final participants = widget.list.participants.entries.toList();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Date range options (based on subscription)
+    final dateOptions = _isPremium ? [1, 3, 7, 30, 90] : [1, 3, 7];
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       color: Theme.of(context).colorScheme.surfaceContainerLow,
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+      child: Row(
         children: [
-          // Filter by user
-          SizedBox(
-            width: 160,
-            child: DropdownButtonFormField<String?>(
-              value: _filter.performedBy,
-              decoration: InputDecoration(
-                labelText: l10n?.smartTodoAuditFilterUser ?? 'User',
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: const OutlineInputBorder(),
+          // Date range chips
+          ...dateOptions.map((days) {
+            final isSelected = _selectedDays == days;
+            final isDisabled = !_isPremium && days > _maxAllowedDays;
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Tooltip(
+                message: isDisabled
+                    ? (l10n?.smartTodoAuditPremiumRequired ?? 'Premium required')
+                    : '${l10n?.smartTodoAuditLastDays(days) ?? 'Last $days days'}',
+                child: ChoiceChip(
+                  label: Text('${days}d'),
+                  selected: isSelected,
+                  onSelected: isDisabled ? null : (_) => _applyDateFilter(days),
+                  selectedColor: Colors.blue,
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.white : (isDisabled ? Colors.grey : null),
+                    fontSize: 12,
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                ),
               ),
-              items: [
-                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
-                ...participants.map((p) {
-                  final displayName = p.value.displayName ?? p.key.split('@').first;
-                  return DropdownMenuItem(
-                    value: displayName,
-                    child: Text(displayName, overflow: TextOverflow.ellipsis),
-                  );
-                }),
-              ],
-              onChanged: (val) {
-                if (val == null) {
-                  _applyFilter(_filter.copyWith(clearPerformedBy: true));
-                } else {
-                  _applyFilter(_filter.copyWith(performedBy: val));
-                }
-              },
-            ),
-          ),
+            );
+          }),
 
-          // Filter by entity type
-          SizedBox(
-            width: 160,
-            child: DropdownButtonFormField<TodoAuditEntityType?>(
-              value: _filter.entityType,
-              decoration: InputDecoration(
-                labelText: l10n?.smartTodoAuditFilterType ?? 'Type',
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: const OutlineInputBorder(),
-              ),
-              items: [
-                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
-                ...TodoAuditEntityType.values.map((t) => DropdownMenuItem(
-                  value: t,
-                  child: Text(_getLocalizedEntityType(t)),
-                )),
-              ],
-              onChanged: (val) {
-                if (val == null) {
-                  _applyFilter(_filter.copyWith(clearEntityType: true));
-                } else {
-                  _applyFilter(_filter.copyWith(entityType: val));
-                }
-              },
-            ),
+          const SizedBox(width: 8),
+          Container(
+            width: 1,
+            height: 32,
+            color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
           ),
+          const SizedBox(width: 8),
 
-          // Filter by action
-          SizedBox(
-            width: 160,
-            child: DropdownButtonFormField<TodoAuditAction?>(
-              value: _filter.action,
-              decoration: InputDecoration(
-                labelText: l10n?.smartTodoAuditFilterAction ?? 'Action',
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: const OutlineInputBorder(),
-              ),
-              items: [
-                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAllFemale ?? 'All')),
-                ...TodoAuditAction.values.map((a) => DropdownMenuItem(
-                  value: a,
-                  child: Text(_getLocalizedAction(a)),
-                )),
-              ],
-              onChanged: (val) {
-                if (val == null) {
-                  _applyFilter(_filter.copyWith(clearAction: true));
-                } else {
-                  _applyFilter(_filter.copyWith(action: val));
-                }
-              },
-            ),
-          ),
+          // Filters row with consistent sizing
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  // Filter by user
+                  SizedBox(
+                    width: 140,
+                    height: 40,
+                    child: DropdownButtonFormField<String?>(
+                      value: _filter.performedBy,
+                      decoration: InputDecoration(
+                        labelText: l10n?.smartTodoAuditFilterUser ?? 'User',
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        border: const OutlineInputBorder(),
+                      ),
+                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
+                        ...participants.map((p) {
+                          final displayName = p.value.displayName ?? p.key.split('@').first;
+                          return DropdownMenuItem(
+                            value: displayName,
+                            child: Text(displayName, overflow: TextOverflow.ellipsis),
+                          );
+                        }),
+                      ],
+                      onChanged: (val) {
+                        if (val == null) {
+                          _applyFilter(_filter.copyWith(clearPerformedBy: true));
+                        } else {
+                          _applyFilter(_filter.copyWith(performedBy: val));
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
 
-          // Search
-          SizedBox(
-            width: 160,
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: l10n?.smartTodoAuditFilterSearch ?? 'Search',
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.search, size: 18),
+                  // Filter by entity type
+                  SizedBox(
+                    width: 140,
+                    height: 40,
+                    child: DropdownButtonFormField<TodoAuditEntityType?>(
+                      value: _filter.entityType,
+                      decoration: InputDecoration(
+                        labelText: l10n?.smartTodoAuditFilterType ?? 'Type',
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        border: const OutlineInputBorder(),
+                      ),
+                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
+                        ...TodoAuditEntityType.values.map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(_getLocalizedEntityType(t)),
+                        )),
+                      ],
+                      onChanged: (val) {
+                        if (val == null) {
+                          _applyFilter(_filter.copyWith(clearEntityType: true));
+                        } else {
+                          _applyFilter(_filter.copyWith(entityType: val));
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Filter by action
+                  SizedBox(
+                    width: 140,
+                    height: 40,
+                    child: DropdownButtonFormField<TodoAuditAction?>(
+                      value: _filter.action,
+                      decoration: InputDecoration(
+                        labelText: l10n?.smartTodoAuditFilterAction ?? 'Action',
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        border: const OutlineInputBorder(),
+                      ),
+                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAllFemale ?? 'All')),
+                        ...TodoAuditAction.values.map((a) => DropdownMenuItem(
+                          value: a,
+                          child: Text(_getLocalizedAction(a)),
+                        )),
+                      ],
+                      onChanged: (val) {
+                        if (val == null) {
+                          _applyFilter(_filter.copyWith(clearAction: true));
+                        } else {
+                          _applyFilter(_filter.copyWith(action: val));
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Filter by tags (multi-select) - stesso stile degli altri dropdown
+                  if (widget.list.availableTags.isNotEmpty)
+                    SizedBox(
+                      width: 140,
+                      height: 40,
+                      child: InkWell(
+                        onTap: () => _showTagMultiSelectDialog(),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: l10n?.smartTodoAuditFilterTag ?? 'Tag',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            border: const OutlineInputBorder(),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _selectedTagIds.isEmpty
+                                    ? Text(
+                                        l10n?.smartTodoAuditFilterAll ?? 'All',
+                                        style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                                      )
+                                    : Row(
+                                        children: [
+                                          ..._selectedTagIds.take(3).map((tagId) {
+                                            final tag = widget.list.availableTags.firstWhere(
+                                              (t) => t.id == tagId,
+                                              orElse: () => TodoLabel(id: '', title: '', colorValue: 0xFF9E9E9E),
+                                            );
+                                            return Container(
+                                              width: 12,
+                                              height: 12,
+                                              margin: const EdgeInsets.only(right: 3),
+                                              decoration: BoxDecoration(
+                                                color: Color(tag.colorValue),
+                                                borderRadius: BorderRadius.circular(2),
+                                              ),
+                                            );
+                                          }),
+                                          if (_selectedTagIds.length > 3)
+                                            Text(
+                                              '+${_selectedTagIds.length - 3}',
+                                              style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                                            ),
+                                        ],
+                                      ),
+                              ),
+                              Icon(Icons.arrow_drop_down, size: 20, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (widget.list.availableTags.isNotEmpty)
+                    const SizedBox(width: 8),
+
+                  // Search - consistent with dropdowns
+                  SizedBox(
+                    width: 140,
+                    height: 40,
+                    child: TextField(
+                      controller: _searchController,
+                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                      decoration: InputDecoration(
+                        hintText: l10n?.smartTodoAuditFilterSearch ?? 'Search',
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.search, size: 16),
+                        prefixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      ),
+                      onSubmitted: (val) {
+                        _applyFilter(_filter.copyWith(searchQuery: val.isEmpty ? '' : val));
+                      },
+                    ),
+                  ),
+                ],
               ),
-              onSubmitted: (val) {
-                _applyFilter(_filter.copyWith(searchQuery: val.isEmpty ? '' : val));
-              },
             ),
           ),
         ],
@@ -286,7 +596,9 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_logs.isEmpty) {
+    final logs = _filteredLogs;
+
+    if (logs.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -294,7 +606,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
             Icon(Icons.history, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             Text(
-              _filter.isEmpty
+              _filter.isEmpty && _selectedTagIds.isEmpty
                   ? (l10n?.smartTodoAuditNoActivity ?? 'No activity recorded')
                   : (l10n?.smartTodoAuditNoResults ?? 'No results for selected filters'),
               style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
@@ -305,12 +617,12 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
     }
 
     return ListView.builder(
-      itemCount: _logs.length + (_hasMore ? 1 : 0),
+      itemCount: logs.length + (_hasMore ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index == _logs.length) {
+        if (index == logs.length) {
           return _buildLoadMoreButton();
         }
-        return _buildLogRow(_logs[index]);
+        return _buildLogRow(logs[index]);
       },
     );
   }
@@ -325,7 +637,9 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_logs.isEmpty) {
+    final logs = _filteredLogs;
+
+    if (logs.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -333,7 +647,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
             Icon(Icons.history, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             Text(
-              _filter.isEmpty
+              _filter.isEmpty && _selectedTagIds.isEmpty
                   ? (l10n?.smartTodoAuditNoActivity ?? 'No activity recorded')
                   : (l10n?.smartTodoAuditNoResults ?? 'No results for selected filters'),
               style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
@@ -348,7 +662,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
 
     // Group logs by performer
     final logsByUser = <String, List<SmartTodoAuditLogModel>>{};
-    for (final log in _logs) {
+    for (final log in logs) {
       logsByUser.putIfAbsent(log.performedByName, () => []).add(log);
     }
 

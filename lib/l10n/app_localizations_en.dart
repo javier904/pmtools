@@ -2698,6 +2698,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoImportHelpFieldEffort => 'Hours (number)';
 
   @override
+  String get smartTodoImportHelpFieldTags => 'Tags (#tag or comma-separated)';
+
+  @override
   String smartTodoImportStatusHint(String columns) {
     return 'Available columns for STATUS: $columns';
   }
@@ -2725,6 +2728,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smartTodoImportFieldEffort => 'Effort';
+
+  @override
+  String get smartTodoImportFieldTags => 'Tags';
 
   @override
   String get smartTodoDeleteTaskTitle => 'Delete Task';
@@ -2783,6 +2789,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoAuditFilterAction => 'Action';
 
   @override
+  String get smartTodoAuditFilterTag => 'Tag';
+
+  @override
   String get smartTodoAuditFilterSearch => 'Search';
 
   @override
@@ -2790,6 +2799,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smartTodoAuditFilterAllFemale => 'All';
+
+  @override
+  String get smartTodoAuditPremiumRequired =>
+      'Premium required for extended history';
+
+  @override
+  String smartTodoAuditLastDays(int days) {
+    return 'Last $days days';
+  }
 
   @override
   String get smartTodoAuditClearFilters => 'Clear Filters';
@@ -2891,6 +2909,220 @@ class AppLocalizationsEn extends AppLocalizations {
   String smartTodoAuditTimeDaysAgo(int count) {
     return '$count days ago';
   }
+
+  @override
+  String get smartTodoCfdTitle => 'CFD Analytics';
+
+  @override
+  String get smartTodoCfdTooltip => 'CFD Analytics';
+
+  @override
+  String get smartTodoCfdDateRange => 'Date Range:';
+
+  @override
+  String get smartTodoCfd7Days => '7 days';
+
+  @override
+  String get smartTodoCfd14Days => '14 days';
+
+  @override
+  String get smartTodoCfd30Days => '30 days';
+
+  @override
+  String get smartTodoCfd90Days => '90 days';
+
+  @override
+  String get smartTodoCfdError => 'Error loading analytics';
+
+  @override
+  String get smartTodoCfdRetry => 'Refresh';
+
+  @override
+  String get smartTodoCfdNoData => 'No data available';
+
+  @override
+  String get smartTodoCfdNoDataHint => 'Task movements will be tracked here';
+
+  @override
+  String get smartTodoCfdKeyMetrics => 'Key Metrics';
+
+  @override
+  String get smartTodoCfdLeadTime => 'Lead Time';
+
+  @override
+  String get smartTodoCfdLeadTimeTooltip =>
+      'Time from task creation to completion';
+
+  @override
+  String get smartTodoCfdCycleTime => 'Cycle Time';
+
+  @override
+  String get smartTodoCfdCycleTimeTooltip =>
+      'Time from work start to completion';
+
+  @override
+  String get smartTodoCfdThroughput => 'Throughput';
+
+  @override
+  String get smartTodoCfdThroughputTooltip => 'Tasks completed per week';
+
+  @override
+  String get smartTodoCfdWip => 'WIP';
+
+  @override
+  String get smartTodoCfdWipTooltip => 'Work in progress';
+
+  @override
+  String get smartTodoCfdLimit => 'Limit';
+
+  @override
+  String get smartTodoCfdCompleted => 'completed';
+
+  @override
+  String get smartTodoCfdFlowAnalysis => 'Flow Analysis';
+
+  @override
+  String get smartTodoCfdArrived => 'Arrived';
+
+  @override
+  String get smartTodoCfdBacklogShrinking => 'Backlog shrinking';
+
+  @override
+  String get smartTodoCfdBacklogGrowing => 'Backlog growing';
+
+  @override
+  String get smartTodoCfdBottlenecks => 'Bottleneck Detection';
+
+  @override
+  String get smartTodoCfdNoBottlenecks => 'No bottlenecks detected';
+
+  @override
+  String get smartTodoCfdTasks => 'tasks';
+
+  @override
+  String get smartTodoCfdAvgAge => 'Avg age';
+
+  @override
+  String get smartTodoCfdAgingWip => 'Aging Work in Progress';
+
+  @override
+  String get smartTodoCfdTask => 'Task';
+
+  @override
+  String get smartTodoCfdColumn => 'Column';
+
+  @override
+  String get smartTodoCfdAge => 'Age';
+
+  @override
+  String get smartTodoCfdDays => 'days';
+
+  @override
+  String get smartTodoCfdHowCalculated => 'How is it calculated?';
+
+  @override
+  String get smartTodoCfdMedian => 'Median';
+
+  @override
+  String get smartTodoCfdP85 => 'P85';
+
+  @override
+  String get smartTodoCfdP95 => 'P95';
+
+  @override
+  String get smartTodoCfdMin => 'Min';
+
+  @override
+  String get smartTodoCfdMax => 'Max';
+
+  @override
+  String get smartTodoCfdSample => 'Sample';
+
+  @override
+  String get smartTodoCfdVsPrevious => 'vs previous period';
+
+  @override
+  String get smartTodoCfdArrivalRate => 'Arrival Rate';
+
+  @override
+  String get smartTodoCfdCompletionRate => 'Completion Rate';
+
+  @override
+  String get smartTodoCfdNetFlow => 'Net Flow';
+
+  @override
+  String get smartTodoCfdPerDay => '/day';
+
+  @override
+  String get smartTodoCfdPerWeek => '/week';
+
+  @override
+  String get smartTodoCfdSeverity => 'Severity';
+
+  @override
+  String get smartTodoCfdAssignee => 'Assignee';
+
+  @override
+  String get smartTodoCfdUnassigned => 'Unassigned';
+
+  @override
+  String get smartTodoCfdLeadTimeExplanation =>
+      'Lead Time measures the total time from when a task is created until it is completed.\n\n**Formula:**\nLead Time = Completion Date - Creation Date\n\n**Metrics:**\n- **Average**: Mean of all lead times\n- **Median**: Middle value (less sensitive to outliers)\n- **P85**: 85% of tasks complete within this time\n- **P95**: 95% of tasks complete within this time\n\n**Why it matters:**\nLead Time represents what the customer experiences - the total wait time. Use P85 when giving delivery estimates to clients.';
+
+  @override
+  String get smartTodoCfdCycleTimeExplanation =>
+      'Cycle Time measures the time from when work actually starts (task leaves \'To Do\') until completion.\n\n**Formula:**\nCycle Time = Completion Date - First Work Start Date\n\n**Difference from Lead Time:**\n- **Lead Time** = Customer perspective (includes waiting)\n- **Cycle Time** = Team perspective (active work only)\n\n**How \'Work Start\' is detected:**\nThe first time a task moves out of the \'To Do\' column is recorded as the work start date.';
+
+  @override
+  String get smartTodoCfdThroughputExplanation =>
+      'Throughput measures how many tasks are completed per unit of time.\n\n**Formulas:**\n- Daily Average = Completed Tasks / Days in Period\n- Weekly Average = Daily Average × 7\n\n**How to use it:**\nForecast delivery dates:\nRemaining Tasks / Weekly Throughput = Weeks to Complete\n\n**Example:**\n30 tasks remaining, throughput of 10/week = ~3 weeks';
+
+  @override
+  String get smartTodoCfdWipExplanation =>
+      'WIP (Work In Progress) counts tasks currently being worked on - not in \'To Do\' and not in \'Done\'.\n\n**Formula:**\nWIP = Total Tasks - Tasks in To Do - Tasks in Done\n\n**Little\'s Law:**\nLead Time = WIP / Throughput\n\nReducing WIP directly reduces Lead Time!\n\n**Suggested WIP Limit:**\nTeam Size × 2 (Kanban best practice)\n\n**Status:**\n- Healthy: WIP ≤ Limit\n- Warning: WIP > Limit × 1.25\n- Critical: WIP > Limit × 1.5';
+
+  @override
+  String get smartTodoCfdFlowExplanation =>
+      'Flow Analysis compares the rate of new tasks arriving vs tasks being completed.\n\n**Formulas:**\n- Arrival Rate = New Tasks Created / Days\n- Completion Rate = Tasks Completed / Days\n- Net Flow = Completed - Arrived\n\n**Status interpretation:**\n- **Draining** (Completion > Arrival): WIP decreasing - good!\n- **Balanced** (within ±10%): Stable flow\n- **Filling** (Arrival > Completion): WIP increasing - action needed';
+
+  @override
+  String get smartTodoCfdBottleneckExplanation =>
+      'Bottleneck Detection identifies columns where tasks accumulate or stay too long.\n\n**Algorithm:**\nSeverity = (Count Score + Age Score) / 2\n\nWhere:\n- Count Score = Tasks in Column / 10\n- Age Score = Average Age / 7 days\n\n**Flagged when:**\n- 2+ tasks in column, OR\n- Average age > 2 days\n\n**Severity levels:**\n- Low (< 0.3): Monitor\n- Medium (0.3-0.6): Investigate\n- High (> 0.6): Take action';
+
+  @override
+  String get smartTodoCfdAgingExplanation =>
+      'Aging WIP shows tasks currently in progress, sorted by how long they\'ve been worked on.\n\n**Formula:**\nAge = Current Time - Work Start Date (in days)\n\n**Status by age:**\n- Fresh (< 3 days): Normal\n- Warning (3-7 days): May need attention\n- Critical (> 7 days): Likely blocked - investigate!\n\nOld tasks often indicate blockers, unclear requirements, or scope creep.';
+
+  @override
+  String get smartTodoCfdTeamBalance => 'Team Balance';
+
+  @override
+  String get smartTodoCfdTeamBalanceExplanation =>
+      'Team Balance shows task distribution across team members.\n\n**Balance Score:**\nCalculated using coefficient of variation (CV).\nScore = 1 / (1 + CV)\n\n**Status:**\n- Balanced (≥80%): Work evenly distributed\n- Uneven (50-80%): Some imbalance\n- Imbalanced (<50%): Significant disparity\n\n**Columns:**\n- To Do: Tasks waiting to start\n- WIP: Tasks in progress\n- Done: Completed tasks';
+
+  @override
+  String get smartTodoCfdBalanced => 'Balanced';
+
+  @override
+  String get smartTodoCfdUneven => 'Uneven';
+
+  @override
+  String get smartTodoCfdImbalanced => 'Imbalanced';
+
+  @override
+  String get smartTodoCfdMember => 'Member';
+
+  @override
+  String get smartTodoCfdTotal => 'Total';
+
+  @override
+  String get smartTodoCfdToDo => 'To Do';
+
+  @override
+  String get smartTodoCfdInProgress => 'In Progress';
+
+  @override
+  String get smartTodoCfdDone => 'Done';
 
   @override
   String get smartTodoNewTaskDefault => 'New Task';
@@ -3104,6 +3336,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smartTodoApplyFilters => 'Apply Filters';
+
+  @override
+  String get smartTodoAllTags => 'All tags';
+
+  @override
+  String smartTodoTagsCount(int count) {
+    return '$count tags';
+  }
+
+  @override
+  String get smartTodoFilterByTag => 'Filter by Tag';
+
+  @override
+  String get smartTodoTagAlreadyExists => 'Tag already exists';
 
   @override
   String smartTodoError(String error) {

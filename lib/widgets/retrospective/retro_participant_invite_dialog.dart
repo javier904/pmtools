@@ -530,9 +530,15 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[800]
+            : Colors.grey[50],
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey[700]!
+              : Colors.grey[200]!,
+        ),
       ),
       child: Row(
         children: [
@@ -559,7 +565,12 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
                   children: [
                     Text(
                       _getRoleLabel(invite.role),
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[400]
+                            : Colors.grey[600],
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Container(
