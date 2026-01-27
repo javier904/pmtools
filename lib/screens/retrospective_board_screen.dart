@@ -326,6 +326,54 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             centerTitle: false,
             elevation: 0,
             actions: [
+               // Navigation Controls (Moved from bottom)
+               if (isFacilitator) ...[
+                 if (retro.currentPhase.index > 0)
+                   TextButton.icon(
+                     onPressed: () => _regressPhase(retro),
+                     icon: const Icon(Icons.arrow_back, size: 16),
+                     label: Text('Prev'),
+                     style: TextButton.styleFrom(
+                       foregroundColor: Theme.of(context).colorScheme.onSurface,
+                     ),
+                   ),
+                   
+                 if (retro.currentPhase == RetroPhase.writing && !retro.areTeamCardsVisible)
+                   Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 8),
+                     child: FilledButton.icon(
+                       onPressed: () => _service.revealCards(retro.id),
+                       icon: const Icon(Icons.visibility, size: 16),
+                       label: Text(l10n?.voteReveal ?? 'Reveal'),
+                       style: FilledButton.styleFrom(
+                         backgroundColor: Colors.orange,
+                         visualDensity: VisualDensity.compact,
+                       ),
+                     ),
+                   )
+                 else if (retro.currentPhase != RetroPhase.completed)
+                   Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 8),
+                     child: TextButton(
+                       onPressed: () => _advancePhase(retro),
+                       style: TextButton.styleFrom(
+                         foregroundColor: Theme.of(context).colorScheme.onSurface,
+                       ),
+                       child: Row(
+                         mainAxisSize: MainAxisSize.min,
+                         children: const [
+                           Text('Next'),
+                           SizedBox(width: 8),
+                           Icon(Icons.arrow_forward, size: 16),
+                         ],
+                       ),
+                     ),
+                   ),
+                  const SizedBox(width: 8),
+                  Container(width: 1, height: 24, color: Theme.of(context).dividerColor), // Separator
+                  const SizedBox(width: 8),
+               ],
+
                // Timer
                RetroTimerWidget(
                  retroId: retro.id,
@@ -374,69 +422,18 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
           ),
           body: Column(
             children: [
-
               Expanded(
                 child: _buildPhaseContent(retro, isFacilitator),
               ),
             ],
           ),
-          bottomNavigationBar: _buildBottomControls(retro, isFacilitator),
+          // bottomNavigationBar: removed as requested
         ));
       },
     );
   }
 
-  Widget? _buildBottomControls(RetrospectiveModel retro, bool isFacilitator) {
-    if (!isFacilitator) return null;
-    final l10n = AppLocalizations.of(context);
 
-    final bool canGoBack = retro.currentPhase.index > 0;
-    final bool canGoNext = retro.currentPhase != RetroPhase.completed;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (canGoBack)
-              FilledButton.icon(
-                onPressed: () => _regressPhase(retro),
-                icon: const Icon(Icons.arrow_back),
-                label: Text('Prev: ${_getPrevPhaseName(retro.currentPhase)}'), 
-              )
-            else
-              const SizedBox(width: 100),
-
-             // Center status or spacer
-            if (retro.currentPhase == RetroPhase.writing && !retro.areTeamCardsVisible)
-               FilledButton.icon(
-                 onPressed: () => _service.revealCards(retro.id),
-                 icon: const Icon(Icons.visibility),
-                 label: Text(l10n?.voteReveal ?? 'Rivela'),
-                 style: FilledButton.styleFrom(backgroundColor: Colors.orange),
-               )
-             else if (canGoNext)
-              FilledButton.icon(
-                onPressed: () => _advancePhase(retro),
-                icon: const Icon(Icons.arrow_forward),
-                label: Text('Next: ${_getNextPhaseName(retro.currentPhase)}'),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 
   // ... (keeping existing methods)
 
@@ -736,7 +733,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                                 height: 200,
                                 child: Center(
                                   child: Text(
-                                    'Nessun action item presente', // localized string logic handled in previous placeholder or parent
+                                    l10n?.retroNoActionItems ?? 'No action items',
                                     style: TextStyle(color: Colors.grey.withOpacity(0.5)),
                                   ),
                                 ),

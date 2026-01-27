@@ -1214,6 +1214,95 @@ class AppLocalizationsEs extends AppLocalizations {
       'Trascina qui una card per creare un Action Item collegato';
 
   @override
+  String get retroNoActionItems => 'Aún no se han creado Action Items.';
+
+  @override
+  String get facilitatorGuideNextColumn => 'Siguiente: Recoger acción de';
+
+  @override
+  String get collectionRationaleSSC =>
+      'Primero Stop para remover bloqueantes, luego Start nuevas prácticas, finalmente Continue lo que funciona.';
+
+  @override
+  String get collectionRationaleMSG =>
+      'Primero abordar las frustraciones, luego las decepciones, luego celebrar los éxitos.';
+
+  @override
+  String get collectionRationale4Ls =>
+      'Primero llenar vacíos, luego planificar aspiraciones futuras, mantener lo que funciona, compartir aprendizajes.';
+
+  @override
+  String get collectionRationaleSailboat =>
+      'Primero mitigar riesgos, remover bloqueantes, luego aprovechar facilitadores y alinearse a objetivos.';
+
+  @override
+  String get collectionRationaleStarfish =>
+      'Detener malas prácticas, reducir otras, mantener las buenas, aumentar las valiosas, iniciar nuevas.';
+
+  @override
+  String get collectionRationaleDAKI =>
+      'Drop para liberar capacidad, Add nuevas prácticas, Improve existentes, Keep lo que funciona.';
+
+  @override
+  String get missingSuggestionSSCStop =>
+      'Considera qué práctica está bloqueando al equipo y debería detenerse.';
+
+  @override
+  String get missingSuggestionSSCStart =>
+      'Piensa en qué nueva práctica podría ayudar al equipo a mejorar.';
+
+  @override
+  String get missingSuggestionMSGMad =>
+      'Aborda las frustraciones del equipo - ¿qué está causando enojo?';
+
+  @override
+  String get missingSuggestionMSGSad =>
+      'Resuelve las decepciones - ¿qué entristeció al equipo?';
+
+  @override
+  String get missingSuggestion4LsLacked =>
+      '¿Qué faltaba que el equipo necesitaba?';
+
+  @override
+  String get missingSuggestion4LsLonged =>
+      '¿Qué desea el equipo para el futuro?';
+
+  @override
+  String get missingSuggestionSailboatAnchor =>
+      '¿Qué está impidiendo al equipo alcanzar sus objetivos?';
+
+  @override
+  String get missingSuggestionSailboatRock =>
+      '¿Qué riesgos amenazan el progreso del equipo?';
+
+  @override
+  String get missingSuggestionStarfishStop =>
+      '¿Qué práctica debería el equipo dejar de hacer completamente?';
+
+  @override
+  String get missingSuggestionStarfishStart =>
+      '¿Qué nueva práctica debería comenzar el equipo?';
+
+  @override
+  String get missingSuggestionDAKIDrop =>
+      '¿Qué debería el equipo decidir eliminar?';
+
+  @override
+  String get missingSuggestionDAKIAdd =>
+      '¿Qué nueva decisión debería tomar el equipo?';
+
+  @override
+  String get missingSuggestionGeneric =>
+      'Considera crear una acción desde esta columna.';
+
+  @override
+  String get facilitatorGuideAllCovered =>
+      '¡Todas las columnas requeridas cubiertas!';
+
+  @override
+  String get facilitatorGuideMissing => 'Mancano azioni per';
+
+  @override
   String get retroPhaseStart => 'Inizia';
 
   @override
@@ -1221,6 +1310,57 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroPhaseContinue => 'Continua';
+
+  @override
+  String get retroColumnMad => 'Enfadado';
+
+  @override
+  String get retroColumnSad => 'Triste';
+
+  @override
+  String get retroColumnGlad => 'Contento';
+
+  @override
+  String get retroColumnLiked => 'Gustado';
+
+  @override
+  String get retroColumnLearned => 'Aprendido';
+
+  @override
+  String get retroColumnLacked => 'Faltado';
+
+  @override
+  String get retroColumnLonged => 'Desiderato';
+
+  @override
+  String get retroColumnWind => 'Viento';
+
+  @override
+  String get retroColumnAnchor => 'Anclas';
+
+  @override
+  String get retroColumnRock => 'Rocas';
+
+  @override
+  String get retroColumnGoal => 'Isla';
+
+  @override
+  String get retroColumnKeep => 'Mantener';
+
+  @override
+  String get retroColumnMore => 'Más';
+
+  @override
+  String get retroColumnLess => 'Menos';
+
+  @override
+  String get retroColumnDrop => 'Eliminar';
+
+  @override
+  String get retroColumnAdd => 'Añadir';
+
+  @override
+  String get retroColumnImprove => 'Mejorar';
 
   @override
   String get settingsLanguage => 'Idioma';
@@ -2347,9 +2487,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get retroActionMonitoringHint =>
       '¿Cómo verificaremos el progreso? (ej. Daily, Review...)';
-
-  @override
-  String get retroNoActionItems => 'Aún no se han creado Action Items.';
 
   @override
   String get retroActionResourcesShort => 'Rec';
@@ -6447,27 +6584,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get smartTodoInviteCreatedAndSent => 'Invitación creada y enviada';
 
   @override
-  String get retroColumnDrop => 'Eliminar';
-
-  @override
   String get retroColumnDropDesc =>
       '¿Qué no aporta valor y debería eliminarse?';
-
-  @override
-  String get retroColumnAdd => 'Añadir';
 
   @override
   String get retroColumnAddDesc =>
       '¿Qué nuevas prácticas deberíamos introducir?';
 
   @override
-  String get retroColumnKeep => 'Mantener';
-
-  @override
   String get retroColumnKeepDesc => '¿Qué funciona bien y debería continuar?';
-
-  @override
-  String get retroColumnImprove => 'Mejorar';
 
   @override
   String get retroColumnImproveDesc => '¿Qué podemos hacer mejor?';
@@ -6492,43 +6617,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroColumnContinueDesc => '¿Qué deberíamos seguir haciendo?';
 
   @override
-  String get retroColumnLiked => 'Gustado';
-
-  @override
-  String get retroColumnLearned => 'Aprendido';
-
-  @override
-  String get retroColumnLacked => 'Faltado';
-
-  @override
   String get retroColumnLongedFor => 'Deseado';
-
-  @override
-  String get retroColumnMad => 'Enfadado';
-
-  @override
-  String get retroColumnSad => 'Triste';
-
-  @override
-  String get retroColumnGlad => 'Contento';
-
-  @override
-  String get retroColumnWind => 'Viento';
-
-  @override
-  String get retroColumnAnchor => 'Anclas';
-
-  @override
-  String get retroColumnRock => 'Rocas';
-
-  @override
-  String get retroColumnGoal => 'Isla';
-
-  @override
-  String get retroColumnMore => 'Más';
-
-  @override
-  String get retroColumnLess => 'Menos';
 
   @override
   String get retroColumnLikedDesc => '¿Qué te gustó de este sprint?';
@@ -7356,14 +7445,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get facilitatorGuideSuggestedOrder => 'Orden Sugerido:';
 
   @override
-  String get facilitatorGuideNextColumn => 'Siguiente: Recoger acción de';
-
-  @override
   String get facilitatorGuideMissingRequired => 'Faltan acciones requeridas';
-
-  @override
-  String get facilitatorGuideAllCovered =>
-      '¡Todas las columnas requeridas cubiertas!';
 
   @override
   String get facilitatorGuideColumnHasAction => 'Tiene acción';
@@ -7376,80 +7458,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get facilitatorGuideOptional => 'Opcional';
-
-  @override
-  String get collectionRationaleSSC =>
-      'Primero Stop para remover bloqueantes, luego Start nuevas prácticas, finalmente Continue lo que funciona.';
-
-  @override
-  String get collectionRationaleMSG =>
-      'Primero abordar las frustraciones, luego las decepciones, luego celebrar los éxitos.';
-
-  @override
-  String get collectionRationale4Ls =>
-      'Primero llenar vacíos, luego planificar aspiraciones futuras, mantener lo que funciona, compartir aprendizajes.';
-
-  @override
-  String get collectionRationaleSailboat =>
-      'Primero mitigar riesgos, remover bloqueantes, luego aprovechar facilitadores y alinearse a objetivos.';
-
-  @override
-  String get collectionRationaleStarfish =>
-      'Detener malas prácticas, reducir otras, mantener las buenas, aumentar las valiosas, iniciar nuevas.';
-
-  @override
-  String get collectionRationaleDAKI =>
-      'Drop para liberar capacidad, Add nuevas prácticas, Improve existentes, Keep lo que funciona.';
-
-  @override
-  String get missingSuggestionSSCStop =>
-      'Considera qué práctica está bloqueando al equipo y debería detenerse.';
-
-  @override
-  String get missingSuggestionSSCStart =>
-      'Piensa en qué nueva práctica podría ayudar al equipo a mejorar.';
-
-  @override
-  String get missingSuggestionMSGMad =>
-      'Aborda las frustraciones del equipo - ¿qué está causando enojo?';
-
-  @override
-  String get missingSuggestionMSGSad =>
-      'Resuelve las decepciones - ¿qué entristeció al equipo?';
-
-  @override
-  String get missingSuggestion4LsLacked =>
-      '¿Qué faltaba que el equipo necesitaba?';
-
-  @override
-  String get missingSuggestion4LsLonged =>
-      '¿Qué desea el equipo para el futuro?';
-
-  @override
-  String get missingSuggestionSailboatRock =>
-      '¿Qué riesgos amenazan el progreso del equipo?';
-
-  @override
-  String get missingSuggestionSailboatAnchor =>
-      '¿Qué está impidiendo al equipo alcanzar sus objetivos?';
-
-  @override
-  String get missingSuggestionStarfishStop =>
-      '¿Qué práctica debería el equipo dejar de hacer completamente?';
-
-  @override
-  String get missingSuggestionStarfishStart =>
-      '¿Qué nueva práctica debería comenzar el equipo?';
-
-  @override
-  String get missingSuggestionDAKIDrop =>
-      '¿Qué debería el equipo decidir eliminar?';
-
-  @override
-  String get missingSuggestionDAKIAdd =>
-      '¿Qué nueva decisión debería tomar el equipo?';
-
-  @override
-  String get missingSuggestionGeneric =>
-      'Considera crear una acción desde esta columna.';
 }

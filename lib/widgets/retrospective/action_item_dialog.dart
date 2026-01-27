@@ -40,6 +40,7 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
   ActionPriority _priority = ActionPriority.medium;
   String? _selectedSourceRefId;
   ActionType? _actionType;
+  String? _selectedSourceColumnId;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
       _dueDate = widget.item!.dueDate;
       _priority = widget.item!.priority;
       _selectedSourceRefId = widget.item!.sourceRefId;
+      _selectedSourceColumnId = widget.item!.sourceColumnId;
       _actionType = widget.item!.actionType;
     } else {
       _selectedSourceRefId = widget.initialSourceRefId;
@@ -138,7 +140,16 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                     }).toList()
                   ],
                   onChanged: (val) {
-                    setState(() => _selectedSourceRefId = val);
+                    setState(() {
+                      _selectedSourceRefId = val;
+                      // Auto-select column when card is chosen
+                      if (val != null) {
+                        try {
+                          final card = widget.availableCards.firstWhere((c) => c.id == val);
+                          _selectedSourceColumnId = card.columnId;
+                        } catch (_) {}
+                      }
+                    });
                     _updateActionTypeSuggestion(val);
                   },
                   selectedItemBuilder: (context) {
@@ -336,6 +347,9 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
           sourceColumnId = card.columnId;
         } catch (_) {}
       }
+      
+      // Fallback to manual selection if no card-linked column found
+      sourceColumnId ??= _selectedSourceColumnId;
 
       final newItem = ActionItem(
         id: widget.item?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),

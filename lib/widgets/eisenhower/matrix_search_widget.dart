@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../../l10n/app_localizations.dart';
 import '../../models/eisenhower_matrix_model.dart';
 
@@ -18,10 +19,20 @@ class MatrixSearchWidget extends StatefulWidget {
 class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
   final TextEditingController _searchController = TextEditingController();
 
+  Timer? _debounce;
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      widget.onSearchChanged(query);
+    });
   }
 
   @override
@@ -46,7 +57,7 @@ class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
-      onChanged: widget.onSearchChanged,
+      onChanged: _onSearchChanged,
     );
   }
 }

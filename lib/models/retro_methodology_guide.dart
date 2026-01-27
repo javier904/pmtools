@@ -481,6 +481,7 @@ class RetroMethodologyGuide {
 
   /// Gets a suggestion message when a required column is missing actions
   static String getMissingColumnSuggestion(AppLocalizations l10n, RetroTemplate template, String columnId) {
+    // Helper to get prefix-less ID if needed, but template usually matches
     final key = '${template.name}_$columnId';
     switch (key) {
       // SSC
@@ -515,6 +516,50 @@ class RetroMethodologyGuide {
         return l10n.missingSuggestionDAKIAdd;
       default:
         return l10n.missingSuggestionGeneric;
+    }
+  }
+
+  /// Gets the localized title for a standard column
+  /// If the column is custom or not found, it returns the fallbackTitle
+  static String getColumnTitle(AppLocalizations l10n, RetroTemplate template, String columnId, String fallbackTitle) {
+    final key = '${template.name}_$columnId';
+    switch (key) {
+      // SSC
+      case 'startStopContinue_start': return l10n.retroPhaseStart;
+      case 'startStopContinue_stop': return l10n.retroPhaseStop;
+      case 'startStopContinue_continue': return l10n.retroPhaseContinue;
+      
+      // MSG
+      case 'madSadGlad_mad': return l10n.retroColumnMad;
+      case 'madSadGlad_sad': return l10n.retroColumnSad;
+      case 'madSadGlad_glad': return l10n.retroColumnGlad;
+      
+      // 4Ls
+      case 'fourLs_liked': return l10n.retroColumnLiked;
+      case 'fourLs_learned': return l10n.retroColumnLearned;
+      case 'fourLs_lacked': return l10n.retroColumnLacked;
+      case 'fourLs_longed': return l10n.retroColumnLonged;
+      
+      // Sailboat
+      case 'sailboat_wind': return l10n.retroColumnWind;
+      case 'sailboat_anchor': return l10n.retroColumnAnchor;
+      case 'sailboat_rock': return l10n.retroColumnRock;
+      case 'sailboat_goal': return l10n.retroColumnGoal;
+      
+      // Starfish
+      case 'starfish_stop': return l10n.retroPhaseStop; // Reuse stop
+      case 'starfish_start': return l10n.retroPhaseStart; // Reuse start
+      case 'starfish_keep': return l10n.retroColumnKeep;
+      case 'starfish_more': return l10n.retroColumnMore;
+      case 'starfish_less': return l10n.retroColumnLess;
+      
+      // DAKI
+      case 'daki_drop': return l10n.retroColumnDrop;
+      case 'daki_add': return l10n.retroColumnAdd;
+      case 'daki_keep': return l10n.retroColumnKeep; // Reuse keep
+      case 'daki_improve': return l10n.retroColumnImprove;
+      
+      default: return fallbackTitle;
     }
   }
 }

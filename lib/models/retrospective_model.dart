@@ -133,24 +133,47 @@ class RetrospectiveModel {
   }
 
   factory RetrospectiveModel.fromMap(String id, Map<String, dynamic> data) {
-    // ... items parsing code ... (omitted for brevity, keep existing)
-    // Parse Columns (keep existing)
+    // 1. Parse Template first to allow syncing
+    final template = RetroTemplate.values.firstWhere(
+      (e) => e.name == data['template'], 
+      orElse: () => RetroTemplate.startStopContinue
+    );
+
+    // 2. Parse Columns
     final colsList = data['columns'] as List<dynamic>? ?? [];
-    var columns = colsList.map((c) => RetroColumn.fromMap(c)).toList();
+    List<RetroColumn> columns = colsList.map((c) => RetroColumn.fromMap(c)).toList();
+    
+    // Default columns if missing
     if (columns.isEmpty) {
-        columns = [
-            RetroColumn(id: 'col_1', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#E8F5E9', iconCode: 0xe800),
-            RetroColumn(id: 'col_2', title: 'To Improve', description: 'Cosa migliorare?', colorHex: '#FFEBEE', iconCode: 0xe801),
-        ];
+        columns = template.defaultColumns;
+    } else {
+      // SYNC: Update colors/icons from template defaults if IDs match
+      // This ensures design updates (like darker colors) propagate to existing retros
+      final defaults = template.defaultColumns;
+      columns = columns.map((col) {
+        try {
+          final defaultCol = defaults.firstWhere((dc) => dc.id == col.id);
+          // Return valid column with updated visual properties but keeping unique data if any (though here we just sync visuals)
+          return col.copyWith(
+            colorHex: defaultCol.colorHex,
+            iconCode: defaultCol.iconCode,
+          );
+        } catch (_) {
+          return col; // Custom column or no match, keep as is
+        }
+      }).toList();
     }
     
     // Parse Items (keep existing)
     var itemsList = data['items'] as List<dynamic>? ?? [];
     List<RetroItem> items = itemsList.map((i) => RetroItem.fromMap(i)).toList();
     if (items.isEmpty && (data['wentWell'] != null || data['toImprove'] != null)) {
-       final ww = (data['wentWell'] as List? ?? []).map((i) => RetroItem.fromMap(i).copyWith(columnId: columns[0].id));
-       final ti = (data['toImprove'] as List? ?? []).map((i) => RetroItem.fromMap(i).copyWith(columnId: columns[1].id));
-       items = [...ww, ...ti];
+       // Legacy migration fallback (if needed, though likely unused now)
+       if (columns.length >= 2) {
+          final ww = (data['wentWell'] as List? ?? []).map((i) => RetroItem.fromMap(i).copyWith(columnId: columns[0].id));
+          final ti = (data['toImprove'] as List? ?? []).map((i) => RetroItem.fromMap(i).copyWith(columnId: columns[1].id));
+          items = [...ww, ...ti];
+       }
     }
 
     return RetrospectiveModel(
@@ -184,7 +207,7 @@ class RetrospectiveModel {
       archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
       status: RetroStatus.values.firstWhere((e) => e.name == data['status'], orElse: () => RetroStatus.draft),
       currentPhase: RetroPhase.values.firstWhere((e) => e.name == data['currentPhase'], orElse: () => RetroPhase.setup),
-      template: RetroTemplate.values.firstWhere((e) => e.name == data['template'], orElse: () => RetroTemplate.startStopContinue),
+      template: template,
       currentWizardStep: data['currentWizardStep'] ?? 0,
       maxVotesPerUser: data['maxVotesPerUser'] ?? 3,
       showAuthorNames: data['showAuthorNames'] ?? true,
@@ -320,6 +343,22 @@ class RetroColumn {
     required this.colorHex,
     required this.iconCode,
   });
+
+  RetroColumn copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? colorHex,
+    int? iconCode,
+  }) {
+    return RetroColumn(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      colorHex: colorHex ?? this.colorHex,
+      iconCode: iconCode ?? this.iconCode,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
     'id': id,
@@ -965,49 +1004,49 @@ extension RetroTemplateExt on RetroTemplate {
       switch (this) {
           case RetroTemplate.startStopContinue:
           return [
-            RetroColumn(id: 'start', title: 'Start', description: 'Quali nuove attività o processi dovremmo iniziare per migliorare?', colorHex: '#BBDEFB', iconCode: Icons.play_circle_outline.codePoint),
-            RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non sta portando valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: Icons.stop_circle_outlined.codePoint),
-            RetroColumn(id: 'continue', title: 'Continue', description: 'Cosa sta funzionando bene e dobbiamo continuare a fare?', colorHex: '#C8E6C9', iconCode: Icons.fast_forward_rounded.codePoint),
+            RetroColumn(id: 'start', title: 'Start', description: 'Quali nuove attività o processi dovremmo iniziare per migliorare?', colorHex: '#90CAF9', iconCode: Icons.play_circle_outline.codePoint),
+            RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non sta portando valore e dovremmo smettere di fare?', colorHex: '#EF9A9A', iconCode: Icons.not_interested_rounded.codePoint), // Stop/Cancel
+            RetroColumn(id: 'continue', title: 'Continue', description: 'Cosa sta funzionando bene e dobbiamo continuare a fare?', colorHex: '#A5D6A7', iconCode: Icons.autorenew_rounded.codePoint), // Loop/Continue
           ];
         case RetroTemplate.sailboat:
             return [
-                RetroColumn(id: 'wind', title: 'Wind', description: 'What pushed us forward? Strengths and support.', colorHex: '#E8F5E9', iconCode: 0xe0c8),
-                RetroColumn(id: 'anchor', title: 'Anchors', description: 'What slowed us down? Obstacles and blockers.', colorHex: '#FFEBEE', iconCode: 0xf1cd),
-                RetroColumn(id: 'rock', title: 'Rocks', description: 'What future risks do we see on the horizon?', colorHex: '#FFF3E0', iconCode: 0xe6e1),
-                RetroColumn(id: 'goal', title: 'Island', description: 'What is our ideal destination?', colorHex: '#E3F2FD', iconCode: 0xe24e),
+                RetroColumn(id: 'wind', title: 'Wind', description: 'What pushed us forward? Strengths and support.', colorHex: '#80DEEA', iconCode: Icons.air.codePoint),
+                RetroColumn(id: 'anchor', title: 'Anchors', description: 'What slowed us down? Obstacles and blockers.', colorHex: '#EF9A9A', iconCode: Icons.anchor.codePoint),
+                RetroColumn(id: 'rock', title: 'Rocks', description: 'What future risks do we see on the horizon?', colorHex: '#FFCC80', iconCode: Icons.warning_amber_rounded.codePoint),
+                RetroColumn(id: 'goal', title: 'Island', description: 'What is our ideal destination?', colorHex: '#81D4FA', iconCode: Icons.flag_rounded.codePoint),
             ]; 
         case RetroTemplate.fourLs:
           return [
-              RetroColumn(id: 'liked', title: 'Liked', description: 'Cosa ti è piaciuto di questo sprint?', colorHex: '#C8E6C9', iconCode: 0xf1cc), 
-              RetroColumn(id: 'learned', title: 'Learned', description: 'Cosa hai imparato di nuovo?', colorHex: '#BBDEFB', iconCode: 0xe80c), 
-              RetroColumn(id: 'lacked', title: 'Lacked', description: 'Cosa è mancato in questo sprint?', colorHex: '#FFCCBC', iconCode: 0xe15b), 
-              RetroColumn(id: 'longed', title: 'Longed For', description: 'Cosa desidereresti avere nel prossimo futuro?', colorHex: '#E1BEE7', iconCode: 0xe8d0), 
+              RetroColumn(id: 'liked', title: 'Liked', description: 'Cosa ti è piaciuto di questo sprint?', colorHex: '#A5D6A7', iconCode: Icons.thumb_up_alt_rounded.codePoint),
+              RetroColumn(id: 'learned', title: 'Learned', description: 'Cosa hai imparato di nuovo?', colorHex: '#90CAF9', iconCode: Icons.lightbulb_outline.codePoint),
+              RetroColumn(id: 'lacked', title: 'Lacked', description: 'Cosa è mancato in questo sprint?', colorHex: '#FFAB91', iconCode: Icons.highlight_remove_rounded.codePoint),
+              RetroColumn(id: 'longed', title: 'Longed For', description: 'Cosa desidereresti avere nel prossimo futuro?', colorHex: '#CE93D8', iconCode: Icons.stars_rounded.codePoint),
           ];
         case RetroTemplate.starfish:
             return [
-              RetroColumn(id: 'keep', title: 'Keep', description: 'Cosa stiamo facendo bene e dovremmo mantenere?', colorHex: '#C8E6C9', iconCode: 0xe86c),
-              RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non porta valore e dovremmo smettere di fare?', colorHex: '#FFCDD2', iconCode: 0xe047),
-              RetroColumn(id: 'start', title: 'Start', description: 'Cosa dovremmo iniziare a fare che non facciamo?', colorHex: '#BBDEFB', iconCode: 0xe037),
-              RetroColumn(id: 'more', title: 'More', description: 'Cosa dovremmo fare di più?', colorHex: '#FFF9C4', iconCode: 0xe5d8),
-              RetroColumn(id: 'less', title: 'Less', description: 'Cosa dovremmo fare di meno?', colorHex: '#F0F4C3', iconCode: 0xe5ce),
+              RetroColumn(id: 'keep', title: 'Keep', description: 'Cosa stiamo facendo bene e dovremmo mantenere?', colorHex: '#A5D6A7', iconCode: Icons.check_circle_outline.codePoint),
+              RetroColumn(id: 'stop', title: 'Stop', description: 'Cosa non porta valore e dovremmo smettere di fare?', colorHex: '#EF9A9A', iconCode: Icons.cancel_outlined.codePoint),
+              RetroColumn(id: 'start', title: 'Start', description: 'Cosa dovremmo iniziare a fare che non facciamo?', colorHex: '#90CAF9', iconCode: Icons.play_circle_outline.codePoint),
+              RetroColumn(id: 'more', title: 'More', description: 'Cosa dovremmo fare di più?', colorHex: '#FFE082', iconCode: Icons.add_circle_outline.codePoint),
+              RetroColumn(id: 'less', title: 'Less', description: 'Cosa dovremmo fare di meno?', colorHex: '#FFCC80', iconCode: Icons.remove_circle_outline.codePoint),
           ];
         case RetroTemplate.madSadGlad:
             return [
-              RetroColumn(id: 'mad', title: 'Mad', description: 'Cosa ti ha fatto arrabbiare o frustrare?', colorHex: '#FFCDD2', iconCode: 0xe7f3), 
-              RetroColumn(id: 'sad', title: 'Sad', description: 'Cosa ti ha deluso o reso triste?', colorHex: '#CFD8DC', iconCode: 0xe7f2), 
-              RetroColumn(id: 'glad', title: 'Glad', description: 'Cosa ti ha reso felice o soddisfatto?', colorHex: '#C8E6C9', iconCode: 0xe7f0), 
+              RetroColumn(id: 'mad', title: 'Mad', description: 'Cosa ti ha fatto arrabbiare o frustrare?', colorHex: '#EF9A9A', iconCode: Icons.sentiment_very_dissatisfied.codePoint),
+              RetroColumn(id: 'sad', title: 'Sad', description: 'Cosa ti ha deluso o reso triste?', colorHex: '#B0BEC5', iconCode: Icons.sentiment_dissatisfied.codePoint),
+              RetroColumn(id: 'glad', title: 'Glad', description: 'Cosa ti ha reso felice o soddisfatto?', colorHex: '#A5D6A7', iconCode: Icons.sentiment_very_satisfied.codePoint),
           ];
         case RetroTemplate.daki:
             return [
-              RetroColumn(id: 'drop', title: 'Drop', description: 'What brings no value and should be eliminated?', colorHex: '#FFCDD2', iconCode: 0xe92e),
-              RetroColumn(id: 'add', title: 'Add', description: 'What new practices should we introduce?', colorHex: '#BBDEFB', iconCode: 0xe148),
-              RetroColumn(id: 'keep', title: 'Keep', description: 'What is working well and should continue?', colorHex: '#C8E6C9', iconCode: 0xe15a),
-              RetroColumn(id: 'improve', title: 'Improve', description: 'What can we do better?', colorHex: '#FFE0B2', iconCode: 0xe6e3),
+              RetroColumn(id: 'drop', title: 'Drop', description: 'What brings no value and should be eliminated?', colorHex: '#EF9A9A', iconCode: Icons.delete_outline.codePoint),
+              RetroColumn(id: 'add', title: 'Add', description: 'What new practices should we introduce?', colorHex: '#90CAF9', iconCode: Icons.add_circle_outline.codePoint),
+              RetroColumn(id: 'keep', title: 'Keep', description: 'What is working well and should continue?', colorHex: '#A5D6A7', iconCode: Icons.check_circle_outline.codePoint),
+              RetroColumn(id: 'improve', title: 'Improve', description: 'What can we do better?', colorHex: '#FFCC80', iconCode: Icons.trending_up.codePoint),
           ];
         default:
             return [
-                RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#C8E6C9', iconCode: 0xf1cc),
-                RetroColumn(id: 'improve', title: 'To Improve', description: 'Cosa può essere migliorato?', colorHex: '#FFCDD2', iconCode: 0xe813),
+                RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#A5D6A7', iconCode: Icons.thumb_up_alt_outlined.codePoint),
+                RetroColumn(id: 'improve', title: 'To Improve', description: 'Cosa può essere migliorato?', colorHex: '#EF9A9A', iconCode: Icons.healing_outlined.codePoint),
             ];
       }
   }

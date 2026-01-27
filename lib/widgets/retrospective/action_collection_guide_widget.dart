@@ -42,22 +42,12 @@ class ActionCollectionGuideWidget extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: isComplete
-          ? Colors.green.withValues(alpha: 0.08)
-          : Colors.amber.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isComplete
-            ? Colors.green.withValues(alpha: 0.3)
-            : Colors.amber.withValues(alpha: 0.3),
-        ),
-      ),
+      // Styling: Minimalist, no strong borders or backgrounds
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          _buildHeader(context, l10n, isComplete, missingRequired.length),
+         _buildHeader(context, l10n, isComplete, missingRequired),
 
           // Divider
           Divider(height: 1, color: Colors.grey.withValues(alpha: 0.2)),
@@ -74,7 +64,7 @@ class ActionCollectionGuideWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontStyle: FontStyle.italic,
-                    color: Colors.white70,
+                    color: Theme.of(context).textTheme.bodySmall?.color, // Use theme color for visibility in Light/Dark
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -116,14 +106,15 @@ class ActionCollectionGuideWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, AppLocalizations l10n, bool isComplete, int missingCount) {
+  Widget _buildHeader(BuildContext context, AppLocalizations l10n, bool isComplete, List<String> missingRequired) {
+    final missingCount = missingRequired.length;
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
           Icon(
             isComplete ? Icons.check_circle : Icons.lightbulb_outline,
-            color: isComplete ? Colors.green : Colors.amber,
+            color: isComplete ? Colors.green : Colors.amber, // Keep lightbulb amber as requested, only changed badge
             size: 20,
           ),
           const SizedBox(width: 8),
@@ -132,39 +123,45 @@ class ActionCollectionGuideWidget extends StatelessWidget {
               l10n.facilitatorGuideTitle,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isComplete ? Colors.green.shade800 : Colors.amber.shade800,
+                // Use default text color for better harmony
+                color: Theme.of(context).textTheme.titleSmall?.color, 
               ),
             ),
           ),
-          // Coverage badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: isComplete
-                ? Colors.green.withValues(alpha: 0.2)
-                : Colors.orange.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isComplete ? Icons.check : Icons.warning_outlined,
-                  size: 14,
-                  color: isComplete ? Colors.green : Colors.orange,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  isComplete
-                    ? l10n.facilitatorGuideComplete
-                    : '${l10n.facilitatorGuideIncomplete} ($missingCount)',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isComplete ? Colors.green : Colors.orange,
+            // Coverage badge
+          Tooltip(
+            message: missingCount > 0 
+                ? '${l10n.facilitatorGuideMissing}: ${missingRequired.map((id) => RetroMethodologyGuide.getColumnTitle(l10n, retro.template, id, id)).join(", ")}'
+                : l10n.facilitatorGuideAllCovered,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: isComplete
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.deepOrange.withValues(alpha: 0.15), // DeepOrange: visible but less aggressive than Red
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isComplete ? Icons.check : Icons.warning_amber_rounded,
+                    size: 14,
+                    color: isComplete ? Colors.green : Colors.deepOrange,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Text(
+                    isComplete
+                      ? l10n.facilitatorGuideComplete
+                      : '${l10n.facilitatorGuideIncomplete} ($missingCount)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isComplete ? Colors.green : Colors.deepOrange,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -180,6 +177,10 @@ class ActionCollectionGuideWidget extends StatelessWidget {
     bool isRequired,
     bool isNext,
   ) {
+    // If it's the next suggested column, use its own color for emphasis, but keep it harmonious.
+    // Avoid yellow/amber outlines which might be hard to read or look like warnings.
+    final baseColor = column.color;
+
     return Tooltip(
       message: hasAction
         ? l10n.facilitatorGuideColumnHasAction
@@ -189,44 +190,38 @@ class ActionCollectionGuideWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: hasAction
-            ? column.color.withValues(alpha: 0.2)
+            ? baseColor.withValues(alpha: 0.2)
             : isNext
-              ? Colors.amber.withValues(alpha: 0.15)
-              : Colors.grey.withValues(alpha: 0.1),
+              ? baseColor.withValues(alpha: 0.1) // Use column color instead of Amber
+              : Colors.grey.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: hasAction
-              ? column.color.withValues(alpha: 0.5)
+              ? baseColor.withValues(alpha: 0.5)
               : isNext
-                ? Colors.amber.withValues(alpha: 0.5)
-                : Colors.grey.withValues(alpha: 0.3),
-            width: isNext ? 2 : 1,
+                ? baseColor.withValues(alpha: 0.5) // Use column color for border too
+                : Colors.grey.withValues(alpha: 0.2),
+            width: isNext ? 1.5 : 1, // Slight emphasis for next
           ),
-          boxShadow: isNext ? [
-            BoxShadow(
-              color: Colors.amber.withValues(alpha: 0.3),
-              blurRadius: 4,
-              spreadRadius: 1,
-            ),
-          ] : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Status icon
             Icon(
-              hasAction ? Icons.check_circle : (isNext ? Icons.arrow_forward : Icons.radio_button_unchecked),
+              hasAction ? Icons.check_circle : (isNext ? Icons.arrow_forward_ios_rounded : Icons.radio_button_unchecked),
               size: 14,
-              color: hasAction ? column.color : (isNext ? Colors.amber.shade700 : Colors.grey),
+              color: hasAction || isNext ? baseColor : Colors.grey, // Icon follows column color
             ),
             const SizedBox(width: 6),
             // Column name
             Text(
-              column.title,
+              // Use localized title helper
+              RetroMethodologyGuide.getColumnTitle(l10n, retro.template, column.id, column.title),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: hasAction || isNext ? FontWeight.w600 : FontWeight.normal,
-                color: hasAction ? column.color : (isNext ? Colors.amber.shade800 : context.textMutedColor),
+                color: hasAction || isNext ? baseColor : context.textMutedColor,
               ),
             ),
             // Required badge
@@ -235,7 +230,7 @@ class ActionCollectionGuideWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 decoration: BoxDecoration(
-                  color: Colors.red, // Solid red for better visibility
+                  color: Colors.red.withOpacity(0.8), 
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Text(
@@ -243,7 +238,7 @@ class ActionCollectionGuideWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white, // White text for contrast
+                    color: Colors.white, 
                   ),
                 ),
               ),
@@ -260,18 +255,19 @@ class ActionCollectionGuideWidget extends StatelessWidget {
 
     final suggestion = RetroMethodologyGuide.getMissingColumnSuggestion(l10n, retro.template, columnId);
 
+    // Styling: Minimalist, removed yellow box. Just icon + text.
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+         // No border, no background color (or very subtle if needed)
+         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.tips_and_updates, color: Colors.amber.shade700, size: 18),
-          const SizedBox(width: 8),
+          // Keep the lightbulb yellow as requested ("solo la lampadina a sinistra gialla")
+          Icon(Icons.lightbulb_outline, color: Colors.amber.shade700, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,23 +278,23 @@ class ActionCollectionGuideWidget extends StatelessWidget {
                     Text(
                       '${l10n.facilitatorGuideNextColumn} ',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: Colors.amber.shade800,
+                        color: Theme.of(context).textTheme.bodyMedium?.color, // Neutral text color
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: column.color.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
+                        color: column.color.withValues(alpha: 0.2), // Column-colored badge
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        column.title,
+                        RetroMethodologyGuide.getColumnTitle(l10n, retro.template, column.id, column.title),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: column.color,
+                          color: column.color, // Column text color
                         ),
                       ),
                     ),
@@ -308,8 +304,9 @@ class ActionCollectionGuideWidget extends StatelessWidget {
                 Text(
                   suggestion,
                   style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.white70,
+                    fontSize: 12,
+                    // Slightly muted text for the explanation
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                   ),
                 ),
               ],

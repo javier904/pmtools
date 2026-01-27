@@ -120,7 +120,7 @@ class _RetroTimerWidgetState extends State<RetroTimerWidget> {
         color: isOver ? Colors.red.withOpacity(0.1) : theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isOver ? Colors.red : theme.dividerColor,
+          color: isOver ? Colors.red : theme.dividerColor.withOpacity(0.2), // Subtler border
         ),
       ),
       child: Row(

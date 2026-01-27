@@ -278,11 +278,11 @@ class ActionItemsTableWidget extends StatelessWidget {
       case ActionPriority.critical:
         return Colors.purple;
       case ActionPriority.high:
-        return Colors.red;
+        return Colors.red.shade700; // Darker red
       case ActionPriority.medium:
-        return Colors.orange;
+        return Colors.orange.shade900; // Darker orange for better contrast
       case ActionPriority.low:
-        return Colors.green;
+        return Colors.green.shade700; // Darker green
     }
   }
 

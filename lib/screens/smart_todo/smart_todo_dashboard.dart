@@ -11,6 +11,10 @@ import '../../widgets/home/favorite_star.dart';
 import '../../services/subscription/subscription_limits_service.dart';
 import '../../widgets/subscription/limit_reached_dialog.dart';
 
+import 'dart:async'; // Add import
+
+// ... (existing imports, ensure this is at top, but tool replaces contiguous block so handle with care or just add Timer logic if imports are separate)
+
 class SmartTodoDashboard extends StatefulWidget {
   const SmartTodoDashboard({super.key});
 
@@ -29,6 +33,8 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   bool _initialNavigationChecked = false;
   String _searchQuery = '';
   bool _showArchived = false;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void didChangeDependencies() {
@@ -63,6 +69,13 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         debugPrint('Error navigating to list: $e');
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -196,9 +209,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), // Reverted to 16 to match Eisenhower
                 child: _buildSearchBar(),
               ),
+              const SizedBox(height: 12), // Match Eisenhower spacing
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
@@ -216,10 +230,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                                         : 1;
 
                     return GridView.builder(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), // Reverted to 16
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: compactCrossAxisCount,
-                        childAspectRatio: 2.5,
+                        childAspectRatio: 2.5, // Match Eisenhower exact ratio
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                       ),
@@ -247,21 +261,31 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   Widget _buildSearchBar() {
     final l10n = AppLocalizations.of(context);
     return TextField(
+      controller: _searchController,
       decoration: InputDecoration(
         hintText: l10n?.smartTodoSearchHint ?? 'Search lists...',
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
                 icon: const Icon(Icons.clear),
-                onPressed: () => setState(() => _searchQuery = ''),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                },
               )
             : null,
+// ...
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
-      onChanged: (value) => setState(() => _searchQuery = value),
+      onChanged: (value) {
+        if (_debounce?.isActive ?? false) _debounce!.cancel();
+        _debounce = Timer(const Duration(milliseconds: 500), () {
+          setState(() => _searchQuery = value);
+        });
+      },
     );
   }
 
@@ -325,7 +349,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         },
         borderRadius: BorderRadius.circular(6),
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(6), // Reduced padding (was 8)
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -417,7 +441,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                     ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2), // Reduced spacing (was 4)
               // Progress bar
               StreamBuilder<({int total, int completed})>(
                 stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
@@ -443,7 +467,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                   );
                 },
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2), // Reduced spacing (was 4)
               // Stats compatte
               StreamBuilder<({int total, int completed})>(
                 stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
@@ -482,14 +506,15 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                       ),
                       const SizedBox(width: 10),
                       _buildParticipantListStat(list, l10n),
-                      if (list.availableTags.isNotEmpty) ...[
-                        const SizedBox(width: 10),
-                        _buildTagsListStat(list, l10n),
-                      ],
                     ],
                   );
                 },
               ),
+              // Tags on a new line (Bottom Left)
+              if (list.availableTags.isNotEmpty) ...[
+                const SizedBox(height: 2), // Reduced spacing (was 4)
+                _buildTagsListStat(list, l10n),
+              ],
             ],
           ),
         ),

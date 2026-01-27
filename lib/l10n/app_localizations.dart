@@ -2334,6 +2334,144 @@ abstract class AppLocalizations {
   /// **'Trascina qui una card per creare un Action Item collegato'**
   String get retroActionDragToCreate;
 
+  /// No description provided for @retroNoActionItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun Action Item ancora creato.'**
+  String get retroNoActionItems;
+
+  /// No description provided for @facilitatorGuideNextColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Prossimo: Raccogli azione da'**
+  String get facilitatorGuideNextColumn;
+
+  /// No description provided for @collectionRationaleSSC.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima Stop per rimuovere bloccanti, poi Start nuove pratiche, infine Continue ciò che funziona.'**
+  String get collectionRationaleSSC;
+
+  /// No description provided for @collectionRationaleMSG.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima affrontare le frustrazioni, poi le delusioni, poi celebrare i successi.'**
+  String get collectionRationaleMSG;
+
+  /// No description provided for @collectionRationale4Ls.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima colmare le lacune, poi pianificare aspirazioni future, mantenere ciò che funziona, condividere apprendimenti.'**
+  String get collectionRationale4Ls;
+
+  /// No description provided for @collectionRationaleSailboat.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima mitigare i rischi, rimuovere bloccanti, poi sfruttare gli abilitatori e allinearsi agli obiettivi.'**
+  String get collectionRationaleSailboat;
+
+  /// No description provided for @collectionRationaleStarfish.
+  ///
+  /// In it, this message translates to:
+  /// **'Fermare pratiche negative, ridurne altre, mantenere quelle buone, aumentare quelle di valore, iniziarne di nuove.'**
+  String get collectionRationaleStarfish;
+
+  /// No description provided for @collectionRationaleDAKI.
+  ///
+  /// In it, this message translates to:
+  /// **'Drop per liberare capacità, Add nuove pratiche, Improve quelle esistenti, Keep ciò che funziona.'**
+  String get collectionRationaleDAKI;
+
+  /// No description provided for @missingSuggestionSSCStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Considera quale pratica sta bloccando il team e dovrebbe essere fermata.'**
+  String get missingSuggestionSSCStop;
+
+  /// No description provided for @missingSuggestionSSCStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Pensa a quale nuova pratica potrebbe aiutare il team a migliorare.'**
+  String get missingSuggestionSSCStart;
+
+  /// No description provided for @missingSuggestionMSGMad.
+  ///
+  /// In it, this message translates to:
+  /// **'Affronta le frustrazioni del team - cosa sta causando rabbia?'**
+  String get missingSuggestionMSGMad;
+
+  /// No description provided for @missingSuggestionMSGSad.
+  ///
+  /// In it, this message translates to:
+  /// **'Risolvi le delusioni - cosa ha reso triste il team?'**
+  String get missingSuggestionMSGSad;
+
+  /// No description provided for @missingSuggestion4LsLacked.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa mancava di cui il team aveva bisogno?'**
+  String get missingSuggestion4LsLacked;
+
+  /// No description provided for @missingSuggestion4LsLonged.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa desidera il team per il futuro?'**
+  String get missingSuggestion4LsLonged;
+
+  /// No description provided for @missingSuggestionSailboatAnchor.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa sta trattenendo il team dal raggiungere gli obiettivi?'**
+  String get missingSuggestionSailboatAnchor;
+
+  /// No description provided for @missingSuggestionSailboatRock.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali rischi minacciano il progresso del team?'**
+  String get missingSuggestionSailboatRock;
+
+  /// No description provided for @missingSuggestionStarfishStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale pratica il team dovrebbe completamente smettere di fare?'**
+  String get missingSuggestionStarfishStop;
+
+  /// No description provided for @missingSuggestionStarfishStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova pratica il team dovrebbe iniziare?'**
+  String get missingSuggestionStarfishStart;
+
+  /// No description provided for @missingSuggestionDAKIDrop.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa dovrebbe il team decidere di eliminare?'**
+  String get missingSuggestionDAKIDrop;
+
+  /// No description provided for @missingSuggestionDAKIAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale nuova decisione dovrebbe prendere il team?'**
+  String get missingSuggestionDAKIAdd;
+
+  /// No description provided for @missingSuggestionGeneric.
+  ///
+  /// In it, this message translates to:
+  /// **'Considera di creare un\'azione da questa colonna.'**
+  String get missingSuggestionGeneric;
+
+  /// No description provided for @facilitatorGuideAllCovered.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le colonne richieste coperte!'**
+  String get facilitatorGuideAllCovered;
+
+  /// No description provided for @facilitatorGuideMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'Mancano azioni per'**
+  String get facilitatorGuideMissing;
+
   /// No description provided for @retroPhaseStart.
   ///
   /// In it, this message translates to:
@@ -2351,6 +2489,108 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Continua'**
   String get retroPhaseContinue;
+
+  /// No description provided for @retroColumnMad.
+  ///
+  /// In it, this message translates to:
+  /// **'Arrabbiato'**
+  String get retroColumnMad;
+
+  /// No description provided for @retroColumnSad.
+  ///
+  /// In it, this message translates to:
+  /// **'Triste'**
+  String get retroColumnSad;
+
+  /// No description provided for @retroColumnGlad.
+  ///
+  /// In it, this message translates to:
+  /// **'Felice'**
+  String get retroColumnGlad;
+
+  /// No description provided for @retroColumnLiked.
+  ///
+  /// In it, this message translates to:
+  /// **'Piaciuto'**
+  String get retroColumnLiked;
+
+  /// No description provided for @retroColumnLearned.
+  ///
+  /// In it, this message translates to:
+  /// **'Imparato'**
+  String get retroColumnLearned;
+
+  /// No description provided for @retroColumnLacked.
+  ///
+  /// In it, this message translates to:
+  /// **'Mancato'**
+  String get retroColumnLacked;
+
+  /// No description provided for @retroColumnLonged.
+  ///
+  /// In it, this message translates to:
+  /// **'Desiderato'**
+  String get retroColumnLonged;
+
+  /// No description provided for @retroColumnWind.
+  ///
+  /// In it, this message translates to:
+  /// **'Vento'**
+  String get retroColumnWind;
+
+  /// No description provided for @retroColumnAnchor.
+  ///
+  /// In it, this message translates to:
+  /// **'Ancore'**
+  String get retroColumnAnchor;
+
+  /// No description provided for @retroColumnRock.
+  ///
+  /// In it, this message translates to:
+  /// **'Scogli'**
+  String get retroColumnRock;
+
+  /// No description provided for @retroColumnGoal.
+  ///
+  /// In it, this message translates to:
+  /// **'Isola'**
+  String get retroColumnGoal;
+
+  /// No description provided for @retroColumnKeep.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantieni'**
+  String get retroColumnKeep;
+
+  /// No description provided for @retroColumnMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Di Più'**
+  String get retroColumnMore;
+
+  /// No description provided for @retroColumnLess.
+  ///
+  /// In it, this message translates to:
+  /// **'Di Meno'**
+  String get retroColumnLess;
+
+  /// No description provided for @retroColumnDrop.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get retroColumnDrop;
+
+  /// No description provided for @retroColumnAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get retroColumnAdd;
+
+  /// No description provided for @retroColumnImprove.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliora'**
+  String get retroColumnImprove;
 
   /// No description provided for @settingsLanguage.
   ///
@@ -4395,12 +4635,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Come verificheremo il progresso? (es. Daily, Review...)'**
   String get retroActionMonitoringHint;
-
-  /// No description provided for @retroNoActionItems.
-  ///
-  /// In it, this message translates to:
-  /// **'Nessun Action Item ancora creato.'**
-  String get retroNoActionItems;
 
   /// No description provided for @retroActionResourcesShort.
   ///
@@ -11734,23 +11968,11 @@ abstract class AppLocalizations {
   /// **'Invito creato e inviato'**
   String get smartTodoInviteCreatedAndSent;
 
-  /// No description provided for @retroColumnDrop.
-  ///
-  /// In it, this message translates to:
-  /// **'Elimina'**
-  String get retroColumnDrop;
-
   /// No description provided for @retroColumnDropDesc.
   ///
   /// In it, this message translates to:
   /// **'Cosa non porta valore e dovrebbe essere eliminato?'**
   String get retroColumnDropDesc;
-
-  /// No description provided for @retroColumnAdd.
-  ///
-  /// In it, this message translates to:
-  /// **'Aggiungi'**
-  String get retroColumnAdd;
 
   /// No description provided for @retroColumnAddDesc.
   ///
@@ -11758,23 +11980,11 @@ abstract class AppLocalizations {
   /// **'Quali nuove pratiche dovremmo introdurre?'**
   String get retroColumnAddDesc;
 
-  /// No description provided for @retroColumnKeep.
-  ///
-  /// In it, this message translates to:
-  /// **'Mantieni'**
-  String get retroColumnKeep;
-
   /// No description provided for @retroColumnKeepDesc.
   ///
   /// In it, this message translates to:
   /// **'Cosa sta funzionando bene e dovrebbe continuare?'**
   String get retroColumnKeepDesc;
-
-  /// No description provided for @retroColumnImprove.
-  ///
-  /// In it, this message translates to:
-  /// **'Migliora'**
-  String get retroColumnImprove;
 
   /// No description provided for @retroColumnImproveDesc.
   ///
@@ -11818,83 +12028,11 @@ abstract class AppLocalizations {
   /// **'Cosa sta funzionando bene e dobbiamo continuare a fare?'**
   String get retroColumnContinueDesc;
 
-  /// No description provided for @retroColumnLiked.
-  ///
-  /// In it, this message translates to:
-  /// **'Piaciuto'**
-  String get retroColumnLiked;
-
-  /// No description provided for @retroColumnLearned.
-  ///
-  /// In it, this message translates to:
-  /// **'Imparato'**
-  String get retroColumnLearned;
-
-  /// No description provided for @retroColumnLacked.
-  ///
-  /// In it, this message translates to:
-  /// **'Mancato'**
-  String get retroColumnLacked;
-
   /// No description provided for @retroColumnLongedFor.
   ///
   /// In it, this message translates to:
   /// **'Desiderato'**
   String get retroColumnLongedFor;
-
-  /// No description provided for @retroColumnMad.
-  ///
-  /// In it, this message translates to:
-  /// **'Arrabbiato'**
-  String get retroColumnMad;
-
-  /// No description provided for @retroColumnSad.
-  ///
-  /// In it, this message translates to:
-  /// **'Triste'**
-  String get retroColumnSad;
-
-  /// No description provided for @retroColumnGlad.
-  ///
-  /// In it, this message translates to:
-  /// **'Felice'**
-  String get retroColumnGlad;
-
-  /// No description provided for @retroColumnWind.
-  ///
-  /// In it, this message translates to:
-  /// **'Vento'**
-  String get retroColumnWind;
-
-  /// No description provided for @retroColumnAnchor.
-  ///
-  /// In it, this message translates to:
-  /// **'Ancore'**
-  String get retroColumnAnchor;
-
-  /// No description provided for @retroColumnRock.
-  ///
-  /// In it, this message translates to:
-  /// **'Scogli'**
-  String get retroColumnRock;
-
-  /// No description provided for @retroColumnGoal.
-  ///
-  /// In it, this message translates to:
-  /// **'Isola'**
-  String get retroColumnGoal;
-
-  /// No description provided for @retroColumnMore.
-  ///
-  /// In it, this message translates to:
-  /// **'Di Più'**
-  String get retroColumnMore;
-
-  /// No description provided for @retroColumnLess.
-  ///
-  /// In it, this message translates to:
-  /// **'Di Meno'**
-  String get retroColumnLess;
 
   /// No description provided for @retroColumnLikedDesc.
   ///
@@ -13282,23 +13420,11 @@ abstract class AppLocalizations {
   /// **'Ordine Suggerito:'**
   String get facilitatorGuideSuggestedOrder;
 
-  /// No description provided for @facilitatorGuideNextColumn.
-  ///
-  /// In it, this message translates to:
-  /// **'Prossimo: Raccogli azione da'**
-  String get facilitatorGuideNextColumn;
-
   /// No description provided for @facilitatorGuideMissingRequired.
   ///
   /// In it, this message translates to:
   /// **'Azioni richieste mancanti'**
   String get facilitatorGuideMissingRequired;
-
-  /// No description provided for @facilitatorGuideAllCovered.
-  ///
-  /// In it, this message translates to:
-  /// **'Tutte le colonne richieste coperte!'**
-  String get facilitatorGuideAllCovered;
 
   /// No description provided for @facilitatorGuideColumnHasAction.
   ///
@@ -13323,120 +13449,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Opzionale'**
   String get facilitatorGuideOptional;
-
-  /// No description provided for @collectionRationaleSSC.
-  ///
-  /// In it, this message translates to:
-  /// **'Prima Stop per rimuovere bloccanti, poi Start nuove pratiche, infine Continue ciò che funziona.'**
-  String get collectionRationaleSSC;
-
-  /// No description provided for @collectionRationaleMSG.
-  ///
-  /// In it, this message translates to:
-  /// **'Prima affrontare le frustrazioni, poi le delusioni, poi celebrare i successi.'**
-  String get collectionRationaleMSG;
-
-  /// No description provided for @collectionRationale4Ls.
-  ///
-  /// In it, this message translates to:
-  /// **'Prima colmare le lacune, poi pianificare aspirazioni future, mantenere ciò che funziona, condividere apprendimenti.'**
-  String get collectionRationale4Ls;
-
-  /// No description provided for @collectionRationaleSailboat.
-  ///
-  /// In it, this message translates to:
-  /// **'Prima mitigare i rischi, rimuovere bloccanti, poi sfruttare gli abilitatori e allinearsi agli obiettivi.'**
-  String get collectionRationaleSailboat;
-
-  /// No description provided for @collectionRationaleStarfish.
-  ///
-  /// In it, this message translates to:
-  /// **'Fermare pratiche negative, ridurne altre, mantenere quelle buone, aumentare quelle di valore, iniziarne di nuove.'**
-  String get collectionRationaleStarfish;
-
-  /// No description provided for @collectionRationaleDAKI.
-  ///
-  /// In it, this message translates to:
-  /// **'Drop per liberare capacità, Add nuove pratiche, Improve quelle esistenti, Keep ciò che funziona.'**
-  String get collectionRationaleDAKI;
-
-  /// No description provided for @missingSuggestionSSCStop.
-  ///
-  /// In it, this message translates to:
-  /// **'Considera quale pratica sta bloccando il team e dovrebbe essere fermata.'**
-  String get missingSuggestionSSCStop;
-
-  /// No description provided for @missingSuggestionSSCStart.
-  ///
-  /// In it, this message translates to:
-  /// **'Pensa a quale nuova pratica potrebbe aiutare il team a migliorare.'**
-  String get missingSuggestionSSCStart;
-
-  /// No description provided for @missingSuggestionMSGMad.
-  ///
-  /// In it, this message translates to:
-  /// **'Affronta le frustrazioni del team - cosa sta causando rabbia?'**
-  String get missingSuggestionMSGMad;
-
-  /// No description provided for @missingSuggestionMSGSad.
-  ///
-  /// In it, this message translates to:
-  /// **'Risolvi le delusioni - cosa ha reso triste il team?'**
-  String get missingSuggestionMSGSad;
-
-  /// No description provided for @missingSuggestion4LsLacked.
-  ///
-  /// In it, this message translates to:
-  /// **'Cosa mancava di cui il team aveva bisogno?'**
-  String get missingSuggestion4LsLacked;
-
-  /// No description provided for @missingSuggestion4LsLonged.
-  ///
-  /// In it, this message translates to:
-  /// **'Cosa desidera il team per il futuro?'**
-  String get missingSuggestion4LsLonged;
-
-  /// No description provided for @missingSuggestionSailboatRock.
-  ///
-  /// In it, this message translates to:
-  /// **'Quali rischi minacciano il progresso del team?'**
-  String get missingSuggestionSailboatRock;
-
-  /// No description provided for @missingSuggestionSailboatAnchor.
-  ///
-  /// In it, this message translates to:
-  /// **'Cosa sta trattenendo il team dal raggiungere gli obiettivi?'**
-  String get missingSuggestionSailboatAnchor;
-
-  /// No description provided for @missingSuggestionStarfishStop.
-  ///
-  /// In it, this message translates to:
-  /// **'Quale pratica il team dovrebbe completamente smettere di fare?'**
-  String get missingSuggestionStarfishStop;
-
-  /// No description provided for @missingSuggestionStarfishStart.
-  ///
-  /// In it, this message translates to:
-  /// **'Quale nuova pratica il team dovrebbe iniziare?'**
-  String get missingSuggestionStarfishStart;
-
-  /// No description provided for @missingSuggestionDAKIDrop.
-  ///
-  /// In it, this message translates to:
-  /// **'Cosa dovrebbe il team decidere di eliminare?'**
-  String get missingSuggestionDAKIDrop;
-
-  /// No description provided for @missingSuggestionDAKIAdd.
-  ///
-  /// In it, this message translates to:
-  /// **'Quale nuova decisione dovrebbe prendere il team?'**
-  String get missingSuggestionDAKIAdd;
-
-  /// No description provided for @missingSuggestionGeneric.
-  ///
-  /// In it, this message translates to:
-  /// **'Considera di creare un\'azione da questa colonna.'**
-  String get missingSuggestionGeneric;
 }
 
 class _AppLocalizationsDelegate

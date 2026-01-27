@@ -47,7 +47,8 @@ class RetroColumnWidget extends StatelessWidget {
           Tooltip(
             message: column.getLocalizedDescription(l10n),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8), // Compact header
+              height: 70, // Reduced from 85
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8), // Halved padding
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -67,13 +68,14 @@ class RetroColumnWidget extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         column.icon, 
-                        size: 18, // Smaller icon
+                        size: 20, 
                         color: Colors.white,
                       ),
                       const SizedBox(width: 8),
@@ -82,7 +84,7 @@ class RetroColumnWidget extends StatelessWidget {
                           column.getLocalizedTitle(l10n).toUpperCase(),
                           style: const TextStyle(
                             fontWeight: FontWeight.w900,
-                            fontSize: 13, // Smaller font
+                            fontSize: 15,
                             letterSpacing: 1.0,
                             color: Colors.white,
                             shadows: [
@@ -96,22 +98,40 @@ class RetroColumnWidget extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 4),
+                   Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      RetroMethodologyGuide.getDiscussionPrompt(l10n, retro.template, column.id),
+                      style: TextStyle(
+                        fontSize: 12, // Increased from 11
+                        color: Colors.white.withValues(alpha: 0.95),
+                        fontWeight: FontWeight.bold, // Bold as requested
+                        fontStyle: FontStyle.italic,
+                        shadows: const [
+                           Shadow(color: Colors.black26, offset: Offset(0, 1), blurRadius: 1),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-
-          // Discussion Prompt - shown only during discuss phase
-          if (retro.currentPhase == RetroPhase.discuss)
-            _buildDiscussionPrompt(l10n),
+          
+          // Gap below header
+          Container(height: 4, color: Colors.transparent),
 
           // Items List (Grid) - Card size optimized for ~70 characters visibility
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.fromLTRB(8, 12, 8, 80),
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220, // Larger cards for 70+ chars (~18 chars x 4 lines)
-                childAspectRatio: 1.4, // Taller cards for more text
+                maxCrossAxisExtent: 220, 
+                childAspectRatio: 1.3, // Taller cards (more vertical space)
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),

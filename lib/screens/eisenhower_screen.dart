@@ -592,22 +592,6 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Row(
-                children: [
-                  const Icon(Icons.folder_open, color: AppColors.success),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.eisenhowerYourMatricesCount(filteredMatrices.length, matrices.length),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: context.textPrimaryColor,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
               // Widget di ricerca
               MatrixSearchWidget(
                 onSearchChanged: (query) => setState(() => _searchQuery = query),
