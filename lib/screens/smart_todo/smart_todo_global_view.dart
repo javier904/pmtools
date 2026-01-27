@@ -5,6 +5,7 @@ import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../widgets/smart_todo/todo_list_view.dart';
 import '../../widgets/smart_todo/todo_task_dialog.dart';
+import '../../l10n/app_localizations.dart';
 
 class SmartTodoGlobalView extends StatefulWidget {
   final List<TodoListModel> userLists;
@@ -327,7 +328,7 @@ class _SmartTodoGlobalViewState extends State<SmartTodoGlobalView> {
 
                                           // List Origin
                                           Tooltip(
-                                            message: 'Lista di appartenenza',
+                                            message: AppLocalizations.of(context)?.smartTodoListOrigin ?? 'List origin',
                                             child: Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                               decoration: BoxDecoration(

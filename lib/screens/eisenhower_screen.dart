@@ -87,6 +87,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
   // Filtro ricerca matrici
   String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   // Filtro archivio
   bool _showArchived = false;
@@ -213,6 +214,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _sidePanelTabController.dispose();
+    _searchController.dispose();
     _cancelSubscriptions();
     _stopPresenceHeartbeat();
     super.dispose();
@@ -594,6 +596,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
             children: [
               // Widget di ricerca
               MatrixSearchWidget(
+                controller: _searchController,
                 onSearchChanged: (query) => setState(() => _searchQuery = query),
               ),
               const SizedBox(height: 12),
@@ -617,13 +620,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                       Chip(
                         label: Text('"$_searchQuery"', style: const TextStyle(fontSize: 11)),
                         deleteIcon: const Icon(Icons.close, size: 14),
-                        onDeleted: () => setState(() => _searchQuery = ''),
+                        onDeleted: () {
+                          setState(() => _searchQuery = '');
+                          _searchController.clear();
+                        },
                         visualDensity: VisualDensity.compact,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       const Spacer(),
                       TextButton(
-                        onPressed: () => setState(() => _searchQuery = ''),
+                        onPressed: () {
+                           setState(() => _searchQuery = '');
+                           _searchController.clear();
+                        },
                         child: Text(l10n.filterRemove, style: const TextStyle(fontSize: 12)),
                       ),
                     ],
@@ -645,7 +654,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                             ),
                             const SizedBox(height: 8),
                             TextButton(
-                              onPressed: () => setState(() => _searchQuery = ''),
+                              onPressed: () {
+                                setState(() => _searchQuery = '');
+                                _searchController.clear();
+                              },
                               child: Text(l10n.filterRemove),
                             ),
                           ],
@@ -809,6 +821,26 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 ],
               ),
               const SizedBox(height: 4),
+              // Progress bar (MOVED UP)
+              if (activityCount > 0) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    value: matrix.votedActivityCount / activityCount,
+                    minHeight: 2,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      matrix.votedActivityCount >= activityCount
+                          ? Colors.green
+                          : AppColors.success.withOpacity(0.6),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+              ] else ...[
+                 const SizedBox(height: 2),
+              ],
+              
               // Stats compatte
               Row(
                 children: [
@@ -832,23 +864,6 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                   _buildParticipantStat(matrix, l10n),
                 ],
               ),
-              // Progress bar
-              if (activityCount > 0) ...[
-                const SizedBox(height: 4),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    value: matrix.votedActivityCount / activityCount,
-                    minHeight: 2,
-                    backgroundColor: Colors.grey.shade200,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      matrix.votedActivityCount >= activityCount
-                          ? Colors.green
-                          : AppColors.success.withOpacity(0.6),
-                    ),
-                  ),
-                ),
-              ],
             ],
           ),
         ),

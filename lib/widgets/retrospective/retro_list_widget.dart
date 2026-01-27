@@ -273,6 +273,21 @@ class RetroListWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
+              // Progress bar (phase-based)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: LinearProgressIndicator(
+                  value: _getPhaseProgress(retro.currentPhase),
+                  minHeight: 2,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    retro.currentPhase == RetroPhase.completed
+                        ? Colors.green
+                        : AppColors.pink.withOpacity(0.6),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
               // Stats compatte
               Row(
                 children: [
@@ -292,21 +307,6 @@ class RetroListWidget extends StatelessWidget {
                   ],
                   _buildParticipantRetroStat(retro, l10n),
                 ],
-              ),
-              // Progress bar (phase-based)
-              const SizedBox(height: 4),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2),
-                child: LinearProgressIndicator(
-                  value: _getPhaseProgress(retro.currentPhase),
-                  minHeight: 2,
-                  backgroundColor: Colors.grey.shade200,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    retro.currentPhase == RetroPhase.completed
-                        ? Colors.green
-                        : AppColors.pink.withOpacity(0.6),
-                  ),
-                ),
               ),
             ],
           ),

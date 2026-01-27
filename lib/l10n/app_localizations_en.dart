@@ -9,6 +9,12 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get smartTodoListOrigin => 'List origin';
+
+  @override
+  String get newRetro => 'New Retro';
+
+  @override
   String get appTitle => 'Keisen';
 
   @override

@@ -278,6 +278,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
       onChanged: (value) {

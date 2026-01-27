@@ -1,6 +1,7 @@
 {
   "@@locale": "fr",
   "appTitle": "Keisen",
+  "newRetro": "Nouvelle Retro",
   "goToHome": "Aller à l'accueil",
   "actionSave": "Enregistrer",
   "actionCancel": "Annuler",

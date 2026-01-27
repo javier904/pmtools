@@ -1,5 +1,7 @@
 {
   "@@locale": "en",
+  "smartTodoListOrigin": "List origin",
+  "newRetro": "New Retro",
   "appTitle": "Keisen",
   "goToHome": "Go to Home",
   "actionSave": "Save",

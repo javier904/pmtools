@@ -200,10 +200,14 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateStandaloneDialog,
         backgroundColor: AppColors.pink,
-        child: const Icon(Icons.add, color: Colors.white),
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          AppLocalizations.of(context)?.newRetro ?? 'New Retro',
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
     ));
   }
@@ -236,6 +240,10 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.pink, width: 2),
+              ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             onChanged: (val) => setState(() {}),
@@ -250,9 +258,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 const SizedBox(width: 8),
                 _buildFilterChip(AppLocalizations.of(context)!.retroFilterActive, RetroStatus.active),
                 const SizedBox(width: 8),
-                _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
                 const SizedBox(width: 8),
-                _buildFilterChip(AppLocalizations.of(context)!.retroFilterDraft, RetroStatus.draft),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
               ],
             ),
           ),

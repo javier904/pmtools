@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../themes/app_colors.dart';
 import 'dart:async';
 import '../../l10n/app_localizations.dart';
 import '../../models/eisenhower_matrix_model.dart';
@@ -6,10 +7,12 @@ import '../../models/eisenhower_matrix_model.dart';
 /// Widget per cercare e filtrare le matrici di Eisenhower
 class MatrixSearchWidget extends StatefulWidget {
   final ValueChanged<String> onSearchChanged;
+  final TextEditingController? controller;
 
   const MatrixSearchWidget({
     super.key,
     required this.onSearchChanged,
+    this.controller,
   });
 
   @override
@@ -17,14 +20,31 @@ class MatrixSearchWidget extends StatefulWidget {
 }
 
 class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
-  final TextEditingController _searchController = TextEditingController();
-
+  late TextEditingController _searchController;
+  final bool _useInternalController = false; // logic handled in initState
+  
   Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = widget.controller ?? TextEditingController();
+  }
+
+  @override
+  void didUpdateWidget(MatrixSearchWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller && widget.controller != null) {
+       _searchController = widget.controller!;
+    }
+  }
 
   @override
   void dispose() {
     _debounce?.cancel();
-    _searchController.dispose();
+    if (widget.controller == null) {
+      _searchController.dispose();
+    }
     super.dispose();
   }
 
@@ -41,7 +61,7 @@ class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
     return TextField(
       controller: _searchController,
       decoration: InputDecoration(
-        hintText: l10n.eisenhowerSearchHint,
+        hintText: l10n?.eisenhowerSearchHint ?? 'Search...',
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
@@ -49,15 +69,27 @@ class _MatrixSearchWidgetState extends State<MatrixSearchWidget> {
                 onPressed: () {
                   _searchController.clear();
                   widget.onSearchChanged('');
+                  // Force rebuild to hide clear button if needed, although text change listener handles it via controller? 
+                  // In Flutter TextField, suffixIcon update usually needs setState unless AnimatedBuilder is used.
+                  // Since we are in local state, we should setState to trigger rebuild of suffixIcon visibility
+                  setState(() {}); 
                 },
               )
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.success, width: 2),
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
-      onChanged: _onSearchChanged,
+      onChanged: (val) {
+        // Trigger setState to show/hide clear icon
+        setState(() {});
+        _onSearchChanged(val);
+      },
     );
   }
 }

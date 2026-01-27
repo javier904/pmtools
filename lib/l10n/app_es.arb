@@ -1,6 +1,7 @@
 {
   "@@locale": "es",
   "appTitle": "Keisen",
+  "newRetro": "Nueva Retro",
   "goToHome": "Ir al inicio",
   "actionSave": "Guardar",
   "actionCancel": "Cancelar",

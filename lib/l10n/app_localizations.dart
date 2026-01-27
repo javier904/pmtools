@@ -102,6 +102,18 @@ abstract class AppLocalizations {
     Locale('it'),
   ];
 
+  /// No description provided for @smartTodoListOrigin.
+  ///
+  /// In it, this message translates to:
+  /// **'Lista di appartenenza'**
+  String get smartTodoListOrigin;
+
+  /// No description provided for @newRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Retro'**
+  String get newRetro;
+
   /// No description provided for @appTitle.
   ///
   /// In it, this message translates to:
