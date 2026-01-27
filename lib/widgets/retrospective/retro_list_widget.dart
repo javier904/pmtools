@@ -100,7 +100,8 @@ class RetroListWidget extends StatelessWidget {
       context: context,
       position: position,
       items: [
-        if (onEdit != null)
+        // EDIT: Allowed only before Voting phase
+        if (onEdit != null && retro.currentPhase.index < RetroPhase.voting.index)
           PopupMenuItem(
             value: 'edit',
             child: Row(
@@ -373,13 +374,21 @@ class RetroListWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.people, size: 18, color: Colors.grey),
+          Icon(
+            Icons.people, 
+            size: 18, 
+            color: (retro.createdBy == currentUserEmail) 
+                ? const Color(0xFFFF4081) // Pink for Owner
+                : Colors.grey, // Grey for Guest
+          ),
           const SizedBox(width: 5),
           Text(
             '${retro.participantEmails.length}',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[700],
+              color: (retro.createdBy == currentUserEmail) 
+                  ? const Color(0xFFFF4081) // Pink Text for Owner (matching icon)
+                  : Colors.grey[700],
               fontWeight: FontWeight.w500,
             ),
           ),

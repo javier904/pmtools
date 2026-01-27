@@ -158,6 +158,17 @@ class RetrospectiveFirestoreService {
     return controller.stream;
   }
 
+  /// Aggiorna le impostazioni della retrospettiva (Max voti, Timer)
+  Future<void> updateSettings(String retroId, {int? maxVotes, Map<String, int>? phaseDurations}) async {
+    final updates = <String, dynamic>{};
+    if (maxVotes != null) updates['maxVotesPerUser'] = maxVotes;
+    if (phaseDurations != null) updates['phaseDurations'] = phaseDurations;
+    
+    if (updates.isNotEmpty) {
+      await _retrosCollection.doc(retroId).update(updates);
+    }
+  }
+
   /// Aggiorna la fase della retrospettiva
   Future<void> updatePhase(String retroId, RetroPhase newPhase, String userId, String userName) async {
     final retroDoc = await _retrosCollection.doc(retroId).get();
@@ -178,8 +189,14 @@ class RetrospectiveFirestoreService {
             isRunning: true,
         ).toMap();
     } else {
-        // Stop timer if no configuration for this phase
+    // Stop timer if no configuration for this phase
         updates['timer'] = const RetroTimer(isRunning: false).toMap();
+    }
+    
+    // Safety: If returning to Writing phase, hide cards again to ensure blind voting possibility
+    if (newPhase == RetroPhase.writing) {
+      updates['areTeamCardsVisible'] = false;
+      updates['showAuthorNames'] = false; // Also reset author names
     }
 
     // Fix Visibility: Update status field to 'completed' if phase is completed
@@ -247,9 +264,23 @@ class RetrospectiveFirestoreService {
   /// Rivela le card a tutti (fine fase Writing)
   Future<void> revealCards(String retroId) async {
     await _retrosCollection.doc(retroId).update({
-        'areTeamCardsVisible': true,
-    });
+      'areTeamCardsVisible': true,
+  });
+}
+
+/// Imposta la visibilità delle card (Toggle per facilitatore)
+Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
+  final updates = <String, dynamic>{
+    'areTeamCardsVisible': isVisible,
+  };
+  
+  // Requirement: When revealing (isVisible=true), hide author names by default
+  if (isVisible) {
+    updates['showAuthorNames'] = false;
   }
+
+  await _retrosCollection.doc(retroId).update(updates);
+}  
 
   /// Toggle author names visibility (Facilitator only)
   Future<void> toggleAuthorNames(String retroId, bool isVisible) async {

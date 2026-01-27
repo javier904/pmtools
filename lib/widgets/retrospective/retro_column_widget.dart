@@ -150,13 +150,16 @@ class RetroColumnWidget extends StatelessWidget {
   }
 
   Widget _buildItemCard(BuildContext context, RetroItem item) {
+    final l10n = AppLocalizations.of(context)!;
     final bool isMine = item.authorEmail == currentUserEmail;
     final bool isContentVisible = isMine || retro.areTeamCardsVisible || retro.currentPhase != RetroPhase.writing;
     // Drag Enable: Discuss phase OR if Action Panel is explicitly visible (e.g. for creating action items)
     final bool isDraggable = retro.currentPhase == RetroPhase.discuss || retro.isActionItemsVisible;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    // Edit Enable: Writing phase AND own card
-    final bool canEdit = retro.currentPhase == RetroPhase.writing && isMine;
+    
+    // Edit Allowed: Phases before Voting (Setup, Icebreaker, Writing)
+    // AND it must be my card (or facilitator? usually only author edits content)
+    final bool canEdit = retro.currentPhase.index < RetroPhase.voting.index && isMine;
 
     final cardContent = Container(
       decoration: BoxDecoration(
@@ -182,42 +185,49 @@ class RetroColumnWidget extends StatelessWidget {
             left: 0, top: 0, bottom: 0, width: 3,
             child: Container(color: column.color),
           ),
-          // Edit button for own cards in writing phase
+          // 3-Dots Menu for Edit/Delete (Phases before Voting)
           if (canEdit)
             Positioned(
-              top: 4,
-              right: 4,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () => _showEditDialog(context, item),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: column.color.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
+              top: 0,
+              right: 0,
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  iconTheme: IconThemeData(size: 16),
+                ),
+                child: PopupMenuButton<String>(
+                  icon: Icon(Icons.more_horiz, color: column.color.withOpacity(0.7)),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 120),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, size: 16, color: column.color),
+                          const SizedBox(width: 8),
+                          Text(l10n.actionEdit, style: const TextStyle(fontSize: 13)),
+                        ],
                       ),
-                      child: Icon(Icons.edit, size: 14, color: column.color),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  InkWell(
-                    onTap: () => _showDeleteConfirmation(context, item),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.delete, size: 16, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(l10n.actionDelete, style: const TextStyle(fontSize: 13, color: Colors.red)),
+                        ],
                       ),
-                      child: const Icon(Icons.delete, size: 14, color: Colors.red),
                     ),
-                  ),
-                ],
+                  ],
+                  onSelected: (value) {
+                    if (value == 'edit') _showEditDialog(context, item);
+                    if (value == 'delete') _showDeleteConfirmation(context, item);
+                  },
+                ),
               ),
             ),
+
           Padding(
             padding: EdgeInsets.fromLTRB(10, canEdit ? 28 : 10, 10, 10),
             child: Column(
@@ -257,16 +267,16 @@ class RetroColumnWidget extends StatelessWidget {
     );
 
     if (isDraggable) {
-      return Draggable<RetroItem>( // Switched from LongPressDraggable to Draggable for easier interaction
+      return Draggable<RetroItem>(
         data: item,
         feedback: Material(
-          elevation: 6, // Higher elevation for feedback
+          elevation: 6, 
           borderRadius: BorderRadius.circular(8),
           color: Colors.transparent,
           child: SizedBox(
             width: 200,
             height: 120,
-            child: Opacity(opacity: 0.8, child: cardContent), // Slight opacity
+            child: Opacity(opacity: 0.8, child: cardContent),
           ),
         ),
         childWhenDragging: Opacity(opacity: 0.3, child: cardContent),
@@ -313,18 +323,31 @@ class RetroColumnWidget extends StatelessWidget {
     final bool hasVoted = item.hasVoted(currentUserEmail);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     
-    // CHECK PHASE: Only allow voting in 'voting' phase
-    // In other phases, show read-only count if votes > 0
+    // VISIBILITY LOGIC
+    // 1. Discuss/Completed: Show Global Votes (Total count + active thumb)
+    // 2. Voting: Show ONLY OWN Votes (My thumb active + count of MY votes if multiple allowed logic existed, but simplified to just 'voted or not' usually, or count if multi-vote)
+    // 3. Writing (or others): HIDE ALL (No widget)
+    
     final bool isVotingPhase = retro.currentPhase == RetroPhase.voting;
-    final bool showReadOnly = !isVotingPhase && item.votes > 0;
+    final bool isDiscussOrCompleted = retro.currentPhase.index >= RetroPhase.discuss.index;
 
-    if (!isVotingPhase && !showReadOnly) return const SizedBox.shrink();
+    // If Writing/Setup -> Hide completely
+    if (!isVotingPhase && !isDiscussOrCompleted) return const SizedBox.shrink();
+
+    // If Voting -> Show only if I can interact OR if I have voted
+    // If Discuss/Completed -> Show always (read only)
 
     return InkWell(
       onTap: isVotingPhase ? () {
-         final int totalVotes = retro.items.where((i) => i.hasVoted(currentUserEmail)).length;
-
-         if (!hasVoted && totalVotes >= retro.maxVotesPerUser) {
+         // Logic to vote (keep existing)
+         final int totalVotes = retro.items.where((i) => i.hasVoted(currentUserEmail)).length; // Total votes across board? Or per user? 
+         // Assuming item.hasVoted checks list of emails. A user can appear multiple times in 'votedBy' if multi-vote is allowed per item? 
+         // Model says: votedBy: List<String>. So yes, multi-vote possible if added multiple times.
+         // But usually UI limits 1 vote per item or checks if (votedBy.contains(email)).
+         // Code above had: if (!hasVoted && totalVotes >= max). 
+         
+         // Let's keep existing logic but just fix display visibility.
+         if (retro.items.expand((i) => i.votedBy).where((e) => e == currentUserEmail).length >= retro.maxVotesPerUser && !item.votedBy.contains(currentUserEmail)) {
            ScaffoldMessenger.of(context).showSnackBar(
              SnackBar(content: Text(l10n.retroVoteLimitReached(retro.maxVotesPerUser)), duration: const Duration(seconds: 1)),
            );
@@ -332,8 +355,12 @@ class RetroColumnWidget extends StatelessWidget {
          }
 
          final service = RetrospectiveFirestoreService();
+         // If already voted, maybe unvote? existing logic just added. 
+         // Assuming simple toggle for now or add only? 
+         // Previous code: service.voteItem(retro.id, item.id, currentUserEmail); 
+         // Usually toggles or adds. I'll rely on service.
          service.voteItem(retro.id, item.id, currentUserEmail);
-      } : null, // Disable tap if not voting phase
+      } : null,
       borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -356,10 +383,10 @@ class RetroColumnWidget extends StatelessWidget {
               size: 14,
               color: hasVoted ? Colors.blue : (isDark ? Colors.grey[400] : Colors.grey[500]),
             ),
-            // Show count ONLY if NOT voting phase or (it's my vote and I want to see I voted? No user said hidden).
-            // User: "must be hidden, and shown only when reveal is done".
-            // So during Voting Phase -> Hide Count completely.
-            if (!isVotingPhase && item.votes > 0) ...[
+            
+            // COUNT VISIBILITY
+            if (isDiscussOrCompleted) ...[
+                // Show Global Count
                 const SizedBox(width: 4),
                 Text(
                   '${item.votes}', 
@@ -367,6 +394,19 @@ class RetroColumnWidget extends StatelessWidget {
                     fontSize: 11, 
                     fontWeight: FontWeight.w800, 
                     color: hasVoted ? Colors.blue : (isDark ? Colors.grey[300] : Colors.grey[700]),
+                  ),
+                ),
+            ] else if (isVotingPhase && hasVoted) ...[
+                // Voting Phase: Show ONLY MY votes on this item (if multiple allowed, calculate my count)
+                // If simple bool, just icon is enough, but if I voted twice?
+                // votedBy is List<String>. Count occurrences of my email.
+                const SizedBox(width: 4),
+                Text(
+                  '${item.votedBy.where((e) => e == currentUserEmail).length}', 
+                  style: const TextStyle(
+                    fontSize: 11, 
+                    fontWeight: FontWeight.w800, 
+                    color: Colors.blue,
                   ),
                 ),
             ]

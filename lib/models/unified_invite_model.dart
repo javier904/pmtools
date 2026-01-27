@@ -249,7 +249,7 @@ class UnifiedInviteModel {
       case InviteSourceType.smartTodo:
         return {'listId': sourceId};
       case InviteSourceType.retroBoard:
-        return {'boardId': sourceId};
+        return {'id': sourceId};
     }
   }
 

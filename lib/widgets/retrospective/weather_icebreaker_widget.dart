@@ -123,12 +123,15 @@ class WeatherIcebreakerWidget extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? selectedColor.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? selectedColor.withValues(alpha: 0.25) : Colors.transparent,
           border: Border.all(
             color: isSelected ? selectedColor : Colors.grey.withOpacity(0.3),
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 3 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected ? [
+            BoxShadow(color: selectedColor.withValues(alpha: 0.3), blurRadius: 8, spreadRadius: 2)
+          ] : null,
         ),
         child: Column(
           children: [

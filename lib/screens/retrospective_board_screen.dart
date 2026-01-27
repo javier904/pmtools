@@ -328,6 +328,21 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             actions: [
                // Navigation Controls (Moved from bottom)
                if (isFacilitator) ...[
+                 // Reveal/Hide Toggle (Writing Phase)
+                 if (retro.currentPhase == RetroPhase.writing)
+                   Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 8),
+                     child: FilledButton.icon(
+                       onPressed: () => _service.setTeamCardsVisibility(retro.id, !retro.areTeamCardsVisible),
+                       icon: Icon(retro.areTeamCardsVisible ? Icons.visibility_off : Icons.visibility, size: 16),
+                       label: Text(retro.areTeamCardsVisible ? 'Hide Cards' : (l10n?.voteReveal ?? 'Reveal Cards')),
+                       style: FilledButton.styleFrom(
+                         backgroundColor: retro.areTeamCardsVisible ? Colors.grey : Colors.orange,
+                         visualDensity: VisualDensity.compact,
+                       ),
+                     ),
+                   ),
+
                  if (retro.currentPhase.index > 0)
                    TextButton.icon(
                      onPressed: () => _regressPhase(retro),
@@ -338,37 +353,24 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                      ),
                    ),
                    
-                 if (retro.currentPhase == RetroPhase.writing && !retro.areTeamCardsVisible)
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                     child: FilledButton.icon(
-                       onPressed: () => _service.revealCards(retro.id),
-                       icon: const Icon(Icons.visibility, size: 16),
-                       label: Text(l10n?.voteReveal ?? 'Reveal'),
-                       style: FilledButton.styleFrom(
-                         backgroundColor: Colors.orange,
-                         visualDensity: VisualDensity.compact,
-                       ),
-                     ),
-                   )
-                 else if (retro.currentPhase != RetroPhase.completed)
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                     child: TextButton(
-                       onPressed: () => _advancePhase(retro),
-                       style: TextButton.styleFrom(
-                         foregroundColor: Theme.of(context).colorScheme.onSurface,
-                       ),
-                       child: Row(
-                         mainAxisSize: MainAxisSize.min,
-                         children: const [
-                           Text('Next'),
-                           SizedBox(width: 8),
-                           Icon(Icons.arrow_forward, size: 16),
-                         ],
-                       ),
-                     ),
-                   ),
+                  if (retro.currentPhase != RetroPhase.completed)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextButton(
+                        onPressed: () => _advancePhase(retro),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Text('Next'),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward, size: 16),
+                          ],
+                        ),
+                      ),
+                    ),
                   const SizedBox(width: 8),
                   Container(width: 1, height: 24, color: Theme.of(context).dividerColor), // Separator
                   const SizedBox(width: 8),
@@ -398,26 +400,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                const SizedBox(width: 8),
                // Online Presence Counter (Replaces old participants dialog)
                _buildOnlineCounter(retro),
-               const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  radius: 12,
-                  child: Text(
-                    widget.currentUserName.isNotEmpty ? widget.currentUserName[0].toUpperCase() : '?',
-                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Home button - sempre ultimo a destra
-              IconButton(
-                icon: const Icon(Icons.home_rounded),
-                tooltip: l10n?.navHome ?? 'Home',
-                color: const Color(0xFF8B5CF6), // Viola come icona app
-                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-              ),
+               const SizedBox(width: 16),
             ],
           ),
           body: Column(
@@ -916,12 +899,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                       label: Text(l10n?.todoExportSheets ?? 'Export Sheets', style: const TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F9D58)),
                     ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: () => _exportData(retro),
-                      icon: const Icon(Icons.download),
-                      label: Text(l10n?.actionExport ?? 'Export CSV'),
-                    ),
+
                   ],
                 ),
               ],

@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       _searchQuery = query;
+      _isSearching = true;
       _isLoading = true;
     });
 

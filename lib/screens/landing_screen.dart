@@ -1297,27 +1297,13 @@ class _LandingScreenState extends State<LandingScreen> {
                           columnColors: [Colors.red, Colors.blue, Colors.green],
                           isDark: isDark,
                         )),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                        const SizedBox(width: 24),
                         Expanded(child: _buildRetroCard(
                           title: l10n.landingRetroTemplate4LsTitle,
                           emoji: '📝',
                           description: l10n.landingRetroTemplate4LsDesc,
                           columns: ['Liked', 'Learned', 'Lacked', 'Longed'],
                           columnColors: [Colors.green, Colors.blue, Colors.orange, Colors.purple],
-                          isDark: isDark,
-                        )),
-                        const SizedBox(width: 24),
-                        Expanded(child: _buildRetroCard(
-                          title: l10n.landingRetroTemplateSailboatTitle,
-                          emoji: '⛵',
-                          description: l10n.landingRetroTemplateSailboatDesc,
-                          columns: ['Wind', 'Anchor', 'Rocks', 'Island'],
-                          columnColors: [Colors.teal, Colors.grey, Colors.red, Colors.amber],
                           isDark: isDark,
                         )),
                       ],
@@ -1376,6 +1362,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       columnColors: [Colors.green, Colors.blue, Colors.orange, Colors.purple],
                       isDark: isDark,
                     ),
+                    /* Removed Sailboat as requested
                     const SizedBox(height: 16),
                     _buildRetroCard(
                       title: l10n.landingRetroTemplateSailboatTitle,
@@ -1385,6 +1372,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       columnColors: [Colors.teal, Colors.grey, Colors.red, Colors.amber],
                       isDark: isDark,
                     ),
+                    */
                   ],
                 );
               }

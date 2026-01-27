@@ -190,6 +190,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     onTap: _navigateToBoard,
                     onCreateNew: _showCreateStandaloneDialog,
                     currentUserEmail: _currentUserEmail, // Pass current user
+                    onEdit: _showEditSettingsDialog, // Added edit handler
                     onDelete: _confirmDeleteRetro, // Pass delete handler
                     onArchive: _archiveRetro,
                     onRestore: _restoreRetro,
@@ -573,7 +574,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     decoration: InputDecoration(labelText: AppLocalizations.of(context)!.retroTemplateLabel),
                     isExpanded: true, // Ensure proper layout for long text
                     selectedItemBuilder: (BuildContext context) {
-                      return RetroTemplate.values.map<Widget>((RetroTemplate t) {
+                      return RetroTemplate.values
+                          .where((t) => t != RetroTemplate.sailboat) // Hide Sailboat
+                          .map<Widget>((RetroTemplate t) {
                         return Text(
                           t.getLocalizedDisplayName(AppLocalizations.of(context)!),
                           style: const TextStyle(fontWeight: FontWeight.w500),
@@ -581,7 +584,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                         );
                       }).toList();
                     },
-                    items: RetroTemplate.values.map((t) {
+                    items: RetroTemplate.values
+                        .where((t) => t != RetroTemplate.sailboat) // Hide Sailboat
+                        .map((t) {
                       return DropdownMenuItem(
                         value: t,
                         child: Row(
@@ -872,5 +877,140 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         case RetroPhase.discuss: return l10n.retroPhaseDiscuss;
         default: return phase.name.toUpperCase();
     }
+  }
+
+
+  void _showEditSettingsDialog(RetrospectiveModel retro) {
+    // Double check constraints (though usually hidden by RetroListWidget)
+    if (retro.currentPhase.index >= RetroPhase.voting.index) {
+       return;
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+    int maxVotes = retro.maxVotesPerUser;
+    // Deep copy durations
+    final Map<String, int> phaseDurations = Map.from(retro.phaseDurations);
+
+    showDialog(
+      context: context,
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          primaryColor: AppColors.retroPrimary,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.retroPrimary,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+             style: ElevatedButton.styleFrom(
+               backgroundColor: AppColors.retroPrimary,
+               foregroundColor: Colors.white,
+             ),
+          ),
+        ),
+        child: StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.actionEdit),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Read-only Info
+                    const SizedBox(height: 8),
+                    Text(l10n.retroSessionTitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    const SizedBox(height: 4),
+                    Text(retro.sprintName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    Text(l10n.retroTemplateLabel, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    const SizedBox(height: 4),
+                    Text(retro.template.getLocalizedDisplayName(l10n), style: const TextStyle(fontSize: 14)),
+                    const Divider(height: 32),
+
+                    // Editable Fields
+                    // Max Votes
+                    Row(
+                       children: [
+                          Expanded(child: Text(l10n.retroVotesPerUser, style: const TextStyle(fontWeight: FontWeight.w500))),
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle_outline),
+                            onPressed: maxVotes > 1 ? () => setDialogState(() => maxVotes--) : null,
+                          ),
+                          Text('$maxVotes', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          IconButton(
+                            icon: const Icon(Icons.add_circle_outline),
+                            onPressed: maxVotes < 10 ? () => setDialogState(() => maxVotes++) : null,
+                          ),
+                       ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Phase Timers
+                    ExpansionTile(
+                      initiallyExpanded: true,
+                      title: Text(l10n.retroTimePhasesOptional, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                      tilePadding: EdgeInsets.zero,
+                      children: [
+                        ...[
+                          RetroPhase.icebreaker,
+                          RetroPhase.writing,
+                          RetroPhase.voting,
+                          RetroPhase.discuss
+                        ].map((phase) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 100, 
+                                  child: Text(_getPhaseName(phase, l10n), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    initialValue: phaseDurations[phase.name]?.toString() ?? '0',
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      isDense: true,
+                                      border: OutlineInputBorder(),
+                                      suffixText: 'min',
+                                    ),
+                                    onChanged: (val) {
+                                      final mins = int.tryParse(val);
+                                      if (mins != null) {
+                                        phaseDurations[phase.name] = mins;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l10n.actionCancel),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _retroService.updateSettings(
+                      retro.id, 
+                      maxVotes: maxVotes, 
+                      phaseDurations: phaseDurations
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: Text(l10n.actionSave),
+                ),
+              ],
+            );
+          }
+        ),
+      ),
+    );
   }
 }

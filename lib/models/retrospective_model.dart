@@ -187,10 +187,23 @@ class RetrospectiveModel {
       timer: RetroTimer.fromMap(data['timer'] as Map<String, dynamic>? ?? {}),
       areTeamCardsVisible: data['areTeamCardsVisible'] ?? false,
       actionItems: (data['actionItems'] as List? ?? []).map((i) => ActionItem.fromMap(i)).toList(),
-      phaseDurations: Map<String, int>.from(data['phaseDurations'] ?? {}),
-      sentimentVotes: Map<String, int>.from(data['sentimentVotes'] ?? {}),
-      oneWordVotes: Map<String, String>.from(data['oneWordVotes'] ?? {}),
-      weatherVotes: Map<String, String>.from(data['weatherVotes'] ?? {}),
+      phaseDurations: (data['phaseDurations'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k, v is num ? v.toInt() : 0)),
+      sentimentVotes: (data['sentimentVotes'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k, v is num ? v.toInt() : 0)),
+      oneWordVotes: (data['oneWordVotes'] as Map<String, dynamic>? ?? {}).map((k, v) {
+        String val = v?.toString() ?? '';
+        // Clean legacy/dirty data format {COM: VALUE}
+        if (val.startsWith('{') && val.contains('COM:')) {
+           val = val.replaceAll(RegExp(r'[{}]'), '').replaceAll(RegExp(r'COM:\s*', caseSensitive: false), '').trim();
+        }
+        return MapEntry(k, val);
+      }),
+      weatherVotes: (data['weatherVotes'] as Map<String, dynamic>? ?? {}).map((k, v) {
+        String val = v?.toString() ?? '';
+        if (val.startsWith('{') && val.contains('COM:')) {
+           val = val.replaceAll(RegExp(r'[{}]'), '').replaceAll(RegExp(r'COM:\s*', caseSensitive: false), '').trim();
+        }
+        return MapEntry(k, val.toLowerCase()); // Ensure lowercase for matching
+      }),
       icebreakerTemplate: data['icebreakerTemplate'] != null 
           ? RetroIcebreaker.values.firstWhere((e) => e.name == data['icebreakerTemplate'], orElse: () => RetroIcebreaker.sentiment)
           : null,

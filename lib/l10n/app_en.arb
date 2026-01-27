@@ -2994,6 +2994,7 @@
   "showingAllActivities": "Showing all activities",
   "showQ4": "Show Q4",
   "hideQ4": "Hide Q4",
+  "actionHide": "Hide Cards",
   "eisenhowerMappingInfo": "Q1→Must, Q2→Should, Q3→Could, Q4→Won't. Importance→Business Value.",
   "estimationExportInfo": "Activities will be added as stories to estimate. Q priority will not be transferred.",
   "createSession": "Create Session",

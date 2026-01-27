@@ -73,6 +73,7 @@ class RetrospectiveSheetsExportService {
         await _populateOverviewSheet(spreadsheetId, retro, exportConfig);
         await _populateActionItemsSheet(spreadsheetId, retro, exportConfig);
         await _populateBoardSheet(spreadsheetId, retro);
+        await _populateIcebreakerSheet(spreadsheetId, retro);
 
         // Populate methodology-specific sheets
         await _populateMethodologySpecificSheet(spreadsheetId, retro, exportConfig);
@@ -119,6 +120,11 @@ class RetrospectiveSheetsExportService {
         spreadsheetId,
         'Board Items!A:Z',
       );
+      await _sheetsApi!.spreadsheets.values.clear(
+        sheets.ClearValuesRequest(),
+        spreadsheetId,
+        'Icebreakers!A:Z',
+      );
 
       // Clear methodology-specific sheet
       final methodologySheetName = _getMethodologySheetName(retro.template);
@@ -137,7 +143,9 @@ class RetrospectiveSheetsExportService {
       // Repopulate with updated data
       await _populateOverviewSheet(spreadsheetId, retro, exportConfig);
       await _populateActionItemsSheet(spreadsheetId, retro, exportConfig);
+      await _populateActionItemsSheet(spreadsheetId, retro, exportConfig);
       await _populateBoardSheet(spreadsheetId, retro);
+      await _populateIcebreakerSheet(spreadsheetId, retro);
       await _populateMethodologySpecificSheet(spreadsheetId, retro, exportConfig);
       await _applyFormatting(spreadsheetId, retro, exportConfig);
     } catch (e) {
@@ -170,6 +178,7 @@ class RetrospectiveSheetsExportService {
       sheets.Sheet()..properties = (sheets.SheetProperties()..title = 'Overview'..index = 0..sheetId = 0),
       sheets.Sheet()..properties = (sheets.SheetProperties()..title = 'Action Items'..index = 1..sheetId = 1),
       sheets.Sheet()..properties = (sheets.SheetProperties()..title = 'Board Items'..index = 2..sheetId = 2),
+      sheets.Sheet()..properties = (sheets.SheetProperties()..title = 'Icebreakers'..index = 3..sheetId = 3),
     ];
 
     // Add methodology-specific sheet based on template
@@ -178,8 +187,8 @@ class RetrospectiveSheetsExportService {
       sheetsList.add(
         sheets.Sheet()..properties = (sheets.SheetProperties()
           ..title = methodologySheetName
-          ..index = 3
-          ..sheetId = 3),
+          ..index = 4
+          ..sheetId = 4),
       );
     }
 
@@ -363,6 +372,45 @@ class RetrospectiveSheetsExportService {
       sheets.ValueRange()..values = values,
       spreadsheetId,
       'Board Items!A1',
+      valueInputOption: 'USER_ENTERED',
+    );
+  }
+
+  Future<void> _populateIcebreakerSheet(String spreadsheetId, RetrospectiveModel retro) async {
+    final values = <List<dynamic>>[];
+    
+    // One Word Check-in
+    values.add(['ONE WORD CHECK-IN']);
+    values.add(['Participant', 'Word']);
+    
+    if (retro.oneWordVotes.isEmpty) {
+      values.add(['No entries recorded', '']);
+    } else {
+      retro.oneWordVotes.forEach((email, word) {
+        values.add([email, word]);
+      });
+    }
+
+    values.add(['']); // Gap
+    values.add(['']); 
+
+    // Weather Report
+    values.add(['WEATHER REPORT']);
+    values.add(['Participant', 'Weather']);
+
+    if (retro.weatherVotes.isEmpty) {
+      values.add(['No entries recorded', '']);
+    } else {
+      retro.weatherVotes.forEach((email, weather) {
+        // Weather is stored as code (sunny, cloudy...). Convert to readable if needed, or just export capitalised.
+        values.add([email, weather.toUpperCase()]);
+      });
+    }
+
+    await _sheetsApi!.spreadsheets.values.update(
+      sheets.ValueRange()..values = values,
+      spreadsheetId,
+      'Icebreakers!A1',
       valueInputOption: 'USER_ENTERED',
     );
   }
