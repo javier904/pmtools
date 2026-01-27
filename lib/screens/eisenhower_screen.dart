@@ -16,7 +16,8 @@ import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../themes/app_colors.dart';
-import '../widgets/eisenhower/matrix_search_widget.dart';
+import '../themes/app_colors.dart';
+// import '../widgets/eisenhower/matrix_search_widget.dart'; // Removed
 import '../widgets/eisenhower/vote_reveal_widget.dart';
 import '../services/subscription/subscription_limits_service.dart';
 import '../widgets/subscription/limit_reached_dialog.dart';
@@ -32,6 +33,7 @@ import '../widgets/eisenhower/export_to_sprint_dialog.dart';
 import '../widgets/eisenhower/export_to_estimation_dialog.dart';
 import '../widgets/eisenhower/invite_tab_widget.dart';
 import '../widgets/home/favorite_star.dart';
+import '../widgets/agile/methodology_guide_dialog.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
 import '../models/smart_todo/todo_participant_model.dart';
@@ -88,6 +90,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   // Filtro ricerca matrici
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
+  String _statusFilter = 'active'; // 'all', 'active', 'completed'
 
   // Filtro archivio
   bool _showArchived = false;
@@ -411,24 +414,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
             ],
           ),
           actions: [
-            // Toggle archivio - sempre visibile nella lista
-            if (_selectedMatrix == null) ...[
-              FilterChip(
-                label: Text(
-                  _showArchived ? l10n.archiveHideArchived : l10n.archiveShowArchived,
-                  style: const TextStyle(fontSize: 12),
-                ),
-                selected: _showArchived,
-                onSelected: (value) => setState(() => _showArchived = value),
-                avatar: Icon(
-                  _showArchived ? Icons.visibility_off : Icons.visibility,
-                  size: 16,
-                ),
-                selectedColor: AppColors.warning.withValues(alpha: 0.2),
-                showCheckmark: false,
-              ),
-              const SizedBox(width: 16),
-            ],
+            // Guida Metodologia
+            if (_selectedMatrix == null) const SizedBox.shrink(),
             if (_selectedMatrix != null) ...[
               // ═══════════════════════════════════════════════════════════
               // ONLINE PARTICIPANTS COUNTER
@@ -580,92 +567,49 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
         final matrices = snapshot.data ?? [];
 
-        if (matrices.isEmpty) {
-          return _buildEmptyState();
-        }
-
         // Applica i filtri
-        final filteredMatrices = matrices.applyFilters(
-          searchQuery: _searchQuery,
-        );
+        final filteredMatrices = matrices.where((m) {
+          final matchesSearch = _searchQuery.isEmpty || 
+                                m.title.toLowerCase().contains(_searchQuery.toLowerCase());
+          
+          bool matchesStatus = true;
+          if (_statusFilter == 'active') {
+             matchesStatus = !m.isArchived;
+          } else if (_statusFilter == 'completed') {
+             matchesStatus = m.isArchived;
+          }
+
+          return matchesSearch && matchesStatus;
+        }).toList();
 
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Widget di ricerca
-              MatrixSearchWidget(
-                controller: _searchController,
-                onSearchChanged: (query) => setState(() => _searchQuery = query),
-              ),
+              _buildSearchFilterSection(),
               const SizedBox(height: 12),
-              // Barra filtri attivi
-              if (_searchQuery.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.filter_alt, size: 16, color: AppColors.secondary),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.eisenhowerSearchLabel,
-                        style: const TextStyle(fontSize: 12, color: AppColors.secondary),
-                      ),
-                      const SizedBox(width: 8),
-                      Chip(
-                        label: Text('"$_searchQuery"', style: const TextStyle(fontSize: 11)),
-                        deleteIcon: const Icon(Icons.close, size: 14),
-                        onDeleted: () {
-                          setState(() => _searchQuery = '');
-                          _searchController.clear();
-                        },
-                        visualDensity: VisualDensity.compact,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () {
-                           setState(() => _searchQuery = '');
-                           _searchController.clear();
-                        },
-                        child: Text(l10n.filterRemove, style: const TextStyle(fontSize: 12)),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 12),
-              // Lista filtrata
+              // Filtered list or Empty State
               Expanded(
                 child: filteredMatrices.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.search_off, size: 48, color: context.textTertiaryColor),
-                            const SizedBox(height: 16),
-                            Text(
-                              l10n.eisenhowerNoMatrixFound,
-                              style: TextStyle(color: context.textSecondaryColor),
+                    ? (matrices.isEmpty 
+                        ? _buildEmptyState() 
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.search_off, size: 48, color: context.textTertiaryColor),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.eisenhowerNoMatrixFound,
+                                  style: TextStyle(color: context.textSecondaryColor),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-                            TextButton(
-                              onPressed: () {
-                                setState(() => _searchQuery = '');
-                                _searchController.clear();
-                              },
-                              child: Text(l10n.filterRemove),
-                            ),
-                          ],
-                        ),
-                      )
+                          ))
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          // Card compatte - stesso layout di Agile Process Manager
+                          // Compact cards
                           final compactCrossAxisCount = constraints.maxWidth > 1400
                               ? 6
                               : constraints.maxWidth > 1100
@@ -679,6 +623,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                                               : 1;
 
                           return GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: compactCrossAxisCount,
                               childAspectRatio: 2.5,
@@ -695,6 +640,97 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSearchFilterSection() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+      ),
+      child: Column(
+        children: [
+          // Search Bar
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: l10n.eisenhowerSearchHint ?? 'Search...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.success, width: 2), // Changed to success (Green)
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onChanged: (value) {
+              setState(() => _searchQuery = value);
+            },
+          ),
+          const SizedBox(height: 12),
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStandardFilterChip(String label, String status) {
+    bool isSelected = _statusFilter == status;
+    Color fabColor = AppColors.success; // Changed to success (Green)
+
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        if (selected) {
+          setState(() {
+            _statusFilter = status;
+            // Map to _showArchived
+            if (status == 'active') _showArchived = false;
+            else if (status == 'completed') _showArchived = true;
+            else if (status == 'all') _showArchived = true; // Show all (stream logic needed)
+            // Note: Currently stream likely only supports includeArchived boolean.
+            // If includeArchived is true, it returns everything (or just archived?).
+            // Checking logic in other screens, usually includeArchived=true returns EVERYTHING.
+            // So 'All' -> _showArchived = true.
+          });
+        }
+      },
+      backgroundColor: Theme.of(context).cardColor,
+      selectedColor: fabColor.withOpacity(0.2),
+      checkmarkColor: fabColor,
+      side: BorderSide(
+        color: isSelected ? fabColor : Colors.white,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
     );
   }
 

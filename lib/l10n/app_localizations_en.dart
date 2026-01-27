@@ -1028,6 +1028,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroSearchHint => 'Search retrospective...';
 
   @override
+  String get agileProcessTitle => 'Agile Process Manager';
+
+  @override
+  String get agileSearchProjects => 'Search projects...';
+
+  @override
+  String get agileMethodologyGuide => 'Methodology Guide';
+
+  @override
+  String get agileMethodologyGuideTitle => 'Agile Methodology Guide';
+
+  @override
+  String get agileMethodologyGuideSubtitle =>
+      'Choose the methodology that best fits your project';
+
+  @override
+  String get agileNewProject => 'New Project';
+
+  @override
+  String get agileRoles => 'ROLES';
+
+  @override
+  String get agileProcessFlow => 'PROCESS FLOW';
+
+  @override
+  String get agileArtifacts => 'ARTIFACTS';
+
+  @override
+  String get agileBestPractices => 'Best Practices';
+
+  @override
+  String get agileAntiPatterns => 'Anti-Patterns to Avoid';
+
+  @override
+  String get agileFAQ => 'Frequently Asked Questions';
+
+  @override
+  String get agileScrumShortDesc =>
+      'Fixed-time sprints, Velocity, Burndown. Ideal for products with evolving requirements.';
+
+  @override
+  String get agileKanbanShortDesc =>
+      'Continuous flow, WIP Limits, Lead Time. Ideal for support and continuous requests.';
+
+  @override
+  String get agileScrumbanShortDesc =>
+      'Mix of Sprints and continuous flow. Ideal for teams wanting flexibility.';
+
+  @override
+  String get agileRolePODesc => 'Manages backlog and priorities';
+
+  @override
+  String get agileRoleSMDesc => 'Facilitates the process and removes obstacles';
+
+  @override
+  String get agileRoleDevTeamDesc => 'Delivers product increments';
+
+  @override
+  String get agileRoleStakeholdersDesc => 'Provide feedback and requirements';
+
+  @override
+  String get agileRoleSRMDesc => 'Manages incoming requests';
+
+  @override
+  String get agileRoleSDMDesc => 'Optimizes workflow';
+
+  @override
+  String get agileRoleTeamDesc => 'Executes work respecting WIP limits';
+
+  @override
+  String get agileRoleFlowMasterDesc => 'Optimizes flow and facilitates';
+
+  @override
+  String get agileRoleTeamHybridDesc => 'Cross-functional, self-organized';
+
+  @override
   String get retroNoResults => 'No results found';
 
   @override
@@ -3591,25 +3667,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String agilePointsValue(int points) {
     return '$points pts';
   }
-
-  @override
-  String get agileMethodologyGuideTitle => 'Agile Methodology Guide';
-
-  @override
-  String get agileMethodologyGuideSubtitle =>
-      'Choose the methodology that best fits your project';
-
-  @override
-  String get agileScrumShortDesc =>
-      'Fixed-time sprints, Velocity, Burndown. Ideal for products with evolving requirements.';
-
-  @override
-  String get agileKanbanShortDesc =>
-      'Continuous flow, WIP Limits, Lead Time. Ideal for support and continuous requests.';
-
-  @override
-  String get agileScrumbanShortDesc =>
-      'Mix of Sprints and continuous flow. Ideal for teams wanting flexibility.';
 
   @override
   String get agileGuide => 'Guide';

@@ -2016,6 +2016,150 @@ abstract class AppLocalizations {
   /// **'Cerca retrospettiva...'**
   String get retroSearchHint;
 
+  /// No description provided for @agileProcessTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Agile Process Manager'**
+  String get agileProcessTitle;
+
+  /// No description provided for @agileSearchProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca progetti...'**
+  String get agileSearchProjects;
+
+  /// No description provided for @agileMethodologyGuide.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida Metodologie'**
+  String get agileMethodologyGuide;
+
+  /// No description provided for @agileMethodologyGuideTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida alle Metodologie Agile'**
+  String get agileMethodologyGuideTitle;
+
+  /// No description provided for @agileMethodologyGuideSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli la metodologia piu adatta al tuo progetto'**
+  String get agileMethodologyGuideSubtitle;
+
+  /// No description provided for @agileNewProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Progetto'**
+  String get agileNewProject;
+
+  /// No description provided for @agileRoles.
+  ///
+  /// In it, this message translates to:
+  /// **'RUOLI'**
+  String get agileRoles;
+
+  /// No description provided for @agileProcessFlow.
+  ///
+  /// In it, this message translates to:
+  /// **'FLUSSO DEL PROCESSO'**
+  String get agileProcessFlow;
+
+  /// No description provided for @agileArtifacts.
+  ///
+  /// In it, this message translates to:
+  /// **'ARTEFATTI'**
+  String get agileArtifacts;
+
+  /// No description provided for @agileBestPractices.
+  ///
+  /// In it, this message translates to:
+  /// **'Best Practices'**
+  String get agileBestPractices;
+
+  /// No description provided for @agileAntiPatterns.
+  ///
+  /// In it, this message translates to:
+  /// **'Anti-Pattern da Evitare'**
+  String get agileAntiPatterns;
+
+  /// No description provided for @agileFAQ.
+  ///
+  /// In it, this message translates to:
+  /// **'Domande Frequenti'**
+  String get agileFAQ;
+
+  /// No description provided for @agileScrumShortDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint a tempo fisso, Velocity, Burndown. Ideale per prodotti con requisiti che evolvono.'**
+  String get agileScrumShortDesc;
+
+  /// No description provided for @agileKanbanShortDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Flusso continuo, WIP Limits, Lead Time. Ideale per supporto e richieste continue.'**
+  String get agileKanbanShortDesc;
+
+  /// No description provided for @agileScrumbanShortDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Mix di Sprint e flusso continuo. Ideale per team che vogliono flessibilita.'**
+  String get agileScrumbanShortDesc;
+
+  /// No description provided for @agileRolePODesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisce il backlog e le priorità'**
+  String get agileRolePODesc;
+
+  /// No description provided for @agileRoleSMDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Facilita il processo e rimuove ostacoli'**
+  String get agileRoleSMDesc;
+
+  /// No description provided for @agileRoleDevTeamDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Realizza gli incrementi di prodotto'**
+  String get agileRoleDevTeamDesc;
+
+  /// No description provided for @agileRoleStakeholdersDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Forniscono feedback e requisiti'**
+  String get agileRoleStakeholdersDesc;
+
+  /// No description provided for @agileRoleSRMDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisce le richieste in ingresso'**
+  String get agileRoleSRMDesc;
+
+  /// No description provided for @agileRoleSDMDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimizza il flusso di lavoro'**
+  String get agileRoleSDMDesc;
+
+  /// No description provided for @agileRoleTeamDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Esegue il lavoro rispettando i WIP'**
+  String get agileRoleTeamDesc;
+
+  /// No description provided for @agileRoleFlowMasterDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimizza il flusso e facilita'**
+  String get agileRoleFlowMasterDesc;
+
+  /// No description provided for @agileRoleTeamHybridDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cross-funzionale, autoorganizzato'**
+  String get agileRoleTeamHybridDesc;
+
   /// No description provided for @retroNoResults.
   ///
   /// In it, this message translates to:
@@ -6681,36 +6825,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{points} pts'**
   String agilePointsValue(int points);
-
-  /// No description provided for @agileMethodologyGuideTitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Guida alle Metodologie Agile'**
-  String get agileMethodologyGuideTitle;
-
-  /// No description provided for @agileMethodologyGuideSubtitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Scegli la metodologia piu adatta al tuo progetto'**
-  String get agileMethodologyGuideSubtitle;
-
-  /// No description provided for @agileScrumShortDesc.
-  ///
-  /// In it, this message translates to:
-  /// **'Sprint a tempo fisso, Velocity, Burndown. Ideale per prodotti con requisiti che evolvono.'**
-  String get agileScrumShortDesc;
-
-  /// No description provided for @agileKanbanShortDesc.
-  ///
-  /// In it, this message translates to:
-  /// **'Flusso continuo, WIP Limits, Lead Time. Ideale per supporto e richieste continue.'**
-  String get agileKanbanShortDesc;
-
-  /// No description provided for @agileScrumbanShortDesc.
-  ///
-  /// In it, this message translates to:
-  /// **'Mix di Sprint e flusso continuo. Ideale per team che vogliono flessibilita.'**
-  String get agileScrumbanShortDesc;
 
   /// No description provided for @agileGuide.
   ///

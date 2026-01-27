@@ -25,7 +25,7 @@ import '../widgets/estimation_room/story_form_dialog.dart';
 import '../widgets/estimation_room/voting_board_widget.dart';
 import '../widgets/estimation_room/results_panel_widget.dart';
 import '../widgets/estimation_room/participant_list_widget.dart';
-import '../widgets/estimation_room/session_search_widget.dart';
+// import '../widgets/estimation_room/session_search_widget.dart'; // Removed
 import '../widgets/estimation_room/estimation_input_wrapper.dart';
 import '../widgets/estimation_room/export_to_smart_todo_dialog.dart';
 import '../widgets/estimation_room/invite_tab_widget.dart';
@@ -90,9 +90,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
   // Filtri ricerca sessioni
   String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
   PlanningPokerSessionStatus? _statusFilter;
   EstimationMode? _modeFilter;
   bool _showArchived = false;
+  Timer? _debounce;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
@@ -111,6 +113,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     _sidePanelTabController.dispose();
     _stopPresenceHeartbeat();
     _storiesSubscription?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -350,26 +353,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     );
 
     // Se siamo nella lista sessioni, mostra solo il toggle archivio
-    if (_selectedSession == null) {
-      return [
-        FilterChip(
-          label: Text(
-            _showArchived ? l10n.archiveHideArchived : l10n.archiveShowArchived,
-            style: const TextStyle(fontSize: 12),
-          ),
-          selected: _showArchived,
-          onSelected: (value) => setState(() => _showArchived = value),
-          avatar: Icon(
-            _showArchived ? Icons.visibility_off : Icons.visibility,
-            size: 16,
-          ),
-          selectedColor: AppColors.warning.withValues(alpha: 0.2),
-          showCheckmark: false,
-        ),
-        const SizedBox(width: 8),
-        homeButton,
-      ];
-    }
+      if (_selectedSession == null) {
+        return [
+          homeButton,
+        ];
+      }
 
     return [
       // ═══════════════════════════════════════════════════════════
@@ -446,13 +434,12 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         },
       ),
       const SizedBox(width: 8),
-      // Home button - sempre ultimo a destra
-      IconButton(
+      /*IconButton(
         icon: const Icon(Icons.home_rounded),
         tooltip: l10n.navHome,
         color: const Color(0xFF8B5CF6), // Viola come icona app
         onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-      ),
+      ),*/
     ];
   }
 
@@ -606,88 +593,56 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
         final sessions = snapshot.data ?? [];
 
-        if (sessions.isEmpty) {
-          return _buildEmptyState();
-        }
+        // Applica i filtri manually
+        final filteredSessions = sessions.where((s) {
+          final matchesSearch = _searchQuery.isEmpty || s.name.toLowerCase().contains(_searchQuery.toLowerCase());
+          
+          bool matchesStatus = true;
+          if (_statusFilter != null) {
+            if (_statusFilter == PlanningPokerSessionStatus.active) {
+              // Active = ha stories da stimare (storyCount > completedStoryCount)
+              matchesStatus = s.storyCount > s.completedStoryCount;
+            } else if (_statusFilter == PlanningPokerSessionStatus.completed) {
+              // Completed = tutte le stories stimate (storyCount == completedStoryCount e storyCount > 0)
+              matchesStatus = s.storyCount > 0 && s.storyCount == s.completedStoryCount;
+            } else {
+              matchesStatus = s.status == _statusFilter;
+            }
+          }
+          
+          bool matchesMode = true;
+          if (_modeFilter != null) {
+             matchesMode = s.estimationMode == _modeFilter;
+          }
 
-        // Applica i filtri
-        final filteredSessions = sessions.applyFilters(
-          searchQuery: _searchQuery,
-          statusFilter: _statusFilter,
-          modeFilter: _modeFilter,
-        );
+          return matchesSearch && matchesStatus && matchesMode;
+        }).toList();
 
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Row(
-                children: [
-                  const Icon(Icons.folder_open, color: Colors.amber),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.estimationSessionsCount(filteredSessions.length, sessions.length),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Widget di ricerca e filtri
-              SessionSearchWidget(
-                onSearchChanged: (query) => setState(() => _searchQuery = query),
-                statusFilter: _statusFilter,
-                onStatusFilterChanged: (status) => setState(() => _statusFilter = status),
-                modeFilter: _modeFilter,
-                onModeFilterChanged: (mode) => setState(() => _modeFilter = mode),
-                showModeFilter: true,
-              ),
-              const SizedBox(height: 12),
-              // Barra filtri attivi
-              ActiveFiltersBar(
-                searchQuery: _searchQuery,
-                statusFilter: _statusFilter,
-                modeFilter: _modeFilter,
-                onClearSearch: () => setState(() => _searchQuery = ''),
-                onClearStatus: () => setState(() => _statusFilter = null),
-                onClearMode: () => setState(() => _modeFilter = null),
-                onClearAll: () => setState(() {
-                  _searchQuery = '';
-                  _statusFilter = null;
-                  _modeFilter = null;
-                  _showArchived = false;
-                }),
-              ),
+              _buildSearchFilterSection(l10n),
               const SizedBox(height: 12),
               // Lista filtrata
               Expanded(
                 child: filteredSessions.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.search_off, size: 48, color: context.textMutedColor),
-                            const SizedBox(height: 16),
-                            Text(
-                              l10n.estimationNoSessionFound,
-                              style: TextStyle(color: context.textSecondaryColor),
+                    ? (sessions.isEmpty 
+                        ? _buildEmptyState()
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.search_off, size: 48, color: context.textTertiaryColor),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.estimationNoSessionFound ?? 'No sessions found',
+                                  style: TextStyle(color: context.textSecondaryColor),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-                            TextButton(
-                              onPressed: () => setState(() {
-                                _searchQuery = '';
-                                _statusFilter = null;
-                                _modeFilter = null;
-                              }),
-                              child: Text(l10n.filterRemove),
-                            ),
-                          ],
-                        ),
-                      )
+                          ))
                     : LayoutBuilder(
                         builder: (context, constraints) {
                           // Card compatte - stesso layout di Agile Process Manager
@@ -704,6 +659,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                                               : 1;
 
                           return GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: compactCrossAxisCount,
                               childAspectRatio: 2.5,
@@ -720,6 +676,104 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSearchFilterSection(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+      ),
+      child: Column(
+        children: [
+          // Search Bar
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search sessions...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                         _searchController.clear();
+                         setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.amber, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onChanged: (value) {
+              if (_debounce?.isActive ?? false) _debounce!.cancel();
+              _debounce = Timer(const Duration(milliseconds: 500), () {
+                setState(() => _searchQuery = value);
+              });
+            },
+          ),
+          const SizedBox(height: 12),
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStandardFilterChip(String label, String status) {
+    bool isSelected = false;
+    if (status == 'all') isSelected = _statusFilter == null && _showArchived == true;
+    else if (status == 'active') isSelected = _statusFilter == PlanningPokerSessionStatus.active;
+    else if (status == 'completed') isSelected = _statusFilter == PlanningPokerSessionStatus.completed;
+
+    Color fabColor = Colors.amber;
+
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        if (selected) {
+          setState(() {
+            if (status == 'all') {
+              _statusFilter = null;
+              _showArchived = true;
+            } else if (status == 'active') {
+              _statusFilter = PlanningPokerSessionStatus.active;
+              _showArchived = false;
+            } else if (status == 'completed') {
+              _statusFilter = PlanningPokerSessionStatus.completed;
+              _showArchived = true;
+            }
+          });
+        }
+      },
+      backgroundColor: Theme.of(context).cardColor,
+      selectedColor: fabColor.withOpacity(0.2),
+      checkmarkColor: fabColor,
+      side: BorderSide(
+        color: isSelected ? fabColor : Colors.white,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
     );
   }
 

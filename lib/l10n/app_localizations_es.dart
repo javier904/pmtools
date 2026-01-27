@@ -1035,6 +1035,82 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroSearchHint => 'Cerca retrospettiva...';
 
   @override
+  String get agileProcessTitle => 'Agile Process Manager';
+
+  @override
+  String get agileSearchProjects => 'Cerca progetti...';
+
+  @override
+  String get agileMethodologyGuide => 'Guida Metodologie';
+
+  @override
+  String get agileMethodologyGuideTitle => 'Guía de Metodología Ágil';
+
+  @override
+  String get agileMethodologyGuideSubtitle =>
+      'Elige la metodología que mejor se adapte a tu proyecto';
+
+  @override
+  String get agileNewProject => 'Nuovo Progetto';
+
+  @override
+  String get agileRoles => 'RUOLI';
+
+  @override
+  String get agileProcessFlow => 'FLUSSO DEL PROCESSO';
+
+  @override
+  String get agileArtifacts => 'ARTEFATTI';
+
+  @override
+  String get agileBestPractices => 'Best Practices';
+
+  @override
+  String get agileAntiPatterns => 'Anti-Pattern da Evitare';
+
+  @override
+  String get agileFAQ => 'Domande Frequenti';
+
+  @override
+  String get agileScrumShortDesc =>
+      'Sprints de tiempo fijo, Velocidad, Burndown. Ideal para productos con requisitos en evolución.';
+
+  @override
+  String get agileKanbanShortDesc =>
+      'Flujo continuo, Límites WIP, Lead Time. Ideal para soporte y solicitudes continuas.';
+
+  @override
+  String get agileScrumbanShortDesc =>
+      'Mezcla de Sprints y flujo continuo. Ideal para equipos que quieren flexibilidad.';
+
+  @override
+  String get agileRolePODesc => 'Gestisce il backlog e le priorità';
+
+  @override
+  String get agileRoleSMDesc => 'Facilita il processo e rimuove ostacoli';
+
+  @override
+  String get agileRoleDevTeamDesc => 'Realizza gli incrementi di prodotto';
+
+  @override
+  String get agileRoleStakeholdersDesc => 'Forniscono feedback e requisiti';
+
+  @override
+  String get agileRoleSRMDesc => 'Gestisce le richieste in ingresso';
+
+  @override
+  String get agileRoleSDMDesc => 'Ottimizza il flusso di lavoro';
+
+  @override
+  String get agileRoleTeamDesc => 'Esegue il lavoro rispettando i WIP';
+
+  @override
+  String get agileRoleFlowMasterDesc => 'Ottimizza il flusso e facilita';
+
+  @override
+  String get agileRoleTeamHybridDesc => 'Cross-funzionale, autoorganizzato';
+
+  @override
   String get retroNoResults => 'Nessun risultato per la ricerca';
 
   @override
@@ -3615,25 +3691,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String agilePointsValue(int points) {
     return '$points pts';
   }
-
-  @override
-  String get agileMethodologyGuideTitle => 'Guía de Metodología Ágil';
-
-  @override
-  String get agileMethodologyGuideSubtitle =>
-      'Elige la metodología que mejor se adapte a tu proyecto';
-
-  @override
-  String get agileScrumShortDesc =>
-      'Sprints de tiempo fijo, Velocidad, Burndown. Ideal para productos con requisitos en evolución.';
-
-  @override
-  String get agileKanbanShortDesc =>
-      'Flujo continuo, Límites WIP, Lead Time. Ideal para soporte y solicitudes continuas.';
-
-  @override
-  String get agileScrumbanShortDesc =>
-      'Mezcla de Sprints y flujo continuo. Ideal para equipos que quieren flexibilidad.';
 
   @override
   String get agileGuide => 'Guía';

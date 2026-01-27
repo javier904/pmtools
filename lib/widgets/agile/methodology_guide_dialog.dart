@@ -192,7 +192,7 @@ class _MethodologyGuideContent extends StatelessWidget {
 
         // Best Practices
         _buildListCard(
-          'Best Practices',
+          AppLocalizations.of(context)!.agileBestPractices,
           guide.bestPractices,
           Icons.check_circle,
           Colors.green,
@@ -201,7 +201,7 @@ class _MethodologyGuideContent extends StatelessWidget {
 
         // Anti-patterns
         _buildListCard(
-          'Anti-Pattern da Evitare',
+          AppLocalizations.of(context)!.agileAntiPatterns,
           guide.antiPatterns,
           Icons.cancel,
           Colors.red,
@@ -332,29 +332,31 @@ class _MethodologyGuideContent extends StatelessWidget {
   }
 
   Widget _buildFAQSection(List<FAQ> faqs) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.help_outline, color: guide.color, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'Domande Frequenti',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: guide.color,
+    return Builder(
+      builder: (context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.help_outline, color: guide.color, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.agileFAQ,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: guide.color,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ...faqs.map((faq) => _buildFAQItem(faq)),
-          ],
+                ],
+              ),
+              const SizedBox(height: 12),
+              ...faqs.map((faq) => _buildFAQItem(faq)),
+            ],
+          ),
         ),
       ),
     );
@@ -488,7 +490,7 @@ class MethodologyGuideButton extends StatelessWidget {
     if (compact) {
       return IconButton(
         icon: const Icon(Icons.help_outline),
-        tooltip: 'Guida alla metodologia',
+        tooltip: AppLocalizations.of(context)!.agileMethodologyGuide,
         onPressed: () => MethodologyGuideDialog.show(context, framework: framework),
       );
     }
@@ -496,7 +498,7 @@ class MethodologyGuideButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: () => MethodologyGuideDialog.show(context, framework: framework),
       icon: const Icon(Icons.menu_book),
-      label: const Text('Guida Metodologie'),
+      label: Text(AppLocalizations.of(context)!.agileMethodologyGuide),
     );
   }
 }
@@ -520,7 +522,7 @@ class _ProcessFlowDiagram extends StatelessWidget {
                 Icon(Icons.account_tree, color: guide.color, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'Flusso del Processo',
+                  AppLocalizations.of(context)!.agileProcessFlow,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -548,14 +550,14 @@ class _ProcessFlowDiagram extends StatelessWidget {
   }
 
   Widget _buildRolesSection(BuildContext context) {
-    final roles = _getRolesForFramework();
+    final roles = _getRolesForFramework(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Builder(
           builder: (context) => Text(
-            'RUOLI',
+            AppLocalizations.of(context)!.agileRoles,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -587,7 +589,7 @@ class _ProcessFlowDiagram extends StatelessWidget {
       children: [
         Builder(
           builder: (context) => Text(
-            'FLUSSO',
+            AppLocalizations.of(context)!.agileProcessFlow, // Using same key "PROCESS FLOW"
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -631,7 +633,7 @@ class _ProcessFlowDiagram extends StatelessWidget {
       children: [
         Builder(
           builder: (context) => Text(
-            'ARTEFATTI',
+            AppLocalizations.of(context)!.agileArtifacts,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -654,7 +656,8 @@ class _ProcessFlowDiagram extends StatelessWidget {
     );
   }
 
-  List<_RoleData> _getRolesForFramework() {
+  List<_RoleData> _getRolesForFramework(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (guide.framework) {
       case AgileFramework.scrum:
         return [
@@ -662,25 +665,25 @@ class _ProcessFlowDiagram extends StatelessWidget {
             icon: Icons.account_circle,
             label: 'Product Owner',
             color: const Color(0xFF7B1FA2),
-            description: 'Gestisce il backlog e le priorita',
+            description: l10n.agileRolePODesc,
           ),
           _RoleData(
             icon: Icons.supervised_user_circle,
             label: 'Scrum Master',
             color: const Color(0xFF1976D2),
-            description: 'Facilita il processo e rimuove ostacoli',
+            description: l10n.agileRoleSMDesc,
           ),
           _RoleData(
             icon: Icons.groups,
             label: 'Development Team',
             color: const Color(0xFF388E3C),
-            description: 'Realizza gli incrementi di prodotto',
+            description: l10n.agileRoleDevTeamDesc,
           ),
           _RoleData(
             icon: Icons.business,
             label: 'Stakeholders',
             color: const Color(0xFF5D4037),
-            description: 'Forniscono feedback e requisiti',
+            description: l10n.agileRoleStakeholdersDesc,
           ),
         ];
       case AgileFramework.kanban:
@@ -689,19 +692,19 @@ class _ProcessFlowDiagram extends StatelessWidget {
             icon: Icons.account_circle,
             label: 'Service Request Manager',
             color: const Color(0xFF7B1FA2),
-            description: 'Gestisce le richieste in ingresso',
+            description: l10n.agileRoleSRMDesc,
           ),
           _RoleData(
             icon: Icons.engineering,
             label: 'Service Delivery Manager',
             color: const Color(0xFF1976D2),
-            description: 'Ottimizza il flusso di lavoro',
+            description: l10n.agileRoleSDMDesc,
           ),
           _RoleData(
             icon: Icons.groups,
             label: 'Team',
             color: const Color(0xFF388E3C),
-            description: 'Esegue il lavoro rispettando i WIP',
+            description: l10n.agileRoleTeamDesc,
           ),
         ];
       case AgileFramework.hybrid:
@@ -710,19 +713,19 @@ class _ProcessFlowDiagram extends StatelessWidget {
             icon: Icons.account_circle,
             label: 'Product Owner',
             color: const Color(0xFF7B1FA2),
-            description: 'Gestisce priorita e backlog',
+            description: l10n.agileRolePODesc,
           ),
           _RoleData(
             icon: Icons.supervised_user_circle,
             label: 'Flow Master',
             color: const Color(0xFF1976D2),
-            description: 'Ottimizza il flusso e facilita',
+            description: l10n.agileRoleFlowMasterDesc,
           ),
           _RoleData(
             icon: Icons.groups,
             label: 'Team',
             color: const Color(0xFF388E3C),
-            description: 'Cross-funzionale, autoorganizzato',
+            description: l10n.agileRoleTeamHybridDesc,
           ),
         ];
     }

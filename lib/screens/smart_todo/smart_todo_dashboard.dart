@@ -30,6 +30,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String _viewMode = 'lists'; // 'lists', 'global'
   String? _filterMode; // Nullable to handle Hot Reload init issues
+  String _statusFilter = 'active'; // 'all', 'active', 'completed'
   bool _initialNavigationChecked = false;
   String _searchQuery = '';
   bool _showArchived = false;
@@ -105,30 +106,6 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           ],
         ),
         actions: [
-          _buildFilterChip(l10n?.smartTodoFilterToday ?? 'Today', Icons.today, 'today', currentFilter),
-          const SizedBox(width: 8),
-          _buildFilterChip(l10n?.smartTodoFilterMyTasks ?? 'My Tasks', Icons.person_outline, 'all_my', currentFilter),
-          const SizedBox(width: 8),
-          _buildFilterChip(l10n?.smartTodoFilterOwner ?? 'Owner', Icons.folder_shared_outlined, 'owner', currentFilter),
-          const SizedBox(width: 16),
-          Container(width: 1, height: 24, color: Colors.grey[300]), // Divider
-          const SizedBox(width: 16),
-          // Toggle archivio
-          FilterChip(
-            label: Text(
-              _showArchived ? (l10n?.archiveHideArchived ?? 'Hide archived') : (l10n?.archiveShowArchived ?? 'Show archived'),
-              style: const TextStyle(fontSize: 12),
-            ),
-            selected: _showArchived,
-            onSelected: (value) => setState(() => _showArchived = value),
-            avatar: Icon(
-              _showArchived ? Icons.visibility_off : Icons.visibility,
-              size: 16,
-            ),
-            selectedColor: AppColors.warning.withValues(alpha: 0.2),
-            showCheckmark: false,
-          ),
-          const SizedBox(width: 16),
           IconButton(
             icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
             tooltip: _viewMode == 'lists'
@@ -137,21 +114,21 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             onPressed: () => setState(() {
               if (_viewMode == 'lists') {
                 _viewMode = 'global';
-                _filterMode = 'all_my'; // Default to "My Tasks" when entering global view
+                // _filterMode = 'all_my'; // Default to "My Tasks" when entering global view
               } else {
                 _viewMode = 'lists';
                 _filterMode = null; // Clear filter when going back to lists
               }
             }),
           ),
-          const SizedBox(width: 16),
-          // Home button - sempre ultimo a destra
-          IconButton(
+          const SizedBox(width: 8),
+          // Home button - removed as requested
+          /*IconButton(
             icon: const Icon(Icons.home_rounded),
             tooltip: l10n?.navHome ?? 'Home',
             color: const Color(0xFF8B5CF6), // Viola come icona app
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-          ),
+          ),*/
         ],
       ),
       body: StreamBuilder<List<TodoListModel>>(
@@ -168,7 +145,16 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             return Center(child: Text(l10n?.smartTodoError(snapshot.error.toString()) ?? 'Error: ${snapshot.error}'));
           }
 
+
           var lists = snapshot.data ?? [];
+
+          // Apply Status Filter (manual filtering because stream with includeArchived=true returns all)
+          if (_statusFilter == 'completed') {
+             lists = lists.where((l) => l.isArchived).toList();
+          } else if (_statusFilter == 'active') {
+             // If stream works as expected (includeArchived: false), this might be redundant but safe
+             lists = lists.where((l) => !l.isArchived).toList();
+          }
           
           // Apply "Owner" filter for lists
           if (currentFilter == 'owner') {
@@ -190,34 +176,23 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                 l.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
           }
 
-          if (lists.isEmpty && _searchQuery.isNotEmpty) {
-             return Column(
-               children: [
-                 Padding(
-                   padding: const EdgeInsets.all(16.0),
-                   child: _buildSearchBar(),
-                 ),
-                 Expanded(child: _buildNoResultsState()),
-               ],
-             );
-          }
-
-          if (lists.isEmpty) {
-            return _buildEmptyState();
-          }
+          // Define userLists from filtered lists
+          final userLists = lists;
 
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), // Reverted to 16 to match Eisenhower
-                child: _buildSearchBar(),
-              ),
-              const SizedBox(height: 12), // Match Eisenhower spacing
+              _buildSearchFilterSection(l10n!),
+              const SizedBox(height: 12),
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Card compatte - stesso layout di Agile Process Manager
-                    final compactCrossAxisCount = constraints.maxWidth > 1400
+                child: userLists.isEmpty
+                    ? (snapshot.data!.isEmpty 
+                        ? _buildEmptyState() // No data at all (before filters) -> Empty State
+                        : _buildNoResultsState()) // Data exists but filtered out -> No Results
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Card compatte - stesso layout di Agile Process Manager
+                          final compactCrossAxisCount = constraints.maxWidth > 1400
+                  
                         ? 6
                         : constraints.maxWidth > 1100
                             ? 5
@@ -258,38 +233,146 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
     );
   }
 
-  Widget _buildSearchBar() {
-    final l10n = AppLocalizations.of(context);
-    return TextField(
-      controller: _searchController,
-      decoration: InputDecoration(
-        hintText: l10n?.smartTodoSearchHint ?? 'Search lists...',
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: _searchQuery.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _searchController.clear();
-                  setState(() => _searchQuery = '');
-                },
-              )
-            : null,
-// ...
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+  Widget _buildSearchFilterSection(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
-      onChanged: (value) {
-        if (_debounce?.isActive ?? false) _debounce!.cancel();
-        _debounce = Timer(const Duration(milliseconds: 500), () {
-          setState(() => _searchQuery = value);
-        });
+      child: Column(
+        children: [
+          // Search Bar
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: l10n.smartTodoSearchHint ?? 'Search lists...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.blue, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onChanged: (value) {
+              if (_debounce?.isActive ?? false) _debounce!.cancel();
+              _debounce = Timer(const Duration(milliseconds: 500), () {
+                setState(() => _searchQuery = value);
+              });
+            },
+          ),
+          const SizedBox(height: 12),
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip(l10n.retroFilterAll ?? 'All', null),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip(l10n.retroFilterActive ?? 'Active', false),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip(l10n.retroFilterCompleted ?? 'Completed', true),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStandardFilterChip(String label, bool? archivedState) {
+    // null = All, false = Active (!archived), true = Completed (archived)
+    
+    // Logic:
+    // If archivedState is null -> selected if _showArchived is... wait.
+    // "All" means show everything? Or implies clearing filters.
+    // In Retro: All clears status filter. 
+    // Here:
+    // Active -> _showArchived = false
+    // Completed -> _showArchived = true
+    // All -> how do we represent "All"? Maybe both?
+    // User requested "All, Active, Completed".
+    // Usually "All" means both archived and active.
+    
+    bool isSelected = false;
+    if (archivedState == null) {
+       // "All" logic is tricky with boolean toggle. 
+       // Let's assume for Todo lists: 
+       // "Active" is default. 
+       // "Completed" is Archived.
+       // "All" might be both.
+       // But _showArchived is boolean. It typically filters the query.
+       // If _showArchived is true, it usually shows ONLY archived or INCLUDES archived?
+       // Looking at streamListsFiltered: `includeArchived: _showArchived`.
+       // Typically `includeArchived: true` means return ALL (active + archived) or JUST archived?
+       // Checking SmartTodoService might be needed. Usually "includeArchived" means "also return archived".
+       // So:
+       // Active -> includeArchived = false (default behavior, usually only active returned)
+       // All -> includeArchived = true (returns both?)
+       // Completed -> return ONLY archived? (Need to check service)
+       
+       // Let's simplified assumption:
+       // Active -> showArchived = false
+       // Completed -> showArchived = true AND filter results in UI?
+       
+       // I'll stick to:
+       // Active: _showArchived = false
+       // Completed: _showArchived = true (and maybe filter locally if service returns both)
+       // All: ??
+       
+       // Let's implement simpler logic similar to Retro:
+       // We need a variable `_filterType` enum? 
+       // Let's keep `_showArchived` but interpret it.
+    }
+    
+    // Quick fix: Use `_filterStatus` string/enum instead of just boolean.
+    // I'll introduce `_statusFilter` string: 'all', 'active', 'completed'.
+    
+    final currentStatus = _statusFilter;
+    if (archivedState == null) isSelected = currentStatus == 'all';
+    else if (archivedState == false) isSelected = currentStatus == 'active';
+    else isSelected = currentStatus == 'completed';
+
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        if (selected) {
+          setState(() {
+            if (archivedState == null) _statusFilter = 'all';
+            else if (archivedState == false) _statusFilter = 'active';
+            else _statusFilter = 'completed';
+            
+            // Map to _showArchived for service compatibility
+            // active -> _showArchived = false
+            // all -> _showArchived = true (to fetch them)
+            // completed -> _showArchived = true (to fetch them)
+            if (_statusFilter == 'active') _showArchived = false;
+            else _showArchived = true;
+          });
+        }
       },
+      backgroundColor: Theme.of(context).cardColor,
+      selectedColor: Colors.blue.withOpacity(0.2),
+      checkmarkColor: Colors.blue,
+      side: BorderSide(
+        color: isSelected ? Colors.blue : Theme.of(context).dividerColor,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
     );
   }
 

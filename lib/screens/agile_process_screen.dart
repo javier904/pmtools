@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/agile_project_model.dart';
 import '../models/agile_enums.dart';
@@ -38,6 +39,9 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   // Stato
   AgileProjectModel? _selectedProject;
   String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  String _statusFilter = 'active'; // 'all', 'active', 'completed'
   bool _showArchived = false;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
@@ -98,6 +102,12 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Se c'è un progetto selezionato, mostra solo il dettaglio (ha il suo Scaffold)
     if (_selectedProject != null) {
@@ -114,31 +124,13 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           children: [
             const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 20),
             const SizedBox(width: 10),
-            const Text(
-              'Agile Process Manager',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.agileProcessTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
         ),
         actions: [
-          // Toggle archivio
-          FilterChip(
-            label: Text(
-              _showArchived
-                  ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
-                  : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
-              style: const TextStyle(fontSize: 12),
-            ),
-            selected: _showArchived,
-            onSelected: (value) => setState(() => _showArchived = value),
-            avatar: Icon(
-              _showArchived ? Icons.visibility_off : Icons.visibility,
-              size: 16,
-            ),
-            selectedColor: AppColors.warning.withValues(alpha: 0.2),
-            showCheckmark: false,
-          ),
-          const SizedBox(width: 16),
           // Pulsante guida metodologie - piu visibile
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -151,13 +143,13 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
               onPressed: () => MethodologyGuideDialog.show(context),
               icon: Icon(Icons.menu_book_rounded, size: 18, color: Colors.teal.shade700),
               label: Text(
-                'Guida Metodologie',
+                AppLocalizations.of(context)!.agileMethodologyGuide,
                 style: TextStyle(color: Colors.teal.shade700, fontWeight: FontWeight.w500),
               ),
             ),
           ),
           const SizedBox(width: 8),
-          // Home button - sempre ultimo a destra
+          // Home button
           IconButton(
             icon: const Icon(Icons.home_rounded),
             tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
@@ -206,10 +198,6 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
 
         final projects = snapshot.data ?? [];
 
-        if (projects.isEmpty) {
-          return _buildEmptyState();
-        }
-
         // Filtra per ricerca
         final filteredProjects = _searchQuery.isEmpty
             ? projects
@@ -218,16 +206,16 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                 p.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
 
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
           child: Column(
             children: [
               // Barra di ricerca
-              _buildSearchBar(),
+              _buildSearchFilterSection(),
               const SizedBox(height: 16),
               // Lista progetti
               Expanded(
                 child: filteredProjects.isEmpty
-                    ? _buildNoResultsState()
+                    ? (projects.isEmpty ? _buildEmptyState() : _buildNoResultsState())
                     : _buildProjectGrid(filteredProjects),
               ),
             ],
@@ -237,33 +225,100 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     );
   }
 
-  Widget _buildSearchBar() {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Cerca progetti...',
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: _searchQuery.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () => setState(() => _searchQuery = ''),
-              )
-            : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: context.borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: context.borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-        ),
-        filled: true,
-        fillColor: context.surfaceVariantColor,
+  Widget _buildSearchFilterSection() {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
-      onChanged: (value) => setState(() => _searchQuery = value),
+      child: Column(
+        children: [
+          // Search Bar
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: l10n?.agileSearchProjects ?? 'Search projects...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                         _searchController.clear();
+                         setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF8B5CF6), width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onChanged: (value) {
+              if (_debounce?.isActive ?? false) _debounce!.cancel();
+              _debounce = Timer(const Duration(milliseconds: 500), () {
+                setState(() => _searchQuery = value);
+              });
+            },
+          ),
+          const SizedBox(height: 12),
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n?.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n?.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n?.retroFilterCompleted ?? 'Completed'), 'completed'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStandardFilterChip(String label, String status) {
+    bool isSelected = false;
+    if (status == 'all') isSelected = _statusFilter == 'all';
+    else if (status == 'active') isSelected = _statusFilter == 'active';
+    else if (status == 'completed') isSelected = _statusFilter == 'completed';
+
+    const Color fabColor = Color(0xFF8B5CF6);
+
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        if (selected) {
+          setState(() {
+            _statusFilter = status;
+            if (status == 'all') {
+              _showArchived = true;
+            } else if (status == 'active') {
+              _showArchived = false;
+            } else if (status == 'completed') {
+              _showArchived = true;
+            }
+          });
+        }
+      },
+      backgroundColor: Theme.of(context).cardColor,
+      selectedColor: fabColor.withOpacity(0.2),
+      checkmarkColor: fabColor,
+      side: BorderSide(
+        color: isSelected ? fabColor : Colors.white,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
     );
   }
 
@@ -292,6 +347,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                             : 1;
 
         return GridView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: compactCrossAxisCount,
             childAspectRatio: 2.5,
@@ -819,7 +875,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     return FloatingActionButton.extended(
       onPressed: _showCreateProjectDialog,
       icon: const Icon(Icons.add, color: Colors.white),
-      label: const Text('Nuovo Progetto', style: TextStyle(color: Colors.white)),
+      label: Text(AppLocalizations.of(context)!.agileNewProject, style: const TextStyle(color: Colors.white)),
       backgroundColor: AppColors.primary,
     );
   }
