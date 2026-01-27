@@ -41,7 +41,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
-  String _statusFilter = 'active'; // 'all', 'active', 'completed'
+  String _statusFilter = 'all'; // 'all', 'active', 'completed'
   bool _showArchived = false;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
@@ -149,7 +149,26 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          // Home button
+          // Archived toggle
+          FilterChip(
+            label: Text(
+              _showArchived
+                  ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                  : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
+              style: const TextStyle(fontSize: 12),
+            ),
+            selected: _showArchived,
+            onSelected: (value) => setState(() => _showArchived = value),
+            avatar: Icon(
+              _showArchived ? Icons.visibility_off : Icons.visibility,
+              size: 16,
+              color: const Color(0xFF8B5CF6),
+            ),
+            selectedColor: AppColors.warning.withOpacity(0.2),
+            showCheckmark: false,
+          ),
+          // Home button - sempre ultimo a destra
+          const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.home_rounded),
             tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',

@@ -90,7 +90,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   // Filtro ricerca matrici
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
-  String _statusFilter = 'active'; // 'all', 'active', 'completed'
+  String _statusFilter = 'all'; // 'all', 'active', 'completed'
 
   // Filtro archivio
   bool _showArchived = false;
@@ -514,6 +514,25 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 onPressed: _leaveMatrix,
               ),
             ],
+            // Archived toggle
+            const SizedBox(width: 8),
+            FilterChip(
+              label: Text(
+                _showArchived
+                    ? (l10n.archiveHideArchived ?? 'Hide archived')
+                    : (l10n.archiveShowArchived ?? 'Show archived'),
+                style: const TextStyle(fontSize: 12),
+              ),
+              selected: _showArchived,
+              onSelected: (value) => setState(() => _showArchived = value),
+              avatar: Icon(
+                _showArchived ? Icons.visibility_off : Icons.visibility,
+                size: 16,
+                color: AppColors.success,
+              ),
+              selectedColor: AppColors.warning.withOpacity(0.2),
+              showCheckmark: false,
+            ),
             // Home button - sempre ultimo a destra
             const SizedBox(width: 8),
             IconButton(

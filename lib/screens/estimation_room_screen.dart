@@ -352,9 +352,30 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
       onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
     );
 
-    // Se siamo nella lista sessioni, mostra solo il toggle archivio
+    // Archived toggle
+    final archivedToggle = FilterChip(
+      label: Text(
+        _showArchived
+            ? (l10n.archiveHideArchived ?? 'Hide archived')
+            : (l10n.archiveShowArchived ?? 'Show archived'),
+        style: const TextStyle(fontSize: 12),
+      ),
+      selected: _showArchived,
+      onSelected: (value) => setState(() => _showArchived = value),
+      avatar: Icon(
+        _showArchived ? Icons.visibility_off : Icons.visibility,
+        size: 16,
+        color: Colors.amber,
+      ),
+      selectedColor: AppColors.warning.withOpacity(0.2),
+      showCheckmark: false,
+    );
+
+    // Se siamo nella lista sessioni, mostra toggle archivio
       if (_selectedSession == null) {
         return [
+          archivedToggle,
+          const SizedBox(width: 8),
           homeButton,
         ];
       }
@@ -740,7 +761,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
   Widget _buildStandardFilterChip(String label, String status) {
     bool isSelected = false;
-    if (status == 'all') isSelected = _statusFilter == null && _showArchived == true;
+    if (status == 'all') isSelected = _statusFilter == null;
     else if (status == 'active') isSelected = _statusFilter == PlanningPokerSessionStatus.active;
     else if (status == 'completed') isSelected = _statusFilter == PlanningPokerSessionStatus.completed;
 
@@ -754,13 +775,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           setState(() {
             if (status == 'all') {
               _statusFilter = null;
-              _showArchived = true;
             } else if (status == 'active') {
               _statusFilter = PlanningPokerSessionStatus.active;
-              _showArchived = false;
             } else if (status == 'completed') {
               _statusFilter = PlanningPokerSessionStatus.completed;
-              _showArchived = true;
             }
           });
         }

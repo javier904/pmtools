@@ -30,7 +30,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String _viewMode = 'lists'; // 'lists', 'global'
   String? _filterMode; // Nullable to handle Hot Reload init issues
-  String _statusFilter = 'active'; // 'all', 'active', 'completed'
+  String _statusFilter = 'all'; // 'all', 'active', 'completed'
   bool _initialNavigationChecked = false;
   String _searchQuery = '';
   bool _showArchived = false;
@@ -122,13 +122,32 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             }),
           ),
           const SizedBox(width: 8),
-          // Home button - removed as requested
-          /*IconButton(
+          // Archived toggle
+          FilterChip(
+            label: Text(
+              _showArchived
+                  ? (l10n?.archiveHideArchived ?? 'Hide archived')
+                  : (l10n?.archiveShowArchived ?? 'Show archived'),
+              style: const TextStyle(fontSize: 12),
+            ),
+            selected: _showArchived,
+            onSelected: (value) => setState(() => _showArchived = value),
+            avatar: Icon(
+              _showArchived ? Icons.visibility_off : Icons.visibility,
+              size: 16,
+              color: const Color(0xFF00B0FF), // Celeste
+            ),
+            selectedColor: const Color(0xFF00B0FF).withOpacity(0.2),
+            showCheckmark: false,
+          ),
+          // Home button
+          const SizedBox(width: 8),
+          IconButton(
             icon: const Icon(Icons.home_rounded),
             tooltip: l10n?.navHome ?? 'Home',
             color: const Color(0xFF8B5CF6), // Viola come icona app
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-          ),*/
+          ),
         ],
       ),
       body: StreamBuilder<List<TodoListModel>>(
@@ -279,11 +298,11 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildStandardFilterChip(l10n.retroFilterAll ?? 'All', null),
+                _buildStandardFilterChip((l10n?.retroFilterAll ?? 'All'), 'all'),
                 const SizedBox(width: 8),
-                _buildStandardFilterChip(l10n.retroFilterActive ?? 'Active', false),
+                _buildStandardFilterChip((l10n?.retroFilterActive ?? 'Active'), 'active'),
                 const SizedBox(width: 8),
-                _buildStandardFilterChip(l10n.retroFilterCompleted ?? 'Completed', true),
+                _buildStandardFilterChip((l10n?.retroFilterCompleted ?? 'Completed'), 'completed'),
               ],
             ),
           ),
@@ -292,68 +311,16 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
     );
   }
 
-  Widget _buildStandardFilterChip(String label, bool? archivedState) {
-    // null = All, false = Active (!archived), true = Completed (archived)
+  Widget _buildStandardFilterChip(String label, String status) {
+    final isSelected = _statusFilter == status;
     
-    // Logic:
-    // If archivedState is null -> selected if _showArchived is... wait.
-    // "All" means show everything? Or implies clearing filters.
-    // In Retro: All clears status filter. 
-    // Here:
-    // Active -> _showArchived = false
-    // Completed -> _showArchived = true
-    // All -> how do we represent "All"? Maybe both?
-    // User requested "All, Active, Completed".
-    // Usually "All" means both archived and active.
-    
-    bool isSelected = false;
-    if (archivedState == null) {
-       // "All" logic is tricky with boolean toggle. 
-       // Let's assume for Todo lists: 
-       // "Active" is default. 
-       // "Completed" is Archived.
-       // "All" might be both.
-       // But _showArchived is boolean. It typically filters the query.
-       // If _showArchived is true, it usually shows ONLY archived or INCLUDES archived?
-       // Looking at streamListsFiltered: `includeArchived: _showArchived`.
-       // Typically `includeArchived: true` means return ALL (active + archived) or JUST archived?
-       // Checking SmartTodoService might be needed. Usually "includeArchived" means "also return archived".
-       // So:
-       // Active -> includeArchived = false (default behavior, usually only active returned)
-       // All -> includeArchived = true (returns both?)
-       // Completed -> return ONLY archived? (Need to check service)
-       
-       // Let's simplified assumption:
-       // Active -> showArchived = false
-       // Completed -> showArchived = true AND filter results in UI?
-       
-       // I'll stick to:
-       // Active: _showArchived = false
-       // Completed: _showArchived = true (and maybe filter locally if service returns both)
-       // All: ??
-       
-       // Let's implement simpler logic similar to Retro:
-       // We need a variable `_filterType` enum? 
-       // Let's keep `_showArchived` but interpret it.
-    }
-    
-    // Quick fix: Use `_filterStatus` string/enum instead of just boolean.
-    // I'll introduce `_statusFilter` string: 'all', 'active', 'completed'.
-    
-    final currentStatus = _statusFilter;
-    if (archivedState == null) isSelected = currentStatus == 'all';
-    else if (archivedState == false) isSelected = currentStatus == 'active';
-    else isSelected = currentStatus == 'completed';
-
     return FilterChip(
       label: Text(label),
       selected: isSelected,
       onSelected: (bool selected) {
         if (selected) {
           setState(() {
-            if (archivedState == null) _statusFilter = 'all';
-            else if (archivedState == false) _statusFilter = 'active';
-            else _statusFilter = 'completed';
+            _statusFilter = status;
             
             // Map to _showArchived for service compatibility
             // active -> _showArchived = false
@@ -365,10 +332,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         }
       },
       backgroundColor: Theme.of(context).cardColor,
-      selectedColor: Colors.blue.withOpacity(0.2),
-      checkmarkColor: Colors.blue,
+      selectedColor: const Color(0xFF00B0FF).withOpacity(0.2),
+      checkmarkColor: const Color(0xFF00B0FF),
       side: BorderSide(
-        color: isSelected ? Colors.blue : Theme.of(context).dividerColor,
+        color: isSelected ? const Color(0xFF00B0FF) : Colors.white,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

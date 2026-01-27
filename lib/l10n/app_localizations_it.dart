@@ -1111,6 +1111,475 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agileRoleTeamHybridDesc => 'Cross-funzionale, autoorganizzato';
 
   @override
+  String get scrumOverview =>
+      'Scrum è un framework Agile iterativo e incrementale per la gestione dello sviluppo prodotto.\nSi basa su cicli di lavoro a tempo fisso chiamati Sprint, tipicamente di 2-4 settimane.\n\nScrum è ideale per:\n• Team che lavorano su prodotti con requisiti che evolvono\n• Progetti che beneficiano di feedback regolare\n• Organizzazioni che vogliono migliorare prevedibilità e trasparenza';
+
+  @override
+  String get scrumRolesTitle => 'I Ruoli Scrum';
+
+  @override
+  String get scrumRolesContent =>
+      'Scrum definisce tre ruoli chiave che collaborano per il successo del progetto.';
+
+  @override
+  String get scrumRolesPO =>
+      'Product Owner: Rappresenta gli stakeholder, gestisce il Product Backlog e massimizza il valore del prodotto';
+
+  @override
+  String get scrumRolesSM =>
+      'Scrum Master: Facilita il processo Scrum, rimuove impedimenti e aiuta il team a migliorare';
+
+  @override
+  String get scrumRolesDev =>
+      'Development Team: Team cross-funzionale e auto-organizzato che consegna l\'incremento di prodotto';
+
+  @override
+  String get scrumEventsTitle => 'Gli Eventi Scrum';
+
+  @override
+  String get scrumEventsContent =>
+      'Scrum prevede eventi regolari per creare regolarità e minimizzare riunioni non pianificate.';
+
+  @override
+  String get scrumEventsPlanning =>
+      'Sprint Planning: Pianificazione del lavoro dello Sprint (max 8h per Sprint di 4 settimane)';
+
+  @override
+  String get scrumEventsDaily =>
+      'Daily Scrum: Sincronizzazione giornaliera del team (15 minuti)';
+
+  @override
+  String get scrumEventsReview =>
+      'Sprint Review: Demo del lavoro completato agli stakeholder (max 4h)';
+
+  @override
+  String get scrumEventsRetro =>
+      'Sprint Retrospective: Riflessione del team per miglioramento continuo (max 3h)';
+
+  @override
+  String get scrumArtifactsTitle => 'Gli Artefatti Scrum';
+
+  @override
+  String get scrumArtifactsContent =>
+      'Gli artefatti rappresentano lavoro o valore e sono progettati per massimizzare la trasparenza.';
+
+  @override
+  String get scrumArtifactsPB =>
+      'Product Backlog: Lista ordinata di tutto ciò che potrebbe servire nel prodotto';
+
+  @override
+  String get scrumArtifactsSB =>
+      'Sprint Backlog: Items selezionati per lo Sprint + piano per consegnare l\'incremento';
+
+  @override
+  String get scrumArtifactsIncrement =>
+      'Incremento: Somma di tutti gli items completati durante lo Sprint, potenzialmente rilasciabile';
+
+  @override
+  String get scrumStoryPointsTitle => 'Story Points e Velocity';
+
+  @override
+  String get scrumStoryPointsContent =>
+      'Gli Story Points sono un\'unità di misura relativa della complessità delle User Stories.\nNon misurano il tempo, ma lo sforzo, la complessità e l\'incertezza.\n\nLa sequenza di Fibonacci (1, 2, 3, 5, 8, 13, 21) è comunemente usata perché:\n• Riflette l\'incertezza crescente per items più grandi\n• Rende difficile la falsa precisione\n• Facilita le discussioni durante la stima\n\nLa Velocity è la media degli Story Points completati negli ultimi sprint e serve per:\n• Prevedere quanto lavoro può essere incluso nei prossimi sprint\n• Identificare trend di produttività del team\n• Non confrontare team diversi (ogni team ha la propria scala)';
+
+  @override
+  String get scrumBP1 =>
+      'Mantieni gli Sprint a durata fissa e rispetta il timebox';
+
+  @override
+  String get scrumBP2 =>
+      'Il Product Backlog deve essere sempre prioritizzato e raffinato';
+
+  @override
+  String get scrumBP3 => 'Le User Stories devono rispettare i criteri INVEST';
+
+  @override
+  String get scrumBP4 => 'La Definition of Done deve essere chiara e condivisa';
+
+  @override
+  String get scrumBP5 => 'Non modificare lo Sprint Goal durante lo Sprint';
+
+  @override
+  String get scrumBP6 => 'Celebra i successi nella Sprint Review';
+
+  @override
+  String get scrumBP7 =>
+      'La Retrospettiva deve produrre azioni concrete di miglioramento';
+
+  @override
+  String get scrumBP8 =>
+      'Il team deve essere cross-funzionale e auto-organizzato';
+
+  @override
+  String get scrumAP1 => 'Sprint senza Sprint Goal chiaro';
+
+  @override
+  String get scrumAP2 => 'Daily Scrum trasformato in report meeting';
+
+  @override
+  String get scrumAP3 =>
+      'Saltare la Retrospettiva quando si è \"troppo occupati\"';
+
+  @override
+  String get scrumAP4 => 'Product Owner assente o non disponibile';
+
+  @override
+  String get scrumAP5 =>
+      'Aggiungere lavoro durante lo Sprint senza rimuovere altro';
+
+  @override
+  String get scrumAP6 => 'Story Points convertiti in ore (perde il senso)';
+
+  @override
+  String get scrumAP7 => 'Team troppo grande (ideale 5-9 persone)';
+
+  @override
+  String get scrumAP8 => 'Scrum Master che \"assegna\" compiti al team';
+
+  @override
+  String get scrumFAQ1Q => 'Quanto deve durare uno Sprint?';
+
+  @override
+  String get scrumFAQ1A =>
+      'La durata tipica è 2 settimane, ma può variare da 1 a 4 settimane. Sprint più brevi permettono feedback più frequenti e correzioni di rotta rapide. Sprint più lunghi danno più tempo per completare items complessi. L\'importante è mantenere la durata costante.';
+
+  @override
+  String get scrumFAQ2Q => 'Come gestire lavoro non completato a fine Sprint?';
+
+  @override
+  String get scrumFAQ2A =>
+      'Le User Stories non completate tornano nel Product Backlog e vengono ri-prioritizzate. Mai estendere lo Sprint o ridurre la Definition of Done. Usare la Retrospettiva per capire perché è successo e come prevenirlo.';
+
+  @override
+  String get scrumFAQ3Q =>
+      'Posso cambiare lo Sprint Backlog durante lo Sprint?';
+
+  @override
+  String get scrumFAQ3A =>
+      'Lo Sprint Goal non dovrebbe cambiare, ma lo Sprint Backlog può evolversi. Il team può negoziare con il PO la sostituzione di items di pari valore. Se lo Sprint Goal diventa obsoleto, il PO può cancellare lo Sprint.';
+
+  @override
+  String get scrumFAQ4Q => 'Come calcolare la Velocity iniziale?';
+
+  @override
+  String get scrumFAQ4A =>
+      'Per i primi 3 Sprint, fai stime conservative. Dopo 3 Sprint avrai una Velocity affidabile. Non usare la Velocity di altri team come riferimento.';
+
+  @override
+  String get kanbanOverview =>
+      'Kanban è un metodo per gestire il lavoro che enfatizza la visualizzazione del flusso,\nla limitazione del Work In Progress (WIP) e il miglioramento continuo del processo.\n\nKanban è ideale per:\n• Team di supporto/manutenzione con richieste continue\n• Ambienti dove le priorità cambiano frequentemente\n• Quando non è possibile pianificare in iterazioni fisse\n• Transizione graduale verso l\'Agile';
+
+  @override
+  String get kanbanPrinciplesTitle => 'I Principi Kanban';
+
+  @override
+  String get kanbanPrinciplesContent =>
+      'Kanban si basa su principi di cambiamento incrementale e rispetto per i ruoli esistenti.';
+
+  @override
+  String get kanbanPrinciple1 =>
+      'Visualizza il flusso di lavoro: Rendi visibile tutto il lavoro';
+
+  @override
+  String get kanbanPrinciple2 =>
+      'Limita il WIP: Completa il lavoro prima di iniziarne di nuovo';
+
+  @override
+  String get kanbanPrinciple3 =>
+      'Gestisci il flusso: Ottimizza per massimizzare il throughput';
+
+  @override
+  String get kanbanPrinciple4 =>
+      'Rendi esplicite le policy: Definisci regole chiare';
+
+  @override
+  String get kanbanPrinciple5 =>
+      'Implementa feedback loops: Migliora continuamente';
+
+  @override
+  String get kanbanPrinciple6 =>
+      'Migliora collaborativamente: Evolvi sperimentando';
+
+  @override
+  String get kanbanBoardTitle => 'Kanban Board';
+
+  @override
+  String get kanbanBoardContent =>
+      'La board visualizza il flusso di lavoro attraverso le sue fasi.\nOgni colonna rappresenta uno stato del lavoro (es. To Do, In Progress, Done).\n\nElementi chiave della board:\n• Colonne: Stati del workflow\n• Card/Ticket: Unità di lavoro\n• WIP Limits: Limiti per colonna\n• Swimlanes: Raggruppamenti orizzontali (opzionale)';
+
+  @override
+  String get kanbanWIPTitle => 'WIP Limits';
+
+  @override
+  String get kanbanWIPContent =>
+      'I limiti di Work In Progress (WIP) sono il cuore di Kanban.\nLimitare il WIP:\n\n• Riduce il context switching\n• Evidenzia i colli di bottiglia\n• Accelera il throughput\n• Migliora la qualità (meno errori da multitasking)\n• Aumenta la prevedibilità\n\nCome impostare i WIP limits:\n• Inizia con numero membri team × 2 per colonna\n• Osserva il flusso e aggiusta\n• Il limite \"giusto\" crea una leggera tensione';
+
+  @override
+  String get kanbanMetricsTitle => 'Metriche Kanban';
+
+  @override
+  String get kanbanMetricsContent =>
+      'Kanban utilizza metriche di flusso per misurare e migliorare il processo.';
+
+  @override
+  String get kanbanMetric1 =>
+      'Lead Time: Tempo dalla richiesta al completamento (include attesa)';
+
+  @override
+  String get kanbanMetric2 =>
+      'Cycle Time: Tempo dall\'inizio lavoro al completamento';
+
+  @override
+  String get kanbanMetric3 => 'Throughput: Items completati per unità di tempo';
+
+  @override
+  String get kanbanMetric4 =>
+      'WIP: Quantità di lavoro in corso in ogni momento';
+
+  @override
+  String get kanbanMetric5 =>
+      'Cumulative Flow Diagram (CFD): Visualizza l\'accumulo di lavoro nel tempo';
+
+  @override
+  String get kanbanCadencesTitle => 'Cadenze Kanban';
+
+  @override
+  String get kanbanCadencesContent =>
+      'A differenza di Scrum, Kanban non prescrive eventi fissi.\nTuttavia, cadenze regolari aiutano il miglioramento continuo:\n\n• Standup Meeting: Sincronizzazione quotidiana davanti alla board\n• Replenishment Meeting: Prioritizzazione del backlog\n• Delivery Planning: Pianificazione delle release\n• Service Delivery Review: Review delle metriche\n• Risk Review: Analisi dei rischi e impedimenti\n• Operations Review: Miglioramento del processo';
+
+  @override
+  String get kanbanBP1 =>
+      'Visualizza TUTTO il lavoro, incluso il lavoro nascosto';
+
+  @override
+  String get kanbanBP2 => 'Rispetta rigorosamente i WIP limits';
+
+  @override
+  String get kanbanBP3 => 'Focalizzati sul completare, non sull\'iniziare';
+
+  @override
+  String get kanbanBP4 =>
+      'Usa le metriche per decisioni, non per giudicare le persone';
+
+  @override
+  String get kanbanBP5 => 'Migliora un passo alla volta';
+
+  @override
+  String get kanbanBP6 => 'Blocca il nuovo lavoro se il WIP è al limite';
+
+  @override
+  String get kanbanBP7 => 'Analizza i blocchi e rimuovili rapidamente';
+
+  @override
+  String get kanbanBP8 => 'Usa swimlanes per priorità o tipologie di lavoro';
+
+  @override
+  String get kanbanAP1 => 'WIP limits troppo alti (o assenti)';
+
+  @override
+  String get kanbanAP2 => 'Ignorare i blocchi sulla board';
+
+  @override
+  String get kanbanAP3 => 'Non rispettare i limiti quando \"è urgente\"';
+
+  @override
+  String get kanbanAP4 => 'Columns troppo generiche (es. solo To Do/Done)';
+
+  @override
+  String get kanbanAP5 => 'Non tracciare quando gli items entrano/escono';
+
+  @override
+  String get kanbanAP6 => 'Usare Kanban solo come task board senza principi';
+
+  @override
+  String get kanbanAP7 => 'Non analizzare mai il Cumulative Flow Diagram';
+
+  @override
+  String get kanbanAP8 => 'Troppi swimlanes che complicano la visualizzazione';
+
+  @override
+  String get kanbanFAQ1Q => 'Come gestire le urgenze in Kanban?';
+
+  @override
+  String get kanbanFAQ1A =>
+      'Crea una swimlane \"Expedite\" con WIP limit di 1. Gli items expedite saltano la coda ma devono essere rari. Se tutto è urgente, niente è urgente.';
+
+  @override
+  String get kanbanFAQ2Q => 'Kanban funziona per lo sviluppo software?';
+
+  @override
+  String get kanbanFAQ2A =>
+      'Assolutamente sì. Kanban è nato in Toyota ma è ampiamente usato nello sviluppo software. È particolarmente adatto per team di manutenzione, DevOps, e support.';
+
+  @override
+  String get kanbanFAQ3Q => 'Come impostare i WIP limits iniziali?';
+
+  @override
+  String get kanbanFAQ3A =>
+      'Formula di partenza: (membri del team + 1) per colonna. Osserva per 2 settimane e riduci gradualmente fino a creare una leggera tensione. Il limite ottimale varia per ogni team e contesto.';
+
+  @override
+  String get kanbanFAQ4Q =>
+      'Quanto tempo serve per vedere risultati con Kanban?';
+
+  @override
+  String get kanbanFAQ4A =>
+      'I primi miglioramenti (visibilità) sono immediati. Riduzione del Lead Time si vede in 2-4 settimane. Miglioramenti significativi del processo richiedono 2-3 mesi.';
+
+  @override
+  String get hybridOverview =>
+      'Scrumban combina elementi di Scrum e Kanban per creare un approccio flessibile\nche si adatta al contesto del team. Mantiene la struttura degli Sprint con\nla flessibilità del flusso continuo e i WIP limits.\n\nScrumban è ideale per:\n• Team che vogliono transire da Scrum a Kanban (o viceversa)\n• Progetti con mix di feature development e manutenzione\n• Team che vogliono Sprint ma con più flessibilità\n• Quando Scrum \"puro\" è troppo rigido per il contesto';
+
+  @override
+  String get hybridFromScrumTitle => 'Da Scrum: Struttura';
+
+  @override
+  String get hybridFromScrumContent =>
+      'Scrumban mantiene alcuni elementi strutturati di Scrum per prevedibilità.';
+
+  @override
+  String get hybridFromScrum1 =>
+      'Sprint (opzionale): Iterazioni a tempo fisso per cadenza';
+
+  @override
+  String get hybridFromScrum2 =>
+      'Sprint Planning: Selezione del lavoro per il periodo';
+
+  @override
+  String get hybridFromScrum3 => 'Retrospettiva: Riflessione e miglioramento';
+
+  @override
+  String get hybridFromScrum4 =>
+      'Demo/Review: Condivisione del valore prodotto';
+
+  @override
+  String get hybridFromScrum5 =>
+      'Story Points: Per stime e previsioni (opzionale)';
+
+  @override
+  String get hybridFromKanbanTitle => 'Da Kanban: Flusso';
+
+  @override
+  String get hybridFromKanbanContent =>
+      'Scrumban adotta i principi di flusso Kanban per efficienza.';
+
+  @override
+  String get hybridFromKanban1 => 'WIP Limits: Limitazione del lavoro in corso';
+
+  @override
+  String get hybridFromKanban2 =>
+      'Pull System: Il team \"tira\" lavoro quando ha capacità';
+
+  @override
+  String get hybridFromKanban3 =>
+      'Visualizzazione: Board condivisa e trasparente';
+
+  @override
+  String get hybridFromKanban4 =>
+      'Metriche di flusso: Lead Time, Cycle Time, Throughput';
+
+  @override
+  String get hybridFromKanban5 =>
+      'Miglioramento continuo: Policy esplicite e sperimentazione';
+
+  @override
+  String get hybridOnDemandTitle => 'Planning su Richiesta';
+
+  @override
+  String get hybridOnDemandContent =>
+      'In Scrumban, il planning può essere \"on-demand\" invece che a intervalli fissi.\n\nIl planning si attiva quando:\n• Il backlog \"Ready\" scende sotto una soglia\n• Serve prioritizzare nuove richieste urgenti\n• Un milestone si avvicina\n\nQuesto riduce le sessioni di planning quando non necessarie\ne permette di reagire più velocemente ai cambiamenti.';
+
+  @override
+  String get hybridWhenTitle => 'Quando Usare Cosa';
+
+  @override
+  String get hybridWhenContent =>
+      'Scrumban non è \"fare tutto\". È scegliere gli elementi giusti per il contesto.\n\nUsa elementi Scrum quando:\n• Serve prevedibilità nelle consegne\n• Gli stakeholder vogliono demo regolari\n• Il team beneficia di ritmo fisso\n\nUsa elementi Kanban quando:\n• Il lavoro è imprevedibile (support, bug fixing)\n• Serve reattività alle urgenze\n• Il focus è sul throughput continuo';
+
+  @override
+  String get hybridBP1 =>
+      'Inizia con ciò che conosci e aggiungi elementi gradualmente';
+
+  @override
+  String get hybridBP2 => 'I WIP limits sono non negoziabili, anche con Sprint';
+
+  @override
+  String get hybridBP3 => 'Usa Sprint per cadenza, non come commitment rigido';
+
+  @override
+  String get hybridBP4 =>
+      'Mantieni la Retrospettiva, è il motore del miglioramento';
+
+  @override
+  String get hybridBP5 =>
+      'Le metriche di flusso aiutano più della Velocity pura';
+
+  @override
+  String get hybridBP6 => 'Sperimenta con una cosa alla volta';
+
+  @override
+  String get hybridBP7 =>
+      'Documenta le policy del team e rivedile regolarmente';
+
+  @override
+  String get hybridBP8 =>
+      'Considera swimlanes per separare feature da manutenzione';
+
+  @override
+  String get hybridAP1 =>
+      'Prendere il peggio di entrambi (rigidità Scrum + caos Kanban)';
+
+  @override
+  String get hybridAP2 =>
+      'Eliminare le Retrospettive perché \"siamo flessibili\"';
+
+  @override
+  String get hybridAP3 => 'WIP limits ignorati perché \"abbiamo gli Sprint\"';
+
+  @override
+  String get hybridAP4 => 'Cambiare framework ad ogni Sprint';
+
+  @override
+  String get hybridAP5 => 'Non avere nessuna cadenza (né Sprint né altro)';
+
+  @override
+  String get hybridAP6 => 'Confondere flessibilità con assenza di regole';
+
+  @override
+  String get hybridAP7 => 'Non misurare niente';
+
+  @override
+  String get hybridAP8 => 'Troppa complessità per il contesto';
+
+  @override
+  String get hybridFAQ1Q => 'Scrumban ha Sprint o no?';
+
+  @override
+  String get hybridFAQ1A =>
+      'Dipende dal team. Puoi avere Sprint per cadenza (review, planning) ma permettere flusso continuo di lavoro dentro lo Sprint. Oppure puoi eliminare gli Sprint e avere solo cadenze Kanban.';
+
+  @override
+  String get hybridFAQ2Q => 'Come misuro la performance in Scrumban?';
+
+  @override
+  String get hybridFAQ2A =>
+      'Usa sia metriche Scrum (Velocity se usi Sprint e Story Points) che metriche Kanban (Lead Time, Cycle Time, Throughput). Le metriche di flusso sono spesso più utili per il miglioramento.';
+
+  @override
+  String get hybridFAQ3Q => 'Da dove partire con Scrumban?';
+
+  @override
+  String get hybridFAQ3A =>
+      'Se vieni da Scrum: aggiungi WIP limits e visualizza il flusso. Se vieni da Kanban: aggiungi cadenze regolari per review e planning. Parti da ciò che il team conosce e aggiungi incrementalmente.';
+
+  @override
+  String get hybridFAQ4Q => 'Scrumban è \"meno Agile\" di Scrum puro?';
+
+  @override
+  String get hybridFAQ4A =>
+      'No. Agile non significa seguire un framework specifico. Scrumban può essere più Agile perché si adatta al contesto. L\'importante è ispezionare e adattare continuamente.';
+
+  @override
   String get retroNoResults => 'Nessun risultato per la ricerca';
 
   @override
@@ -3876,9 +4345,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get kanbanUnderstood => 'Ho capito';
-
-  @override
-  String get kanbanBoardTitle => 'Kanban Board';
 
   @override
   String sprintTitle(int count) {

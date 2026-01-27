@@ -2160,6 +2160,798 @@ abstract class AppLocalizations {
   /// **'Cross-funzionale, autoorganizzato'**
   String get agileRoleTeamHybridDesc;
 
+  /// No description provided for @scrumOverview.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum è un framework Agile iterativo e incrementale per la gestione dello sviluppo prodotto.\nSi basa su cicli di lavoro a tempo fisso chiamati Sprint, tipicamente di 2-4 settimane.\n\nScrum è ideale per:\n• Team che lavorano su prodotti con requisiti che evolvono\n• Progetti che beneficiano di feedback regolare\n• Organizzazioni che vogliono migliorare prevedibilità e trasparenza'**
+  String get scrumOverview;
+
+  /// No description provided for @scrumRolesTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'I Ruoli Scrum'**
+  String get scrumRolesTitle;
+
+  /// No description provided for @scrumRolesContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum definisce tre ruoli chiave che collaborano per il successo del progetto.'**
+  String get scrumRolesContent;
+
+  /// No description provided for @scrumRolesPO.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Owner: Rappresenta gli stakeholder, gestisce il Product Backlog e massimizza il valore del prodotto'**
+  String get scrumRolesPO;
+
+  /// No description provided for @scrumRolesSM.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum Master: Facilita il processo Scrum, rimuove impedimenti e aiuta il team a migliorare'**
+  String get scrumRolesSM;
+
+  /// No description provided for @scrumRolesDev.
+  ///
+  /// In it, this message translates to:
+  /// **'Development Team: Team cross-funzionale e auto-organizzato che consegna l\'incremento di prodotto'**
+  String get scrumRolesDev;
+
+  /// No description provided for @scrumEventsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Gli Eventi Scrum'**
+  String get scrumEventsTitle;
+
+  /// No description provided for @scrumEventsContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum prevede eventi regolari per creare regolarità e minimizzare riunioni non pianificate.'**
+  String get scrumEventsContent;
+
+  /// No description provided for @scrumEventsPlanning.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Planning: Pianificazione del lavoro dello Sprint (max 8h per Sprint di 4 settimane)'**
+  String get scrumEventsPlanning;
+
+  /// No description provided for @scrumEventsDaily.
+  ///
+  /// In it, this message translates to:
+  /// **'Daily Scrum: Sincronizzazione giornaliera del team (15 minuti)'**
+  String get scrumEventsDaily;
+
+  /// No description provided for @scrumEventsReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Review: Demo del lavoro completato agli stakeholder (max 4h)'**
+  String get scrumEventsReview;
+
+  /// No description provided for @scrumEventsRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Retrospective: Riflessione del team per miglioramento continuo (max 3h)'**
+  String get scrumEventsRetro;
+
+  /// No description provided for @scrumArtifactsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Gli Artefatti Scrum'**
+  String get scrumArtifactsTitle;
+
+  /// No description provided for @scrumArtifactsContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Gli artefatti rappresentano lavoro o valore e sono progettati per massimizzare la trasparenza.'**
+  String get scrumArtifactsContent;
+
+  /// No description provided for @scrumArtifactsPB.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Backlog: Lista ordinata di tutto ciò che potrebbe servire nel prodotto'**
+  String get scrumArtifactsPB;
+
+  /// No description provided for @scrumArtifactsSB.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Backlog: Items selezionati per lo Sprint + piano per consegnare l\'incremento'**
+  String get scrumArtifactsSB;
+
+  /// No description provided for @scrumArtifactsIncrement.
+  ///
+  /// In it, this message translates to:
+  /// **'Incremento: Somma di tutti gli items completati durante lo Sprint, potenzialmente rilasciabile'**
+  String get scrumArtifactsIncrement;
+
+  /// No description provided for @scrumStoryPointsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points e Velocity'**
+  String get scrumStoryPointsTitle;
+
+  /// No description provided for @scrumStoryPointsContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Gli Story Points sono un\'unità di misura relativa della complessità delle User Stories.\nNon misurano il tempo, ma lo sforzo, la complessità e l\'incertezza.\n\nLa sequenza di Fibonacci (1, 2, 3, 5, 8, 13, 21) è comunemente usata perché:\n• Riflette l\'incertezza crescente per items più grandi\n• Rende difficile la falsa precisione\n• Facilita le discussioni durante la stima\n\nLa Velocity è la media degli Story Points completati negli ultimi sprint e serve per:\n• Prevedere quanto lavoro può essere incluso nei prossimi sprint\n• Identificare trend di produttività del team\n• Non confrontare team diversi (ogni team ha la propria scala)'**
+  String get scrumStoryPointsContent;
+
+  /// No description provided for @scrumBP1.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantieni gli Sprint a durata fissa e rispetta il timebox'**
+  String get scrumBP1;
+
+  /// No description provided for @scrumBP2.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Product Backlog deve essere sempre prioritizzato e raffinato'**
+  String get scrumBP2;
+
+  /// No description provided for @scrumBP3.
+  ///
+  /// In it, this message translates to:
+  /// **'Le User Stories devono rispettare i criteri INVEST'**
+  String get scrumBP3;
+
+  /// No description provided for @scrumBP4.
+  ///
+  /// In it, this message translates to:
+  /// **'La Definition of Done deve essere chiara e condivisa'**
+  String get scrumBP4;
+
+  /// No description provided for @scrumBP5.
+  ///
+  /// In it, this message translates to:
+  /// **'Non modificare lo Sprint Goal durante lo Sprint'**
+  String get scrumBP5;
+
+  /// No description provided for @scrumBP6.
+  ///
+  /// In it, this message translates to:
+  /// **'Celebra i successi nella Sprint Review'**
+  String get scrumBP6;
+
+  /// No description provided for @scrumBP7.
+  ///
+  /// In it, this message translates to:
+  /// **'La Retrospettiva deve produrre azioni concrete di miglioramento'**
+  String get scrumBP7;
+
+  /// No description provided for @scrumBP8.
+  ///
+  /// In it, this message translates to:
+  /// **'Il team deve essere cross-funzionale e auto-organizzato'**
+  String get scrumBP8;
+
+  /// No description provided for @scrumAP1.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint senza Sprint Goal chiaro'**
+  String get scrumAP1;
+
+  /// No description provided for @scrumAP2.
+  ///
+  /// In it, this message translates to:
+  /// **'Daily Scrum trasformato in report meeting'**
+  String get scrumAP2;
+
+  /// No description provided for @scrumAP3.
+  ///
+  /// In it, this message translates to:
+  /// **'Saltare la Retrospettiva quando si è \"troppo occupati\"'**
+  String get scrumAP3;
+
+  /// No description provided for @scrumAP4.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Owner assente o non disponibile'**
+  String get scrumAP4;
+
+  /// No description provided for @scrumAP5.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungere lavoro durante lo Sprint senza rimuovere altro'**
+  String get scrumAP5;
+
+  /// No description provided for @scrumAP6.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points convertiti in ore (perde il senso)'**
+  String get scrumAP6;
+
+  /// No description provided for @scrumAP7.
+  ///
+  /// In it, this message translates to:
+  /// **'Team troppo grande (ideale 5-9 persone)'**
+  String get scrumAP7;
+
+  /// No description provided for @scrumAP8.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum Master che \"assegna\" compiti al team'**
+  String get scrumAP8;
+
+  /// No description provided for @scrumFAQ1Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Quanto deve durare uno Sprint?'**
+  String get scrumFAQ1Q;
+
+  /// No description provided for @scrumFAQ1A.
+  ///
+  /// In it, this message translates to:
+  /// **'La durata tipica è 2 settimane, ma può variare da 1 a 4 settimane. Sprint più brevi permettono feedback più frequenti e correzioni di rotta rapide. Sprint più lunghi danno più tempo per completare items complessi. L\'importante è mantenere la durata costante.'**
+  String get scrumFAQ1A;
+
+  /// No description provided for @scrumFAQ2Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Come gestire lavoro non completato a fine Sprint?'**
+  String get scrumFAQ2Q;
+
+  /// No description provided for @scrumFAQ2A.
+  ///
+  /// In it, this message translates to:
+  /// **'Le User Stories non completate tornano nel Product Backlog e vengono ri-prioritizzate. Mai estendere lo Sprint o ridurre la Definition of Done. Usare la Retrospettiva per capire perché è successo e come prevenirlo.'**
+  String get scrumFAQ2A;
+
+  /// No description provided for @scrumFAQ3Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Posso cambiare lo Sprint Backlog durante lo Sprint?'**
+  String get scrumFAQ3Q;
+
+  /// No description provided for @scrumFAQ3A.
+  ///
+  /// In it, this message translates to:
+  /// **'Lo Sprint Goal non dovrebbe cambiare, ma lo Sprint Backlog può evolversi. Il team può negoziare con il PO la sostituzione di items di pari valore. Se lo Sprint Goal diventa obsoleto, il PO può cancellare lo Sprint.'**
+  String get scrumFAQ3A;
+
+  /// No description provided for @scrumFAQ4Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Come calcolare la Velocity iniziale?'**
+  String get scrumFAQ4Q;
+
+  /// No description provided for @scrumFAQ4A.
+  ///
+  /// In it, this message translates to:
+  /// **'Per i primi 3 Sprint, fai stime conservative. Dopo 3 Sprint avrai una Velocity affidabile. Non usare la Velocity di altri team come riferimento.'**
+  String get scrumFAQ4A;
+
+  /// No description provided for @kanbanOverview.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban è un metodo per gestire il lavoro che enfatizza la visualizzazione del flusso,\nla limitazione del Work In Progress (WIP) e il miglioramento continuo del processo.\n\nKanban è ideale per:\n• Team di supporto/manutenzione con richieste continue\n• Ambienti dove le priorità cambiano frequentemente\n• Quando non è possibile pianificare in iterazioni fisse\n• Transizione graduale verso l\'Agile'**
+  String get kanbanOverview;
+
+  /// No description provided for @kanbanPrinciplesTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'I Principi Kanban'**
+  String get kanbanPrinciplesTitle;
+
+  /// No description provided for @kanbanPrinciplesContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban si basa su principi di cambiamento incrementale e rispetto per i ruoli esistenti.'**
+  String get kanbanPrinciplesContent;
+
+  /// No description provided for @kanbanPrinciple1.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizza il flusso di lavoro: Rendi visibile tutto il lavoro'**
+  String get kanbanPrinciple1;
+
+  /// No description provided for @kanbanPrinciple2.
+  ///
+  /// In it, this message translates to:
+  /// **'Limita il WIP: Completa il lavoro prima di iniziarne di nuovo'**
+  String get kanbanPrinciple2;
+
+  /// No description provided for @kanbanPrinciple3.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisci il flusso: Ottimizza per massimizzare il throughput'**
+  String get kanbanPrinciple3;
+
+  /// No description provided for @kanbanPrinciple4.
+  ///
+  /// In it, this message translates to:
+  /// **'Rendi esplicite le policy: Definisci regole chiare'**
+  String get kanbanPrinciple4;
+
+  /// No description provided for @kanbanPrinciple5.
+  ///
+  /// In it, this message translates to:
+  /// **'Implementa feedback loops: Migliora continuamente'**
+  String get kanbanPrinciple5;
+
+  /// No description provided for @kanbanPrinciple6.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliora collaborativamente: Evolvi sperimentando'**
+  String get kanbanPrinciple6;
+
+  /// No description provided for @kanbanBoardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban Board'**
+  String get kanbanBoardTitle;
+
+  /// No description provided for @kanbanBoardContent.
+  ///
+  /// In it, this message translates to:
+  /// **'La board visualizza il flusso di lavoro attraverso le sue fasi.\nOgni colonna rappresenta uno stato del lavoro (es. To Do, In Progress, Done).\n\nElementi chiave della board:\n• Colonne: Stati del workflow\n• Card/Ticket: Unità di lavoro\n• WIP Limits: Limiti per colonna\n• Swimlanes: Raggruppamenti orizzontali (opzionale)'**
+  String get kanbanBoardContent;
+
+  /// No description provided for @kanbanWIPTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP Limits'**
+  String get kanbanWIPTitle;
+
+  /// No description provided for @kanbanWIPContent.
+  ///
+  /// In it, this message translates to:
+  /// **'I limiti di Work In Progress (WIP) sono il cuore di Kanban.\nLimitare il WIP:\n\n• Riduce il context switching\n• Evidenzia i colli di bottiglia\n• Accelera il throughput\n• Migliora la qualità (meno errori da multitasking)\n• Aumenta la prevedibilità\n\nCome impostare i WIP limits:\n• Inizia con numero membri team × 2 per colonna\n• Osserva il flusso e aggiusta\n• Il limite \"giusto\" crea una leggera tensione'**
+  String get kanbanWIPContent;
+
+  /// No description provided for @kanbanMetricsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Metriche Kanban'**
+  String get kanbanMetricsTitle;
+
+  /// No description provided for @kanbanMetricsContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban utilizza metriche di flusso per misurare e migliorare il processo.'**
+  String get kanbanMetricsContent;
+
+  /// No description provided for @kanbanMetric1.
+  ///
+  /// In it, this message translates to:
+  /// **'Lead Time: Tempo dalla richiesta al completamento (include attesa)'**
+  String get kanbanMetric1;
+
+  /// No description provided for @kanbanMetric2.
+  ///
+  /// In it, this message translates to:
+  /// **'Cycle Time: Tempo dall\'inizio lavoro al completamento'**
+  String get kanbanMetric2;
+
+  /// No description provided for @kanbanMetric3.
+  ///
+  /// In it, this message translates to:
+  /// **'Throughput: Items completati per unità di tempo'**
+  String get kanbanMetric3;
+
+  /// No description provided for @kanbanMetric4.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP: Quantità di lavoro in corso in ogni momento'**
+  String get kanbanMetric4;
+
+  /// No description provided for @kanbanMetric5.
+  ///
+  /// In it, this message translates to:
+  /// **'Cumulative Flow Diagram (CFD): Visualizza l\'accumulo di lavoro nel tempo'**
+  String get kanbanMetric5;
+
+  /// No description provided for @kanbanCadencesTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Cadenze Kanban'**
+  String get kanbanCadencesTitle;
+
+  /// No description provided for @kanbanCadencesContent.
+  ///
+  /// In it, this message translates to:
+  /// **'A differenza di Scrum, Kanban non prescrive eventi fissi.\nTuttavia, cadenze regolari aiutano il miglioramento continuo:\n\n• Standup Meeting: Sincronizzazione quotidiana davanti alla board\n• Replenishment Meeting: Prioritizzazione del backlog\n• Delivery Planning: Pianificazione delle release\n• Service Delivery Review: Review delle metriche\n• Risk Review: Analisi dei rischi e impedimenti\n• Operations Review: Miglioramento del processo'**
+  String get kanbanCadencesContent;
+
+  /// No description provided for @kanbanBP1.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizza TUTTO il lavoro, incluso il lavoro nascosto'**
+  String get kanbanBP1;
+
+  /// No description provided for @kanbanBP2.
+  ///
+  /// In it, this message translates to:
+  /// **'Rispetta rigorosamente i WIP limits'**
+  String get kanbanBP2;
+
+  /// No description provided for @kanbanBP3.
+  ///
+  /// In it, this message translates to:
+  /// **'Focalizzati sul completare, non sull\'iniziare'**
+  String get kanbanBP3;
+
+  /// No description provided for @kanbanBP4.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa le metriche per decisioni, non per giudicare le persone'**
+  String get kanbanBP4;
+
+  /// No description provided for @kanbanBP5.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliora un passo alla volta'**
+  String get kanbanBP5;
+
+  /// No description provided for @kanbanBP6.
+  ///
+  /// In it, this message translates to:
+  /// **'Blocca il nuovo lavoro se il WIP è al limite'**
+  String get kanbanBP6;
+
+  /// No description provided for @kanbanBP7.
+  ///
+  /// In it, this message translates to:
+  /// **'Analizza i blocchi e rimuovili rapidamente'**
+  String get kanbanBP7;
+
+  /// No description provided for @kanbanBP8.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa swimlanes per priorità o tipologie di lavoro'**
+  String get kanbanBP8;
+
+  /// No description provided for @kanbanAP1.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP limits troppo alti (o assenti)'**
+  String get kanbanAP1;
+
+  /// No description provided for @kanbanAP2.
+  ///
+  /// In it, this message translates to:
+  /// **'Ignorare i blocchi sulla board'**
+  String get kanbanAP2;
+
+  /// No description provided for @kanbanAP3.
+  ///
+  /// In it, this message translates to:
+  /// **'Non rispettare i limiti quando \"è urgente\"'**
+  String get kanbanAP3;
+
+  /// No description provided for @kanbanAP4.
+  ///
+  /// In it, this message translates to:
+  /// **'Columns troppo generiche (es. solo To Do/Done)'**
+  String get kanbanAP4;
+
+  /// No description provided for @kanbanAP5.
+  ///
+  /// In it, this message translates to:
+  /// **'Non tracciare quando gli items entrano/escono'**
+  String get kanbanAP5;
+
+  /// No description provided for @kanbanAP6.
+  ///
+  /// In it, this message translates to:
+  /// **'Usare Kanban solo come task board senza principi'**
+  String get kanbanAP6;
+
+  /// No description provided for @kanbanAP7.
+  ///
+  /// In it, this message translates to:
+  /// **'Non analizzare mai il Cumulative Flow Diagram'**
+  String get kanbanAP7;
+
+  /// No description provided for @kanbanAP8.
+  ///
+  /// In it, this message translates to:
+  /// **'Troppi swimlanes che complicano la visualizzazione'**
+  String get kanbanAP8;
+
+  /// No description provided for @kanbanFAQ1Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Come gestire le urgenze in Kanban?'**
+  String get kanbanFAQ1Q;
+
+  /// No description provided for @kanbanFAQ1A.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una swimlane \"Expedite\" con WIP limit di 1. Gli items expedite saltano la coda ma devono essere rari. Se tutto è urgente, niente è urgente.'**
+  String get kanbanFAQ1A;
+
+  /// No description provided for @kanbanFAQ2Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban funziona per lo sviluppo software?'**
+  String get kanbanFAQ2Q;
+
+  /// No description provided for @kanbanFAQ2A.
+  ///
+  /// In it, this message translates to:
+  /// **'Assolutamente sì. Kanban è nato in Toyota ma è ampiamente usato nello sviluppo software. È particolarmente adatto per team di manutenzione, DevOps, e support.'**
+  String get kanbanFAQ2A;
+
+  /// No description provided for @kanbanFAQ3Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Come impostare i WIP limits iniziali?'**
+  String get kanbanFAQ3Q;
+
+  /// No description provided for @kanbanFAQ3A.
+  ///
+  /// In it, this message translates to:
+  /// **'Formula di partenza: (membri del team + 1) per colonna. Osserva per 2 settimane e riduci gradualmente fino a creare una leggera tensione. Il limite ottimale varia per ogni team e contesto.'**
+  String get kanbanFAQ3A;
+
+  /// No description provided for @kanbanFAQ4Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Quanto tempo serve per vedere risultati con Kanban?'**
+  String get kanbanFAQ4Q;
+
+  /// No description provided for @kanbanFAQ4A.
+  ///
+  /// In it, this message translates to:
+  /// **'I primi miglioramenti (visibilità) sono immediati. Riduzione del Lead Time si vede in 2-4 settimane. Miglioramenti significativi del processo richiedono 2-3 mesi.'**
+  String get kanbanFAQ4A;
+
+  /// No description provided for @hybridOverview.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban combina elementi di Scrum e Kanban per creare un approccio flessibile\nche si adatta al contesto del team. Mantiene la struttura degli Sprint con\nla flessibilità del flusso continuo e i WIP limits.\n\nScrumban è ideale per:\n• Team che vogliono transire da Scrum a Kanban (o viceversa)\n• Progetti con mix di feature development e manutenzione\n• Team che vogliono Sprint ma con più flessibilità\n• Quando Scrum \"puro\" è troppo rigido per il contesto'**
+  String get hybridOverview;
+
+  /// No description provided for @hybridFromScrumTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Scrum: Struttura'**
+  String get hybridFromScrumTitle;
+
+  /// No description provided for @hybridFromScrumContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban mantiene alcuni elementi strutturati di Scrum per prevedibilità.'**
+  String get hybridFromScrumContent;
+
+  /// No description provided for @hybridFromScrum1.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint (opzionale): Iterazioni a tempo fisso per cadenza'**
+  String get hybridFromScrum1;
+
+  /// No description provided for @hybridFromScrum2.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Planning: Selezione del lavoro per il periodo'**
+  String get hybridFromScrum2;
+
+  /// No description provided for @hybridFromScrum3.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospettiva: Riflessione e miglioramento'**
+  String get hybridFromScrum3;
+
+  /// No description provided for @hybridFromScrum4.
+  ///
+  /// In it, this message translates to:
+  /// **'Demo/Review: Condivisione del valore prodotto'**
+  String get hybridFromScrum4;
+
+  /// No description provided for @hybridFromScrum5.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points: Per stime e previsioni (opzionale)'**
+  String get hybridFromScrum5;
+
+  /// No description provided for @hybridFromKanbanTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Kanban: Flusso'**
+  String get hybridFromKanbanTitle;
+
+  /// No description provided for @hybridFromKanbanContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban adotta i principi di flusso Kanban per efficienza.'**
+  String get hybridFromKanbanContent;
+
+  /// No description provided for @hybridFromKanban1.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP Limits: Limitazione del lavoro in corso'**
+  String get hybridFromKanban1;
+
+  /// No description provided for @hybridFromKanban2.
+  ///
+  /// In it, this message translates to:
+  /// **'Pull System: Il team \"tira\" lavoro quando ha capacità'**
+  String get hybridFromKanban2;
+
+  /// No description provided for @hybridFromKanban3.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizzazione: Board condivisa e trasparente'**
+  String get hybridFromKanban3;
+
+  /// No description provided for @hybridFromKanban4.
+  ///
+  /// In it, this message translates to:
+  /// **'Metriche di flusso: Lead Time, Cycle Time, Throughput'**
+  String get hybridFromKanban4;
+
+  /// No description provided for @hybridFromKanban5.
+  ///
+  /// In it, this message translates to:
+  /// **'Miglioramento continuo: Policy esplicite e sperimentazione'**
+  String get hybridFromKanban5;
+
+  /// No description provided for @hybridOnDemandTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Planning su Richiesta'**
+  String get hybridOnDemandTitle;
+
+  /// No description provided for @hybridOnDemandContent.
+  ///
+  /// In it, this message translates to:
+  /// **'In Scrumban, il planning può essere \"on-demand\" invece che a intervalli fissi.\n\nIl planning si attiva quando:\n• Il backlog \"Ready\" scende sotto una soglia\n• Serve prioritizzare nuove richieste urgenti\n• Un milestone si avvicina\n\nQuesto riduce le sessioni di planning quando non necessarie\ne permette di reagire più velocemente ai cambiamenti.'**
+  String get hybridOnDemandContent;
+
+  /// No description provided for @hybridWhenTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Quando Usare Cosa'**
+  String get hybridWhenTitle;
+
+  /// No description provided for @hybridWhenContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban non è \"fare tutto\". È scegliere gli elementi giusti per il contesto.\n\nUsa elementi Scrum quando:\n• Serve prevedibilità nelle consegne\n• Gli stakeholder vogliono demo regolari\n• Il team beneficia di ritmo fisso\n\nUsa elementi Kanban quando:\n• Il lavoro è imprevedibile (support, bug fixing)\n• Serve reattività alle urgenze\n• Il focus è sul throughput continuo'**
+  String get hybridWhenContent;
+
+  /// No description provided for @hybridBP1.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia con ciò che conosci e aggiungi elementi gradualmente'**
+  String get hybridBP1;
+
+  /// No description provided for @hybridBP2.
+  ///
+  /// In it, this message translates to:
+  /// **'I WIP limits sono non negoziabili, anche con Sprint'**
+  String get hybridBP2;
+
+  /// No description provided for @hybridBP3.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa Sprint per cadenza, non come commitment rigido'**
+  String get hybridBP3;
+
+  /// No description provided for @hybridBP4.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantieni la Retrospettiva, è il motore del miglioramento'**
+  String get hybridBP4;
+
+  /// No description provided for @hybridBP5.
+  ///
+  /// In it, this message translates to:
+  /// **'Le metriche di flusso aiutano più della Velocity pura'**
+  String get hybridBP5;
+
+  /// No description provided for @hybridBP6.
+  ///
+  /// In it, this message translates to:
+  /// **'Sperimenta con una cosa alla volta'**
+  String get hybridBP6;
+
+  /// No description provided for @hybridBP7.
+  ///
+  /// In it, this message translates to:
+  /// **'Documenta le policy del team e rivedile regolarmente'**
+  String get hybridBP7;
+
+  /// No description provided for @hybridBP8.
+  ///
+  /// In it, this message translates to:
+  /// **'Considera swimlanes per separare feature da manutenzione'**
+  String get hybridBP8;
+
+  /// No description provided for @hybridAP1.
+  ///
+  /// In it, this message translates to:
+  /// **'Prendere il peggio di entrambi (rigidità Scrum + caos Kanban)'**
+  String get hybridAP1;
+
+  /// No description provided for @hybridAP2.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare le Retrospettive perché \"siamo flessibili\"'**
+  String get hybridAP2;
+
+  /// No description provided for @hybridAP3.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP limits ignorati perché \"abbiamo gli Sprint\"'**
+  String get hybridAP3;
+
+  /// No description provided for @hybridAP4.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambiare framework ad ogni Sprint'**
+  String get hybridAP4;
+
+  /// No description provided for @hybridAP5.
+  ///
+  /// In it, this message translates to:
+  /// **'Non avere nessuna cadenza (né Sprint né altro)'**
+  String get hybridAP5;
+
+  /// No description provided for @hybridAP6.
+  ///
+  /// In it, this message translates to:
+  /// **'Confondere flessibilità con assenza di regole'**
+  String get hybridAP6;
+
+  /// No description provided for @hybridAP7.
+  ///
+  /// In it, this message translates to:
+  /// **'Non misurare niente'**
+  String get hybridAP7;
+
+  /// No description provided for @hybridAP8.
+  ///
+  /// In it, this message translates to:
+  /// **'Troppa complessità per il contesto'**
+  String get hybridAP8;
+
+  /// No description provided for @hybridFAQ1Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban ha Sprint o no?'**
+  String get hybridFAQ1Q;
+
+  /// No description provided for @hybridFAQ1A.
+  ///
+  /// In it, this message translates to:
+  /// **'Dipende dal team. Puoi avere Sprint per cadenza (review, planning) ma permettere flusso continuo di lavoro dentro lo Sprint. Oppure puoi eliminare gli Sprint e avere solo cadenze Kanban.'**
+  String get hybridFAQ1A;
+
+  /// No description provided for @hybridFAQ2Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Come misuro la performance in Scrumban?'**
+  String get hybridFAQ2Q;
+
+  /// No description provided for @hybridFAQ2A.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa sia metriche Scrum (Velocity se usi Sprint e Story Points) che metriche Kanban (Lead Time, Cycle Time, Throughput). Le metriche di flusso sono spesso più utili per il miglioramento.'**
+  String get hybridFAQ2A;
+
+  /// No description provided for @hybridFAQ3Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Da dove partire con Scrumban?'**
+  String get hybridFAQ3Q;
+
+  /// No description provided for @hybridFAQ3A.
+  ///
+  /// In it, this message translates to:
+  /// **'Se vieni da Scrum: aggiungi WIP limits e visualizza il flusso. Se vieni da Kanban: aggiungi cadenze regolari per review e planning. Parti da ciò che il team conosce e aggiungi incrementalmente.'**
+  String get hybridFAQ3A;
+
+  /// No description provided for @hybridFAQ4Q.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban è \"meno Agile\" di Scrum puro?'**
+  String get hybridFAQ4Q;
+
+  /// No description provided for @hybridFAQ4A.
+  ///
+  /// In it, this message translates to:
+  /// **'No. Agile non significa seguire un framework specifico. Scrumban può essere più Agile perché si adatta al contesto. L\'importante è ispezionare e adattare continuamente.'**
+  String get hybridFAQ4A;
+
   /// No description provided for @retroNoResults.
   ///
   /// In it, this message translates to:
@@ -7149,12 +7941,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Ho capito'**
   String get kanbanUnderstood;
-
-  /// No description provided for @kanbanBoardTitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Kanban Board'**
-  String get kanbanBoardTitle;
 
   /// No description provided for @sprintTitle.
   ///

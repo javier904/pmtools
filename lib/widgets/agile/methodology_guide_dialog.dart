@@ -109,7 +109,7 @@ class _MethodologyGuideDialogState extends State<MethodologyGuideDialog>
             // Tab bar
             TabBar(
               controller: _tabController,
-              tabs: MethodologyGuide.allGuides.map((guide) => Tab(
+              tabs: MethodologyGuide.getAllGuides(context).map((guide) => Tab(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -127,7 +127,7 @@ class _MethodologyGuideDialogState extends State<MethodologyGuideDialog>
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: MethodologyGuide.allGuides.map((guide) =>
+                children: MethodologyGuide.getAllGuides(context).map((guide) =>
                   _MethodologyGuideContent(guide: guide),
                 ).toList(),
               ),
@@ -415,7 +415,7 @@ class MethodologyQuickInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final guide = MethodologyGuide.forFramework(framework);
+    final guide = MethodologyGuide.forFramework(framework, context);
 
     return Card(
       color: guide.color.withOpacity(0.1),

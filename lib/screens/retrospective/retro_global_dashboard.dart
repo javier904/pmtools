@@ -270,7 +270,6 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
 
   Widget _buildFilterChip(String label, RetroStatus? status) {
     final isSelected = _selectedFilter == status;
-    final theme = Theme.of(context);
     
     return FilterChip(
       label: Text(label),
@@ -280,20 +279,14 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           _selectedFilter = selected ? status : null;
         });
       },
-      backgroundColor: Colors.transparent,
-      selectedColor: theme.primaryColor,
-      checkmarkColor: isSelected ? Colors.white : theme.primaryColor,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : null, // White text when selected
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      backgroundColor: Theme.of(context).cardColor,
+      selectedColor: AppColors.pink.withOpacity(0.2),
+      checkmarkColor: AppColors.pink,
+      side: BorderSide(
+        color: isSelected ? AppColors.pink : Colors.white,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isSelected 
-              ? theme.primaryColor 
-              : theme.dividerColor,
-        ),
       ),
     );
   }
