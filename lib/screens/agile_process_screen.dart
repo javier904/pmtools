@@ -987,8 +987,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
       context: context,
       position: position,
       items: [
-        const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit, size: 18), SizedBox(width: 8), Text('Modifica')])),
-        const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings, size: 18), SizedBox(width: 8), Text('Impostazioni')])),
+        PopupMenuItem(value: 'edit', child: Row(children: [const Icon(Icons.edit, size: 18), const SizedBox(width: 8), Text(l10n.agileEdit)])),
+        PopupMenuItem(value: 'settings', child: Row(children: [const Icon(Icons.settings, size: 18), const SizedBox(width: 8), Text(l10n.agileSettings)])),
         // Archive/Restore option
         PopupMenuItem(
           value: project.isArchived ? 'restore' : 'archive',
@@ -1004,7 +1004,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
             ],
           ),
         ),
-        if (isOwner) const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, size: 18, color: Colors.red), SizedBox(width: 8), Text('Elimina', style: TextStyle(color: Colors.red))])),
+        if (isOwner) PopupMenuItem(value: 'delete', child: Row(children: [const Icon(Icons.delete, size: 18, color: Colors.red), const SizedBox(width: 8), Text(l10n.agileDelete, style: const TextStyle(color: Colors.red))])),
       ],
     );
 
@@ -1094,15 +1094,16 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   }
 
   Future<void> _confirmDeleteProject(AgileProjectModel project) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Progetto'),
+        title: Text(l10n.agileDeleteProjectTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Sei sicuro di voler eliminare "${project.name}"?'),
+            Text(l10n.agileDeleteProjectConfirm(project.name)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -1117,10 +1118,10 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Questa azione eliminerà permanentemente:\n'
-                      '• ${project.backlogCount} user stories\n'
-                      '• ${project.sprintCount} sprint\n'
-                      '• Tutti i dati del progetto',
+                      '${l10n.agileDeleteProjectWarning}\n'
+                      '• ${l10n.agileDeleteWarningUserStories(project.backlogCount)}\n'
+                      '• ${l10n.agileDeleteWarningSprints(project.sprintCount)}\n'
+                      '• ${l10n.agileDeleteProjectData}',
                       style: TextStyle(color: Colors.red[700], fontSize: 13),
                     ),
                   ),
@@ -1132,12 +1133,12 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Elimina'),
+            child: Text(l10n.agileDelete),
           ),
         ],
       ),
@@ -1272,8 +1273,9 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(isEditing ? 'Modifica Progetto' : 'Nuovo Progetto Agile'),
+      title: Text(isEditing ? l10n.agileEditProjectTitle : l10n.agileCreateProjectTitle),
       content: SizedBox(
         width: 500,
         child: Form(
@@ -1286,15 +1288,15 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                 // Nome
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome Progetto *',
-                    hintText: 'Es: Fashion PMO v2',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.folder),
+                  decoration: InputDecoration(
+                    labelText: l10n.agileProjectNameLabel,
+                    hintText: l10n.agileProjectNameHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.folder),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Inserisci il nome del progetto';
+                      return l10n.agileEnterProjectName;
                     }
                     return null;
                   },
@@ -1304,11 +1306,11 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                 // Descrizione
                 TextFormField(
                   controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Descrizione',
-                    hintText: 'Descrizione opzionale del progetto',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.description),
+                  decoration: InputDecoration(
+                    labelText: l10n.agileProjectDescLabel,
+                    hintText: l10n.agileProjectDescHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.description),
                   ),
                   maxLines: 2,
                 ),
@@ -1318,7 +1320,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                 Row(
                   children: [
                     Text(
-                      'Framework Agile',
+                      l10n.agileFrameworkLabel,
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: context.textSecondaryColor,
@@ -1328,7 +1330,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                     TextButton.icon(
                       onPressed: () => MethodologyGuideDialog.show(context, framework: _framework),
                       icon: const Icon(Icons.help_outline, size: 16),
-                      label: const Text('Scopri le differenze'),
+                      label: Text(l10n.agileDiscoverDifferences),
                       style: TextButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                       ),
@@ -1341,7 +1343,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
 
                 // Configurazione Sprint
                 Text(
-                  'Configurazione Sprint',
+                  l10n.agileSprintConfig,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: context.textSecondaryColor,
@@ -1352,7 +1354,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                   children: [
                     Expanded(
                       child: _buildNumberField(
-                        label: 'Durata Sprint (giorni)',
+                        label: l10n.agileSprintDuration,
                         value: _sprintDurationDays,
                         min: 7,
                         max: 30,
@@ -1362,7 +1364,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: _buildNumberField(
-                        label: 'Ore/Giorno',
+                        label: l10n.agileHoursPerDay,
                         value: _workingHoursPerDay,
                         min: 4,
                         max: 12,
@@ -1383,12 +1385,12 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton.icon(
           onPressed: _submit,
           icon: Icon(isEditing ? Icons.save : Icons.add),
-          label: Text(isEditing ? 'Salva' : 'Crea'),
+          label: Text(isEditing ? l10n.actionSave : l10n.actionCreate),
         ),
       ],
     );
@@ -1524,6 +1526,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
   }
 
   Widget _buildKeyRolesSection() {
+    final l10n = AppLocalizations.of(context)!;
     // Get participants for dropdown
     List<TeamMemberModel> participants;
 
@@ -1551,7 +1554,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
         Row(
           children: [
             Text(
-              'Ruoli Chiave',
+              l10n.agileKeyRoles,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: context.textSecondaryColor,
@@ -1559,7 +1562,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
             ),
             const SizedBox(width: 8),
             Tooltip(
-              message: 'Assegna i ruoli principali del team.\nPotrai modificarli anche dalle impostazioni del progetto.',
+              message: l10n.agileAssignRolesHint,
               child: Icon(
                 Icons.info_outline,
                 size: 16,
@@ -1571,11 +1574,12 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
         const SizedBox(height: 12),
 
         // Product Owner
+        // Product Owner
         _buildRoleSelector(
           icon: Icons.account_circle,
-          label: 'Product Owner',
+          label: l10n.agileRoleProductOwner,
           color: const Color(0xFF7B1FA2),
-          description: 'Gestisce il backlog e le priorita',
+          description: l10n.agileRoleProductOwnerDesc,
           selectedEmail: _productOwnerEmail,
           participants: participants,
           onChanged: (email) => setState(() => _productOwnerEmail = email),
@@ -1583,11 +1587,12 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
         const SizedBox(height: 12),
 
         // Scrum Master
+        // Scrum Master
         _buildRoleSelector(
           icon: Icons.supervised_user_circle,
-          label: 'Scrum Master',
+          label: l10n.agileRoleScrumMaster,
           color: const Color(0xFF1976D2),
-          description: 'Facilita il processo e rimuove ostacoli',
+          description: l10n.agileRoleScrumMasterDesc,
           selectedEmail: _scrumMasterEmail,
           participants: participants,
           onChanged: (email) => setState(() => _scrumMasterEmail = email),
@@ -1605,6 +1610,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
     required List<TeamMemberModel> participants,
     required ValueChanged<String?> onChanged,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedMember = selectedEmail != null
         ? participants.where((p) => p.email == selectedEmail).firstOrNull
         : null;
@@ -1658,7 +1664,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
             DropdownButton<String?>(
               value: selectedEmail,
               hint: Text(
-                'Seleziona',
+                l10n.agileSelectParticipant,
                 style: TextStyle(
                   fontSize: 13,
                   color: context.textMutedColor,
@@ -1670,7 +1676,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                 DropdownMenuItem<String?>(
                   value: null,
                   child: Text(
-                    'Non assegnato',
+                    l10n.agileUnassigned,
                     style: TextStyle(
                       fontSize: 13,
                       color: context.textMutedColor,
@@ -1724,7 +1730,7 @@ class _ProjectFormDialogState extends State<_ProjectFormDialog> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Assegnabile dopo la creazione',
+                    l10n.agileAssignableLater,
                     style: TextStyle(
                       fontSize: 11,
                       color: context.textMutedColor,
@@ -1792,6 +1798,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final participants = widget.project.participants.values.toList();
 
     return AlertDialog(
@@ -1799,7 +1806,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
         children: [
           Icon(Icons.settings, color: Theme.of(context).primaryColor),
           const SizedBox(width: 12),
-          const Text('Impostazioni Progetto'),
+          Text(l10n.agileProjectSettingsTitle),
         ],
       ),
       content: SizedBox(
@@ -1812,17 +1819,17 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
               // Sezione Ruoli Chiave
               _buildSectionHeader(
                 icon: Icons.people_alt,
-                title: 'Ruoli Chiave',
-                subtitle: 'Assegna i ruoli principali del team Scrum',
+                title: l10n.agileKeyRoles,
+                subtitle: l10n.agileKeyRolesSubtitle,
               ),
               const SizedBox(height: 16),
 
               // Product Owner
               _buildRoleCard(
                 icon: Icons.account_circle,
-                label: 'Product Owner',
+                label: l10n.agileRoleProductOwner,
                 color: const Color(0xFF7B1FA2),
-                description: 'Gestisce il backlog e definisce le priorità del prodotto',
+                description: l10n.agileRoleProductOwnerDesc,
                 selectedEmail: _productOwnerEmail,
                 participants: participants,
                 onChanged: (email) => setState(() => _productOwnerEmail = email),
@@ -1832,9 +1839,9 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
               // Scrum Master
               _buildRoleCard(
                 icon: Icons.supervised_user_circle,
-                label: 'Scrum Master',
+                label: l10n.agileRoleScrumMaster,
                 color: const Color(0xFF1976D2),
-                description: 'Facilita il processo Scrum e rimuove gli ostacoli',
+                description: l10n.agileRoleScrumMasterDesc,
                 selectedEmail: _scrumMasterEmail,
                 participants: participants,
                 onChanged: (email) => setState(() => _scrumMasterEmail = email),
@@ -1860,8 +1867,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'I ruoli verranno mostrati con icone dedicate nella lista progetti. '
-                        'Puoi aggiungere altri partecipanti dal Team del progetto.',
+                        l10n.agileRolesInfo,
                         style: TextStyle(
                           fontSize: 12,
                           color: context.textSecondaryColor,
@@ -1878,12 +1884,12 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annulla'),
+          child: Text(l10n.actionCancel),
         ),
         ElevatedButton.icon(
           onPressed: _submit,
           icon: const Icon(Icons.save, size: 18),
-          label: const Text('Salva'),
+          label: Text(l10n.actionSave),
         ),
       ],
     );
@@ -1932,6 +1938,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
     required List<TeamMemberModel> participants,
     required ValueChanged<String?> onChanged,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedMember = selectedEmail != null
         ? participants.where((p) => p.email == selectedEmail).firstOrNull
         : null;
@@ -1995,7 +2002,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
               isExpanded: true,
               underline: const SizedBox(),
               hint: Text(
-                'Seleziona partecipante',
+                l10n.agileSelectParticipant,
                 style: TextStyle(color: context.textMutedColor),
               ),
               items: [
@@ -2006,7 +2013,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                       Icon(Icons.person_off, color: context.textMutedColor, size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        'Non assegnato',
+                        l10n.agileUnassigned,
                         style: TextStyle(
                           color: context.textMutedColor,
                           fontStyle: FontStyle.italic,
@@ -2072,7 +2079,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                   const Icon(Icons.check_circle, color: Colors.green, size: 14),
                   const SizedBox(width: 6),
                   Text(
-                    'Assegnato a ${selectedMember.name}',
+                    l10n.agileAssignedTo(selectedMember.name),
                     style: const TextStyle(
                       fontSize: 11,
                       color: Colors.green,
@@ -2093,6 +2100,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
         .map((email) => participants.where((p) => p.email == email).firstOrNull)
         .whereType<TeamMemberModel>()
         .toList();
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -2119,8 +2127,8 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Development Team',
+                    Text(
+                      l10n.agileRoleDevTeam,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF388E3C),
@@ -2128,7 +2136,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                       ),
                     ),
                     Text(
-                      'I membri che sviluppano il prodotto',
+                      l10n.agileRoleDevTeamDesc,
                       style: TextStyle(
                         fontSize: 11,
                         color: context.textMutedColor,
@@ -2160,7 +2168,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                   Icon(Icons.group_add, color: context.textMutedColor, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    'Nessun membro nel team. Clicca + per aggiungere.',
+                    l10n.agileNoDevTeamMembers,
                     style: TextStyle(
                       fontSize: 12,
                       color: context.textMutedColor,
@@ -2200,6 +2208,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
   }
 
   void _showAddTeamMemberDialog(List<TeamMemberModel> participants) {
+    final l10n = AppLocalizations.of(context)!;
     // Filter out already selected members and PO/SM
     final availableParticipants = participants.where((p) {
       return !_developmentTeamEmails.contains(p.email) &&
@@ -2209,8 +2218,8 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
 
     if (availableParticipants.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tutti i partecipanti sono già assegnati a un ruolo.'),
+        SnackBar(
+          content: Text(l10n.agileAllMembersAssigned),
         ),
       );
       return;
@@ -2219,7 +2228,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Aggiungi al Team'),
+        title: Text(l10n.agileAddToTeam),
         content: SizedBox(
           width: 300,
           child: ListView.builder(
@@ -2257,8 +2266,8 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Chiudi'),
+             onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.agileClose),
           ),
         ],
       ),

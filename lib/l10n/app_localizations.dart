@@ -2121,7 +2121,7 @@ abstract class AppLocalizations {
   /// No description provided for @agileRoleDevTeamDesc.
   ///
   /// In it, this message translates to:
-  /// **'Realizza gli incrementi di prodotto'**
+  /// **'I membri che sviluppano il prodotto'**
   String get agileRoleDevTeamDesc;
 
   /// No description provided for @agileRoleStakeholdersDesc.
@@ -11581,13 +11581,13 @@ abstract class AppLocalizations {
   /// No description provided for @archiveShowArchived.
   ///
   /// In it, this message translates to:
-  /// **'Mostra archiviati'**
+  /// **'Mostra Archiviati'**
   String get archiveShowArchived;
 
   /// No description provided for @archiveHideArchived.
   ///
   /// In it, this message translates to:
-  /// **'Nascondi archiviati'**
+  /// **'Nascondi Archiviati'**
   String get archiveHideArchived;
 
   /// No description provided for @archiveConfirmTitle.
@@ -11617,25 +11617,25 @@ abstract class AppLocalizations {
   /// No description provided for @archiveSuccessMessage.
   ///
   /// In it, this message translates to:
-  /// **'Elemento archiviato con successo'**
+  /// **'Progetto archiviato'**
   String get archiveSuccessMessage;
 
   /// No description provided for @archiveRestoreSuccessMessage.
   ///
   /// In it, this message translates to:
-  /// **'Elemento ripristinato con successo'**
+  /// **'Progetto ripristinato'**
   String get archiveRestoreSuccessMessage;
 
   /// No description provided for @archiveErrorMessage.
   ///
   /// In it, this message translates to:
-  /// **'Errore durante l\'archiviazione'**
+  /// **'Errore archiviazione progetto'**
   String get archiveErrorMessage;
 
   /// No description provided for @archiveRestoreErrorMessage.
   ///
   /// In it, this message translates to:
-  /// **'Errore durante il ripristino'**
+  /// **'Errore ripristino progetto'**
   String get archiveRestoreErrorMessage;
 
   /// No description provided for @archiveFilterLabel.
@@ -11665,7 +11665,7 @@ abstract class AppLocalizations {
   /// No description provided for @archiveBadge.
   ///
   /// In it, this message translates to:
-  /// **'Archiviato'**
+  /// **'ARCHIVIO'**
   String get archiveBadge;
 
   /// No description provided for @archiveEmptyMessage.
@@ -14361,6 +14361,1404 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Opzionale'**
   String get facilitatorGuideOptional;
+
+  /// No description provided for @agileEdit.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica'**
+  String get agileEdit;
+
+  /// No description provided for @agileSettings.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni'**
+  String get agileSettings;
+
+  /// No description provided for @agileDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get agileDelete;
+
+  /// No description provided for @agileDeleteProjectTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Progetto'**
+  String get agileDeleteProjectTitle;
+
+  /// No description provided for @agileDeleteProjectConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare \"{projectName}\"?'**
+  String agileDeleteProjectConfirm(String projectName);
+
+  /// No description provided for @agileDeleteProjectWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione eliminerà permanentemente:'**
+  String get agileDeleteProjectWarning;
+
+  /// No description provided for @agileDeleteWarningUserStories.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} user stories'**
+  String agileDeleteWarningUserStories(int count);
+
+  /// No description provided for @agileDeleteWarningSprints.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} sprint'**
+  String agileDeleteWarningSprints(int count);
+
+  /// No description provided for @agileDeleteProjectData.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i dati del progetto'**
+  String get agileDeleteProjectData;
+
+  /// No description provided for @agileProjectSettingsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni Progetto'**
+  String get agileProjectSettingsTitle;
+
+  /// No description provided for @agileKeyRoles.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruoli Chiave'**
+  String get agileKeyRoles;
+
+  /// No description provided for @agileKeyRolesSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegna i ruoli principali del team Scrum'**
+  String get agileKeyRolesSubtitle;
+
+  /// No description provided for @agileRoleProductOwner.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Owner'**
+  String get agileRoleProductOwner;
+
+  /// No description provided for @agileRoleProductOwnerDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisce il backlog e definisce le priorità del prodotto'**
+  String get agileRoleProductOwnerDesc;
+
+  /// No description provided for @agileRoleScrumMaster.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum Master'**
+  String get agileRoleScrumMaster;
+
+  /// No description provided for @agileRoleScrumMasterDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Facilita il processo Scrum e rimuove gli ostacoli'**
+  String get agileRoleScrumMasterDesc;
+
+  /// No description provided for @agileRoleDevTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'Development Team'**
+  String get agileRoleDevTeam;
+
+  /// No description provided for @agileNoDevTeamMembers.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun membro nel team. Clicca + per aggiungere.'**
+  String get agileNoDevTeamMembers;
+
+  /// No description provided for @agileRolesInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'I ruoli verranno mostrati con icone dedicate nella lista progetti. Puoi aggiungere altri partecipanti dal Team del progetto.'**
+  String get agileRolesInfo;
+
+  /// No description provided for @agileAssignedTo.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnato a {name}'**
+  String agileAssignedTo(String name);
+
+  /// No description provided for @agileUnassigned.
+  ///
+  /// In it, this message translates to:
+  /// **'Non assegnato'**
+  String get agileUnassigned;
+
+  /// No description provided for @agileAssignableLater.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnabile dopo la creazione'**
+  String get agileAssignableLater;
+
+  /// No description provided for @agileAddToTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi al Team'**
+  String get agileAddToTeam;
+
+  /// No description provided for @agileAllMembersAssigned.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i partecipanti sono già assegnati a un ruolo.'**
+  String get agileAllMembersAssigned;
+
+  /// No description provided for @agileClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get agileClose;
+
+  /// No description provided for @agileProjectNameLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Progetto *'**
+  String get agileProjectNameLabel;
+
+  /// No description provided for @agileProjectNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Es: Fashion PMO v2'**
+  String get agileProjectNameHint;
+
+  /// No description provided for @agileEnterProjectName.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci il nome del progetto'**
+  String get agileEnterProjectName;
+
+  /// No description provided for @agileProjectDescLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get agileProjectDescLabel;
+
+  /// No description provided for @agileProjectDescHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione opzionale del progetto'**
+  String get agileProjectDescHint;
+
+  /// No description provided for @agileFrameworkLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Framework Agile'**
+  String get agileFrameworkLabel;
+
+  /// No description provided for @agileDiscoverDifferences.
+  ///
+  /// In it, this message translates to:
+  /// **'Scopri le differenze'**
+  String get agileDiscoverDifferences;
+
+  /// No description provided for @agileSprintConfig.
+  ///
+  /// In it, this message translates to:
+  /// **'Configurazione Sprint'**
+  String get agileSprintConfig;
+
+  /// No description provided for @agileSprintDuration.
+  ///
+  /// In it, this message translates to:
+  /// **'Durata Sprint (giorni)'**
+  String get agileSprintDuration;
+
+  /// No description provided for @agileHoursPerDay.
+  ///
+  /// In it, this message translates to:
+  /// **'Ore/Giorno'**
+  String get agileHoursPerDay;
+
+  /// No description provided for @agileCreateProjectTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Progetto Agile'**
+  String get agileCreateProjectTitle;
+
+  /// No description provided for @agileEditProjectTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Progetto'**
+  String get agileEditProjectTitle;
+
+  /// No description provided for @agileSelectParticipant.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona partecipante'**
+  String get agileSelectParticipant;
+
+  /// No description provided for @agileAssignRolesHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegna i ruoli principali.\nPotrai modificarli anche dalle impostazioni.'**
+  String get agileAssignRolesHint;
+
+  /// No description provided for @agileArchiveAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivia'**
+  String get agileArchiveAction;
+
+  /// No description provided for @agileRestoreAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina'**
+  String get agileRestoreAction;
+
+  /// No description provided for @agileSetupTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Setup del Progetto'**
+  String get agileSetupTitle;
+
+  /// No description provided for @agileStepComplete.
+  ///
+  /// In it, this message translates to:
+  /// **'{completed} di {total} passi completati'**
+  String agileStepComplete(int completed, int total);
+
+  /// No description provided for @agileSetupCompleteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Setup Completato!'**
+  String get agileSetupCompleteTitle;
+
+  /// No description provided for @agileSetupCompleteMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Il tuo progetto è pronto per iniziare.'**
+  String get agileSetupCompleteMessage;
+
+  /// No description provided for @agileChecklistAddMembers.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi membri al team'**
+  String get agileChecklistAddMembers;
+
+  /// No description provided for @agileChecklistAddMembersDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Invita i membri del team a collaborare'**
+  String get agileChecklistAddMembersDesc;
+
+  /// No description provided for @agileChecklistInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Invita'**
+  String get agileChecklistInvite;
+
+  /// No description provided for @agileChecklistCreateStories.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea le prime {itemType}'**
+  String agileChecklistCreateStories(String itemType);
+
+  /// No description provided for @agileChecklistAddItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi almeno 3 item al backlog'**
+  String get agileChecklistAddItems;
+
+  /// No description provided for @agileChecklistAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get agileChecklistAdd;
+
+  /// No description provided for @agileChecklistWipLimits.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura i WIP limits'**
+  String get agileChecklistWipLimits;
+
+  /// No description provided for @agileChecklistWipLimitsDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Imposta limiti per ogni colonna Kanban'**
+  String get agileChecklistWipLimitsDesc;
+
+  /// No description provided for @agileChecklistConfigure.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura'**
+  String get agileChecklistConfigure;
+
+  /// No description provided for @agileChecklistEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima le {itemType}'**
+  String agileChecklistEstimate(String itemType);
+
+  /// No description provided for @agileChecklistEstimateDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegna Story Points per pianificare meglio'**
+  String get agileChecklistEstimateDesc;
+
+  /// No description provided for @agileChecklistCreateSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea il primo Sprint'**
+  String get agileChecklistCreateSprint;
+
+  /// No description provided for @agileChecklistSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona le storie e inizia a lavorare'**
+  String get agileChecklistSprintDesc;
+
+  /// No description provided for @agileChecklistCreateSprintAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Sprint'**
+  String get agileChecklistCreateSprintAction;
+
+  /// No description provided for @agileChecklistStartWork.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia a lavorare'**
+  String get agileChecklistStartWork;
+
+  /// No description provided for @agileChecklistStartWorkDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Sposta un item in lavorazione'**
+  String get agileChecklistStartWorkDesc;
+
+  /// No description provided for @agileTipStartSprintTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pronto per uno Sprint?'**
+  String get agileTipStartSprintTitle;
+
+  /// No description provided for @agileTipStartSprintMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai abbastanza stories nel backlog. Considera di pianificare il primo Sprint.'**
+  String get agileTipStartSprintMessage;
+
+  /// No description provided for @agileTipWipTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura i WIP Limits'**
+  String get agileTipWipTitle;
+
+  /// No description provided for @agileTipWipMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'I WIP limits sono fondamentali in Kanban. Limita il lavoro in corso per migliorare il flusso.'**
+  String get agileTipWipMessage;
+
+  /// No description provided for @agileTipHybridTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura il tuo Scrumban'**
+  String get agileTipHybridTitle;
+
+  /// No description provided for @agileTipHybridMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi usare Sprint per cadenza o WIP limits per flusso continuo. Sperimenta!'**
+  String get agileTipHybridMessage;
+
+  /// No description provided for @agileTipDiscover.
+  ///
+  /// In it, this message translates to:
+  /// **'Scopri'**
+  String get agileTipDiscover;
+
+  /// No description provided for @agileTipClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get agileTipClose;
+
+  /// No description provided for @agileNextStepInviteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Invita il Team'**
+  String get agileNextStepInviteTitle;
+
+  /// No description provided for @agileNextStepInviteDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi membri per collaborare al progetto.'**
+  String get agileNextStepInviteDesc;
+
+  /// No description provided for @agileNextStepBacklogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea il Backlog'**
+  String get agileNextStepBacklogTitle;
+
+  /// No description provided for @agileNextStepBacklogDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi le prime {itemType} al backlog.'**
+  String agileNextStepBacklogDesc(String itemType);
+
+  /// No description provided for @agileNextStepSprintTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianifica uno Sprint'**
+  String get agileNextStepSprintTitle;
+
+  /// No description provided for @agileNextStepSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai {count} items pronti. Crea il primo Sprint!'**
+  String agileNextStepSprintDesc(int count);
+
+  /// No description provided for @agileNextStepWipTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura WIP Limits'**
+  String get agileNextStepWipTitle;
+
+  /// No description provided for @agileNextStepWipDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Limita il lavoro in corso per migliorare il flusso.'**
+  String get agileNextStepWipDesc;
+
+  /// No description provided for @agileNextStepWorkTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia a Lavorare'**
+  String get agileNextStepWorkTitle;
+
+  /// No description provided for @agileNextStepWorkDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Sposta un item \"In Progress\" per iniziare.'**
+  String get agileNextStepWorkDesc;
+
+  /// No description provided for @agileNextStepGoToKanban.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai al Kanban'**
+  String get agileNextStepGoToKanban;
+
+  /// No description provided for @agileActionNewStory.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Story'**
+  String get agileActionNewStory;
+
+  /// No description provided for @agileBacklogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Backlog'**
+  String get agileBacklogTitle;
+
+  /// No description provided for @agileBacklogArchiveTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivio Completate'**
+  String get agileBacklogArchiveTitle;
+
+  /// No description provided for @agileBacklogToggleActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra Backlog attivo'**
+  String get agileBacklogToggleActive;
+
+  /// No description provided for @agileBacklogToggleArchive.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra Archivio ({count} completate)'**
+  String agileBacklogToggleArchive(int count);
+
+  /// No description provided for @agileBacklogArchiveBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivio ({count})'**
+  String agileBacklogArchiveBadge(int count);
+
+  /// No description provided for @agileBacklogSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca per titolo, descrizione o ID...'**
+  String get agileBacklogSearchHint;
+
+  /// No description provided for @agileBacklogStatsStories.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} storie'**
+  String agileBacklogStatsStories(int count);
+
+  /// No description provided for @agileBacklogStatsPoints.
+  ///
+  /// In it, this message translates to:
+  /// **'{points} pt'**
+  String agileBacklogStatsPoints(int points);
+
+  /// No description provided for @agileBacklogStatsEstimated.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} stimate'**
+  String agileBacklogStatsEstimated(int count);
+
+  /// No description provided for @agileFiltersStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato:'**
+  String get agileFiltersStatus;
+
+  /// No description provided for @agileFiltersPriority.
+  ///
+  /// In it, this message translates to:
+  /// **'Priorità:'**
+  String get agileFiltersPriority;
+
+  /// No description provided for @agileFiltersTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag:'**
+  String get agileFiltersTags;
+
+  /// No description provided for @agileFiltersAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get agileFiltersAll;
+
+  /// No description provided for @agileFiltersClear.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi filtri'**
+  String get agileFiltersClear;
+
+  /// No description provided for @agileEmptyBacklogMatch.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna story trovata'**
+  String get agileEmptyBacklogMatch;
+
+  /// No description provided for @agileEmptyBacklog.
+  ///
+  /// In it, this message translates to:
+  /// **'Backlog vuoto'**
+  String get agileEmptyBacklog;
+
+  /// No description provided for @agileEmptyBacklogHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi la prima User Story'**
+  String get agileEmptyBacklogHint;
+
+  /// No description provided for @agileEstTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima Story'**
+  String get agileEstTitle;
+
+  /// No description provided for @agileEstMethod.
+  ///
+  /// In it, this message translates to:
+  /// **'Metodo di stima'**
+  String get agileEstMethod;
+
+  /// No description provided for @agileEstSelectValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona un valore'**
+  String get agileEstSelectValue;
+
+  /// No description provided for @agileEstSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma Stima'**
+  String get agileEstSubmit;
+
+  /// No description provided for @agileEstCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get agileEstCancel;
+
+  /// No description provided for @agileEstPokerTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Planning Poker (Fibonacci)'**
+  String get agileEstPokerTitle;
+
+  /// No description provided for @agileEstPokerDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona la complessità della story in story points'**
+  String get agileEstPokerDesc;
+
+  /// No description provided for @agileEstTShirtTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'T-Shirt Sizing'**
+  String get agileEstTShirtTitle;
+
+  /// No description provided for @agileEstTShirtDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona la dimensione relativa della story'**
+  String get agileEstTShirtDesc;
+
+  /// No description provided for @agileEstThreePointTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima a Tre Punti (PERT)'**
+  String get agileEstThreePointTitle;
+
+  /// No description provided for @agileEstThreePointDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci tre valori per calcolare la stima PERT'**
+  String get agileEstThreePointDesc;
+
+  /// No description provided for @agileEstBucketTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Bucket System'**
+  String get agileEstBucketTitle;
+
+  /// No description provided for @agileEstBucketDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Posiziona la story nel bucket appropriato'**
+  String get agileEstBucketDesc;
+
+  /// No description provided for @agileEstBucketHint.
+  ///
+  /// In it, this message translates to:
+  /// **'I bucket più grandi indicano story più complesse'**
+  String get agileEstBucketHint;
+
+  /// No description provided for @agileEstReference.
+  ///
+  /// In it, this message translates to:
+  /// **'Riferimento:'**
+  String get agileEstReference;
+
+  /// No description provided for @agileEstRefXS.
+  ///
+  /// In it, this message translates to:
+  /// **'XS = Poche ore'**
+  String get agileEstRefXS;
+
+  /// No description provided for @agileEstRefS.
+  ///
+  /// In it, this message translates to:
+  /// **'S = ~1 giorno'**
+  String get agileEstRefS;
+
+  /// No description provided for @agileEstRefM.
+  ///
+  /// In it, this message translates to:
+  /// **'M = ~2-3 giorni'**
+  String get agileEstRefM;
+
+  /// No description provided for @agileEstRefL.
+  ///
+  /// In it, this message translates to:
+  /// **'L = ~1 settimana'**
+  String get agileEstRefL;
+
+  /// No description provided for @agileEstRefXL.
+  ///
+  /// In it, this message translates to:
+  /// **'XL = ~2 settimane'**
+  String get agileEstRefXL;
+
+  /// No description provided for @agileEstRefXXL.
+  ///
+  /// In it, this message translates to:
+  /// **'XXL = Troppo grande, dividere'**
+  String get agileEstRefXXL;
+
+  /// No description provided for @agileEstOptimistic.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimistica (O)'**
+  String get agileEstOptimistic;
+
+  /// No description provided for @agileEstOptimisticHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Caso migliore'**
+  String get agileEstOptimisticHint;
+
+  /// No description provided for @agileEstMostLikely.
+  ///
+  /// In it, this message translates to:
+  /// **'Più Probabile (M)'**
+  String get agileEstMostLikely;
+
+  /// No description provided for @agileEstMostLikelyHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Caso probabile'**
+  String get agileEstMostLikelyHint;
+
+  /// No description provided for @agileEstPessimistic.
+  ///
+  /// In it, this message translates to:
+  /// **'Pessimistica (P)'**
+  String get agileEstPessimistic;
+
+  /// No description provided for @agileEstPessimisticHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Caso peggiore'**
+  String get agileEstPessimisticHint;
+
+  /// No description provided for @agileEstPointsSuffix.
+  ///
+  /// In it, this message translates to:
+  /// **'pt'**
+  String get agileEstPointsSuffix;
+
+  /// No description provided for @agileEstFormula.
+  ///
+  /// In it, this message translates to:
+  /// **'Formula PERT: (O + 4M + P) / 6'**
+  String get agileEstFormula;
+
+  /// No description provided for @agileEstResult.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima: {value} punti'**
+  String agileEstResult(String value);
+
+  /// No description provided for @agileEstErrorThreePoint.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci tutti e tre i valori'**
+  String get agileEstErrorThreePoint;
+
+  /// No description provided for @agileEstErrorSelect.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona un valore'**
+  String get agileEstErrorSelect;
+
+  /// No description provided for @agileEstExisting.
+  ///
+  /// In it, this message translates to:
+  /// **'Stime esistenti ({count})'**
+  String agileEstExisting(int count);
+
+  /// No description provided for @agileEstYou.
+  ///
+  /// In it, this message translates to:
+  /// **'Tu'**
+  String get agileEstYou;
+
+  /// No description provided for @scrumPermBacklogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Permessi Backlog'**
+  String get scrumPermBacklogTitle;
+
+  /// No description provided for @scrumPermBacklogDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Product Owner può creare, modificare, eliminare e prioritizzare le stories'**
+  String get scrumPermBacklogDesc;
+
+  /// No description provided for @scrumPermSprintTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Permessi Sprint'**
+  String get scrumPermSprintTitle;
+
+  /// No description provided for @scrumPermSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo lo Scrum Master può creare, avviare e completare gli sprint'**
+  String get scrumPermSprintDesc;
+
+  /// No description provided for @scrumPermEstimateTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Permessi Stima'**
+  String get scrumPermEstimateTitle;
+
+  /// No description provided for @scrumPermEstimateDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Development Team può stimare le stories'**
+  String get scrumPermEstimateDesc;
+
+  /// No description provided for @scrumPermKanbanTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Permessi Kanban'**
+  String get scrumPermKanbanTitle;
+
+  /// No description provided for @scrumPermKanbanDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Development Team può spostare le proprie stories, PO e SM possono spostare qualsiasi story'**
+  String get scrumPermKanbanDesc;
+
+  /// No description provided for @scrumPermTeamTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Permessi Team'**
+  String get scrumPermTeamTitle;
+
+  /// No description provided for @scrumPermTeamDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'PO e SM possono invitare membri, solo il PO può modificare i ruoli'**
+  String get scrumPermTeamDesc;
+
+  /// No description provided for @scrumPermDeniedBacklogCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Product Owner può creare nuove stories'**
+  String get scrumPermDeniedBacklogCreate;
+
+  /// No description provided for @scrumPermDeniedBacklogEdit.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Product Owner può modificare le stories'**
+  String get scrumPermDeniedBacklogEdit;
+
+  /// No description provided for @scrumPermDeniedBacklogDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Product Owner può eliminare le stories'**
+  String get scrumPermDeniedBacklogDelete;
+
+  /// No description provided for @scrumPermDeniedBacklogPrioritize.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Product Owner può riordinare il backlog'**
+  String get scrumPermDeniedBacklogPrioritize;
+
+  /// No description provided for @scrumPermDeniedSprintCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo lo Scrum Master può creare nuovi sprint'**
+  String get scrumPermDeniedSprintCreate;
+
+  /// No description provided for @scrumPermDeniedSprintStart.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo lo Scrum Master può avviare gli sprint'**
+  String get scrumPermDeniedSprintStart;
+
+  /// No description provided for @scrumPermDeniedSprintComplete.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo lo Scrum Master può completare gli sprint'**
+  String get scrumPermDeniedSprintComplete;
+
+  /// No description provided for @scrumPermDeniedEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Development Team può stimare le stories'**
+  String get scrumPermDeniedEstimate;
+
+  /// No description provided for @scrumPermDeniedInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo PO e SM possono invitare nuovi membri'**
+  String get scrumPermDeniedInvite;
+
+  /// No description provided for @scrumPermDeniedRoleChange.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo il Product Owner può modificare i ruoli del team'**
+  String get scrumPermDeniedRoleChange;
+
+  /// No description provided for @scrumPermDeniedWipConfig.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo lo Scrum Master può configurare i limiti WIP'**
+  String get scrumPermDeniedWipConfig;
+
+  /// No description provided for @scrumRoleProductOwner.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Owner'**
+  String get scrumRoleProductOwner;
+
+  /// No description provided for @scrumRoleScrumMaster.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrum Master'**
+  String get scrumRoleScrumMaster;
+
+  /// No description provided for @scrumRoleDeveloper.
+  ///
+  /// In it, this message translates to:
+  /// **'Developer'**
+  String get scrumRoleDeveloper;
+
+  /// No description provided for @scrumRoleDesigner.
+  ///
+  /// In it, this message translates to:
+  /// **'Designer'**
+  String get scrumRoleDesigner;
+
+  /// No description provided for @scrumRoleQA.
+  ///
+  /// In it, this message translates to:
+  /// **'QA'**
+  String get scrumRoleQA;
+
+  /// No description provided for @scrumRoleStakeholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Stakeholder'**
+  String get scrumRoleStakeholder;
+
+  /// No description provided for @scrumMatrixTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice Permessi Scrum'**
+  String get scrumMatrixTitle;
+
+  /// No description provided for @scrumMatrixSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Chi può fare cosa secondo la Scrum Guide 2020'**
+  String get scrumMatrixSubtitle;
+
+  /// No description provided for @scrumMatrixLegend.
+  ///
+  /// In it, this message translates to:
+  /// **'Legenda'**
+  String get scrumMatrixLegend;
+
+  /// No description provided for @scrumMatrixLegendFull.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisce'**
+  String get scrumMatrixLegendFull;
+
+  /// No description provided for @scrumMatrixLegendPartial.
+  ///
+  /// In it, this message translates to:
+  /// **'Parziale'**
+  String get scrumMatrixLegendPartial;
+
+  /// No description provided for @scrumMatrixLegendView.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizza'**
+  String get scrumMatrixLegendView;
+
+  /// No description provided for @scrumMatrixLegendNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno'**
+  String get scrumMatrixLegendNone;
+
+  /// No description provided for @scrumMatrixCategoryBacklog.
+  ///
+  /// In it, this message translates to:
+  /// **'BACKLOG'**
+  String get scrumMatrixCategoryBacklog;
+
+  /// No description provided for @scrumMatrixCategorySprint.
+  ///
+  /// In it, this message translates to:
+  /// **'SPRINT'**
+  String get scrumMatrixCategorySprint;
+
+  /// No description provided for @scrumMatrixCategoryEstimation.
+  ///
+  /// In it, this message translates to:
+  /// **'STIMA'**
+  String get scrumMatrixCategoryEstimation;
+
+  /// No description provided for @scrumMatrixCategoryKanban.
+  ///
+  /// In it, this message translates to:
+  /// **'KANBAN'**
+  String get scrumMatrixCategoryKanban;
+
+  /// No description provided for @scrumMatrixCategoryTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'TEAM'**
+  String get scrumMatrixCategoryTeam;
+
+  /// No description provided for @scrumMatrixCategoryRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'RETROSPETTIVA'**
+  String get scrumMatrixCategoryRetro;
+
+  /// No description provided for @scrumMatrixActionCreateStory.
+  ///
+  /// In it, this message translates to:
+  /// **'Creare Story'**
+  String get scrumMatrixActionCreateStory;
+
+  /// No description provided for @scrumMatrixActionEditStory.
+  ///
+  /// In it, this message translates to:
+  /// **'Modificare Story'**
+  String get scrumMatrixActionEditStory;
+
+  /// No description provided for @scrumMatrixActionDeleteStory.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare Story'**
+  String get scrumMatrixActionDeleteStory;
+
+  /// No description provided for @scrumMatrixActionPrioritize.
+  ///
+  /// In it, this message translates to:
+  /// **'Prioritizzare Backlog'**
+  String get scrumMatrixActionPrioritize;
+
+  /// No description provided for @scrumMatrixActionAddAcceptance.
+  ///
+  /// In it, this message translates to:
+  /// **'Definire Criteri Accettazione'**
+  String get scrumMatrixActionAddAcceptance;
+
+  /// No description provided for @scrumMatrixActionCreateSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Creare Sprint'**
+  String get scrumMatrixActionCreateSprint;
+
+  /// No description provided for @scrumMatrixActionStartSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Avviare Sprint'**
+  String get scrumMatrixActionStartSprint;
+
+  /// No description provided for @scrumMatrixActionCompleteSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Completare Sprint'**
+  String get scrumMatrixActionCompleteSprint;
+
+  /// No description provided for @scrumMatrixActionConfigWip.
+  ///
+  /// In it, this message translates to:
+  /// **'Configurare Limiti WIP'**
+  String get scrumMatrixActionConfigWip;
+
+  /// No description provided for @scrumMatrixActionEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Stimare Story Points'**
+  String get scrumMatrixActionEstimate;
+
+  /// No description provided for @scrumMatrixActionFinalEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Definire Stima Finale'**
+  String get scrumMatrixActionFinalEstimate;
+
+  /// No description provided for @scrumMatrixActionMoveOwn.
+  ///
+  /// In it, this message translates to:
+  /// **'Spostare proprie Story'**
+  String get scrumMatrixActionMoveOwn;
+
+  /// No description provided for @scrumMatrixActionMoveAny.
+  ///
+  /// In it, this message translates to:
+  /// **'Spostare qualsiasi Story'**
+  String get scrumMatrixActionMoveAny;
+
+  /// No description provided for @scrumMatrixActionSelfAssign.
+  ///
+  /// In it, this message translates to:
+  /// **'Auto-assegnarsi'**
+  String get scrumMatrixActionSelfAssign;
+
+  /// No description provided for @scrumMatrixActionAssignOthers.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnare altri'**
+  String get scrumMatrixActionAssignOthers;
+
+  /// No description provided for @scrumMatrixActionChangeStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambiare stato Story'**
+  String get scrumMatrixActionChangeStatus;
+
+  /// No description provided for @scrumMatrixActionInvite.
+  ///
+  /// In it, this message translates to:
+  /// **'Invitare membri'**
+  String get scrumMatrixActionInvite;
+
+  /// No description provided for @scrumMatrixActionRemove.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovere membri'**
+  String get scrumMatrixActionRemove;
+
+  /// No description provided for @scrumMatrixActionChangeRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambiare ruoli'**
+  String get scrumMatrixActionChangeRole;
+
+  /// No description provided for @scrumMatrixActionFacilitateRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Facilitare Retrospettiva'**
+  String get scrumMatrixActionFacilitateRetro;
+
+  /// No description provided for @scrumMatrixActionParticipateRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipare Retrospettiva'**
+  String get scrumMatrixActionParticipateRetro;
+
+  /// No description provided for @scrumMatrixActionAddRetroItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungere item Retro'**
+  String get scrumMatrixActionAddRetroItem;
+
+  /// No description provided for @scrumMatrixActionVoteRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Votare item'**
+  String get scrumMatrixActionVoteRetro;
+
+  /// No description provided for @scrumMatrixColPO.
+  ///
+  /// In it, this message translates to:
+  /// **'PO'**
+  String get scrumMatrixColPO;
+
+  /// No description provided for @scrumMatrixColSM.
+  ///
+  /// In it, this message translates to:
+  /// **'SM'**
+  String get scrumMatrixColSM;
+
+  /// No description provided for @scrumMatrixColDev.
+  ///
+  /// In it, this message translates to:
+  /// **'Dev'**
+  String get scrumMatrixColDev;
+
+  /// No description provided for @scrumMatrixColStake.
+  ///
+  /// In it, this message translates to:
+  /// **'Stake'**
+  String get scrumMatrixColStake;
+
+  /// No description provided for @agileInviteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Invita al Team'**
+  String get agileInviteTitle;
+
+  /// No description provided for @agileInviteNew.
+  ///
+  /// In it, this message translates to:
+  /// **'NUOVO INVITO'**
+  String get agileInviteNew;
+
+  /// No description provided for @agileInviteEmailLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Email'**
+  String get agileInviteEmailLabel;
+
+  /// No description provided for @agileInviteEmailHint.
+  ///
+  /// In it, this message translates to:
+  /// **'nome@esempio.com'**
+  String get agileInviteEmailHint;
+
+  /// No description provided for @agileInviteEnterEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un\'email'**
+  String get agileInviteEnterEmail;
+
+  /// No description provided for @agileInviteInvalidEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Email non valida'**
+  String get agileInviteInvalidEmail;
+
+  /// No description provided for @agileInviteProjectRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruolo nel Progetto'**
+  String get agileInviteProjectRole;
+
+  /// No description provided for @agileInviteTeamRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruolo nel Team'**
+  String get agileInviteTeamRole;
+
+  /// No description provided for @agileInviteSendEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia email di notifica'**
+  String get agileInviteSendEmail;
+
+  /// No description provided for @agileInviteSendBtn.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia Invito'**
+  String get agileInviteSendBtn;
+
+  /// No description provided for @agileInviteLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Link di invito:'**
+  String get agileInviteLink;
+
+  /// No description provided for @agileInviteLinkCopied.
+  ///
+  /// In it, this message translates to:
+  /// **'Link copiato!'**
+  String get agileInviteLinkCopied;
+
+  /// No description provided for @agileInviteListTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'INVITI'**
+  String get agileInviteListTitle;
+
+  /// No description provided for @agileInviteClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get agileInviteClose;
+
+  /// No description provided for @agileInviteGmailAuthTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizzazione Gmail'**
+  String get agileInviteGmailAuthTitle;
+
+  /// No description provided for @agileInviteGmailAuthContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\nVuoi procedere?'**
+  String get agileInviteGmailAuthContent;
+
+  /// No description provided for @agileInviteGmailAuthNo.
+  ///
+  /// In it, this message translates to:
+  /// **'No, solo link'**
+  String get agileInviteGmailAuthNo;
+
+  /// No description provided for @agileInviteGmailAuthYes.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizza'**
+  String get agileInviteGmailAuthYes;
+
+  /// No description provided for @agileInviteSentEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito inviato via email a {email}'**
+  String agileInviteSentEmail(String email);
+
+  /// No description provided for @agileInviteCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito creato per {email}'**
+  String agileInviteCreated(String email);
+
+  /// No description provided for @agileInviteRevokeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Revocare invito?'**
+  String get agileInviteRevokeTitle;
+
+  /// No description provided for @agileInviteRevokeContent.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'invito non sarà più valido.'**
+  String get agileInviteRevokeContent;
+
+  /// No description provided for @agileInviteRevokeBtn.
+  ///
+  /// In it, this message translates to:
+  /// **'Revoca'**
+  String get agileInviteRevokeBtn;
+
+  /// No description provided for @agileInviteResend.
+  ///
+  /// In it, this message translates to:
+  /// **'Reinvia'**
+  String get agileInviteResend;
+
+  /// No description provided for @agileInviteResent.
+  ///
+  /// In it, this message translates to:
+  /// **'Invito reinviato'**
+  String get agileInviteResent;
+
+  /// No description provided for @agileInviteStatusPending.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa'**
+  String get agileInviteStatusPending;
+
+  /// No description provided for @agileInviteStatusAccepted.
+  ///
+  /// In it, this message translates to:
+  /// **'Accettato'**
+  String get agileInviteStatusAccepted;
+
+  /// No description provided for @agileInviteStatusDeclined.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiutato'**
+  String get agileInviteStatusDeclined;
+
+  /// No description provided for @agileInviteStatusExpired.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaduto'**
+  String get agileInviteStatusExpired;
+
+  /// No description provided for @agileInviteStatusRevoked.
+  ///
+  /// In it, this message translates to:
+  /// **'Revocato'**
+  String get agileInviteStatusRevoked;
+
+  /// No description provided for @agileRoleMember.
+  ///
+  /// In it, this message translates to:
+  /// **'Membro'**
+  String get agileRoleMember;
+
+  /// No description provided for @agileRoleAdmin.
+  ///
+  /// In it, this message translates to:
+  /// **'Admin'**
+  String get agileRoleAdmin;
+
+  /// No description provided for @agileRoleViewer.
+  ///
+  /// In it, this message translates to:
+  /// **'Osservatore'**
+  String get agileRoleViewer;
+
+  /// No description provided for @agileRoleOwner.
+  ///
+  /// In it, this message translates to:
+  /// **'Proprietario'**
+  String get agileRoleOwner;
 }
 
 class _AppLocalizationsDelegate

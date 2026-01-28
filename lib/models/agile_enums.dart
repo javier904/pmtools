@@ -341,14 +341,99 @@ enum TeamRole {
     }
   }
 
-  /// Verifica se può gestire il backlog
+  // =========================================================================
+  // PERMESSI SCRUM-COMPLIANT (Scrum Guide 2020)
+  // =========================================================================
+
+  /// BACKLOG MANAGEMENT - Solo Product Owner
+  /// "The Product Owner is accountable for the Product Backlog"
   bool get canManageBacklog => this == TeamRole.productOwner;
 
-  /// Verifica se può facilitare le cerimonie
+  /// Può creare user stories - Solo PO
+  bool get canCreateStory => this == TeamRole.productOwner;
+
+  /// Può modificare user stories - Solo PO
+  bool get canEditStory => this == TeamRole.productOwner;
+
+  /// Può eliminare user stories - Solo PO
+  bool get canDeleteStory => this == TeamRole.productOwner;
+
+  /// Può riordinare/prioritizzare backlog - Solo PO
+  bool get canPrioritizeBacklog => this == TeamRole.productOwner;
+
+  // =========================================================================
+  // SPRINT MANAGEMENT - Solo Scrum Master
+  // =========================================================================
+
+  /// Può gestire sprint (creare, avviare, completare) - Solo SM
+  bool get canManageSprints => this == TeamRole.scrumMaster;
+
+  /// Può facilitare le cerimonie Scrum - SM (e PO per Sprint Review)
   bool get canFacilitate => this == TeamRole.scrumMaster || this == TeamRole.productOwner;
 
-  /// Verifica se può stimare
+  // =========================================================================
+  // ESTIMATION - Solo Development Team
+  // =========================================================================
+
+  /// Può stimare (votare in Planning Poker) - Solo Dev Team
+  /// "Only Developers estimate the effort required"
   bool get canEstimate => this == TeamRole.developer || this == TeamRole.designer || this == TeamRole.qa;
+
+  /// Può impostare la stima finale dopo consenso - Solo PO
+  bool get canSetFinalEstimate => this == TeamRole.productOwner;
+
+  // =========================================================================
+  // TASK ASSIGNMENT & KANBAN
+  // =========================================================================
+
+  /// Può auto-assegnarsi task - Solo Dev Team (self-organizing)
+  bool get canSelfAssign => this == TeamRole.developer || this == TeamRole.designer || this == TeamRole.qa;
+
+  /// Può assegnare task ad altri - Solo PO (se necessario)
+  bool get canAssignOthers => this == TeamRole.productOwner;
+
+  /// Può spostare le proprie story sul Kanban - Tutti tranne Stakeholder
+  bool get canMoveOwnStory => this != TeamRole.stakeholder;
+
+  /// Può spostare qualsiasi story sul Kanban - PO e SM
+  bool get canMoveAnyStory => this == TeamRole.productOwner || this == TeamRole.scrumMaster;
+
+  // =========================================================================
+  // TEAM MANAGEMENT
+  // =========================================================================
+
+  /// Può invitare membri al team - PO e SM
+  bool get canInviteMembers => this == TeamRole.productOwner || this == TeamRole.scrumMaster;
+
+  /// Può rimuovere membri dal team - Solo PO
+  bool get canRemoveMembers => this == TeamRole.productOwner;
+
+  /// Può cambiare ruoli nel team - Solo PO
+  bool get canChangeRoles => this == TeamRole.productOwner;
+
+  // =========================================================================
+  // DAILY STANDUP & RETROSPECTIVE
+  // =========================================================================
+
+  /// Può aggiungere note standup - Tutti tranne Stakeholder
+  bool get canAddStandupNote => this != TeamRole.stakeholder;
+
+  /// Può facilitare retrospettiva - Solo SM
+  bool get canFacilitateRetro => this == TeamRole.scrumMaster;
+
+  /// Può partecipare a retrospettiva - Tutti tranne Stakeholder
+  /// "The Retrospective is for the Scrum Team"
+  bool get canParticipateRetro => this != TeamRole.stakeholder;
+
+  // =========================================================================
+  // UTILITY
+  // =========================================================================
+
+  /// È parte del Development Team
+  bool get isDevelopmentTeam => this == TeamRole.developer || this == TeamRole.designer || this == TeamRole.qa;
+
+  /// È parte dello Scrum Team (PO + SM + Dev Team)
+  bool get isScrumTeam => this != TeamRole.stakeholder;
 }
 
 /// Ruoli partecipante (semplificato per permessi)

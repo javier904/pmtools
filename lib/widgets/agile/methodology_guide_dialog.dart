@@ -190,6 +190,13 @@ class _MethodologyGuideContent extends StatelessWidget {
         // Sections
         ...guide.sections.map((section) => _buildSection(section)),
 
+        // Matrice permessi (solo per Scrum e Hybrid che usano ruoli Scrum)
+        if (guide.framework == AgileFramework.scrum ||
+            guide.framework == AgileFramework.hybrid) ...[
+          ScrumPermissionsMatrixWidget(accentColor: guide.color),
+          const SizedBox(height: 16),
+        ],
+
         // Best Practices
         _buildListCard(
           AppLocalizations.of(context)!.agileBestPractices,
@@ -946,4 +953,300 @@ class _ArtifactChip extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Widget per mostrare la matrice completa dei permessi Scrum
+class ScrumPermissionsMatrixWidget extends StatelessWidget {
+  final Color accentColor;
+
+  const ScrumPermissionsMatrixWidget({
+    super.key,
+    this.accentColor = Colors.teal,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                Icon(Icons.security, color: accentColor, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.scrumMatrixTitle,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: accentColor,
+                        ),
+                      ),
+                      Text(
+                        l10n.scrumMatrixSubtitle,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: context.textMutedColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Legenda
+            _buildLegend(context, l10n),
+            const SizedBox(height: 16),
+
+            // Matrice
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: _buildMatrix(context, l10n),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLegend(BuildContext context, AppLocalizations l10n) {
+    return Row(
+      children: [
+        Text(
+          '${l10n.scrumMatrixLegend}: ',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            color: context.textMutedColor,
+          ),
+        ),
+        const SizedBox(width: 8),
+        _buildLegendItem('✅', l10n.scrumMatrixLegendFull, Colors.green),
+        const SizedBox(width: 12),
+        _buildLegendItem('📝', l10n.scrumMatrixLegendPartial, Colors.orange),
+        const SizedBox(width: 12),
+        _buildLegendItem('👁️', l10n.scrumMatrixLegendView, Colors.blue),
+        const SizedBox(width: 12),
+        _buildLegendItem('❌', l10n.scrumMatrixLegendNone, Colors.grey),
+      ],
+    );
+  }
+
+  Widget _buildLegendItem(String emoji, String label, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(emoji, style: const TextStyle(fontSize: 12)),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(fontSize: 11, color: color),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMatrix(BuildContext context, AppLocalizations l10n) {
+    final categories = _getCategories(l10n);
+
+    return Table(
+      defaultColumnWidth: const IntrinsicColumnWidth(),
+      border: TableBorder.all(
+        color: context.borderColor,
+        width: 0.5,
+      ),
+      children: [
+        // Header row
+        TableRow(
+          decoration: BoxDecoration(
+            color: accentColor.withOpacity(0.1),
+          ),
+          children: [
+            _buildHeaderCell('', isAction: true),
+            _buildHeaderCell(l10n.scrumMatrixColPO),
+            _buildHeaderCell(l10n.scrumMatrixColSM),
+            _buildHeaderCell(l10n.scrumMatrixColDev),
+            _buildHeaderCell(l10n.scrumMatrixColStake),
+          ],
+        ),
+        // Data rows by category
+        ...categories.expand((category) => [
+          // Category header
+          TableRow(
+            decoration: BoxDecoration(
+              color: context.surfaceVariantColor,
+            ),
+            children: [
+              _buildCategoryCell(category.name),
+              _buildCategoryCell(''),
+              _buildCategoryCell(''),
+              _buildCategoryCell(''),
+              _buildCategoryCell(''),
+            ],
+          ),
+          // Actions in category
+          ...category.actions.map((action) => TableRow(
+            children: [
+              _buildActionCell(action.label),
+              _buildPermissionCell(action.po),
+              _buildPermissionCell(action.sm),
+              _buildPermissionCell(action.dev),
+              _buildPermissionCell(action.stake),
+            ],
+          )),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildHeaderCell(String text, {bool isAction = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: accentColor,
+        ),
+        textAlign: isAction ? TextAlign.left : TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildCategoryCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionCell(String text) {
+    return Builder(
+      builder: (context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 11,
+            color: context.textSecondaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPermissionCell(_PermLevel level) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Text(
+        level.emoji,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 14),
+      ),
+    );
+  }
+
+  List<_PermissionCategory> _getCategories(AppLocalizations l10n) {
+    return [
+      _PermissionCategory(
+        name: l10n.scrumMatrixCategoryBacklog,
+        actions: [
+          _PermissionAction(l10n.scrumMatrixActionCreateStory, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionEditStory, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionDeleteStory, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionPrioritize, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionAddAcceptance, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+        ],
+      ),
+      _PermissionCategory(
+        name: l10n.scrumMatrixCategorySprint,
+        actions: [
+          _PermissionAction(l10n.scrumMatrixActionCreateSprint, _PermLevel.none, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionStartSprint, _PermLevel.none, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionCompleteSprint, _PermLevel.none, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionConfigWip, _PermLevel.none, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+        ],
+      ),
+      _PermissionCategory(
+        name: l10n.scrumMatrixCategoryEstimation,
+        actions: [
+          _PermissionAction(l10n.scrumMatrixActionEstimate, _PermLevel.none, _PermLevel.none, _PermLevel.full, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionFinalEstimate, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+        ],
+      ),
+      _PermissionCategory(
+        name: l10n.scrumMatrixCategoryKanban,
+        actions: [
+          _PermissionAction(l10n.scrumMatrixActionMoveOwn, _PermLevel.full, _PermLevel.full, _PermLevel.full, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionMoveAny, _PermLevel.full, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionSelfAssign, _PermLevel.none, _PermLevel.none, _PermLevel.full, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionAssignOthers, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionChangeStatus, _PermLevel.full, _PermLevel.full, _PermLevel.partial, _PermLevel.view),
+        ],
+      ),
+      _PermissionCategory(
+        name: l10n.scrumMatrixCategoryTeam,
+        actions: [
+          _PermissionAction(l10n.scrumMatrixActionInvite, _PermLevel.full, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionRemove, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionChangeRole, _PermLevel.full, _PermLevel.none, _PermLevel.none, _PermLevel.none),
+        ],
+      ),
+      _PermissionCategory(
+        name: l10n.scrumMatrixCategoryRetro,
+        actions: [
+          _PermissionAction(l10n.scrumMatrixActionFacilitateRetro, _PermLevel.none, _PermLevel.full, _PermLevel.none, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionParticipateRetro, _PermLevel.full, _PermLevel.full, _PermLevel.full, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionAddRetroItem, _PermLevel.full, _PermLevel.full, _PermLevel.full, _PermLevel.none),
+          _PermissionAction(l10n.scrumMatrixActionVoteRetro, _PermLevel.full, _PermLevel.full, _PermLevel.full, _PermLevel.none),
+        ],
+      ),
+    ];
+  }
+}
+
+enum _PermLevel {
+  full('✅'),
+  partial('📝'),
+  view('👁️'),
+  none('❌');
+
+  final String emoji;
+  const _PermLevel(this.emoji);
+}
+
+class _PermissionCategory {
+  final String name;
+  final List<_PermissionAction> actions;
+
+  const _PermissionCategory({required this.name, required this.actions});
+}
+
+class _PermissionAction {
+  final String label;
+  final _PermLevel po;
+  final _PermLevel sm;
+  final _PermLevel dev;
+  final _PermLevel stake;
+
+  const _PermissionAction(this.label, this.po, this.sm, this.dev, this.stake);
 }

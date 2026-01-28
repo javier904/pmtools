@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
+import '../../themes/app_colors.dart';
 import '../models/agile_project_model.dart';
 import '../models/user_story_model.dart';
 import '../models/sprint_model.dart';
@@ -145,15 +148,18 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             onPressed: () => AuditLogViewer.show(context, widget.project.id),
           ),
           // Settings
+          // SCRUM PERMISSIONS: Menu mostra solo opzioni per cui l'utente ha permesso
           PopupMenuButton<String>(
             itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'invite',
-                child: ListTile(
-                  leading: const Icon(Icons.person_add),
-                  title: Text(l10n.actionInviteMember),
+              // Solo PO/SM possono invitare membri
+              if (widget.project.canInviteMembers(_currentUserEmail))
+                PopupMenuItem(
+                  value: 'invite',
+                  child: ListTile(
+                    leading: const Icon(Icons.person_add),
+                    title: Text(l10n.actionInviteMember),
+                  ),
                 ),
-              ),
               PopupMenuItem(
                 value: 'settings',
                 child: ListTile(
@@ -186,32 +192,38 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           )).toList(),
         ),
       ),
-      body: StreamBuilder<List<UserStoryModel>>(
-        stream: _firestoreService.streamProjectStories(widget.project.id),
-        builder: (context, storiesSnapshot) {
-          if (storiesSnapshot.hasData) {
-            _stories = storiesSnapshot.data!;
-          }
+      body: StreamBuilder<AgileProjectModel?>(
+        stream: _firestoreService.streamProject(widget.project.id),
+        builder: (context, projectSnapshot) {
+          final project = projectSnapshot.data ?? widget.project;
 
-          return StreamBuilder<List<SprintModel>>(
-            stream: _firestoreService.streamProjectSprints(widget.project.id),
-            builder: (context, sprintsSnapshot) {
-              if (sprintsSnapshot.hasData) {
-                _sprints = sprintsSnapshot.data!;
+          return StreamBuilder<List<UserStoryModel>>(
+            stream: _firestoreService.streamProjectStories(project.id),
+            builder: (context, storiesSnapshot) {
+              if (storiesSnapshot.hasData) {
+                _stories = storiesSnapshot.data!;
               }
 
-              // Team members sono nei participants del progetto
-              _teamMembers = widget.project.participants.values.toList();
+              return StreamBuilder<List<SprintModel>>(
+                stream: _firestoreService.streamProjectSprints(project.id),
+                builder: (context, sprintsSnapshot) {
+                  if (sprintsSnapshot.hasData) {
+                    _sprints = sprintsSnapshot.data!;
+                  }
 
-              return TabBarView(
-                controller: _tabController,
-                children: _features.visibleTabs.map((tab) => _buildTabContent(tab)).toList(),
+                  // Team members sono nei participants del progetto
+                  _teamMembers = project.participants.values.toList();
+
+                  return TabBarView(
+                    controller: _tabController,
+                    children: _features.visibleTabs.map((tab) => _buildTabContent(tab, project)).toList(),
+                  );
+                },
               );
             },
           );
         },
       ),
-      // floatingActionButton: _buildFAB(), // Nascondi FAB come richiesto
     );
   }
 
@@ -219,16 +231,16 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // TAB CONTENT BUILDER
   // ══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildTabContent(AgileTab tab) {
+  Widget _buildTabContent(AgileTab tab, AgileProjectModel project) {
     switch (tab) {
       case AgileTab.backlog:
-        return _buildBacklogTab();
+        return _buildBacklogTab(project);
       case AgileTab.sprint:
-        return _buildSprintTab();
+        return _buildSprintTab(project);
       case AgileTab.kanban:
-        return _buildKanbanTab();
+        return _buildKanbanTab(project);
       case AgileTab.team:
-        return _buildTeamTab();
+        return _buildTeamTab(project);
       case AgileTab.metrics:
         return _buildMetricsTab();
       case AgileTab.retro:
@@ -240,37 +252,39 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // TAB 1: BACKLOG
   // ══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildBacklogTab() {
-    final isSetupComplete = _isProjectSetupComplete();
+  Widget _buildBacklogTab(AgileProjectModel project) {
+    final isSetupComplete = _isProjectSetupComplete(project);
     final hasActiveSprint = _sprints.any((s) => s.status == SprintStatus.active);
-    final hasWipLimits = widget.project.kanbanColumns.any((c) => c.wipLimit != null);
+    final hasWipLimits = project.kanbanColumns.any((c) => c.wipLimit != null);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Calcola l'altezza disponibile per il backlog
-        // Assumiamo che i widget superiori occupino circa 350-400px
-        final backlogMinHeight = (constraints.maxHeight - 400).clamp(300.0, constraints.maxHeight * 0.6);
-        
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Column(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 32),
+      child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Setup checklist per progetti nuovi
+                // SCRUM PERMISSIONS: I callback sono abilitati solo se l'utente ha il permesso appropriato
                 if (!isSetupComplete) ...[
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: SetupChecklistWidget(
-                      project: widget.project,
+                      project: project,
                       stories: _stories,
                       sprints: _sprints,
-                      onAddTeamMember: _showInviteDialog,
-                      onAddStory: _showCreateStoryDialog,
-                      onStartSprint: _features.showSprintTab ? _showCreateSprintDialog : null,
-                      onConfigureWip: _features.hasWipLimits ? () => _tabController.animateTo(
-                        _features.visibleTabs.indexOf(AgileTab.kanban),
-                      ) : null,
+                      onAddTeamMember: project.canInviteMembers(_currentUserEmail)
+                          ? _showInviteDialog
+                          : null,
+                      onAddStory: project.canCreateStory(_currentUserEmail)
+                          ? _showCreateStoryDialog
+                          : null,
+                      onStartSprint: _features.showSprintTab && project.canManageSprints(_currentUserEmail)
+                          ? _showCreateSprintDialog
+                          : null,
+                      onConfigureWip: _features.hasWipLimits && project.canManageSprints(_currentUserEmail)
+                          ? () => _tabController.animateTo(
+                              _features.visibleTabs.indexOf(AgileTab.kanban),
+                            )
+                          : null,
                     ),
                   ),
                 ] else ...[
@@ -278,8 +292,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                     child: NextStepWidget(
-                      framework: widget.project.framework,
-                      project: widget.project,
+                      framework: project.framework,
+                      project: project,
                       stories: _stories,
                       sprints: _sprints,
                       onAction: () {
@@ -301,41 +315,46 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                   ),
                 ),
 
-                // Backlog list con altezza minima garantita
-                SizedBox(
-                  height: backlogMinHeight,
-                  child: BacklogListWidget(
+                // Backlog list
+                // SCRUM PERMISSIONS:
+                // - canEdit: PO può creare/editare/eliminare/riordinare stories
+                // - onStoryEstimate: Dev Team può stimare (controllato nel dialog)
+                BacklogListWidget(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                     stories: _stories,
                     sprints: _sprints,
-                    projectId: widget.project.id,
+                    projectId: project.id,
                     onStoryTap: (story) => _showStoryDetail(story),
-                    onReorder: (newOrder) => _reorderStories(newOrder),
-                    onStoryEstimate: _showEstimateStoryDialog,
+                    onReorder: project.canPrioritizeBacklog(_currentUserEmail)
+                        ? (newOrder) => _reorderStories(newOrder)
+                        : null,
+                    onStoryEstimate: project.canEstimate(_currentUserEmail)
+                        ? _showEstimateStoryDialog
+                        : null,
                     onAddToSprint: _addToSprint,
-                    onAddStory: _showCreateStoryDialog,
-                    canEdit: widget.project.canManage(_currentUserEmail),
-                  ),
+                    onAddStory: project.canCreateStory(_currentUserEmail)
+                        ? _showCreateStoryDialog
+                        : null,
+                    canEdit: project.canEditStory(_currentUserEmail),
                 ),
-              ],
-            ),
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
 
   /// Verifica se il setup del progetto è completato
-  bool _isProjectSetupComplete() {
+  bool _isProjectSetupComplete(AgileProjectModel project) {
     // Criteri base: almeno 3 stories e team > 1
     if (_stories.length < 3) return false;
-    if (widget.project.participantCount <= 1) return false;
+    if (project.participantCount <= 1) return false;
 
     // Per Scrum/Hybrid: almeno uno sprint
     if (_features.showSprintTab && _sprints.isEmpty) return false;
 
     // Per Kanban/Hybrid: WIP limits configurati
     if (_features.hasWipLimits) {
-      final hasWip = widget.project.kanbanColumns.any((c) => c.wipLimit != null);
+      final hasWip = project.kanbanColumns.any((c) => c.wipLimit != null);
       if (!hasWip) return false;
     }
 
@@ -378,10 +397,13 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   Future<void> _showStoryDetail(UserStoryModel story) async {
+    // SCRUM PERMISSIONS:
+    // - onEdit: Solo PO può modificare le stories
+    // - onStatusChange: Dev Team può spostare le proprie stories (gestito nel widget)
     await StoryDetailDialog.show(
       context: context,
       story: story,
-      onEdit: widget.project.canManage(_currentUserEmail)
+      onEdit: widget.project.canEditStory(_currentUserEmail)
           ? () => _showEditStoryDialog(story)
           : null,
       onStatusChange: (status) => _updateStoryStatus(story, status),
@@ -637,7 +659,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
-  Widget _buildSprintTab() {
+  Widget _buildSprintTab(AgileProjectModel project) {
     final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
 
     return SingleChildScrollView(
@@ -650,10 +672,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: MethodologyQuickInfo(
-                framework: widget.project.framework,
+                framework: project.framework,
                 onLearnMore: () => MethodologyGuideDialog.show(
                   context,
-                  framework: widget.project.framework,
+                  framework: project.framework,
                 ),
               ),
             ),
@@ -671,13 +693,20 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ],
 
           // Lista sprint
+          // SCRUM PERMISSIONS: Solo SM può gestire gli sprint
           SprintListWidget(
             sprints: _sprints,
             onSprintTap: (sprint) => _showSprintDetail(sprint),
-            onAddSprint: _showCreateSprintDialog,
-            onSprintStart: _startSprint,
-            onSprintComplete: _completeSprint,
-            canEdit: widget.project.canManage(_currentUserEmail),
+            onAddSprint: project.canManageSprints(_currentUserEmail)
+                ? _showCreateSprintDialog
+                : null,
+            onSprintStart: project.canManageSprints(_currentUserEmail)
+                ? _startSprint
+                : null,
+            onSprintComplete: project.canManageSprints(_currentUserEmail)
+                ? _completeSprint
+                : null,
+            canEdit: project.canManageSprints(_currentUserEmail),
           ),
 
           const SizedBox(height: 24),
@@ -702,7 +731,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         : 0.0;
 
     return Card(
-      color: Colors.blue.shade50,
+      color: context.surfaceVariantColor,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -710,7 +739,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           children: [
             Row(
               children: [
-                const Icon(Icons.flag, color: Colors.blue),
+                Icon(Icons.flag, color: AppColors.primary),
                 const SizedBox(width: 8),
                 Text(
                   sprint.name,
@@ -981,7 +1010,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             onPressed: () => Navigator.pop(context),
             child: const Text('Chiudi'),
           ),
-          if (sprint.status == SprintStatus.active && widget.project.canManage(_currentUserEmail))
+          // SCRUM PERMISSIONS: Solo SM può completare sprint
+          if (sprint.status == SprintStatus.active && widget.project.canManageSprints(_currentUserEmail))
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.pop(context);
@@ -1129,7 +1159,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // TAB 3: KANBAN
   // ══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildKanbanTab() {
+  Widget _buildKanbanTab(AgileProjectModel project) {
     final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
     var storiesToShow = _stories;
 
@@ -1228,16 +1258,22 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             ),
           ),
 
+        // SCRUM PERMISSIONS:
+        // - canEdit: PO/SM possono spostare qualsiasi card, Dev Team solo le proprie
+        // - showWipConfig: Solo SM può configurare WIP limits
         Expanded(
           child: KanbanBoardWidget(
             stories: activeSprint == null && _filterByActiveSprint ? [] : storiesToShow,
-            columns: widget.project.effectiveKanbanColumns,
-            framework: widget.project.framework,
+            columns: project.effectiveKanbanColumns,
+            framework: project.framework,
             onStatusChange: (storyId, newStatus) => _updateStoryStatusById(storyId, newStatus),
             onStoryTap: (story) => _showStoryDetail(story),
-            onWipLimitChange: _features.hasWipLimits ? _updateWipLimit : null,
-            canEdit: widget.project.canManage(_currentUserEmail),
-            showWipConfig: _features.hasWipLimits && widget.project.canManage(_currentUserEmail),
+            onWipLimitChange: _features.hasWipLimits && project.canManageSprints(_currentUserEmail)
+                ? _updateWipLimit
+                : null,
+            canEdit: project.canMoveAnyStory(_currentUserEmail) ||
+                     project.canMoveOwnStory(_currentUserEmail),
+            showWipConfig: _features.hasWipLimits && project.canManageSprints(_currentUserEmail),
           ),
         ),
       ],
@@ -1296,7 +1332,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // TAB 4: TEAM
   // ══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildTeamTab() {
+  Widget _buildTeamTab(AgileProjectModel project) {
     final assignedHours = _calculateAssignedHours();
 
     return SingleChildScrollView(
@@ -1305,12 +1341,18 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Team list
+          // SCRUM PERMISSIONS:
+          // - isOwnerOrAdmin: Per visualizzazione capacità/skills (mantiene accesso base)
+          // - onInvite: PO/SM possono invitare membri
+          // - onEdit: Gestione ruoli riservata a PO
           TeamListWidget(
-            participants: widget.project.participants,
+            participants: project.participants,
             currentUserEmail: _currentUserEmail,
-            isOwnerOrAdmin: widget.project.canManage(_currentUserEmail),
-            onEdit: (member) => _showMemberDetail(member),
-            onInvite: widget.project.canManage(_currentUserEmail)
+            isOwnerOrAdmin: project.canManage(_currentUserEmail),
+            onEdit: project.canChangeRoles(_currentUserEmail)
+                ? (member) => _showMemberDetail(member)
+                : null,
+            onInvite: project.canInviteMembers(_currentUserEmail)
                 ? _showInviteDialog
                 : null,
           ),

@@ -6,6 +6,7 @@ import '../../models/agile_enums.dart';
 import '../../models/framework_features.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Checklist di setup per un nuovo progetto Agile
 ///
@@ -34,14 +35,15 @@ class SetupChecklistWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final checklist = _buildChecklist();
+    final l10n = AppLocalizations.of(context)!;
+    final checklist = _buildChecklist(context, l10n);
     final completedCount = checklist.where((item) => item.isCompleted).length;
     final totalCount = checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
 
     // Se tutto completato, mostra solo un messaggio di successo
     if (completedCount == totalCount && totalCount > 0) {
-      return _buildCompletedState();
+      return _buildCompletedState(l10n);
     }
 
     return Card(
@@ -62,16 +64,16 @@ class SetupChecklistWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Setup del Progetto',
-                        style: TextStyle(
+                      Text(
+                        l10n.agileSetupTitle,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Builder(
                         builder: (context) => Text(
-                          '$completedCount di $totalCount passi completati',
+                          l10n.agileStepComplete(completedCount, totalCount),
                           style: TextStyle(
                             fontSize: 12,
                             color: context.textSecondaryColor,
@@ -112,14 +114,14 @@ class SetupChecklistWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             // Checklist items
-            ...checklist.map((item) => _buildChecklistItem(item)),
+            ...checklist.map((item) => _buildChecklistItem(context, l10n, item)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCompletedState() {
+  Widget _buildCompletedState(AppLocalizations l10n) {
     return Card(
       color: Colors.green.shade50,
       child: Padding(
@@ -128,21 +130,21 @@ class SetupChecklistWidget extends StatelessWidget {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 32),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Setup Completato!',
-                    style: TextStyle(
+                    l10n.agileSetupCompleteTitle,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.green,
                     ),
                   ),
                   Text(
-                    'Il tuo progetto è pronto per iniziare.',
-                    style: TextStyle(
+                    l10n.agileSetupCompleteMessage,
+                    style: const TextStyle(
                       fontSize: 13,
                       color: Colors.green,
                     ),
@@ -156,7 +158,7 @@ class SetupChecklistWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildChecklistItem(ChecklistItem item) {
+  Widget _buildChecklistItem(BuildContext context, AppLocalizations l10n, ChecklistItem item) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -220,35 +222,35 @@ class SetupChecklistWidget extends StatelessWidget {
           if (!item.isCompleted && item.action != null)
             TextButton(
               onPressed: item.action,
-              child: Text(item.actionLabel ?? 'Inizia'),
+              child: Text(item.actionLabel ?? l10n.actionCreate),
             ),
         ],
       ),
     );
   }
 
-  List<ChecklistItem> _buildChecklist() {
+  List<ChecklistItem> _buildChecklist(BuildContext context, AppLocalizations l10n) {
     final items = <ChecklistItem>[];
     int order = 1;
 
     // 1. Team members
     items.add(ChecklistItem(
       order: order++,
-      title: 'Aggiungi membri al team',
-      description: 'Invita i membri del team a collaborare',
+      title: l10n.agileChecklistAddMembers,
+      description: l10n.agileChecklistAddMembersDesc,
       isCompleted: project.participantCount > 1,
       action: onAddTeamMember,
-      actionLabel: 'Invita',
+      actionLabel: l10n.agileChecklistInvite,
     ));
 
     // 2. Backlog items
     items.add(ChecklistItem(
       order: order++,
-      title: 'Crea le prime ${_features.workItemLabelPlural.toLowerCase()}',
-      description: 'Aggiungi almeno 3 item al backlog',
+      title: l10n.agileChecklistCreateStories(_features.workItemLabelPlural.toLowerCase()),
+      description: l10n.agileChecklistAddItems,
       isCompleted: stories.length >= 3,
       action: onAddStory,
-      actionLabel: 'Aggiungi',
+      actionLabel: l10n.agileChecklistAdd,
     ));
 
     // 3. Framework-specific items
@@ -257,11 +259,11 @@ class SetupChecklistWidget extends StatelessWidget {
       final hasCustomWip = project.kanbanColumns.any((c) => c.wipLimit != null);
       items.add(ChecklistItem(
         order: order++,
-        title: 'Configura i WIP limits',
-        description: 'Imposta limiti per ogni colonna Kanban',
+        title: l10n.agileChecklistWipLimits,
+        description: l10n.agileChecklistWipLimitsDesc,
         isCompleted: hasCustomWip,
         action: onConfigureWip,
-        actionLabel: 'Configura',
+        actionLabel: l10n.agileChecklistConfigure,
       ));
     }
 
@@ -270,8 +272,8 @@ class SetupChecklistWidget extends StatelessWidget {
       final estimatedStories = stories.where((s) => s.storyPoints != null && s.storyPoints! > 0).length;
       items.add(ChecklistItem(
         order: order++,
-        title: 'Stima le ${_features.workItemLabelPlural.toLowerCase()}',
-        description: 'Assegna Story Points per pianificare meglio',
+        title: l10n.agileChecklistEstimate(_features.workItemLabelPlural.toLowerCase()),
+        description: l10n.agileChecklistEstimateDesc,
         isCompleted: estimatedStories >= 3,
       ));
     }
@@ -280,11 +282,11 @@ class SetupChecklistWidget extends StatelessWidget {
       // Scrum/Hybrid: Crea primo sprint
       items.add(ChecklistItem(
         order: order++,
-        title: 'Crea il primo Sprint',
-        description: 'Seleziona le stories e inizia a lavorare',
+        title: l10n.agileChecklistCreateSprint,
+        description: l10n.agileChecklistSprintDesc,
         isCompleted: sprints.isNotEmpty,
         action: onStartSprint,
-        actionLabel: 'Crea Sprint',
+        actionLabel: l10n.agileChecklistCreateSprintAction,
       ));
     }
 
@@ -294,8 +296,8 @@ class SetupChecklistWidget extends StatelessWidget {
         s.status == StoryStatus.inReview);
     items.add(ChecklistItem(
       order: order++,
-      title: 'Inizia a lavorare',
-      description: 'Sposta un item in lavorazione',
+      title: l10n.agileChecklistStartWork,
+      description: l10n.agileChecklistStartWorkDesc,
       isCompleted: hasWorkInProgress,
     ));
 
@@ -428,7 +430,7 @@ class FrameworkTipsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tips = _getTips();
+    final tips = _getTips(context);
 
     if (tips.isEmpty) return const SizedBox.shrink();
 
@@ -440,42 +442,49 @@ class FrameworkTipsWidget extends StatelessWidget {
     );
   }
 
-  List<Widget> _getTips() {
+  List<Widget> _getTips(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tips = <Widget>[];
 
     switch (framework) {
       case AgileFramework.scrum:
         if (!hasActiveSprint && storiesCount >= 3) {
-          tips.add(const ContextualTipBanner(
+          tips.add(ContextualTipBanner(
             tipId: 'scrum_start_sprint',
-            title: 'Pronto per uno Sprint?',
-            message: 'Hai abbastanza stories nel backlog. Considera di pianificare il primo Sprint.',
+            title: l10n.agileTipStartSprintTitle,
+            message: l10n.agileTipStartSprintMessage,
             icon: Icons.flag,
             color: Colors.blue,
+            actionLabel: l10n.agileTipDiscover,
+            onDismiss: () {},
           ));
         }
         break;
 
       case AgileFramework.kanban:
         if (!hasWipLimits && storiesCount > 0) {
-          tips.add(const ContextualTipBanner(
+          tips.add(ContextualTipBanner(
             tipId: 'kanban_wip_limits',
-            title: 'Configura i WIP Limits',
-            message: 'I WIP limits sono fondamentali in Kanban. Limita il lavoro in corso per migliorare il flusso.',
+            title: l10n.agileTipWipTitle,
+            message: l10n.agileTipWipMessage,
             icon: Icons.speed,
             color: Colors.green,
+            actionLabel: l10n.agileTipDiscover,
+            onDismiss: () {},
           ));
         }
         break;
 
       case AgileFramework.hybrid:
         if (storiesCount >= 3 && !hasActiveSprint && !hasWipLimits) {
-          tips.add(const ContextualTipBanner(
+          tips.add(ContextualTipBanner(
             tipId: 'hybrid_setup',
-            title: 'Configura il tuo Scrumban',
-            message: 'Puoi usare Sprint per cadenza o WIP limits per flusso continuo. Sperimenta!',
+            title: l10n.agileTipHybridTitle,
+            message: l10n.agileTipHybridMessage,
             icon: Icons.all_inclusive,
             color: Colors.purple,
+            actionLabel: l10n.agileTipDiscover,
+            onDismiss: () {},
           ));
         }
         break;
@@ -483,7 +492,7 @@ class FrameworkTipsWidget extends StatelessWidget {
 
     return tips;
   }
-}
+} // End of FrameworkTipsWidget
 
 /// Widget per mostrare il passo successivo consigliato
 class NextStepWidget extends StatelessWidget {
@@ -503,14 +512,15 @@ class NextStepWidget extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
-    final nextStep = _getNextStep();
+    final nextStep = _getNextStep(context);
     if (nextStep == null) return const SizedBox.shrink();
 
     return Card(
-      color: Colors.teal.shade50,
+      color: context.surfaceVariantColor,
       child: ListTile(
-        leading: Icon(nextStep.icon, color: Colors.teal),
+        leading: Icon(nextStep.icon, color: AppColors.primary),
         title: Text(
           nextStep.title,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -529,16 +539,17 @@ class NextStepWidget extends StatelessWidget {
     );
   }
 
-  _NextStep? _getNextStep() {
+  _NextStep? _getNextStep(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final features = FrameworkFeatures(framework);
 
     // 1. No team members
     if (project.participantCount <= 1) {
       return _NextStep(
         icon: Icons.people,
-        title: 'Invita il Team',
-        description: 'Aggiungi membri per collaborare al progetto.',
-        actionLabel: 'Invita',
+        title: l10n.agileNextStepInviteTitle,
+        description: l10n.agileNextStepInviteDesc,
+        actionLabel: l10n.agileChecklistInvite,
       );
     }
 
@@ -546,9 +557,9 @@ class NextStepWidget extends StatelessWidget {
     if (stories.isEmpty) {
       return _NextStep(
         icon: Icons.add_task,
-        title: 'Crea il Backlog',
-        description: 'Aggiungi le prime ${features.workItemLabelPlural.toLowerCase()} al backlog.',
-        actionLabel: 'Aggiungi',
+        title: l10n.agileNextStepBacklogTitle,
+        description: l10n.agileNextStepBacklogDesc(features.workItemLabelPlural.toLowerCase()),
+        actionLabel: l10n.agileChecklistAdd,
       );
     }
 
@@ -556,18 +567,18 @@ class NextStepWidget extends StatelessWidget {
     if (features.showSprintTab && sprints.isEmpty && stories.length >= 3) {
       return _NextStep(
         icon: Icons.flag,
-        title: 'Pianifica uno Sprint',
-        description: 'Hai ${stories.length} items pronti. Crea il primo Sprint!',
-        actionLabel: 'Crea Sprint',
+        title: l10n.agileNextStepSprintTitle,
+        description: l10n.agileNextStepSprintDesc(stories.length),
+        actionLabel: l10n.agileChecklistCreateSprintAction,
       );
     }
 
     if (features.hasWipLimits && !project.kanbanColumns.any((c) => c.wipLimit != null)) {
       return _NextStep(
         icon: Icons.tune,
-        title: 'Configura WIP Limits',
-        description: 'Limita il lavoro in corso per migliorare il flusso.',
-        actionLabel: 'Configura',
+        title: l10n.agileNextStepWipTitle,
+        description: l10n.agileNextStepWipDesc,
+        actionLabel: l10n.agileChecklistConfigure,
       );
     }
 
@@ -576,9 +587,9 @@ class NextStepWidget extends StatelessWidget {
     if (!hasWip && stories.isNotEmpty) {
       return _NextStep(
         icon: Icons.play_arrow,
-        title: 'Inizia a Lavorare',
-        description: 'Sposta un item "In Progress" per iniziare.',
-        actionLabel: 'Vai al Kanban',
+        title: l10n.agileNextStepWorkTitle,
+        description: l10n.agileNextStepWorkDesc,
+        actionLabel: l10n.agileNextStepGoToKanban,
       );
     }
 

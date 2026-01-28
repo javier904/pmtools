@@ -3805,5 +3805,360 @@
   "missingSuggestionStarfishStart": "Quale nuova pratica il team dovrebbe iniziare?",
   "missingSuggestionDAKIDrop": "Cosa dovrebbe il team decidere di eliminare?",
   "missingSuggestionDAKIAdd": "Quale nuova decisione dovrebbe prendere il team?",
-  "missingSuggestionGeneric": "Considera di creare un'azione da questa colonna."
+  "missingSuggestionGeneric": "Considera di creare un'azione da questa colonna.",
+  "agileEdit": "Modifica",
+  "agileSettings": "Impostazioni",
+  "agileDelete": "Elimina",
+  "agileDeleteProjectTitle": "Elimina Progetto",
+  "agileDeleteProjectConfirm": "Sei sicuro di voler eliminare \"{projectName}\"?",
+  "@agileDeleteProjectConfirm": {
+    "placeholders": {
+      "projectName": {
+        "type": "String"
+      }
+    }
+  },
+  "agileDeleteProjectWarning": "Questa azione eliminerà permanentemente:",
+  "agileDeleteWarningUserStories": "{count} user stories",
+  "@agileDeleteWarningUserStories": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileDeleteWarningSprints": "{count} sprint",
+  "@agileDeleteWarningSprints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileDeleteProjectData": "Tutti i dati del progetto",
+  "agileProjectSettingsTitle": "Impostazioni Progetto",
+  "agileKeyRoles": "Ruoli Chiave",
+  "agileKeyRolesSubtitle": "Assegna i ruoli principali del team Scrum",
+  "agileRoleProductOwner": "Product Owner",
+  "agileRoleProductOwnerDesc": "Gestisce il backlog e definisce le priorità del prodotto",
+  "agileRoleScrumMaster": "Scrum Master",
+  "agileRoleScrumMasterDesc": "Facilita il processo Scrum e rimuove gli ostacoli",
+  "agileRoleDevTeam": "Development Team",
+  "agileRoleDevTeamDesc": "I membri che sviluppano il prodotto",
+  "agileNoDevTeamMembers": "Nessun membro nel team. Clicca + per aggiungere.",
+  "agileRolesInfo": "I ruoli verranno mostrati con icone dedicate nella lista progetti. Puoi aggiungere altri partecipanti dal Team del progetto.",
+  "agileAssignedTo": "Assegnato a {name}",
+  "@agileAssignedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agileUnassigned": "Non assegnato",
+  "agileAssignableLater": "Assegnabile dopo la creazione",
+  "agileAddToTeam": "Aggiungi al Team",
+  "agileAllMembersAssigned": "Tutti i partecipanti sono già assegnati a un ruolo.",
+  "agileClose": "Chiudi",
+  "agileProjectNameLabel": "Nome Progetto *",
+  "agileProjectNameHint": "Es: Fashion PMO v2",
+  "agileEnterProjectName": "Inserisci il nome del progetto",
+  "agileProjectDescLabel": "Descrizione",
+  "agileProjectDescHint": "Descrizione opzionale del progetto",
+  "agileFrameworkLabel": "Framework Agile",
+  "agileDiscoverDifferences": "Scopri le differenze",
+  "agileSprintConfig": "Configurazione Sprint",
+  "agileSprintDuration": "Durata Sprint (giorni)",
+  "agileHoursPerDay": "Ore/Giorno",
+  "agileCreateProjectTitle": "Nuovo Progetto Agile",
+  "agileEditProjectTitle": "Modifica Progetto",
+  "agileSelectParticipant": "Seleziona partecipante",
+  "agileAssignRolesHint": "Assegna i ruoli principali.\nPotrai modificarli anche dalle impostazioni.",
+  "agileArchiveAction": "Archivia",
+  "agileRestoreAction": "Ripristina",
+  "archiveHideArchived": "Nascondi Archiviati",
+  "archiveShowArchived": "Mostra Archiviati",
+  "archiveBadge": "ARCHIVIO",
+  "archiveSuccessMessage": "Progetto archiviato",
+  "archiveErrorMessage": "Errore archiviazione progetto",
+  "archiveRestoreSuccessMessage": "Progetto ripristinato",
+  "archiveRestoreErrorMessage": "Errore ripristino progetto",
+  "archiveAction": "Archivia",
+  "archiveRestoreAction": "Ripristina",
+  "agileSetupTitle": "Setup del Progetto",
+  "agileStepComplete": "{completed} di {total} passi completati",
+  "@agileStepComplete": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "agileSetupCompleteTitle": "Setup Completato!",
+  "agileSetupCompleteMessage": "Il tuo progetto è pronto per iniziare.",
+  "agileChecklistAddMembers": "Aggiungi membri al team",
+  "agileChecklistAddMembersDesc": "Invita i membri del team a collaborare",
+  "agileChecklistInvite": "Invita",
+  "agileChecklistCreateStories": "Crea le prime {itemType}",
+  "@agileChecklistCreateStories": {
+    "placeholders": {
+      "itemType": { "type": "String" }
+    }
+  },
+  "agileChecklistAddItems": "Aggiungi almeno 3 item al backlog",
+  "agileChecklistAdd": "Aggiungi",
+  "agileChecklistWipLimits": "Configura i WIP limits",
+  "agileChecklistWipLimitsDesc": "Imposta limiti per ogni colonna Kanban",
+  "agileChecklistConfigure": "Configura",
+  "agileChecklistEstimate": "Stima le {itemType}",
+  "@agileChecklistEstimate": {
+    "placeholders": {
+      "itemType": { "type": "String" }
+    }
+  },
+  "agileChecklistEstimateDesc": "Assegna Story Points per pianificare meglio",
+  "agileChecklistCreateSprint": "Crea il primo Sprint",
+  "agileChecklistSprintDesc": "Seleziona le storie e inizia a lavorare",
+  "agileChecklistCreateSprintAction": "Crea Sprint",
+  "agileChecklistStartWork": "Inizia a lavorare",
+  "agileChecklistStartWorkDesc": "Sposta un item in lavorazione",
+  "agileTipStartSprintTitle": "Pronto per uno Sprint?",
+  "agileTipStartSprintMessage": "Hai abbastanza stories nel backlog. Considera di pianificare il primo Sprint.",
+  "agileTipWipTitle": "Configura i WIP Limits",
+  "agileTipWipMessage": "I WIP limits sono fondamentali in Kanban. Limita il lavoro in corso per migliorare il flusso.",
+  "agileTipHybridTitle": "Configura il tuo Scrumban",
+  "agileTipHybridMessage": "Puoi usare Sprint per cadenza o WIP limits per flusso continuo. Sperimenta!",
+  "agileTipDiscover": "Scopri",
+  "agileTipClose": "Chiudi",
+  "agileNextStepInviteTitle": "Invita il Team",
+  "agileNextStepInviteDesc": "Aggiungi membri per collaborare al progetto.",
+  "agileNextStepBacklogTitle": "Crea il Backlog",
+  "agileNextStepBacklogDesc": "Aggiungi le prime {itemType} al backlog.",
+  "@agileNextStepBacklogDesc": {
+    "placeholders": {
+      "itemType": { "type": "String" }
+    }
+  },
+  "agileNextStepSprintTitle": "Pianifica uno Sprint",
+  "agileNextStepSprintDesc": "Hai {count} items pronti. Crea il primo Sprint!",
+  "@agileNextStepSprintDesc": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileNextStepWipTitle": "Configura WIP Limits",
+  "agileNextStepWipDesc": "Limita il lavoro in corso per migliorare il flusso.",
+  "agileNextStepWorkTitle": "Inizia a Lavorare",
+  "agileNextStepWorkDesc": "Sposta un item \"In Progress\" per iniziare.",
+  "agileNextStepGoToKanban": "Vai al Kanban",
+  "agileActionNewStory": "Nuova Story",
+  "agileBacklogTitle": "Product Backlog",
+  "agileBacklogArchiveTitle": "Archivio Completate",
+  "agileBacklogToggleActive": "Mostra Backlog attivo",
+  "agileBacklogToggleArchive": "Mostra Archivio ({count} completate)",
+  "@agileBacklogToggleArchive": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileBacklogArchiveBadge": "Archivio ({count})",
+  "@agileBacklogArchiveBadge": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileBacklogSearchHint": "Cerca per titolo, descrizione o ID...",
+  "agileBacklogStatsStories": "{count} storie",
+  "@agileBacklogStatsStories": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileBacklogStatsPoints": "{points} pt",
+  "@agileBacklogStatsPoints": {
+    "placeholders": {
+      "points": { "type": "int" }
+    }
+  },
+  "agileBacklogStatsEstimated": "{count} stimate",
+  "@agileBacklogStatsEstimated": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileFiltersStatus": "Stato:",
+  "agileFiltersPriority": "Priorità:",
+  "agileFiltersTags": "Tag:",
+  "agileFiltersAll": "Tutti",
+  "agileFiltersClear": "Rimuovi filtri",
+  "agileEmptyBacklogMatch": "Nessuna story trovata",
+  "agileEmptyBacklog": "Backlog vuoto",
+  "agileEmptyBacklogHint": "Aggiungi la prima User Story",
+  "agileEstTitle": "Stima Story",
+  "agileEstMethod": "Metodo di stima",
+  "agileEstSelectValue": "Seleziona un valore",
+  "agileEstSubmit": "Conferma Stima",
+  "agileEstCancel": "Annulla",
+  "agileEstPokerTitle": "Planning Poker (Fibonacci)",
+  "agileEstPokerDesc": "Seleziona la complessità della story in story points",
+  "agileEstTShirtTitle": "T-Shirt Sizing",
+  "agileEstTShirtDesc": "Seleziona la dimensione relativa della story",
+  "agileEstThreePointTitle": "Stima a Tre Punti (PERT)",
+  "agileEstThreePointDesc": "Inserisci tre valori per calcolare la stima PERT",
+  "agileEstBucketTitle": "Bucket System",
+  "agileEstBucketDesc": "Posiziona la story nel bucket appropriato",
+  "agileEstBucketHint": "I bucket più grandi indicano story più complesse",
+  "agileEstReference": "Riferimento:",
+  "agileEstRefXS": "XS = Poche ore",
+  "agileEstRefS": "S = ~1 giorno",
+  "agileEstRefM": "M = ~2-3 giorni",
+  "agileEstRefL": "L = ~1 settimana",
+  "agileEstRefXL": "XL = ~2 settimane",
+  "agileEstRefXXL": "XXL = Troppo grande, dividere",
+  "agileEstOptimistic": "Ottimistica (O)",
+  "agileEstOptimisticHint": "Caso migliore",
+  "agileEstMostLikely": "Più Probabile (M)",
+  "agileEstMostLikelyHint": "Caso probabile",
+  "agileEstPessimistic": "Pessimistica (P)",
+  "agileEstPessimisticHint": "Caso peggiore",
+  "agileEstPointsSuffix": "pt",
+  "agileEstFormula": "Formula PERT: (O + 4M + P) / 6",
+  "agileEstResult": "Stima: {value} punti",
+  "@agileEstResult": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "agileEstErrorThreePoint": "Inserisci tutti e tre i valori",
+  "agileEstErrorSelect": "Seleziona un valore",
+  "agileEstExisting": "Stime esistenti ({count})",
+  "@agileEstExisting": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileEstYou": "Tu",
+
+  "scrumPermBacklogTitle": "Permessi Backlog",
+  "scrumPermBacklogDesc": "Solo il Product Owner può creare, modificare, eliminare e prioritizzare le stories",
+  "scrumPermSprintTitle": "Permessi Sprint",
+  "scrumPermSprintDesc": "Solo lo Scrum Master può creare, avviare e completare gli sprint",
+  "scrumPermEstimateTitle": "Permessi Stima",
+  "scrumPermEstimateDesc": "Solo il Development Team può stimare le stories",
+  "scrumPermKanbanTitle": "Permessi Kanban",
+  "scrumPermKanbanDesc": "Il Development Team può spostare le proprie stories, PO e SM possono spostare qualsiasi story",
+  "scrumPermTeamTitle": "Permessi Team",
+  "scrumPermTeamDesc": "PO e SM possono invitare membri, solo il PO può modificare i ruoli",
+
+  "scrumPermDeniedBacklogCreate": "Solo il Product Owner può creare nuove stories",
+  "scrumPermDeniedBacklogEdit": "Solo il Product Owner può modificare le stories",
+  "scrumPermDeniedBacklogDelete": "Solo il Product Owner può eliminare le stories",
+  "scrumPermDeniedBacklogPrioritize": "Solo il Product Owner può riordinare il backlog",
+  "scrumPermDeniedSprintCreate": "Solo lo Scrum Master può creare nuovi sprint",
+  "scrumPermDeniedSprintStart": "Solo lo Scrum Master può avviare gli sprint",
+  "scrumPermDeniedSprintComplete": "Solo lo Scrum Master può completare gli sprint",
+  "scrumPermDeniedEstimate": "Solo il Development Team può stimare le stories",
+  "scrumPermDeniedInvite": "Solo PO e SM possono invitare nuovi membri",
+  "scrumPermDeniedRoleChange": "Solo il Product Owner può modificare i ruoli del team",
+  "scrumPermDeniedWipConfig": "Solo lo Scrum Master può configurare i limiti WIP",
+
+  "scrumRoleProductOwner": "Product Owner",
+  "scrumRoleScrumMaster": "Scrum Master",
+  "scrumRoleDeveloper": "Developer",
+  "scrumRoleDesigner": "Designer",
+  "scrumRoleQA": "QA",
+  "scrumRoleStakeholder": "Stakeholder",
+
+  "scrumMatrixTitle": "Matrice Permessi Scrum",
+  "scrumMatrixSubtitle": "Chi può fare cosa secondo la Scrum Guide 2020",
+  "scrumMatrixLegend": "Legenda",
+  "scrumMatrixLegendFull": "Gestisce",
+  "scrumMatrixLegendPartial": "Parziale",
+  "scrumMatrixLegendView": "Visualizza",
+  "scrumMatrixLegendNone": "Nessuno",
+
+  "scrumMatrixCategoryBacklog": "BACKLOG",
+  "scrumMatrixCategorySprint": "SPRINT",
+  "scrumMatrixCategoryEstimation": "STIMA",
+  "scrumMatrixCategoryKanban": "KANBAN",
+  "scrumMatrixCategoryTeam": "TEAM",
+  "scrumMatrixCategoryRetro": "RETROSPETTIVA",
+
+  "scrumMatrixActionCreateStory": "Creare Story",
+  "scrumMatrixActionEditStory": "Modificare Story",
+  "scrumMatrixActionDeleteStory": "Eliminare Story",
+  "scrumMatrixActionPrioritize": "Prioritizzare Backlog",
+  "scrumMatrixActionAddAcceptance": "Definire Criteri Accettazione",
+
+  "scrumMatrixActionCreateSprint": "Creare Sprint",
+  "scrumMatrixActionStartSprint": "Avviare Sprint",
+  "scrumMatrixActionCompleteSprint": "Completare Sprint",
+  "scrumMatrixActionConfigWip": "Configurare Limiti WIP",
+
+  "scrumMatrixActionEstimate": "Stimare Story Points",
+  "scrumMatrixActionFinalEstimate": "Definire Stima Finale",
+
+  "scrumMatrixActionMoveOwn": "Spostare proprie Story",
+  "scrumMatrixActionMoveAny": "Spostare qualsiasi Story",
+  "scrumMatrixActionSelfAssign": "Auto-assegnarsi",
+  "scrumMatrixActionAssignOthers": "Assegnare altri",
+  "scrumMatrixActionChangeStatus": "Cambiare stato Story",
+
+  "scrumMatrixActionInvite": "Invitare membri",
+  "scrumMatrixActionRemove": "Rimuovere membri",
+  "scrumMatrixActionChangeRole": "Cambiare ruoli",
+
+  "scrumMatrixActionFacilitateRetro": "Facilitare Retrospettiva",
+  "scrumMatrixActionParticipateRetro": "Partecipare Retrospettiva",
+  "scrumMatrixActionAddRetroItem": "Aggiungere item Retro",
+  "scrumMatrixActionVoteRetro": "Votare item",
+
+  "scrumMatrixColPO": "PO",
+  "scrumMatrixColSM": "SM",
+  "scrumMatrixColDev": "Dev",
+  "scrumMatrixColStake": "Stake",
+
+  "agileInviteTitle": "Invita al Team",
+  "agileInviteNew": "NUOVO INVITO",
+  "agileInviteEmailLabel": "Email",
+  "agileInviteEmailHint": "nome@esempio.com",
+  "agileInviteEnterEmail": "Inserisci un'email",
+  "agileInviteInvalidEmail": "Email non valida",
+  "agileInviteProjectRole": "Ruolo nel Progetto",
+  "agileInviteTeamRole": "Ruolo nel Team",
+  "agileInviteSendEmail": "Invia email di notifica",
+  "agileInviteSendBtn": "Invia Invito",
+  "agileInviteLink": "Link di invito:",
+  "agileInviteLinkCopied": "Link copiato!",
+  "agileInviteListTitle": "INVITI",
+  "agileInviteClose": "Chiudi",
+  "agileInviteGmailAuthTitle": "Autorizzazione Gmail",
+  "agileInviteGmailAuthContent": "Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\nVuoi procedere?",
+  "agileInviteGmailAuthNo": "No, solo link",
+  "agileInviteGmailAuthYes": "Autorizza",
+  "agileInviteSentEmail": "Invito inviato via email a {email}",
+  "@agileInviteSentEmail": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "agileInviteCreated": "Invito creato per {email}",
+  "@agileInviteCreated": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "agileInviteRevokeTitle": "Revocare invito?",
+  "agileInviteRevokeContent": "L'invito non sarà più valido.",
+  "agileInviteRevokeBtn": "Revoca",
+  "agileInviteResend": "Reinvia",
+  "agileInviteResent": "Invito reinviato",
+  "agileInviteStatusPending": "In attesa",
+  "agileInviteStatusAccepted": "Accettato",
+  "agileInviteStatusDeclined": "Rifiutato",
+  "agileInviteStatusExpired": "Scaduto",
+  "agileInviteStatusRevoked": "Revocato",
+  "agileRoleMember": "Membro",
+  "agileRoleAdmin": "Admin",
+  "agileRoleViewer": "Osservatore",
+  "agileRoleOwner": "Proprietario"
 }

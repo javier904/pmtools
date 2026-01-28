@@ -7,6 +7,7 @@ import '../../themes/app_colors.dart';
 import 'story_card_widget.dart';
 import 'story_form_dialog.dart';
 import 'story_detail_dialog.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Widget per visualizzare e gestire il Product Backlog
 ///
@@ -44,7 +45,12 @@ class BacklogListWidget extends StatefulWidget {
     this.onStoryEstimate,
     this.onAddToSprint,
     this.onAddStory,
+    this.shrinkWrap = false,
+    this.physics,
   });
+
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
 
   @override
   State<BacklogListWidget> createState() => _BacklogListWidgetState();
@@ -142,6 +148,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final stories = _filteredStories;
 
     // Stats
@@ -158,16 +165,19 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         if (_showFilters) _buildFilters(),
 
         // Lista stories
-        Expanded(
-          child: stories.isEmpty
-              ? _buildEmptyState()
-              : _buildStoryList(stories),
-        ),
+        widget.shrinkWrap
+            ? (stories.isEmpty ? _buildEmptyState() : _buildStoryList(stories))
+            : Expanded(
+                child: stories.isEmpty
+                    ? _buildEmptyState()
+                    : _buildStoryList(stories),
+              ),
       ],
     );
   }
 
   Widget _buildHeader(int count, int totalPoints, int estimatedCount) {
+    final l10n = AppLocalizations.of(context)!;
     final archivedCount = _archivedStories.length;
 
     return Container(
@@ -189,7 +199,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               ),
               const SizedBox(width: 8),
               Text(
-                _showArchive ? 'Archivio Completate' : 'Product Backlog',
+                _showArchive ? l10n.agileBacklogArchiveTitle : l10n.agileBacklogTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -198,17 +208,17 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               ),
               const Spacer(),
               // Stats badges
-              _buildStatBadge('$count stories', Colors.blue),
+              _buildStatBadge(l10n.agileBacklogStatsStories(count), Colors.blue),
               const SizedBox(width: 8),
-              _buildStatBadge('$totalPoints pts', Colors.green),
+              _buildStatBadge(l10n.agileBacklogStatsPoints(totalPoints), Colors.green),
               const SizedBox(width: 8),
-              _buildStatBadge('$estimatedCount stimate', Colors.orange),
+              _buildStatBadge(l10n.agileBacklogStatsEstimated(estimatedCount), Colors.orange),
               const SizedBox(width: 16),
               // Toggle Archivio
               Tooltip(
                 message: _showArchive
-                    ? 'Mostra Backlog attivo'
-                    : 'Mostra Archivio ($archivedCount completate)',
+                    ? l10n.agileBacklogToggleActive
+                    : l10n.agileBacklogToggleArchive(archivedCount),
                 child: InkWell(
                   onTap: () => setState(() => _showArchive = !_showArchive),
                   borderRadius: BorderRadius.circular(8),
@@ -235,7 +245,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _showArchive ? 'Backlog' : 'Archivio ($archivedCount)',
+                          _showArchive ? 'Backlog' : l10n.agileBacklogArchiveBadge(archivedCount),
                           style: TextStyle(
                             fontSize: 12,
                             color: _showArchive ? Colors.grey : Colors.green,
@@ -262,7 +272,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                 ElevatedButton.icon(
                   onPressed: widget.onAddStory,
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Nuova Story'),
+                  label: Text(l10n.agileActionNewStory),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -275,7 +285,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           TextField(
             style: TextStyle(color: context.textPrimaryColor),
             decoration: InputDecoration(
-              hintText: 'Cerca per titolo, descrizione o ID...',
+              hintText: l10n.agileBacklogSearchHint,
               hintStyle: TextStyle(color: context.textMutedColor),
               prefixIcon: Icon(Icons.search, color: context.textMutedColor),
               suffixIcon: _searchQuery.isNotEmpty
@@ -329,6 +339,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
       _statusFilter != null || _priorityFilter != null || _tagFilter != null;
 
   Widget _buildFilters() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -343,10 +354,10 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           // Status filter
           Row(
             children: [
-              Text('Status: ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
+              Text('${l10n.agileFiltersStatus} ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
               const SizedBox(width: 8),
               FilterChip(
-                label: const Text('Tutti'),
+                label: Text(l10n.agileFiltersAll),
                 selected: _statusFilter == null,
                 onSelected: (_) => setState(() => _statusFilter = null),
               ),
@@ -366,10 +377,10 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           // Priority filter
           Row(
             children: [
-              Text('Priorità: ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
+              Text('${l10n.agileFiltersPriority} ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
               const SizedBox(width: 8),
               FilterChip(
-                label: const Text('Tutte'),
+                label: Text(l10n.agileFiltersAll),
                 selected: _priorityFilter == null,
                 onSelected: (_) => setState(() => _priorityFilter = null),
               ),
@@ -390,10 +401,10 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Text('Tag: ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
+                Text('${l10n.agileFiltersTags} ', style: TextStyle(fontWeight: FontWeight.w500, color: context.textSecondaryColor)),
                 const SizedBox(width: 8),
                 FilterChip(
-                  label: const Text('Tutti'),
+                  label: Text(l10n.agileFiltersAll),
                   selected: _tagFilter == null,
                   onSelected: (_) => setState(() => _tagFilter = null),
                 ),
@@ -426,7 +437,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                 _tagFilter = null;
               }),
               icon: const Icon(Icons.clear_all, size: 18),
-              label: const Text('Rimuovi filtri'),
+              label: Text(l10n.agileFiltersClear),
             ),
           ],
         ],
@@ -435,6 +446,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
   }
 
    Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
     if (_hasActiveFilters || _searchQuery.isNotEmpty) {
       return Center(
         child: SingleChildScrollView(
@@ -444,7 +456,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               Icon(Icons.search_off, size: 64, color: context.textMutedColor),
               const SizedBox(height: 16),
               Text(
-                'Nessuna story trovata',
+                l10n.agileEmptyBacklogMatch,
                 style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
               ),
               const SizedBox(height: 8),
@@ -455,7 +467,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                   _priorityFilter = null;
                   _tagFilter = null;
                 }),
-                child: const Text('Rimuovi filtri'),
+                child: Text(l10n.agileFiltersClear),
               ),
             ],
           ),
@@ -471,12 +483,12 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
             Icon(Icons.note_add, size: 64, color: context.textMutedColor),
             const SizedBox(height: 16),
             Text(
-              'Backlog vuoto',
+              l10n.agileEmptyBacklog,
               style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
             ),
             const SizedBox(height: 8),
             Text(
-              'Aggiungi la prima User Story',
+              l10n.agileEmptyBacklogHint,
               style: TextStyle(color: context.textTertiaryColor),
             ),
             if (widget.canEdit && widget.onAddStory != null) ...[
@@ -484,7 +496,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               ElevatedButton.icon(
                 onPressed: widget.onAddStory,
                 icon: const Icon(Icons.add),
-                label: const Text('Nuova Story'),
+                label: Text(l10n.agileActionNewStory),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -500,6 +512,8 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
   Widget _buildStoryList(List<UserStoryModel> stories) {
     if (widget.canEdit && widget.onReorder != null) {
       return ReorderableListView.builder(
+        shrinkWrap: widget.shrinkWrap,
+        physics: widget.physics,
         padding: const EdgeInsets.all(16),
         itemCount: stories.length,
         onReorder: (oldIndex, newIndex) {
@@ -517,6 +531,8 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     }
 
     return ListView.builder(
+      shrinkWrap: widget.shrinkWrap,
+      physics: widget.physics,
       padding: const EdgeInsets.all(16),
       itemCount: stories.length,
       itemBuilder: (context, index) => _buildStoryItem(stories[index]),

@@ -3,6 +3,7 @@ import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Dialog per stimare una User Story
 ///
@@ -83,14 +84,14 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
         finalValue = pertEstimate.toStringAsFixed(1);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inserisci tutti e tre i valori')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.agileEstErrorThreePoint)),
         );
         return;
       }
     } else {
       if (_selectedValue == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Seleziona un valore')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.agileEstErrorSelect)),
         );
         return;
       }
@@ -110,6 +111,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Row(
         children: [
@@ -119,7 +121,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Stima Story'),
+                Text(l10n.agileEstTitle),
                 Text(
                   widget.story.title,
                   style: TextStyle(
@@ -141,16 +143,16 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Method selector
-              const Text(
-                'Metodo di stima',
-                style: TextStyle(fontWeight: FontWeight.w500),
+              Text(
+                l10n.agileEstMethod,
+                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: EstimationType.values.map((method) => ChoiceChip(
-                  label: Text(method.displayName),
+                  label: Text(_getMethodDisplayName(method, l10n)),
                   selected: _selectedMethod == method,
                   onSelected: (_) => setState(() {
                     _selectedMethod = method;
@@ -168,7 +170,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
               if (widget.story.estimates.isNotEmpty) ...[
                 const Divider(height: 32),
                 Text(
-                  'Stime esistenti (${widget.story.estimates.length})',
+                  l10n.agileEstExisting(widget.story.estimates.length),
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
@@ -187,8 +189,8 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
                     '${entry.value.type.displayName}: ${entry.value.value}',
                   ),
                   trailing: entry.key == widget.currentUserEmail
-                      ? const Chip(
-                          label: Text('Tu', style: TextStyle(fontSize: 10)),
+                      ? Chip(
+                          label: Text(l10n.agileEstYou, style: const TextStyle(fontSize: 10)),
                           padding: EdgeInsets.zero,
                         )
                       : null,
@@ -201,7 +203,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.agileEstCancel),
         ),
         ElevatedButton(
           onPressed: _submit,
@@ -209,37 +211,38 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
-          child: const Text('Conferma Stima'),
+          child: Text(l10n.agileEstSubmit),
         ),
       ],
     );
   }
 
   Widget _buildEstimationInterface() {
+    final l10n = AppLocalizations.of(context)!;
     switch (_selectedMethod) {
       case EstimationType.planningPoker:
-        return _buildPlanningPokerInterface();
+        return _buildPlanningPokerInterface(l10n);
       case EstimationType.tshirt:
-        return _buildTShirtInterface();
+        return _buildTShirtInterface(l10n);
       case EstimationType.threePoint:
-        return _buildThreePointInterface();
+        return _buildThreePointInterface(l10n);
       case EstimationType.bucket:
-        return _buildBucketInterface();
+        return _buildBucketInterface(l10n);
     }
   }
 
-  Widget _buildPlanningPokerInterface() {
+  Widget _buildPlanningPokerInterface(AppLocalizations l10n) {
     return Builder(
       builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Planning Poker (Fibonacci)',
-            style: TextStyle(fontWeight: FontWeight.w500),
+          Text(
+            l10n.agileEstPokerTitle,
+            style: const TextStyle(fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 4),
           Text(
-            'Seleziona la complessità della story in story points',
+            l10n.agileEstPokerDesc,
             style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
           ),
           const SizedBox(height: 12),
@@ -307,17 +310,17 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
     );
   }
 
-  Widget _buildTShirtInterface() {
+  Widget _buildTShirtInterface(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'T-Shirt Sizing',
-          style: TextStyle(fontWeight: FontWeight.w500),
+        Text(
+          l10n.agileEstTShirtTitle,
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
         Text(
-          'Seleziona la dimensione relativa della story',
+          l10n.agileEstTShirtDesc,
           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
         const SizedBox(height: 12),
@@ -347,17 +350,17 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
             color: Colors.blue.withOpacity(0.05),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Riferimento:', style: TextStyle(fontWeight: FontWeight.w500)),
-              SizedBox(height: 4),
-              Text('XS = Poche ore', style: TextStyle(fontSize: 12)),
-              Text('S = ~1 giorno', style: TextStyle(fontSize: 12)),
-              Text('M = ~2-3 giorni', style: TextStyle(fontSize: 12)),
-              Text('L = ~1 settimana', style: TextStyle(fontSize: 12)),
-              Text('XL = ~2 settimane', style: TextStyle(fontSize: 12)),
-              Text('XXL = Troppo grande, dividere', style: TextStyle(fontSize: 12)),
+              Text(l10n.agileEstReference, style: const TextStyle(fontWeight: FontWeight.w500)),
+              const SizedBox(height: 4),
+              Text(l10n.agileEstRefXS, style: const TextStyle(fontSize: 12)),
+              Text(l10n.agileEstRefS, style: const TextStyle(fontSize: 12)),
+              Text(l10n.agileEstRefM, style: const TextStyle(fontSize: 12)),
+              Text(l10n.agileEstRefL, style: const TextStyle(fontSize: 12)),
+              Text(l10n.agileEstRefXL, style: const TextStyle(fontSize: 12)),
+              Text(l10n.agileEstRefXXL, style: const TextStyle(fontSize: 12)),
             ],
           ),
         ),
@@ -365,17 +368,17 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
     );
   }
 
-  Widget _buildThreePointInterface() {
+  Widget _buildThreePointInterface(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Three-Point Estimation (PERT)',
-          style: TextStyle(fontWeight: FontWeight.w500),
+        Text(
+          l10n.agileEstThreePointTitle,
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
         Text(
-          'Inserisci tre valori per calcolare la stima PERT',
+          l10n.agileEstThreePointDesc,
           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
         const SizedBox(height: 16),
@@ -383,11 +386,11 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
           children: [
             Expanded(
               child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Ottimistica (O)',
-                  hintText: 'Best case',
-                  border: OutlineInputBorder(),
-                  suffixText: 'pts',
+                decoration: InputDecoration(
+                  labelText: l10n.agileEstOptimistic,
+                  hintText: l10n.agileEstOptimisticHint,
+                  border: const OutlineInputBorder(),
+                  suffixText: l10n.agileEstPointsSuffix,
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) => _optimistic = double.tryParse(value),
@@ -396,11 +399,11 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
             const SizedBox(width: 12),
             Expanded(
               child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Più Probabile (M)',
-                  hintText: 'Most likely',
-                  border: OutlineInputBorder(),
-                  suffixText: 'pts',
+                decoration: InputDecoration(
+                  labelText: l10n.agileEstMostLikely,
+                  hintText: l10n.agileEstMostLikelyHint,
+                  border: const OutlineInputBorder(),
+                  suffixText: l10n.agileEstPointsSuffix,
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) => _mostLikely = double.tryParse(value),
@@ -409,11 +412,11 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
             const SizedBox(width: 12),
             Expanded(
               child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Pessimistica (P)',
-                  hintText: 'Worst case',
-                  border: OutlineInputBorder(),
-                  suffixText: 'pts',
+                decoration: InputDecoration(
+                  labelText: l10n.agileEstPessimistic,
+                  hintText: l10n.agileEstPessimisticHint,
+                  border: const OutlineInputBorder(),
+                  suffixText: l10n.agileEstPointsSuffix,
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) => _pessimistic = double.tryParse(value),
@@ -431,14 +434,14 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Formula PERT: (O + 4M + P) / 6',
-                style: TextStyle(fontWeight: FontWeight.w500),
+              Text(
+                l10n.agileEstFormula,
+                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
               if (_optimistic != null && _mostLikely != null && _pessimistic != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Stima: ${((_optimistic! + 4 * _mostLikely! + _pessimistic!) / 6).toStringAsFixed(1)} punti',
+                  l10n.agileEstResult(((_optimistic! + 4 * _mostLikely! + _pessimistic!) / 6).toStringAsFixed(1)),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -453,17 +456,17 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
     );
   }
 
-  Widget _buildBucketInterface() {
+  Widget _buildBucketInterface(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Bucket System',
-          style: TextStyle(fontWeight: FontWeight.w500),
+        Text(
+          l10n.agileEstBucketTitle,
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
         Text(
-          'Posiziona la story nel bucket appropriato',
+          l10n.agileEstBucketDesc,
           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
         const SizedBox(height: 12),
@@ -508,10 +511,23 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
         ),
         const SizedBox(height: 8),
         Text(
-          'I bucket più grandi indicano story più complesse',
+          l10n.agileEstBucketHint,
           style: TextStyle(fontSize: 11, color: Colors.grey[600]),
         ),
       ],
     );
+  }
+
+  String _getMethodDisplayName(EstimationType method, AppLocalizations l10n) {
+    switch (method) {
+      case EstimationType.planningPoker:
+        return 'Planning Poker'; // Usually kept in English or localized if needed
+      case EstimationType.tshirt:
+        return 'T-Shirt';
+      case EstimationType.threePoint:
+        return 'PERT (3-Point)';
+      case EstimationType.bucket:
+        return 'Bucket System';
+    }
   }
 }

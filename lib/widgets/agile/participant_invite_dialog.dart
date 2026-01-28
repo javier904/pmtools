@@ -9,6 +9,7 @@ import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Dialog per invitare partecipanti a un Progetto Agile
 ///
@@ -119,8 +120,8 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(_sendEmailWithInvite && emailSent
-                  ? 'Invito inviato via email a ${invite.email}'
-                  : 'Invito creato per ${invite.email}'),
+                  ? AppLocalizations.of(context)!.agileInviteSentEmail(invite.email)
+                  : AppLocalizations.of(context)!.agileInviteCreated(invite.email)),
               backgroundColor: Colors.green,
             ),
           );
@@ -172,19 +173,18 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
             final shouldReauth = await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: const Text('Autorizzazione Gmail'),
-                content: const Text(
-                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\n'
-                  'Vuoi procedere?'
+                title: Text(AppLocalizations.of(context)!.agileInviteGmailAuthTitle),
+                content: Text(
+                  AppLocalizations.of(context)!.agileInviteGmailAuthContent
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('No, solo link'),
+                    child: Text(AppLocalizations.of(context)!.agileInviteGmailAuthNo),
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('Autorizza'),
+                    child: Text(AppLocalizations.of(context)!.agileInviteGmailAuthYes),
                   ),
                 ],
               ),
@@ -306,17 +306,17 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Revocare invito?'),
-        content: const Text('L\'invito non sara\' piu\' valido.'),
+        title: Text(AppLocalizations.of(context)!.agileInviteRevokeTitle),
+        content: Text(AppLocalizations.of(context)!.agileInviteRevokeContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(AppLocalizations.of(context)!.agileEstCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Revoca'),
+            child: Text(AppLocalizations.of(context)!.agileInviteRevokeBtn),
           ),
         ],
       ),
@@ -338,8 +338,8 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
         await _loadInvites();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Invito reinviato'),
+             SnackBar(
+              content: Text(AppLocalizations.of(context)!.agileInviteResent),
               backgroundColor: Colors.green,
             ),
           );
@@ -354,6 +354,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Row(
         children: [
@@ -363,7 +364,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Invita al Team', style: TextStyle(fontSize: 18)),
+                Text(l10n.agileInviteTitle, style: const TextStyle(fontSize: 18)),
                 Text(
                   widget.projectName,
                   style: TextStyle(
@@ -391,7 +392,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'NUOVO INVITO',
+                      l10n.agileInviteNew,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -403,19 +404,19 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                     // Email
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'nome@esempio.com',
-                        prefixIcon: Icon(Icons.email),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.agileInviteEmailLabel,
+                        hintText: l10n.agileInviteEmailHint,
+                        prefixIcon: const Icon(Icons.email),
+                        border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Inserisci un\'email';
+                          return l10n.agileInviteEnterEmail;
                         }
                         if (!value.contains('@') || !value.contains('.')) {
-                          return 'Email non valida';
+                          return l10n.agileInviteInvalidEmail;
                         }
                         return null;
                       },
@@ -423,30 +424,30 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                     const SizedBox(height: 16),
 
                     // Ruolo Progetto
-                    const Text(
-                      'Ruolo nel Progetto',
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                    Text(
+                      l10n.agileInviteProjectRole,
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
                       children: [
                         ChoiceChip(
-                          label: const Text('Member'),
+                          label: Text(l10n.agileRoleMember),
                           selected: _selectedParticipantRole == AgileParticipantRole.member,
                           onSelected: (_) => setState(
                               () => _selectedParticipantRole = AgileParticipantRole.member),
                           avatar: Icon(AgileParticipantRole.member.icon, size: 16),
                         ),
                         ChoiceChip(
-                          label: const Text('Admin'),
+                          label: Text(l10n.agileRoleAdmin),
                           selected: _selectedParticipantRole == AgileParticipantRole.admin,
                           onSelected: (_) => setState(
                               () => _selectedParticipantRole = AgileParticipantRole.admin),
                           avatar: Icon(AgileParticipantRole.admin.icon, size: 16),
                         ),
                         ChoiceChip(
-                          label: const Text('Viewer'),
+                          label: Text(l10n.agileRoleViewer),
                           selected: _selectedParticipantRole == AgileParticipantRole.viewer,
                           onSelected: (_) => setState(
                               () => _selectedParticipantRole = AgileParticipantRole.viewer),
@@ -457,9 +458,9 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                     const SizedBox(height: 16),
 
                     // Ruolo Team
-                    const Text(
-                      'Ruolo nel Team',
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                    Text(
+                      l10n.agileInviteTeamRole,
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
@@ -498,7 +499,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Invia email di notifica',
+                              l10n.agileInviteSendEmail,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: _sendEmailWithInvite ? Colors.green[700] : context.textSecondaryColor,
@@ -527,7 +528,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.send),
-                        label: const Text('Invia Invito'),
+                        label: Text(l10n.agileInviteSendBtn),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
@@ -556,9 +557,9 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                         children: [
                           const Icon(Icons.link, color: Colors.green, size: 18),
                           const SizedBox(width: 8),
-                          const Text(
-                            'Link di invito:',
-                            style: TextStyle(
+                          Text(
+                            l10n.agileInviteLink,
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
                             ),
@@ -569,7 +570,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                             onPressed: () {
                               Clipboard.setData(ClipboardData(text: _generatedLink!));
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Link copiato!')),
+                                SnackBar(content: Text(l10n.agileInviteLinkCopied)),
                               );
                             },
                             tooltip: 'Copia link',
@@ -592,7 +593,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                 const Divider(),
                 const SizedBox(height: 12),
                 Text(
-                  'INVITI',
+                  l10n.agileInviteListTitle,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -609,7 +610,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, _invites.any((i) => i.status == UnifiedInviteStatus.accepted)),
-          child: const Text('Chiudi'),
+          child: Text(l10n.agileInviteClose),
         ),
       ],
     );
@@ -738,34 +739,35 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   }
 
   _InviteStatusInfo _getStatusInfo(UnifiedInviteStatus status) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case UnifiedInviteStatus.pending:
         return _InviteStatusInfo(
-          label: 'In attesa',
+          label: l10n.agileInviteStatusPending,
           color: Colors.orange,
           icon: Icons.hourglass_empty,
         );
       case UnifiedInviteStatus.accepted:
         return _InviteStatusInfo(
-          label: 'Accettato',
+          label: l10n.agileInviteStatusAccepted,
           color: Colors.green,
           icon: Icons.check_circle,
         );
       case UnifiedInviteStatus.declined:
         return _InviteStatusInfo(
-          label: 'Rifiutato',
+          label: l10n.agileInviteStatusDeclined,
           color: Colors.red,
           icon: Icons.cancel,
         );
       case UnifiedInviteStatus.expired:
         return _InviteStatusInfo(
-          label: 'Scaduto',
+          label: l10n.agileInviteStatusExpired,
           color: Colors.grey,
           icon: Icons.timer_off,
         );
       case UnifiedInviteStatus.revoked:
         return _InviteStatusInfo(
-          label: 'Revocato',
+          label: l10n.agileInviteStatusRevoked,
           color: Colors.grey,
           icon: Icons.block,
         );

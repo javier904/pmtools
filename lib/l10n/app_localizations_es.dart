@@ -1090,7 +1090,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get agileRoleSMDesc => 'Facilita el proceso y elimina obstáculos';
 
   @override
-  String get agileRoleDevTeamDesc => 'Entrega incrementos de producto';
+  String get agileRoleDevTeamDesc => 'Miembros que desarrollan el producto';
 
   @override
   String get agileRoleStakeholdersDesc => 'Proporcionan feedback y requisitos';
@@ -6397,10 +6397,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get archiveRestoreAction => 'Restaurar';
 
   @override
-  String get archiveShowArchived => 'Mostrar archivados';
+  String get archiveShowArchived => 'Mostrar Archivados';
 
   @override
-  String get archiveHideArchived => 'Ocultar archivados';
+  String get archiveHideArchived => 'Ocultar Archivados';
 
   @override
   String archiveConfirmTitle(String itemType) {
@@ -6421,16 +6421,16 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Quieres restaurar este elemento del archivo?';
 
   @override
-  String get archiveSuccessMessage => 'Elemento archivado con éxito';
+  String get archiveSuccessMessage => 'Proyecto archivado';
 
   @override
-  String get archiveRestoreSuccessMessage => 'Elemento restaurado con éxito';
+  String get archiveRestoreSuccessMessage => 'Proyecto restaurado';
 
   @override
-  String get archiveErrorMessage => 'Error al archivar';
+  String get archiveErrorMessage => 'Error al archivar proyecto';
 
   @override
-  String get archiveRestoreErrorMessage => 'Error al restaurar';
+  String get archiveRestoreErrorMessage => 'Error al restaurar proyecto';
 
   @override
   String get archiveFilterLabel => 'Archivo';
@@ -6445,7 +6445,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get archiveFilterAll => 'Todos';
 
   @override
-  String get archiveBadge => 'Archivado';
+  String get archiveBadge => 'ARCHIVADO';
 
   @override
   String get archiveEmptyMessage => 'No hay elementos archivados';
@@ -7989,4 +7989,777 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get facilitatorGuideOptional => 'Opcional';
+
+  @override
+  String get agileEdit => 'Editar';
+
+  @override
+  String get agileSettings => 'Configuración';
+
+  @override
+  String get agileDelete => 'Eliminar';
+
+  @override
+  String get agileDeleteProjectTitle => 'Eliminar Proyecto';
+
+  @override
+  String agileDeleteProjectConfirm(String projectName) {
+    return '¿Estás seguro de que quieres eliminar \"$projectName\"?';
+  }
+
+  @override
+  String get agileDeleteProjectWarning =>
+      'Esta acción eliminará permanentemente:';
+
+  @override
+  String agileDeleteWarningUserStories(int count) {
+    return '$count historias de usuario';
+  }
+
+  @override
+  String agileDeleteWarningSprints(int count) {
+    return '$count sprints';
+  }
+
+  @override
+  String get agileDeleteProjectData => 'Todos los datos del proyecto';
+
+  @override
+  String get agileProjectSettingsTitle => 'Configuración del Proyecto';
+
+  @override
+  String get agileKeyRoles => 'Roles Clave';
+
+  @override
+  String get agileKeyRolesSubtitle =>
+      'Asignar roles principales del equipo Scrum';
+
+  @override
+  String get agileRoleProductOwner => 'Product Owner';
+
+  @override
+  String get agileRoleProductOwnerDesc =>
+      'Gestiona el backlog y define prioridades';
+
+  @override
+  String get agileRoleScrumMaster => 'Scrum Master';
+
+  @override
+  String get agileRoleScrumMasterDesc =>
+      'Facilita el proceso Scrum y elimina obstáculos';
+
+  @override
+  String get agileRoleDevTeam => 'Equipo de Desarrollo';
+
+  @override
+  String get agileNoDevTeamMembers => 'Sin miembros. Clic + para añadir.';
+
+  @override
+  String get agileRolesInfo =>
+      'Los roles se mostrarán con iconos en la lista de proyectos. Puedes añadir más participantes del equipo.';
+
+  @override
+  String agileAssignedTo(String name) {
+    return 'Asignado a $name';
+  }
+
+  @override
+  String get agileUnassigned => 'No asignado';
+
+  @override
+  String get agileAssignableLater => 'Asignable después de crear';
+
+  @override
+  String get agileAddToTeam => 'Añadir al Equipo';
+
+  @override
+  String get agileAllMembersAssigned =>
+      'Todos los participantes ya tienen rol.';
+
+  @override
+  String get agileClose => 'Cerrar';
+
+  @override
+  String get agileProjectNameLabel => 'Nombre del Proyecto *';
+
+  @override
+  String get agileProjectNameHint => 'Ej: Fashion PMO v2';
+
+  @override
+  String get agileEnterProjectName => 'Introduce nombre del proyecto';
+
+  @override
+  String get agileProjectDescLabel => 'Descripción';
+
+  @override
+  String get agileProjectDescHint => 'Descripción opcional';
+
+  @override
+  String get agileFrameworkLabel => 'Marco Ágil';
+
+  @override
+  String get agileDiscoverDifferences => 'Descubrir diferencias';
+
+  @override
+  String get agileSprintConfig => 'Configuración del Sprint';
+
+  @override
+  String get agileSprintDuration => 'Duración Sprint (días)';
+
+  @override
+  String get agileHoursPerDay => 'Horas/Día';
+
+  @override
+  String get agileCreateProjectTitle => 'Nuevo Proyecto Ágil';
+
+  @override
+  String get agileEditProjectTitle => 'Editar Proyecto';
+
+  @override
+  String get agileSelectParticipant => 'Seleccionar participante';
+
+  @override
+  String get agileAssignRolesHint =>
+      'Asigna roles clave. Puedes modificarlos en configuración.';
+
+  @override
+  String get agileArchiveAction => 'Archivar';
+
+  @override
+  String get agileRestoreAction => 'Restaurar';
+
+  @override
+  String get agileSetupTitle => 'Configuración del Proyecto';
+
+  @override
+  String agileStepComplete(int completed, int total) {
+    return '$completed de $total pasos completados';
+  }
+
+  @override
+  String get agileSetupCompleteTitle => '¡Configuración Completada!';
+
+  @override
+  String get agileSetupCompleteMessage =>
+      'Tu proyecto está listo para empezar.';
+
+  @override
+  String get agileChecklistAddMembers => 'Añadir miembros al equipo';
+
+  @override
+  String get agileChecklistAddMembersDesc => 'Invita a miembros a colaborar';
+
+  @override
+  String get agileChecklistInvite => 'Invitar';
+
+  @override
+  String agileChecklistCreateStories(String itemType) {
+    return 'Crear primeras $itemType';
+  }
+
+  @override
+  String get agileChecklistAddItems => 'Añadir al menos 3 items al backlog';
+
+  @override
+  String get agileChecklistAdd => 'Añadir';
+
+  @override
+  String get agileChecklistWipLimits => 'Configurar límites WIP';
+
+  @override
+  String get agileChecklistWipLimitsDesc =>
+      'Establecer límites para cada columna Kanban';
+
+  @override
+  String get agileChecklistConfigure => 'Configurar';
+
+  @override
+  String agileChecklistEstimate(String itemType) {
+    return 'Estimar $itemType';
+  }
+
+  @override
+  String get agileChecklistEstimateDesc =>
+      'Asignar Story Points para planificar mejor';
+
+  @override
+  String get agileChecklistCreateSprint => 'Crear primer Sprint';
+
+  @override
+  String get agileChecklistSprintDesc =>
+      'Seleccionar historias y empezar a trabajar';
+
+  @override
+  String get agileChecklistCreateSprintAction => 'Crear Sprint';
+
+  @override
+  String get agileChecklistStartWork => 'Empezar a trabajar';
+
+  @override
+  String get agileChecklistStartWorkDesc => 'Mover un item a en progreso';
+
+  @override
+  String get agileTipStartSprintTitle => '¿Listo para un Sprint?';
+
+  @override
+  String get agileTipStartSprintMessage =>
+      'Tienes suficientes historias. Considera planificar el primer Sprint.';
+
+  @override
+  String get agileTipWipTitle => 'Configurar Límites WIP';
+
+  @override
+  String get agileTipWipMessage =>
+      'Los límites WIP son clave en Kanban. Limita el trabajo en curso para mejorar el flujo.';
+
+  @override
+  String get agileTipHybridTitle => 'Configura tu Scrumban';
+
+  @override
+  String get agileTipHybridMessage =>
+      'Puedes usar Sprints por cadencia o límites WIP por flujo. ¡Experimenta!';
+
+  @override
+  String get agileTipDiscover => 'Descubrir';
+
+  @override
+  String get agileTipClose => 'Cerrar';
+
+  @override
+  String get agileNextStepInviteTitle => 'Invitar Equipo';
+
+  @override
+  String get agileNextStepInviteDesc => 'Añadir miembros para colaborar.';
+
+  @override
+  String get agileNextStepBacklogTitle => 'Crear Backlog';
+
+  @override
+  String agileNextStepBacklogDesc(String itemType) {
+    return 'Añadir primeras $itemType al backlog.';
+  }
+
+  @override
+  String get agileNextStepSprintTitle => 'Planificar un Sprint';
+
+  @override
+  String agileNextStepSprintDesc(int count) {
+    return 'Tienes $count items listos. ¡Crea el Sprint!';
+  }
+
+  @override
+  String get agileNextStepWipTitle => 'Configurar Límites WIP';
+
+  @override
+  String get agileNextStepWipDesc =>
+      'Limita el trabajo en curso para mejorar el flujo.';
+
+  @override
+  String get agileNextStepWorkTitle => 'Empezar a trabajar';
+
+  @override
+  String get agileNextStepWorkDesc =>
+      'Mueve un item a \"En Progreso\" para empezar.';
+
+  @override
+  String get agileNextStepGoToKanban => 'Ir a Kanban';
+
+  @override
+  String get agileActionNewStory => 'Nueva Historia';
+
+  @override
+  String get agileBacklogTitle => 'Backlog de Producto';
+
+  @override
+  String get agileBacklogArchiveTitle => 'Archivo Completado';
+
+  @override
+  String get agileBacklogToggleActive => 'Mostrar Backlog activo';
+
+  @override
+  String agileBacklogToggleArchive(int count) {
+    return 'Mostrar Archivo ($count)';
+  }
+
+  @override
+  String agileBacklogArchiveBadge(int count) {
+    return 'Archivo ($count)';
+  }
+
+  @override
+  String get agileBacklogSearchHint => 'Buscar por título, descripción o ID...';
+
+  @override
+  String agileBacklogStatsStories(int count) {
+    return '$count historias';
+  }
+
+  @override
+  String agileBacklogStatsPoints(int points) {
+    return '$points pts';
+  }
+
+  @override
+  String agileBacklogStatsEstimated(int count) {
+    return '$count estimadas';
+  }
+
+  @override
+  String get agileFiltersStatus => 'Estado:';
+
+  @override
+  String get agileFiltersPriority => 'Prioridad:';
+
+  @override
+  String get agileFiltersTags => 'Etiquetas:';
+
+  @override
+  String get agileFiltersAll => 'Todos';
+
+  @override
+  String get agileFiltersClear => 'Limpiar filtros';
+
+  @override
+  String get agileEmptyBacklogMatch => 'No se encontraron historias';
+
+  @override
+  String get agileEmptyBacklog => 'Backlog vacío';
+
+  @override
+  String get agileEmptyBacklogHint => 'Añade la primera Historia de Usuario';
+
+  @override
+  String get agileEstTitle => 'Estimar Historia';
+
+  @override
+  String get agileEstMethod => 'Método de estimación';
+
+  @override
+  String get agileEstSelectValue => 'Selecciona un valor';
+
+  @override
+  String get agileEstSubmit => 'Confirmar Estimación';
+
+  @override
+  String get agileEstCancel => 'Cancelar';
+
+  @override
+  String get agileEstPokerTitle => 'Planning Poker (Fibonacci)';
+
+  @override
+  String get agileEstPokerDesc => 'Selecciona la complejidad en story points';
+
+  @override
+  String get agileEstTShirtTitle => 'T-Shirt Sizing';
+
+  @override
+  String get agileEstTShirtDesc =>
+      'Selecciona el tamaño relativo de la historia';
+
+  @override
+  String get agileEstThreePointTitle => 'Estimación Tres Puntos (PERT)';
+
+  @override
+  String get agileEstThreePointDesc =>
+      'Ingresa tres valores para calcular PERT';
+
+  @override
+  String get agileEstBucketTitle => 'Sistema de Cubos (Bucket)';
+
+  @override
+  String get agileEstBucketDesc => 'Coloca la historia en el cubo apropiado';
+
+  @override
+  String get agileEstBucketHint =>
+      'Cubos más grandes indican mayor complejidad';
+
+  @override
+  String get agileEstReference => 'Referencia:';
+
+  @override
+  String get agileEstRefXS => 'XS = Pocas horas';
+
+  @override
+  String get agileEstRefS => 'S = ~1 día';
+
+  @override
+  String get agileEstRefM => 'M = ~2-3 días';
+
+  @override
+  String get agileEstRefL => 'L = ~1 semana';
+
+  @override
+  String get agileEstRefXL => 'XL = ~2 semanas';
+
+  @override
+  String get agileEstRefXXL => 'XXL = Demasiado grande, dividir';
+
+  @override
+  String get agileEstOptimistic => 'Optimista (O)';
+
+  @override
+  String get agileEstOptimisticHint => 'Mejor caso';
+
+  @override
+  String get agileEstMostLikely => 'Más probable (M)';
+
+  @override
+  String get agileEstMostLikelyHint => 'Caso probable';
+
+  @override
+  String get agileEstPessimistic => 'Pesimista (P)';
+
+  @override
+  String get agileEstPessimisticHint => 'Peor caso';
+
+  @override
+  String get agileEstPointsSuffix => 'pts';
+
+  @override
+  String get agileEstFormula => 'Fórmula PERT: (O + 4M + P) / 6';
+
+  @override
+  String agileEstResult(String value) {
+    return 'Estimación: $value puntos';
+  }
+
+  @override
+  String get agileEstErrorThreePoint => 'Ingresa los tres valores';
+
+  @override
+  String get agileEstErrorSelect => 'Selecciona un valor';
+
+  @override
+  String agileEstExisting(int count) {
+    return 'Estimaciones existentes ($count)';
+  }
+
+  @override
+  String get agileEstYou => 'Tú';
+
+  @override
+  String get scrumPermBacklogTitle => 'Permisos del Backlog';
+
+  @override
+  String get scrumPermBacklogDesc =>
+      'Solo el Product Owner puede crear, editar, eliminar y priorizar historias';
+
+  @override
+  String get scrumPermSprintTitle => 'Permisos del Sprint';
+
+  @override
+  String get scrumPermSprintDesc =>
+      'Solo el Scrum Master puede crear, iniciar y completar sprints';
+
+  @override
+  String get scrumPermEstimateTitle => 'Permisos de Estimación';
+
+  @override
+  String get scrumPermEstimateDesc =>
+      'Solo el Equipo de Desarrollo puede estimar historias';
+
+  @override
+  String get scrumPermKanbanTitle => 'Permisos del Kanban';
+
+  @override
+  String get scrumPermKanbanDesc =>
+      'El Equipo de Desarrollo puede mover sus propias historias, PO y SM pueden mover cualquier historia';
+
+  @override
+  String get scrumPermTeamTitle => 'Permisos del Equipo';
+
+  @override
+  String get scrumPermTeamDesc =>
+      'PO y SM pueden invitar miembros, solo el PO puede cambiar roles';
+
+  @override
+  String get scrumPermDeniedBacklogCreate =>
+      'Solo el Product Owner puede crear nuevas historias';
+
+  @override
+  String get scrumPermDeniedBacklogEdit =>
+      'Solo el Product Owner puede editar historias';
+
+  @override
+  String get scrumPermDeniedBacklogDelete =>
+      'Solo el Product Owner puede eliminar historias';
+
+  @override
+  String get scrumPermDeniedBacklogPrioritize =>
+      'Solo el Product Owner puede reordenar el backlog';
+
+  @override
+  String get scrumPermDeniedSprintCreate =>
+      'Solo el Scrum Master puede crear nuevos sprints';
+
+  @override
+  String get scrumPermDeniedSprintStart =>
+      'Solo el Scrum Master puede iniciar sprints';
+
+  @override
+  String get scrumPermDeniedSprintComplete =>
+      'Solo el Scrum Master puede completar sprints';
+
+  @override
+  String get scrumPermDeniedEstimate =>
+      'Solo el Equipo de Desarrollo puede estimar historias';
+
+  @override
+  String get scrumPermDeniedInvite =>
+      'Solo PO y SM pueden invitar nuevos miembros';
+
+  @override
+  String get scrumPermDeniedRoleChange =>
+      'Solo el Product Owner puede cambiar los roles del equipo';
+
+  @override
+  String get scrumPermDeniedWipConfig =>
+      'Solo el Scrum Master puede configurar los límites WIP';
+
+  @override
+  String get scrumRoleProductOwner => 'Product Owner';
+
+  @override
+  String get scrumRoleScrumMaster => 'Scrum Master';
+
+  @override
+  String get scrumRoleDeveloper => 'Desarrollador';
+
+  @override
+  String get scrumRoleDesigner => 'Diseñador';
+
+  @override
+  String get scrumRoleQA => 'QA';
+
+  @override
+  String get scrumRoleStakeholder => 'Stakeholder';
+
+  @override
+  String get scrumMatrixTitle => 'Matriz de Permisos Scrum';
+
+  @override
+  String get scrumMatrixSubtitle =>
+      'Quién puede hacer qué según la Guía Scrum 2020';
+
+  @override
+  String get scrumMatrixLegend => 'Leyenda';
+
+  @override
+  String get scrumMatrixLegendFull => 'Gestiona';
+
+  @override
+  String get scrumMatrixLegendPartial => 'Parcial';
+
+  @override
+  String get scrumMatrixLegendView => 'Solo ver';
+
+  @override
+  String get scrumMatrixLegendNone => 'Ninguno';
+
+  @override
+  String get scrumMatrixCategoryBacklog => 'BACKLOG';
+
+  @override
+  String get scrumMatrixCategorySprint => 'SPRINT';
+
+  @override
+  String get scrumMatrixCategoryEstimation => 'ESTIMACIÓN';
+
+  @override
+  String get scrumMatrixCategoryKanban => 'KANBAN';
+
+  @override
+  String get scrumMatrixCategoryTeam => 'EQUIPO';
+
+  @override
+  String get scrumMatrixCategoryRetro => 'RETROSPECTIVA';
+
+  @override
+  String get scrumMatrixActionCreateStory => 'Crear Historia';
+
+  @override
+  String get scrumMatrixActionEditStory => 'Editar Historia';
+
+  @override
+  String get scrumMatrixActionDeleteStory => 'Eliminar Historia';
+
+  @override
+  String get scrumMatrixActionPrioritize => 'Priorizar Backlog';
+
+  @override
+  String get scrumMatrixActionAddAcceptance =>
+      'Definir Criterios de Aceptación';
+
+  @override
+  String get scrumMatrixActionCreateSprint => 'Crear Sprint';
+
+  @override
+  String get scrumMatrixActionStartSprint => 'Iniciar Sprint';
+
+  @override
+  String get scrumMatrixActionCompleteSprint => 'Completar Sprint';
+
+  @override
+  String get scrumMatrixActionConfigWip => 'Configurar Límites WIP';
+
+  @override
+  String get scrumMatrixActionEstimate => 'Estimar Story Points';
+
+  @override
+  String get scrumMatrixActionFinalEstimate => 'Definir Estimación Final';
+
+  @override
+  String get scrumMatrixActionMoveOwn => 'Mover propias Historias';
+
+  @override
+  String get scrumMatrixActionMoveAny => 'Mover cualquier Historia';
+
+  @override
+  String get scrumMatrixActionSelfAssign => 'Auto-asignarse';
+
+  @override
+  String get scrumMatrixActionAssignOthers => 'Asignar a otros';
+
+  @override
+  String get scrumMatrixActionChangeStatus => 'Cambiar estado Historia';
+
+  @override
+  String get scrumMatrixActionInvite => 'Invitar miembros';
+
+  @override
+  String get scrumMatrixActionRemove => 'Eliminar miembros';
+
+  @override
+  String get scrumMatrixActionChangeRole => 'Cambiar roles';
+
+  @override
+  String get scrumMatrixActionFacilitateRetro => 'Facilitar Retrospectiva';
+
+  @override
+  String get scrumMatrixActionParticipateRetro => 'Participar en Retrospectiva';
+
+  @override
+  String get scrumMatrixActionAddRetroItem => 'Agregar item Retro';
+
+  @override
+  String get scrumMatrixActionVoteRetro => 'Votar items';
+
+  @override
+  String get scrumMatrixColPO => 'PO';
+
+  @override
+  String get scrumMatrixColSM => 'SM';
+
+  @override
+  String get scrumMatrixColDev => 'Dev';
+
+  @override
+  String get scrumMatrixColStake => 'Stake';
+
+  @override
+  String get agileInviteTitle => 'Invitar al Equipo';
+
+  @override
+  String get agileInviteNew => 'NUEVA INVITACIÓN';
+
+  @override
+  String get agileInviteEmailLabel => 'Correo electrónico';
+
+  @override
+  String get agileInviteEmailHint => 'nombre@ejemplo.com';
+
+  @override
+  String get agileInviteEnterEmail => 'Ingresa un correo';
+
+  @override
+  String get agileInviteInvalidEmail => 'Correo inválido';
+
+  @override
+  String get agileInviteProjectRole => 'Rol en el Proyecto';
+
+  @override
+  String get agileInviteTeamRole => 'Rol en el Equipo';
+
+  @override
+  String get agileInviteSendEmail => 'Enviar correo de notificación';
+
+  @override
+  String get agileInviteSendBtn => 'Enviar Invitación';
+
+  @override
+  String get agileInviteLink => 'Enlace de invitación:';
+
+  @override
+  String get agileInviteLinkCopied => '¡Enlace copiado!';
+
+  @override
+  String get agileInviteListTitle => 'INVITACIONES';
+
+  @override
+  String get agileInviteClose => 'Cerrar';
+
+  @override
+  String get agileInviteGmailAuthTitle => 'Autorización de Gmail';
+
+  @override
+  String get agileInviteGmailAuthContent =>
+      'Para enviar correos de invitación, necesitas reautenticarte con Google.\n\n¿Deseas continuar?';
+
+  @override
+  String get agileInviteGmailAuthNo => 'No, solo enlace';
+
+  @override
+  String get agileInviteGmailAuthYes => 'Autorizar';
+
+  @override
+  String agileInviteSentEmail(String email) {
+    return 'Invitación enviada por correo a $email';
+  }
+
+  @override
+  String agileInviteCreated(String email) {
+    return 'Invitación creada para $email';
+  }
+
+  @override
+  String get agileInviteRevokeTitle => '¿Revocar invitación?';
+
+  @override
+  String get agileInviteRevokeContent => 'La invitación ya no será válida.';
+
+  @override
+  String get agileInviteRevokeBtn => 'Revocar';
+
+  @override
+  String get agileInviteResend => 'Reenviar';
+
+  @override
+  String get agileInviteResent => 'Invitación reenviada';
+
+  @override
+  String get agileInviteStatusPending => 'Pendiente';
+
+  @override
+  String get agileInviteStatusAccepted => 'Aceptado';
+
+  @override
+  String get agileInviteStatusDeclined => 'Rechazado';
+
+  @override
+  String get agileInviteStatusExpired => 'Expirado';
+
+  @override
+  String get agileInviteStatusRevoked => 'Revocado';
+
+  @override
+  String get agileRoleMember => 'Miembro';
+
+  @override
+  String get agileRoleAdmin => 'Admin';
+
+  @override
+  String get agileRoleViewer => 'Observador';
+
+  @override
+  String get agileRoleOwner => 'Propietario';
 }

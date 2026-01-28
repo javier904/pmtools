@@ -288,6 +288,178 @@ class AgileProjectModel {
   List<TeamMemberModel> getParticipantsByRole(TeamRole role) =>
       participants.values.where((p) => p.teamRole == role).toList();
 
+  // =========================================================================
+  // PERMESSI SCRUM-COMPLIANT
+  // Combinano AgileParticipantRole (accesso) + TeamRole (funzione)
+  // =========================================================================
+
+  /// Helper: ottiene il TeamRole di un utente
+  TeamRole? getTeamRole(String email) => participants[email]?.teamRole;
+
+  // ---------------------------------------------------------------------------
+  // BACKLOG MANAGEMENT (Solo Product Owner)
+  // ---------------------------------------------------------------------------
+
+  /// Può creare user stories - Richiede accesso + ruolo PO
+  bool canCreateStory(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canCreateStory;
+  }
+
+  /// Può modificare user stories - Richiede accesso + ruolo PO
+  bool canEditStory(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canEditStory;
+  }
+
+  /// Può eliminare user stories - Richiede accesso + ruolo PO
+  bool canDeleteStory(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canDeleteStory;
+  }
+
+  /// Può riordinare/prioritizzare backlog - Richiede accesso + ruolo PO
+  bool canPrioritizeBacklog(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canPrioritizeBacklog;
+  }
+
+  // ---------------------------------------------------------------------------
+  // SPRINT MANAGEMENT (Solo Scrum Master)
+  // ---------------------------------------------------------------------------
+
+  /// Può gestire sprint (creare, avviare, completare) - Richiede accesso + ruolo SM
+  bool canManageSprints(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canManage && p.teamRole.canManageSprints;
+  }
+
+  // ---------------------------------------------------------------------------
+  // ESTIMATION (Solo Development Team)
+  // ---------------------------------------------------------------------------
+
+  /// Può stimare (votare) - Richiede accesso + ruolo Dev Team
+  bool canEstimate(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canEstimate;
+  }
+
+  /// Può impostare la stima finale - Richiede accesso + ruolo PO
+  bool canSetFinalEstimate(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canSetFinalEstimate;
+  }
+
+  // ---------------------------------------------------------------------------
+  // KANBAN BOARD & TASK ASSIGNMENT
+  // ---------------------------------------------------------------------------
+
+  /// Può spostare le proprie story - Richiede accesso + non stakeholder
+  bool canMoveOwnStory(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canMoveOwnStory;
+  }
+
+  /// Può spostare qualsiasi story - Richiede accesso + ruolo PO/SM
+  bool canMoveAnyStory(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canMoveAnyStory;
+  }
+
+  /// Può auto-assegnarsi - Richiede accesso + ruolo Dev Team
+  bool canSelfAssign(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canSelfAssign;
+  }
+
+  /// Può assegnare task ad altri - Richiede accesso + ruolo PO
+  bool canAssignOthers(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canAssignOthers;
+  }
+
+  // ---------------------------------------------------------------------------
+  // TEAM MANAGEMENT
+  // ---------------------------------------------------------------------------
+
+  /// Può invitare membri - Richiede gestione + ruolo PO/SM
+  bool canInviteMembers(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canInvite && p.teamRole.canInviteMembers;
+  }
+
+  /// Può rimuovere membri - Richiede owner + ruolo PO
+  bool canRemoveMembers(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    // Owner può sempre rimuovere, oppure PO con permesso admin
+    return isOwner(email) || (p.participantRole.canManage && p.teamRole.canRemoveMembers);
+  }
+
+  /// Può cambiare ruoli - Richiede owner + ruolo PO
+  bool canChangeRoles(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return isOwner(email) || (p.participantRole.canManage && p.teamRole.canChangeRoles);
+  }
+
+  // ---------------------------------------------------------------------------
+  // DAILY STANDUP & RETROSPECTIVE
+  // ---------------------------------------------------------------------------
+
+  /// Può aggiungere note standup - Richiede accesso + non stakeholder
+  bool canAddStandupNote(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canAddStandupNote;
+  }
+
+  /// Può facilitare retrospettiva - Richiede accesso + ruolo SM
+  bool canFacilitateRetro(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canManage && p.teamRole.canFacilitateRetro;
+  }
+
+  /// Può partecipare a retrospettiva - Richiede accesso + non stakeholder
+  bool canParticipateRetro(String email) {
+    final p = participants[email];
+    if (p == null) return false;
+    return p.participantRole.canEdit && p.teamRole.canParticipateRetro;
+  }
+
+  // ---------------------------------------------------------------------------
+  // UTILITY
+  // ---------------------------------------------------------------------------
+
+  /// Verifica se l'utente è Product Owner
+  bool isProductOwner(String email) =>
+      participants[email]?.teamRole == TeamRole.productOwner;
+
+  /// Verifica se l'utente è Scrum Master
+  bool isScrumMaster(String email) =>
+      participants[email]?.teamRole == TeamRole.scrumMaster;
+
+  /// Verifica se l'utente è nel Development Team
+  bool isDevelopmentTeam(String email) =>
+      participants[email]?.teamRole.isDevelopmentTeam ?? false;
+
+  /// Verifica se l'utente è nello Scrum Team (non stakeholder)
+  bool isScrumTeam(String email) =>
+      participants[email]?.teamRole.isScrumTeam ?? false;
+
   /// Aggiunge un partecipante
   AgileProjectModel withParticipant(TeamMemberModel participant) {
     return copyWith(

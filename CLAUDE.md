@@ -199,7 +199,8 @@ agile_projects/{projectId}
 ├── name, description, createdBy
 ├── framework (scrum, kanban, hybrid)
 ├── sprintDurationDays, workingHoursPerDay
-├── participants: {escapedEmail: role}
+├── participants: {escapedEmail: TeamMemberModel}
+│   └── TeamMemberModel: { email, name, participantRole, teamRole, capacity, skills }
 ├── activeSprintId
 │
 ├── stories/{storyId}
@@ -221,6 +222,90 @@ agile_projects/{projectId}
     ├── wentWell, toImprove, actionItems
     └── sentimentVotes, averageSentiment
 ```
+
+### Sistema Permessi Scrum-Compliant
+
+Il sistema utilizza **due ruoli complementari** per ogni partecipante (Scrum Guide 2020):
+
+| Tipo Ruolo | Enum | Valori | Scopo |
+|------------|------|--------|-------|
+| **Accesso** | `AgileParticipantRole` | owner, admin, member, viewer | Controllo accesso base |
+| **Funzionale** | `TeamRole` | productOwner, scrumMaster, developer, designer, qa, stakeholder | Permessi Scrum specifici |
+
+### Matrice Permessi per TeamRole
+
+| Azione | Product Owner | Scrum Master | Dev Team | Stakeholder |
+|--------|:-------------:|:------------:|:--------:|:-----------:|
+| **Backlog** |
+| Creare Stories | ✅ | ❌ | ❌ | ❌ |
+| Modificare Stories | ✅ | ❌ | ❌ | ❌ |
+| Eliminare Stories | ✅ | ❌ | ❌ | ❌ |
+| Prioritizzare Backlog | ✅ | ❌ | ❌ | ❌ |
+| **Sprint** |
+| Creare Sprint | ❌ | ✅ | ❌ | ❌ |
+| Avviare Sprint | ❌ | ✅ | ❌ | ❌ |
+| Completare Sprint | ❌ | ✅ | ❌ | ❌ |
+| Configurare WIP Limits | ❌ | ✅ | ❌ | ❌ |
+| **Stima & Sviluppo** |
+| Stimare Story Points | ❌ | ❌ | ✅ | ❌ |
+| Definire Stima Finale | ✅ | ❌ | ❌ | ❌ |
+| Spostare proprie stories | ✅ | ✅ | ✅ | ❌ |
+| Spostare qualsiasi story | ✅ | ✅ | ❌ | ❌ |
+| Auto-assegnarsi | ❌ | ❌ | ✅ | ❌ |
+| Assegnare altri | ✅ | ❌ | ❌ | ❌ |
+| **Team** |
+| Invitare membri | ✅ | ✅ | ❌ | ❌ |
+| Rimuovere membri | ✅ | ❌ | ❌ | ❌ |
+| Cambiare ruoli | ✅ | ❌ | ❌ | ❌ |
+| **Retrospective** |
+| Facilitare Retro | ❌ | ✅ | ❌ | ❌ |
+| Partecipare Retro | ✅ | ✅ | ✅ | ❌ |
+
+### Implementazione Tecnica
+
+**File chiave:**
+- `lib/models/agile_enums.dart` - Helper methods per TeamRole (canCreateStory, canManageSprints, etc.)
+- `lib/models/agile_project_model.dart` - Metodi permesso combinati (accesso + funzionale)
+- `lib/screens/agile_project_detail_screen.dart` - Controlli UI permission-aware
+
+**Pattern di utilizzo:**
+```dart
+// Verifica permesso specifico
+if (project.canCreateStory(userEmail)) {
+  // Mostra pulsante "Nuova Story"
+}
+
+// Verifica ruolo
+if (project.isProductOwner(userEmail)) {
+  // Logica PO-specific
+}
+
+// Verifica appartenenza gruppo
+if (project.isDevelopmentTeam(userEmail)) {
+  // Logica Dev Team
+}
+```
+
+**Logica combinata:**
+```dart
+// AgileProjectModel.canCreateStory()
+bool canCreateStory(String email) {
+  final p = participants[email];
+  if (p == null) return false;
+  // ENTRAMBI i controlli devono passare:
+  // 1. Accesso: canEdit (owner, admin, member)
+  // 2. Funzionale: teamRole.canCreateStory (solo PO)
+  return p.participantRole.canEdit && p.teamRole.canCreateStory;
+}
+```
+
+### Traduzioni Permessi
+
+Chiavi di traduzione disponibili (IT, EN, ES, FR):
+- `scrumPermBacklogTitle/Desc` - Descrizione permessi backlog
+- `scrumPermSprintTitle/Desc` - Descrizione permessi sprint
+- `scrumPermDenied*` - Messaggi diniego accesso (per future UI con feedback)
+- `scrumRole*` - Nomi ruoli localizzati
 
 ## Temi e Stile
 
