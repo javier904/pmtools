@@ -143,9 +143,10 @@ enum StoryPriority {
   }
 }
 
-/// Status delle user stories nel flusso Kanban
+/// Status delle user stories nel flusso Kanban/Scrum
 enum StoryStatus {
   backlog,
+  refinement, // NEW: Story in fase di Refinement (analisi, dettaglio, DoR check)
   ready,
   inSprint,
   inProgress,
@@ -156,6 +157,8 @@ enum StoryStatus {
     switch (this) {
       case StoryStatus.backlog:
         return 'Backlog';
+      case StoryStatus.refinement:
+        return 'Refinement';
       case StoryStatus.ready:
         return 'Ready';
       case StoryStatus.inSprint:
@@ -173,6 +176,8 @@ enum StoryStatus {
     switch (this) {
       case StoryStatus.backlog:
         return const Color(0xFF9E9E9E); // Grey
+      case StoryStatus.refinement:
+        return const Color(0xFFAB47BC); // Purple - analisi/dettaglio
       case StoryStatus.ready:
         return const Color(0xFF2196F3); // Blue
       case StoryStatus.inSprint:
@@ -190,6 +195,8 @@ enum StoryStatus {
     switch (this) {
       case StoryStatus.backlog:
         return Icons.inventory_2_outlined;
+      case StoryStatus.refinement:
+        return Icons.auto_fix_high; // Refinement/Grooming
       case StoryStatus.ready:
         return Icons.check_circle_outline;
       case StoryStatus.inSprint:
@@ -204,7 +211,14 @@ enum StoryStatus {
   }
 
   /// Verifica se la story può essere messa in uno sprint
+  /// Solo le story "Ready" possono essere aggiunte (soddisfano la Definition of Ready)
   bool get canAddToSprint => this == StoryStatus.ready;
+
+  /// Verifica se la story necessita di refinement prima di essere ready
+  bool get needsRefinement => this == StoryStatus.backlog || this == StoryStatus.refinement;
+
+  /// Verifica se la story è in fase di refinement
+  bool get isInRefinement => this == StoryStatus.refinement;
 
   /// Verifica se la story è completata
   bool get isCompleted => this == StoryStatus.done;
@@ -601,6 +615,170 @@ enum EstimationType {
         return 13;
       default:
         return 0;
+    }
+  }
+}
+
+/// Classes of Service (Kanban - David Anderson)
+/// Categorizza il lavoro per tipo di urgenza/impatto business
+enum ClassOfService {
+  /// Standard: Lavoro normale, processato FIFO
+  standard,
+  /// Expedite: Urgente, priorità massima (es: bug produzione)
+  expedite,
+  /// Fixed Date: Scadenza immutabile (es: compliance, eventi)
+  fixedDate,
+  /// Intangible: Importante ma senza valore business immediato (es: tech debt)
+  intangible;
+
+  String get displayName {
+    switch (this) {
+      case ClassOfService.standard:
+        return 'Standard';
+      case ClassOfService.expedite:
+        return 'Expedite';
+      case ClassOfService.fixedDate:
+        return 'Fixed Date';
+      case ClassOfService.intangible:
+        return 'Intangible';
+    }
+  }
+
+  String get shortName {
+    switch (this) {
+      case ClassOfService.standard:
+        return 'STD';
+      case ClassOfService.expedite:
+        return 'EXP';
+      case ClassOfService.fixedDate:
+        return 'FIX';
+      case ClassOfService.intangible:
+        return 'INT';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case ClassOfService.standard:
+        return 'Lavoro regolare, priorità normale (FIFO)';
+      case ClassOfService.expedite:
+        return 'Urgente! Priorità massima, può superare WIP limits';
+      case ClassOfService.fixedDate:
+        return 'Scadenza fissa non negoziabile';
+      case ClassOfService.intangible:
+        return 'Tech debt, miglioramenti, lavoro di valore futuro';
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case ClassOfService.standard:
+        return const Color(0xFF2196F3); // Blue
+      case ClassOfService.expedite:
+        return const Color(0xFFE53935); // Red
+      case ClassOfService.fixedDate:
+        return const Color(0xFF7B1FA2); // Purple
+      case ClassOfService.intangible:
+        return const Color(0xFF9E9E9E); // Grey
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case ClassOfService.standard:
+        return Icons.remove_circle_outline;
+      case ClassOfService.expedite:
+        return Icons.local_fire_department;
+      case ClassOfService.fixedDate:
+        return Icons.event;
+      case ClassOfService.intangible:
+        return Icons.build_circle;
+    }
+  }
+
+  /// Ordine di priorità (più basso = più urgente)
+  int get sortOrder {
+    switch (this) {
+      case ClassOfService.expedite:
+        return 0;
+      case ClassOfService.fixedDate:
+        return 1;
+      case ClassOfService.standard:
+        return 2;
+      case ClassOfService.intangible:
+        return 3;
+    }
+  }
+
+  /// Può superare i WIP limits?
+  bool get canExceedWipLimit => this == ClassOfService.expedite;
+
+  /// Richiede una data di scadenza?
+  bool get requiresDueDate => this == ClassOfService.fixedDate;
+}
+
+/// Tipo di raggruppamento per Swimlanes nella Kanban Board
+///
+/// Le Swimlanes sono corsie orizzontali che raggruppano le card
+/// per un attributo specifico, migliorando la visualizzazione del flusso.
+enum SwimlaneType {
+  /// Nessun raggruppamento (visualizzazione classica)
+  none,
+
+  /// Raggruppa per Class of Service (Expedite in alto, poi Fixed Date, Standard, Intangible)
+  classOfService,
+
+  /// Raggruppa per assegnatario (una riga per persona, più "Non assegnato")
+  assignee,
+
+  /// Raggruppa per priorità (Must, Should, Could, Won't)
+  priority,
+
+  /// Raggruppa per tag (una riga per ogni tag)
+  tag;
+
+  String get displayName {
+    switch (this) {
+      case SwimlaneType.none:
+        return 'Nessuno';
+      case SwimlaneType.classOfService:
+        return 'Class of Service';
+      case SwimlaneType.assignee:
+        return 'Assegnatario';
+      case SwimlaneType.priority:
+        return 'Priorità';
+      case SwimlaneType.tag:
+        return 'Tag';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case SwimlaneType.none:
+        return 'Visualizzazione classica senza raggruppamento';
+      case SwimlaneType.classOfService:
+        return 'Raggruppa per Expedite, Fixed Date, Standard, Intangible';
+      case SwimlaneType.assignee:
+        return 'Raggruppa per persona assegnata';
+      case SwimlaneType.priority:
+        return 'Raggruppa per livello di priorità MoSCoW';
+      case SwimlaneType.tag:
+        return 'Raggruppa per tag applicato';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case SwimlaneType.none:
+        return Icons.view_column;
+      case SwimlaneType.classOfService:
+        return Icons.layers;
+      case SwimlaneType.assignee:
+        return Icons.person;
+      case SwimlaneType.priority:
+        return Icons.flag;
+      case SwimlaneType.tag:
+        return Icons.label;
     }
   }
 }

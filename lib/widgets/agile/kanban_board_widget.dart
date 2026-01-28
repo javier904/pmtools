@@ -18,8 +18,12 @@ class KanbanBoardWidget extends StatefulWidget {
   final void Function(String storyId, StoryStatus newStatus)? onStatusChange;
   final void Function(UserStoryModel story)? onStoryTap;
   final void Function(String columnId, int? newLimit)? onWipLimitChange;
+  final void Function(String columnId, List<String> policies)? onPoliciesChange;
+  final void Function(SwimlaneType)? onSwimlaneChange;
+  final SwimlaneType swimlaneType;
   final bool canEdit;
   final bool showWipConfig;
+  final bool showPolicies;
 
   const KanbanBoardWidget({
     super.key,
@@ -29,8 +33,12 @@ class KanbanBoardWidget extends StatefulWidget {
     this.onStatusChange,
     this.onStoryTap,
     this.onWipLimitChange,
+    this.onPoliciesChange,
+    this.onSwimlaneChange,
+    this.swimlaneType = SwimlaneType.none,
     this.canEdit = true,
     this.showWipConfig = false,
+    this.showPolicies = true,
   });
 
   @override
@@ -75,30 +83,415 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         // Header con info framework
         if (_features.hasWipLimits) _buildWipInfoBanner(),
 
+        // Swimlane selector (solo per Kanban/Hybrid)
+        if (_features.hasWipLimits && widget.onSwimlaneChange != null)
+          _buildSwimlaneSelector(),
+
         // Board
         Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final columnCount = widget.columns.length;
-              final columnWidth = ((constraints.maxWidth - 32) / columnCount - 8)
-                  .clamp(200.0, 350.0);
-
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.columns.map((column) {
-                    final stories = _storiesByColumn[column.id] ?? [];
-                    return _buildColumn(column, stories, columnWidth);
-                  }).toList(),
-                ),
-              );
-            },
-          ),
+          child: widget.swimlaneType == SwimlaneType.none
+              ? _buildStandardBoard()
+              : _buildSwimlanedBoard(),
         ),
       ],
     );
+  }
+
+  Widget _buildSwimlaneSelector() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: context.surfaceColor,
+      child: Row(
+        children: [
+          Icon(Icons.view_agenda, size: 16, color: context.textSecondaryColor),
+          const SizedBox(width: 8),
+          Text('Swimlanes:', style: TextStyle(fontSize: 12, color: context.textSecondaryColor)),
+          const SizedBox(width: 8),
+          ...SwimlaneType.values.map((type) => Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: ChoiceChip(
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(type.icon, size: 14),
+                  const SizedBox(width: 4),
+                  Text(type.displayName, style: const TextStyle(fontSize: 11)),
+                ],
+              ),
+              selected: widget.swimlaneType == type,
+              onSelected: (_) => widget.onSwimlaneChange?.call(type),
+              tooltip: type.description,
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStandardBoard() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columnCount = widget.columns.length;
+        final columnWidth = ((constraints.maxWidth - 32) / columnCount - 8)
+            .clamp(200.0, 350.0);
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: widget.columns.map((column) {
+              final stories = _storiesByColumn[column.id] ?? [];
+              return _buildColumn(column, stories, columnWidth);
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSwimlanedBoard() {
+    final swimlanes = _getSwimlanes();
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columnCount = widget.columns.length;
+        final columnWidth = ((constraints.maxWidth - 32 - 150) / columnCount - 8)
+            .clamp(180.0, 300.0);
+
+        return SingleChildScrollView(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row con nomi colonne
+                _buildSwimlaneHeader(columnWidth),
+                const SizedBox(height: 8),
+                // Swimlane rows
+                ...swimlanes.map((lane) =>
+                    _buildSwimlaneRow(lane, columnWidth)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSwimlaneHeader(double columnWidth) {
+    return Row(
+      children: [
+        // Spazio per label swimlane
+        SizedBox(
+          width: 140,
+          child: Text('Swimlane', style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: context.textSecondaryColor,
+            fontSize: 12,
+          )),
+        ),
+        const SizedBox(width: 8),
+        // Nomi colonne
+        ...widget.columns.map((column) => Container(
+          width: columnWidth,
+          margin: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: column.statuses.first.color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            column.name,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: column.statuses.first.color,
+            ),
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildSwimlaneRow(_SwimlaneData lane, double columnWidth) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: lane.color.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: lane.color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Swimlane label
+          Container(
+            width: 140,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Icon(lane.icon, size: 16, color: lane.color),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        lane.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: lane.color,
+                          fontSize: 12,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '${lane.stories.length} items',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: context.textSecondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Colonne per questa swimlane
+          ...widget.columns.map((column) {
+            final columnStories = lane.stories
+                .where((s) => column.statuses.contains(s.status))
+                .toList();
+
+            return _buildSwimlaneColumnCell(column, columnStories, columnWidth, lane);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSwimlaneColumnCell(
+    KanbanColumnConfig column,
+    List<UserStoryModel> stories,
+    double width,
+    _SwimlaneData lane,
+  ) {
+    final primaryStatus = column.statuses.isNotEmpty
+        ? column.statuses.first
+        : StoryStatus.backlog;
+
+    return DragTarget<UserStoryModel>(
+      onWillAcceptWithDetails: (details) {
+        if (!widget.canEdit) return false;
+        if (column.statuses.contains(details.data.status)) return false;
+        return true;
+      },
+      onAcceptWithDetails: (details) {
+        widget.onStatusChange?.call(details.data.id, primaryStatus);
+      },
+      builder: (context, candidateData, rejectedData) {
+        final isHighlighted = candidateData.isNotEmpty;
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: width,
+          margin: const EdgeInsets.only(right: 8),
+          constraints: BoxConstraints(
+            minHeight: 80,
+            maxHeight: stories.isEmpty ? 80 : (stories.length * 70.0 + 16).clamp(80.0, 300.0),
+          ),
+          decoration: BoxDecoration(
+            color: isHighlighted
+                ? primaryStatus.color.withValues(alpha: 0.1)
+                : context.surfaceVariantColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isHighlighted ? primaryStatus.color : context.borderColor,
+              width: isHighlighted ? 2 : 1,
+            ),
+          ),
+          child: stories.isEmpty
+              ? Center(
+                  child: Icon(
+                    Icons.inbox_outlined,
+                    size: 20,
+                    color: context.textMutedColor,
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(4),
+                  itemCount: stories.length,
+                  itemBuilder: (context, index) =>
+                      _buildCompactCard(stories[index]),
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCompactCard(UserStoryModel story) {
+    return GestureDetector(
+      onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 4),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: story.priority.color,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  story.title,
+                  style: const TextStyle(fontSize: 11),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (story.storyPoints != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '${story.storyPoints}',
+                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<_SwimlaneData> _getSwimlanes() {
+    switch (widget.swimlaneType) {
+      case SwimlaneType.none:
+        return [];
+
+      case SwimlaneType.classOfService:
+        return ClassOfService.values.map((cos) {
+          final stories = widget.stories
+              .where((s) => s.classOfService == cos)
+              .toList();
+          return _SwimlaneData(
+            id: cos.name,
+            name: cos.displayName,
+            icon: cos.icon,
+            color: cos.color,
+            stories: stories,
+          );
+        }).where((lane) => lane.stories.isNotEmpty).toList()
+          ..sort((a, b) {
+            final aOrder = ClassOfService.values.firstWhere((c) => c.name == a.id).sortOrder;
+            final bOrder = ClassOfService.values.firstWhere((c) => c.name == b.id).sortOrder;
+            return aOrder.compareTo(bOrder);
+          });
+
+      case SwimlaneType.assignee:
+        final assignees = <String>{};
+        for (final story in widget.stories) {
+          if (story.assigneeEmail != null) {
+            assignees.add(story.assigneeEmail!);
+          }
+        }
+
+        final lanes = assignees.map((email) {
+          final stories = widget.stories
+              .where((s) => s.assigneeEmail == email)
+              .toList();
+          return _SwimlaneData(
+            id: email,
+            name: email.split('@').first,
+            icon: Icons.person,
+            color: Colors.blue,
+            stories: stories,
+          );
+        }).toList();
+
+        // Add unassigned
+        final unassigned = widget.stories
+            .where((s) => s.assigneeEmail == null)
+            .toList();
+        if (unassigned.isNotEmpty) {
+          lanes.add(_SwimlaneData(
+            id: '_unassigned',
+            name: 'Non assegnato',
+            icon: Icons.person_outline,
+            color: Colors.grey,
+            stories: unassigned,
+          ));
+        }
+
+        return lanes;
+
+      case SwimlaneType.priority:
+        return StoryPriority.values.map((priority) {
+          final stories = widget.stories
+              .where((s) => s.priority == priority)
+              .toList();
+          return _SwimlaneData(
+            id: priority.name,
+            name: priority.displayName,
+            icon: Icons.flag,
+            color: priority.color,
+            stories: stories,
+          );
+        }).where((lane) => lane.stories.isNotEmpty).toList();
+
+      case SwimlaneType.tag:
+        final tags = <String>{};
+        for (final story in widget.stories) {
+          tags.addAll(story.tags);
+        }
+
+        final lanes = tags.map((tag) {
+          final stories = widget.stories
+              .where((s) => s.tags.contains(tag))
+              .toList();
+          return _SwimlaneData(
+            id: tag,
+            name: tag,
+            icon: Icons.label,
+            color: Colors.purple,
+            stories: stories,
+          );
+        }).toList();
+
+        // Add untagged
+        final untagged = widget.stories
+            .where((s) => s.tags.isEmpty)
+            .toList();
+        if (untagged.isNotEmpty) {
+          lanes.add(_SwimlaneData(
+            id: '_untagged',
+            name: 'Senza tag',
+            icon: Icons.label_off,
+            color: Colors.grey,
+            stories: untagged,
+          ));
+        }
+
+        return lanes;
+    }
   }
 
   Widget _buildWipInfoBanner() {
@@ -229,6 +622,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     bool isWipAtLimit,
   ) {
     final hasWipLimit = column.wipLimit != null && _features.hasWipLimits;
+    final hasPolicies = column.hasPolicies && widget.showPolicies;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -260,6 +654,12 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   ),
                 ),
               ),
+              // Policy indicator
+              if (hasPolicies)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _buildPolicyIndicator(column, primaryStatus),
+                ),
               // WIP Counter
               _buildWipCounter(column, itemCount, isWipExceeded, isWipAtLimit),
             ],
@@ -284,6 +684,160 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  /// Indicatore policy con tooltip che mostra le policy della colonna
+  Widget _buildPolicyIndicator(KanbanColumnConfig column, StoryStatus primaryStatus) {
+    final policiesText = column.policies.map((p) => '• $p').join('\n');
+
+    return Tooltip(
+      message: 'Policy:\n$policiesText',
+      preferBelow: false,
+      child: InkWell(
+        onTap: widget.onPoliciesChange != null && widget.canEdit
+            ? () => _showPoliciesDialog(column)
+            : null,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: primaryStatus.color.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.policy_outlined,
+                size: 14,
+                color: primaryStatus.color,
+              ),
+              const SizedBox(width: 2),
+              Text(
+                '${column.policies.length}',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: primaryStatus.color,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Dialog per modificare le policy di una colonna
+  Future<void> _showPoliciesDialog(KanbanColumnConfig column) async {
+    final policies = List<String>.from(column.policies);
+    final controller = TextEditingController();
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.policy, color: Theme.of(ctx).primaryColor),
+              const SizedBox(width: 8),
+              Text('Policy: ${column.name}'),
+            ],
+          ),
+          content: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Le policy esplicite aiutano il team a capire le regole di questa colonna.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.textSecondaryColor,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Lista policy esistenti
+                if (policies.isNotEmpty) ...[
+                  ...policies.asMap().entries.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(entry.value)),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                            onPressed: () {
+                              setDialogState(() {
+                                policies.removeAt(entry.key);
+                              });
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 16),
+                ],
+                // Aggiungi nuova policy
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          hintText: 'Nuova policy...',
+                          isDense: true,
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (value) {
+                          if (value.trim().isNotEmpty) {
+                            setDialogState(() {
+                              policies.add(value.trim());
+                              controller.clear();
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.add_circle, color: Colors.green),
+                      onPressed: () {
+                        if (controller.text.trim().isNotEmpty) {
+                          setDialogState(() {
+                            policies.add(controller.text.trim());
+                            controller.clear();
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annulla'),
+            ),
+            FilledButton(
+              onPressed: () {
+                widget.onPoliciesChange?.call(column.id, policies);
+                Navigator.pop(ctx);
+              },
+              child: const Text('Salva'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -456,6 +1010,35 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                     ),
                   ),
                   const Spacer(),
+                  // Class of Service (solo se non è Standard)
+                  if (story.classOfService != ClassOfService.standard) ...[
+                    Tooltip(
+                      message: story.classOfService.description,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: story.classOfService.color.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(story.classOfService.icon, size: 10, color: story.classOfService.color),
+                            const SizedBox(width: 2),
+                            Text(
+                              story.classOfService.shortName,
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: story.classOfService.color,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
                   // Priority
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
@@ -930,4 +1513,21 @@ class KanbanSummaryWidget extends StatelessWidget {
     if (name.length <= 8) return name;
     return name.substring(0, 7);
   }
+}
+
+/// Dati per una swimlane
+class _SwimlaneData {
+  final String id;
+  final String name;
+  final IconData icon;
+  final Color color;
+  final List<UserStoryModel> stories;
+
+  const _SwimlaneData({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required this.color,
+    required this.stories,
+  });
 }

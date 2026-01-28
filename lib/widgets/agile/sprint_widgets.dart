@@ -4,6 +4,7 @@ import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 // =============================================================================
 // SPRINT LIST WIDGET
@@ -36,6 +37,7 @@ class SprintListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -47,7 +49,7 @@ class SprintListWidget extends StatelessWidget {
               const Icon(Icons.timeline, color: AppColors.primary),
               const SizedBox(width: 8),
               Text(
-                'Sprint (${sprints.length})',
+                '${l10n.agileSprintTitle} (${sprints.length})',
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
@@ -55,7 +57,7 @@ class SprintListWidget extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: onAddSprint,
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Nuovo Sprint'),
+                  label: Text(l10n.agileNewSprint),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -107,21 +109,23 @@ class SprintListWidget extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.timeline, size: 64, color: context.textMutedColor),
           const SizedBox(height: 16),
-          Text('Nessuno sprint', style: TextStyle(fontSize: 18, color: context.textSecondaryColor)),
+          Text(l10n.agileNoSprints, style: TextStyle(fontSize: 18, color: context.textSecondaryColor)),
           const SizedBox(height: 8),
-          Text('Crea il primo sprint per iniziare', style: TextStyle(color: context.textTertiaryColor)),
+          Text(l10n.agileCreateFirstSprint, style: TextStyle(color: context.textTertiaryColor)),
         ],
       ),
     );
   }
 
   Widget _buildSprintCard(BuildContext context, SprintModel sprint, {bool hasActiveSprint = false}) {
+    final l10n = AppLocalizations.of(context)!;
     final isActive = sprint.status == SprintStatus.active;
     final isCompleted = sprint.status == SprintStatus.completed;
 
@@ -157,7 +161,7 @@ class SprintListWidget extends StatelessWidget {
                         Icon(sprint.status.icon, size: 14, color: sprint.status.color),
                         const SizedBox(width: 4),
                         Text(
-                          sprint.status.displayName,
+                          _getSprintStatusLabel(sprint.status, l10n),
                           style: TextStyle(
                             fontSize: 11,
                             color: sprint.status.color,
@@ -169,7 +173,7 @@ class SprintListWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Sprint ${sprint.number}',
+                    '${l10n.agileSprintTitle} ${sprint.number}',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -182,15 +186,15 @@ class SprintListWidget extends StatelessWidget {
                       icon: const Icon(Icons.more_vert, size: 20),
                       itemBuilder: (context) => [
                         if (sprint.status == SprintStatus.planning && onSprintStart != null)
-                          const PopupMenuItem(value: 'start', child: Text('Avvia Sprint')),
+                          PopupMenuItem(value: 'start', child: Text(l10n.agileStartSprint)),
                         if (sprint.status == SprintStatus.active && onSprintComplete != null)
-                          const PopupMenuItem(value: 'complete', child: Text('Completa Sprint')),
+                          PopupMenuItem(value: 'complete', child: Text(l10n.agileCompleteSprint)),
                         if (onSprintEdit != null)
-                          const PopupMenuItem(value: 'edit', child: Text('Modifica')),
+                          PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
                         if (sprint.status == SprintStatus.planning && onSprintDelete != null)
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'delete',
-                            child: Text('Elimina', style: TextStyle(color: Colors.red)),
+                            child: Text(l10n.agileDeleteSprint, style: const TextStyle(color: Colors.red)),
                           ),
                       ],
                       onSelected: (value) {
@@ -247,7 +251,7 @@ class SprintListWidget extends StatelessWidget {
                   Icon(Icons.access_time, size: 12, color: context.textSecondaryColor),
                   const SizedBox(width: 2),
                   Text(
-                    '${sprint.durationDays}g',
+                    l10n.agileDurationDays(sprint.durationDays.toString()),
                     style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
                 ],
@@ -262,14 +266,14 @@ class SprintListWidget extends StatelessWidget {
                   _buildCompactStat(
                     context,
                     '${sprint.storyIds.length}',
-                    'stories',
+                    l10n.agileStatsStories,
                     Colors.blue,
                     tooltip: 'Numero di User Stories assegnate a questo sprint',
                   ),
                   _buildCompactStat(
                     context,
                     '${sprint.plannedPoints}',
-                    'pts',
+                    l10n.agileStatsPoints,
                     Colors.orange,
                     tooltip: 'Story Points pianificati: somma dei punti delle stories selezionate',
                   ),
@@ -277,14 +281,14 @@ class SprintListWidget extends StatelessWidget {
                     _buildCompactStat(
                       context,
                       '${sprint.completedPoints}',
-                      'completati',
+                      l10n.agileStatsCompleted,
                       Colors.green,
                       tooltip: 'Story Points completati: somma dei punti delle stories in stato Done alla chiusura dello sprint',
                     ),
                     _buildCompactStat(
                       context,
                       sprint.velocity?.toStringAsFixed(1) ?? '-',
-                      'velocity',
+                      l10n.agileStatsVelocity,
                       AppColors.primary,
                       tooltip: 'Velocity: Story Points completati diviso durata in settimane.\nIndica la capacità del team di completare lavoro.',
                     ),
@@ -317,7 +321,7 @@ class SprintListWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${sprint.daysRemaining}g rimanenti',
+                  l10n.agileDaysRemaining(sprint.daysRemaining.toString()),
                   style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
                 ),
               ],
@@ -404,6 +408,19 @@ class SprintListWidget extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}';
+  }
+
+  String _getSprintStatusLabel(SprintStatus status, AppLocalizations l10n) {
+    switch (status) {
+      case SprintStatus.planning:
+        return l10n.agileSprintStatusPlanning;
+      case SprintStatus.active:
+        return l10n.agileSprintStatusActive;
+      case SprintStatus.review:
+        return l10n.agileSprintStatusReview;
+      case SprintStatus.completed:
+        return l10n.agileSprintStatusCompleted;
+    }
   }
 }
 
@@ -527,6 +544,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
   @override
   Widget build(BuildContext context) {
     final duration = _endDate.difference(_startDate).inDays + 1;
+    final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
       title: Row(
@@ -536,7 +554,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
             color: AppColors.primary,
           ),
           const SizedBox(width: 8),
-          Text(_isEditing ? 'Modifica Sprint' : 'Nuovo Sprint'),
+          Text(_isEditing ? '${l10n.actionEdit} ${l10n.agileSprintTitle}' : l10n.agileNewSprint),
         ],
       ),
       content: SizedBox(
@@ -551,14 +569,14 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                 // Name
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome Sprint',
-                    hintText: 'es. Sprint 1 - MVP',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.agileSprintName,
+                    hintText: 'es. ${l10n.agileSprintTitle} 1 - MVP',
+                    border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Inserisci un nome';
+                      return l10n.formRequired;
                     }
                     return null;
                   },
@@ -568,10 +586,10 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                 // Goal
                 TextFormField(
                   controller: _goalController,
-                  decoration: const InputDecoration(
-                    labelText: 'Sprint Goal',
-                    hintText: 'Obiettivo dello sprint',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.agileSprintGoal,
+                    hintText: l10n.agileSprintGoalHint,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLines: 2,
                 ),
@@ -584,9 +602,9 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                       child: InkWell(
                         onTap: () => _selectDate(true),
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Data Inizio',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.agileStartDate,
+                            border: const OutlineInputBorder(),
                           ),
                           child: Row(
                             children: [
@@ -603,9 +621,9 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                       child: InkWell(
                         onTap: () => _selectDate(false),
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Data Fine',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.agileEndDate,
+                            border: const OutlineInputBorder(),
                           ),
                           child: Row(
                             children: [
@@ -621,7 +639,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Durata: $duration giorni',
+                  l10n.agileDurationDays(duration.toString()),
                   style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                 ),
                 const SizedBox(height: 16),
@@ -642,7 +660,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                             const Icon(Icons.speed, size: 16, color: Colors.blue),
                             const SizedBox(width: 8),
                             Text(
-                              'Velocity media: ${widget.averageVelocity!.toStringAsFixed(1)} pts/sprint',
+                              '${l10n.agileAverageVelocity}: ${widget.averageVelocity!.toStringAsFixed(1)} pts/sprint',
                               style: const TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -655,7 +673,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                             const Icon(Icons.people, size: 16, color: Colors.blue),
                             const SizedBox(width: 8),
                             Text(
-                              'Team: ${widget.teamCapacity.length} membri',
+                              l10n.agileTeamMembersCount(widget.teamCapacity.length.toString()),
                               style: const TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -672,7 +690,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.agileActionCancel),
         ),
         ElevatedButton(
           onPressed: _save,
@@ -680,7 +698,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
-          child: Text(_isEditing ? 'Salva' : 'Crea'),
+          child: Text(_isEditing ? l10n.agileActionSave : l10n.agileActionCreate),
         ),
       ],
     );
@@ -757,6 +775,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Row(
         children: [
@@ -765,9 +784,9 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Sprint Planning'),
+              Text(l10n.agileSprintPlanningTitle),
               Text(
-                'Seleziona le storie da completare in questo sprint',
+                l10n.agileSprintPlanningSubtitle,
                 style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.normal),
               ),
             ],
@@ -790,14 +809,14 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildStatColumn(
-                    'Selezionati',
-                    '$_selectedPoints pts',
+                    l10n.agileSelectedPoints,
+                    '$_selectedPoints ${l10n.agileStatsPoints}',
                     _selectedStoryIds.length.toString(),
                     AppColors.primary,
                   ),
                   _buildStatColumn(
-                    'Suggeriti',
-                    '$_suggestedPoints pts',
+                    l10n.agileSuggestedPoints,
+                    '$_suggestedPoints ${l10n.agileStatsPoints}',
                     'basato su velocity media',
                     Colors.blue,
                   ),
@@ -949,15 +968,25 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.agileActionCancel),
         ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, _selectedStoryIds),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
+        // Scrum Guide: Sprint deve avere almeno 1 story per raggiungere lo Sprint Goal
+        Tooltip(
+          message: _selectedStoryIds.isEmpty
+              ? l10n.agileSelectAtLeastOne
+              : l10n.agileConfirmStories(_selectedStoryIds.length.toString()),
+          child: ElevatedButton(
+            onPressed: _selectedStoryIds.isEmpty
+                ? null  // Disabilitato se 0 stories
+                : () => Navigator.pop(context, _selectedStoryIds),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _selectedStoryIds.isEmpty ? Colors.grey : AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(_selectedStoryIds.isEmpty
+                ? l10n.agileSelectAtLeastOne
+                : l10n.agileConfirmStories(_selectedStoryIds.length.toString())),
           ),
-          child: Text('Conferma (${_selectedStoryIds.length} stories)'),
         ),
       ],
     );

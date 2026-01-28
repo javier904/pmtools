@@ -3,6 +3,7 @@ import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Dialog per creare o modificare una User Story
 ///
@@ -53,6 +54,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
   late TextEditingController _criteriaController;
 
   late StoryPriority _priority;
+  late ClassOfService _classOfService;
   late int _businessValue;
   late List<String> _tags;
   late List<AcceptanceCriterion> _acceptanceCriteria;
@@ -86,6 +88,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
     }
 
     _priority = widget.story?.priority ?? StoryPriority.should;
+    _classOfService = widget.story?.classOfService ?? ClassOfService.standard;
     _businessValue = widget.story?.businessValue ?? 5;
     _tags = List.from(widget.story?.tags ?? []);
     _acceptanceCriteria = List.from(widget.story?.acceptanceCriteria
@@ -185,6 +188,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       title: _titleController.text.trim(),
       description: _buildDescription(),
       priority: _priority,
+      classOfService: _classOfService,
       businessValue: _businessValue,
       storyPoints: _storyPoints,
       status: widget.story?.status ?? StoryStatus.backlog,
@@ -207,6 +211,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Row(
         children: [
@@ -215,7 +220,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             color: AppColors.primary,
           ),
           const SizedBox(width: 8),
-          Text(_isEditing ? 'Modifica Story' : 'Nuova User Story'),
+          Text(_isEditing ? l10n.agileEditStory : l10n.agileNewStory),
         ],
       ),
       content: SizedBox(
@@ -227,11 +232,11 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             length: 3,
             child: Column(
               children: [
-                const TabBar(
+                TabBar(
                   tabs: [
-                    Tab(text: 'Dettagli'),
-                    Tab(text: 'Acceptance Criteria'),
-                    Tab(text: 'Altro'),
+                    Tab(text: l10n.agileDetailsTab),
+                    Tab(text: l10n.agileAcceptanceCriteriaTab),
+                    Tab(text: l10n.agileOtherTab),
                   ],
                   labelColor: AppColors.primary,
                 ),
@@ -252,7 +257,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(l10n.agileActionCancel),
         ),
         ElevatedButton(
           onPressed: _save,
@@ -260,13 +265,14 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
           ),
-          child: Text(_isEditing ? 'Salva' : 'Crea'),
+          child: Text(_isEditing ? l10n.agileActionSave : l10n.agileActionCreate),
         ),
       ],
     );
   }
 
   Widget _buildDetailsTab() {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -275,14 +281,14 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           // Title
           TextFormField(
             controller: _titleController,
-            decoration: const InputDecoration(
-              labelText: 'Titolo',
-              hintText: 'Breve descrizione della funzionalità',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.agileTitleLabel,
+              hintText: l10n.agileTitleHint,
+              border: const OutlineInputBorder(),
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Inserisci un titolo';
+                return l10n.formTitleRequired;
               }
               return null;
             },
@@ -291,8 +297,8 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
 
           // Template toggle
           SwitchListTile(
-            title: const Text('Usa template User Story'),
-            subtitle: const Text('As a... I want... So that...'),
+            title: Text(l10n.agileUseStoryTemplate),
+            subtitle: Text(l10n.agileStoryTemplateSubtitle),
             value: _useTemplate,
             onChanged: (value) => setState(() => _useTemplate = value),
             contentPadding: EdgeInsets.zero,
@@ -303,26 +309,26 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           if (_useTemplate) ...[
             TextFormField(
               controller: _userController,
-              decoration: const InputDecoration(
-                labelText: 'As a...',
-                hintText: 'utente, admin, cliente...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.agileAsA,
+                hintText: l10n.agileAsAHint,
+                border: const OutlineInputBorder(),
                 prefixText: 'As a ',
               ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _featureController,
-              decoration: const InputDecoration(
-                labelText: 'I want...',
-                hintText: 'poter fare qualcosa...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.agileIWant,
+                hintText: l10n.agileIWantHint,
+                border: const OutlineInputBorder(),
                 prefixText: 'I want ',
               ),
               maxLines: 2,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Inserisci cosa vuole l\'utente';
+                  return l10n.formRequired;
                 }
                 return null;
               },
@@ -330,25 +336,25 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _benefitController,
-              decoration: const InputDecoration(
-                labelText: 'So that...',
-                hintText: 'ottenere un beneficio...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.agileSoThat,
+                hintText: l10n.agileSoThatHint,
+                border: const OutlineInputBorder(),
                 prefixText: 'So that ',
               ),
             ),
           ] else ...[
             TextFormField(
               controller: _featureController,
-              decoration: const InputDecoration(
-                labelText: 'Descrizione',
-                hintText: 'Descrizione libera della story',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.agileDescriptionLabel,
+                hintText: l10n.agileDescriptionHint,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 4,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Inserisci una descrizione';
+                  return l10n.formRequired;
                 }
                 return null;
               },
@@ -367,8 +373,8 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Anteprima:',
+                Text(
+                  l10n.agilePreview,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -379,7 +385,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                 Text(
                   _buildDescription().isNotEmpty
                       ? _buildDescription()
-                      : '(descrizione vuota)',
+                      : l10n.agileEmptyDescription,
                   style: TextStyle(
                     fontStyle: _buildDescription().isEmpty
                         ? FontStyle.italic
@@ -396,18 +402,19 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
   }
 
   Widget _buildAcceptanceCriteriaTab() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Acceptance Criteria',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            l10n.agileAcceptanceCriteriaTab,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
-            'Definisci quando la story può considerarsi completata',
+            l10n.agileDefineComplete,
             style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
           ),
           const SizedBox(height: 12),
@@ -418,9 +425,9 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
               Expanded(
                 child: TextField(
                   controller: _criteriaController,
-                  decoration: const InputDecoration(
-                    hintText: 'Aggiungi criterio di accettazione...',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: l10n.agileAddCriterionHint,
+                    border: const OutlineInputBorder(),
                   ),
                   onSubmitted: (_) => _addCriterion(),
                 ),
@@ -444,7 +451,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                         Icon(Icons.checklist, size: 48, color: context.textMutedColor),
                         const SizedBox(height: 8),
                         Text(
-                          'Nessun criterio definito',
+                          l10n.agileNoCriteria,
                           style: TextStyle(color: context.textSecondaryColor),
                         ),
                       ],
@@ -479,9 +486,10 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
 
           // Suggerimenti
           const SizedBox(height: 12),
-          const Text(
-            'Suggerimenti:',
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+          const SizedBox(height: 12),
+          Text(
+            l10n.agileSuggestions,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
           ),
           Wrap(
             spacing: 4,
@@ -511,19 +519,20 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
   }
 
   Widget _buildOtherTab() {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Priority
-          const Text('Priorità (MoSCoW)', style: TextStyle(fontWeight: FontWeight.w500)),
+          Text(l10n.agilePriorityMoscow, style: const TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: StoryPriority.values.map((priority) => ChoiceChip(
-              label: Text(priority.displayName),
+              label: Text(_getPriorityLabel(priority, l10n)),
               selected: _priority == priority,
               onSelected: (_) => setState(() => _priority = priority),
               avatar: Icon(priority.icon, size: 16),
@@ -532,8 +541,34 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           ),
           const SizedBox(height: 16),
 
+          // Class of Service (Kanban)
+          Row(
+            children: [
+              Text('Class of Service', style: const TextStyle(fontWeight: FontWeight.w500)),
+              const SizedBox(width: 8),
+              Tooltip(
+                message: 'Categorizza il lavoro per tipo di urgenza/impatto business (Kanban)',
+                child: Icon(Icons.info_outline, size: 16, color: context.textSecondaryColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ClassOfService.values.map((cos) => ChoiceChip(
+              label: Text(cos.displayName),
+              selected: _classOfService == cos,
+              onSelected: (_) => setState(() => _classOfService = cos),
+              avatar: Icon(cos.icon, size: 16),
+              selectedColor: cos.color.withValues(alpha: 0.2),
+              tooltip: cos.description,
+            )).toList(),
+          ),
+          const SizedBox(height: 16),
+
           // Business Value
-          const Text('Business Value', style: TextStyle(fontWeight: FontWeight.w500)),
+          Text(l10n.agileBusinessValue, style: const TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -572,11 +607,10 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           // Story Points Estimation
           Row(
             children: [
-              const Text('Stimata in Story Points', style: TextStyle(fontWeight: FontWeight.w500)),
+              Text(l10n.agileEstimatedStoryPoints, style: const TextStyle(fontWeight: FontWeight.w500)),
               const SizedBox(width: 8),
               Tooltip(
-                message: 'Gli Story Points rappresentano la complessità relativa del lavoro.\n'
-                    'Usa la sequenza di Fibonacci: 1 (semplice) -> 21 (molto complessa).',
+                message: l10n.agileStoryPointsTooltip,
                 child: Icon(Icons.info_outline, size: 16, color: context.textSecondaryColor),
               ),
             ],
@@ -587,7 +621,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             runSpacing: 8,
             children: [
               ChoiceChip(
-                label: const Text('Nessuna'),
+                label: Text(l10n.agileNoPoints),
                 selected: _storyPoints == null,
                 onSelected: (selected) {
                   if (selected) setState(() => _storyPoints = null);
@@ -614,16 +648,16 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           const SizedBox(height: 24),
 
           // Tags
-          const Text('Tags', style: TextStyle(fontWeight: FontWeight.w500)),
+          Text(l10n.agileTags, style: const TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _tagController,
-                  decoration: const InputDecoration(
-                    hintText: 'Aggiungi tag...',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: l10n.agileAddTagHint,
+                    border: const OutlineInputBorder(),
                   ),
                   onSubmitted: (_) => _addTag(),
                 ),
@@ -647,7 +681,8 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             ),
           if (widget.existingTags.isNotEmpty) ...[
             const SizedBox(height: 8),
-            const Text('Tag esistenti:', style: TextStyle(fontSize: 12)),
+            const SizedBox(height: 8),
+            Text(l10n.agileExistingTags, style: const TextStyle(fontSize: 12)),
             Wrap(
               spacing: 4,
               children: widget.existingTags
@@ -668,18 +703,18 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
 
           // Assignee
           if (widget.teamMembers.isNotEmpty) ...[
-            const Text('Assegna a', style: TextStyle(fontWeight: FontWeight.w500)),
+            Text(l10n.agileAssignTo, style: const TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String?>(
               value: _assigneeEmail,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Seleziona un membro del team',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: l10n.agileSelectMemberHint,
               ),
               items: [
-                const DropdownMenuItem(
+                DropdownMenuItem(
                   value: null,
-                  child: Text('Non assegnato'),
+                  child: Text(l10n.agileUnassigned),
                 ),
                 ...widget.teamMembers.map((email) => DropdownMenuItem(
                   value: email,
@@ -701,16 +736,31 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
   }
 
   String _getBusinessValueLabel() {
-    if (_businessValue >= 8) return 'Alto valore di business';
-    if (_businessValue >= 5) return 'Valore medio';
-    return 'Basso valore di business';
+    final l10n = AppLocalizations.of(context)!;
+    if (_businessValue >= 8) return l10n.agileBusinessValueHigh;
+    if (_businessValue >= 5) return l10n.agileBusinessValueMedium;
+    return l10n.agileBusinessValueLow;
   }
 
   String _getStoryPointsDescription(int points) {
-    if (points <= 2) return 'Compito rapido e semplice';
-    if (points <= 5) return 'Compito di media complessità';
-    if (points <= 13) return 'Compito complesso, richiede analisi';
-    return 'Molto complesso, considera di spezzare la story';
+    final l10n = AppLocalizations.of(context)!;
+    if (points <= 2) return l10n.agilePointsComplexityVeryLow;
+    if (points <= 5) return l10n.agilePointsComplexityLow;
+    if (points <= 13) return l10n.agilePointsComplexityMedium;
+    return l10n.agilePointsComplexityHigh;
+  }
+
+  String _getPriorityLabel(StoryPriority priority, AppLocalizations l10n) {
+    switch (priority) {
+      case StoryPriority.must:
+        return l10n.agilePriorityMust;
+      case StoryPriority.should:
+        return l10n.agilePriorityShould;
+      case StoryPriority.could:
+        return l10n.agilePriorityCould;
+      case StoryPriority.wont:
+        return l10n.agilePriorityWont;
+    }
   }
 }
 

@@ -1348,6 +1348,20 @@ class AppLocalizationsIt extends AppLocalizations {
       'A differenza di Scrum, Kanban non prescrive eventi fissi.\nTuttavia, cadenze regolari aiutano il miglioramento continuo:\n\n• Standup Meeting: Sincronizzazione quotidiana davanti alla board\n• Replenishment Meeting: Prioritizzazione del backlog\n• Delivery Planning: Pianificazione delle release\n• Service Delivery Review: Review delle metriche\n• Risk Review: Analisi dei rischi e impedimenti\n• Operations Review: Miglioramento del processo';
 
   @override
+  String get kanbanSwimlanesTitle => 'Swimlanes';
+
+  @override
+  String get kanbanSwimlanesContent =>
+      'Le swimlanes sono righe orizzontali che raggruppano le card sulla board per un attributo comune.\n\nTipi di swimlane disponibili:\n• Classe di Servizio: Raggruppa per priorità/urgenza del lavoro\n• Assegnatario: Raggruppa per membro del team assegnato\n• Priorità: Raggruppa per livello MoSCoW\n• Tag: Raggruppa per etichette delle storie\n\nLe swimlanes aiutano a:\n• Visualizzare il carico di lavoro per persona\n• Gestire diverse classi di servizio (urgente, standard)\n• Identificare colli di bottiglia per tipo di lavoro';
+
+  @override
+  String get kanbanPoliciesTitle => 'Policy Colonna';
+
+  @override
+  String get kanbanPoliciesContent =>
+      'La pratica #4 di Kanban: \'Make Policies Explicit\' richiede di definire regole chiare per ogni colonna.\n\nEsempi di policy:\n• \'Max 24h in questa colonna\' - tempo massimo\n• \'Richiede code review approvata\' - criteri di uscita\n• \'Max 1 item per persona\' - limite individuale\n• \'Daily update obbligatorio\' - comunicazione\n\nLe policy:\n• Rendono le aspettative trasparenti a tutti\n• Riducono ambiguità e conflitti\n• Facilitano l\'onboarding di nuovi membri\n• Permettono di identificare quando le regole vengono violate';
+
+  @override
   String get kanbanBP1 =>
       'Visualizza TUTTO il lavoro, incluso il lavoro nascosto';
 
@@ -8756,4 +8770,386 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get agileRoleOwner => 'Proprietario';
+
+  @override
+  String get agileEditStory => 'Modifica Story';
+
+  @override
+  String get agileNewStory => 'Nuova User Story';
+
+  @override
+  String get agileDetailsTab => 'Dettagli';
+
+  @override
+  String get agileAcceptanceCriteriaTab => 'Acceptance Criteria';
+
+  @override
+  String get agileOtherTab => 'Altro';
+
+  @override
+  String get agileTitleLabel => 'Titolo';
+
+  @override
+  String get agileTitleHint => 'Breve descrizione della funzionalità';
+
+  @override
+  String get agileUseStoryTemplate => 'Usa template User Story';
+
+  @override
+  String get agileStoryTemplateSubtitle => 'As a... I want... So that...';
+
+  @override
+  String get agileAsA => 'As a...';
+
+  @override
+  String get agileAsAHint => 'utente, admin, cliente...';
+
+  @override
+  String get agileIWant => 'I want...';
+
+  @override
+  String get agileIWantHint => 'poter fare qualcosa...';
+
+  @override
+  String get agileSoThat => 'So that...';
+
+  @override
+  String get agileSoThatHint => 'ottenere un beneficio...';
+
+  @override
+  String get agileDescriptionLabel => 'Descrizione';
+
+  @override
+  String get agileDescriptionHint => 'Descrizione libera della story';
+
+  @override
+  String get agilePreview => 'Anteprima:';
+
+  @override
+  String get agileEmptyDescription => '(descrizione vuota)';
+
+  @override
+  String get agileDefineComplete =>
+      'Definisci quando la story può considerarsi completata';
+
+  @override
+  String get agileAddCriterionHint => 'Aggiungi criterio di accettazione...';
+
+  @override
+  String get agileNoCriteria => 'Nessun criterio definito';
+
+  @override
+  String get agileSuggestions => 'Suggerimenti:';
+
+  @override
+  String get agilePriorityMoscow => 'Priorità (MoSCoW)';
+
+  @override
+  String get agileBusinessValue => 'Business Value';
+
+  @override
+  String get agileBusinessValueLow => 'Basso valore di business';
+
+  @override
+  String get agileBusinessValueMedium => 'Valore medio';
+
+  @override
+  String get agileBusinessValueHigh => 'Alto valore di business';
+
+  @override
+  String get agileEstimatedStoryPoints => 'Stimata in Story Points';
+
+  @override
+  String get agileStoryPointsTooltip =>
+      'Gli Story Points rappresentano la complessità relativa del lavoro.\nUsa la sequenza di Fibonacci: 1 (semplice) -> 21 (molto complessa).';
+
+  @override
+  String get agileNoPoints => 'Nessuna';
+
+  @override
+  String get agileActionSave => 'Salva';
+
+  @override
+  String get agileActionCreate => 'Crea';
+
+  @override
+  String get agileActionCancel => 'Annulla';
+
+  @override
+  String get agileTags => 'Tags';
+
+  @override
+  String get agileAddTagHint => 'Aggiungi tag...';
+
+  @override
+  String get agileExistingTags => 'Tag esistenti:';
+
+  @override
+  String get agileAssignTo => 'Assegna a';
+
+  @override
+  String get agileSelectMemberHint => 'Seleziona un membro del team';
+
+  @override
+  String get agilePointsComplexityVeryLow => 'Compito rapido e semplice';
+
+  @override
+  String get agilePointsComplexityLow => 'Compito di media complessità';
+
+  @override
+  String get agilePointsComplexityMedium =>
+      'Compito complesso, richiede analisi';
+
+  @override
+  String get agilePointsComplexityHigh =>
+      'Molto complesso, considera di spezzare la story';
+
+  @override
+  String get agileSprintTitle => 'Sprint';
+
+  @override
+  String get agileNewSprint => 'Nuovo Sprint';
+
+  @override
+  String get agileNoSprints => 'Nessuno sprint';
+
+  @override
+  String get agileCreateFirstSprint => 'Crea il primo sprint per iniziare';
+
+  @override
+  String get agileSprintStatusPlanning => 'Planning';
+
+  @override
+  String get agileSprintStatusActive => 'Attivo';
+
+  @override
+  String get agileSprintStatusReview => 'Review';
+
+  @override
+  String get agileSprintStatusCompleted => 'Completato';
+
+  @override
+  String get agileStartSprint => 'Avvia Sprint';
+
+  @override
+  String get agileCompleteSprint => 'Completa Sprint';
+
+  @override
+  String get agileDeleteSprint => 'Elimina';
+
+  @override
+  String get agileSprintName => 'Nome Sprint';
+
+  @override
+  String get agileSprintGoal => 'Sprint Goal';
+
+  @override
+  String get agileSprintGoalHint => 'Obiettivo dello sprint';
+
+  @override
+  String get agileStartDate => 'Data Inizio';
+
+  @override
+  String get agileEndDate => 'Data Fine';
+
+  @override
+  String agileDurationDays(Object days) {
+    return 'Durata: $days giorni';
+  }
+
+  @override
+  String get agileAverageVelocity => 'Velocity media';
+
+  @override
+  String agileTeamMembersCount(Object count) {
+    return 'Team: $count membri';
+  }
+
+  @override
+  String get agilePriorityMust => 'Must Have';
+
+  @override
+  String get agilePriorityShould => 'Should Have';
+
+  @override
+  String get agilePriorityCould => 'Could Have';
+
+  @override
+  String get agilePriorityWont => 'Won\'t Have';
+
+  @override
+  String get agileSprintPlanningTitle => 'Sprint Planning';
+
+  @override
+  String get agileSprintPlanningSubtitle =>
+      'Seleziona le storie da completare in questo sprint';
+
+  @override
+  String get agileSelectedPoints => 'Selezionati';
+
+  @override
+  String get agileSuggestedPoints => 'Suggeriti';
+
+  @override
+  String agileDaysRemaining(Object days) {
+    return '${days}g rimanenti';
+  }
+
+  @override
+  String get agileStatsStories => 'storie';
+
+  @override
+  String get agileStatsPoints => 'pti';
+
+  @override
+  String get agileStatsCompleted => 'completati';
+
+  @override
+  String get agileStatsVelocity => 'velocity';
+
+  @override
+  String get agileSelectAtLeastOne => 'Seleziona almeno 1 story';
+
+  @override
+  String agileConfirmStories(Object count) {
+    return 'Conferma ($count stories)';
+  }
+
+  @override
+  String get kanbanPoliciesDescription =>
+      'Le policy esplicite definiscono le regole per questa colonna (Kanban Practice #4)';
+
+  @override
+  String get kanbanPoliciesEmpty => 'Nessuna policy definita';
+
+  @override
+  String get kanbanPoliciesAdd => 'Aggiungi policy';
+
+  @override
+  String get kanbanPoliciesHint => 'Es: Max 24h in questa colonna';
+
+  @override
+  String kanbanPoliciesIndicator(int count) {
+    return 'Policy attive: $count';
+  }
+
+  @override
+  String get sprintReviewTitle => 'Sprint Review';
+
+  @override
+  String get sprintReviewSubtitle =>
+      'Revisione del lavoro completato con gli stakeholder';
+
+  @override
+  String get sprintReviewConductBy => 'Condotto da';
+
+  @override
+  String get sprintReviewDate => 'Data Review';
+
+  @override
+  String get sprintReviewAttendees => 'Partecipanti';
+
+  @override
+  String get sprintReviewSelectAttendees => 'Seleziona partecipanti';
+
+  @override
+  String get sprintReviewDemoNotes => 'Note Demo';
+
+  @override
+  String get sprintReviewDemoNotesHint => 'Descrivi le funzionalità dimostrate';
+
+  @override
+  String get sprintReviewFeedback => 'Feedback Ricevuto';
+
+  @override
+  String get sprintReviewFeedbackHint => 'Feedback dagli stakeholder';
+
+  @override
+  String get sprintReviewBacklogUpdates => 'Aggiornamenti Backlog';
+
+  @override
+  String get sprintReviewBacklogUpdatesHint => 'Modifiche al backlog discusse';
+
+  @override
+  String get sprintReviewNextFocus => 'Focus Prossimo Sprint';
+
+  @override
+  String get sprintReviewNextFocusHint => 'Priorità per il prossimo sprint';
+
+  @override
+  String get sprintReviewMarketNotes => 'Note Mercato/Budget';
+
+  @override
+  String get sprintReviewMarketNotesHint =>
+      'Condizioni di mercato, timeline, budget';
+
+  @override
+  String get sprintReviewStoriesCompleted => 'Storie Completate';
+
+  @override
+  String get sprintReviewStoriesNotCompleted => 'Storie Non Completate';
+
+  @override
+  String get sprintReviewPointsCompleted => 'Punti Completati';
+
+  @override
+  String get sprintReviewSave => 'Salva Review';
+
+  @override
+  String get sprintReviewWarning => 'Attenzione: Sprint Review';
+
+  @override
+  String get sprintReviewWarningMessage =>
+      'La Sprint Review non è ancora stata effettuata. Secondo lo Scrum Guide 2020, la Sprint Review è un evento obbligatorio prima di completare lo sprint.';
+
+  @override
+  String get sprintReviewCompleteAnyway => 'Completa comunque';
+
+  @override
+  String get sprintReviewDoReview => 'Effettua Review';
+
+  @override
+  String get sprintReviewCompleted => 'Sprint Review completata';
+
+  @override
+  String get swimlaneTitle => 'Swimlanes';
+
+  @override
+  String get swimlaneDescription => 'Raggruppa le card per attributo';
+
+  @override
+  String get swimlaneTypeNone => 'Nessuna';
+
+  @override
+  String get swimlaneTypeNoneDesc => 'Vista standard senza raggruppamento';
+
+  @override
+  String get swimlaneTypeClassOfService => 'Classe di Servizio';
+
+  @override
+  String get swimlaneTypeClassOfServiceDesc => 'Raggruppa per priorità/urgenza';
+
+  @override
+  String get swimlaneTypeAssignee => 'Assegnatario';
+
+  @override
+  String get swimlaneTypeAssigneeDesc => 'Raggruppa per membro del team';
+
+  @override
+  String get swimlaneTypePriority => 'Priorità';
+
+  @override
+  String get swimlaneTypePriorityDesc => 'Raggruppa per livello di priorità';
+
+  @override
+  String get swimlaneTypeTag => 'Tag';
+
+  @override
+  String get swimlaneTypeTagDesc => 'Raggruppa per tag della storia';
+
+  @override
+  String get swimlaneUnassigned => 'Non Assegnato';
+
+  @override
+  String get swimlaneNoTag => 'Senza Tag';
 }

@@ -17,6 +17,7 @@ class UserStoryModel {
   final int? storyPoints; // Fibonacci: 1,2,3,5,8,13,21
   final StoryPriority priority; // must, should, could, wont
   final StoryStatus status;
+  final ClassOfService classOfService; // Kanban: expedite, fixedDate, standard, intangible
 
   // Metadata
   final List<String> tags;
@@ -52,6 +53,7 @@ class UserStoryModel {
     this.storyPoints,
     this.priority = StoryPriority.should,
     this.status = StoryStatus.backlog,
+    this.classOfService = ClassOfService.standard,
     this.tags = const [],
     this.acceptanceCriteria = const [],
     this.dependencies = const [],
@@ -101,6 +103,10 @@ class UserStoryModel {
         (s) => s.name == data['status'],
         orElse: () => StoryStatus.backlog,
       ),
+      classOfService: ClassOfService.values.firstWhere(
+        (c) => c.name == data['classOfService'],
+        orElse: () => ClassOfService.standard,
+      ),
       tags: List<String>.from(data['tags'] ?? []),
       acceptanceCriteria: List<String>.from(data['acceptanceCriteria'] ?? []),
       dependencies: List<String>.from(data['dependencies'] ?? []),
@@ -134,6 +140,7 @@ class UserStoryModel {
       if (storyPoints != null) 'storyPoints': storyPoints,
       'priority': priority.name,
       'status': status.name,
+      'classOfService': classOfService.name,
       'tags': tags,
       'acceptanceCriteria': acceptanceCriteria,
       'dependencies': dependencies,
@@ -162,6 +169,7 @@ class UserStoryModel {
     int? storyPoints,
     StoryPriority? priority,
     StoryStatus? status,
+    ClassOfService? classOfService,
     List<String>? tags,
     List<String>? acceptanceCriteria,
     List<String>? dependencies,
@@ -187,6 +195,7 @@ class UserStoryModel {
       storyPoints: storyPoints ?? this.storyPoints,
       priority: priority ?? this.priority,
       status: status ?? this.status,
+      classOfService: classOfService ?? this.classOfService,
       tags: tags ?? this.tags,
       acceptanceCriteria: acceptanceCriteria ?? this.acceptanceCriteria,
       dependencies: dependencies ?? this.dependencies,

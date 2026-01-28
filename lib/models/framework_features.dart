@@ -76,8 +76,11 @@ class FrameworkFeatures {
   /// Metrics sempre visibile (ma contenuto diverso)
   bool get showMetricsTab => true;
 
-  /// Retrospective solo per Scrum e Hybrid
-  bool get showRetroTab => framework != AgileFramework.kanban;
+  /// Retrospective per TUTTI i framework
+  /// - Scrum: Sprint Retrospective (Scrum Guide 2020)
+  /// - Kanban: Operations Review / Service Delivery Review (feedback loops practice - David Anderson)
+  /// - Hybrid: Entrambi gli approcci
+  bool get showRetroTab => true;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // FEATURES CONFIGURATION
@@ -107,14 +110,23 @@ class FrameworkFeatures {
   /// Cumulative Flow Diagram per Kanban e Hybrid
   bool get hasCFD => framework != AgileFramework.scrum;
 
-  /// Lead/Cycle Time per Kanban e Hybrid
-  bool get hasLeadCycleTime => framework != AgileFramework.scrum;
+  /// Lead/Cycle Time per TUTTI i framework
+  /// - Scrum: Utile per predictability e continuous improvement (Scrum Guide 2020)
+  /// - Kanban: Core practice - "Manage Flow" (David Anderson)
+  /// - Hybrid: Entrambi gli approcci
+  bool get hasLeadCycleTime => true;
 
-  /// Throughput metrics per Kanban e Hybrid
-  bool get hasThroughput => framework != AgileFramework.scrum;
+  /// Throughput metrics per TUTTI i framework
+  /// - Scrum: Utile per forecasting e sprint planning
+  /// - Kanban: Core metric per flow management
+  /// - Hybrid: Entrambi gli approcci
+  bool get hasThroughput => true;
 
-  /// Daily Standup tracking per Scrum
-  bool get hasDailyStandup => framework == AgileFramework.scrum;
+  /// Daily Standup/Meeting per TUTTI i framework
+  /// - Scrum: Daily Scrum (Scrum Guide 2020 - 15 min max)
+  /// - Kanban: Daily Meeting/Standup (common practice, non obbligatorio ma consigliato)
+  /// - Hybrid: Entrambi gli approcci
+  bool get hasDailyStandup => true;
 
   /// Estimation sessions (tutti, ma con focus diverso)
   bool get hasEstimation => true;
@@ -150,12 +162,13 @@ class FrameworkFeatures {
     switch (framework) {
       case AgileFramework.scrum:
         // Scrum: focus su Sprint Backlog, no WIP limits
+        // NOTA: inSprint è lo status delle stories aggiunte allo sprint attivo
         return [
           KanbanColumnConfig(
             id: 'todo',
             name: 'Sprint Backlog',
             wipLimit: null,
-            statuses: [StoryStatus.ready],
+            statuses: [StoryStatus.ready, StoryStatus.inSprint],
           ),
           KanbanColumnConfig(
             id: 'inProgress',
@@ -178,60 +191,106 @@ class FrameworkFeatures {
         ];
 
       case AgileFramework.kanban:
-        // Kanban: WIP limits sono fondamentali
-        return [
-          KanbanColumnConfig(
-            id: 'backlog',
-            name: 'To Do',
-            wipLimit: 5,
-            statuses: [StoryStatus.backlog, StoryStatus.ready],
-          ),
-          KanbanColumnConfig(
-            id: 'inProgress',
-            name: 'In Progress',
-            wipLimit: 3,
-            statuses: [StoryStatus.inProgress],
-          ),
-          KanbanColumnConfig(
-            id: 'review',
-            name: 'Review',
-            wipLimit: 2,
-            statuses: [StoryStatus.inReview],
-          ),
-          KanbanColumnConfig(
-            id: 'done',
-            name: 'Done',
-            wipLimit: null,
-            statuses: [StoryStatus.done],
-          ),
-        ];
-
-      case AgileFramework.hybrid:
-        // Hybrid: Colonne più granulari con WIP limits
+        // Kanban: WIP limits sono fondamentali, include Refinement
+        // Policy esplicite per ogni colonna (Kanban Practice #4)
         return [
           KanbanColumnConfig(
             id: 'backlog',
             name: 'Backlog',
-            wipLimit: 10,
+            wipLimit: null, // Backlog non ha WIP limit
             statuses: [StoryStatus.backlog],
+            policies: ['Ordina per priorità business'],
+          ),
+          KanbanColumnConfig(
+            id: 'refinement',
+            name: 'Refinement',
+            wipLimit: 5, // Limita item in analisi parallela
+            statuses: [StoryStatus.refinement],
+            policies: [
+              'Max 2 giorni in questa colonna',
+              'Richiede criteri di accettazione definiti',
+            ],
           ),
           KanbanColumnConfig(
             id: 'ready',
             name: 'Ready',
             wipLimit: 5,
             statuses: [StoryStatus.ready],
+            policies: [
+              'Item pronto per essere lavorato',
+              'Stima completata (se richiesta)',
+            ],
           ),
           KanbanColumnConfig(
             id: 'inProgress',
             name: 'In Progress',
-            wipLimit: 4,
+            wipLimit: 3,
             statuses: [StoryStatus.inProgress],
+            policies: [
+              'Max 1 item per persona',
+              'Daily update obbligatorio',
+            ],
           ),
           KanbanColumnConfig(
             id: 'review',
             name: 'Review',
             wipLimit: 2,
             statuses: [StoryStatus.inReview],
+            policies: [
+              'Max 24h in questa colonna',
+              'Richiede code review approvata',
+            ],
+          ),
+          KanbanColumnConfig(
+            id: 'done',
+            name: 'Done',
+            wipLimit: null,
+            statuses: [StoryStatus.done],
+            policies: [
+              'Tutti i criteri di accettazione soddisfatti',
+              'Test superati',
+            ],
+          ),
+        ];
+
+      case AgileFramework.hybrid:
+        // Hybrid: Colonne più granulari con WIP limits, include Refinement
+        // NOTA: inSprint incluso in Ready per compatibilità con sprint opzionali
+        // Policy esplicite per ogni colonna (Kanban Practice #4)
+        return [
+          KanbanColumnConfig(
+            id: 'backlog',
+            name: 'Backlog',
+            wipLimit: null,
+            statuses: [StoryStatus.backlog],
+          ),
+          KanbanColumnConfig(
+            id: 'refinement',
+            name: 'Refinement',
+            wipLimit: 5,
+            statuses: [StoryStatus.refinement],
+            policies: ['Richiede criteri di accettazione'],
+          ),
+          KanbanColumnConfig(
+            id: 'ready',
+            name: 'Ready',
+            wipLimit: 5,
+            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+            policies: ['Item pronto per sviluppo'],
+          ),
+          KanbanColumnConfig(
+            id: 'inProgress',
+            name: 'In Progress',
+            wipLimit: 4,
+            statuses: [StoryStatus.inProgress],
+            policies: ['Max 1 item per persona'],
+          ),
+          KanbanColumnConfig(
+            id: 'review',
+            name: 'Review',
+            wipLimit: 2,
+            statuses: [StoryStatus.inReview],
+            policies: ['Code review obbligatoria'],
           ),
           KanbanColumnConfig(
             id: 'done',
@@ -333,6 +392,10 @@ class KanbanColumnConfig {
   final Color? color;
   final int order;
 
+  /// Policy esplicite per questa colonna (Kanban Practice #4 - Make Policies Explicit)
+  /// Esempi: "Max 24h in questa colonna", "Richiede code review approvata"
+  final List<String> policies;
+
   const KanbanColumnConfig({
     required this.id,
     required this.name,
@@ -340,6 +403,7 @@ class KanbanColumnConfig {
     required this.statuses,
     this.color,
     this.order = 0,
+    this.policies = const [],
   });
 
   /// Verifica se il WIP limit è superato
@@ -368,6 +432,9 @@ class KanbanColumnConfig {
     return Colors.green;
   }
 
+  /// Verifica se la colonna ha policy definite
+  bool get hasPolicies => policies.isNotEmpty;
+
   /// Crea una copia con modifiche
   KanbanColumnConfig copyWith({
     String? id,
@@ -377,6 +444,7 @@ class KanbanColumnConfig {
     List<StoryStatus>? statuses,
     Color? color,
     int? order,
+    List<String>? policies,
   }) {
     return KanbanColumnConfig(
       id: id ?? this.id,
@@ -385,6 +453,7 @@ class KanbanColumnConfig {
       statuses: statuses ?? this.statuses,
       color: color ?? this.color,
       order: order ?? this.order,
+      policies: policies ?? this.policies,
     );
   }
 
@@ -397,6 +466,7 @@ class KanbanColumnConfig {
       'statuses': statuses.map((s) => s.name).toList(),
       'color': color?.value,
       'order': order,
+      'policies': policies,
     };
   }
 
@@ -415,6 +485,7 @@ class KanbanColumnConfig {
           [],
       color: data['color'] != null ? Color(data['color'] as int) : null,
       order: data['order'] as int? ?? 0,
+      policies: List<String>.from(data['policies'] ?? []),
     );
   }
 }

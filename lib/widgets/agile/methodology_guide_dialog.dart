@@ -750,13 +750,14 @@ class _ProcessFlowDiagram extends StatelessWidget {
           _ProcessStepData('Retro-\nspettiva', Icons.psychology),
         ];
       case AgileFramework.kanban:
+        // Kanban: Feedback Loops = Operations Review (David Anderson)
         return [
           _ProcessStepData('Richiesta\nIn Arrivo', Icons.inbox),
           _ProcessStepData('To Do\n(WIP)', Icons.playlist_add),
           _ProcessStepData('In Progress\n(WIP)', Icons.pending),
           _ProcessStepData('Review\n(WIP)', Icons.rate_review),
           _ProcessStepData('Done\n', Icons.check_circle),
-          _ProcessStepData('Metriche\n& Improve', Icons.analytics),
+          _ProcessStepData('Operations\nReview', Icons.psychology),
         ];
       case AgileFramework.hybrid:
         return [
@@ -772,20 +773,23 @@ class _ProcessFlowDiagram extends StatelessWidget {
   List<_ArtifactData> _getArtifacts() {
     switch (guide.framework) {
       case AgileFramework.scrum:
+        // Scrum: Artifacts + Flow metrics (useful for predictability)
         return [
           _ArtifactData('Product Backlog', Icons.list_alt),
           _ArtifactData('Sprint Backlog', Icons.assignment),
           _ArtifactData('Incremento', Icons.add_box),
           _ArtifactData('Burndown Chart', Icons.trending_down),
           _ArtifactData('Velocity', Icons.speed),
+          _ArtifactData('Lead/Cycle Time', Icons.timer),
         ];
       case AgileFramework.kanban:
+        // Kanban: Core metrics + Feedback Loops artifacts
         return [
           _ArtifactData('Kanban Board', Icons.view_column),
           _ArtifactData('WIP Limits', Icons.block),
           _ArtifactData('CFD', Icons.area_chart),
-          _ArtifactData('Lead Time', Icons.timer),
-          _ArtifactData('Cycle Time', Icons.loop),
+          _ArtifactData('Lead/Cycle Time', Icons.timer),
+          _ArtifactData('Throughput', Icons.trending_up),
         ];
       case AgileFramework.hybrid:
         return [

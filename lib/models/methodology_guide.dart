@@ -214,6 +214,16 @@ MethodologyGuide _buildKanbanGuide(AppLocalizations l10n) {
         content: l10n.kanbanCadencesContent,
         icon: Icons.event_repeat,
       ),
+      MethodologySection(
+        title: l10n.kanbanSwimlanesTitle,
+        content: l10n.kanbanSwimlanesContent,
+        icon: Icons.view_stream,
+      ),
+      MethodologySection(
+        title: l10n.kanbanPoliciesTitle,
+        content: l10n.kanbanPoliciesContent,
+        icon: Icons.policy,
+      ),
     ],
     bestPractices: [
       l10n.kanbanBP1,

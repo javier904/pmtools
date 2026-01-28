@@ -33,6 +33,9 @@ class SprintModel {
   // Daily standup notes
   final List<StandupNote> standupNotes;
 
+  // Sprint Review (Scrum Guide 2020 - evento separato dalla Retrospective)
+  final SprintReview? sprintReview;
+
   // Metadata
   final DateTime createdAt;
   final String createdBy;
@@ -56,6 +59,7 @@ class SprintModel {
     this.velocity,
     this.burndownData = const [],
     this.standupNotes = const [],
+    this.sprintReview,
     required this.createdAt,
     required this.createdBy,
     this.startedAt,
@@ -81,6 +85,12 @@ class SprintModel {
     final standupNotes = standupList
         .map((s) => StandupNote.fromMap(s as Map<String, dynamic>))
         .toList();
+
+    // Parse sprint review
+    SprintReview? sprintReview;
+    if (data['sprintReview'] != null) {
+      sprintReview = SprintReview.fromMap(data['sprintReview'] as Map<String, dynamic>);
+    }
 
     // Parse team capacity
     final capacityMap = data['teamCapacity'] as Map<String, dynamic>? ?? {};
@@ -109,6 +119,7 @@ class SprintModel {
       velocity: (data['velocity'] as num?)?.toDouble(),
       burndownData: burndownData,
       standupNotes: standupNotes,
+      sprintReview: sprintReview,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       createdBy: data['createdBy'] ?? '',
       startedAt: (data['startedAt'] as Timestamp?)?.toDate(),
@@ -134,6 +145,7 @@ class SprintModel {
       if (velocity != null) 'velocity': velocity,
       'burndownData': burndownData.map((b) => b.toMap()).toList(),
       'standupNotes': standupNotes.map((s) => s.toMap()).toList(),
+      if (sprintReview != null) 'sprintReview': sprintReview!.toMap(),
       'createdAt': Timestamp.fromDate(createdAt),
       'createdBy': createdBy,
       if (startedAt != null) 'startedAt': Timestamp.fromDate(startedAt!),
@@ -159,6 +171,7 @@ class SprintModel {
     double? velocity,
     List<BurndownPoint>? burndownData,
     List<StandupNote>? standupNotes,
+    SprintReview? sprintReview,
     DateTime? createdAt,
     String? createdBy,
     DateTime? startedAt,
@@ -181,6 +194,7 @@ class SprintModel {
       velocity: velocity ?? this.velocity,
       burndownData: burndownData ?? this.burndownData,
       standupNotes: standupNotes ?? this.standupNotes,
+      sprintReview: sprintReview ?? this.sprintReview,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       startedAt: startedAt ?? this.startedAt,
@@ -243,6 +257,15 @@ class SprintModel {
 
   /// Verifica se si può modificare il contenuto
   bool get canModifyStories => status.canModifyStories;
+
+  /// Verifica se la Sprint Review è stata effettuata
+  bool get hasSprintReview => sprintReview != null;
+
+  /// Verifica se lo sprint può essere chiuso (Sprint Review è consigliata ma non obbligatoria)
+  bool get canClose => isActive;
+
+  /// Verifica se manca la Sprint Review prima della chiusura
+  bool get missingSprintReviewWarning => isActive && !hasSprintReview;
 
   // =========================================================================
   // Helper per stories
@@ -469,4 +492,89 @@ class StandupNote {
 
   /// Verifica se ci sono blockers
   bool get hasBlockers => blockers.isNotEmpty;
+}
+
+/// Sprint Review (Scrum Guide 2020)
+///
+/// La Sprint Review è l'evento in cui il team ispeziona l'outcome dello Sprint
+/// e determina gli adattamenti futuri. Il team presenta il lavoro svolto
+/// agli stakeholder e discute i progressi verso il Product Goal.
+class SprintReview {
+  final DateTime date;
+  final String conductedBy; // Email di chi ha condotto la review
+  final String conductedByName;
+
+  // Partecipanti (email list)
+  final List<String> attendees;
+
+  // Contenuto della review
+  final String demoNotes; // Note sulla demo del lavoro completato
+  final String feedback; // Feedback ricevuto dagli stakeholder
+  final List<String> backlogUpdates; // Modifiche al Product Backlog discusse
+  final String nextSprintFocus; // Focus suggerito per il prossimo sprint
+
+  // Metriche presentate
+  final int storiesCompleted;
+  final int storiesNotCompleted;
+  final int pointsCompleted;
+  final String marketConditionsNotes; // Note su cambiamenti di mercato/business
+
+  const SprintReview({
+    required this.date,
+    required this.conductedBy,
+    required this.conductedByName,
+    this.attendees = const [],
+    this.demoNotes = '',
+    this.feedback = '',
+    this.backlogUpdates = const [],
+    this.nextSprintFocus = '',
+    this.storiesCompleted = 0,
+    this.storiesNotCompleted = 0,
+    this.pointsCompleted = 0,
+    this.marketConditionsNotes = '',
+  });
+
+  factory SprintReview.fromMap(Map<String, dynamic> data) {
+    return SprintReview(
+      date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      conductedBy: data['conductedBy'] ?? '',
+      conductedByName: data['conductedByName'] ?? '',
+      attendees: List<String>.from(data['attendees'] ?? []),
+      demoNotes: data['demoNotes'] ?? '',
+      feedback: data['feedback'] ?? '',
+      backlogUpdates: List<String>.from(data['backlogUpdates'] ?? []),
+      nextSprintFocus: data['nextSprintFocus'] ?? '',
+      storiesCompleted: data['storiesCompleted'] ?? 0,
+      storiesNotCompleted: data['storiesNotCompleted'] ?? 0,
+      pointsCompleted: data['pointsCompleted'] ?? 0,
+      marketConditionsNotes: data['marketConditionsNotes'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'date': Timestamp.fromDate(date),
+      'conductedBy': conductedBy,
+      'conductedByName': conductedByName,
+      'attendees': attendees,
+      'demoNotes': demoNotes,
+      'feedback': feedback,
+      'backlogUpdates': backlogUpdates,
+      'nextSprintFocus': nextSprintFocus,
+      'storiesCompleted': storiesCompleted,
+      'storiesNotCompleted': storiesNotCompleted,
+      'pointsCompleted': pointsCompleted,
+      'marketConditionsNotes': marketConditionsNotes,
+    };
+  }
+
+  /// Verifica se la review ha contenuto significativo
+  bool get hasContent =>
+      demoNotes.isNotEmpty ||
+      feedback.isNotEmpty ||
+      backlogUpdates.isNotEmpty ||
+      nextSprintFocus.isNotEmpty;
+
+  /// Verifica se ci sono aggiornamenti al backlog
+  bool get hasBacklogUpdates => backlogUpdates.isNotEmpty;
 }

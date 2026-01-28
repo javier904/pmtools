@@ -31,6 +31,7 @@ import '../widgets/agile/team_member_form_dialog.dart';
 import '../widgets/agile/participant_invite_dialog.dart' show AgileParticipantInviteDialog;
 import '../widgets/agile/burndown_chart_widget.dart';
 import '../widgets/agile/capacity_chart_widget.dart';
+import '../widgets/agile/team_capacity_widget.dart';
 import '../widgets/agile/skill_matrix_widget.dart';
 
 import '../widgets/agile/metrics_dashboard_widget.dart';
@@ -69,6 +70,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   final AgileSheetsService _sheetsService = AgileSheetsService();
   final AuthService _authService = AuthService();
   bool _filterByActiveSprint = true;
+  SwimlaneType _currentSwimlaneType = SwimlaneType.none;
 
   late TabController _tabController;
   late FrameworkFeatures _features;
@@ -1078,6 +1080,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     final totalStories = sprintStories.length;
     final completedCount = completedStories.length;
     final incompleteCount = totalStories - completedCount;
+    final hasSprintReview = sprint.hasSprintReview;
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -1089,6 +1092,71 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           children: [
             Text('Sei sicuro di voler completare "${sprint.name}"?'),
             const SizedBox(height: 16),
+            // Warning Sprint Review (Scrum Guide 2020)
+            if (!hasSprintReview)
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.warning_amber, color: Colors.orange, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Sprint Review non effettuata',
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Lo Scrum Guide 2020 raccomanda di fare la Sprint Review prima di chiudere lo sprint per ispezionare il lavoro svolto con gli stakeholder.',
+                            style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                          ),
+                          const SizedBox(height: 8),
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                              _showSprintReviewDialog(sprint);
+                            },
+                            icon: const Icon(Icons.rate_review, size: 16),
+                            label: const Text('Conduci Sprint Review'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.orange,
+                              side: const BorderSide(color: Colors.orange),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                    const SizedBox(width: 8),
+                    Text('Sprint Review completata il ${_formatDate(sprint.sprintReview!.date)}',
+                        style: const TextStyle(color: Colors.green)),
+                  ],
+                ),
+              ),
             // Riepilogo sprint
             Container(
               padding: const EdgeInsets.all(12),
@@ -1099,13 +1167,13 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('📊 Riepilogo Sprint:', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('📊 Riepilogo Sprint:', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text('• Stories totali: $totalStories'),
-                  Text('• Stories completate: $completedCount', style: TextStyle(color: Colors.green)),
-                  Text('• Story Points completati: $actualCompletedPoints pts', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                  Text('• Stories completate: $completedCount', style: const TextStyle(color: Colors.green)),
+                  Text('• Story Points completati: $actualCompletedPoints pts', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
                   if (incompleteCount > 0)
-                    Text('• Stories incomplete: $incompleteCount (torneranno nel backlog)', style: TextStyle(color: Colors.orange)),
+                    Text('• Stories incomplete: $incompleteCount (torneranno nel backlog)', style: const TextStyle(color: Colors.orange)),
                 ],
               ),
             ),
@@ -1151,6 +1219,231 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         _showSuccess('Sprint completato! Velocity: ${velocity.toStringAsFixed(1)} pts/settimana');
       } catch (e) {
         _showError('Errore completamento sprint: $e');
+      }
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
+  /// Dialog per condurre la Sprint Review (Scrum Guide 2020)
+  Future<void> _showSprintReviewDialog(SprintModel sprint) async {
+    final sprintStories = _stories.where((s) => s.sprintId == sprint.id).toList();
+    final completedStories = sprintStories.where((s) => s.status == StoryStatus.done).toList();
+    final incompleteStories = sprintStories.where((s) => s.status != StoryStatus.done).toList();
+    final actualCompletedPoints = completedStories.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+
+    final demoNotesController = TextEditingController();
+    final feedbackController = TextEditingController();
+    final nextSprintFocusController = TextEditingController();
+    final backlogUpdateController = TextEditingController();
+    final backlogUpdates = <String>[];
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.rate_review, color: Colors.blue),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Sprint Review: ${sprint.name}')),
+            ],
+          ),
+          content: SizedBox(
+            width: 500,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'La Sprint Review è un momento per ispezionare l\'outcome dello Sprint con gli stakeholder.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Riepilogo lavoro completato
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('✅ Lavoro Completato:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text('${completedStories.length} stories (${actualCompletedPoints} pts)'),
+                        if (completedStories.isNotEmpty)
+                          ...completedStories.take(5).map((s) => Padding(
+                                padding: const EdgeInsets.only(left: 16, top: 4),
+                                child: Text('• ${s.title}', style: const TextStyle(fontSize: 12)),
+                              )),
+                        if (completedStories.length > 5)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16, top: 4),
+                            child: Text('... e altre ${completedStories.length - 5}',
+                                style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  if (incompleteStories.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('⏳ Non Completato:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          ...incompleteStories.take(3).map((s) => Padding(
+                                padding: const EdgeInsets.only(left: 16, top: 4),
+                                child: Text('• ${s.title}', style: const TextStyle(fontSize: 12)),
+                              )),
+                          if (incompleteStories.length > 3)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, top: 4),
+                              child: Text('... e altre ${incompleteStories.length - 3}',
+                                  style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                            ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // Demo notes
+                  TextField(
+                    controller: demoNotesController,
+                    decoration: const InputDecoration(
+                      labelText: 'Note Demo',
+                      hintText: 'Cosa è stato mostrato durante la demo?',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Feedback
+                  TextField(
+                    controller: feedbackController,
+                    decoration: const InputDecoration(
+                      labelText: 'Feedback Stakeholder',
+                      hintText: 'Feedback ricevuto dagli stakeholder',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Backlog updates
+                  const Text('Modifiche al Product Backlog:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: backlogUpdateController,
+                          decoration: const InputDecoration(
+                            hintText: 'Nuova modifica al backlog...',
+                            isDense: true,
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle, color: Colors.green),
+                        onPressed: () {
+                          if (backlogUpdateController.text.trim().isNotEmpty) {
+                            setDialogState(() {
+                              backlogUpdates.add(backlogUpdateController.text.trim());
+                              backlogUpdateController.clear();
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  if (backlogUpdates.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    ...backlogUpdates.asMap().entries.map((entry) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.arrow_right, size: 16),
+                              Expanded(child: Text(entry.value, style: const TextStyle(fontSize: 12))),
+                              IconButton(
+                                icon: const Icon(Icons.close, size: 14, color: Colors.red),
+                                onPressed: () => setDialogState(() => backlogUpdates.removeAt(entry.key)),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
+                  const SizedBox(height: 12),
+
+                  // Next sprint focus
+                  TextField(
+                    controller: nextSprintFocusController,
+                    decoration: const InputDecoration(
+                      labelText: 'Focus Prossimo Sprint',
+                      hintText: 'Su cosa dovrebbe concentrarsi il team?',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annulla'),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.pop(context, true),
+              icon: const Icon(Icons.check),
+              label: const Text('Salva Review'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        final currentUser = widget.project.participants[_currentUserEmail];
+        final sprintReview = SprintReview(
+          date: DateTime.now(),
+          conductedBy: _currentUserEmail,
+          conductedByName: currentUser?.name ?? _currentUserEmail.split('@').first,
+          attendees: widget.project.participantEmails,
+          demoNotes: demoNotesController.text,
+          feedback: feedbackController.text,
+          backlogUpdates: backlogUpdates,
+          nextSprintFocus: nextSprintFocusController.text,
+          storiesCompleted: completedStories.length,
+          storiesNotCompleted: incompleteStories.length,
+          pointsCompleted: actualCompletedPoints,
+        );
+
+        final updatedSprint = sprint.copyWith(sprintReview: sprintReview);
+        await _firestoreService.updateSprint(widget.project.id, updatedSprint);
+
+        _showSuccess('Sprint Review salvata');
+      } catch (e) {
+        _showError('Errore salvataggio Sprint Review: $e');
       }
     }
   }
@@ -1261,6 +1554,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         // SCRUM PERMISSIONS:
         // - canEdit: PO/SM possono spostare qualsiasi card, Dev Team solo le proprie
         // - showWipConfig: Solo SM può configurare WIP limits
+        // - onPoliciesChange: SM/PO possono modificare le policy delle colonne (Kanban Practice #4)
+        // - swimlanes: Raggruppamento visuale per Kanban/Hybrid
         Expanded(
           child: KanbanBoardWidget(
             stories: activeSprint == null && _filterByActiveSprint ? [] : storiesToShow,
@@ -1271,9 +1566,17 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             onWipLimitChange: _features.hasWipLimits && project.canManageSprints(_currentUserEmail)
                 ? _updateWipLimit
                 : null,
+            onPoliciesChange: project.canManageSprints(_currentUserEmail)
+                ? _updateColumnPolicies
+                : null,
+            swimlaneType: _currentSwimlaneType,
+            onSwimlaneChange: _features.hasWipLimits
+                ? (type) => setState(() => _currentSwimlaneType = type)
+                : null,
             canEdit: project.canMoveAnyStory(_currentUserEmail) ||
                      project.canMoveOwnStory(_currentUserEmail),
             showWipConfig: _features.hasWipLimits && project.canManageSprints(_currentUserEmail),
+            showPolicies: _features.hasWipLimits, // Mostra policy solo per Kanban/Hybrid
           ),
         ),
       ],
@@ -1323,6 +1626,30 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
+  /// Aggiorna le policy esplicite di una colonna Kanban
+  /// (Kanban Practice #4 - Make Policies Explicit)
+  Future<void> _updateColumnPolicies(String columnId, List<String> policies) async {
+    try {
+      // Aggiorna la colonna con le nuove policy
+      final updatedColumns = widget.project.effectiveKanbanColumns.map((col) {
+        if (col.id == columnId) {
+          return col.copyWith(policies: policies);
+        }
+        return col;
+      }).toList();
+
+      // Salva su Firestore
+      await _firestoreService.updateProjectFields(
+        widget.project.id,
+        {'kanbanColumns': updatedColumns.map((c) => c.toFirestore()).toList()},
+      );
+
+      _showSuccess('Policy aggiornate');
+    } catch (e) {
+      _showError('Errore aggiornamento policy: $e');
+    }
+  }
+
   Future<void> _updateStoryStatusById(String storyId, StoryStatus status) async {
     final story = _stories.firstWhere((s) => s.id == storyId);
     await _updateStoryStatus(story, status);
@@ -1358,9 +1685,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ),
           const SizedBox(height: 24),
 
-          // Capacity chart
-          CapacityChartWidget(
+          // Team Capacity - Doppia vista: Story Points (Scrum) / Ore
+          TeamCapacityWidget(
             teamMembers: _teamMembers,
+            sprints: _sprints,
+            stories: _stories,
             currentSprint: _sprints.where((s) => s.status == SprintStatus.active).firstOrNull,
             assignedHours: assignedHours,
           ),
@@ -1485,6 +1814,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
     final latestSprint = lastCompletedSprint.isNotEmpty ? lastCompletedSprint.first : null;
 
+    // Per Kanban: le retro si chiamano "Operations Review" e non richiedono sprint
+    final isKanban = widget.project.framework == AgileFramework.kanban;
+
     // Stream delle retrospettive
     return StreamBuilder<List<RetrospectiveModel>>(
       stream: _retroService.streamProjectRetrospectives(widget.project.id),
@@ -1505,9 +1837,13 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 onTap: (retro) => _showRetroDetail(retro),
-                onCreateNew: latestSprint != null 
-                    ? () { _createNewRetro(latestSprint!); } 
-                    : () {}, 
+                // Kanban: può sempre creare retro (Operations Review)
+                // Scrum/Hybrid: richiede sprint completato
+                onCreateNew: isKanban
+                    ? _createKanbanRetro
+                    : (latestSprint != null
+                        ? () { _createNewRetro(latestSprint!); }
+                        : () {}),
                 currentUserEmail: _currentUserEmail,
                 onDelete: _confirmDeleteRetro,
               ),
@@ -1562,6 +1898,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   Widget _buildEmptyRetroState() {
+    final isKanban = widget.project.framework == AgileFramework.kanban;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(48),
@@ -1570,14 +1908,29 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             Icon(Icons.history, size: 64, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
-              'Nessuna retrospettiva',
+              isKanban ? 'Nessuna Operations Review' : 'Nessuna retrospettiva',
               style: TextStyle(fontSize: 18, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              'Completa uno sprint per creare la prima retrospettiva',
+              isKanban
+                  ? 'Crea una Operations Review per migliorare il flusso di lavoro'
+                  : 'Completa uno sprint per creare la prima retrospettiva',
               style: TextStyle(color: Colors.grey[500]),
+              textAlign: TextAlign.center,
             ),
+            if (isKanban) ...[
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _createKanbanRetro,
+                icon: const Icon(Icons.add),
+                label: const Text('Crea Operations Review'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _features.primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -1930,6 +2283,180 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         _showSuccess('Retrospettiva creata!');
       } catch (e) {
         _showError('Errore creazione retrospettiva: $e');
+      }
+    }
+  }
+
+  /// Crea una Operations Review per Kanban (senza sprint)
+  /// In Kanban, le retrospettive sono chiamate "Operations Review" o "Service Delivery Review"
+  /// e fanno parte della practice "Feedback Loops" (David Anderson)
+  Future<void> _createKanbanRetro() async {
+    final wentWell = <String>[];
+    final toImprove = <String>[];
+    final actionItems = <String>[];
+
+    // Calcola il numero della review basandosi sulle retro esistenti
+    final existingRetros = await _retroService.streamProjectRetrospectives(widget.project.id).first;
+    final reviewNumber = existingRetros.length + 1;
+
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.psychology, color: Colors.green),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Operations Review #$reviewNumber')),
+            ],
+          ),
+          content: SizedBox(
+            width: 600,
+            height: 500,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Descrizione Kanban-specific
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.green, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Le Operations Review fanno parte delle Feedback Loops di Kanban. '
+                            'Analizza il flusso di lavoro e identifica miglioramenti.',
+                            style: TextStyle(fontSize: 12, color: Colors.green),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // What went well
+                  _buildRetroInput(
+                    'Cosa ha funzionato bene?',
+                    'Aggiungi un punto positivo...',
+                    Icons.thumb_up,
+                    Colors.green,
+                    wentWell,
+                    (value) => setState(() => wentWell.add(value)),
+                    (index) => setState(() => wentWell.removeAt(index)),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // What to improve
+                  _buildRetroInput(
+                    'Cosa migliorare nel flusso?',
+                    'Aggiungi un punto da migliorare...',
+                    Icons.trending_up,
+                    Colors.orange,
+                    toImprove,
+                    (value) => setState(() => toImprove.add(value)),
+                    (index) => setState(() => toImprove.removeAt(index)),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Action items
+                  _buildRetroInput(
+                    'Action Items',
+                    'Aggiungi un action item...',
+                    Icons.assignment_turned_in,
+                    Colors.blue,
+                    actionItems,
+                    (value) => setState(() => actionItems.add(value)),
+                    (index) => setState(() => actionItems.removeAt(index)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annulla'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context, true),
+              icon: const Icon(Icons.save),
+              label: const Text('Salva Operations Review'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        final now = DateTime.now();
+
+        // Costruisci le colonne default
+        final columns = RetroTemplateExt(RetroTemplate.startStopContinue).defaultColumns;
+        final col1Id = columns.isNotEmpty ? columns[0].id : 'col_1';
+        final col2Id = columns.length > 1 ? columns[1].id : 'col_2';
+
+        // Costruisci gli items
+        final wentWellItems = wentWell.map((content) => RetroItem(
+          id: '${now.millisecondsSinceEpoch}_${content.hashCode}',
+          columnId: col1Id,
+          content: content,
+          authorEmail: _currentUserEmail,
+          authorName: _currentUserName,
+          createdAt: now,
+        )).toList();
+
+        final toImproveItems = toImprove.map((content) => RetroItem(
+          id: '${now.millisecondsSinceEpoch}_${content.hashCode}',
+          columnId: col2Id,
+          content: content,
+          authorEmail: _currentUserEmail,
+          authorName: _currentUserName,
+          createdAt: now,
+        )).toList();
+
+        final updatedActionItemsList = actionItems.map((description) => ActionItem(
+          id: '${now.millisecondsSinceEpoch}_${description.hashCode}',
+          description: description,
+          ownerEmail: _currentUserEmail,
+          createdAt: now,
+        )).toList();
+
+        // Crea il modello senza sprint (Kanban)
+        final retro = RetrospectiveModel(
+          id: '',
+          projectId: widget.project.id,
+          sprintId: null, // Kanban: no sprint
+          sprintName: 'Operations Review #$reviewNumber',
+          sprintNumber: reviewNumber,
+          createdAt: now,
+          createdBy: _currentUserEmail,
+          status: RetroStatus.draft,
+          currentPhase: RetroPhase.icebreaker,
+          columns: columns,
+          items: [...wentWellItems, ...toImproveItems],
+          actionItems: updatedActionItemsList,
+          timer: RetroTimer(durationMinutes: 60),
+        );
+
+        await _retroService.createRetrospective(retro);
+
+        _showSuccess('Operations Review creata!');
+      } catch (e) {
+        _showError('Errore creazione Operations Review: $e');
       }
     }
   }

@@ -513,6 +513,7 @@ class StoryCardWidget extends StatelessWidget {
       // Se non ci sono AC, usa lo status
       switch (story.status) {
         case StoryStatus.backlog:
+        case StoryStatus.refinement:
         case StoryStatus.ready:
           return 0;
         case StoryStatus.inSprint:
