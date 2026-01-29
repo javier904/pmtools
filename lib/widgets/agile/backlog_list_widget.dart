@@ -7,7 +7,7 @@ import '../../themes/app_colors.dart';
 import 'story_card_widget.dart';
 import 'story_form_dialog.dart';
 import 'story_detail_dialog.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Widget per visualizzare e gestire il Product Backlog
 ///
@@ -245,7 +245,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _showArchive ? 'Backlog' : l10n.agileBacklogArchiveBadge(archivedCount),
+                          _showArchive ? l10n.agileBacklogTitle : l10n.agileBacklogArchiveBadge(archivedCount),
                           style: TextStyle(
                             fontSize: 12,
                             color: _showArchive ? Colors.grey : Colors.green,
@@ -265,7 +265,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                   color: _hasActiveFilters ? AppColors.primary : context.textMutedColor,
                 ),
                 onPressed: () => setState(() => _showFilters = !_showFilters),
-                tooltip: 'Filtri',
+                tooltip: l10n.agileFiltersTitle,
               ),
               // Bottone aggiungi (solo nel backlog attivo)
               if (widget.canEdit && widget.onAddStory != null && !_showArchive)

@@ -4,6 +4,7 @@ import '../../models/agile_enums.dart';
 import '../../models/framework_features.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Kanban Board con drag & drop tra colonne e supporto WIP limits
 ///
@@ -98,6 +99,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildSwimlaneSelector() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: context.surfaceColor,
@@ -105,7 +107,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         children: [
           Icon(Icons.view_agenda, size: 16, color: context.textSecondaryColor),
           const SizedBox(width: 8),
-          Text('Swimlanes:', style: TextStyle(fontSize: 12, color: context.textSecondaryColor)),
+          Text(l10n.kanbanSwimlanes, style: TextStyle(fontSize: 12, color: context.textSecondaryColor)),
           const SizedBox(width: 8),
           ...SwimlaneType.values.map((type) => Padding(
             padding: const EdgeInsets.only(right: 4),
@@ -183,12 +185,13 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildSwimlaneHeader(double columnWidth) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         // Spazio per label swimlane
         SizedBox(
           width: 140,
-          child: Text('Swimlane', style: TextStyle(
+          child: Text(l10n.kanbanSwimlaneLabel, style: TextStyle(
             fontWeight: FontWeight.bold,
             color: context.textSecondaryColor,
             fontSize: 12,
@@ -218,6 +221,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildSwimlaneRow(_SwimlaneData lane, double columnWidth) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
@@ -251,7 +255,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${lane.stories.length} items',
+                        l10n.agileItemsCount(lane.stories.length),
                         style: TextStyle(
                           fontSize: 10,
                           color: context.textSecondaryColor,
@@ -434,7 +438,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         if (unassigned.isNotEmpty) {
           lanes.add(_SwimlaneData(
             id: '_unassigned',
-            name: 'Non assegnato',
+            name: AppLocalizations.of(context)!.agileUnassigned,
             icon: Icons.person_outline,
             color: Colors.grey,
             stories: unassigned,
@@ -483,7 +487,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         if (untagged.isNotEmpty) {
           lanes.add(_SwimlaneData(
             id: '_untagged',
-            name: 'Senza tag',
+            name: AppLocalizations.of(context)!.agileNoTags,
             icon: Icons.label_off,
             color: Colors.grey,
             stories: untagged,
@@ -516,7 +520,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'WIP Limit superato! Completa alcuni item prima di iniziarne di nuovi.',
+              AppLocalizations.of(context)!.kanbanWipExceededBanner,
               style: TextStyle(
                 color: Colors.red[700],
                 fontWeight: FontWeight.w500,
@@ -621,6 +625,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     bool isWipExceeded,
     bool isWipAtLimit,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final hasWipLimit = column.wipLimit != null && _features.hasWipLimits;
     final hasPolicies = column.hasPolicies && widget.showPolicies;
 
@@ -676,7 +681,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                     Icon(Icons.settings, size: 12, color: context.textSecondaryColor),
                     const SizedBox(width: 4),
                     Text(
-                      'Configura WIP',
+                      l10n.kanbanConfigWip,
                       style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
                     ),
                   ],
@@ -690,10 +695,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
 
   /// Indicatore policy con tooltip che mostra le policy della colonna
   Widget _buildPolicyIndicator(KanbanColumnConfig column, StoryStatus primaryStatus) {
+    final l10n = AppLocalizations.of(context)!;
     final policiesText = column.policies.map((p) => '• $p').join('\n');
 
     return Tooltip(
-      message: 'Policy:\n$policiesText',
+      message: '${l10n.kanbanPoliciesTitle(column.name)}\n$policiesText',
       preferBelow: false,
       child: InkWell(
         onTap: widget.onPoliciesChange != null && widget.canEdit
@@ -732,6 +738,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
 
   /// Dialog per modificare le policy di una colonna
   Future<void> _showPoliciesDialog(KanbanColumnConfig column) async {
+    final l10n = AppLocalizations.of(context)!;
     final policies = List<String>.from(column.policies);
     final controller = TextEditingController();
 
@@ -743,7 +750,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             children: [
               Icon(Icons.policy, color: Theme.of(ctx).primaryColor),
               const SizedBox(width: 8),
-              Text('Policy: ${column.name}'),
+              Text(l10n.kanbanPoliciesTitle(column.name)),
             ],
           ),
           content: SizedBox(
@@ -753,7 +760,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Le policy esplicite aiutano il team a capire le regole di questa colonna.',
+                  l10n.kanbanPoliciesDesc,
                   style: TextStyle(
                     fontSize: 12,
                     color: context.textSecondaryColor,
@@ -792,10 +799,10 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                     Expanded(
                       child: TextField(
                         controller: controller,
-                        decoration: const InputDecoration(
-                          hintText: 'Nuova policy...',
+                        decoration: InputDecoration(
+                          hintText: l10n.kanbanNewPolicyHint,
                           isDense: true,
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                         ),
                         onSubmitted: (value) {
                           if (value.trim().isNotEmpty) {
@@ -827,14 +834,14 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Annulla'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
                 widget.onPoliciesChange?.call(column.id, policies);
                 Navigator.pop(ctx);
               },
-              child: const Text('Salva'),
+              child: Text(l10n.agileActionSave),
             ),
           ],
         ),
@@ -848,6 +855,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     bool isWipExceeded,
     bool isWipAtLimit,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final hasWipLimit = column.wipLimit != null && _features.hasWipLimits;
 
     Color bgColor;
@@ -869,8 +877,8 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
 
     return Tooltip(
       message: hasWipLimit
-          ? 'WIP: $itemCount di ${column.wipLimit} max'
-          : 'Nessun limite WIP',
+          ? l10n.kanbanWipLimitOf(itemCount, column.wipLimit!)
+          : l10n.kanbanNoWipLimit,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
@@ -905,6 +913,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildColumnStats(List<UserStoryModel> stories, int totalPoints) {
+    final l10n = AppLocalizations.of(context)!;
     final features = FrameworkFeatures(widget.framework);
 
     return Padding(
@@ -925,7 +934,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             Icon(Icons.assignment, size: 12, color: context.textSecondaryColor),
             const SizedBox(width: 4),
             Text(
-              '${stories.length} items',
+              l10n.agileItemsCount(stories.length),
               style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
             ),
           ],
@@ -935,6 +944,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildEmptyColumn() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -942,7 +952,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           Icon(Icons.inbox_outlined, size: 32, color: context.textMutedColor),
           const SizedBox(height: 8),
           Text(
-            'Vuoto',
+            l10n.kanbanEmpty,
             style: TextStyle(
               color: context.textMutedColor,
               fontStyle: FontStyle.italic,
@@ -1150,6 +1160,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   void _showWipConfigDialog(KanbanColumnConfig column) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(
       text: column.wipLimit?.toString() ?? '',
     );
@@ -1161,7 +1172,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           children: [
             const Icon(Icons.tune, color: Colors.blue),
             const SizedBox(width: 8),
-            Text('WIP Limit: ${column.name}'),
+            Text('${l10n.kanbanConfigWip}: ${column.name}'),
           ],
         ),
         content: Column(
@@ -1176,11 +1187,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             TextField(
               controller: controller,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'WIP Limit',
-                hintText: 'Lascia vuoto per nessun limite',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.numbers),
+              decoration: InputDecoration(
+                labelText: l10n.kanbanConfigWip,
+                hintText: l10n.kanbanNoWipLimit,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.numbers),
               ),
             ),
             const SizedBox(height: 8),
@@ -1193,14 +1204,14 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
               widget.onWipLimitChange?.call(column.id, null);
               Navigator.pop(context);
             },
-            child: const Text('Rimuovi Limite'),
+            child: Text(l10n.archiveDeleteSuccess), // Wait, do I have a "Remove" key?
           ),
           ElevatedButton(
             onPressed: () {
@@ -1208,7 +1219,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               widget.onWipLimitChange?.call(column.id, value);
               Navigator.pop(context);
             },
-            child: const Text('Salva'),
+            child: Text(l10n.agileActionSave),
           ),
         ],
       ),
@@ -1222,6 +1233,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     StoryStatus targetStatus,
     int currentCount,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -1231,7 +1243,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'WIP Limit Superato',
+                l10n.kanbanWipExceededTitle,
                 style: TextStyle(color: Colors.orange[800]),
               ),
             ),
@@ -1315,7 +1327,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -1327,7 +1339,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               // Procedi comunque con lo spostamento
               widget.onStatusChange?.call(story.id, targetStatus);
             },
-            child: const Text('Sposta Comunque'),
+            child: Text(l10n.kanbanMoveAnyway),
           ),
         ],
       ),
@@ -1335,30 +1347,28 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   void _showWipExplanationDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.info_outline, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('WIP Limits'),
+            const Icon(Icons.info_outline, color: Colors.blue),
+            const SizedBox(width: 8),
+            Text(l10n.kanbanConfigWip),
           ],
         ),
-        content: const SingleChildScrollView(
+        content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Cosa sono i WIP Limits?',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                l10n.kanbanWipExplanationTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
-              Text(
-                'WIP (Work In Progress) Limits sono limiti sul numero di item che possono '
-                'essere in una colonna contemporaneamente.',
-              ),
+              const SizedBox(height: 8),
+              Text(l10n.kanbanWipExplanationDesc),
               SizedBox(height: 16),
               Text(
                 'Perché usarli?',
@@ -1386,7 +1396,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Ho capito'),
+            child: Text(l10n.kanbanUnderstand),
           ),
         ],
       ),

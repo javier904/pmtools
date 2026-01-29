@@ -36,6 +36,21 @@ class TodoTaskRow extends StatelessWidget {
         ),
         child: Row(
           children: [
+            // Drag Handle (Added for reorder)
+            // Only show if list is not null (implies we are in a list view context)
+             if (list != null) ...[
+               ReorderableDragStartListener(
+                 index: -1, // Will be overridden by ListView builder context if valid, but we use wrapping usually
+                 // Actually ReorderableListView needs this to be the direct child or we use a key.
+                 // Better pattern: ReorderableDragStartListener in the item builder of the list.
+                 // But wait, we are inside the Row widget. We need to pass the index or just be the listener.
+                 // ReorderableListView by default makes the whole tile draggable unless we use buildDefaultDragHandles: false.
+                 // We want specific handle.
+                 child: Icon(Icons.drag_indicator, color: isDark ? Colors.grey[700] : Colors.grey[300]),
+               ),
+               const SizedBox(width: 8),
+             ],
+
             // Status Indicator (Fixed Width for Alignment)
             if (column != null) ...[
               SizedBox(

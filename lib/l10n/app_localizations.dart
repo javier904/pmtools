@@ -108,6 +108,42 @@ abstract class AppLocalizations {
   /// **'Lista di appartenenza'**
   String get smartTodoListOrigin;
 
+  /// No description provided for @smartTodoSortTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Opzioni Ordinamento'**
+  String get smartTodoSortTooltip;
+
+  /// No description provided for @smartTodoSortManual.
+  ///
+  /// In it, this message translates to:
+  /// **'Manuale'**
+  String get smartTodoSortManual;
+
+  /// No description provided for @smartTodoSortDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Recenti'**
+  String get smartTodoSortDate;
+
+  /// No description provided for @smartTodoActionSortPriority.
+  ///
+  /// In it, this message translates to:
+  /// **'Riordina per Priorità'**
+  String get smartTodoActionSortPriority;
+
+  /// No description provided for @smartTodoActionSortDeadline.
+  ///
+  /// In it, this message translates to:
+  /// **'Riordina per Scadenza'**
+  String get smartTodoActionSortDeadline;
+
+  /// No description provided for @smartTodoOrderUpdated.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordine aggiornato manualmente'**
+  String get smartTodoOrderUpdated;
+
   /// No description provided for @newRetro.
   ///
   /// In it, this message translates to:
@@ -2565,8 +2601,8 @@ abstract class AppLocalizations {
   /// No description provided for @kanbanPoliciesTitle.
   ///
   /// In it, this message translates to:
-  /// **'Policy Colonna'**
-  String get kanbanPoliciesTitle;
+  /// **'Policy: {columnName}'**
+  String kanbanPoliciesTitle(String columnName);
 
   /// No description provided for @kanbanPoliciesContent.
   ///
@@ -3714,11 +3750,473 @@ abstract class AppLocalizations {
   /// **'Partecipanti'**
   String get participants;
 
-  /// No description provided for @addParticipant.
+  /// No description provided for @agileStoryDetailTitle.
   ///
   /// In it, this message translates to:
-  /// **'Aggiungi partecipante'**
-  String get addParticipant;
+  /// **'Dettagli Storia'**
+  String get agileStoryDetailTitle;
+
+  /// No description provided for @agileStoryPoints.
+  ///
+  /// In it, this message translates to:
+  /// **'Punti Storia'**
+  String get agileStoryPoints;
+
+  /// No description provided for @agileAcceptanceCriteria.
+  ///
+  /// In it, this message translates to:
+  /// **'Criteri di Accettazione'**
+  String get agileAcceptanceCriteria;
+
+  /// No description provided for @agileAcceptanceCriteriaCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{completed} di {total} elementi'**
+  String agileAcceptanceCriteriaCount(int completed, int total);
+
+  /// No description provided for @agileNoAcceptanceCriteria.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun criterio di accettazione definito'**
+  String get agileNoAcceptanceCriteria;
+
+  /// No description provided for @agileDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get agileDescription;
+
+  /// No description provided for @agileNoDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna descrizione'**
+  String get agileNoDescription;
+
+  /// No description provided for @agileTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tags'**
+  String get agileTags;
+
+  /// No description provided for @agileEstimates.
+  ///
+  /// In it, this message translates to:
+  /// **'Stime'**
+  String get agileEstimates;
+
+  /// No description provided for @agileFinalEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima Finale'**
+  String get agileFinalEstimate;
+
+  /// No description provided for @agileEstimatesReceived.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} stime ricevute'**
+  String agileEstimatesReceived(int count);
+
+  /// No description provided for @agileInformation.
+  ///
+  /// In it, this message translates to:
+  /// **'Informazioni'**
+  String get agileInformation;
+
+  /// No description provided for @agileBusinessValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Business Value'**
+  String get agileBusinessValue;
+
+  /// No description provided for @agileAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnatario'**
+  String get agileAssignee;
+
+  /// No description provided for @agileCreatedBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Creato da'**
+  String get agileCreatedBy;
+
+  /// No description provided for @agileCreatedAt.
+  ///
+  /// In it, this message translates to:
+  /// **'Creato il'**
+  String get agileCreatedAt;
+
+  /// No description provided for @agileStartedAt.
+  ///
+  /// In it, this message translates to:
+  /// **'Iniziato il'**
+  String get agileStartedAt;
+
+  /// No description provided for @agileCompletedAt.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato il'**
+  String get agileCompletedAt;
+
+  /// No description provided for @agileSprintTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint'**
+  String get agileSprintTitle;
+
+  /// No description provided for @agileNewSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Sprint'**
+  String get agileNewSprint;
+
+  /// No description provided for @agileNoSprints.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno sprint'**
+  String get agileNoSprints;
+
+  /// No description provided for @agileCreateFirstSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea il primo sprint per iniziare'**
+  String get agileCreateFirstSprint;
+
+  /// No description provided for @agileSprintStatusPlanning.
+  ///
+  /// In it, this message translates to:
+  /// **'Planning'**
+  String get agileSprintStatusPlanning;
+
+  /// No description provided for @agileSprintStatusActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Attivo'**
+  String get agileSprintStatusActive;
+
+  /// No description provided for @agileSprintStatusReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Review'**
+  String get agileSprintStatusReview;
+
+  /// No description provided for @agileSprintStatusCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato'**
+  String get agileSprintStatusCompleted;
+
+  /// No description provided for @agileStartSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvia Sprint'**
+  String get agileStartSprint;
+
+  /// No description provided for @agileCompleteSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa Sprint'**
+  String get agileCompleteSprint;
+
+  /// No description provided for @agileDeleteSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get agileDeleteSprint;
+
+  /// No description provided for @agileSprintName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Sprint'**
+  String get agileSprintName;
+
+  /// No description provided for @agileSprintGoal.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Goal'**
+  String get agileSprintGoal;
+
+  /// No description provided for @agileSprintGoalHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Obiettivo dello sprint'**
+  String get agileSprintGoalHint;
+
+  /// No description provided for @agileStartDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data Inizio'**
+  String get agileStartDate;
+
+  /// No description provided for @agileEndDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data Fine'**
+  String get agileEndDate;
+
+  /// No description provided for @agileStatsStories.
+  ///
+  /// In it, this message translates to:
+  /// **'storie'**
+  String get agileStatsStories;
+
+  /// No description provided for @agileStatsPoints.
+  ///
+  /// In it, this message translates to:
+  /// **'pti'**
+  String get agileStatsPoints;
+
+  /// No description provided for @agileStatsCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'completati'**
+  String get agileStatsCompleted;
+
+  /// No description provided for @agileStatsVelocity.
+  ///
+  /// In it, this message translates to:
+  /// **'velocity'**
+  String get agileStatsVelocity;
+
+  /// No description provided for @agileDaysRemainingCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} giorni rimanenti'**
+  String agileDaysRemainingCount(String count);
+
+  /// No description provided for @agileAverageVelocity.
+  ///
+  /// In it, this message translates to:
+  /// **'Velocity media'**
+  String get agileAverageVelocity;
+
+  /// No description provided for @agileTeamMembersCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Team: {count} membri'**
+  String agileTeamMembersCount(String count);
+
+  /// No description provided for @agileActionCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get agileActionCancel;
+
+  /// No description provided for @agileActionSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva'**
+  String get agileActionSave;
+
+  /// No description provided for @agileActionCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea'**
+  String get agileActionCreate;
+
+  /// No description provided for @agileSprintPlanningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Planning'**
+  String get agileSprintPlanningTitle;
+
+  /// No description provided for @agileSprintPlanningSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona le storie da completare in questo sprint'**
+  String get agileSprintPlanningSubtitle;
+
+  /// No description provided for @agileBurndownChart.
+  ///
+  /// In it, this message translates to:
+  /// **'Burndown Chart'**
+  String get agileBurndownChart;
+
+  /// No description provided for @agileBurndownIdeal.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale'**
+  String get agileBurndownIdeal;
+
+  /// No description provided for @agileBurndownActual.
+  ///
+  /// In it, this message translates to:
+  /// **'Reale'**
+  String get agileBurndownActual;
+
+  /// No description provided for @agileBurndownPlanned.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianificati'**
+  String get agileBurndownPlanned;
+
+  /// No description provided for @agileBurndownRemaining.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimanenti'**
+  String get agileBurndownRemaining;
+
+  /// No description provided for @agileBurndownNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato burndown'**
+  String get agileBurndownNoData;
+
+  /// No description provided for @agileBurndownNoDataHint.
+  ///
+  /// In it, this message translates to:
+  /// **'I dati appariranno quando lo sprint sarà attivo'**
+  String get agileBurndownNoDataHint;
+
+  /// No description provided for @agileVelocityTrend.
+  ///
+  /// In it, this message translates to:
+  /// **'Trend Velocity'**
+  String get agileVelocityTrend;
+
+  /// No description provided for @agileVelocityNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato velocity'**
+  String get agileVelocityNoData;
+
+  /// No description provided for @agileVelocityNoDataHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa almeno uno sprint per vedere il trend'**
+  String get agileVelocityNoDataHint;
+
+  /// No description provided for @agileTeamCapacity.
+  ///
+  /// In it, this message translates to:
+  /// **'Capacità Team'**
+  String get agileTeamCapacity;
+
+  /// No description provided for @agileTeamCapacityScrum.
+  ///
+  /// In it, this message translates to:
+  /// **'Capacità Team (Scrum)'**
+  String get agileTeamCapacityScrum;
+
+  /// No description provided for @agileTeamCapacityHours.
+  ///
+  /// In it, this message translates to:
+  /// **'Capacità Team (Ore)'**
+  String get agileTeamCapacityHours;
+
+  /// No description provided for @agileThroughput.
+  ///
+  /// In it, this message translates to:
+  /// **'Throughput'**
+  String get agileThroughput;
+
+  /// No description provided for @agileSuggestedCapacity.
+  ///
+  /// In it, this message translates to:
+  /// **'Capacità Suggerita per Sprint Planning'**
+  String get agileSuggestedCapacity;
+
+  /// No description provided for @agileSuggestedCapacityHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Basato su velocity media ± deviazione standard (±10%)'**
+  String get agileSuggestedCapacityHint;
+
+  /// No description provided for @agileSuggestedCapacityNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa almeno 1 sprint per avere suggerimenti sulla capacità'**
+  String get agileSuggestedCapacityNoData;
+
+  /// No description provided for @agileScrumGuideNote.
+  ///
+  /// In it, this message translates to:
+  /// **'La Scrum Guide raccomanda di basare la pianificazione sulla Velocity storica, non sulle ore.'**
+  String get agileScrumGuideNote;
+
+  /// No description provided for @agileHoursAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Disponibile'**
+  String get agileHoursAvailable;
+
+  /// No description provided for @agileHoursAssigned.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnato'**
+  String get agileHoursAssigned;
+
+  /// No description provided for @agileHoursOverloaded.
+  ///
+  /// In it, this message translates to:
+  /// **'Sovraccarico'**
+  String get agileHoursOverloaded;
+
+  /// No description provided for @agileHoursTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Capacità Totale'**
+  String get agileHoursTotal;
+
+  /// No description provided for @agileHoursUtilization.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizzazione'**
+  String get agileHoursUtilization;
+
+  /// No description provided for @agileMetricsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Metriche {framework}'**
+  String agileMetricsTitle(String framework);
+
+  /// No description provided for @agileItemsCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Item Completati'**
+  String get agileItemsCompleted;
+
+  /// No description provided for @agileInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Lavorazione'**
+  String get agileInProgress;
+
+  /// No description provided for @agileCycleTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Cycle Time'**
+  String get agileCycleTime;
+
+  /// No description provided for @agileLeadTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Lead Time'**
+  String get agileLeadTime;
+
+  /// No description provided for @agileDistribution.
+  ///
+  /// In it, this message translates to:
+  /// **'Distribuzione Stories'**
+  String get agileDistribution;
+
+  /// No description provided for @agileCompletionRate.
+  ///
+  /// In it, this message translates to:
+  /// **'Completion Rate'**
+  String get agileCompletionRate;
+
+  /// No description provided for @agileAccuracy.
+  ///
+  /// In it, this message translates to:
+  /// **'Accuratezza Stime'**
+  String get agileAccuracy;
+
+  /// No description provided for @agileEfficiency.
+  ///
+  /// In it, this message translates to:
+  /// **'Flow Efficiency'**
+  String get agileEfficiency;
 
   /// No description provided for @removeParticipant.
   ///
@@ -6082,18 +6580,6 @@ abstract class AppLocalizations {
   /// **'Ordinamento'**
   String get smartTodoSortBy;
 
-  /// No description provided for @smartTodoSortDate.
-  ///
-  /// In it, this message translates to:
-  /// **'Recenti'**
-  String get smartTodoSortDate;
-
-  /// No description provided for @smartTodoSortManual.
-  ///
-  /// In it, this message translates to:
-  /// **'Manuale'**
-  String get smartTodoSortManual;
-
   /// No description provided for @smartTodoColumnSortTitle.
   ///
   /// In it, this message translates to:
@@ -7903,7 +8389,7 @@ abstract class AppLocalizations {
   /// No description provided for @kanbanWipExplanationTitle.
   ///
   /// In it, this message translates to:
-  /// **'WIP Limits'**
+  /// **'Cosa sono i WIP Limits?'**
   String get kanbanWipExplanationTitle;
 
   /// No description provided for @kanbanWipWhat.
@@ -15928,12 +16414,6 @@ abstract class AppLocalizations {
   /// **'Priorità (MoSCoW)'**
   String get agilePriorityMoscow;
 
-  /// No description provided for @agileBusinessValue.
-  ///
-  /// In it, this message translates to:
-  /// **'Business Value'**
-  String get agileBusinessValue;
-
   /// No description provided for @agileBusinessValueLow.
   ///
   /// In it, this message translates to:
@@ -15969,30 +16449,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Nessuna'**
   String get agileNoPoints;
-
-  /// No description provided for @agileActionSave.
-  ///
-  /// In it, this message translates to:
-  /// **'Salva'**
-  String get agileActionSave;
-
-  /// No description provided for @agileActionCreate.
-  ///
-  /// In it, this message translates to:
-  /// **'Crea'**
-  String get agileActionCreate;
-
-  /// No description provided for @agileActionCancel.
-  ///
-  /// In it, this message translates to:
-  /// **'Annulla'**
-  String get agileActionCancel;
-
-  /// No description provided for @agileTags.
-  ///
-  /// In it, this message translates to:
-  /// **'Tags'**
-  String get agileTags;
 
   /// No description provided for @agileAddTagHint.
   ///
@@ -16042,119 +16498,11 @@ abstract class AppLocalizations {
   /// **'Molto complesso, considera di spezzare la story'**
   String get agilePointsComplexityHigh;
 
-  /// No description provided for @agileSprintTitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Sprint'**
-  String get agileSprintTitle;
-
-  /// No description provided for @agileNewSprint.
-  ///
-  /// In it, this message translates to:
-  /// **'Nuovo Sprint'**
-  String get agileNewSprint;
-
-  /// No description provided for @agileNoSprints.
-  ///
-  /// In it, this message translates to:
-  /// **'Nessuno sprint'**
-  String get agileNoSprints;
-
-  /// No description provided for @agileCreateFirstSprint.
-  ///
-  /// In it, this message translates to:
-  /// **'Crea il primo sprint per iniziare'**
-  String get agileCreateFirstSprint;
-
-  /// No description provided for @agileSprintStatusPlanning.
-  ///
-  /// In it, this message translates to:
-  /// **'Planning'**
-  String get agileSprintStatusPlanning;
-
-  /// No description provided for @agileSprintStatusActive.
-  ///
-  /// In it, this message translates to:
-  /// **'Attivo'**
-  String get agileSprintStatusActive;
-
-  /// No description provided for @agileSprintStatusReview.
-  ///
-  /// In it, this message translates to:
-  /// **'Review'**
-  String get agileSprintStatusReview;
-
-  /// No description provided for @agileSprintStatusCompleted.
-  ///
-  /// In it, this message translates to:
-  /// **'Completato'**
-  String get agileSprintStatusCompleted;
-
-  /// No description provided for @agileStartSprint.
-  ///
-  /// In it, this message translates to:
-  /// **'Avvia Sprint'**
-  String get agileStartSprint;
-
-  /// No description provided for @agileCompleteSprint.
-  ///
-  /// In it, this message translates to:
-  /// **'Completa Sprint'**
-  String get agileCompleteSprint;
-
-  /// No description provided for @agileDeleteSprint.
-  ///
-  /// In it, this message translates to:
-  /// **'Elimina'**
-  String get agileDeleteSprint;
-
-  /// No description provided for @agileSprintName.
-  ///
-  /// In it, this message translates to:
-  /// **'Nome Sprint'**
-  String get agileSprintName;
-
-  /// No description provided for @agileSprintGoal.
-  ///
-  /// In it, this message translates to:
-  /// **'Sprint Goal'**
-  String get agileSprintGoal;
-
-  /// No description provided for @agileSprintGoalHint.
-  ///
-  /// In it, this message translates to:
-  /// **'Obiettivo dello sprint'**
-  String get agileSprintGoalHint;
-
-  /// No description provided for @agileStartDate.
-  ///
-  /// In it, this message translates to:
-  /// **'Data Inizio'**
-  String get agileStartDate;
-
-  /// No description provided for @agileEndDate.
-  ///
-  /// In it, this message translates to:
-  /// **'Data Fine'**
-  String get agileEndDate;
-
   /// No description provided for @agileDurationDays.
   ///
   /// In it, this message translates to:
   /// **'Durata: {days} giorni'**
   String agileDurationDays(Object days);
-
-  /// No description provided for @agileAverageVelocity.
-  ///
-  /// In it, this message translates to:
-  /// **'Velocity media'**
-  String get agileAverageVelocity;
-
-  /// No description provided for @agileTeamMembersCount.
-  ///
-  /// In it, this message translates to:
-  /// **'Team: {count} membri'**
-  String agileTeamMembersCount(Object count);
 
   /// No description provided for @agilePriorityMust.
   ///
@@ -16180,28 +16528,16 @@ abstract class AppLocalizations {
   /// **'Won\'t Have'**
   String get agilePriorityWont;
 
-  /// No description provided for @agileSprintPlanningTitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Sprint Planning'**
-  String get agileSprintPlanningTitle;
-
-  /// No description provided for @agileSprintPlanningSubtitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Seleziona le storie da completare in questo sprint'**
-  String get agileSprintPlanningSubtitle;
-
   /// No description provided for @agileSelectedPoints.
   ///
   /// In it, this message translates to:
-  /// **'Selezionati'**
+  /// **'Punti Selezionati'**
   String get agileSelectedPoints;
 
   /// No description provided for @agileSuggestedPoints.
   ///
   /// In it, this message translates to:
-  /// **'Suggeriti'**
+  /// **'Punti Suggeriti'**
   String get agileSuggestedPoints;
 
   /// No description provided for @agileDaysRemaining.
@@ -16210,41 +16546,17 @@ abstract class AppLocalizations {
   /// **'{days}g rimanenti'**
   String agileDaysRemaining(Object days);
 
-  /// No description provided for @agileStatsStories.
-  ///
-  /// In it, this message translates to:
-  /// **'storie'**
-  String get agileStatsStories;
-
-  /// No description provided for @agileStatsPoints.
-  ///
-  /// In it, this message translates to:
-  /// **'pti'**
-  String get agileStatsPoints;
-
-  /// No description provided for @agileStatsCompleted.
-  ///
-  /// In it, this message translates to:
-  /// **'completati'**
-  String get agileStatsCompleted;
-
-  /// No description provided for @agileStatsVelocity.
-  ///
-  /// In it, this message translates to:
-  /// **'velocity'**
-  String get agileStatsVelocity;
-
   /// No description provided for @agileSelectAtLeastOne.
   ///
   /// In it, this message translates to:
-  /// **'Seleziona almeno 1 story'**
+  /// **'Seleziona almeno una storia'**
   String get agileSelectAtLeastOne;
 
   /// No description provided for @agileConfirmStories.
   ///
   /// In it, this message translates to:
-  /// **'Conferma ({count} stories)'**
-  String agileConfirmStories(Object count);
+  /// **'Conferma {count} storie'**
+  String agileConfirmStories(String count);
 
   /// No description provided for @kanbanPoliciesDescription.
   ///
@@ -16509,6 +16821,978 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Senza Tag'**
   String get swimlaneNoTag;
+
+  /// No description provided for @agileMetricsVelocityTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Velocity'**
+  String get agileMetricsVelocityTitle;
+
+  /// No description provided for @agileMetricsVelocityDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Misura la quantità di story points completati per sprint. Aiuta a prevedere la capacità del team.'**
+  String get agileMetricsVelocityDesc;
+
+  /// No description provided for @agileMetricsLeadTimeDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempo totale dalla creazione al completamento. Include il tempo di attesa nel backlog.'**
+  String get agileMetricsLeadTimeDesc;
+
+  /// No description provided for @agileMetricsCycleTimeDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempo dall\'inizio lavoro al completamento. Misura l\'efficienza dello sviluppo.'**
+  String get agileMetricsCycleTimeDesc;
+
+  /// No description provided for @agileMetricsThroughputDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Numero di item completati per unità di tempo. Indica la produttività.'**
+  String get agileMetricsThroughputDesc;
+
+  /// No description provided for @agileMetricsDistributionDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizza la distribuzione per stato. Aiuta a identificare colli di bottiglia.'**
+  String get agileMetricsDistributionDesc;
+
+  /// No description provided for @agilePredictability.
+  ///
+  /// In it, this message translates to:
+  /// **'Prevedibilità'**
+  String get agilePredictability;
+
+  /// No description provided for @agilePredictabilityDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'85% degli item viene completato in ≤{days} giorni'**
+  String agilePredictabilityDesc(int days);
+
+  /// No description provided for @agileThroughputWeekly.
+  ///
+  /// In it, this message translates to:
+  /// **'Item completati/settimana (ultime {weeks} sett.)'**
+  String agileThroughputWeekly(int weeks);
+
+  /// No description provided for @agileNoDataVelocity.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato velocity'**
+  String get agileNoDataVelocity;
+
+  /// No description provided for @agileNoDataLeadTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato lead time'**
+  String get agileNoDataLeadTime;
+
+  /// No description provided for @agileNoDataCycleTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato cycle time'**
+  String get agileNoDataCycleTime;
+
+  /// No description provided for @agileNoDataThroughput.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato throughput'**
+  String get agileNoDataThroughput;
+
+  /// No description provided for @agileNoDataAccuracy.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato accuracy'**
+  String get agileNoDataAccuracy;
+
+  /// No description provided for @agileStartFinishOneItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa almeno un item per calcolare'**
+  String get agileStartFinishOneItem;
+
+  /// No description provided for @timeDays.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni'**
+  String get timeDays;
+
+  /// No description provided for @auditLogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Audit Log'**
+  String get auditLogTitle;
+
+  /// No description provided for @auditLogEventCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} eventi'**
+  String auditLogEventCount(int count);
+
+  /// No description provided for @actionRefresh.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorna'**
+  String get actionRefresh;
+
+  /// No description provided for @auditLogFilterEntityType.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo'**
+  String get auditLogFilterEntityType;
+
+  /// No description provided for @auditLogFilterAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Azione'**
+  String get auditLogFilterAction;
+
+  /// No description provided for @auditLogFilterFromDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Da'**
+  String get auditLogFilterFromDate;
+
+  /// No description provided for @actionDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'Dettagli'**
+  String get actionDetails;
+
+  /// No description provided for @auditLogDetailsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Dettagli Modifica'**
+  String get auditLogDetailsTitle;
+
+  /// No description provided for @auditLogPreviousValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore precedente:'**
+  String get auditLogPreviousValue;
+
+  /// No description provided for @auditLogNewValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo valore:'**
+  String get auditLogNewValue;
+
+  /// No description provided for @auditLogNoEvents.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun evento registrato'**
+  String get auditLogNoEvents;
+
+  /// No description provided for @auditLogNoEventsDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Le attività sul progetto verranno registrate qui'**
+  String get auditLogNoEventsDesc;
+
+  /// No description provided for @recentActivityTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Attività Recente'**
+  String get recentActivityTitle;
+
+  /// No description provided for @actionViewAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi tutto'**
+  String get actionViewAll;
+
+  /// No description provided for @recentActivityNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività recente'**
+  String get recentActivityNone;
+
+  /// No description provided for @burndownChartTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Burndown Chart'**
+  String get burndownChartTitle;
+
+  /// No description provided for @agileIdeal.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale'**
+  String get agileIdeal;
+
+  /// No description provided for @agileActual.
+  ///
+  /// In it, this message translates to:
+  /// **'Reale'**
+  String get agileActual;
+
+  /// No description provided for @agileRemaining.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimanenti'**
+  String get agileRemaining;
+
+  /// No description provided for @agileBurndownNoDataDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'I dati appariranno quando lo sprint sarà attivo'**
+  String get agileBurndownNoDataDesc;
+
+  /// No description provided for @agileCompleteActiveFirst.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa lo sprint attivo prima di avviarne un altro'**
+  String get agileCompleteActiveFirst;
+
+  /// No description provided for @kanbanSwimlanes.
+  ///
+  /// In it, this message translates to:
+  /// **'Swimlanes:'**
+  String get kanbanSwimlanes;
+
+  /// No description provided for @kanbanSwimlaneLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Swimlane'**
+  String get kanbanSwimlaneLabel;
+
+  /// No description provided for @agileNoTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Senza tag'**
+  String get agileNoTags;
+
+  /// No description provided for @kanbanWipExceededBanner.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP Limit superato! Completa alcuni item prima di iniziarne di nuovi.'**
+  String get kanbanWipExceededBanner;
+
+  /// No description provided for @kanbanConfigWip.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura WIP'**
+  String get kanbanConfigWip;
+
+  /// No description provided for @kanbanPoliciesDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Le policy esplicite aiutano il team a capire le regole di questa colonna.'**
+  String get kanbanPoliciesDesc;
+
+  /// No description provided for @kanbanNewPolicyHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova policy...'**
+  String get kanbanNewPolicyHint;
+
+  /// No description provided for @kanbanWipLimitOf.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP: {count} di {limit} max'**
+  String kanbanWipLimitOf(int count, int limit);
+
+  /// No description provided for @kanbanWipExplanationDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP (Work In Progress) Limits sono limiti sul numero di item che possono essere in una colonna contemporaneamente.'**
+  String get kanbanWipExplanationDesc;
+
+  /// No description provided for @kanbanUnderstand.
+  ///
+  /// In it, this message translates to:
+  /// **'Ho capito'**
+  String get kanbanUnderstand;
+
+  /// No description provided for @agileHours.
+  ///
+  /// In it, this message translates to:
+  /// **'Ore'**
+  String get agileHours;
+
+  /// No description provided for @agileStoriesPerSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Stories / Sprint'**
+  String get agileStoriesPerSprint;
+
+  /// No description provided for @agileSprints.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint'**
+  String get agileSprints;
+
+  /// No description provided for @agileTeamComposition.
+  ///
+  /// In it, this message translates to:
+  /// **'Composizione Team'**
+  String get agileTeamComposition;
+
+  /// No description provided for @agileHoursNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Le ore sono un riferimento interno. Per la pianificazione Scrum, usa la vista Story Points.'**
+  String get agileHoursNote;
+
+  /// No description provided for @agileNoTeamMembers.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun membro nel team'**
+  String get agileNoTeamMembers;
+
+  /// No description provided for @agileGmailAuthError.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizzazione Gmail non disponibile. Prova a fare logout e login.'**
+  String get agileGmailAuthError;
+
+  /// No description provided for @agileGmailPermissionDenied.
+  ///
+  /// In it, this message translates to:
+  /// **'Permesso Gmail non concesso.'**
+  String get agileGmailPermissionDenied;
+
+  /// No description provided for @agileResend.
+  ///
+  /// In it, this message translates to:
+  /// **'Reinvia'**
+  String get agileResend;
+
+  /// No description provided for @agileRevoke.
+  ///
+  /// In it, this message translates to:
+  /// **'Revoca'**
+  String get agileRevoke;
+
+  /// No description provided for @agileVelocityUnits.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points / Sprint'**
+  String get agileVelocityUnits;
+
+  /// No description provided for @agileFiltersTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtri'**
+  String get agileFiltersTitle;
+
+  /// No description provided for @agilePlanned.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianificato'**
+  String get agilePlanned;
+
+  /// No description provided for @archiveDeleteSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Archiviato/eliminato con successo'**
+  String get archiveDeleteSuccess;
+
+  /// No description provided for @agileNoItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun elemento da mostrare'**
+  String get agileNoItems;
+
+  /// No description provided for @agileItemsOfTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'{completed} di {total}'**
+  String agileItemsOfTotal(int completed, int total);
+
+  /// No description provided for @agileItemsCompletedLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Completati'**
+  String get agileItemsCompletedLabel;
+
+  /// No description provided for @agileDaysRemainingSuffix.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni rimanenti'**
+  String get agileDaysRemainingSuffix;
+
+  /// No description provided for @average.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get average;
+
+  /// No description provided for @agileItemsCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} elementi'**
+  String agileItemsCount(int count);
+
+  /// No description provided for @agileDaysLeft.
+  ///
+  /// In it, this message translates to:
+  /// **'Giorni Rimanenti'**
+  String get agileDaysLeft;
+
+  /// No description provided for @all.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get all;
+
+  /// No description provided for @kanbanGuidePoliciesTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Policy Esplicite'**
+  String get kanbanGuidePoliciesTitle;
+
+  /// No description provided for @agileDaysLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Giorni'**
+  String get agileDaysLabel;
+
+  /// No description provided for @agileStatRemaining.
+  ///
+  /// In it, this message translates to:
+  /// **'rimasti'**
+  String get agileStatRemaining;
+
+  /// No description provided for @agileStatsCompletedLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Completati'**
+  String get agileStatsCompletedLabel;
+
+  /// No description provided for @agileStatsPlannedLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianificati'**
+  String get agileStatsPlannedLabel;
+
+  /// No description provided for @agileProgressLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Progresso'**
+  String get agileProgressLabel;
+
+  /// No description provided for @agileDurationLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Durata'**
+  String get agileDurationLabel;
+
+  /// No description provided for @agileVelocityLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Velocity'**
+  String get agileVelocityLabel;
+
+  /// No description provided for @agileStoriesLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie'**
+  String get agileStoriesLabel;
+
+  /// No description provided for @agileSprintSummary.
+  ///
+  /// In it, this message translates to:
+  /// **'Riepilogo Sprint'**
+  String get agileSprintSummary;
+
+  /// No description provided for @agileStoriesTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie totali'**
+  String get agileStoriesTotal;
+
+  /// No description provided for @agileStoriesCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie completate'**
+  String get agileStoriesCompleted;
+
+  /// No description provided for @agilePointsCompletedLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points completati'**
+  String get agilePointsCompletedLabel;
+
+  /// No description provided for @agileStoriesIncomplete.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie incomplete'**
+  String get agileStoriesIncomplete;
+
+  /// No description provided for @agileIncompleteReturnToBacklog.
+  ///
+  /// In it, this message translates to:
+  /// **'(torneranno nel backlog)'**
+  String get agileIncompleteReturnToBacklog;
+
+  /// No description provided for @agilePointsLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points'**
+  String get agilePointsLabel;
+
+  /// No description provided for @agileRecordReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Conduci Sprint Review'**
+  String get agileRecordReview;
+
+  /// No description provided for @agileCompleteSprintAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi Sprint'**
+  String get agileCompleteSprintAction;
+
+  /// No description provided for @agileMissingReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Review non ancora effettuata'**
+  String get agileMissingReview;
+
+  /// No description provided for @agileSprintReviewCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Review completata'**
+  String get agileSprintReviewCompleted;
+
+  /// No description provided for @agileReviewNotesLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Note Review'**
+  String get agileReviewNotesLabel;
+
+  /// No description provided for @agileReviewFeedbackLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Feedback Stakeholder'**
+  String get agileReviewFeedbackLabel;
+
+  /// No description provided for @agileReviewNextFocus.
+  ///
+  /// In it, this message translates to:
+  /// **'Focus Prossimo Sprint'**
+  String get agileReviewNextFocus;
+
+  /// No description provided for @agileBacklogUpdatesLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifiche Backlog'**
+  String get agileBacklogUpdatesLabel;
+
+  /// No description provided for @agileSaveReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Review'**
+  String get agileSaveReview;
+
+  /// No description provided for @agileConductedBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Condotta da'**
+  String get agileConductedBy;
+
+  /// No description provided for @agileReviewDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data Review'**
+  String get agileReviewDate;
+
+  /// No description provided for @agileReviewOutcome.
+  ///
+  /// In it, this message translates to:
+  /// **'Esito Review'**
+  String get agileReviewOutcome;
+
+  /// No description provided for @agileStoriesRejected.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie non accettate'**
+  String get agileStoriesRejected;
+
+  /// No description provided for @agileRejectedWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Le storie non completate o non accettate torneranno automaticamente nel Backlog.'**
+  String get agileRejectedWarning;
+
+  /// No description provided for @agileReviewDemoHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa è stato mostrato durante la demo?'**
+  String get agileReviewDemoHint;
+
+  /// No description provided for @agileReviewFeedbackHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Feedback ricevuto dagli stakeholder'**
+  String get agileReviewFeedbackHint;
+
+  /// No description provided for @agileReviewBacklogHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova modifica al backlog...'**
+  String get agileReviewBacklogHint;
+
+  /// No description provided for @agileReviewNextFocusHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Su cosa dovrebbe concentrarsi il team?'**
+  String get agileReviewNextFocusHint;
+
+  /// No description provided for @agileReviewScrumGuide.
+  ///
+  /// In it, this message translates to:
+  /// **'Lo Scrum Guide 2020 raccomanda di fare la Sprint Review prima di chiudere lo sprint per ispezionare il lavoro svolto con gli stakeholder.'**
+  String get agileReviewScrumGuide;
+
+  /// No description provided for @agileSprintCompleteConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler completare \"{name}\"?'**
+  String agileSprintCompleteConfirm(String name);
+
+  /// No description provided for @agileSprintCompleteSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint completato! Velocity: {velocity} pts/settimana'**
+  String agileSprintCompleteSuccess(String velocity);
+
+  /// No description provided for @agileSprintReviewSaveSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Review salvata'**
+  String get agileSprintReviewSaveSuccess;
+
+  /// No description provided for @agileEstimationAccuracy.
+  ///
+  /// In it, this message translates to:
+  /// **'Accuratezza Stime'**
+  String get agileEstimationAccuracy;
+
+  /// No description provided for @agileCompleteOneSprintFirst.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa almeno uno sprint'**
+  String get agileCompleteOneSprintFirst;
+
+  /// No description provided for @agileNoDataAccuracyFix.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato di accuratezza'**
+  String get agileNoDataAccuracyFix;
+
+  /// No description provided for @agileScrumGuideRecommends.
+  ///
+  /// In it, this message translates to:
+  /// **'La Scrum Guide raccomanda la pianificazione basata sulla Velocity storica, non sulle ore.'**
+  String get agileScrumGuideRecommends;
+
+  /// No description provided for @agileNoSkillsDefined.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna competenza definita'**
+  String get agileNoSkillsDefined;
+
+  /// No description provided for @agileAddSkillsToMembers.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi competenze ai membri del team'**
+  String get agileAddSkillsToMembers;
+
+  /// No description provided for @retroNoSprintWarningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno Sprint Completato'**
+  String get retroNoSprintWarningTitle;
+
+  /// No description provided for @retroNoSprintWarningMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Per creare una retrospettiva Scrum, devi prima completare almeno uno sprint. Le retrospettive sono collegate agli sprint per tracciare miglioramenti tra un\'iterazione e l\'altra.'**
+  String get retroNoSprintWarningMessage;
+
+  /// No description provided for @agileGoToSprints.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai agli Sprint'**
+  String get agileGoToSprints;
+
+  /// No description provided for @agileSprintReviewHistory.
+  ///
+  /// In it, this message translates to:
+  /// **'Cronologia Sprint Review'**
+  String get agileSprintReviewHistory;
+
+  /// No description provided for @agileNoSprintReviews.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna Sprint Review'**
+  String get agileNoSprintReviews;
+
+  /// No description provided for @agileNoSprintReviewsHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa uno sprint e conduci una Sprint Review per vederla qui'**
+  String get agileNoSprintReviewsHint;
+
+  /// No description provided for @agileAttendees.
+  ///
+  /// In it, this message translates to:
+  /// **'Partecipanti'**
+  String get agileAttendees;
+
+  /// No description provided for @agileStoryEvaluations.
+  ///
+  /// In it, this message translates to:
+  /// **'Valutazione Storie'**
+  String get agileStoryEvaluations;
+
+  /// No description provided for @agileDecisions.
+  ///
+  /// In it, this message translates to:
+  /// **'Decisioni'**
+  String get agileDecisions;
+
+  /// No description provided for @agileDemoNotes.
+  ///
+  /// In it, this message translates to:
+  /// **'Note Demo'**
+  String get agileDemoNotes;
+
+  /// No description provided for @agileFeedback.
+  ///
+  /// In it, this message translates to:
+  /// **'Feedback'**
+  String get agileFeedback;
+
+  /// No description provided for @agileStoryApproved.
+  ///
+  /// In it, this message translates to:
+  /// **'Approvata'**
+  String get agileStoryApproved;
+
+  /// No description provided for @agileStoryNeedsRefinement.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Rifinire'**
+  String get agileStoryNeedsRefinement;
+
+  /// No description provided for @agileStoryRejected.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiutata'**
+  String get agileStoryRejected;
+
+  /// No description provided for @agileAddAttendee.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Partecipante'**
+  String get agileAddAttendee;
+
+  /// No description provided for @agileAddDecision.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Decisione'**
+  String get agileAddDecision;
+
+  /// No description provided for @agileEvaluateStories.
+  ///
+  /// In it, this message translates to:
+  /// **'Valuta Storie'**
+  String get agileEvaluateStories;
+
+  /// No description provided for @agileSelectRole.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Ruolo'**
+  String get agileSelectRole;
+
+  /// No description provided for @agileStatsNotCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Non Completate'**
+  String get agileStatsNotCompleted;
+
+  /// No description provided for @agileFramework.
+  ///
+  /// In it, this message translates to:
+  /// **'Framework'**
+  String get agileFramework;
+
+  /// No description provided for @teamMembers.
+  ///
+  /// In it, this message translates to:
+  /// **'Membri del Team'**
+  String get teamMembers;
+
+  /// No description provided for @eisenhowerImportCsv.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa CSV'**
+  String get eisenhowerImportCsv;
+
+  /// No description provided for @eisenhowerImportPreview.
+  ///
+  /// In it, this message translates to:
+  /// **'Anteprima Attività'**
+  String get eisenhowerImportPreview;
+
+  /// No description provided for @eisenhowerImportSelectFile.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona un file CSV da importare'**
+  String get eisenhowerImportSelectFile;
+
+  /// No description provided for @eisenhowerImportFormatHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Formato atteso: Attività, Descrizione, Quadrante, Urgenza, Importanza'**
+  String get eisenhowerImportFormatHint;
+
+  /// No description provided for @eisenhowerImportClickToSelect.
+  ///
+  /// In it, this message translates to:
+  /// **'Clicca per selezionare file'**
+  String get eisenhowerImportClickToSelect;
+
+  /// No description provided for @eisenhowerImportSupportedFormats.
+  ///
+  /// In it, this message translates to:
+  /// **'Formati supportati: .csv (UTF-8 o Latin-1)'**
+  String get eisenhowerImportSupportedFormats;
+
+  /// No description provided for @eisenhowerImportNoActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna attività trovata nel file'**
+  String get eisenhowerImportNoActivities;
+
+  /// No description provided for @eisenhowerImportMarkRevealed.
+  ///
+  /// In it, this message translates to:
+  /// **'Segna come già votate'**
+  String get eisenhowerImportMarkRevealed;
+
+  /// No description provided for @eisenhowerImportMarkRevealedHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Le attività appariranno direttamente nel quadrante calcolato'**
+  String get eisenhowerImportMarkRevealedHint;
+
+  /// No description provided for @eisenhowerImportSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Importate {count} attività'**
+  String eisenhowerImportSuccess(int count);
+
+  /// No description provided for @actionSelectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Tutti'**
+  String get actionSelectAll;
+
+  /// No description provided for @actionDeselectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Deseleziona Tutti'**
+  String get actionDeselectAll;
+
+  /// No description provided for @actionImport.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa'**
+  String get actionImport;
+
+  /// No description provided for @eisenhowerImportShowInstructions.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra/nascondi istruzioni'**
+  String get eisenhowerImportShowInstructions;
+
+  /// No description provided for @eisenhowerImportInstructionsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Formato CSV Richiesto'**
+  String get eisenhowerImportInstructionsTitle;
+
+  /// No description provided for @eisenhowerImportInstructionsBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Il file CSV deve contenere almeno la colonna \'Attività\' o \'Title\'. Colonne opzionali: Descrizione, Urgenza (1-10), Importanza (1-10). La prima riga deve essere l\'intestazione.'**
+  String get eisenhowerImportInstructionsBody;
+
+  /// No description provided for @eisenhowerImportExampleFormat.
+  ///
+  /// In it, this message translates to:
+  /// **'Attività,Descrizione,Urgenza,Importanza\n\"Nome attività\",\"Descrizione opzionale\",8.5,7.2'**
+  String get eisenhowerImportExampleFormat;
+
+  /// No description provided for @eisenhowerImportChangeFile.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambia file'**
+  String get eisenhowerImportChangeFile;
+
+  /// No description provided for @eisenhowerImportSkippedRows.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} righe saltate per errori'**
+  String eisenhowerImportSkippedRows(int count);
+
+  /// No description provided for @eisenhowerImportAndMore.
+  ///
+  /// In it, this message translates to:
+  /// **'...e altre {count} righe'**
+  String eisenhowerImportAndMore(int count);
+
+  /// No description provided for @eisenhowerImportFoundActivities.
+  ///
+  /// In it, this message translates to:
+  /// **'Trovate {valid} attività valide su {total} righe'**
+  String eisenhowerImportFoundActivities(int valid, int total);
+
+  /// No description provided for @eisenhowerImportErrorEmptyTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Riga {row}: titolo vuoto'**
+  String eisenhowerImportErrorEmptyTitle(int row);
+
+  /// No description provided for @eisenhowerImportErrorInvalidRow.
+  ///
+  /// In it, this message translates to:
+  /// **'Riga {row}: formato non valido'**
+  String eisenhowerImportErrorInvalidRow(int row);
+
+  /// No description provided for @eisenhowerImportErrorMissingColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Colonna \'Attività\' o \'Title\' non trovata nell\'intestazione'**
+  String get eisenhowerImportErrorMissingColumn;
+
+  /// No description provided for @eisenhowerImportErrorEmptyFile.
+  ///
+  /// In it, this message translates to:
+  /// **'Il file è vuoto'**
+  String get eisenhowerImportErrorEmptyFile;
+
+  /// No description provided for @eisenhowerImportErrorNoHeader.
+  ///
+  /// In it, this message translates to:
+  /// **'Intestazione non trovata nella prima riga'**
+  String get eisenhowerImportErrorNoHeader;
+
+  /// No description provided for @eisenhowerImportErrorRow.
+  ///
+  /// In it, this message translates to:
+  /// **'Riga {row}'**
+  String eisenhowerImportErrorRow(int row);
+
+  /// No description provided for @eisenhowerImportErrorReadFile.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile leggere il file'**
+  String get eisenhowerImportErrorReadFile;
 }
 
 class _AppLocalizationsDelegate

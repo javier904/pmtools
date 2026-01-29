@@ -380,7 +380,7 @@ enum TeamRole {
   // =========================================================================
 
   /// Può gestire sprint (creare, avviare, completare) - Solo SM
-  bool get canManageSprints => this == TeamRole.scrumMaster;
+  bool get canManageSprints => this == TeamRole.scrumMaster || this == TeamRole.productOwner;
 
   /// Può facilitare le cerimonie Scrum - SM (e PO per Sprint Review)
   bool get canFacilitate => this == TeamRole.scrumMaster || this == TeamRole.productOwner;

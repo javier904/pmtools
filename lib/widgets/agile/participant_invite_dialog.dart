@@ -88,6 +88,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   }
 
   Future<void> _sendInvite() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
@@ -131,7 +132,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore: $e'),
+            content: Text('${l10n.error}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -200,9 +201,10 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
         if (accessToken == null || senderEmail == null) {
           print('⚠️ [EMAIL] [WEB] FALLITO: Token o email non disponibili');
           if (mounted) {
+            final l10n = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
+              SnackBar(
+                content: Text(l10n.agileGmailAuthError),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -262,9 +264,10 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
         if (!hasGmailScope) {
           print('⚠️ [EMAIL] [MOBILE] FALLITO: Scope Gmail non autorizzato');
           if (mounted) {
+            final l10n = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Permesso Gmail non concesso.'),
+              SnackBar(
+                content: Text(l10n.agileGmailPermissionDenied),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -573,7 +576,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
                                 SnackBar(content: Text(l10n.agileInviteLinkCopied)),
                               );
                             },
-                            tooltip: 'Copia link',
+                            tooltip: l10n.actionCopy,
                           ),
                         ],
                       ),
@@ -617,6 +620,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   }
 
   Widget _buildInviteRow(UnifiedInviteModel invite) {
+    final l10n = AppLocalizations.of(context)!;
     final statusInfo = _getStatusInfo(invite.status);
     final roleDisplay = _getRoleDisplay(invite);
 
@@ -685,12 +689,12 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
               IconButton(
                 icon: const Icon(Icons.refresh, size: 18),
                 onPressed: () => _resendInvite(invite.id),
-                tooltip: 'Reinvia',
+                tooltip: l10n.agileResend,
               ),
               IconButton(
                 icon: const Icon(Icons.close, size: 18, color: Colors.red),
                 onPressed: () => _revokeInvite(invite.id),
-                tooltip: 'Revoca',
+                tooltip: l10n.agileRevoke,
               ),
             ],
           ],
@@ -706,13 +710,14 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
   }
 
   String _getParticipantRoleName(String role) {
+    final l10n = AppLocalizations.of(context)!;
     switch (role.toLowerCase()) {
       case 'member':
-        return 'Member';
+        return l10n.agileRoleMember;
       case 'admin':
-        return 'Admin';
+        return l10n.agileRoleAdmin;
       case 'viewer':
-        return 'Viewer';
+        return l10n.agileRoleViewer;
       default:
         return role;
     }
@@ -720,22 +725,18 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
 
   String _getTeamRoleName(String? teamRole) {
     if (teamRole == null) return 'Developer';
-    switch (teamRole.toLowerCase()) {
-      case 'developer':
-        return 'Developer';
-      case 'designer':
-        return 'Designer';
-      case 'qa':
-        return 'QA';
-      case 'productowner':
-        return 'Product Owner';
-      case 'scrummaster':
-        return 'Scrum Master';
-      case 'stakeholder':
-        return 'Stakeholder';
-      default:
-        return teamRole;
-    }
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Team roles display names are often localized in TeamRole extension
+    // or we can map them here if not available.
+    // Let's assume TeamRole enum has a localized displayName or similar
+    // For now, let's look for mapping or use the role as is if not found.
+    
+    final role = TeamRole.values.firstWhere(
+      (r) => r.name.toLowerCase() == teamRole.toLowerCase(),
+      orElse: () => TeamRole.developer,
+    );
+    return role.displayName;
   }
 
   _InviteStatusInfo _getStatusInfo(UnifiedInviteStatus status) {

@@ -2467,3 +2467,4 @@ class _PulseLogoState extends State<_PulseLogo> with SingleTickerProviderStateMi
     );
   }
 }
+

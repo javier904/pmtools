@@ -84,7 +84,7 @@ class AgileProjectModel {
     final participantsData = data['participants'] as Map<String, dynamic>? ?? {};
     final participants = participantsData.map(
       (key, value) => MapEntry(
-        _unescapeEmailKey(key),
+        _unescapeEmailKey(key).toLowerCase(),
         TeamMemberModel.fromFirestore(value as Map<String, dynamic>),
       ),
     );
@@ -145,7 +145,7 @@ class AgileProjectModel {
       'holidays': holidays.map((h) => Timestamp.fromDate(h)).toList(),
       'participants': participants.map(
         (email, member) => MapEntry(
-          _escapeEmailKey(email),
+          _escapeEmailKey(email.toLowerCase()),
           member.toFirestore(),
         ),
       ),
@@ -161,7 +161,7 @@ class AgileProjectModel {
       'developmentTeamEmails': developmentTeamEmails,
       'pendingEmails': pendingEmails,
       // Per query
-      'participantEmails': participants.keys.toList(),
+      'participantEmails': participants.keys.map((e) => e.toLowerCase()).toList(),
       // 🗄️ Archiviazione
       'isArchived': isArchived,
       if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
@@ -270,15 +270,19 @@ class AgileProjectModel {
   bool hasParticipant(String email) => participants.containsKey(email);
 
   /// Ottiene un partecipante per email
-  TeamMemberModel? getParticipant(String email) => participants[email];
+  TeamMemberModel? getParticipant(String email) => participants[email.toLowerCase()];
 
-  /// Verifica se l'utente è owner
-  bool isOwner(String email) =>
-      participants[email]?.participantRole == AgileParticipantRole.owner;
+  /// Verifica se l'utente è owner (per email o perché creatore)
+  bool isOwner(String email) {
+    if (email.isEmpty) return false;
+    final normalized = email.trim().toLowerCase();
+    if (createdBy.trim().toLowerCase() == normalized) return true;
+    return participants[normalized]?.participantRole == AgileParticipantRole.owner;
+  }
 
   /// Verifica se l'utente può gestire il progetto
   bool canManage(String email) =>
-      participants[email]?.participantRole.canManage ?? false;
+      participants[email.toLowerCase()]?.participantRole.canManage ?? false;
 
   /// Verifica se l'utente può modificare
   bool canEdit(String email) =>
@@ -294,7 +298,7 @@ class AgileProjectModel {
   // =========================================================================
 
   /// Helper: ottiene il TeamRole di un utente
-  TeamRole? getTeamRole(String email) => participants[email]?.teamRole;
+  TeamRole? getTeamRole(String email) => participants[email.toLowerCase()]?.teamRole;
 
   // ---------------------------------------------------------------------------
   // BACKLOG MANAGEMENT (Solo Product Owner)
@@ -302,6 +306,7 @@ class AgileProjectModel {
 
   /// Può creare user stories - Richiede accesso + ruolo PO
   bool canCreateStory(String email) {
+    if (isOwner(email)) return true;
     final p = participants[email];
     if (p == null) return false;
     return p.participantRole.canEdit && p.teamRole.canCreateStory;
@@ -334,9 +339,18 @@ class AgileProjectModel {
 
   /// Può gestire sprint (creare, avviare, completare) - Richiede accesso + ruolo SM
   bool canManageSprints(String email) {
-    final p = participants[email];
+    if (email.isEmpty) return false;
+    final normalized = email.trim().toLowerCase();
+    
+    // Il creatore del progetto o l'owner hanno sempre permessi completi
+    if (isOwner(normalized)) return true;
+    
+    final p = participants[normalized];
     if (p == null) return false;
-    return p.participantRole.canManage && p.teamRole.canManageSprints;
+    
+    // Admin o ruoli dello Scrum Team con permessi di edit possono gestire lo sprint
+    return p.participantRole.canManage || 
+           (p.participantRole.canEdit && p.teamRole.isScrumTeam);
   }
 
   // ---------------------------------------------------------------------------
@@ -395,6 +409,7 @@ class AgileProjectModel {
 
   /// Può invitare membri - Richiede gestione + ruolo PO/SM
   bool canInviteMembers(String email) {
+    if (isOwner(email)) return true;
     final p = participants[email];
     if (p == null) return false;
     return p.participantRole.canInvite && p.teamRole.canInviteMembers;
@@ -428,6 +443,7 @@ class AgileProjectModel {
 
   /// Può facilitare retrospettiva - Richiede accesso + ruolo SM
   bool canFacilitateRetro(String email) {
+    if (isOwner(email)) return true;
     final p = participants[email];
     if (p == null) return false;
     return p.participantRole.canManage && p.teamRole.canFacilitateRetro;
@@ -444,21 +460,21 @@ class AgileProjectModel {
   // UTILITY
   // ---------------------------------------------------------------------------
 
-  /// Verifica se l'utente è Product Owner
-  bool isProductOwner(String email) =>
-      participants[email]?.teamRole == TeamRole.productOwner;
-
   /// Verifica se l'utente è Scrum Master
   bool isScrumMaster(String email) =>
-      participants[email]?.teamRole == TeamRole.scrumMaster;
+      participants[email.toLowerCase()]?.teamRole == TeamRole.scrumMaster;
+      
+  /// Verifica se l'utente è Product Owner
+  bool isProductOwner(String email) =>
+      participants[email.toLowerCase()]?.teamRole == TeamRole.productOwner;
 
   /// Verifica se l'utente è nel Development Team
   bool isDevelopmentTeam(String email) =>
-      participants[email]?.teamRole.isDevelopmentTeam ?? false;
+      participants[email.toLowerCase()]?.teamRole.isDevelopmentTeam ?? false;
 
   /// Verifica se l'utente è nello Scrum Team (non stakeholder)
   bool isScrumTeam(String email) =>
-      participants[email]?.teamRole.isScrumTeam ?? false;
+      participants[email.toLowerCase()]?.teamRole.isScrumTeam ?? false;
 
   /// Aggiunge un partecipante
   AgileProjectModel withParticipant(TeamMemberModel participant) {

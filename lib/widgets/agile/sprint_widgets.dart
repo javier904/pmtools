@@ -4,7 +4,7 @@ import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 // =============================================================================
 // SPRINT LIST WIDGET
@@ -268,14 +268,14 @@ class SprintListWidget extends StatelessWidget {
                     '${sprint.storyIds.length}',
                     l10n.agileStatsStories,
                     Colors.blue,
-                    tooltip: 'Numero di User Stories assegnate a questo sprint',
+                    tooltip: l10n.agileStatsStories,
                   ),
                   _buildCompactStat(
                     context,
                     '${sprint.plannedPoints}',
                     l10n.agileStatsPoints,
                     Colors.orange,
-                    tooltip: 'Story Points pianificati: somma dei punti delle stories selezionate',
+                    tooltip: l10n.agileStatsPoints,
                   ),
                   if (isCompleted) ...[
                     _buildCompactStat(
@@ -283,14 +283,14 @@ class SprintListWidget extends StatelessWidget {
                       '${sprint.completedPoints}',
                       l10n.agileStatsCompleted,
                       Colors.green,
-                      tooltip: 'Story Points completati: somma dei punti delle stories in stato Done alla chiusura dello sprint',
+                      tooltip: l10n.agileStatsCompleted,
                     ),
                     _buildCompactStat(
                       context,
                       sprint.velocity?.toStringAsFixed(1) ?? '-',
                       l10n.agileStatsVelocity,
                       AppColors.primary,
-                      tooltip: 'Velocity: Story Points completati diviso durata in settimane.\nIndica la capacità del team di completare lavoro.',
+                      tooltip: l10n.agileStatsVelocity,
                     ),
                   ],
                 ],
@@ -333,11 +333,11 @@ class SprintListWidget extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: hasActiveSprint
                       ? Tooltip(
-                          message: 'Completa lo sprint attivo prima di avviarne un altro',
+                          message: l10n.agileCompleteActiveFirst,
                           child: OutlinedButton.icon(
                             onPressed: null,
                             icon: const Icon(Icons.play_arrow, size: 14),
-                            label: const Text('Avvia', style: TextStyle(fontSize: 11)),
+                            label: Text(l10n.agileStartSprint, style: const TextStyle(fontSize: 11)),
                             style: OutlinedButton.styleFrom(
                               visualDensity: VisualDensity.compact,
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -347,7 +347,7 @@ class SprintListWidget extends StatelessWidget {
                       : ElevatedButton.icon(
                           onPressed: () => onSprintStart?.call(sprint.id),
                           icon: const Icon(Icons.play_arrow, size: 14),
-                          label: const Text('Avvia', style: TextStyle(fontSize: 11)),
+                          label: Text(l10n.agileStartSprint, style: const TextStyle(fontSize: 11)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             foregroundColor: Colors.white,
@@ -817,13 +817,13 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                   _buildStatColumn(
                     l10n.agileSuggestedPoints,
                     '$_suggestedPoints ${l10n.agileStatsPoints}',
-                    'basato su velocity media',
+                    l10n.agileAverageVelocity,
                     Colors.blue,
                   ),
                   _buildStatColumn(
-                    'Capacità',
+                    l10n.agileTeamCapacity,
                     '${widget.totalCapacityHours}h',
-                    '${widget.sprint.durationDays} giorni',
+                    l10n.agileDurationDays(widget.sprint.durationDays.toString()),
                     Colors.green,
                   ),
                 ],
@@ -863,7 +863,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  'Attenzione: superata la velocity suggerita',
+                  '${l10n.agileHoursOverloaded}: ${l10n.agileSuggestedPoints}',
                   style: TextStyle(color: Colors.orange[700], fontSize: 12),
                 ),
               ),
@@ -874,7 +874,7 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
               child: _availableStories.isEmpty
                   ? Center(
                       child: Text(
-                        'Nessuna story disponibile nel backlog',
+                        l10n.agileEmptyBacklogMatch,
                         style: TextStyle(color: context.textSecondaryColor),
                       ),
                     )

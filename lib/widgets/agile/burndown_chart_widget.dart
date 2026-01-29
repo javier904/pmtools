@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../models/sprint_model.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
+import '../../l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
 
 /// Widget per visualizzare il Burndown Chart dello sprint
 class BurndownChartWidget extends StatelessWidget {
@@ -15,8 +19,9 @@ class BurndownChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (burndownData.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     final idealLine = _calculateIdealLine();
@@ -33,15 +38,15 @@ class BurndownChartWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.show_chart, color: Colors.blue),
                 const SizedBox(width: 8),
-                const Text(
-                  'Burndown Chart',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.burndownChartTitle,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 // Legend
-                _buildLegendItem('Ideale', Colors.blue),
+                _buildLegendItem(l10n.agileIdeal, Colors.blue),
                 const SizedBox(width: 16),
-                _buildLegendItem('Reale', Colors.green),
+                _buildLegendItem(l10n.agileActual, Colors.green),
               ],
             ),
             const SizedBox(height: 24),
@@ -145,7 +150,7 @@ class BurndownChartWidget extends StatelessWidget {
                         return touchedSpots.map((spot) {
                           final isIdeal = spot.barIndex == 0;
                           return LineTooltipItem(
-                            '${isIdeal ? "Ideale" : "Reale"}: ${spot.y.toInt()} pts',
+                            '${isIdeal ? l10n.agileIdeal : l10n.agileActual}: ${spot.y.toInt()} pts',
                             TextStyle(
                               color: isIdeal ? Colors.blue : Colors.green,
                               fontWeight: FontWeight.bold,
@@ -165,27 +170,27 @@ class BurndownChartWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildStatBox(
-                  'Pianificati',
+                  l10n.agilePlanned,
                   '${sprint.plannedPoints}',
                   'pts',
                   Colors.blue,
                 ),
                 _buildStatBox(
-                  'Completati',
+                  l10n.agileStatsCompleted,
                   '${sprint.completedPoints}',
                   'pts',
                   Colors.green,
                 ),
                 _buildStatBox(
-                  'Rimanenti',
+                  l10n.agileRemaining,
                   '${sprint.plannedPoints - sprint.completedPoints}',
                   'pts',
                   Colors.orange,
                 ),
                 _buildStatBox(
-                  'Giorni',
+                  l10n.agileDaysLeft,
                   '${sprint.daysRemaining}',
-                  'rimasti',
+                  l10n.agileDaysRemainingSuffix,
                   Colors.purple,
                 ),
               ],
@@ -196,7 +201,7 @@ class BurndownChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -206,12 +211,12 @@ class BurndownChartWidget extends StatelessWidget {
             Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato burndown',
+              l10n.agileBurndownNoData,
               style: TextStyle(color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              'I dati appariranno quando lo sprint sarà attivo',
+              l10n.agileBurndownNoDataDesc,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
@@ -306,8 +311,9 @@ class VelocityChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (velocityData.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     final avgVelocity = velocityData.fold<double>(0, (sum, d) => sum + d.velocity) /
@@ -323,9 +329,9 @@ class VelocityChartWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.speed, color: Colors.purple),
                 const SizedBox(width: 8),
-                const Text(
-                  'Velocity Trend',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.agileVelocityTrend,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Container(
@@ -415,7 +421,7 @@ class VelocityChartWidget extends StatelessWidget {
                         dashArray: [5, 5],
                         label: HorizontalLineLabel(
                           show: true,
-                          labelResolver: (line) => 'Media',
+                          labelResolver: (line) => l10n.average,
                           style: const TextStyle(fontSize: 10, color: Colors.orange),
                         ),
                       ),
@@ -430,7 +436,7 @@ class VelocityChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -440,12 +446,12 @@ class VelocityChartWidget extends StatelessWidget {
             Icon(Icons.speed, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato velocity',
+              l10n.agileNoDataVelocity,
               style: TextStyle(color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              'Completa almeno uno sprint per vedere il trend',
+              l10n.agileVelocityNoDataHint,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],

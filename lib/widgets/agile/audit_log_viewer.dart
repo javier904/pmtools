@@ -4,6 +4,7 @@ import '../../models/agile_enums.dart';
 import '../../services/agile_audit_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Widget per visualizzare i log di audit del progetto
 class AuditLogViewer extends StatefulWidget {
@@ -81,6 +82,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Header
@@ -98,25 +100,25 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
               children: [
                 const Icon(Icons.history, color: Colors.teal),
                 const SizedBox(width: 8),
-                const Text(
-                  'Audit Log',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.auditLogTitle,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Text(
-                  '${_logs.length} eventi',
+                  l10n.auditLogEventCount(_logs.length),
                   style: TextStyle(color: context.textSecondaryColor),
                 ),
                 const SizedBox(width: 16),
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: _loadLogs,
-                  tooltip: 'Aggiorna',
+                  tooltip: l10n.actionRefresh,
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.pop(context),
-                  tooltip: 'Chiudi',
+                  tooltip: l10n.actionClose,
                 ),
               ],
             ),
@@ -142,6 +144,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
   }
 
   Widget _buildFilters() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Wrap(
@@ -150,16 +153,17 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
         children: [
           // Filtro tipo entità
           SizedBox(
-            width: 140,
+            width: 160,
             child: DropdownButtonFormField<AuditEntityType?>(
               value: _filterEntityType,
-              decoration: const InputDecoration(
-                labelText: 'Tipo',
+              isExpanded: true,
+              decoration: InputDecoration(
+                labelText: l10n.auditLogFilterEntityType,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Tutti')),
+                DropdownMenuItem(value: null, child: Text(l10n.all)),
                 ...AuditEntityType.values.map((type) => DropdownMenuItem(
                   value: type,
                   child: Text(type.displayName),
@@ -173,16 +177,17 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
           ),
           // Filtro azione
           SizedBox(
-            width: 140,
+            width: 160,
             child: DropdownButtonFormField<AuditAction?>(
               value: _filterAction,
-              decoration: const InputDecoration(
-                labelText: 'Azione',
+              isExpanded: true,
+              decoration: InputDecoration(
+                labelText: l10n.auditLogFilterAction,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Tutte')),
+                DropdownMenuItem(value: null, child: Text(l10n.all)),
                 ...AuditAction.values.map((action) => DropdownMenuItem(
                   value: action,
                   child: Text(action.displayName),
@@ -238,7 +243,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
               _loadLogs();
             },
             icon: const Icon(Icons.clear_all, size: 18),
-            label: const Text('Reset'),
+            label: Text(l10n.actionReset),
           ),
         ],
       ),
@@ -246,6 +251,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
   }
 
   Widget _buildLogItem(AuditLogModel log) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -293,7 +299,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
             ? IconButton(
                 icon: const Icon(Icons.info_outline),
                 onPressed: () => _showLogDetails(log),
-                tooltip: 'Dettagli',
+                tooltip: l10n.actionDetails,
               )
             : null,
       ),
@@ -344,6 +350,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
   }
 
   void _showLogDetails(AuditLogModel log) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -351,7 +358,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
           children: [
             Icon(log.action.icon, color: log.action.color),
             const SizedBox(width: 8),
-            const Text('Dettagli Modifica'),
+            Text(l10n.auditLogDetailsTitle),
           ],
         ),
         content: SizedBox(
@@ -362,9 +369,9 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (log.previousValue?.isNotEmpty ?? false) ...[
-                  const Text(
-                    'Valore precedente:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.auditLogPreviousValue,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -381,9 +388,9 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
                   const SizedBox(height: 16),
                 ],
                 if (log.newValue?.isNotEmpty ?? false) ...[
-                  const Text(
-                    'Nuovo valore:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.auditLogNewValue,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -405,7 +412,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Chiudi'),
+            child: Text(l10n.actionClose),
           ),
         ],
       ),
@@ -413,6 +420,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
     return Builder(
       builder: (context) => Center(
         child: Column(
@@ -421,7 +429,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
             Icon(Icons.history, size: 64, color: context.textMutedColor),
             const SizedBox(height: 16),
             Text(
-              'Nessun evento registrato',
+              l10n.auditLogNoEvents,
               style: TextStyle(
                 fontSize: 16,
                 color: context.textSecondaryColor,
@@ -429,7 +437,7 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Le attività sul progetto verranno registrate qui',
+              l10n.auditLogNoEventsDesc,
               style: TextStyle(
                 fontSize: 13,
                 color: context.textTertiaryColor,
@@ -455,6 +463,7 @@ class RecentActivityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -465,15 +474,15 @@ class RecentActivityWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.update, color: Colors.teal),
                 const SizedBox(width: 8),
-                const Text(
-                  'Attività Recente',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.recentActivityTitle,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 if (onViewAll != null)
                   TextButton(
                     onPressed: onViewAll,
-                    child: const Text('Vedi tutto'),
+                    child: Text(l10n.actionViewAll),
                   ),
               ],
             ),
@@ -483,7 +492,7 @@ class RecentActivityWidget extends StatelessWidget {
                 builder: (context) => Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
-                    'Nessuna attività recente',
+                    l10n.recentActivityNone,
                     style: TextStyle(color: context.textMutedColor),
                   ),
                 ),

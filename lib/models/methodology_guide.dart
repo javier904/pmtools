@@ -220,7 +220,7 @@ MethodologyGuide _buildKanbanGuide(AppLocalizations l10n) {
         icon: Icons.view_stream,
       ),
       MethodologySection(
-        title: l10n.kanbanPoliciesTitle,
+        title: l10n.kanbanGuidePoliciesTitle,
         content: l10n.kanbanPoliciesContent,
         icon: Icons.policy,
       ),

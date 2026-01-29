@@ -1,6 +1,12 @@
 {
   "@@locale": "it",
   "smartTodoListOrigin": "Lista di appartenenza",
+  "smartTodoSortTooltip": "Opzioni Ordinamento",
+  "smartTodoSortManual": "Manuale (Drag & Drop)",
+  "smartTodoSortDate": "Aggiornati di Recente",
+  "smartTodoActionSortPriority": "Riordina per Priorità",
+  "smartTodoActionSortDeadline": "Riordina per Scadenza",
+  "smartTodoOrderUpdated": "Ordine aggiornato manualmente",
   "newRetro": "Nuova Retro",
   "appTitle": "Keisen",
   "goToHome": "Vai alla Home",
@@ -4451,5 +4457,69 @@
   "agileSelectRole": "Seleziona Ruolo",
   "agileStatsNotCompleted": "Non Completate",
   "agileFramework": "Framework",
-  "teamMembers": "Membri del Team"
+  "teamMembers": "Membri del Team",
+  "eisenhowerImportCsv": "Importa CSV",
+  "eisenhowerImportPreview": "Anteprima Attività",
+  "eisenhowerImportSelectFile": "Seleziona un file CSV da importare",
+  "eisenhowerImportFormatHint": "Formato atteso: Attività, Descrizione, Quadrante, Urgenza, Importanza",
+  "eisenhowerImportClickToSelect": "Clicca per selezionare file",
+  "eisenhowerImportSupportedFormats": "Formati supportati: .csv (UTF-8 o Latin-1)",
+  "eisenhowerImportNoActivities": "Nessuna attività trovata nel file",
+  "eisenhowerImportMarkRevealed": "Segna come già votate",
+  "eisenhowerImportMarkRevealedHint": "Le attività appariranno direttamente nel quadrante calcolato",
+  "eisenhowerImportSuccess": "Importate {count} attività",
+  "@eisenhowerImportSuccess": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "actionSelectAll": "Seleziona Tutti",
+  "actionDeselectAll": "Deseleziona Tutti",
+  "actionImport": "Importa",
+  "eisenhowerImportShowInstructions": "Mostra/nascondi istruzioni",
+  "eisenhowerImportInstructionsTitle": "Formato CSV Richiesto",
+  "eisenhowerImportInstructionsBody": "Il file CSV deve contenere almeno la colonna 'Attività' o 'Title'. Colonne opzionali: Descrizione, Urgenza (1-10), Importanza (1-10). La prima riga deve essere l'intestazione.",
+  "eisenhowerImportExampleFormat": "Attività,Descrizione,Urgenza,Importanza\n\"Nome attività\",\"Descrizione opzionale\",8.5,7.2",
+  "eisenhowerImportChangeFile": "Cambia file",
+  "eisenhowerImportSkippedRows": "{count} righe saltate per errori",
+  "@eisenhowerImportSkippedRows": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "eisenhowerImportAndMore": "...e altre {count} righe",
+  "@eisenhowerImportAndMore": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "eisenhowerImportFoundActivities": "Trovate {valid} attività valide su {total} righe",
+  "@eisenhowerImportFoundActivities": {
+    "placeholders": {
+      "valid": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorEmptyTitle": "Riga {row}: titolo vuoto",
+  "@eisenhowerImportErrorEmptyTitle": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorInvalidRow": "Riga {row}: formato non valido",
+  "@eisenhowerImportErrorInvalidRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorMissingColumn": "Colonna 'Attività' o 'Title' non trovata nell'intestazione",
+  "eisenhowerImportErrorEmptyFile": "Il file è vuoto",
+  "eisenhowerImportErrorNoHeader": "Intestazione non trovata nella prima riga",
+  "eisenhowerImportErrorRow": "Riga {row}",
+  "@eisenhowerImportErrorRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorReadFile": "Impossibile leggere il file"
 }

@@ -71,7 +71,6 @@ class TodoKanbanView extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch, // Fill width
-            mainAxisSize: MainAxisSize.min,
             children: [
               // Column Header
               Padding(
@@ -133,60 +132,62 @@ class TodoKanbanView extends StatelessWidget {
                 ),
               ),
               
-              // Task List (Scrollable within column)
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.65, 
-                ),
-                child: Builder(
-                  builder: (context) {
-                    // 1. Sort Tasks Client-Side
-                    final sortedTasks = List<TodoTaskModel>.from(columnTasks);
-                    sortedTasks.sort((a, b) {
-                      switch (col.sortBy) {
-                        case TodoColumnSort.manual:
-                          return a.position.compareTo(b.position);
-                        case TodoColumnSort.priority:
-                          // High (index 2) > Low (index 0). Descending.
-                          return b.priority.index.compareTo(a.priority.index);
-                        case TodoColumnSort.dueDate:
-                          if (a.dueDate == null) return 1;
-                          if (b.dueDate == null) return -1;
-                          return a.dueDate!.compareTo(b.dueDate!);
-                        case TodoColumnSort.createdAt:
-                          return b.createdAt.compareTo(a.createdAt);
-                      }
-                    });
+              // Task List (Scrollable within column) - Flexible to prevent overflow
+              Flexible(
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.65, 
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      // 1. Sort Tasks Client-Side
+                      final sortedTasks = List<TodoTaskModel>.from(columnTasks);
+                      sortedTasks.sort((a, b) {
+                        switch (col.sortBy) {
+                          case TodoColumnSort.manual:
+                            return a.position.compareTo(b.position);
+                          case TodoColumnSort.priority:
+                            // High (index 2) > Low (index 0). Descending.
+                            return b.priority.index.compareTo(a.priority.index);
+                          case TodoColumnSort.dueDate:
+                            if (a.dueDate == null) return 1;
+                            if (b.dueDate == null) return -1;
+                            return a.dueDate!.compareTo(b.dueDate!);
+                          case TodoColumnSort.createdAt:
+                            return b.createdAt.compareTo(a.createdAt);
+                        }
+                      });
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      itemCount: sortedTasks.length,
-                      itemBuilder: (context, index) {
-                        final task = sortedTasks[index];
-                        
-                        return DragTarget<TodoTaskModel>(
-                          onWillAccept: (draggedTask) => draggedTask != null && draggedTask.id != task.id,
-                          onAccept: (draggedTask) {
-                             // Dropped on 'task'. Insert 'draggedTask' BEFORE 'task'.
-                             onTaskMoved(draggedTask, col.id, task);
-                          },
-                          builder: (context, candidateData, rejectedData) {
-                            // Visual feedback for insertion point?
-                            final isHovered = candidateData.isNotEmpty;
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isHovered) 
-                                  Container(height: 4, margin: const EdgeInsets.symmetric(vertical: 4), color: Colors.blue, width: 100),
-                                _buildDraggableCard(task, col, null), 
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    );
-                  }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: sortedTasks.length,
+                        itemBuilder: (context, index) {
+                          final task = sortedTasks[index];
+                          
+                          return DragTarget<TodoTaskModel>(
+                            onWillAccept: (draggedTask) => draggedTask != null && draggedTask.id != task.id,
+                            onAccept: (draggedTask) {
+                               // Dropped on 'task'. Insert 'draggedTask' BEFORE 'task'.
+                               onTaskMoved(draggedTask, col.id, task);
+                            },
+                            builder: (context, candidateData, rejectedData) {
+                              // Visual feedback for insertion point?
+                              final isHovered = candidateData.isNotEmpty;
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (isHovered) 
+                                    Container(height: 4, margin: const EdgeInsets.symmetric(vertical: 4), color: Colors.blue, width: 100),
+                                  _buildDraggableCard(task, col, null), 
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
+                  ),
                 ),
               ),
               

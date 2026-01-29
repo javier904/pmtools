@@ -1,0 +1,14 @@
+#,Attività,Descrizione,Quadrante,Azione,Urgenza (media),Importanza (media),N. Voti
+1,Formalizzare figura Release Manager,,Q1,DO,8.7,9.3,3
+2,Trovare tempo per i Tech Lead,Obiettivo minimo: 1 gg a settimana.,Q1,DO,8.0,8.0,3
+3,Come portare avanti l'evoluzione del BMS prodotto,,Q1,DO,7.0,6.0,3
+4,Come portare avanti pipeline di qualità,Ha sviluppato la pipeline di qualità ipotizzata con Stefano. Quando sarà membro OPS non potrà più lavorarci,Q1,DO,6.0,8.7,3
+5,Gestione release,"- progetto pilota sonarqube
+- Implementazione suite di smoke test
+- processo hotfix
+- revisione struttura BMS",Q1,DO,8.3,9.7,3
+6,Formazione gruppo,"Definire roadmap formazione di gruppo, e pianificazione delle sessioni.",Q1,DO,8.0,9.3,3
+7,Trovare strumenti di documentazione,,Q1,DO,6.3,8.0,3
+8,Interventi per rimuovere brand BMS dalla codebase,Legato a certificazione Abstrid,Q2,SCHEDULE,3.7,6.0,3
+9,Valutare come gestire i WMS a livello qualitativo e standard,,Q2,SCHEDULE,5.0,6.3,3
+10,Aggiornamento dei requirements,Formalizzare verifiche e richiesta periodica di aggiornamento (eliminando l'incontro periodico con Verrocchio).,Q4,DELETE,1.7,4.7,3

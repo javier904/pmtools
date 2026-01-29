@@ -12,6 +12,24 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoListOrigin => 'Lista di appartenenza';
 
   @override
+  String get smartTodoSortTooltip => 'Opzioni Ordinamento';
+
+  @override
+  String get smartTodoSortManual => 'Manuale';
+
+  @override
+  String get smartTodoSortDate => 'Recenti';
+
+  @override
+  String get smartTodoActionSortPriority => 'Riordina per Priorità';
+
+  @override
+  String get smartTodoActionSortDeadline => 'Riordina per Scadenza';
+
+  @override
+  String get smartTodoOrderUpdated => 'Ordine aggiornato manualmente';
+
+  @override
   String get newRetro => 'Nuova Retro';
 
   @override
@@ -1355,7 +1373,9 @@ class AppLocalizationsIt extends AppLocalizations {
       'Le swimlanes sono righe orizzontali che raggruppano le card sulla board per un attributo comune.\n\nTipi di swimlane disponibili:\n• Classe di Servizio: Raggruppa per priorità/urgenza del lavoro\n• Assegnatario: Raggruppa per membro del team assegnato\n• Priorità: Raggruppa per livello MoSCoW\n• Tag: Raggruppa per etichette delle storie\n\nLe swimlanes aiutano a:\n• Visualizzare il carico di lavoro per persona\n• Gestire diverse classi di servizio (urgente, standard)\n• Identificare colli di bottiglia per tipo di lavoro';
 
   @override
-  String get kanbanPoliciesTitle => 'Policy Colonna';
+  String kanbanPoliciesTitle(String columnName) {
+    return 'Policy: $columnName';
+  }
 
   @override
   String get kanbanPoliciesContent =>
@@ -2005,7 +2025,255 @@ class AppLocalizationsIt extends AppLocalizations {
   String get participants => 'Partecipanti';
 
   @override
-  String get addParticipant => 'Aggiungi partecipante';
+  String get agileStoryDetailTitle => 'Dettagli Storia';
+
+  @override
+  String get agileStoryPoints => 'Punti Storia';
+
+  @override
+  String get agileAcceptanceCriteria => 'Criteri di Accettazione';
+
+  @override
+  String agileAcceptanceCriteriaCount(int completed, int total) {
+    return '$completed di $total elementi';
+  }
+
+  @override
+  String get agileNoAcceptanceCriteria =>
+      'Nessun criterio di accettazione definito';
+
+  @override
+  String get agileDescription => 'Descrizione';
+
+  @override
+  String get agileNoDescription => 'Nessuna descrizione';
+
+  @override
+  String get agileTags => 'Tags';
+
+  @override
+  String get agileEstimates => 'Stime';
+
+  @override
+  String get agileFinalEstimate => 'Stima Finale';
+
+  @override
+  String agileEstimatesReceived(int count) {
+    return '$count stime ricevute';
+  }
+
+  @override
+  String get agileInformation => 'Informazioni';
+
+  @override
+  String get agileBusinessValue => 'Business Value';
+
+  @override
+  String get agileAssignee => 'Assegnatario';
+
+  @override
+  String get agileCreatedBy => 'Creato da';
+
+  @override
+  String get agileCreatedAt => 'Creato il';
+
+  @override
+  String get agileStartedAt => 'Iniziato il';
+
+  @override
+  String get agileCompletedAt => 'Completato il';
+
+  @override
+  String get agileSprintTitle => 'Sprint';
+
+  @override
+  String get agileNewSprint => 'Nuovo Sprint';
+
+  @override
+  String get agileNoSprints => 'Nessuno sprint';
+
+  @override
+  String get agileCreateFirstSprint => 'Crea il primo sprint per iniziare';
+
+  @override
+  String get agileSprintStatusPlanning => 'Planning';
+
+  @override
+  String get agileSprintStatusActive => 'Attivo';
+
+  @override
+  String get agileSprintStatusReview => 'Review';
+
+  @override
+  String get agileSprintStatusCompleted => 'Completato';
+
+  @override
+  String get agileStartSprint => 'Avvia Sprint';
+
+  @override
+  String get agileCompleteSprint => 'Completa Sprint';
+
+  @override
+  String get agileDeleteSprint => 'Elimina';
+
+  @override
+  String get agileSprintName => 'Nome Sprint';
+
+  @override
+  String get agileSprintGoal => 'Sprint Goal';
+
+  @override
+  String get agileSprintGoalHint => 'Obiettivo dello sprint';
+
+  @override
+  String get agileStartDate => 'Data Inizio';
+
+  @override
+  String get agileEndDate => 'Data Fine';
+
+  @override
+  String get agileStatsStories => 'storie';
+
+  @override
+  String get agileStatsPoints => 'pti';
+
+  @override
+  String get agileStatsCompleted => 'completati';
+
+  @override
+  String get agileStatsVelocity => 'velocity';
+
+  @override
+  String agileDaysRemainingCount(String count) {
+    return '$count giorni rimanenti';
+  }
+
+  @override
+  String get agileAverageVelocity => 'Velocity media';
+
+  @override
+  String agileTeamMembersCount(String count) {
+    return 'Team: $count membri';
+  }
+
+  @override
+  String get agileActionCancel => 'Annulla';
+
+  @override
+  String get agileActionSave => 'Salva';
+
+  @override
+  String get agileActionCreate => 'Crea';
+
+  @override
+  String get agileSprintPlanningTitle => 'Sprint Planning';
+
+  @override
+  String get agileSprintPlanningSubtitle =>
+      'Seleziona le storie da completare in questo sprint';
+
+  @override
+  String get agileBurndownChart => 'Burndown Chart';
+
+  @override
+  String get agileBurndownIdeal => 'Ideale';
+
+  @override
+  String get agileBurndownActual => 'Reale';
+
+  @override
+  String get agileBurndownPlanned => 'Pianificati';
+
+  @override
+  String get agileBurndownRemaining => 'Rimanenti';
+
+  @override
+  String get agileBurndownNoData => 'Nessun dato burndown';
+
+  @override
+  String get agileBurndownNoDataHint =>
+      'I dati appariranno quando lo sprint sarà attivo';
+
+  @override
+  String get agileVelocityTrend => 'Trend Velocity';
+
+  @override
+  String get agileVelocityNoData => 'Nessun dato velocity';
+
+  @override
+  String get agileVelocityNoDataHint =>
+      'Completa almeno uno sprint per vedere il trend';
+
+  @override
+  String get agileTeamCapacity => 'Capacità Team';
+
+  @override
+  String get agileTeamCapacityScrum => 'Capacità Team (Scrum)';
+
+  @override
+  String get agileTeamCapacityHours => 'Capacità Team (Ore)';
+
+  @override
+  String get agileThroughput => 'Throughput';
+
+  @override
+  String get agileSuggestedCapacity => 'Capacità Suggerita per Sprint Planning';
+
+  @override
+  String get agileSuggestedCapacityHint =>
+      'Basato su velocity media ± deviazione standard (±10%)';
+
+  @override
+  String get agileSuggestedCapacityNoData =>
+      'Completa almeno 1 sprint per avere suggerimenti sulla capacità';
+
+  @override
+  String get agileScrumGuideNote =>
+      'La Scrum Guide raccomanda di basare la pianificazione sulla Velocity storica, non sulle ore.';
+
+  @override
+  String get agileHoursAvailable => 'Disponibile';
+
+  @override
+  String get agileHoursAssigned => 'Assegnato';
+
+  @override
+  String get agileHoursOverloaded => 'Sovraccarico';
+
+  @override
+  String get agileHoursTotal => 'Capacità Totale';
+
+  @override
+  String get agileHoursUtilization => 'Utilizzazione';
+
+  @override
+  String agileMetricsTitle(String framework) {
+    return 'Metriche $framework';
+  }
+
+  @override
+  String get agileItemsCompleted => 'Item Completati';
+
+  @override
+  String get agileInProgress => 'In Lavorazione';
+
+  @override
+  String get agileCycleTime => 'Cycle Time';
+
+  @override
+  String get agileLeadTime => 'Lead Time';
+
+  @override
+  String get agileDistribution => 'Distribuzione Stories';
+
+  @override
+  String get agileCompletionRate => 'Completion Rate';
+
+  @override
+  String get agileAccuracy => 'Accuratezza Stime';
+
+  @override
+  String get agileEfficiency => 'Flow Efficiency';
 
   @override
   String get removeParticipant => 'Rimuovi partecipante';
@@ -3309,12 +3577,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get smartTodoSortBy => 'Ordinamento';
 
   @override
-  String get smartTodoSortDate => 'Recenti';
-
-  @override
-  String get smartTodoSortManual => 'Manuale';
-
-  @override
   String get smartTodoColumnSortTitle => 'Ordina Colonna';
 
   @override
@@ -4325,7 +4587,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get kanbanMoveAnyway => 'Sposta Comunque';
 
   @override
-  String get kanbanWipExplanationTitle => 'WIP Limits';
+  String get kanbanWipExplanationTitle => 'Cosa sono i WIP Limits?';
 
   @override
   String get kanbanWipWhat => 'Cosa sono i WIP Limits?';
@@ -8845,9 +9107,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agilePriorityMoscow => 'Priorità (MoSCoW)';
 
   @override
-  String get agileBusinessValue => 'Business Value';
-
-  @override
   String get agileBusinessValueLow => 'Basso valore di business';
 
   @override
@@ -8865,18 +9124,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get agileNoPoints => 'Nessuna';
-
-  @override
-  String get agileActionSave => 'Salva';
-
-  @override
-  String get agileActionCreate => 'Crea';
-
-  @override
-  String get agileActionCancel => 'Annulla';
-
-  @override
-  String get agileTags => 'Tags';
 
   @override
   String get agileAddTagHint => 'Aggiungi tag...';
@@ -8905,64 +9152,8 @@ class AppLocalizationsIt extends AppLocalizations {
       'Molto complesso, considera di spezzare la story';
 
   @override
-  String get agileSprintTitle => 'Sprint';
-
-  @override
-  String get agileNewSprint => 'Nuovo Sprint';
-
-  @override
-  String get agileNoSprints => 'Nessuno sprint';
-
-  @override
-  String get agileCreateFirstSprint => 'Crea il primo sprint per iniziare';
-
-  @override
-  String get agileSprintStatusPlanning => 'Planning';
-
-  @override
-  String get agileSprintStatusActive => 'Attivo';
-
-  @override
-  String get agileSprintStatusReview => 'Review';
-
-  @override
-  String get agileSprintStatusCompleted => 'Completato';
-
-  @override
-  String get agileStartSprint => 'Avvia Sprint';
-
-  @override
-  String get agileCompleteSprint => 'Completa Sprint';
-
-  @override
-  String get agileDeleteSprint => 'Elimina';
-
-  @override
-  String get agileSprintName => 'Nome Sprint';
-
-  @override
-  String get agileSprintGoal => 'Sprint Goal';
-
-  @override
-  String get agileSprintGoalHint => 'Obiettivo dello sprint';
-
-  @override
-  String get agileStartDate => 'Data Inizio';
-
-  @override
-  String get agileEndDate => 'Data Fine';
-
-  @override
   String agileDurationDays(Object days) {
     return 'Durata: $days giorni';
-  }
-
-  @override
-  String get agileAverageVelocity => 'Velocity media';
-
-  @override
-  String agileTeamMembersCount(Object count) {
-    return 'Team: $count membri';
   }
 
   @override
@@ -8978,17 +9169,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agilePriorityWont => 'Won\'t Have';
 
   @override
-  String get agileSprintPlanningTitle => 'Sprint Planning';
+  String get agileSelectedPoints => 'Punti Selezionati';
 
   @override
-  String get agileSprintPlanningSubtitle =>
-      'Seleziona le storie da completare in questo sprint';
-
-  @override
-  String get agileSelectedPoints => 'Selezionati';
-
-  @override
-  String get agileSuggestedPoints => 'Suggeriti';
+  String get agileSuggestedPoints => 'Punti Suggeriti';
 
   @override
   String agileDaysRemaining(Object days) {
@@ -8996,23 +9180,11 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get agileStatsStories => 'storie';
+  String get agileSelectAtLeastOne => 'Seleziona almeno una storia';
 
   @override
-  String get agileStatsPoints => 'pti';
-
-  @override
-  String get agileStatsCompleted => 'completati';
-
-  @override
-  String get agileStatsVelocity => 'velocity';
-
-  @override
-  String get agileSelectAtLeastOne => 'Seleziona almeno 1 story';
-
-  @override
-  String agileConfirmStories(Object count) {
-    return 'Conferma ($count stories)';
+  String agileConfirmStories(String count) {
+    return 'Conferma $count storie';
   }
 
   @override
@@ -9152,4 +9324,548 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get swimlaneNoTag => 'Senza Tag';
+
+  @override
+  String get agileMetricsVelocityTitle => 'Velocity';
+
+  @override
+  String get agileMetricsVelocityDesc =>
+      'Misura la quantità di story points completati per sprint. Aiuta a prevedere la capacità del team.';
+
+  @override
+  String get agileMetricsLeadTimeDesc =>
+      'Tempo totale dalla creazione al completamento. Include il tempo di attesa nel backlog.';
+
+  @override
+  String get agileMetricsCycleTimeDesc =>
+      'Tempo dall\'inizio lavoro al completamento. Misura l\'efficienza dello sviluppo.';
+
+  @override
+  String get agileMetricsThroughputDesc =>
+      'Numero di item completati per unità di tempo. Indica la produttività.';
+
+  @override
+  String get agileMetricsDistributionDesc =>
+      'Visualizza la distribuzione per stato. Aiuta a identificare colli di bottiglia.';
+
+  @override
+  String get agilePredictability => 'Prevedibilità';
+
+  @override
+  String agilePredictabilityDesc(int days) {
+    return 'L\'85% degli item viene completato in ≤$days giorni';
+  }
+
+  @override
+  String agileThroughputWeekly(int weeks) {
+    return 'Item completati/settimana (ultime $weeks sett.)';
+  }
+
+  @override
+  String get agileNoDataVelocity => 'Nessun dato velocity';
+
+  @override
+  String get agileNoDataLeadTime => 'Nessun dato lead time';
+
+  @override
+  String get agileNoDataCycleTime => 'Nessun dato cycle time';
+
+  @override
+  String get agileNoDataThroughput => 'Nessun dato throughput';
+
+  @override
+  String get agileNoDataAccuracy => 'Nessun dato accuracy';
+
+  @override
+  String get agileStartFinishOneItem => 'Completa almeno un item per calcolare';
+
+  @override
+  String get timeDays => 'giorni';
+
+  @override
+  String get auditLogTitle => 'Audit Log';
+
+  @override
+  String auditLogEventCount(int count) {
+    return '$count eventi';
+  }
+
+  @override
+  String get actionRefresh => 'Aggiorna';
+
+  @override
+  String get auditLogFilterEntityType => 'Tipo';
+
+  @override
+  String get auditLogFilterAction => 'Azione';
+
+  @override
+  String get auditLogFilterFromDate => 'Da';
+
+  @override
+  String get actionDetails => 'Dettagli';
+
+  @override
+  String get auditLogDetailsTitle => 'Dettagli Modifica';
+
+  @override
+  String get auditLogPreviousValue => 'Valore precedente:';
+
+  @override
+  String get auditLogNewValue => 'Nuovo valore:';
+
+  @override
+  String get auditLogNoEvents => 'Nessun evento registrato';
+
+  @override
+  String get auditLogNoEventsDesc =>
+      'Le attività sul progetto verranno registrate qui';
+
+  @override
+  String get recentActivityTitle => 'Attività Recente';
+
+  @override
+  String get actionViewAll => 'Vedi tutto';
+
+  @override
+  String get recentActivityNone => 'Nessuna attività recente';
+
+  @override
+  String get burndownChartTitle => 'Burndown Chart';
+
+  @override
+  String get agileIdeal => 'Ideale';
+
+  @override
+  String get agileActual => 'Reale';
+
+  @override
+  String get agileRemaining => 'Rimanenti';
+
+  @override
+  String get agileBurndownNoDataDesc =>
+      'I dati appariranno quando lo sprint sarà attivo';
+
+  @override
+  String get agileCompleteActiveFirst =>
+      'Completa lo sprint attivo prima di avviarne un altro';
+
+  @override
+  String get kanbanSwimlanes => 'Swimlanes:';
+
+  @override
+  String get kanbanSwimlaneLabel => 'Swimlane';
+
+  @override
+  String get agileNoTags => 'Senza tag';
+
+  @override
+  String get kanbanWipExceededBanner =>
+      'WIP Limit superato! Completa alcuni item prima di iniziarne di nuovi.';
+
+  @override
+  String get kanbanConfigWip => 'Configura WIP';
+
+  @override
+  String get kanbanPoliciesDesc =>
+      'Le policy esplicite aiutano il team a capire le regole di questa colonna.';
+
+  @override
+  String get kanbanNewPolicyHint => 'Nuova policy...';
+
+  @override
+  String kanbanWipLimitOf(int count, int limit) {
+    return 'WIP: $count di $limit max';
+  }
+
+  @override
+  String get kanbanWipExplanationDesc =>
+      'WIP (Work In Progress) Limits sono limiti sul numero di item che possono essere in una colonna contemporaneamente.';
+
+  @override
+  String get kanbanUnderstand => 'Ho capito';
+
+  @override
+  String get agileHours => 'Ore';
+
+  @override
+  String get agileStoriesPerSprint => 'Stories / Sprint';
+
+  @override
+  String get agileSprints => 'Sprint';
+
+  @override
+  String get agileTeamComposition => 'Composizione Team';
+
+  @override
+  String get agileHoursNote =>
+      'Le ore sono un riferimento interno. Per la pianificazione Scrum, usa la vista Story Points.';
+
+  @override
+  String get agileNoTeamMembers => 'Nessun membro nel team';
+
+  @override
+  String get agileGmailAuthError =>
+      'Autorizzazione Gmail non disponibile. Prova a fare logout e login.';
+
+  @override
+  String get agileGmailPermissionDenied => 'Permesso Gmail non concesso.';
+
+  @override
+  String get agileResend => 'Reinvia';
+
+  @override
+  String get agileRevoke => 'Revoca';
+
+  @override
+  String get agileVelocityUnits => 'Story Points / Sprint';
+
+  @override
+  String get agileFiltersTitle => 'Filtri';
+
+  @override
+  String get agilePlanned => 'Pianificato';
+
+  @override
+  String get archiveDeleteSuccess => 'Archiviato/eliminato con successo';
+
+  @override
+  String get agileNoItems => 'Nessun elemento da mostrare';
+
+  @override
+  String agileItemsOfTotal(int completed, int total) {
+    return '$completed di $total';
+  }
+
+  @override
+  String get agileItemsCompletedLabel => 'Elementi Completati';
+
+  @override
+  String get agileDaysRemainingSuffix => 'giorni rimanenti';
+
+  @override
+  String get average => 'Media';
+
+  @override
+  String agileItemsCount(int count) {
+    return '$count elementi';
+  }
+
+  @override
+  String get agileDaysLeft => 'Giorni Rimanenti';
+
+  @override
+  String get all => 'Tutti';
+
+  @override
+  String get kanbanGuidePoliciesTitle => 'Policy Esplicite';
+
+  @override
+  String get agileDaysLabel => 'Giorni';
+
+  @override
+  String get agileStatRemaining => 'rimasti';
+
+  @override
+  String get agileStatsCompletedLabel => 'Completati';
+
+  @override
+  String get agileStatsPlannedLabel => 'Pianificati';
+
+  @override
+  String get agileProgressLabel => 'Progresso';
+
+  @override
+  String get agileDurationLabel => 'Durata';
+
+  @override
+  String get agileVelocityLabel => 'Velocity';
+
+  @override
+  String get agileStoriesLabel => 'Storie';
+
+  @override
+  String get agileSprintSummary => 'Riepilogo Sprint';
+
+  @override
+  String get agileStoriesTotal => 'Storie totali';
+
+  @override
+  String get agileStoriesCompleted => 'Storie completate';
+
+  @override
+  String get agilePointsCompletedLabel => 'Story Points completati';
+
+  @override
+  String get agileStoriesIncomplete => 'Storie incomplete';
+
+  @override
+  String get agileIncompleteReturnToBacklog => '(torneranno nel backlog)';
+
+  @override
+  String get agilePointsLabel => 'Story Points';
+
+  @override
+  String get agileRecordReview => 'Conduci Sprint Review';
+
+  @override
+  String get agileCompleteSprintAction => 'Chiudi Sprint';
+
+  @override
+  String get agileMissingReview => 'Sprint Review non ancora effettuata';
+
+  @override
+  String get agileSprintReviewCompleted => 'Sprint Review completata';
+
+  @override
+  String get agileReviewNotesLabel => 'Note Review';
+
+  @override
+  String get agileReviewFeedbackLabel => 'Feedback Stakeholder';
+
+  @override
+  String get agileReviewNextFocus => 'Focus Prossimo Sprint';
+
+  @override
+  String get agileBacklogUpdatesLabel => 'Modifiche Backlog';
+
+  @override
+  String get agileSaveReview => 'Salva Review';
+
+  @override
+  String get agileConductedBy => 'Condotta da';
+
+  @override
+  String get agileReviewDate => 'Data Review';
+
+  @override
+  String get agileReviewOutcome => 'Esito Review';
+
+  @override
+  String get agileStoriesRejected => 'Storie non accettate';
+
+  @override
+  String get agileRejectedWarning =>
+      'Le storie non completate o non accettate torneranno automaticamente nel Backlog.';
+
+  @override
+  String get agileReviewDemoHint => 'Cosa è stato mostrato durante la demo?';
+
+  @override
+  String get agileReviewFeedbackHint => 'Feedback ricevuto dagli stakeholder';
+
+  @override
+  String get agileReviewBacklogHint => 'Nuova modifica al backlog...';
+
+  @override
+  String get agileReviewNextFocusHint =>
+      'Su cosa dovrebbe concentrarsi il team?';
+
+  @override
+  String get agileReviewScrumGuide =>
+      'Lo Scrum Guide 2020 raccomanda di fare la Sprint Review prima di chiudere lo sprint per ispezionare il lavoro svolto con gli stakeholder.';
+
+  @override
+  String agileSprintCompleteConfirm(String name) {
+    return 'Sei sicuro di voler completare \"$name\"?';
+  }
+
+  @override
+  String agileSprintCompleteSuccess(String velocity) {
+    return 'Sprint completato! Velocity: $velocity pts/settimana';
+  }
+
+  @override
+  String get agileSprintReviewSaveSuccess => 'Sprint Review salvata';
+
+  @override
+  String get agileEstimationAccuracy => 'Accuratezza Stime';
+
+  @override
+  String get agileCompleteOneSprintFirst => 'Completa almeno uno sprint';
+
+  @override
+  String get agileNoDataAccuracyFix => 'Nessun dato di accuratezza';
+
+  @override
+  String get agileScrumGuideRecommends =>
+      'La Scrum Guide raccomanda la pianificazione basata sulla Velocity storica, non sulle ore.';
+
+  @override
+  String get agileNoSkillsDefined => 'Nessuna competenza definita';
+
+  @override
+  String get agileAddSkillsToMembers =>
+      'Aggiungi competenze ai membri del team';
+
+  @override
+  String get retroNoSprintWarningTitle => 'Nessuno Sprint Completato';
+
+  @override
+  String get retroNoSprintWarningMessage =>
+      'Per creare una retrospettiva Scrum, devi prima completare almeno uno sprint. Le retrospettive sono collegate agli sprint per tracciare miglioramenti tra un\'iterazione e l\'altra.';
+
+  @override
+  String get agileGoToSprints => 'Vai agli Sprint';
+
+  @override
+  String get agileSprintReviewHistory => 'Cronologia Sprint Review';
+
+  @override
+  String get agileNoSprintReviews => 'Nessuna Sprint Review';
+
+  @override
+  String get agileNoSprintReviewsHint =>
+      'Completa uno sprint e conduci una Sprint Review per vederla qui';
+
+  @override
+  String get agileAttendees => 'Partecipanti';
+
+  @override
+  String get agileStoryEvaluations => 'Valutazione Storie';
+
+  @override
+  String get agileDecisions => 'Decisioni';
+
+  @override
+  String get agileDemoNotes => 'Note Demo';
+
+  @override
+  String get agileFeedback => 'Feedback';
+
+  @override
+  String get agileStoryApproved => 'Approvata';
+
+  @override
+  String get agileStoryNeedsRefinement => 'Da Rifinire';
+
+  @override
+  String get agileStoryRejected => 'Rifiutata';
+
+  @override
+  String get agileAddAttendee => 'Aggiungi Partecipante';
+
+  @override
+  String get agileAddDecision => 'Aggiungi Decisione';
+
+  @override
+  String get agileEvaluateStories => 'Valuta Storie';
+
+  @override
+  String get agileSelectRole => 'Seleziona Ruolo';
+
+  @override
+  String get agileStatsNotCompleted => 'Non Completate';
+
+  @override
+  String get agileFramework => 'Framework';
+
+  @override
+  String get teamMembers => 'Membri del Team';
+
+  @override
+  String get eisenhowerImportCsv => 'Importa CSV';
+
+  @override
+  String get eisenhowerImportPreview => 'Anteprima Attività';
+
+  @override
+  String get eisenhowerImportSelectFile => 'Seleziona un file CSV da importare';
+
+  @override
+  String get eisenhowerImportFormatHint =>
+      'Formato atteso: Attività, Descrizione, Quadrante, Urgenza, Importanza';
+
+  @override
+  String get eisenhowerImportClickToSelect => 'Clicca per selezionare file';
+
+  @override
+  String get eisenhowerImportSupportedFormats =>
+      'Formati supportati: .csv (UTF-8 o Latin-1)';
+
+  @override
+  String get eisenhowerImportNoActivities =>
+      'Nessuna attività trovata nel file';
+
+  @override
+  String get eisenhowerImportMarkRevealed => 'Segna come già votate';
+
+  @override
+  String get eisenhowerImportMarkRevealedHint =>
+      'Le attività appariranno direttamente nel quadrante calcolato';
+
+  @override
+  String eisenhowerImportSuccess(int count) {
+    return 'Importate $count attività';
+  }
+
+  @override
+  String get actionSelectAll => 'Seleziona Tutti';
+
+  @override
+  String get actionDeselectAll => 'Deseleziona Tutti';
+
+  @override
+  String get actionImport => 'Importa';
+
+  @override
+  String get eisenhowerImportShowInstructions => 'Mostra/nascondi istruzioni';
+
+  @override
+  String get eisenhowerImportInstructionsTitle => 'Formato CSV Richiesto';
+
+  @override
+  String get eisenhowerImportInstructionsBody =>
+      'Il file CSV deve contenere almeno la colonna \'Attività\' o \'Title\'. Colonne opzionali: Descrizione, Urgenza (1-10), Importanza (1-10). La prima riga deve essere l\'intestazione.';
+
+  @override
+  String get eisenhowerImportExampleFormat =>
+      'Attività,Descrizione,Urgenza,Importanza\n\"Nome attività\",\"Descrizione opzionale\",8.5,7.2';
+
+  @override
+  String get eisenhowerImportChangeFile => 'Cambia file';
+
+  @override
+  String eisenhowerImportSkippedRows(int count) {
+    return '$count righe saltate per errori';
+  }
+
+  @override
+  String eisenhowerImportAndMore(int count) {
+    return '...e altre $count righe';
+  }
+
+  @override
+  String eisenhowerImportFoundActivities(int valid, int total) {
+    return 'Trovate $valid attività valide su $total righe';
+  }
+
+  @override
+  String eisenhowerImportErrorEmptyTitle(int row) {
+    return 'Riga $row: titolo vuoto';
+  }
+
+  @override
+  String eisenhowerImportErrorInvalidRow(int row) {
+    return 'Riga $row: formato non valido';
+  }
+
+  @override
+  String get eisenhowerImportErrorMissingColumn =>
+      'Colonna \'Attività\' o \'Title\' non trovata nell\'intestazione';
+
+  @override
+  String get eisenhowerImportErrorEmptyFile => 'Il file è vuoto';
+
+  @override
+  String get eisenhowerImportErrorNoHeader =>
+      'Intestazione non trovata nella prima riga';
+
+  @override
+  String eisenhowerImportErrorRow(int row) {
+    return 'Riga $row';
+  }
+
+  @override
+  String get eisenhowerImportErrorReadFile => 'Impossibile leggere il file';
 }

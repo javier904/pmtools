@@ -4,6 +4,7 @@ import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import 'story_card_widget.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Dialog per visualizzare i dettagli completi di una User Story
 class StoryDetailDialog extends StatelessWidget {
@@ -40,6 +41,8 @@ class StoryDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return AlertDialog(
       title: Row(
         children: [
@@ -72,7 +75,7 @@ class StoryDetailDialog extends StatelessWidget {
                 Navigator.pop(context);
                 onEdit?.call();
               },
-              tooltip: 'Modifica',
+              tooltip: l10n.actionEdit,
             ),
         ],
       ),
@@ -167,7 +170,7 @@ class StoryDetailDialog extends StatelessWidget {
                           const Icon(Icons.stars, size: 16, color: Colors.green),
                           const SizedBox(width: 8),
                           Text(
-                            '${story.storyPoints} punti',
+                            '${story.storyPoints} ${l10n.agileStatsPoints}',
                             style: const TextStyle(
                               color: Colors.green,
                               fontWeight: FontWeight.bold,
@@ -183,12 +186,12 @@ class StoryDetailDialog extends StatelessWidget {
               // Description
               _buildSection(
                 context,
-                'Descrizione',
+                l10n.agileDescription,
                 Icons.description,
                 child: Text(
                   story.description.isNotEmpty
                       ? story.description
-                      : 'Nessuna descrizione',
+                      : l10n.agileNoDescription,
                   style: TextStyle(
                     fontSize: 15,
                     fontStyle: story.description.isEmpty ? FontStyle.italic : null,
@@ -201,11 +204,11 @@ class StoryDetailDialog extends StatelessWidget {
               // Acceptance Criteria
               _buildSection(
                 context,
-                'Acceptance Criteria (${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length})',
+                l10n.agileAcceptanceCriteriaCount(story.completedAcceptanceCriteria, story.acceptanceCriteria.length),
                 Icons.checklist,
                 child: story.acceptanceCriteria.isEmpty
                     ? Text(
-                        'Nessun criterio definito',
+                        l10n.agileNoAcceptanceCriteria,
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                           color: context.textSecondaryColor,
@@ -214,14 +217,35 @@ class StoryDetailDialog extends StatelessWidget {
                     : Column(
                         children: List.generate(story.acceptanceCriteria.length, (index) {
                           final criterion = story.acceptanceCriteria[index];
-                          // Per ora non gestiamo il completamento
-                          return ListTile(
+                          final isCompleted = criterion.startsWith('[x]') || 
+                                            criterion.startsWith('[X]') ||
+                                            criterion.startsWith('✓');
+                          
+                          final cleanText = criterion.replaceAll(RegExp(r'^\[[xX]\]\s*|^✓\s*'), '');
+                          
+                          return CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: Icon(
-                              Icons.check_circle_outline,
-                              color: context.textMutedColor,
+                            title: Text(
+                              cleanText,
+                              style: TextStyle(
+                                decoration: isCompleted ? TextDecoration.lineThrough : null,
+                                color: isCompleted ? context.textMutedColor : null,
+                              ),
                             ),
-                            title: Text(criterion),
+                            value: isCompleted,
+                            onChanged: onCriterionToggle != null 
+                              ? (value) {
+                                  // Non chiudiamo il dialog, ma notifichiamo il parent
+                                  // Il parent deve aggiornare lo stato e ricostruire il dialog se necessario
+                                  // O meglio, aggiornare il record nel DB
+                                  onCriterionToggle!(index, value ?? false);
+                                  // Per aggiornamento visuale immediato potremmo usare Stateful, 
+                                  // ma preferiamo che lo stato venga gestito dal parent/stream
+                                  Navigator.pop(context); // Temporaneo: chiudiamo per forzare refresh se parent non è reattivo live
+                                }
+                              : null,
+                            controlAffinity: ListTileControlAffinity.leading,
+                            dense: true,
                           );
                         }),
                       ),
@@ -232,7 +256,7 @@ class StoryDetailDialog extends StatelessWidget {
               if (story.tags.isNotEmpty) ...[
                 _buildSection(
                   context,
-                  'Tags',
+                  l10n.agileTags,
                   Icons.label,
                   child: Wrap(
                     spacing: 8,
@@ -250,14 +274,14 @@ class StoryDetailDialog extends StatelessWidget {
               if (story.isEstimated) ...[
                 _buildSection(
                   context,
-                  'Stima',
+                  l10n.agileEstimates,
                   Icons.calculate,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          const Text('Stima finale: '),
+                          Text('${l10n.agileFinalEstimate}: '),
                           Text(
                             story.finalEstimate ?? '${story.storyPoints} pts',
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -267,7 +291,7 @@ class StoryDetailDialog extends StatelessWidget {
                       if (story.estimates.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Text(
-                          '${story.estimates.length} stime ricevute',
+                          l10n.agileEstimatesReceived(story.estimates.length),
                           style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                         ),
                       ],
@@ -280,21 +304,21 @@ class StoryDetailDialog extends StatelessWidget {
               // Metadata
               _buildSection(
                 context,
-                'Informazioni',
+                l10n.agileInformation,
                 Icons.info_outline,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInfoRow(context, 'Business Value', '${story.businessValue}/10'),
+                    _buildInfoRow(context, l10n.agileBusinessValue, '${story.businessValue}/10'),
                     if (story.assigneeEmail != null)
-                      _buildInfoRow(context, 'Assegnato a', story.assigneeEmail!),
+                      _buildInfoRow(context, l10n.agileAssignee, story.assigneeEmail!),
                     if (story.sprintId != null)
-                      _buildInfoRow(context, 'Sprint', story.sprintId!),
-                    _buildInfoRow(context, 'Creato il', _formatDate(story.createdAt)),
+                      _buildInfoRow(context, l10n.agileSprintTitle, story.sprintId!),
+                    _buildInfoRow(context, l10n.agileCreatedAt, _formatDate(story.createdAt)),
                     if (story.startedAt != null)
-                      _buildInfoRow(context, 'Iniziato il', _formatDate(story.startedAt!)),
+                      _buildInfoRow(context, l10n.agileStartedAt, _formatDate(story.startedAt!)),
                     if (story.completedAt != null)
-                      _buildInfoRow(context, 'Completato il', _formatDate(story.completedAt!)),
+                      _buildInfoRow(context, l10n.agileCompletedAt, _formatDate(story.completedAt!)),
                   ],
                 ),
               ),
@@ -305,7 +329,7 @@ class StoryDetailDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Chiudi'),
+          child: Text(l10n.actionClose),
         ),
       ],
     );

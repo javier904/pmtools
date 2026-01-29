@@ -4,6 +4,7 @@ import '../../models/team_member_model.dart';
 import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Enum per le due modalità di visualizzazione
 enum CapacityViewMode {
@@ -71,6 +72,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   }
 
   Widget _buildHeader() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Icon(
@@ -84,8 +86,8 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
         const SizedBox(width: 8),
         Text(
           _viewMode == CapacityViewMode.scrumStandard
-              ? 'Capacità Team (Scrum)'
-              : 'Capacità Team (Ore)',
+              ? l10n.agileTeamCapacityScrum
+              : l10n.agileTeamCapacityHours,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
@@ -101,14 +103,14 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               _buildToggleButton(
                 icon: Icons.speed,
                 label: 'SP',
-                tooltip: 'Vista Scrum (Story Points)',
+                tooltip: l10n.agileTeamCapacityScrum,
                 isSelected: _viewMode == CapacityViewMode.scrumStandard,
                 onTap: () => setState(() => _viewMode = CapacityViewMode.scrumStandard),
               ),
               _buildToggleButton(
                 icon: Icons.schedule,
-                label: 'Ore',
-                tooltip: 'Vista Ore',
+                label: l10n.agileHours,
+                tooltip: l10n.agileTeamCapacityHours,
                 isSelected: _viewMode == CapacityViewMode.hours,
                 onTap: () => setState(() => _viewMode = CapacityViewMode.hours),
               ),
@@ -166,6 +168,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildScrumView() {
+    final l10n = AppLocalizations.of(context)!;
     final completedSprints = widget.sprints
         .where((s) => s.status == SprintStatus.completed)
         .toList();
@@ -192,25 +195,25 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
           children: [
             Expanded(child: _buildMetricCard(
               icon: Icons.speed,
-              label: 'Velocity Media',
+              label: l10n.agileAverageVelocity,
               value: '${avgVelocity.toStringAsFixed(1)} SP',
-              subtitle: 'Story Points per Sprint',
+              subtitle: l10n.agileVelocityUnits, // Wait, I should add this too
               color: Colors.indigo,
             )),
             const SizedBox(width: 12),
             Expanded(child: _buildMetricCard(
               icon: Icons.check_circle_outline,
-              label: 'Throughput',
+              label: l10n.agileThroughput,
               value: avgThroughput.toStringAsFixed(1),
-              subtitle: 'Stories per Sprint',
+              subtitle: l10n.agileStoriesPerSprint,
               color: Colors.green,
             )),
             const SizedBox(width: 12),
             Expanded(child: _buildMetricCard(
               icon: Icons.history,
-              label: 'Sprint Completati',
+              label: l10n.agileStatsCompleted,
               value: '${completedSprints.length}',
-              subtitle: 'Base dati storica',
+              subtitle: l10n.agileSprints,
               color: Colors.blue,
             )),
           ],
@@ -223,9 +226,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
 
         // Grafico velocity trend (se ci sono abbastanza dati)
         if (completedSprints.length >= 2) ...[
-          const Text(
-            'Trend Velocity',
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+          Text(
+            l10n.agileVelocityTrend,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
           const SizedBox(height: 8),
           SizedBox(
@@ -253,7 +256,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'La Scrum Guide raccomanda di basare la pianificazione sulla Velocity storica, non sulle ore.',
+                  l10n.agileScrumGuideNote,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.blue.shade700,
@@ -313,6 +316,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   }
 
   Widget _buildSuggestedCapacity(double avgVelocity, double stdDev) {
+    final l10n = AppLocalizations.of(context)!;
     final minSuggested = (avgVelocity - stdDev).clamp(0, double.infinity);
     final maxSuggested = avgVelocity + stdDev;
 
@@ -333,7 +337,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               Icon(Icons.lightbulb_outline, color: Colors.indigo.shade700),
               const SizedBox(width: 8),
               Text(
-                'Capacità Suggerita per Sprint Planning',
+                l10n.agileSuggestedCapacity,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.indigo.shade700,
@@ -366,7 +370,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Basato su velocity media ± deviazione standard (±10%)',
+              l10n.agileSuggestedCapacityHint,
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.indigo.shade400,
@@ -375,7 +379,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
             ),
           ] else ...[
             Text(
-              'Completa almeno 1 sprint per avere suggerimenti sulla capacità',
+              l10n.agileSuggestedCapacityNoData,
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.indigo.shade500,
@@ -494,9 +498,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Composizione Team',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        Text(
+          AppLocalizations.of(context)!.agileTeamComposition,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -539,6 +543,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildHoursView() {
+    final l10n = AppLocalizations.of(context)!;
     if (widget.teamMembers.isEmpty) {
       return _buildEmptyState();
     }
@@ -551,11 +556,11 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _buildLegendItem('Disponibile', Colors.green),
+            _buildLegendItem(l10n.agileHoursAvailable, Colors.green),
             const SizedBox(width: 12),
-            _buildLegendItem('Assegnato', Colors.blue),
+            _buildLegendItem(l10n.agileHoursAssigned, Colors.blue),
             const SizedBox(width: 12),
-            _buildLegendItem('Sovraccarico', Colors.red),
+            _buildLegendItem(l10n.agileHoursOverloaded, Colors.red),
           ],
         ),
         const SizedBox(height: 16),
@@ -621,9 +626,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
 
                     return BarTooltipItem(
                       '${member.name}\n'
-                      'Capacità: ${capacity}h\n'
-                      'Assegnato: ${assigned}h\n'
-                      'Disponibile: ${available}h',
+                      '${l10n.agileHoursTotal}: ${capacity}h\n'
+                      '${l10n.agileHoursAssigned}: ${assigned}h\n'
+                      '${l10n.agileHoursAvailable}: ${available}h',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -652,7 +657,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Le ore sono un riferimento interno. Per la pianificazione Scrum, usa la vista Story Points.',
+                  l10n.agileHoursNote,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.orange.shade700,
@@ -667,13 +672,14 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(Icons.group, size: 48, color: Colors.grey.shade400),
         const SizedBox(height: 16),
         Text(
-          'Nessun membro nel team',
+          l10n.agileNoTeamMembers,
           style: TextStyle(color: Colors.grey.shade600),
         ),
       ],
@@ -761,6 +767,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   }
 
   Widget _buildHoursSummary() {
+    final l10n = AppLocalizations.of(context)!;
     int totalCapacity = 0;
     int totalAssigned = 0;
     int overloadedCount = 0;
@@ -780,15 +787,15 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildSummaryItem('Capacità Totale', '${totalCapacity}h', Colors.green),
-        _buildSummaryItem('Ore Assegnate', '${totalAssigned}h', Colors.blue),
+        _buildSummaryItem(l10n.agileHoursTotal, '${totalCapacity}h', Colors.green),
+        _buildSummaryItem(l10n.agileHoursAssigned, '${totalAssigned}h', Colors.blue),
         _buildSummaryItem(
-          'Utilizzazione',
+          l10n.agileHoursUtilization,
           '$utilizationPercent%',
           utilizationPercent > 100 ? Colors.red : Colors.teal,
         ),
         if (overloadedCount > 0)
-          _buildSummaryItem('Sovraccaricati', '$overloadedCount', Colors.red),
+          _buildSummaryItem(l10n.agileHoursOverloaded, '$overloadedCount', Colors.red),
       ],
     );
   }

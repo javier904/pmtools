@@ -1,6 +1,12 @@
 {
   "@@locale": "en",
   "smartTodoListOrigin": "List origin",
+  "smartTodoSortTooltip": "Sort Options",
+  "smartTodoSortManual": "Manual (Drag & Drop)",
+  "smartTodoSortDate": "Recently Updated",
+  "smartTodoActionSortPriority": "Reorder by Priority",
+  "smartTodoActionSortDeadline": "Reorder by Deadline",
+  "smartTodoOrderUpdated": "Order updated manually",
   "newRetro": "New Retro",
   "appTitle": "Keisen",
   "goToHome": "Go to Home",
@@ -4624,5 +4630,97 @@
   "agileSelectRole": "Select Role",
   "agileStatsNotCompleted": "Not Completed",
   "agileFramework": "Framework",
-  "teamMembers": "Team Members"
+  "teamMembers": "Team Members",
+  "eisenhowerImportCsv": "Import CSV",
+  "eisenhowerImportPreview": "Activity Preview",
+  "eisenhowerImportSelectFile": "Select a CSV file to import",
+  "eisenhowerImportFormatHint": "Expected format: Activity, Description, Quadrant, Urgency, Importance",
+  "eisenhowerImportClickToSelect": "Click to select file",
+  "eisenhowerImportSupportedFormats": "Supported formats: .csv (UTF-8 or Latin-1)",
+  "eisenhowerImportNoActivities": "No activities found in file",
+  "eisenhowerImportMarkRevealed": "Mark as already voted",
+  "eisenhowerImportMarkRevealedHint": "Activities will appear directly in the calculated quadrant",
+  "eisenhowerImportSuccess": "Imported {count} activities",
+  "@eisenhowerImportSuccess": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "actionSelectAll": "Select All",
+  "actionDeselectAll": "Deselect All",
+  "actionImport": "Import",
+  "eisenhowerImportShowInstructions": "Show/hide instructions",
+  "eisenhowerImportInstructionsTitle": "Required CSV Format",
+  "eisenhowerImportInstructionsBody": "The CSV file must contain at least the 'Activity' or 'Title' column. Optional columns: Description, Urgency (1-10), Importance (1-10). The first row must be the header.",
+  "eisenhowerImportExampleFormat": "Activity,Description,Urgency,Importance\n\"Activity name\",\"Optional description\",8.5,7.2",
+  "eisenhowerImportChangeFile": "Change file",
+  "eisenhowerImportSkippedRows": "{count} rows skipped due to errors",
+  "@eisenhowerImportSkippedRows": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "eisenhowerImportAndMore": "...and {count} more rows",
+  "@eisenhowerImportAndMore": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "eisenhowerImportFoundActivities": "Found {valid} valid activities out of {total} rows",
+  "@eisenhowerImportFoundActivities": {
+    "placeholders": {
+      "valid": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorEmptyTitle": "Row {row}: empty title",
+  "@eisenhowerImportErrorEmptyTitle": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorInvalidRow": "Row {row}: invalid format",
+  "@eisenhowerImportErrorInvalidRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorMissingColumn": "'Activity' or 'Title' column not found in header",
+  "eisenhowerImportErrorEmptyFile": "The file is empty",
+  "eisenhowerImportErrorNoHeader": "Header not found in first row",
+  "eisenhowerImportErrorRow": "Row {row}",
+  "@eisenhowerImportErrorRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorReadFile": "Unable to read file",
+
+  "subscriptionPlanName": "Current Plan: {plan}",
+  "@subscriptionPlanName": {
+    "placeholders": {
+      "plan": { "type": "String" }
+    }
+  },
+  "activitiesAddedToSprint": "{count} activities added to {sprintName}",
+  "@activitiesAddedToSprint": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "sprintName": { "type": "String" }
+    }
+  },
+  "activitiesAddedToProject": "{count} activities added to project {projectName}",
+  "@activitiesAddedToProject": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "projectName": { "type": "String" }
+    }
+  },
+  "estimationSessionCreated": "Estimation session created with {count} activities",
+  "@estimationSessionCreated": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agileNoDataAccuracyFix": "No accuracy data"
 }

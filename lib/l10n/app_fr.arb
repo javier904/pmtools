@@ -3971,5 +3971,545 @@
   "swimlaneTypeTag": "Tag",
   "swimlaneTypeTagDesc": "Regrouper par tag de la story",
   "swimlaneUnassigned": "Non Assigné",
-  "swimlaneNoTag": "Sans Tag"
+  "swimlaneNoTag": "Sans Tag",
+  "eisenhowerImportCsv": "Importer CSV",
+  "eisenhowerImportPreview": "Aperçu des activités",
+  "eisenhowerImportSelectFile": "Sélectionnez un fichier CSV à importer",
+  "eisenhowerImportFormatHint": "Format attendu : Activité, Description, Quadrant, Urgence, Importance",
+  "eisenhowerImportClickToSelect": "Cliquez pour sélectionner un fichier",
+  "eisenhowerImportSupportedFormats": "Formats supportés : .csv (UTF-8 ou Latin-1)",
+  "eisenhowerImportNoActivities": "Aucune activité trouvée dans le fichier",
+  "eisenhowerImportMarkRevealed": "Marquer comme déjà votées",
+  "eisenhowerImportMarkRevealedHint": "Les activités apparaîtront directement dans le quadrant calculé",
+  "eisenhowerImportSuccess": "{count} activités importées",
+  "@eisenhowerImportSuccess": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "actionSelectAll": "Tout sélectionner",
+  "actionDeselectAll": "Tout désélectionner",
+  "actionImport": "Importer",
+  "eisenhowerImportShowInstructions": "Afficher/masquer les instructions",
+  "eisenhowerImportInstructionsTitle": "Format CSV Requis",
+  "eisenhowerImportInstructionsBody": "Le fichier CSV doit contenir au moins la colonne 'Activité' ou 'Title'. Colonnes optionnelles : Description, Urgence (1-10), Importance (1-10). La première ligne doit être l'en-tête.",
+  "eisenhowerImportExampleFormat": "Activité,Description,Urgence,Importance\n\"Nom activité\",\"Description optionnelle\",8.5,7.2",
+  "eisenhowerImportChangeFile": "Changer de fichier",
+  "eisenhowerImportSkippedRows": "{count} lignes ignorées à cause d'erreurs",
+  "@eisenhowerImportSkippedRows": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "eisenhowerImportAndMore": "...et {count} autres lignes",
+  "@eisenhowerImportAndMore": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "eisenhowerImportFoundActivities": "{valid} activités valides trouvées sur {total} lignes",
+  "@eisenhowerImportFoundActivities": {
+    "placeholders": {
+      "valid": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorEmptyTitle": "Ligne {row} : titre vide",
+  "@eisenhowerImportErrorEmptyTitle": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorInvalidRow": "Ligne {row} : format invalide",
+  "@eisenhowerImportErrorInvalidRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorMissingColumn": "Colonne 'Activité' ou 'Title' non trouvée dans l'en-tête",
+  "eisenhowerImportErrorEmptyFile": "Le fichier est vide",
+  "eisenhowerImportErrorNoHeader": "En-tête non trouvé dans la première ligne",
+  "eisenhowerImportErrorRow": "Ligne {row}",
+  "@eisenhowerImportErrorRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "eisenhowerImportErrorReadFile": "Impossible de lire le fichier",
+  "smartTodoListOrigin": "Liste d'appartenance",
+  "eisenhowerWaitingForVotes": "En attente de votes",
+  "eisenhowerVotedParticipants": "{ready}/{total} votes",
+  "@eisenhowerVotedParticipants": {
+    "placeholders": {
+      "ready": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVoteSubmit": "VOTER",
+  "eisenhowerVotedSuccess": "Vous avez voté",
+  "eisenhowerRevealVotes": "RÉVÉLER LES VOTES",
+  "eisenhowerQuickVote": "Vote Rapide",
+  "eisenhowerTeamVote": "Vote Équipe",
+  "eisenhowerUrgencyShort": "U :",
+  "eisenhowerImportanceShort": "I :",
+  "eisenhowerVotingInProgress": "VOTE EN COURS",
+  "eisenhowerWaitingForOthers": "En attente que tous votent. Le facilitateur révélera les votes.",
+  "eisenhowerReady": "Prêt",
+  "eisenhowerWaiting": "En attente",
+  "eisenhowerIndividualVotes": "VOTES INDIVIDUELS",
+  "eisenhowerResult": "RÉSULTAT",
+  "eisenhowerAverage": "MOYENNE",
+  "eisenhowerVotesRevealed": "Votes Révélés",
+  "eisenhowerNextActivity": "Activité Suivante",
+  "eisenhowerNoVotesRecorded": "Aucun vote enregistré",
+  "eisenhowerWaitingForStart": "En attente",
+  "eisenhowerPreVotesTooltip": "Votes anticipés qui seront comptabilisés lorsque le facilitateur lance le vote",
+  "eisenhowerObserverWaiting": "En attente que le facilitateur lance le vote collectif",
+  "eisenhowerPreVoteTooltip": "Exprimez votre vote à l'avance. Il sera comptabilisé lorsque le vote sera lancé.",
+  "eisenhowerPreVote": "Pré-voter",
+  "eisenhowerPreVoted": "Vous avez pré-voté",
+  "eisenhowerStartVotingTooltip": "Lancer la session de vote collectif. Les pré-votes existants seront conservés.",
+  "eisenhowerResetVotingTooltip": "Réinitialiser le vote en supprimant tous les votes",
+  "eisenhowerObserverWaitingVotes": "Observation du vote en cours...",
+  "eisenhowerWaitingForAllVotes": "En attente que tous les participants votent",
+  "eisenhowerRevealTooltipReady": "Tout le monde a voté ! Cliquez pour révéler les résultats.",
+  "eisenhowerRevealTooltipNotReady": "Il manque encore {count} votes",
+  "@eisenhowerRevealTooltipNotReady": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVotingLocked": "Vote fermé",
+  "eisenhowerVotingLockedTooltip": "Les votes ont été révélés. Il n'est plus possible de voter sur cette activité.",
+  "eisenhowerOnlineParticipants": "{online} sur {total} participants en ligne",
+  "@eisenhowerOnlineParticipants": {
+    "placeholders": {
+      "online": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "eisenhowerVoting": "Vote",
+  "eisenhowerAllActivitiesVoted": "Toutes les activités ont été votées !",
+  "retroGuidance": "Guide des Rétrospectives",
+  "retroSearchHint": "Rechercher une rétrospective...",
+  "agileProcessTitle": "Agile Process Manager",
+  "agileSearchProjects": "Rechercher des projets...",
+  "agileMethodologyGuide": "Guide des Méthodologies",
+  "agileNewProject": "Nouveau Projet",
+  "agileRoles": "RÔLES",
+  "agileProcessFlow": "FLUX DU PROCESSUS",
+  "agileArtifacts": "ARTEFACTS",
+  "agileBestPractices": "Bonnes Pratiques",
+  "agileAntiPatterns": "Anti-Patterns à Éviter",
+  "agileFAQ": "Questions Fréquentes",
+  "retroNoResults": "Aucun résultat pour la recherche",
+  "retroFilterAll": "Toutes",
+  "retroFilterActive": "Active",
+  "retroFilterCompleted": "Completed",
+  "retroFilterDraft": "Draft",
+  "retroDeleteSuccess": "Rétrospective supprimée avec succès",
+  "retroDeleteConfirmAction": "Supprimer définitivement",
+  "retroNewRetroTitle": "Nouvelle Rétrospective",
+  "retroNoProjectFound": "Aucun projet trouvé.",
+  "retroSprintLabel": "Sprint {number}: {name}",
+  "@retroSprintLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "retroActionClose": "Fermer",
+  "retroActionCreate": "Créer",
+  "retroActionItemsLabel": "Action Items",
+  "retroActionDragToCreate": "Glissez une carte ici pour créer un Action Item associé",
+  "facilitatorGuideMissing": "Actions manquantes pour",
+  "retroPhaseStart": "Commencer",
+  "retroPhaseStop": "Arrêter",
+  "retroPhaseContinue": "Continuer",
+  "retroColumnLonged": "Souhaité",
+  "agileStoryDetailTitle": "Détails de la Story",
+  "agileStoryPoints": "Story Points",
+  "agileAcceptanceCriteria": "Critères d'Acceptation",
+  "agileAcceptanceCriteriaCount": "{completed} sur {total} éléments",
+  "@agileAcceptanceCriteriaCount": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "agileNoAcceptanceCriteria": "Aucun critère d'acceptation défini",
+  "agileDescription": "Description",
+  "agileNoDescription": "Aucune description",
+  "agileEstimates": "Estimations",
+  "agileFinalEstimate": "Estimation Finale",
+  "agileEstimatesReceived": "{count} estimations reçues",
+  "@agileEstimatesReceived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileInformation": "Informations",
+  "agileAssignee": "Assigné à",
+  "agileCreatedBy": "Créé par",
+  "agileCreatedAt": "Créé le",
+  "agileStartedAt": "Commencé le",
+  "agileCompletedAt": "Terminé le",
+  "agileDaysRemainingCount": "{count} jours restants",
+  "@agileDaysRemainingCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "agileBurndownChart": "Burndown Chart",
+  "agileBurndownIdeal": "Idéal",
+  "agileBurndownActual": "Réel",
+  "agileBurndownPlanned": "Planifiés",
+  "agileBurndownRemaining": "Restants",
+  "agileBurndownNoData": "Aucune donnée burndown",
+  "agileBurndownNoDataHint": "Les données apparaîtront lorsque le sprint sera actif",
+  "agileVelocityTrend": "Tendance Velocity",
+  "agileVelocityNoData": "Aucune donnée velocity",
+  "agileVelocityNoDataHint": "Complétez au moins un sprint pour voir la tendance",
+  "agileTeamCapacity": "Capacité de l'Équipe",
+  "agileTeamCapacityScrum": "Capacité de l'Équipe (Scrum)",
+  "agileTeamCapacityHours": "Capacité de l'Équipe (Heures)",
+  "agileThroughput": "Throughput",
+  "agileSuggestedCapacity": "Capacité Suggérée pour le Sprint Planning",
+  "agileSuggestedCapacityHint": "Basé sur la velocity moyenne ± écart type (±10%)",
+  "agileSuggestedCapacityNoData": "Complétez au moins 1 sprint pour obtenir des suggestions de capacité",
+  "agileScrumGuideNote": "Le Scrum Guide recommande de baser la planification sur la Velocity historique, et non sur les heures.",
+  "agileHoursAvailable": "Disponible",
+  "agileHoursAssigned": "Assigné",
+  "agileHoursOverloaded": "Surchargé",
+  "agileHoursTotal": "Capacité Totale",
+  "agileHoursUtilization": "Utilisation",
+  "agileMetricsTitle": "Métriques {framework}",
+  "@agileMetricsTitle": {
+    "placeholders": {
+      "framework": {
+        "type": "String"
+      }
+    }
+  },
+  "agileItemsCompleted": "Items Complétés",
+  "agileInProgress": "En Cours",
+  "agileCycleTime": "Cycle Time",
+  "agileLeadTime": "Lead Time",
+  "agileDistribution": "Distribution des Stories",
+  "agileCompletionRate": "Taux de Complétion",
+  "agileAccuracy": "Précision des Estimations",
+  "agileEfficiency": "Flow Efficiency",
+  "planFree": "Gratuit",
+  "planPremium": "Premium",
+  "planElite": "Elite",
+  "statusActive": "Actif",
+  "statusTrialing": "En essai",
+  "statusPastDue": "Paiement en retard",
+  "statusPaused": "En pause",
+  "statusCancelled": "Annulé",
+  "statusExpired": "Expiré",
+  "cycleMonthly": "Mensuel",
+  "cycleQuarterly": "Trimestriel",
+  "cycleYearly": "Annuel",
+  "cycleLifetime": "À vie",
+  "pricePerMonth": "mois",
+  "pricePerQuarter": "trim",
+  "pricePerYear": "an",
+  "priceForever": "à vie",
+  "priceFree": "Gratuit",
+  "actionSubmit": "Envoyer",
+  "retroIcebreakerOneWordTitle": "Icebreaker : Un Mot",
+  "retroIcebreakerOneWordQuestion": "Décrivez ce sprint en UN seul mot",
+  "retroIcebreakerOneWordHint": "Votre mot...",
+  "retroIcebreakerSubmitted": "Envoyé !",
+  "retroIcebreakerWordsSubmitted": "{count} mots envoyés",
+  "@retroIcebreakerWordsSubmitted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "retroIcebreakerWeatherTitle": "Icebreaker : Météo",
+  "retroIcebreakerWeatherQuestion": "Quelle météo représente le mieux comment vous vous sentez par rapport à ce sprint ?",
+  "retroWeatherSunny": "Ensoleillé",
+  "retroWeatherPartlyCloudy": "Partiellement nuageux",
+  "retroWeatherCloudy": "Nuageux",
+  "retroWeatherRainy": "Pluvieux",
+  "retroWeatherStormy": "Orageux",
+  "retroIcebreakerTwoTruths": "Deux Vérités et un Mensonge",
+  "retroDescTwoTruths": "Simple et classique.",
+  "retroIcebreakerCheckin": "Check-in Émotionnel",
+  "retroDescCheckin": "Comment se sentent tous les membres ?",
+  "retroTimerMinutes": "{minutes} Min",
+  "@retroTimerMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "retroAddCardButton": "Ajouter une Carte",
+  "retroExportSuccessMessage": "Votre rétrospective a été exportée sur Google Sheets.",
+  "smartTodoAddItem": "Ajouter un élément",
+  "smartTodoAddImageUrl": "Ajouter une Image (URL)",
+  "smartTodoNone": "Aucun",
+  "smartTodoPointsHint": "Points (ex. 5)",
+  "smartTodoNewItem": "Nouvel élément",
+  "smartTodoDeleteComment": "Supprimer",
+  "priorityHigh": "HAUTE",
+  "priorityMedium": "MOYENNE",
+  "priorityLow": "BASSE",
+  "activitiesAddedToSprint": "{count} activités ajoutées à {sprintName}",
+  "@activitiesAddedToSprint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
+    }
+  },
+  "activitiesAddedToProject": "{count} activités ajoutées au projet {projectName}",
+  "@activitiesAddedToProject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "projectName": {
+        "type": "String"
+      }
+    }
+  },
+  "estimationSessionCreated": "Session d'estimation créée avec {count} activités",
+  "@estimationSessionCreated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileMetricsVelocityTitle": "Velocity",
+  "agileMetricsVelocityDesc": "Mesure la quantité de story points complétés par sprint. Aide à prévoir la capacité de l'équipe.",
+  "agileMetricsLeadTimeDesc": "Temps total de la création à la complétion. Inclut le temps d'attente dans le backlog.",
+  "agileMetricsCycleTimeDesc": "Temps du début du travail à la complétion. Mesure l'efficacité du développement.",
+  "agileMetricsThroughputDesc": "Nombre d'items complétés par unité de temps. Indique la productivité.",
+  "agileMetricsDistributionDesc": "Visualise la distribution par statut. Aide à identifier les goulots d'étranglement.",
+  "agilePredictability": "Prévisibilité",
+  "agilePredictabilityDesc": "85% des items sont complétés en ≤{days} jours",
+  "@agilePredictabilityDesc": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "agileThroughputWeekly": "Items complétés/semaine (dernières {weeks} sem.)",
+  "@agileThroughputWeekly": {
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "agileNoDataVelocity": "Aucune donnée velocity",
+  "agileNoDataLeadTime": "Aucune donnée lead time",
+  "agileNoDataCycleTime": "Aucune donnée cycle time",
+  "agileNoDataThroughput": "Aucune donnée throughput",
+  "agileNoDataAccuracy": "Aucune donnée de précision",
+  "agileStartFinishOneItem": "Complétez au moins un item pour calculer",
+  "timeDays": "jours",
+  "auditLogTitle": "Journal d'Audit",
+  "auditLogEventCount": "{count} événements",
+  "@auditLogEventCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionRefresh": "Actualiser",
+  "auditLogFilterEntityType": "Type",
+  "auditLogFilterAction": "Action",
+  "auditLogFilterFromDate": "Depuis",
+  "actionDetails": "Détails",
+  "auditLogDetailsTitle": "Détails de la Modification",
+  "auditLogPreviousValue": "Valeur précédente :",
+  "auditLogNewValue": "Nouvelle valeur :",
+  "auditLogNoEvents": "Aucun événement enregistré",
+  "auditLogNoEventsDesc": "Les activités du projet seront enregistrées ici",
+  "recentActivityTitle": "Activité Récente",
+  "actionViewAll": "Voir tout",
+  "recentActivityNone": "Aucune activité récente",
+  "burndownChartTitle": "Burndown Chart",
+  "agileIdeal": "Idéal",
+  "agileActual": "Réel",
+  "agileRemaining": "Restants",
+  "agileBurndownNoDataDesc": "Les données apparaîtront lorsque le sprint sera actif",
+  "agileCompleteActiveFirst": "Complétez le sprint actif avant d'en démarrer un autre",
+  "kanbanSwimlanes": "Swimlanes :",
+  "kanbanSwimlaneLabel": "Swimlane",
+  "agileNoTags": "Sans tag",
+  "kanbanWipExceededBanner": "Limite WIP dépassée ! Terminez certains items avant d'en commencer de nouveaux.",
+  "kanbanConfigWip": "Configurer WIP",
+  "kanbanPoliciesDesc": "Les politiques explicites aident l'équipe à comprendre les règles de cette colonne.",
+  "kanbanNewPolicyHint": "Nouvelle politique...",
+  "kanbanWipLimitOf": "WIP : {count} sur {limit} max",
+  "@kanbanWipLimitOf": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "kanbanWipExplanationDesc": "Les limites WIP (Work In Progress) sont des limites sur le nombre d'items pouvant se trouver dans une colonne en même temps.",
+  "kanbanUnderstand": "J'ai compris",
+  "agileHours": "Heures",
+  "agileStoriesPerSprint": "Stories / Sprint",
+  "agileSprints": "Sprints",
+  "agileTeamComposition": "Composition de l'Équipe",
+  "agileHoursNote": "Les heures sont une référence interne. Pour la planification Scrum, utilisez la vue Story Points.",
+  "agileNoTeamMembers": "Aucun membre dans l'équipe",
+  "agileGmailAuthError": "Autorisation Gmail non disponible. Essayez de vous déconnecter et reconnecter.",
+  "agileGmailPermissionDenied": "Permission Gmail non accordée.",
+  "agileResend": "Renvoyer",
+  "agileRevoke": "Révoquer",
+  "agileVelocityUnits": "Story Points / Sprint",
+  "agileFiltersTitle": "Filtres",
+  "agilePlanned": "Planifié",
+  "archiveDeleteSuccess": "Archivé/supprimé avec succès",
+  "agileNoItems": "Aucun élément à afficher",
+  "agileItemsOfTotal": "{completed} sur {total}",
+  "@agileItemsOfTotal": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "agileItemsCompletedLabel": "Éléments Complétés",
+  "agileDaysRemainingSuffix": "jours restants",
+  "average": "Moyenne",
+  "agileItemsCount": "{count} éléments",
+  "@agileItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileDaysLeft": "Jours Restants",
+  "all": "Tous",
+  "kanbanGuidePoliciesTitle": "Politiques Explicites",
+  "agileDaysLabel": "Jours",
+  "agileStatRemaining": "restants",
+  "agileStatsCompletedLabel": "Complétés",
+  "agileStatsPlannedLabel": "Planifiés",
+  "agileProgressLabel": "Progression",
+  "agileDurationLabel": "Durée",
+  "agileVelocityLabel": "Velocity",
+  "agileStoriesLabel": "Stories",
+  "agileSprintSummary": "Résumé du Sprint",
+  "agileStoriesTotal": "Stories totales",
+  "agileStoriesCompleted": "Stories complétées",
+  "agilePointsCompletedLabel": "Story Points complétés",
+  "agileStoriesIncomplete": "Stories incomplètes",
+  "agileIncompleteReturnToBacklog": "(retourneront dans le backlog)",
+  "agilePointsLabel": "Story Points",
+  "agileRecordReview": "Effectuer la Sprint Review",
+  "agileCompleteSprintAction": "Clôturer le Sprint",
+  "agileMissingReview": "Sprint Review pas encore effectuée",
+  "agileSprintReviewCompleted": "Sprint Review terminée",
+  "agileReviewNotesLabel": "Notes de Review",
+  "agileReviewFeedbackLabel": "Feedback des Stakeholders",
+  "agileReviewNextFocus": "Focus du Prochain Sprint",
+  "agileBacklogUpdatesLabel": "Modifications du Backlog",
+  "agileSaveReview": "Enregistrer la Review",
+  "agileConductedBy": "Conduite par",
+  "agileReviewDate": "Date de Review",
+  "agileReviewOutcome": "Résultat de la Review",
+  "agileStoriesRejected": "Stories non acceptées",
+  "agileRejectedWarning": "Les stories non complétées ou non acceptées retourneront automatiquement dans le Backlog.",
+  "agileReviewDemoHint": "Qu'a été présenté pendant la démo ?",
+  "agileReviewFeedbackHint": "Feedback reçu des stakeholders",
+  "agileReviewBacklogHint": "Nouvelle modification du backlog...",
+  "agileReviewNextFocusHint": "Sur quoi l'équipe devrait-elle se concentrer ?",
+  "agileReviewScrumGuide": "Le Scrum Guide 2020 recommande d'effectuer la Sprint Review avant de clôturer le sprint pour inspecter le travail réalisé avec les stakeholders.",
+  "agileSprintCompleteConfirm": "Êtes-vous sûr de vouloir terminer \"{name}\" ?",
+  "@agileSprintCompleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agileSprintCompleteSuccess": "Sprint terminé ! Velocity : {velocity} pts/semaine",
+  "@agileSprintCompleteSuccess": {
+    "placeholders": {
+      "velocity": {
+        "type": "String"
+      }
+    }
+  },
+  "agileSprintReviewSaveSuccess": "Sprint Review enregistrée",
+  "agileEstimationAccuracy": "Précision des Estimations",
+  "agileCompleteOneSprintFirst": "Complétez au moins un sprint",
+  "agileNoDataAccuracyFix": "Aucune donnée de précision",
+  "agileScrumGuideRecommends": "Le Scrum Guide recommande la planification basée sur la Velocity historique, et non sur les heures.",
+  "agileNoSkillsDefined": "Aucune compétence définie",
+  "agileAddSkillsToMembers": "Ajoutez des compétences aux membres de l'équipe",
+  "retroNoSprintWarningTitle": "Aucun Sprint Terminé",
+  "retroNoSprintWarningMessage": "Pour créer une rétrospective Scrum, vous devez d'abord terminer au moins un sprint. Les rétrospectives sont liées aux sprints pour suivre les améliorations d'une itération à l'autre.",
+  "agileGoToSprints": "Aller aux Sprints",
+  "agileSprintReviewHistory": "Historique des Sprint Reviews",
+  "agileNoSprintReviews": "Aucune Sprint Review",
+  "agileNoSprintReviewsHint": "Complétez un sprint et effectuez une Sprint Review pour la voir ici",
+  "agileAttendees": "Participants",
+  "agileStoryEvaluations": "Évaluation des Stories",
+  "agileDecisions": "Décisions",
+  "agileDemoNotes": "Notes de Démo",
+  "agileFeedback": "Feedback",
+  "agileStoryApproved": "Approuvée",
+  "agileStoryNeedsRefinement": "À Affiner",
+  "agileStoryRejected": "Rejetée",
+  "agileAddAttendee": "Ajouter un Participant",
+  "agileAddDecision": "Ajouter une Décision",
+  "agileEvaluateStories": "Évaluer les Stories",
+  "agileSelectRole": "Sélectionner un Rôle",
+  "agileStatsNotCompleted": "Non Complétées",
+  "agileFramework": "Framework",
+  "teamMembers": "Membres de l'Équipe",
+  "smartTodoSortTooltip": "Options de Tri",
+  "smartTodoActionSortPriority": "Trier par Priorité",
+  "smartTodoActionSortDeadline": "Trier par Échéance",
+  "smartTodoOrderUpdated": "Ordre mis à jour manuellement"
 }

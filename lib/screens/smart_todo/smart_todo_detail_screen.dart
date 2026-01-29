@@ -309,7 +309,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       columns: currentList.columns,
                       list: currentList,
                       onTaskTap: (t) => _editTask(t, currentList),
-                      onTaskMoved: (t, s) => _handleTaskMoved(t, s, currentList, tasks),
+                      onTaskMoved: (t, s, [p]) => _handleTaskMoved(t, s, currentList, tasks, p),
                       onTaskDelete: (t) => _deleteTask(t, currentList),
                     );
                     break;
@@ -586,10 +586,79 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
 
              const SizedBox(width: 12),
              
-             // Sort Toggle (Manual / Date)
-             InkWell(
-               onTap: () => setState(() => _sortByDate = !_sortByDate),
-               borderRadius: BorderRadius.circular(20),
+             // Sort Menu (Manual / Recent / Reorder Actions)
+             PopupMenuButton<String>(
+               tooltip: AppLocalizations.of(context)?.smartTodoSortTooltip ?? 'Sort Options',
+               onSelected: (value) {
+                 if (value == 'manual') {
+                   setState(() => _sortByDate = false); // _sortByDate false = Manual
+                 } else if (value == 'recent') {
+                   setState(() => _sortByDate = true); // _sortByDate true = Recent
+                 } else if (value == 'priority') {
+                   _reorderTasksByPriority(currentList);
+                   setState(() => _sortByDate = false); // Switch to manual after reorder
+                 } else if (value == 'deadline') {
+                   _reorderTasksByDeadline(currentList);
+                   setState(() => _sortByDate = false); // Switch to manual after reorder
+                 }
+               },
+               itemBuilder: (context) => [
+                 // VIEW MODES
+                 PopupMenuItem(
+                   value: 'manual',
+                   child: Row(
+                     children: [
+                       Icon(Icons.drag_indicator, size: 20, color: !_sortByDate ? Colors.blue : Colors.grey),
+                       const SizedBox(width: 12),
+                       Text(
+                         AppLocalizations.of(context)?.smartTodoSortManual ?? 'Manual (Drag & Drop)',
+                         style: TextStyle(
+                           fontWeight: !_sortByDate ? FontWeight.bold : FontWeight.normal,
+                           color: !_sortByDate ? Colors.blue : null,
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+                 PopupMenuItem(
+                   value: 'recent',
+                   child: Row(
+                     children: [
+                       Icon(Icons.access_time, size: 20, color: _sortByDate ? Colors.blue : Colors.grey),
+                       const SizedBox(width: 12),
+                       Text(
+                         AppLocalizations.of(context)?.smartTodoSortDate ?? 'Recently Updated',
+                         style: TextStyle(
+                           fontWeight: _sortByDate ? FontWeight.bold : FontWeight.normal,
+                           color: _sortByDate ? Colors.blue : null,
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+                 const PopupMenuDivider(),
+                 // ACTIONS
+                 PopupMenuItem(
+                   value: 'priority',
+                   child: Row(
+                     children: [
+                       const Icon(Icons.low_priority, size: 20, color: Colors.grey),
+                       const SizedBox(width: 12),
+                       Text(AppLocalizations.of(context)?.smartTodoActionSortPriority ?? 'Reorder by Priority'),
+                     ],
+                   ),
+                 ),
+                 PopupMenuItem(
+                   value: 'deadline',
+                   child: Row(
+                     children: [
+                       const Icon(Icons.calendar_month, size: 20, color: Colors.grey),
+                       const SizedBox(width: 12),
+                       Text(AppLocalizations.of(context)?.smartTodoActionSortDeadline ?? 'Reorder by Deadline'),
+                     ],
+                   ),
+                 ),
+               ],
                child: Container(
                  padding: const EdgeInsets.symmetric(horizontal: 16),
                  height: 40,
@@ -615,6 +684,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          color: isDark ? Colors.grey[300] : Colors.black,
                        ),
                      ),
+                     const SizedBox(width: 4),
+                     Icon(Icons.arrow_drop_down, size: 18, color: isDark ? Colors.grey[400] : Colors.grey),
                    ],
                  ),
                ),
@@ -791,6 +862,61 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         );
       }
     }
+  }
+
+  void _reorderTasksByPriority(TodoListModel list) async {
+    final tasks = await _todoService.streamTasks(list.id).first;
+    
+    // Sort logic: High -> Medium -> Low
+    // Sort is stable if we don't mess up equals? Dart sort is not stable by default but we can use position as secondary
+    tasks.sort((a, b) {
+       final pA = a.priority.index; // 0=low, 1=medium, 2=high (Actually defined: low=0, medium=1, high=2? Let's check model)
+       final pB = b.priority.index;
+       // Model: Low=0, Medium=1, High=2. We want DESCENDING (High first).
+       if (pA != pB) return pB.compareTo(pA);
+       // Secondary: Due Date (asc)
+       if (a.dueDate != null && b.dueDate != null) return a.dueDate!.compareTo(b.dueDate!);
+       if (a.dueDate != null) return -1;
+       if (b.dueDate != null) return 1;
+       return 0;
+    });
+
+    _batchUpdatePositions(list.id, tasks);
+  }
+
+  void _reorderTasksByDeadline(TodoListModel list) async {
+    final tasks = await _todoService.streamTasks(list.id).first;
+    
+    // Sort logic: Earliest Date -> No Date
+    tasks.sort((a, b) {
+       if (a.dueDate == null && b.dueDate == null) return 0;
+       if (a.dueDate == null) return 1; // A (no date) goes last
+       if (b.dueDate == null) return -1; // B (no date) goes last
+       
+       final cmp = a.dueDate!.compareTo(b.dueDate!);
+       if (cmp != 0) return cmp;
+       
+       // Secondary: Priority (High first)
+       return b.priority.index.compareTo(a.priority.index);
+    });
+
+    _batchUpdatePositions(list.id, tasks);
+  }
+
+  void _batchUpdatePositions(String listId, List<TodoTaskModel> sortedTasks) {
+    double currentPos = 10000.0;
+    for (var i = 0; i < sortedTasks.length; i++) {
+      final t = sortedTasks[i];
+      // Only update if changes (optimization?) - batch writes are cheaper if we just fire and forget on service
+      // But here we need to iterate.
+      // Currently service has updateTaskPosition individually. Ideally we want batch.
+      // We'll Loop for now.
+      _todoService.updateTaskPosition(listId, t.id, currentPos);
+      currentPos += 10000.0;
+    }
+     ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoOrderUpdated ?? 'Order updated manually')),
+    );
   }
 
   void _showColumnSortDialog(TodoColumn col, TodoListModel currentList) {

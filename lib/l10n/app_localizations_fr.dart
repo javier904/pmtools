@@ -9,7 +9,25 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get smartTodoListOrigin => 'Lista di appartenenza';
+  String get smartTodoListOrigin => 'Liste d\'appartenance';
+
+  @override
+  String get smartTodoSortTooltip => 'Options de Tri';
+
+  @override
+  String get smartTodoSortManual => 'Manuel';
+
+  @override
+  String get smartTodoSortDate => 'Récents';
+
+  @override
+  String get smartTodoActionSortPriority => 'Trier par Priorité';
+
+  @override
+  String get smartTodoActionSortDeadline => 'Trier par Échéance';
+
+  @override
+  String get smartTodoOrderUpdated => 'Ordre mis à jour manuellement';
 
   @override
   String get newRetro => 'Nouvelle Retro';
@@ -529,27 +547,27 @@ class AppLocalizationsFr extends AppLocalizations {
       'Erreur lors du chargement des activités';
 
   @override
-  String get eisenhowerWaitingForVotes => 'In attesa di voti';
+  String get eisenhowerWaitingForVotes => 'En attente de votes';
 
   @override
   String eisenhowerVotedParticipants(int ready, int total) {
-    return '$ready/$total voti';
+    return '$ready/$total votes';
   }
 
   @override
-  String get eisenhowerVoteSubmit => 'VOTA';
+  String get eisenhowerVoteSubmit => 'VOTER';
 
   @override
-  String get eisenhowerVotedSuccess => 'Hai votato';
+  String get eisenhowerVotedSuccess => 'Vous avez voté';
 
   @override
-  String get eisenhowerRevealVotes => 'RIVELA VOTI';
+  String get eisenhowerRevealVotes => 'RÉVÉLER LES VOTES';
 
   @override
-  String get eisenhowerQuickVote => 'Voto Rapido';
+  String get eisenhowerQuickVote => 'Vote Rapide';
 
   @override
-  String get eisenhowerTeamVote => 'Voto Team';
+  String get eisenhowerTeamVote => 'Vote Équipe';
 
   @override
   String get eisenhowerUrgency => 'URGENCE';
@@ -558,106 +576,106 @@ class AppLocalizationsFr extends AppLocalizations {
   String get eisenhowerImportance => 'IMPORTANCE';
 
   @override
-  String get eisenhowerUrgencyShort => 'U:';
+  String get eisenhowerUrgencyShort => 'U :';
 
   @override
-  String get eisenhowerImportanceShort => 'I:';
+  String get eisenhowerImportanceShort => 'I :';
 
   @override
-  String get eisenhowerVotingInProgress => 'VOTAZIONE IN CORSO';
+  String get eisenhowerVotingInProgress => 'VOTE EN COURS';
 
   @override
   String get eisenhowerWaitingForOthers =>
-      'In attesa che tutti votino. Il facilitatore rivelerà i voti.';
+      'En attente que tous votent. Le facilitateur révélera les votes.';
 
   @override
-  String get eisenhowerReady => 'Pronto';
+  String get eisenhowerReady => 'Prêt';
 
   @override
-  String get eisenhowerWaiting => 'In attesa';
+  String get eisenhowerWaiting => 'En attente';
 
   @override
-  String get eisenhowerIndividualVotes => 'VOTI INDIVIDUALI';
+  String get eisenhowerIndividualVotes => 'VOTES INDIVIDUELS';
 
   @override
-  String get eisenhowerResult => 'RISULTATO';
+  String get eisenhowerResult => 'RÉSULTAT';
 
   @override
-  String get eisenhowerAverage => 'MEDIA';
+  String get eisenhowerAverage => 'MOYENNE';
 
   @override
-  String get eisenhowerVotesRevealed => 'Voti Rivelati';
+  String get eisenhowerVotesRevealed => 'Votes Révélés';
 
   @override
-  String get eisenhowerNextActivity => 'Prossima Attività';
+  String get eisenhowerNextActivity => 'Activité Suivante';
 
   @override
-  String get eisenhowerNoVotesRecorded => 'Nessun voto registrato';
+  String get eisenhowerNoVotesRecorded => 'Aucun vote enregistré';
 
   @override
-  String get eisenhowerWaitingForStart => 'In attesa';
+  String get eisenhowerWaitingForStart => 'En attente';
 
   @override
   String get eisenhowerPreVotesTooltip =>
-      'Voti anticipati che verranno conteggiati quando il facilitatore avvia la votazione';
+      'Votes anticipés qui seront comptabilisés lorsque le facilitateur lance le vote';
 
   @override
   String get eisenhowerObserverWaiting =>
-      'In attesa che il facilitatore avvii la votazione collettiva';
+      'En attente que le facilitateur lance le vote collectif';
 
   @override
   String get eisenhowerPreVoteTooltip =>
-      'Esprimi il tuo voto in anticipo. Verrà conteggiato quando la votazione sarà avviata.';
+      'Exprimez votre vote à l\'avance. Il sera comptabilisé lorsque le vote sera lancé.';
 
   @override
-  String get eisenhowerPreVote => 'Pre-vota';
+  String get eisenhowerPreVote => 'Pré-voter';
 
   @override
-  String get eisenhowerPreVoted => 'Hai pre-votato';
+  String get eisenhowerPreVoted => 'Vous avez pré-voté';
 
   @override
   String get eisenhowerStartVotingTooltip =>
-      'Avvia la sessione di votazione collettiva. I pre-voti esistenti verranno preservati.';
+      'Lancer la session de vote collectif. Les pré-votes existants seront conservés.';
 
   @override
   String get eisenhowerResetVotingTooltip =>
-      'Resetta la votazione cancellando tutti i voti';
+      'Réinitialiser le vote en supprimant tous les votes';
 
   @override
   String get eisenhowerObserverWaitingVotes =>
-      'Osservando la votazione in corso...';
+      'Observation du vote en cours...';
 
   @override
   String get eisenhowerWaitingForAllVotes =>
-      'In attesa che tutti i partecipanti votino';
+      'En attente que tous les participants votent';
 
   @override
   String get eisenhowerRevealTooltipReady =>
-      'Tutti hanno votato! Clicca per rivelare i risultati.';
+      'Tout le monde a voté ! Cliquez pour révéler les résultats.';
 
   @override
   String eisenhowerRevealTooltipNotReady(int count) {
-    return 'Mancano ancora $count voti';
+    return 'Il manque encore $count votes';
   }
 
   @override
-  String get eisenhowerVotingLocked => 'Votazione chiusa';
+  String get eisenhowerVotingLocked => 'Vote fermé';
 
   @override
   String get eisenhowerVotingLockedTooltip =>
-      'I voti sono stati rivelati. Non è più possibile votare su questa attività.';
+      'Les votes ont été révélés. Il n\'est plus possible de voter sur cette activité.';
 
   @override
   String eisenhowerOnlineParticipants(int online, int total) {
-    return '$online di $total partecipanti online';
+    return '$online sur $total participants en ligne';
   }
 
   @override
-  String get eisenhowerVoting => 'Votazione';
+  String get eisenhowerVoting => 'Vote';
 
   @override
   String get eisenhowerAllActivitiesVoted =>
-      'Tutte le attività sono state votate!';
+      'Toutes les activités ont été votées !';
 
   @override
   String get estimationTitle => 'Salle d\'Estimation';
@@ -1032,19 +1050,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroCreateNew => 'Créer nouvelle';
 
   @override
-  String get retroGuidance => 'Guida alle Retrospettive';
+  String get retroGuidance => 'Guide des Rétrospectives';
 
   @override
-  String get retroSearchHint => 'Cerca retrospettiva...';
+  String get retroSearchHint => 'Rechercher une rétrospective...';
 
   @override
   String get agileProcessTitle => 'Agile Process Manager';
 
   @override
-  String get agileSearchProjects => 'Cerca progetti...';
+  String get agileSearchProjects => 'Rechercher des projets...';
 
   @override
-  String get agileMethodologyGuide => 'Guida Metodologie';
+  String get agileMethodologyGuide => 'Guide des Méthodologies';
 
   @override
   String get agileMethodologyGuideTitle => 'Guide des méthodologies Agile';
@@ -1054,25 +1072,25 @@ class AppLocalizationsFr extends AppLocalizations {
       'Choisissez la méthodologie qui convient le mieux à votre projet';
 
   @override
-  String get agileNewProject => 'Nuovo Progetto';
+  String get agileNewProject => 'Nouveau Projet';
 
   @override
-  String get agileRoles => 'RUOLI';
+  String get agileRoles => 'RÔLES';
 
   @override
-  String get agileProcessFlow => 'FLUSSO DEL PROCESSO';
+  String get agileProcessFlow => 'FLUX DU PROCESSUS';
 
   @override
-  String get agileArtifacts => 'ARTEFATTI';
+  String get agileArtifacts => 'ARTEFACTS';
 
   @override
-  String get agileBestPractices => 'Best Practices';
+  String get agileBestPractices => 'Bonnes Pratiques';
 
   @override
-  String get agileAntiPatterns => 'Anti-Pattern da Evitare';
+  String get agileAntiPatterns => 'Anti-Patterns à Éviter';
 
   @override
-  String get agileFAQ => 'Domande Frequenti';
+  String get agileFAQ => 'Questions Fréquentes';
 
   @override
   String get agileScrumShortDesc =>
@@ -1361,7 +1379,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les swimlanes sont des lignes horizontales qui regroupent les cartes sur le tableau par un attribut commun.\n\nTypes de swimlane disponibles :\n• Classe de Service : Regrouper par priorité/urgence\n• Assigné : Regrouper par membre de l\'équipe\n• Priorité : Regrouper par niveau MoSCoW\n• Tag : Regrouper par étiquettes des stories\n\nLes swimlanes aident à :\n• Visualiser la charge de travail par personne\n• Gérer différentes classes de service (urgent, standard)\n• Identifier les goulots d\'étranglement par type de travail';
 
   @override
-  String get kanbanPoliciesTitle => 'Politiques de Colonne';
+  String kanbanPoliciesTitle(String columnName) {
+    return 'Politiques de Colonne';
+  }
 
   @override
   String get kanbanPoliciesContent =>
@@ -1609,10 +1629,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Non. Agile ne signifie pas suivre un framework spécifique. Scrumban peut être plus Agile car il s\'adapte au contexte. L\'important est d\'inspecter et d\'adapter continuellement.';
 
   @override
-  String get retroNoResults => 'Nessun risultato per la ricerca';
+  String get retroNoResults => 'Aucun résultat pour la recherche';
 
   @override
-  String get retroFilterAll => 'Tutte';
+  String get retroFilterAll => 'Toutes';
 
   @override
   String get retroFilterActive => 'Active';
@@ -1632,7 +1652,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get retroDeleteSuccess => 'Retrospettiva eliminata con successo';
+  String get retroDeleteSuccess => 'Rétrospective supprimée avec succès';
 
   @override
   String retroDeleteError(String error) {
@@ -1640,16 +1660,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get retroDeleteConfirmAction => 'Elimina definitivamente';
+  String get retroDeleteConfirmAction => 'Supprimer définitivement';
 
   @override
-  String get retroNewRetroTitle => 'Nuova Retrospettiva';
+  String get retroNewRetroTitle => 'Nouvelle Rétrospective';
 
   @override
   String get retroLinkToSprint => 'Lier au Sprint ?';
 
   @override
-  String get retroNoProjectFound => 'Nessun progetto trovato.';
+  String get retroNoProjectFound => 'Aucun projet trouvé.';
 
   @override
   String get retroSelectProject => 'Sélectionner le Projet';
@@ -1675,10 +1695,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroVotesPerUser => 'Votes par utilisateur :';
 
   @override
-  String get retroActionClose => 'Chiudi';
+  String get retroActionClose => 'Fermer';
 
   @override
-  String get retroActionCreate => 'Crea';
+  String get retroActionCreate => 'Créer';
 
   @override
   String get retroStatusDraft => 'Brouillon';
@@ -1790,7 +1810,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get retroActionDragToCreate =>
-      'Trascina qui una card per creare un Action Item collegato';
+      'Glissez une carte ici pour créer un Action Item associé';
 
   @override
   String get retroNoActionItems =>
@@ -1880,16 +1900,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Toutes les colonnes requises couvertes!';
 
   @override
-  String get facilitatorGuideMissing => 'Mancano azioni per';
+  String get facilitatorGuideMissing => 'Actions manquantes pour';
 
   @override
-  String get retroPhaseStart => 'Inizia';
+  String get retroPhaseStart => 'Commencer';
 
   @override
-  String get retroPhaseStop => 'Smetti';
+  String get retroPhaseStop => 'Arrêter';
 
   @override
-  String get retroPhaseContinue => 'Continua';
+  String get retroPhaseContinue => 'Continuer';
 
   @override
   String get retroColumnMad => 'En colère';
@@ -1910,7 +1930,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroColumnLacked => 'Manqué';
 
   @override
-  String get retroColumnLonged => 'Desiderato';
+  String get retroColumnLonged => 'Souhaité';
 
   @override
   String get retroColumnWind => 'Vent';
@@ -2020,7 +2040,255 @@ class AppLocalizationsFr extends AppLocalizations {
   String get participants => 'Participants';
 
   @override
-  String get addParticipant => 'Ajouter un participant';
+  String get agileStoryDetailTitle => 'Détails de la Story';
+
+  @override
+  String get agileStoryPoints => 'Story Points';
+
+  @override
+  String get agileAcceptanceCriteria => 'Critères d\'Acceptation';
+
+  @override
+  String agileAcceptanceCriteriaCount(int completed, int total) {
+    return '$completed sur $total éléments';
+  }
+
+  @override
+  String get agileNoAcceptanceCriteria => 'Aucun critère d\'acceptation défini';
+
+  @override
+  String get agileDescription => 'Description';
+
+  @override
+  String get agileNoDescription => 'Aucune description';
+
+  @override
+  String get agileTags => 'Tags';
+
+  @override
+  String get agileEstimates => 'Estimations';
+
+  @override
+  String get agileFinalEstimate => 'Estimation Finale';
+
+  @override
+  String agileEstimatesReceived(int count) {
+    return '$count estimations reçues';
+  }
+
+  @override
+  String get agileInformation => 'Informations';
+
+  @override
+  String get agileBusinessValue => 'Business Value';
+
+  @override
+  String get agileAssignee => 'Assigné à';
+
+  @override
+  String get agileCreatedBy => 'Créé par';
+
+  @override
+  String get agileCreatedAt => 'Créé le';
+
+  @override
+  String get agileStartedAt => 'Commencé le';
+
+  @override
+  String get agileCompletedAt => 'Terminé le';
+
+  @override
+  String get agileSprintTitle => 'Sprint';
+
+  @override
+  String get agileNewSprint => 'New Sprint';
+
+  @override
+  String get agileNoSprints => 'No sprints';
+
+  @override
+  String get agileCreateFirstSprint => 'Create the first sprint to start';
+
+  @override
+  String get agileSprintStatusPlanning => 'Planning';
+
+  @override
+  String get agileSprintStatusActive => 'Active';
+
+  @override
+  String get agileSprintStatusReview => 'Review';
+
+  @override
+  String get agileSprintStatusCompleted => 'Completed';
+
+  @override
+  String get agileStartSprint => 'Start Sprint';
+
+  @override
+  String get agileCompleteSprint => 'Complete Sprint';
+
+  @override
+  String get agileDeleteSprint => 'Delete';
+
+  @override
+  String get agileSprintName => 'Sprint Name';
+
+  @override
+  String get agileSprintGoal => 'Sprint Goal';
+
+  @override
+  String get agileSprintGoalHint => 'Objective of the sprint';
+
+  @override
+  String get agileStartDate => 'Start Date';
+
+  @override
+  String get agileEndDate => 'End Date';
+
+  @override
+  String get agileStatsStories => 'stories';
+
+  @override
+  String get agileStatsPoints => 'pts';
+
+  @override
+  String get agileStatsCompleted => 'completed';
+
+  @override
+  String get agileStatsVelocity => 'velocity';
+
+  @override
+  String agileDaysRemainingCount(String count) {
+    return '$count jours restants';
+  }
+
+  @override
+  String get agileAverageVelocity => 'Avg Velocity';
+
+  @override
+  String agileTeamMembersCount(String count) {
+    return 'Team: $count members';
+  }
+
+  @override
+  String get agileActionCancel => 'Cancel';
+
+  @override
+  String get agileActionSave => 'Save';
+
+  @override
+  String get agileActionCreate => 'Create';
+
+  @override
+  String get agileSprintPlanningTitle => 'Sprint Planning';
+
+  @override
+  String get agileSprintPlanningSubtitle =>
+      'Select stories to complete in this sprint';
+
+  @override
+  String get agileBurndownChart => 'Burndown Chart';
+
+  @override
+  String get agileBurndownIdeal => 'Idéal';
+
+  @override
+  String get agileBurndownActual => 'Réel';
+
+  @override
+  String get agileBurndownPlanned => 'Planifiés';
+
+  @override
+  String get agileBurndownRemaining => 'Restants';
+
+  @override
+  String get agileBurndownNoData => 'Aucune donnée burndown';
+
+  @override
+  String get agileBurndownNoDataHint =>
+      'Les données apparaîtront lorsque le sprint sera actif';
+
+  @override
+  String get agileVelocityTrend => 'Tendance Velocity';
+
+  @override
+  String get agileVelocityNoData => 'Aucune donnée velocity';
+
+  @override
+  String get agileVelocityNoDataHint =>
+      'Complétez au moins un sprint pour voir la tendance';
+
+  @override
+  String get agileTeamCapacity => 'Capacité de l\'Équipe';
+
+  @override
+  String get agileTeamCapacityScrum => 'Capacité de l\'Équipe (Scrum)';
+
+  @override
+  String get agileTeamCapacityHours => 'Capacité de l\'Équipe (Heures)';
+
+  @override
+  String get agileThroughput => 'Throughput';
+
+  @override
+  String get agileSuggestedCapacity =>
+      'Capacité Suggérée pour le Sprint Planning';
+
+  @override
+  String get agileSuggestedCapacityHint =>
+      'Basé sur la velocity moyenne ± écart type (±10%)';
+
+  @override
+  String get agileSuggestedCapacityNoData =>
+      'Complétez au moins 1 sprint pour obtenir des suggestions de capacité';
+
+  @override
+  String get agileScrumGuideNote =>
+      'Le Scrum Guide recommande de baser la planification sur la Velocity historique, et non sur les heures.';
+
+  @override
+  String get agileHoursAvailable => 'Disponible';
+
+  @override
+  String get agileHoursAssigned => 'Assigné';
+
+  @override
+  String get agileHoursOverloaded => 'Surchargé';
+
+  @override
+  String get agileHoursTotal => 'Capacité Totale';
+
+  @override
+  String get agileHoursUtilization => 'Utilisation';
+
+  @override
+  String agileMetricsTitle(String framework) {
+    return 'Métriques $framework';
+  }
+
+  @override
+  String get agileItemsCompleted => 'Items Complétés';
+
+  @override
+  String get agileInProgress => 'En Cours';
+
+  @override
+  String get agileCycleTime => 'Cycle Time';
+
+  @override
+  String get agileLeadTime => 'Lead Time';
+
+  @override
+  String get agileDistribution => 'Distribution des Stories';
+
+  @override
+  String get agileCompletionRate => 'Taux de Complétion';
+
+  @override
+  String get agileAccuracy => 'Précision des Estimations';
+
+  @override
+  String get agileEfficiency => 'Flow Efficiency';
 
   @override
   String get removeParticipant => 'Retirer le participant';
@@ -2174,7 +2442,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileUpgradePlan => 'Mettre à niveau le plan';
 
   @override
-  String get planFree => 'Gratuito';
+  String get planFree => 'Gratuit';
 
   @override
   String get planPremium => 'Premium';
@@ -2183,49 +2451,49 @@ class AppLocalizationsFr extends AppLocalizations {
   String get planElite => 'Elite';
 
   @override
-  String get statusActive => 'Attivo';
+  String get statusActive => 'Actif';
 
   @override
-  String get statusTrialing => 'In prova';
+  String get statusTrialing => 'En essai';
 
   @override
-  String get statusPastDue => 'Pagamento scaduto';
+  String get statusPastDue => 'Paiement en retard';
 
   @override
-  String get statusPaused => 'In pausa';
+  String get statusPaused => 'En pause';
 
   @override
-  String get statusCancelled => 'Cancellato';
+  String get statusCancelled => 'Annulé';
 
   @override
-  String get statusExpired => 'Scaduto';
+  String get statusExpired => 'Expiré';
 
   @override
-  String get cycleMonthly => 'Mensile';
+  String get cycleMonthly => 'Mensuel';
 
   @override
-  String get cycleQuarterly => 'Trimestrale';
+  String get cycleQuarterly => 'Trimestriel';
 
   @override
-  String get cycleYearly => 'Annuale';
+  String get cycleYearly => 'Annuel';
 
   @override
-  String get cycleLifetime => 'Sempre';
+  String get cycleLifetime => 'À vie';
 
   @override
-  String get pricePerMonth => 'mese';
+  String get pricePerMonth => 'mois';
 
   @override
   String get pricePerQuarter => 'trim';
 
   @override
-  String get pricePerYear => 'anno';
+  String get pricePerYear => 'an';
 
   @override
-  String get priceForever => 'sempre';
+  String get priceForever => 'à vie';
 
   @override
-  String get priceFree => 'Gratuito';
+  String get priceFree => 'Gratuit';
 
   @override
   String get profileGeneralSettings => 'Paramètres généraux';
@@ -2929,47 +3197,47 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroMoodExcellent => 'Excellent';
 
   @override
-  String get actionSubmit => 'Invia';
+  String get actionSubmit => 'Envoyer';
 
   @override
-  String get retroIcebreakerOneWordTitle => 'Icebreaker: Una Parola';
+  String get retroIcebreakerOneWordTitle => 'Icebreaker : Un Mot';
 
   @override
   String get retroIcebreakerOneWordQuestion =>
-      'Descrivi questo sprint con UNA sola parola';
+      'Décrivez ce sprint en UN seul mot';
 
   @override
-  String get retroIcebreakerOneWordHint => 'La tua parola...';
+  String get retroIcebreakerOneWordHint => 'Votre mot...';
 
   @override
-  String get retroIcebreakerSubmitted => 'Inviato!';
+  String get retroIcebreakerSubmitted => 'Envoyé !';
 
   @override
   String retroIcebreakerWordsSubmitted(int count) {
-    return '$count parole inviate';
+    return '$count mots envoyés';
   }
 
   @override
-  String get retroIcebreakerWeatherTitle => 'Icebreaker: Meteo';
+  String get retroIcebreakerWeatherTitle => 'Icebreaker : Météo';
 
   @override
   String get retroIcebreakerWeatherQuestion =>
-      'Quale meteo rappresenta meglio come ti senti riguardo a questo sprint?';
+      'Quelle météo représente le mieux comment vous vous sentez par rapport à ce sprint ?';
 
   @override
-  String get retroWeatherSunny => 'Soleggiato';
+  String get retroWeatherSunny => 'Ensoleillé';
 
   @override
-  String get retroWeatherPartlyCloudy => 'Parz. nuvoloso';
+  String get retroWeatherPartlyCloudy => 'Partiellement nuageux';
 
   @override
-  String get retroWeatherCloudy => 'Nuvoloso';
+  String get retroWeatherCloudy => 'Nuageux';
 
   @override
-  String get retroWeatherRainy => 'Piovoso';
+  String get retroWeatherRainy => 'Pluvieux';
 
   @override
-  String get retroWeatherStormy => 'Tempestoso';
+  String get retroWeatherStormy => 'Orageux';
 
   @override
   String get retroAgileCoach => 'Coach Agile';
@@ -3092,16 +3360,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroTableOwner => 'Propriétaire';
 
   @override
-  String get retroIcebreakerTwoTruths => 'Due Verità e una Bugia';
+  String get retroIcebreakerTwoTruths => 'Deux Vérités et un Mensonge';
 
   @override
-  String get retroDescTwoTruths => 'Semplice e classico.';
+  String get retroDescTwoTruths => 'Simple et classique.';
 
   @override
-  String get retroIcebreakerCheckin => 'Check-in Emotivo';
+  String get retroIcebreakerCheckin => 'Check-in Émotionnel';
 
   @override
-  String get retroDescCheckin => 'Come si sentono tutti?';
+  String get retroDescCheckin => 'Comment se sentent tous les membres ?';
 
   @override
   String get retroTableActions => 'Actions';
@@ -3157,7 +3425,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get retroAddCardButton => 'Aggiungi Card';
+  String get retroAddCardButton => 'Ajouter une Carte';
 
   @override
   String get retroNoRetrosFound => 'Aucune rétrospective trouvée';
@@ -3329,12 +3597,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get smartTodoSortBy => 'Trier par';
-
-  @override
-  String get smartTodoSortDate => 'Récents';
-
-  @override
-  String get smartTodoSortManual => 'Manuel';
 
   @override
   String get smartTodoColumnSortTitle => 'Trier la colonne';
@@ -5835,7 +6097,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get retroExportSuccessMessage =>
-      'La tua retrospettiva è stata esportata su Google Sheets.';
+      'Votre rétrospective a été exportée sur Google Sheets.';
 
   @override
   String get retroExportError => 'Erreur lors de l\'exportation vers Sheets.';
@@ -6076,31 +6338,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchBackToDashboard => 'Retour au Tableau de bord';
 
   @override
-  String get smartTodoAddItem => 'Aggiungi voce';
+  String get smartTodoAddItem => 'Ajouter un élément';
 
   @override
-  String get smartTodoAddImageUrl => 'Aggiungi Immagine (URL)';
+  String get smartTodoAddImageUrl => 'Ajouter une Image (URL)';
 
   @override
-  String get smartTodoNone => 'Nessuno';
+  String get smartTodoNone => 'Aucun';
 
   @override
-  String get smartTodoPointsHint => 'Punti (es. 5)';
+  String get smartTodoPointsHint => 'Points (ex. 5)';
 
   @override
-  String get smartTodoNewItem => 'Nuova voce';
+  String get smartTodoNewItem => 'Nouvel élément';
 
   @override
-  String get smartTodoDeleteComment => 'Elimina';
+  String get smartTodoDeleteComment => 'Supprimer';
 
   @override
-  String get priorityHigh => 'ALTA';
+  String get priorityHigh => 'HAUTE';
 
   @override
-  String get priorityMedium => 'MEDIA';
+  String get priorityMedium => 'MOYENNE';
 
   @override
-  String get priorityLow => 'BASSA';
+  String get priorityLow => 'BASSE';
 
   @override
   String get exportToEstimation => 'Exporter vers l\'estimation';
@@ -6417,17 +6679,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String activitiesAddedToSprint(int count, String sprintName) {
-    return '$count attività aggiunte a $sprintName';
+    return '$count activités ajoutées à $sprintName';
   }
 
   @override
   String activitiesAddedToProject(int count, String projectName) {
-    return '$count attività aggiunte al progetto $projectName';
+    return '$count activités ajoutées au projet $projectName';
   }
 
   @override
   String estimationSessionCreated(int count) {
-    return 'Sessione di stima creata con $count attività';
+    return 'Session d\'estimation créée avec $count activités';
   }
 
   @override
@@ -8899,9 +9161,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agilePriorityMoscow => 'Priority (MoSCoW)';
 
   @override
-  String get agileBusinessValue => 'Business Value';
-
-  @override
   String get agileBusinessValueLow => 'Low business value';
 
   @override
@@ -8919,18 +9178,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agileNoPoints => 'None';
-
-  @override
-  String get agileActionSave => 'Save';
-
-  @override
-  String get agileActionCreate => 'Create';
-
-  @override
-  String get agileActionCancel => 'Cancel';
-
-  @override
-  String get agileTags => 'Tags';
 
   @override
   String get agileAddTagHint => 'Add tag...';
@@ -8957,64 +9204,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agilePointsComplexityHigh => 'Very complex, consider splitting';
 
   @override
-  String get agileSprintTitle => 'Sprint';
-
-  @override
-  String get agileNewSprint => 'New Sprint';
-
-  @override
-  String get agileNoSprints => 'No sprints';
-
-  @override
-  String get agileCreateFirstSprint => 'Create the first sprint to start';
-
-  @override
-  String get agileSprintStatusPlanning => 'Planning';
-
-  @override
-  String get agileSprintStatusActive => 'Active';
-
-  @override
-  String get agileSprintStatusReview => 'Review';
-
-  @override
-  String get agileSprintStatusCompleted => 'Completed';
-
-  @override
-  String get agileStartSprint => 'Start Sprint';
-
-  @override
-  String get agileCompleteSprint => 'Complete Sprint';
-
-  @override
-  String get agileDeleteSprint => 'Delete';
-
-  @override
-  String get agileSprintName => 'Sprint Name';
-
-  @override
-  String get agileSprintGoal => 'Sprint Goal';
-
-  @override
-  String get agileSprintGoalHint => 'Objective of the sprint';
-
-  @override
-  String get agileStartDate => 'Start Date';
-
-  @override
-  String get agileEndDate => 'End Date';
-
-  @override
   String agileDurationDays(Object days) {
     return 'Duration: $days days';
-  }
-
-  @override
-  String get agileAverageVelocity => 'Avg Velocity';
-
-  @override
-  String agileTeamMembersCount(Object count) {
-    return 'Team: $count members';
   }
 
   @override
@@ -9030,13 +9221,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agilePriorityWont => 'Won\'t Have';
 
   @override
-  String get agileSprintPlanningTitle => 'Sprint Planning';
-
-  @override
-  String get agileSprintPlanningSubtitle =>
-      'Select stories to complete in this sprint';
-
-  @override
   String get agileSelectedPoints => 'Selected';
 
   @override
@@ -9048,22 +9232,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get agileStatsStories => 'stories';
-
-  @override
-  String get agileStatsPoints => 'pts';
-
-  @override
-  String get agileStatsCompleted => 'completed';
-
-  @override
-  String get agileStatsVelocity => 'velocity';
-
-  @override
   String get agileSelectAtLeastOne => 'Select at least 1 story';
 
   @override
-  String agileConfirmStories(Object count) {
+  String agileConfirmStories(String count) {
     return 'Confirmer ($count stories)';
   }
 
@@ -9206,4 +9378,552 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get swimlaneNoTag => 'Sans Tag';
+
+  @override
+  String get agileMetricsVelocityTitle => 'Velocity';
+
+  @override
+  String get agileMetricsVelocityDesc =>
+      'Mesure la quantité de story points complétés par sprint. Aide à prévoir la capacité de l\'équipe.';
+
+  @override
+  String get agileMetricsLeadTimeDesc =>
+      'Temps total de la création à la complétion. Inclut le temps d\'attente dans le backlog.';
+
+  @override
+  String get agileMetricsCycleTimeDesc =>
+      'Temps du début du travail à la complétion. Mesure l\'efficacité du développement.';
+
+  @override
+  String get agileMetricsThroughputDesc =>
+      'Nombre d\'items complétés par unité de temps. Indique la productivité.';
+
+  @override
+  String get agileMetricsDistributionDesc =>
+      'Visualise la distribution par statut. Aide à identifier les goulots d\'étranglement.';
+
+  @override
+  String get agilePredictability => 'Prévisibilité';
+
+  @override
+  String agilePredictabilityDesc(int days) {
+    return '85% des items sont complétés en ≤$days jours';
+  }
+
+  @override
+  String agileThroughputWeekly(int weeks) {
+    return 'Items complétés/semaine (dernières $weeks sem.)';
+  }
+
+  @override
+  String get agileNoDataVelocity => 'Aucune donnée velocity';
+
+  @override
+  String get agileNoDataLeadTime => 'Aucune donnée lead time';
+
+  @override
+  String get agileNoDataCycleTime => 'Aucune donnée cycle time';
+
+  @override
+  String get agileNoDataThroughput => 'Aucune donnée throughput';
+
+  @override
+  String get agileNoDataAccuracy => 'Aucune donnée de précision';
+
+  @override
+  String get agileStartFinishOneItem =>
+      'Complétez au moins un item pour calculer';
+
+  @override
+  String get timeDays => 'jours';
+
+  @override
+  String get auditLogTitle => 'Journal d\'Audit';
+
+  @override
+  String auditLogEventCount(int count) {
+    return '$count événements';
+  }
+
+  @override
+  String get actionRefresh => 'Actualiser';
+
+  @override
+  String get auditLogFilterEntityType => 'Type';
+
+  @override
+  String get auditLogFilterAction => 'Action';
+
+  @override
+  String get auditLogFilterFromDate => 'Depuis';
+
+  @override
+  String get actionDetails => 'Détails';
+
+  @override
+  String get auditLogDetailsTitle => 'Détails de la Modification';
+
+  @override
+  String get auditLogPreviousValue => 'Valeur précédente :';
+
+  @override
+  String get auditLogNewValue => 'Nouvelle valeur :';
+
+  @override
+  String get auditLogNoEvents => 'Aucun événement enregistré';
+
+  @override
+  String get auditLogNoEventsDesc =>
+      'Les activités du projet seront enregistrées ici';
+
+  @override
+  String get recentActivityTitle => 'Activité Récente';
+
+  @override
+  String get actionViewAll => 'Voir tout';
+
+  @override
+  String get recentActivityNone => 'Aucune activité récente';
+
+  @override
+  String get burndownChartTitle => 'Burndown Chart';
+
+  @override
+  String get agileIdeal => 'Idéal';
+
+  @override
+  String get agileActual => 'Réel';
+
+  @override
+  String get agileRemaining => 'Restants';
+
+  @override
+  String get agileBurndownNoDataDesc =>
+      'Les données apparaîtront lorsque le sprint sera actif';
+
+  @override
+  String get agileCompleteActiveFirst =>
+      'Complétez le sprint actif avant d\'en démarrer un autre';
+
+  @override
+  String get kanbanSwimlanes => 'Swimlanes :';
+
+  @override
+  String get kanbanSwimlaneLabel => 'Swimlane';
+
+  @override
+  String get agileNoTags => 'Sans tag';
+
+  @override
+  String get kanbanWipExceededBanner =>
+      'Limite WIP dépassée ! Terminez certains items avant d\'en commencer de nouveaux.';
+
+  @override
+  String get kanbanConfigWip => 'Configurer WIP';
+
+  @override
+  String get kanbanPoliciesDesc =>
+      'Les politiques explicites aident l\'équipe à comprendre les règles de cette colonne.';
+
+  @override
+  String get kanbanNewPolicyHint => 'Nouvelle politique...';
+
+  @override
+  String kanbanWipLimitOf(int count, int limit) {
+    return 'WIP : $count sur $limit max';
+  }
+
+  @override
+  String get kanbanWipExplanationDesc =>
+      'Les limites WIP (Work In Progress) sont des limites sur le nombre d\'items pouvant se trouver dans une colonne en même temps.';
+
+  @override
+  String get kanbanUnderstand => 'J\'ai compris';
+
+  @override
+  String get agileHours => 'Heures';
+
+  @override
+  String get agileStoriesPerSprint => 'Stories / Sprint';
+
+  @override
+  String get agileSprints => 'Sprints';
+
+  @override
+  String get agileTeamComposition => 'Composition de l\'Équipe';
+
+  @override
+  String get agileHoursNote =>
+      'Les heures sont une référence interne. Pour la planification Scrum, utilisez la vue Story Points.';
+
+  @override
+  String get agileNoTeamMembers => 'Aucun membre dans l\'équipe';
+
+  @override
+  String get agileGmailAuthError =>
+      'Autorisation Gmail non disponible. Essayez de vous déconnecter et reconnecter.';
+
+  @override
+  String get agileGmailPermissionDenied => 'Permission Gmail non accordée.';
+
+  @override
+  String get agileResend => 'Renvoyer';
+
+  @override
+  String get agileRevoke => 'Révoquer';
+
+  @override
+  String get agileVelocityUnits => 'Story Points / Sprint';
+
+  @override
+  String get agileFiltersTitle => 'Filtres';
+
+  @override
+  String get agilePlanned => 'Planifié';
+
+  @override
+  String get archiveDeleteSuccess => 'Archivé/supprimé avec succès';
+
+  @override
+  String get agileNoItems => 'Aucun élément à afficher';
+
+  @override
+  String agileItemsOfTotal(int completed, int total) {
+    return '$completed sur $total';
+  }
+
+  @override
+  String get agileItemsCompletedLabel => 'Éléments Complétés';
+
+  @override
+  String get agileDaysRemainingSuffix => 'jours restants';
+
+  @override
+  String get average => 'Moyenne';
+
+  @override
+  String agileItemsCount(int count) {
+    return '$count éléments';
+  }
+
+  @override
+  String get agileDaysLeft => 'Jours Restants';
+
+  @override
+  String get all => 'Tous';
+
+  @override
+  String get kanbanGuidePoliciesTitle => 'Politiques Explicites';
+
+  @override
+  String get agileDaysLabel => 'Jours';
+
+  @override
+  String get agileStatRemaining => 'restants';
+
+  @override
+  String get agileStatsCompletedLabel => 'Complétés';
+
+  @override
+  String get agileStatsPlannedLabel => 'Planifiés';
+
+  @override
+  String get agileProgressLabel => 'Progression';
+
+  @override
+  String get agileDurationLabel => 'Durée';
+
+  @override
+  String get agileVelocityLabel => 'Velocity';
+
+  @override
+  String get agileStoriesLabel => 'Stories';
+
+  @override
+  String get agileSprintSummary => 'Résumé du Sprint';
+
+  @override
+  String get agileStoriesTotal => 'Stories totales';
+
+  @override
+  String get agileStoriesCompleted => 'Stories complétées';
+
+  @override
+  String get agilePointsCompletedLabel => 'Story Points complétés';
+
+  @override
+  String get agileStoriesIncomplete => 'Stories incomplètes';
+
+  @override
+  String get agileIncompleteReturnToBacklog => '(retourneront dans le backlog)';
+
+  @override
+  String get agilePointsLabel => 'Story Points';
+
+  @override
+  String get agileRecordReview => 'Effectuer la Sprint Review';
+
+  @override
+  String get agileCompleteSprintAction => 'Clôturer le Sprint';
+
+  @override
+  String get agileMissingReview => 'Sprint Review pas encore effectuée';
+
+  @override
+  String get agileSprintReviewCompleted => 'Sprint Review terminée';
+
+  @override
+  String get agileReviewNotesLabel => 'Notes de Review';
+
+  @override
+  String get agileReviewFeedbackLabel => 'Feedback des Stakeholders';
+
+  @override
+  String get agileReviewNextFocus => 'Focus du Prochain Sprint';
+
+  @override
+  String get agileBacklogUpdatesLabel => 'Modifications du Backlog';
+
+  @override
+  String get agileSaveReview => 'Enregistrer la Review';
+
+  @override
+  String get agileConductedBy => 'Conduite par';
+
+  @override
+  String get agileReviewDate => 'Date de Review';
+
+  @override
+  String get agileReviewOutcome => 'Résultat de la Review';
+
+  @override
+  String get agileStoriesRejected => 'Stories non acceptées';
+
+  @override
+  String get agileRejectedWarning =>
+      'Les stories non complétées ou non acceptées retourneront automatiquement dans le Backlog.';
+
+  @override
+  String get agileReviewDemoHint => 'Qu\'a été présenté pendant la démo ?';
+
+  @override
+  String get agileReviewFeedbackHint => 'Feedback reçu des stakeholders';
+
+  @override
+  String get agileReviewBacklogHint => 'Nouvelle modification du backlog...';
+
+  @override
+  String get agileReviewNextFocusHint =>
+      'Sur quoi l\'équipe devrait-elle se concentrer ?';
+
+  @override
+  String get agileReviewScrumGuide =>
+      'Le Scrum Guide 2020 recommande d\'effectuer la Sprint Review avant de clôturer le sprint pour inspecter le travail réalisé avec les stakeholders.';
+
+  @override
+  String agileSprintCompleteConfirm(String name) {
+    return 'Êtes-vous sûr de vouloir terminer \"$name\" ?';
+  }
+
+  @override
+  String agileSprintCompleteSuccess(String velocity) {
+    return 'Sprint terminé ! Velocity : $velocity pts/semaine';
+  }
+
+  @override
+  String get agileSprintReviewSaveSuccess => 'Sprint Review enregistrée';
+
+  @override
+  String get agileEstimationAccuracy => 'Précision des Estimations';
+
+  @override
+  String get agileCompleteOneSprintFirst => 'Complétez au moins un sprint';
+
+  @override
+  String get agileNoDataAccuracyFix => 'Aucune donnée de précision';
+
+  @override
+  String get agileScrumGuideRecommends =>
+      'Le Scrum Guide recommande la planification basée sur la Velocity historique, et non sur les heures.';
+
+  @override
+  String get agileNoSkillsDefined => 'Aucune compétence définie';
+
+  @override
+  String get agileAddSkillsToMembers =>
+      'Ajoutez des compétences aux membres de l\'équipe';
+
+  @override
+  String get retroNoSprintWarningTitle => 'Aucun Sprint Terminé';
+
+  @override
+  String get retroNoSprintWarningMessage =>
+      'Pour créer une rétrospective Scrum, vous devez d\'abord terminer au moins un sprint. Les rétrospectives sont liées aux sprints pour suivre les améliorations d\'une itération à l\'autre.';
+
+  @override
+  String get agileGoToSprints => 'Aller aux Sprints';
+
+  @override
+  String get agileSprintReviewHistory => 'Historique des Sprint Reviews';
+
+  @override
+  String get agileNoSprintReviews => 'Aucune Sprint Review';
+
+  @override
+  String get agileNoSprintReviewsHint =>
+      'Complétez un sprint et effectuez une Sprint Review pour la voir ici';
+
+  @override
+  String get agileAttendees => 'Participants';
+
+  @override
+  String get agileStoryEvaluations => 'Évaluation des Stories';
+
+  @override
+  String get agileDecisions => 'Décisions';
+
+  @override
+  String get agileDemoNotes => 'Notes de Démo';
+
+  @override
+  String get agileFeedback => 'Feedback';
+
+  @override
+  String get agileStoryApproved => 'Approuvée';
+
+  @override
+  String get agileStoryNeedsRefinement => 'À Affiner';
+
+  @override
+  String get agileStoryRejected => 'Rejetée';
+
+  @override
+  String get agileAddAttendee => 'Ajouter un Participant';
+
+  @override
+  String get agileAddDecision => 'Ajouter une Décision';
+
+  @override
+  String get agileEvaluateStories => 'Évaluer les Stories';
+
+  @override
+  String get agileSelectRole => 'Sélectionner un Rôle';
+
+  @override
+  String get agileStatsNotCompleted => 'Non Complétées';
+
+  @override
+  String get agileFramework => 'Framework';
+
+  @override
+  String get teamMembers => 'Membres de l\'Équipe';
+
+  @override
+  String get eisenhowerImportCsv => 'Importer CSV';
+
+  @override
+  String get eisenhowerImportPreview => 'Aperçu des activités';
+
+  @override
+  String get eisenhowerImportSelectFile =>
+      'Sélectionnez un fichier CSV à importer';
+
+  @override
+  String get eisenhowerImportFormatHint =>
+      'Format attendu : Activité, Description, Quadrant, Urgence, Importance';
+
+  @override
+  String get eisenhowerImportClickToSelect =>
+      'Cliquez pour sélectionner un fichier';
+
+  @override
+  String get eisenhowerImportSupportedFormats =>
+      'Formats supportés : .csv (UTF-8 ou Latin-1)';
+
+  @override
+  String get eisenhowerImportNoActivities =>
+      'Aucune activité trouvée dans le fichier';
+
+  @override
+  String get eisenhowerImportMarkRevealed => 'Marquer comme déjà votées';
+
+  @override
+  String get eisenhowerImportMarkRevealedHint =>
+      'Les activités apparaîtront directement dans le quadrant calculé';
+
+  @override
+  String eisenhowerImportSuccess(int count) {
+    return '$count activités importées';
+  }
+
+  @override
+  String get actionSelectAll => 'Tout sélectionner';
+
+  @override
+  String get actionDeselectAll => 'Tout désélectionner';
+
+  @override
+  String get actionImport => 'Importer';
+
+  @override
+  String get eisenhowerImportShowInstructions =>
+      'Afficher/masquer les instructions';
+
+  @override
+  String get eisenhowerImportInstructionsTitle => 'Format CSV Requis';
+
+  @override
+  String get eisenhowerImportInstructionsBody =>
+      'Le fichier CSV doit contenir au moins la colonne \'Activité\' ou \'Title\'. Colonnes optionnelles : Description, Urgence (1-10), Importance (1-10). La première ligne doit être l\'en-tête.';
+
+  @override
+  String get eisenhowerImportExampleFormat =>
+      'Activité,Description,Urgence,Importance\n\"Nom activité\",\"Description optionnelle\",8.5,7.2';
+
+  @override
+  String get eisenhowerImportChangeFile => 'Changer de fichier';
+
+  @override
+  String eisenhowerImportSkippedRows(int count) {
+    return '$count lignes ignorées à cause d\'erreurs';
+  }
+
+  @override
+  String eisenhowerImportAndMore(int count) {
+    return '...et $count autres lignes';
+  }
+
+  @override
+  String eisenhowerImportFoundActivities(int valid, int total) {
+    return '$valid activités valides trouvées sur $total lignes';
+  }
+
+  @override
+  String eisenhowerImportErrorEmptyTitle(int row) {
+    return 'Ligne $row : titre vide';
+  }
+
+  @override
+  String eisenhowerImportErrorInvalidRow(int row) {
+    return 'Ligne $row : format invalide';
+  }
+
+  @override
+  String get eisenhowerImportErrorMissingColumn =>
+      'Colonne \'Activité\' ou \'Title\' non trouvée dans l\'en-tête';
+
+  @override
+  String get eisenhowerImportErrorEmptyFile => 'Le fichier est vide';
+
+  @override
+  String get eisenhowerImportErrorNoHeader =>
+      'En-tête non trouvé dans la première ligne';
+
+  @override
+  String eisenhowerImportErrorRow(int row) {
+    return 'Ligne $row';
+  }
+
+  @override
+  String get eisenhowerImportErrorReadFile => 'Impossible de lire le fichier';
 }
