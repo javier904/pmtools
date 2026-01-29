@@ -154,6 +154,57 @@
 - [x] Fix voting mode lock (startVoting imposta status active)
 - [x] LimitReachedDialog aggiunto a tutti i tool
 
+### 18. Agile Process Manager - Funzionalita' Avanzate
+- [x] Sprint Review Enhancement (Scrum Guide 2020 compliant)
+  - [x] SprintReview model con attendees, story outcomes, decisions
+  - [x] ReviewAttendee, StoryReviewOutcome, ReviewDecision classes
+  - [x] sprint_review_history_widget.dart (400+ righe)
+  - [x] Dialog sprint review a 4 tab (Demo, Evaluation, Decisions, Summary)
+- [x] Kanban Advanced Features
+  - [x] Swimlanes (ClassOfService, Assignee, Priority, Tag, None)
+  - [x] Column Policies (Kanban Practice #4 - Make Policies Explicit)
+  - [x] Class of Service enum (standard, expedite, fixedDate, intangible)
+  - [x] SwimlaneType enum
+- [x] Audit Logging completo
+  - [x] agile_audit_service.dart (11 azioni: create/update/delete/move/estimate/assign/complete/start/close/invite/join/leave)
+  - [x] audit_log_model.dart (entity types: project/story/sprint/team/retrospective)
+  - [x] audit_log_viewer.dart (widget viewer)
+- [x] Methodology Guides localizzate
+  - [x] Scrum Guide (ruoli, eventi, artefatti, story points)
+  - [x] Kanban Guide (6 principi, board, WIP, metriche, cadenze, swimlanes, policies)
+  - [x] Hybrid/Scrumban Guide
+  - [x] Best practices e anti-patterns per framework
+  - [x] FAQ per framework
+- [x] Team Capacity Widget (dual-view)
+  - [x] Scrum Standard View: velocity, throughput, story points/sprint
+  - [x] Hours View: ore disponibili, assegnate, utilization %
+  - [x] Capacita' ore/giorno per membro
+  - [x] Date indisponibilita' (ferie/festivita')
+- [x] Skill Matrix Widget per team
+- [x] Google Sheets Export (5 fogli: Backlog, Sprint Planning, Team & Capacity, Retrospective, Metriche)
+- [x] Story status 'refinement' aggiunto al workflow (7 stati totali)
+- [x] Setup Checklist Widget per onboarding progetti
+- [x] Real-time online presence tracking per team members
+- [x] Burndown + Velocity charts
+- [x] Metrics Dashboard widget completo
+
+### 19. Retrospective Board - Funzionalita' Avanzate
+- [x] 6 template (Start/Stop/Continue, Mad/Sad/Glad, 4Ls, Sailboat, DAKI, Starfish)
+- [x] Sistema fasi guidate (setup, icebreaker, writing, voting, discuss, completed)
+- [x] Icebreakers (oneWord, weather, sentiment)
+- [x] Timer per fasi
+- [x] Retro Methodology Guide con coach tips
+- [x] Online presence real-time
+- [x] Voting system con maxVotesPerUser
+- [x] Guided column-by-column workflow
+
+### 20. Traduzioni Complete 4 Lingue
+- [x] 0 untranslated messages su IT, EN, FR, ES
+- [x] Traduzioni Agile Process (sprint review, swimlanes, policies, audit, methodology)
+- [x] Traduzioni Retrospective (template, fasi, icebreakers)
+- [x] Traduzioni Smart Todo (sorting, actions, audit)
+- [x] Traduzioni Estimation Room e Eisenhower
+
 ---
 
 ## Attivita' Pendenti
@@ -181,9 +232,10 @@
 
 ## Funzionalita' Future (PRIORITA' BASSA)
 
-- [ ] Implementare import attivita' da CSV
+- [ ] Implementare import attivita' da CSV (Agile Process)
 - [ ] Implementare import attivita' da testo (copia/incolla)
-- [ ] Implementare export risultati (CSV/PDF)
+- [ ] Implementare export risultati PDF
+- [x] ~~Implementare export Google Sheets~~ (completato per Agile Process - 5 fogli)
 - [ ] Aggiungere test automatici
 - [ ] Configurare Firestore Security Rules
 - [ ] Integrazione Slack/Teams

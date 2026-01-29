@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../models/sprint_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import 'story_card_widget.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Dialog per visualizzare i dettagli completi di una User Story
-class StoryDetailDialog extends StatelessWidget {
+class StoryDetailDialog extends StatefulWidget {
   final UserStoryModel story;
   final VoidCallback? onEdit;
   final void Function(StoryStatus)? onStatusChange;
   final void Function(int index, bool completed)? onCriterionToggle;
+  final void Function(String? email)? onAssigneeChange;
+  final List<String> teamMembers;
+  final List<SprintModel> sprints;
 
   const StoryDetailDialog({
     super.key,
@@ -19,6 +23,9 @@ class StoryDetailDialog extends StatelessWidget {
     this.onEdit,
     this.onStatusChange,
     this.onCriterionToggle,
+    this.onAssigneeChange,
+    this.teamMembers = const [],
+    this.sprints = const [],
   });
 
   static Future<void> show({
@@ -27,6 +34,9 @@ class StoryDetailDialog extends StatelessWidget {
     VoidCallback? onEdit,
     void Function(StoryStatus)? onStatusChange,
     void Function(int index, bool completed)? onCriterionToggle,
+    void Function(String? email)? onAssigneeChange,
+    List<String> teamMembers = const [],
+    List<SprintModel> sprints = const [],
   }) {
     return showDialog(
       context: context,
@@ -35,14 +45,64 @@ class StoryDetailDialog extends StatelessWidget {
         onEdit: onEdit,
         onStatusChange: onStatusChange,
         onCriterionToggle: onCriterionToggle,
+        onAssigneeChange: onAssigneeChange,
+        teamMembers: teamMembers,
+        sprints: sprints,
       ),
     );
   }
 
   @override
+  State<StoryDetailDialog> createState() => _StoryDetailDialogState();
+}
+
+class _StoryDetailDialogState extends State<StoryDetailDialog> {
+  late List<String> _acceptanceCriteria;
+
+  @override
+  void initState() {
+    super.initState();
+    _acceptanceCriteria = List<String>.from(widget.story.acceptanceCriteria);
+  }
+
+  bool _isCriterionCompleted(String criterion) {
+    return criterion.startsWith('[x]') ||
+        criterion.startsWith('[X]') ||
+        criterion.startsWith('✓');
+  }
+
+  String _cleanCriterionText(String criterion) {
+    return criterion.replaceAll(RegExp(r'^\[[xX]\]\s*|^✓\s*'), '');
+  }
+
+  void _toggleCriterion(int index, bool completed) {
+    final criterion = _acceptanceCriteria[index];
+    final cleanText = _cleanCriterionText(criterion);
+
+    setState(() {
+      if (completed) {
+        _acceptanceCriteria[index] = '[x] $cleanText';
+      } else {
+        _acceptanceCriteria[index] = cleanText;
+      }
+    });
+
+    widget.onCriterionToggle?.call(index, completed);
+  }
+
+  String? _resolveSprintName(String? sprintId) {
+    if (sprintId == null) return null;
+    final sprint = widget.sprints.where((s) => s.id == sprintId).firstOrNull;
+    return sprint?.name ?? sprintId;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+    final story = widget.story;
+
+    final completedCount = _acceptanceCriteria.where(_isCriterionCompleted).length;
+
     return AlertDialog(
       title: Row(
         children: [
@@ -68,12 +128,12 @@ class StoryDetailDialog extends StatelessWidget {
               style: const TextStyle(fontSize: 18),
             ),
           ),
-          if (onEdit != null)
+          if (widget.onEdit != null)
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
                 Navigator.pop(context);
-                onEdit?.call();
+                widget.onEdit?.call();
               },
               tooltip: l10n.actionEdit,
             ),
@@ -90,7 +150,7 @@ class StoryDetailDialog extends StatelessWidget {
               Row(
                 children: [
                   // Status
-                  if (onStatusChange != null)
+                  if (widget.onStatusChange != null)
                     PopupMenuButton<StoryStatus>(
                       initialValue: story.status,
                       child: Container(
@@ -128,7 +188,7 @@ class StoryDetailDialog extends StatelessWidget {
                         ),
                       ).toList(),
                       onSelected: (status) {
-                        onStatusChange?.call(status);
+                        widget.onStatusChange?.call(status);
                         Navigator.pop(context);
                       },
                     )
@@ -204,9 +264,9 @@ class StoryDetailDialog extends StatelessWidget {
               // Acceptance Criteria
               _buildSection(
                 context,
-                l10n.agileAcceptanceCriteriaCount(story.completedAcceptanceCriteria, story.acceptanceCriteria.length),
+                l10n.agileAcceptanceCriteriaCount(completedCount, _acceptanceCriteria.length),
                 Icons.checklist,
-                child: story.acceptanceCriteria.isEmpty
+                child: _acceptanceCriteria.isEmpty
                     ? Text(
                         l10n.agileNoAcceptanceCriteria,
                         style: TextStyle(
@@ -215,14 +275,11 @@ class StoryDetailDialog extends StatelessWidget {
                         ),
                       )
                     : Column(
-                        children: List.generate(story.acceptanceCriteria.length, (index) {
-                          final criterion = story.acceptanceCriteria[index];
-                          final isCompleted = criterion.startsWith('[x]') || 
-                                            criterion.startsWith('[X]') ||
-                                            criterion.startsWith('✓');
-                          
-                          final cleanText = criterion.replaceAll(RegExp(r'^\[[xX]\]\s*|^✓\s*'), '');
-                          
+                        children: List.generate(_acceptanceCriteria.length, (index) {
+                          final criterion = _acceptanceCriteria[index];
+                          final isCompleted = _isCriterionCompleted(criterion);
+                          final cleanText = _cleanCriterionText(criterion);
+
                           return CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(
@@ -233,16 +290,8 @@ class StoryDetailDialog extends StatelessWidget {
                               ),
                             ),
                             value: isCompleted,
-                            onChanged: onCriterionToggle != null 
-                              ? (value) {
-                                  // Non chiudiamo il dialog, ma notifichiamo il parent
-                                  // Il parent deve aggiornare lo stato e ricostruire il dialog se necessario
-                                  // O meglio, aggiornare il record nel DB
-                                  onCriterionToggle!(index, value ?? false);
-                                  // Per aggiornamento visuale immediato potremmo usare Stateful, 
-                                  // ma preferiamo che lo stato venga gestito dal parent/stream
-                                  Navigator.pop(context); // Temporaneo: chiudiamo per forzare refresh se parent non è reattivo live
-                                }
+                            onChanged: widget.onCriterionToggle != null
+                              ? (value) => _toggleCriterion(index, value ?? false)
                               : null,
                             controlAffinity: ListTileControlAffinity.leading,
                             dense: true,
@@ -310,10 +359,10 @@ class StoryDetailDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildInfoRow(context, l10n.agileBusinessValue, '${story.businessValue}/10'),
-                    if (story.assigneeEmail != null)
-                      _buildInfoRow(context, l10n.agileAssignee, story.assigneeEmail!),
+                    // Assignee - interactive if onAssigneeChange is provided
+                    _buildAssigneeRow(context, l10n),
                     if (story.sprintId != null)
-                      _buildInfoRow(context, l10n.agileSprintTitle, story.sprintId!),
+                      _buildInfoRow(context, l10n.agileSprintTitle, _resolveSprintName(story.sprintId) ?? story.sprintId!),
                     _buildInfoRow(context, l10n.agileCreatedAt, _formatDate(story.createdAt)),
                     if (story.startedAt != null)
                       _buildInfoRow(context, l10n.agileStartedAt, _formatDate(story.startedAt!)),
@@ -332,6 +381,120 @@ class StoryDetailDialog extends StatelessWidget {
           child: Text(l10n.actionClose),
         ),
       ],
+    );
+  }
+
+  Widget _buildAssigneeRow(BuildContext context, AppLocalizations l10n) {
+    final story = widget.story;
+
+    if (widget.onAssigneeChange != null && widget.teamMembers.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          children: [
+            Text(
+              '${l10n.agileAssignee}: ',
+              style: TextStyle(color: context.textSecondaryColor),
+            ),
+            InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () => _showAssigneePicker(context, l10n),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: story.assigneeEmail != null
+                      ? AppColors.primary.withOpacity(0.1)
+                      : context.surfaceVariantColor,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      story.assigneeEmail != null ? Icons.person : Icons.person_add,
+                      size: 16,
+                      color: story.assigneeEmail != null ? AppColors.primary : context.textSecondaryColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      story.assigneeEmail ?? l10n.agileNoAssignee,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: story.assigneeEmail != null ? null : context.textSecondaryColor,
+                        fontStyle: story.assigneeEmail == null ? FontStyle.italic : null,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(Icons.arrow_drop_down, size: 16, color: context.textSecondaryColor),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Read-only display (no onAssigneeChange or no team members)
+    if (story.assigneeEmail != null) {
+      return _buildInfoRow(context, l10n.agileAssignee, story.assigneeEmail!);
+    }
+    return const SizedBox.shrink();
+  }
+
+  void _showAssigneePicker(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(l10n.agileAssignee),
+        children: [
+          // Option to unassign
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              widget.onAssigneeChange?.call(null);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.person_off, color: context.textSecondaryColor),
+                const SizedBox(width: 12),
+                Text(
+                  l10n.agileNoAssignee,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: context.textSecondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          // Team members
+          ...widget.teamMembers.map((email) => SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              widget.onAssigneeChange?.call(email);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  email == widget.story.assigneeEmail ? Icons.check_circle : Icons.person,
+                  color: email == widget.story.assigneeEmail ? AppColors.primary : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    email,
+                    style: TextStyle(
+                      fontWeight: email == widget.story.assigneeEmail ? FontWeight.bold : null,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
     );
   }
 

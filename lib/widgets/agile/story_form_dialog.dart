@@ -361,41 +361,6 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             ),
           ],
           const SizedBox(height: 16),
-
-          // Preview
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.agilePreview,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _buildDescription().isNotEmpty
-                      ? _buildDescription()
-                      : l10n.agileEmptyDescription,
-                  style: TextStyle(
-                    fontStyle: _buildDescription().isEmpty
-                        ? FontStyle.italic
-                        : FontStyle.normal,
-                    color: _buildDescription().isEmpty ? context.textMutedColor : null,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

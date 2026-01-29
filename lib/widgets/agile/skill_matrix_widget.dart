@@ -3,6 +3,8 @@ import '../../models/team_member_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 
+import 'package:agile_tools/l10n/app_localizations.dart';
+
 /// Widget per visualizzare la matrice competenze del team
 class SkillMatrixWidget extends StatelessWidget {
   final List<TeamMemberModel> teamMembers;
@@ -42,12 +44,17 @@ class SkillMatrixWidget extends StatelessWidget {
               children: [
                 Icon(Icons.grid_view, color: AppColors.primary),
                 SizedBox(width: 8),
-                Text(
-                  'Matrice Competenze',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return Text(
+                      l10n.agileSkillMatrixTitle,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    );
+                  }
                 ),
               ],
-            ),
+             ),
             const SizedBox(height: 16),
 
             // Matrix
@@ -130,7 +137,7 @@ class SkillMatrixWidget extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Stats
-            _buildSkillStats(skillsList),
+            _buildSkillStats(context, skillsList),
           ],
         ),
       ),
@@ -138,21 +145,24 @@ class SkillMatrixWidget extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return Card(
+     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Builder(
-          builder: (context) => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.group, size: 48, color: context.textMutedColor),
-              const SizedBox(height: 16),
-              Text(
-                'Nessun membro nel team',
-                style: TextStyle(color: context.textSecondaryColor),
-              ),
-            ],
-          ),
+          builder: (context) {
+            final l10n = AppLocalizations.of(context)!;
+             return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.group, size: 48, color: context.textMutedColor),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.agileNoMembers,
+                  style: TextStyle(color: context.textSecondaryColor),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -163,28 +173,32 @@ class SkillMatrixWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Builder(
-          builder: (context) => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.school, size: 48, color: context.textMutedColor),
-              const SizedBox(height: 16),
-              Text(
-                'Nessuna competenza definita',
-                style: TextStyle(color: context.textSecondaryColor),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Aggiungi competenze ai membri del team',
-                style: TextStyle(fontSize: 12, color: context.textTertiaryColor),
-              ),
-            ],
-          ),
+          builder: (context) {
+            final l10n = AppLocalizations.of(context)!;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.school, size: 48, color: context.textMutedColor),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.agileNoSkillsDefined,
+                  style: TextStyle(color: context.textSecondaryColor),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.agileAddSkillsHint,
+                  style: TextStyle(fontSize: 12, color: context.textTertiaryColor),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildSkillStats(List<String> skillsList) {
+  Widget _buildSkillStats(BuildContext context, List<String> skillsList) {
+    final l10n = AppLocalizations.of(context)!;
     // Calcola copertura per ogni skill
     final skillCoverage = <String, int>{};
     for (final skill in skillsList) {
@@ -254,8 +268,8 @@ class SkillMatrixWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Competenze critiche',
+                      Text(
+                        l10n.agileCriticalSkills,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.orange,
@@ -263,7 +277,7 @@ class SkillMatrixWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Solo 1 persona copre: ${criticalSkills.join(", ")}',
+                        l10n.agileCriticalSkillsWarning(criticalSkills.join(", ")),
                         style: const TextStyle(fontSize: 12),
                       ),
                     ],
@@ -295,18 +309,19 @@ class MemberSkillsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Builder(
       builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Competenze',
+          Text(
+            l10n.agileSkills,
             style: TextStyle(fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
           if (member.skills.isEmpty)
             Text(
-              'Nessuna competenza',
+              l10n.agileNoSkills,
               style: TextStyle(
                 fontStyle: FontStyle.italic,
                 color: context.textSecondaryColor,
@@ -337,6 +352,7 @@ class MemberSkillsWidget extends StatelessWidget {
   }
 
   Widget _buildAddSkillButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final availableSkills = (allTeamSkills ?? [])
         .where((s) => !member.skills.contains(s))
         .toList();
@@ -354,7 +370,7 @@ class MemberSkillsWidget extends StatelessWidget {
             Icon(Icons.add, size: 16, color: AppColors.primary),
             const SizedBox(width: 4),
             Text(
-              'Aggiungi competenza',
+              l10n.agileAddSkill,
               style: TextStyle(fontSize: 12, color: AppColors.primary),
             ),
           ],
@@ -363,9 +379,9 @@ class MemberSkillsWidget extends StatelessWidget {
       itemBuilder: (context) {
         if (availableSkills.isEmpty) {
           return [
-            const PopupMenuItem(
+            PopupMenuItem(
               enabled: false,
-              child: Text('Nessuna skill disponibile'),
+              child: Text(l10n.agileNoSkillsAvailable),
             ),
             PopupMenuItem(
               value: '__new__',
@@ -373,7 +389,7 @@ class MemberSkillsWidget extends StatelessWidget {
                 children: [
                   const Icon(Icons.add, size: 16),
                   const SizedBox(width: 8),
-                  const Text('Nuova competenza...'),
+                  Text(l10n.agileNewSkill),
                 ],
               ),
             ),
@@ -391,7 +407,7 @@ class MemberSkillsWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.add, size: 16),
                 const SizedBox(width: 8),
-                const Text('Nuova competenza...'),
+                Text(l10n.agileNewSkill),
               ],
             ),
           ),
@@ -411,16 +427,17 @@ class MemberSkillsWidget extends StatelessWidget {
   }
 
   Future<String?> _showNewSkillDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Nuova Competenza'),
+        title: Text(l10n.agileNewSkillDialogTitle),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nome competenza',
-            hintText: 'Es: Flutter, Python, AWS...',
+          decoration: InputDecoration(
+            labelText: l10n.agileNewSkillName,
+            hintText: l10n.agileNewSkillHint,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.words,
@@ -428,11 +445,11 @@ class MemberSkillsWidget extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Aggiungi'),
+            child: Text(l10n.actionAdd),
           ),
         ],
       ),
@@ -460,6 +477,8 @@ class SkillRadarWidget extends StatelessWidget {
     final skills = skillCoverage.keys.toList();
     final maxCoverage = teamSize > 0 ? teamSize : 1;
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -471,7 +490,7 @@ class SkillRadarWidget extends StatelessWidget {
                 Icon(Icons.radar, color: AppColors.primary),
                 SizedBox(width: 8),
                 Text(
-                  'Copertura Competenze',
+                  l10n.agileSkillCoverage,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],

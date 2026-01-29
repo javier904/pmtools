@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../models/sprint_model.dart';
 import '../../models/framework_features.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
@@ -21,10 +22,13 @@ class KanbanBoardWidget extends StatefulWidget {
   final void Function(String columnId, int? newLimit)? onWipLimitChange;
   final void Function(String columnId, List<String> policies)? onPoliciesChange;
   final void Function(SwimlaneType)? onSwimlaneChange;
+  final void Function(UserStoryModel story, String? email)? onAssigneeChange;
   final SwimlaneType swimlaneType;
   final bool canEdit;
   final bool showWipConfig;
   final bool showPolicies;
+  final List<String> teamMembers;
+  final List<SprintModel> sprints;
 
   const KanbanBoardWidget({
     super.key,
@@ -36,10 +40,13 @@ class KanbanBoardWidget extends StatefulWidget {
     this.onWipLimitChange,
     this.onPoliciesChange,
     this.onSwimlaneChange,
+    this.onAssigneeChange,
     this.swimlaneType = SwimlaneType.none,
     this.canEdit = true,
     this.showWipConfig = false,
     this.showPolicies = true,
+    this.teamMembers = const [],
+    this.sprints = const [],
   });
 
   @override
@@ -1101,6 +1108,45 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                 const SizedBox(height: 8),
               ],
 
+              // Sprint name badge
+              if (story.sprintId != null) ...[
+                Builder(builder: (context) {
+                  final sprint = widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
+                  if (sprint == null) return const SizedBox.shrink();
+                  final isCompleted = sprint.status == SprintStatus.completed;
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: (isCompleted ? Colors.green : Colors.blue).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: (isCompleted ? Colors.green : Colors.blue).withValues(alpha: 0.25),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isCompleted ? Icons.check_circle : Icons.flag,
+                          size: 10,
+                          color: isCompleted ? Colors.green : Colors.blue,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          sprint.name,
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w500,
+                            color: isCompleted ? Colors.green : Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                const SizedBox(height: 8),
+              ],
+
               // Footer
               Row(
                 children: [
@@ -1140,21 +1186,103 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                     ),
                   ],
                   const Spacer(),
-                  // Assignee
-                  if (story.assigneeEmail != null)
-                    CircleAvatar(
-                      radius: 10,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-                      child: Text(
-                        story.assigneeEmail![0].toUpperCase(),
-                        style: const TextStyle(fontSize: 8, color: AppColors.primary),
-                      ),
-                    ),
+                  // Assignee (clickable)
+                  _buildAssigneeAvatar(story),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAssigneeAvatar(UserStoryModel story) {
+    final hasAssignee = story.assigneeEmail != null;
+    final canAssign = widget.onAssigneeChange != null && widget.teamMembers.isNotEmpty;
+
+    final avatar = Tooltip(
+      message: hasAssignee ? story.assigneeEmail! : '',
+      child: CircleAvatar(
+        radius: 10,
+        backgroundColor: hasAssignee
+            ? AppColors.primary.withValues(alpha: 0.2)
+            : context.surfaceVariantColor,
+        child: hasAssignee
+            ? Text(
+                story.assigneeEmail![0].toUpperCase(),
+                style: const TextStyle(fontSize: 8, color: AppColors.primary),
+              )
+            : Icon(
+                Icons.person_add,
+                size: 11,
+                color: context.textSecondaryColor,
+              ),
+      ),
+    );
+
+    if (!canAssign) {
+      return hasAssignee ? avatar : const SizedBox.shrink();
+    }
+
+    return GestureDetector(
+      onTap: () => _showQuickAssignDialog(story),
+      child: avatar,
+    );
+  }
+
+  void _showQuickAssignDialog(UserStoryModel story) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(l10n.agileAssignee),
+        children: [
+          // Unassign option
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              widget.onAssigneeChange?.call(story, null);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.person_off, color: context.textSecondaryColor),
+                const SizedBox(width: 12),
+                Text(
+                  l10n.agileNoAssignee,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: context.textSecondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          ...widget.teamMembers.map((email) => SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              widget.onAssigneeChange?.call(story, email);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  email == story.assigneeEmail ? Icons.check_circle : Icons.person,
+                  color: email == story.assigneeEmail ? AppColors.primary : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    email,
+                    style: TextStyle(
+                      fontWeight: email == story.assigneeEmail ? FontWeight.bold : null,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
       ),
     );
   }

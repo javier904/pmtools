@@ -31,23 +31,20 @@ class MetricsDashboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header con info framework
-          _buildFrameworkHeader(context),
-          const SizedBox(height: 16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header con info framework
+        _buildFrameworkHeader(context),
+        const SizedBox(height: 16),
 
-          // Summary cards row (differenti per framework)
-          _buildSummaryRow(context),
-          const SizedBox(height: 24),
+        // Summary cards row (differenti per framework)
+        _buildSummaryRow(context),
+        const SizedBox(height: 24),
 
-          // Metriche specifiche per framework
-          ..._buildFrameworkSpecificMetrics(context),
-        ],
-      ),
+        // Metriche specifiche per framework
+        ..._buildFrameworkSpecificMetrics(context),
+      ],
     );
   }
 
@@ -223,11 +220,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileStatsCompleted,
             '$completedSprints',
-            '${sprints.length} totali',
+            l10n.agileStatsTotalCount(sprints.length),
             Icons.flag,
             Colors.blue,
-            tooltip: 'Numero di sprint con status "Completato".\n'
-                'Clicca "Completa Sprint" per finalizzare uno sprint attivo.',
+            tooltip: l10n.agileStatsCompletedTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -235,12 +231,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileAverageVelocity,
             avgVelocity.toStringAsFixed(1),
-            'pts/sprint',
+            l10n.agileStatsPtsPerSprint,
             Icons.speed,
             Colors.purple,
-            tooltip: 'Media degli Story Points completati per sprint.\n'
-                'Calcolata dagli sprint completati che hanno stories in stato "Done".\n'
-                'Più alta = team più produttivo.',
+            tooltip: l10n.agileAverageVelocityTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -248,12 +242,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             '${l10n.agileStatsStories} ${l10n.agileStatsCompleted}',
             '$completedStories',
-            '$totalStories totali',
+            l10n.agileStatsTotalCount(totalStories),
             Icons.check_circle,
             Colors.green,
-            tooltip: 'Numero di User Stories con status "Done".\n'
-                'Per incrementare questo valore, sposta le stories '
-                'nella colonna "Done" della Kanban Board.',
+            tooltip: l10n.agileStatsStoriesCompletedTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -261,11 +253,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileStatsPoints,
             '${_getTotalCompletedPoints()}',
-            '${_getTotalPlannedPoints()} pianificati',
+            l10n.agileStatsPlannedCount(_getTotalPlannedPoints()),
             Icons.stars,
             Colors.orange,
-            tooltip: 'Somma degli Story Points delle stories completate.\n'
-                '"Pianificati" include tutte le stories stimate nel backlog.',
+            tooltip: l10n.agileStatsPointsTooltip,
           ),
         ),
       ],
@@ -286,11 +277,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileItemsCompleted,
             '$completedItems',
-            '$totalItems totali',
+            l10n.agileStatsTotalCount(totalItems),
             Icons.done_all,
             Colors.green,
-            tooltip: 'Numero di Work Items con status "Done".\n'
-                'Sposta gli items nella colonna "Done" per completarli.',
+            tooltip: l10n.agileItemsCompletedTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -298,11 +288,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileInProgress,
             '$inProgressItems',
-            'work in progress',
+            l10n.agileStatsWorkInProgress,
             Icons.engineering,
             Colors.orange,
-            tooltip: 'Items attualmente in lavorazione (WIP).\n'
-                'Tieni questo numero basso per migliorare il flusso.',
+            tooltip: l10n.agileInProgressTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -313,9 +302,7 @@ class MetricsDashboardWidget extends StatelessWidget {
             l10n.timeDays,
             Icons.timer,
             Colors.blue,
-            tooltip: 'Tempo medio dall\'inizio lavoro al completamento.\n'
-                'Richiede items con date "Iniziato" e "Completato" valorizzate.\n'
-                'Più basso = team più efficiente.',
+            tooltip: l10n.agileCycleTimeTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -323,11 +310,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileThroughput,
             throughput > 0 ? throughput.toStringAsFixed(1) : '-',
-            'items/settimana',
+            l10n.agileStatsItemsPerWeek,
             Icons.trending_up,
             Colors.teal,
-            tooltip: 'Media items completati per settimana (ultime 4 settimane).\n'
-                'Indica la produttività del team nel tempo.',
+            tooltip: l10n.agileThroughputTooltip,
           ),
         ),
       ],
@@ -347,10 +333,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileSprintTitle,
             '$completedSprints',
-            '${sprints.length} totali',
+            l10n.agileStatsTotalCount(sprints.length),
             Icons.flag,
             Colors.purple,
-            tooltip: 'Sprint completati rispetto al totale.',
+            tooltip: l10n.agileHybridSprintTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -358,11 +344,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileMetricsVelocityTitle,
             avgVelocity.toStringAsFixed(1),
-            'pts/sprint',
+            l10n.agileStatsPtsPerSprint,
             Icons.speed,
             Colors.blue,
-            tooltip: 'Media Story Points completati per sprint.\n'
-                'Calcolata da sprint con stories in stato "Done".',
+            tooltip: l10n.agileAverageVelocityTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -373,8 +358,7 @@ class MetricsDashboardWidget extends StatelessWidget {
             l10n.timeDays,
             Icons.timer,
             Colors.green,
-            tooltip: 'Tempo medio dall\'inizio lavoro al completamento.\n'
-                'Richiede date "Iniziato" e "Completato" valorizzate.',
+            tooltip: l10n.agileCycleTimeTooltip,
           ),
         ),
         const SizedBox(width: 16),
@@ -382,11 +366,10 @@ class MetricsDashboardWidget extends StatelessWidget {
           child: _buildSummaryCard(
             l10n.agileStatsCompleted,
             '$completedStories',
-            '${stories.length} totali',
+             l10n.agileStatsTotalCount(stories.length),
             Icons.check_circle,
             Colors.orange,
-            tooltip: 'Items con status "Done" rispetto al totale.\n'
-                'Sposta items nella colonna "Done" per completarli.',
+            tooltip: l10n.agileHybridCompletedTooltip,
           ),
         ),
       ],
@@ -811,11 +794,10 @@ class LeadTimeWidget extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildTimeMetric('Media', avgLeadTime.toStringAsFixed(1), Colors.indigo),
-                _buildTimeMetric('Min', '$minLeadTime', Colors.green),
-                _buildTimeMetric('Max', '$maxLeadTime', Colors.red),
+                _buildTimeMetric('Media', avgLeadTime.toStringAsFixed(1), l10n.timeDays, Colors.indigo),
+                _buildTimeMetric('Min', '$minLeadTime', l10n.timeDays, Colors.green),
+                _buildTimeMetric('Max', '$maxLeadTime', l10n.timeDays, Colors.red),
               ],
             ),
             const SizedBox(height: 16),
@@ -833,11 +815,11 @@ class LeadTimeWidget extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildPercentileBar('50%', p50, maxLeadTime, Colors.green),
+                  child: _buildPercentileBar('50%', p50, maxLeadTime, Colors.green, l10n.timeDays),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _buildPercentileBar('85%', p85, maxLeadTime, Colors.orange),
+                  child: _buildPercentileBar('85%', p85, maxLeadTime, Colors.orange, l10n.timeDays),
                 ),
               ],
             ),
@@ -852,7 +834,7 @@ class LeadTimeWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeMetric(String label, String value, Color color) {
+  Widget _buildTimeMetric(String label, String value, String unit, Color color) {
     return Column(
       children: [
         Text(
@@ -876,7 +858,7 @@ class LeadTimeWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'gg',
+                unit,
                 style: TextStyle(fontSize: 11, color: Colors.grey[600]),
               ),
             ),
@@ -886,7 +868,7 @@ class LeadTimeWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPercentileBar(String label, int value, int max, Color color) {
+  Widget _buildPercentileBar(String label, int value, int max, Color color, String unit) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -894,7 +876,7 @@ class LeadTimeWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-            Text('$value gg', style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+            Text('$value $unit', style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 4),
@@ -995,7 +977,7 @@ class ThroughputWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${avgThroughput.toStringAsFixed(1)}/sett',
+                    '${avgThroughput.toStringAsFixed(1)}${l10n.agilePerWeekSuffix}',
                     style: const TextStyle(
                       color: Colors.teal,
                       fontWeight: FontWeight.bold,
@@ -1389,14 +1371,14 @@ class CycleTimeWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildTimeMetric('Media', avgCycleTime.toStringAsFixed(1), Colors.blue),
-                _buildTimeMetric('Min', '$minCycleTime', Colors.green),
-                _buildTimeMetric('Max', '$maxCycleTime', Colors.red),
+                _buildTimeMetric('Media', avgCycleTime.toStringAsFixed(1), l10n.timeDays, Colors.blue),
+                _buildTimeMetric('Min', '$minCycleTime', l10n.timeDays, Colors.green),
+                _buildTimeMetric('Max', '$maxCycleTime', l10n.timeDays, Colors.red),
               ],
             ),
             const SizedBox(height: 16),
             Text(
-              'Basato su ${completedStories.length} items completati',
+              l10n.agileBasedOnCompletedItems(completedStories.length),
               style: TextStyle(fontSize: 11, color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
@@ -1406,7 +1388,7 @@ class CycleTimeWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeMetric(String label, String value, Color color) {
+  Widget _buildTimeMetric(String label, String value, String unit, Color color) {
     return Column(
       children: [
         Text(
@@ -1430,7 +1412,7 @@ class CycleTimeWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'gg',
+                unit,
                 style: TextStyle(fontSize: 11, color: Colors.grey[600]),
               ),
             ),
@@ -1645,7 +1627,7 @@ class MetricsQuickViewWidget extends StatelessWidget {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: _buildQuickMetrics(),
+                children: _buildQuickMetrics(l10n),
               ),
             ],
           ),
@@ -1654,7 +1636,7 @@ class MetricsQuickViewWidget extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildQuickMetrics() {
+  List<Widget> _buildQuickMetrics(AppLocalizations l10n) {
     if (framework == AgileFramework.kanban) {
       // Kanban: Cycle Time, Throughput, WIP
       final avgCycleTime = _calculateAverageCycleTime();
@@ -1662,9 +1644,9 @@ class MetricsQuickViewWidget extends StatelessWidget {
       final throughput = _calculateWeeklyThroughput();
 
       return [
-        _buildMetricColumn('Cycle Time', avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-', 'gg', Colors.blue),
-        _buildMetricColumn('In Progress', '$inProgress', 'items', Colors.orange),
-        _buildMetricColumn('Throughput', throughput > 0 ? throughput.toStringAsFixed(1) : '-', '/sett', Colors.teal),
+        _buildMetricColumn('Cycle Time', avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-', l10n.timeDays, Colors.blue),
+        _buildMetricColumn('In Progress', '$inProgress', l10n.agileItems, Colors.orange),
+        _buildMetricColumn('Throughput', throughput > 0 ? throughput.toStringAsFixed(1) : '-', l10n.agilePerWeekSuffix, Colors.teal),
       ];
     } else if (framework == AgileFramework.scrum) {
       // Scrum: Velocity, Completion, Sprint days remaining
@@ -1673,10 +1655,10 @@ class MetricsQuickViewWidget extends StatelessWidget {
       final activeSprint = sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
 
       return [
-        _buildMetricColumn('Velocity', avgVelocity.toStringAsFixed(1), 'pts', Colors.purple),
+        _buildMetricColumn('Velocity', avgVelocity.toStringAsFixed(1), l10n.agilePoints, Colors.purple),
         _buildMetricColumn('Completamento', '${(completionRate * 100).round()}', '%', Colors.green),
         if (activeSprint != null)
-          _buildMetricColumn('Sprint', '${activeSprint.daysRemaining}', 'gg', Colors.blue),
+          _buildMetricColumn('Sprint', '${activeSprint.daysRemaining}', l10n.timeDays, Colors.blue),
       ];
     } else {
       // Hybrid: mix of both
@@ -1685,8 +1667,8 @@ class MetricsQuickViewWidget extends StatelessWidget {
       final completionRate = _calculateCompletionRate();
 
       return [
-        _buildMetricColumn('Velocity', avgVelocity.toStringAsFixed(1), 'pts', Colors.purple),
-        _buildMetricColumn('Cycle', avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-', 'gg', Colors.blue),
+        _buildMetricColumn('Velocity', avgVelocity.toStringAsFixed(1), l10n.agilePoints, Colors.purple),
+        _buildMetricColumn('Cycle', avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-', l10n.timeDays, Colors.blue),
         _buildMetricColumn('Done', '${(completionRate * 100).round()}', '%', Colors.green),
       ];
     }

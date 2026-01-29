@@ -2001,17 +2001,158 @@ class AppLocalizationsEn extends AppLocalizations {
   String get participants => 'Participants';
 
   @override
-  String get agileStoryDetailTitle => 'Story Details';
-
-  @override
-  String get agileStoryPoints => 'Story Points';
-
-  @override
   String get agileAcceptanceCriteria => 'Acceptance Criteria';
 
   @override
   String agileAcceptanceCriteriaCount(int completed, int total) {
     return '$completed of $total items';
+  }
+
+  @override
+  String get agileEstimateRequired => 'Estimate required (click to estimate)';
+
+  @override
+  String get agileNoActiveSprint => 'No Active Sprint';
+
+  @override
+  String get agileKanbanBoardHint =>
+      'The Kanban Board shows stories from the active sprint.\nTo view stories:';
+
+  @override
+  String get agileStartSprintFromTab => 'Start a sprint from the Sprint tab';
+
+  @override
+  String get agileDisableFilterHint =>
+      'Or disable the filter to see all stories';
+
+  @override
+  String get agileShowAllStories => 'Show all stories';
+
+  @override
+  String get agileFilterActiveSprint => 'Active Sprint Filter: ';
+
+  @override
+  String get agileFilterActive => 'Active';
+
+  @override
+  String get agileFilterAll => 'All';
+
+  @override
+  String get agileActionInvite => 'Invite';
+
+  @override
+  String agileTeamTitle(int count) {
+    return 'Team ($count)';
+  }
+
+  @override
+  String get agileNoMembers => 'No members in team';
+
+  @override
+  String get agileYouBadge => 'You';
+
+  @override
+  String agileStatsPlannedCount(int count) {
+    return '$count planned';
+  }
+
+  @override
+  String agileStatsTotalCount(int count) {
+    return '$count total';
+  }
+
+  @override
+  String get agileStatsPtsPerSprint => 'pts/sprint';
+
+  @override
+  String get agileStatsWorkInProgress => 'work in progress';
+
+  @override
+  String get agileStatsItemsPerWeek => 'items/week';
+
+  @override
+  String get agileStatsCompletedTooltip =>
+      'Number of sprints with \'Completed\' status.\nClick \'Complete Sprint\' to finalize an active sprint.';
+
+  @override
+  String get agileAverageVelocityTooltip =>
+      'Average Story Points completed per sprint.\nCalculated from completed sprints with \'Done\' stories.\nHigher = more productive team.';
+
+  @override
+  String get agileStatsStoriesCompletedTooltip =>
+      'Number of User Stories with \'Done\' status.\nTo increase this value, move stories to the \'Done\' column on the Kanban Board.';
+
+  @override
+  String get agileStatsPointsTooltip =>
+      'Sum of Story Points of completed stories.\n\'Planned\' includes all estimated stories in the backlog.';
+
+  @override
+  String get agileItemsCompletedTooltip =>
+      'Number of Work Items with \'Done\' status.\nMove items to the \'Done\' column to complete them.';
+
+  @override
+  String get agileInProgressTooltip =>
+      'Items currently in progress (WIP).\nKeep this number low to improve flow.';
+
+  @override
+  String get agileCycleTimeTooltip =>
+      'Average time from start of work to completion.\nRequires items with \'Started\' and \'Completed\' dates.\nLower = more efficient team.';
+
+  @override
+  String get agileThroughputTooltip =>
+      'Average items completed per week (last 4 weeks).\nIndicates team productivity over time.';
+
+  @override
+  String get agileHybridSprintTooltip => 'Completed sprints vs total.';
+
+  @override
+  String get agileHybridCompletedTooltip =>
+      'Items with \'Done\' status vs total.\nMove items to \'Done\' column to complete them.';
+
+  @override
+  String get agileAddSkillsHint => 'Add skills to team members';
+
+  @override
+  String get agileSkillMatrixTitle => 'Skill Matrix';
+
+  @override
+  String get agileCriticalSkills => 'Critical Skills';
+
+  @override
+  String agileCriticalSkillsWarning(String skills) {
+    return 'Only 1 person covers: $skills';
+  }
+
+  @override
+  String get agileSkills => 'Skills';
+
+  @override
+  String get agileNoSkills => 'No skills';
+
+  @override
+  String get agileAddSkill => 'Add skill';
+
+  @override
+  String get agileNewSkill => 'New skill...';
+
+  @override
+  String get agileNewSkillDialogTitle => 'New Skill';
+
+  @override
+  String get agileNewSkillName => 'Skill name';
+
+  @override
+  String get agileNewSkillHint => 'Ex: Flutter, Python, AWS...';
+
+  @override
+  String get agileSkillCoverage => 'Skill Coverage';
+
+  @override
+  String get agileNoSkillsAvailable => 'No skills available';
+
+  @override
+  String agileBasedOnCompletedItems(int count) {
+    return 'Based on $count completed items';
   }
 
   @override
@@ -2045,6 +2186,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileAssignee => 'Assignee';
+
+  @override
+  String get agileNoAssignee => 'Unassigned';
 
   @override
   String get agileCreatedBy => 'Created by';
@@ -4388,9 +4532,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileEstimated => 'Estimated';
 
   @override
-  String get agileEstimateRequired => 'Estimate required (click to estimate)';
-
-  @override
   String get agilePoints => 'pts';
 
   @override
@@ -5061,7 +5202,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get landingRetroSubtitle =>
-      'Real-time collaborative tools: timers, anonymous voting, action items, and AI reports.';
+      'Real-time collaborative tools: timers, anonymous voting, action items.';
 
   @override
   String get landingRetroActionTitle => 'Action Items Tracking';
@@ -9476,6 +9617,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileDaysRemainingSuffix => 'days remaining';
 
   @override
+  String get agileItems => 'items';
+
+  @override
+  String get agilePerWeekSuffix => '/week';
+
+  @override
   String get average => 'Average';
 
   @override
@@ -9796,4 +9943,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eisenhowerImportErrorReadFile => 'Unable to read file';
+
+  @override
+  String get agileSprintHealthTitle => 'Sprint Health';
+
+  @override
+  String get agileSprintHealthNoSprint => 'No active sprint';
+
+  @override
+  String get agileSprintHealthNoSprintDesc =>
+      'Start a sprint to see health metrics';
+
+  @override
+  String get agileSprintHealthGoal => 'Sprint Goal';
+
+  @override
+  String get agileSprintHealthOnTrack => 'On Track';
+
+  @override
+  String get agileSprintHealthAtRisk => 'At Risk';
+
+  @override
+  String get agileSprintHealthOffTrack => 'Off Track';
+
+  @override
+  String get agileSprintHealthTime => 'Time';
+
+  @override
+  String get agileSprintHealthWork => 'Work';
+
+  @override
+  String get agileSprintHealthDaysLeft => 'days left';
+
+  @override
+  String get agileSprintHealthSpRemaining => 'SP remaining';
+
+  @override
+  String get agileSprintHealthStoriesDone => 'Stories Done';
+
+  @override
+  String get agileSprintHealthCommitment => 'Commitment';
+
+  @override
+  String get agileSprintHealthDailyVelocity => 'Daily Velocity';
+
+  @override
+  String get agileSprintHealthPrediction => 'Prediction';
+
+  @override
+  String get agileSprintHealthOnTime => 'On time';
+
+  @override
+  String get agileSprintHealthStoriesBreakdown => 'Stories Breakdown';
+
+  @override
+  String get agileSprintBurndownTitle => 'Sprint Burndown';
+
+  @override
+  String get agileSprintBurndownNoData => 'No burndown data';
+
+  @override
+  String get agileSprintBurndownNoDataDesc =>
+      'Assign stories to the sprint to see the burndown';
+
+  @override
+  String get agileWorkloadTitle => 'Team Workload';
+
+  @override
+  String get agileWorkloadBalanced => 'Balanced';
+
+  @override
+  String get agileWorkloadUnbalanced => 'Unbalanced';
+
+  @override
+  String get agileWorkloadTotalStories => 'Total Stories';
+
+  @override
+  String get agileWorkloadAssigned => 'Assigned';
+
+  @override
+  String get agileWorkloadAvgSp => 'Avg SP/Person';
+
+  @override
+  String get agileWorkloadStories => 'stories';
+
+  @override
+  String get agileWorkloadInProgress => 'in progress';
+
+  @override
+  String get agileWorkloadUnassigned => 'Unassigned';
+
+  @override
+  String get agileWorkloadUnassignedWarning => 'stories without assignee';
+
+  @override
+  String get agileWorkloadNoStories => 'No stories to analyze';
+
+  @override
+  String get agileWorkloadNoStoriesDesc =>
+      'Create stories and assign them to team members';
+
+  @override
+  String get agileWorkloadOverloaded => 'Overloaded';
 }

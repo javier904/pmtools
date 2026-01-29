@@ -4071,6 +4071,7 @@
   },
   "agileInformation": "Información",
   "agileAssignee": "Asignado a",
+  "agileNoAssignee": "Sin asignar",
   "agileCreatedBy": "Creado por",
   "agileCreatedAt": "Creado el",
   "agileStartedAt": "Iniciado el",

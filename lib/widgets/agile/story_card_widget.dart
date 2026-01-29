@@ -4,7 +4,7 @@ import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../common/avatar_widget.dart';
 import '../../themes/app_colors.dart';
-import '../common/avatar_widget.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Card per visualizzare una User Story
 ///
@@ -48,6 +48,7 @@ class StoryCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 1,
       margin: EdgeInsets.zero,
@@ -115,6 +116,7 @@ class StoryCardWidget extends StatelessWidget {
   }
 
   Widget _buildFullContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -349,7 +351,7 @@ class StoryCardWidget extends StatelessWidget {
                       Text(
                         story.isEstimated 
                           ? (story.storyPoints != null ? '${story.storyPoints} pts' : 'Stimata')
-                          : 'Stima richiesta (click per stimare)',
+                          : l10n.agileEstimateRequired,
                         style: TextStyle(
                           fontSize: 11,
                           color: story.isEstimated ? Colors.green : context.textMutedColor,

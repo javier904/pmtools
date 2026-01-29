@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/team_member_model.dart';
 import '../../models/agile_enums.dart';
 import '../common/avatar_widget.dart';
@@ -31,6 +32,7 @@ class TeamListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final members = participants.values.toList()
       ..sort((a, b) {
         // Ordina per ruolo (owner prima, poi admin, poi member, poi viewer)
@@ -50,7 +52,7 @@ class TeamListWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Team (${members.length})',
+                l10n.agileTeamTitle(members.length),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -60,7 +62,7 @@ class TeamListWidget extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: onInvite,
                   icon: const Icon(Icons.person_add, size: 18),
-                  label: const Text('Invita'),
+                  label: Text(l10n.agileActionInvite),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,
@@ -73,12 +75,12 @@ class TeamListWidget extends StatelessWidget {
 
         // Lista membri
         if (members.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(32),
+          Padding(
+            padding: const EdgeInsets.all(32),
             child: Center(
               child: Text(
-                'Nessun membro nel team',
-                style: TextStyle(color: Colors.grey),
+                l10n.agileNoMembers,
+                style: const TextStyle(color: Colors.grey),
               ),
             ),
           )
@@ -97,6 +99,7 @@ class TeamListWidget extends StatelessWidget {
   }
 
   Widget _buildMemberTile(BuildContext context, TeamMemberModel member) {
+    final l10n = AppLocalizations.of(context)!;
     final isCurrentUser = member.email.toLowerCase() == currentUserEmail.toLowerCase();
     final canEdit = isOwnerOrAdmin && !isCurrentUser;
     final canRemove = isOwnerOrAdmin && !isCurrentUser && member.role != AgileParticipantRole.owner;
@@ -145,9 +148,9 @@ class TeamListWidget extends StatelessWidget {
                   color: Colors.blue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'Tu',
-                  style: TextStyle(fontSize: 10, color: Colors.blue),
+                child: Text(
+                  l10n.agileYouBadge,
+                  style: const TextStyle(fontSize: 10, color: Colors.blue),
                 ),
               ),
             ],

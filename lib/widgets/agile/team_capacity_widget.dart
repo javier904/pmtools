@@ -4,6 +4,7 @@ import '../../models/team_member_model.dart';
 import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../themes/app_theme.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Enum per le due modalità di visualizzazione
@@ -94,7 +95,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
         // Toggle button
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: context.surfaceVariantColor,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -246,20 +247,20 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
+            color: Colors.blue.withValues(alpha: context.isDarkMode ? 0.15 : 0.08),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.blue.shade100),
+            border: Border.all(color: Colors.blue.withValues(alpha: context.isDarkMode ? 0.3 : 0.2)),
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
+              Icon(Icons.info_outline, color: context.isDarkMode ? Colors.blue.shade300 : Colors.blue.shade700, size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   l10n.agileScrumGuideNote,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.blue.shade700,
+                    color: context.isDarkMode ? Colors.blue.shade300 : Colors.blue.shade700,
                   ),
                 ),
               ),
@@ -320,27 +321,26 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
     final minSuggested = (avgVelocity - stdDev).clamp(0, double.infinity);
     final maxSuggested = avgVelocity + stdDev;
 
+    final isDark = context.isDarkMode;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.indigo.shade50, Colors.purple.shade50],
-        ),
+        color: Colors.indigo.withValues(alpha: isDark ? 0.15 : 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.indigo.shade100),
+        border: Border.all(color: Colors.indigo.withValues(alpha: isDark ? 0.3 : 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: Colors.indigo.shade700),
+              Icon(Icons.lightbulb_outline, color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700),
               const SizedBox(width: 8),
               Text(
                 l10n.agileSuggestedCapacity,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.indigo.shade700,
+                  color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
                 ),
               ),
             ],
@@ -355,7 +355,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.indigo.shade700,
+                    color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -363,7 +363,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
                   'Story Points',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.indigo.shade500,
+                    color: isDark ? Colors.indigo.shade400 : Colors.indigo.shade500,
                   ),
                 ),
               ],
@@ -373,7 +373,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               l10n.agileSuggestedCapacityHint,
               style: TextStyle(
                 fontSize: 11,
-                color: Colors.indigo.shade400,
+                color: isDark ? Colors.indigo.shade400 : Colors.indigo.shade400,
               ),
               textAlign: TextAlign.center,
             ),
@@ -382,7 +382,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               l10n.agileSuggestedCapacityNoData,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.indigo.shade500,
+                color: isDark ? Colors.indigo.shade400 : Colors.indigo.shade500,
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
@@ -647,20 +647,20 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.orange.shade50,
+            color: Colors.orange.withValues(alpha: context.isDarkMode ? 0.15 : 0.08),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.orange.shade100),
+            border: Border.all(color: Colors.orange.withValues(alpha: context.isDarkMode ? 0.3 : 0.2)),
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.orange.shade700, size: 20),
+              Icon(Icons.info_outline, color: context.isDarkMode ? Colors.orange.shade300 : Colors.orange.shade700, size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   l10n.agileHoursNote,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.orange.shade700,
+                    color: context.isDarkMode ? Colors.orange.shade300 : Colors.orange.shade700,
                   ),
                 ),
               ),

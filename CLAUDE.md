@@ -66,7 +66,7 @@ lib/
 │   ├── eisenhower/                    # Widget Eisenhower
 │   ├── estimation_room/               # Widget Estimation Room
 │   ├── retrospective/                 # Widget Retrospective (retro_list_widget)
-│   ├── agile/                         # Widget Agile Process
+│   ├── agile/                         # Widget Agile Process (20 widget files)
 │   └── subscription/                  # Widget abbonamento (limit_reached_dialog, etc.)
 │
 ├── models/
@@ -74,15 +74,26 @@ lib/
 │   ├── subscription/                  # Limiti abbonamento
 │   ├── smart_todo/                    # TodoListModel, TodoTaskModel, TodoColumn
 │   ├── agile_project_model.dart       # Progetto Agile (3 framework)
-│   ├── estimation_mode.dart           # 7 modalità di stima
-│   ├── retrospective_model.dart       # Retrospettiva (6 template)
+│   ├── agile_enums.dart               # 12 enum (Framework, Status, Priority, TeamRole, CoS, Swimlane, Audit...)
+│   ├── user_story_model.dart          # User Story (7 stati, stima, CoS, tags)
+│   ├── sprint_model.dart              # Sprint + SprintReview + Burndown + Standup
+│   ├── team_member_model.dart         # Membro team (ruolo, capacita', skills, disponibilita')
+│   ├── framework_features.dart        # Tab/feature toggle per framework + KanbanColumnConfig
+│   ├── methodology_guide.dart         # Guide Scrum/Kanban/Hybrid localizzate
+│   ├── retro_methodology_guide.dart   # Guide retro con coach tips
+│   ├── audit_log_model.dart           # Audit trail (11 azioni, 5 entity types)
+│   ├── estimation_mode.dart           # 7 modalita' di stima
+│   ├── retrospective_model.dart       # Retrospettiva (6 template, fasi, icebreakers)
 │   └── eisenhower_matrix_model.dart   # Matrice Eisenhower
 │
 ├── services/
 │   ├── auth_service.dart              # Autenticazione Firebase
 │   ├── user_profile_service.dart      # Gestione profilo/abbonamenti/settings
 │   ├── smart_todo_service.dart        # CRUD liste e task
-│   ├── agile_firestore_service.dart   # CRUD progetti agili
+│   ├── agile_firestore_service.dart   # CRUD progetti agili + stories/sprints/retro
+│   ├── agile_audit_service.dart       # Audit logging automatico (11 azioni)
+│   ├── agile_sheets_service.dart      # Export Google Sheets (5 fogli)
+│   ├── agile_invite_service.dart      # Inviti team agile
 │   ├── eisenhower_firestore_service.dart # CRUD matrici Eisenhower
 │   ├── planning_poker_firestore_service.dart # CRUD sessioni stima
 │   ├── retrospective_firestore_service.dart  # CRUD retrospettive
@@ -306,6 +317,163 @@ Chiavi di traduzione disponibili (IT, EN, ES, FR):
 - `scrumPermSprintTitle/Desc` - Descrizione permessi sprint
 - `scrumPermDenied*` - Messaggi diniego accesso (per future UI con feedback)
 - `scrumRole*` - Nomi ruoli localizzati
+
+## Agile Process Manager - Funzionalita' Avanzate
+
+### Sprint Review (Scrum Guide 2020)
+
+Il sistema implementa Sprint Review come evento separato (non solo campo in SprintModel):
+
+**Modelli** (`lib/models/sprint_model.dart`):
+- `SprintReview`: data, conductor, attendees, demo notes, stakeholder feedback, backlog updates, next sprint focus, metrics
+- `ReviewAttendee`: email, name, role (po/sm/dev/stakeholder/guest), isPresent
+- `StoryReviewOutcome`: storyId, title, outcome (approved/needsRefinement/rejected), notes, storyPoints
+- `ReviewDecision`: type (actionItem/backlogChange/scopeChange/technical/business), description, assignee, dueDate, isCompleted
+
+**Widget**: `lib/widgets/agile/sprint_review_history_widget.dart` (~400 righe)
+**Dialog**: 4 tab (Demo, Evaluation, Decisions, Summary)
+
+### Kanban Advanced Features
+
+#### Swimlanes (`lib/models/agile_enums.dart`)
+```dart
+enum SwimlaneType { none, classOfService, assignee, priority, tag }
+```
+Implementato in `kanban_board_widget.dart` con raggruppamento dinamico delle stories.
+
+#### Column Policies (Kanban Practice #4)
+```dart
+// In KanbanColumnConfig (framework_features.dart)
+final List<String> policies; // Es: "Max 24h in questa colonna", "Richiede code review"
+```
+Visualizzazione policies nel header colonna Kanban board.
+
+#### Class of Service (`lib/models/agile_enums.dart`)
+```dart
+enum ClassOfService { standard, expedite, fixedDate, intangible }
+```
+- `standard`: Lavoro normale FIFO (blu)
+- `expedite`: Urgente, puo' eccedere WIP limits (rosso)
+- `fixedDate`: Deadline immobile (viola)
+- `intangible`: Debito tecnico, no valore business immediato (grigio)
+
+### Audit Logging
+
+Sistema completo di tracciamento modifiche per progetti agili:
+
+**Modello** (`lib/models/audit_log_model.dart`):
+- 11 azioni: create, update, delete, move, estimate, assign, complete, start, close, invite, join, leave
+- 5 entity types: project, story, sprint, team, retrospective
+- Traccia: performer, timestamp, previous/new values, changed fields
+
+**Servizio** (`lib/services/agile_audit_service.dart`):
+- Fire-and-forget logging su subcollection `agile_projects/{projectId}/audit_logs/`
+- Automaticamente chiamato da AgileFirestoreService
+
+**Widget** (`lib/widgets/agile/audit_log_viewer.dart`):
+- Accessibile da icona `Icons.history` nella toolbar del progetto
+- Filtri per tipo azione, entity type, utente, data
+
+### Methodology Guides
+
+**File**: `lib/models/methodology_guide.dart`
+
+Guide localizzate (IT/EN/FR/ES) per ogni framework:
+
+| Framework | Sezioni | Best Practices | Anti-Patterns | FAQ |
+|-----------|---------|----------------|---------------|-----|
+| Scrum | Ruoli, Eventi, Artefatti, Story Points | 8+ | 8+ | 4+ |
+| Kanban | 6 Principi, Board, WIP, Metriche, Cadenze, Swimlanes, Policies | 8+ | 8+ | 4+ |
+| Hybrid | Da Scrum, Da Kanban, Planning on-demand, Quando usare | 8+ | 8+ | 4+ |
+
+**Widget**: `lib/widgets/agile/methodology_guide_dialog.dart`
+Accessibile da icona help nella toolbar del progetto.
+
+### Team Capacity (Dual-View)
+
+**Widget**: `lib/widgets/agile/team_capacity_widget.dart` (~847 righe)
+
+Due modalita' di visualizzazione:
+1. **Scrum Standard View**: Velocity, Throughput, Story Points/Sprint suggeriti
+2. **Hours View**: Ore disponibili per membro, ore assegnate, utilization %
+
+**Configurazione per membro** (`lib/models/team_member_model.dart`):
+- `capacityHoursPerDay`: ore lavorative giornaliere (default 8)
+- `skills`: lista competenze per skill matrix
+- `unavailableDates`: periodi indisponibilita' (ferie/festivita') come List<DateRange>
+
+**Widget correlati**:
+- `lib/widgets/agile/skill_matrix_widget.dart` - Matrice competenze team
+- `lib/widgets/agile/capacity_chart_widget.dart` - Grafici capacita'
+
+### Google Sheets Export
+
+**Servizio**: `lib/services/agile_sheets_service.dart`
+
+Esporta 5 fogli formattati:
+1. **Product Backlog**: tutte le stories con metadati
+2. **Sprint Planning**: timeline sprint e allocazione stories
+3. **Team & Capacity**: roster team con skills e capacita'
+4. **Retrospective**: items retro e action items
+5. **Metriche**: metriche aggregate
+
+Usa Google Sheets API v4 + Drive API v3. Richiede Google Sign-In.
+
+### Story Workflow (7 Stati)
+
+```
+backlog → refinement → ready → inSprint → inProgress → inReview → done
+```
+
+Lo stato `refinement` (grooming) e' stato aggiunto per tracciare le stories in fase di raffinamento prima di essere marcate come "ready".
+
+### Widget Agile Completi
+
+```
+lib/widgets/agile/
+├── backlog_list_widget.dart          # Product Backlog con drag-drop
+├── story_card_widget.dart            # Card singola story
+├── story_form_dialog.dart            # Form creazione/modifica story (3 tab)
+├── story_detail_dialog.dart          # Dettaglio story
+├── story_estimation_dialog.dart      # Interfaccia stima
+├── kanban_board_widget.dart          # Board Kanban con swimlanes e policies
+├── sprint_widgets.dart               # Sprint list, card, planning
+├── sprint_review_history_widget.dart # Storico Sprint Review
+├── team_list_widget.dart             # Roster team con ruoli e status
+├── team_member_form_dialog.dart      # Form membro team
+├── team_capacity_widget.dart         # Capacita' dual-view
+├── skill_matrix_widget.dart          # Matrice competenze
+├── burndown_chart_widget.dart        # Burndown + Velocity charts
+├── capacity_chart_widget.dart        # Grafici capacita'
+├── metrics_dashboard_widget.dart     # Dashboard metriche KPI
+├── audit_log_viewer.dart             # Viewer audit trail
+├── methodology_guide_dialog.dart     # Guide metodologiche
+├── setup_checklist_widget.dart       # Checklist setup progetto
+├── participant_invite_dialog.dart    # Inviti team
+└── agile_project_form_dialog.dart    # Form creazione progetto
+```
+
+### Servizi Agile Completi
+
+```
+lib/services/
+├── agile_firestore_service.dart      # CRUD progetti, stories, sprints, retro
+├── agile_audit_service.dart          # Audit logging automatico
+├── agile_sheets_service.dart         # Export Google Sheets
+└── agile_invite_service.dart         # Gestione inviti team
+```
+
+### Firestore Structure Agile
+
+```
+agile_projects/{projectId}
+├── name, description, framework, participants, kanbanColumns, ...
+├── stories/{storyId}        # User Stories
+├── sprints/{sprintId}       # Sprint con burndown, review, standup
+├── retrospectives/{retroId} # Retrospettive con template
+└── audit_logs/{logId}       # Audit trail
+agile_invites/{inviteId}     # Inviti team
+```
 
 ## Temi e Stile
 

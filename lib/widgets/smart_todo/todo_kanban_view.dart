@@ -253,9 +253,24 @@ class TodoKanbanView extends StatelessWidget {
         width: 320,
         child: Opacity(
           opacity: 0.9,
-          child: Transform.scale(
-            scale: 1.05,
-            child: TodoTaskCard(task: task, list: list),
+          child: Transform.rotate(
+            angle: 0.05, // Slight tilt
+            child: Transform.scale(
+              scale: 1.05,
+              child: Container(
+                 decoration: BoxDecoration(
+                   borderRadius: BorderRadius.circular(12),
+                   boxShadow: [
+                     BoxShadow(
+                       color: Colors.black.withOpacity(0.2),
+                       blurRadius: 12,
+                       offset: const Offset(0, 6),
+                     ),
+                   ],
+                 ),
+                 child: TodoTaskCard(task: task, list: list),
+              ),
+            ),
           ),
         ),
       ),

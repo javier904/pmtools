@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
+import 'dart:ui';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import 'todo_task_row.dart'; // Import the new row widget
@@ -118,6 +119,26 @@ class TodoListView extends StatelessWidget {
         if (onTaskMoved != null) {
           onTaskMoved!(task, task.statusId, newPos); 
         }
+      },
+      proxyDecorator: (child, index, animation) {
+        return AnimatedBuilder(
+          animation: animation,
+          builder: (BuildContext context, Widget? child) {
+            final double animValue = Curves.easeInOut.transform(animation.value);
+            final double elevation = lerpDouble(0, 6, animValue)!;
+            return Material(
+              elevation: elevation,
+              color: Colors.transparent,
+              shadowColor: Colors.black.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+              child: Transform.scale(
+                scale: 1.02,
+                child: child,
+              ),
+            );
+          },
+          child: child,
+        );
       },
       itemBuilder: (context, index) {
         final task = sortedTasks[index];

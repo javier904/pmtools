@@ -794,10 +794,57 @@
   "filterActive": "Attivi",
   "filterCompleted": "Completati",
   "participants": "Partecipanti",
-  "agileStoryDetailTitle": "Dettagli Storia",
-  "agileStoryPoints": "Punti Storia",
   "agileAcceptanceCriteria": "Criteri di Accettazione",
   "agileAcceptanceCriteriaCount": "{completed} di {total} elementi",
+  "agileEstimateRequired": "Stima richiesta (click per stimare)",
+  "agileNoActiveSprint": "Nessuno Sprint Attivo",
+  "agileKanbanBoardHint": "La Kanban Board mostra le stories dello sprint attivo.\nPer visualizzare le stories:",
+  "agileStartSprintFromTab": "Avvia uno sprint dalla tab Sprint",
+  "agileDisableFilterHint": "Oppure disattiva il filtro per vedere tutte le stories",
+  "agileShowAllStories": "Mostra tutte le stories",
+  "agileFilterActiveSprint": "Filtro Sprint Attivo: ",
+  "agileFilterActive": "Attivo",
+  "agileFilterAll": "Tutto",
+  "agileActionInvite": "Invita",
+  "agileTeamTitle": "Team ({count})",
+  "@agileTeamTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileNoMembers": "Nessun membro nel team",
+  "agileYouBadge": "Tu",
+  "agileStatsPlannedCount": "{count} pianificati",
+  "@agileStatsPlannedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileStatsTotalCount": "{count} totali",
+  "@agileStatsTotalCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agileStatsPtsPerSprint": "pts/sprint",
+  "agileStatsWorkInProgress": "work in progress",
+  "agileStatsItemsPerWeek": "items/settimana",
+  "agileStatsCompletedTooltip": "Numero di sprint con status 'Completato'.\nClicca 'Completa Sprint' per finalizzare uno sprint attivo.",
+  "agileAverageVelocityTooltip": "Media degli Story Points completati per sprint.\nCalcolata dagli sprint completati che hanno stories in stato 'Done'.\nPiù alta = team più produttivo.",
+  "agileStatsStoriesCompletedTooltip": "Numero di User Stories con status 'Done'.\nPer incrementare questo valore, sposta le stories nella colonna 'Done' della Kanban Board.",
+  "agileStatsPointsTooltip": "Somma degli Story Points delle stories completate.\n'Pianificati' include tutte le stories stimate nel backlog.",
+  "agileItemsCompletedTooltip": "Numero di Work Items con status 'Done'.\nSposta gli items nella colonna 'Done' per completarli.",
+  "agileInProgressTooltip": "Items attualmente in lavorazione (WIP).\nTieni questo numero basso per migliorare il flusso.",
+  "agileCycleTimeTooltip": "Tempo medio dall'inizio lavoro al completamento.\nRichiede items con date 'Iniziato' e 'Completato' valorizzate.\nPiù basso = team più efficiente.",
+  "agileThroughputTooltip": "Media items completati per settimana (ultime 4 settimane).\nIndica la produttività del team nel tempo.",
+  "agileHybridSprintTooltip": "Sprint completati rispetto al totale.",
+  "agileHybridCompletedTooltip": "Items con status 'Done' rispetto al totale.\nSposta items nella colonna 'Done' per completarli.",
   "@agileAcceptanceCriteriaCount": {
     "placeholders": {
       "completed": {
@@ -805,6 +852,34 @@
       },
       "total": {
         "type": "int"
+      }
+    }
+  },
+  "agileAddSkillsHint": "Aggiungi competenze ai membri del team",
+  "agileSkillMatrixTitle": "Matrice Competenze",
+  "agileCriticalSkills": "Competenze critiche",
+  "agileCriticalSkillsWarning": "Solo 1 persona copre: {skills}",
+  "agileSkills": "Competenze",
+  "agileNoSkills": "Nessuna competenza",
+  "agileAddSkill": "Aggiungi competenza",
+  "agileNewSkill": "Nuova competenza...",
+  "agileNewSkillDialogTitle": "Nuova Competenza",
+  "agileNewSkillName": "Nome competenza",
+  "agileNewSkillHint": "Es: Flutter, Python, AWS...",
+  "agileSkillCoverage": "Copertura Competenze",
+  "agileNoSkillsAvailable": "Nessuna skill disponibile",
+  "agileBasedOnCompletedItems": "Basato su {count} items completati",
+  "@agileBasedOnCompletedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@agileCriticalSkillsWarning": {
+    "placeholders": {
+      "skills": {
+        "type": "String"
       }
     }
   },
@@ -825,6 +900,7 @@
   "agileInformation": "Informazioni",
   "agileBusinessValue": "Business Value",
   "agileAssignee": "Assegnatario",
+  "agileNoAssignee": "Non assegnato",
   "agileCreatedBy": "Creato da",
   "agileCreatedAt": "Creato il",
   "agileStartedAt": "Iniziato il",
@@ -4367,6 +4443,8 @@
   },
   "agileItemsCompletedLabel": "Elementi Completati",
   "agileDaysRemainingSuffix": "giorni rimanenti",
+  "agileItems": "items",
+  "agilePerWeekSuffix": "/sett",
   "average": "Media",
   "agileItemsCount": "{count} elementi",
   "@agileItemsCount": {
@@ -4521,5 +4599,38 @@
       "row": {"type": "int"}
     }
   },
-  "eisenhowerImportErrorReadFile": "Impossibile leggere il file"
+  "eisenhowerImportErrorReadFile": "Impossibile leggere il file",
+  "agileSprintHealthTitle": "Sprint Health",
+  "agileSprintHealthNoSprint": "Nessuno sprint attivo",
+  "agileSprintHealthNoSprintDesc": "Avvia uno sprint per vedere le metriche di salute",
+  "agileSprintHealthGoal": "Sprint Goal",
+  "agileSprintHealthOnTrack": "In Linea",
+  "agileSprintHealthAtRisk": "A Rischio",
+  "agileSprintHealthOffTrack": "In Ritardo",
+  "agileSprintHealthTime": "Tempo",
+  "agileSprintHealthWork": "Lavoro",
+  "agileSprintHealthDaysLeft": "giorni rimasti",
+  "agileSprintHealthSpRemaining": "SP rimasti",
+  "agileSprintHealthStoriesDone": "Stories Fatte",
+  "agileSprintHealthCommitment": "Affidabilità",
+  "agileSprintHealthDailyVelocity": "Vel. Giornaliera",
+  "agileSprintHealthPrediction": "Previsione",
+  "agileSprintHealthOnTime": "In tempo",
+  "agileSprintHealthStoriesBreakdown": "Distribuzione Stories",
+  "agileSprintBurndownTitle": "Sprint Burndown",
+  "agileSprintBurndownNoData": "Nessun dato burndown",
+  "agileSprintBurndownNoDataDesc": "Assegna stories allo sprint per vedere il burndown",
+  "agileWorkloadTitle": "Carico del Team",
+  "agileWorkloadBalanced": "Bilanciato",
+  "agileWorkloadUnbalanced": "Sbilanciato",
+  "agileWorkloadTotalStories": "Stories Totali",
+  "agileWorkloadAssigned": "Assegnate",
+  "agileWorkloadAvgSp": "SP Medi/Persona",
+  "agileWorkloadStories": "stories",
+  "agileWorkloadInProgress": "in corso",
+  "agileWorkloadUnassigned": "Non assegnate",
+  "agileWorkloadUnassignedWarning": "stories senza assegnatario",
+  "agileWorkloadNoStories": "Nessuna story da analizzare",
+  "agileWorkloadNoStoriesDesc": "Crea stories e assegnale ai membri del team",
+  "agileWorkloadOverloaded": "Sovraccaricato"
 }

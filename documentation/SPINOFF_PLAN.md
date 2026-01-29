@@ -1,10 +1,18 @@
 # Agile Tools - Piano Spinoff
 
-## Obiettivo
+> **DOCUMENTO STORICO** - Questo file descrive il piano originale dello spinoff (2024).
+> L'app si e' evoluta ben oltre il piano iniziale (2 tool -> 5 tool + abbonamenti + localizzazione).
+> Per la documentazione aggiornata, fare riferimento a:
+> - `CLAUDE.md` - Architettura e struttura corrente
+> - `TODO.md` - Stato attivita' e funzionalita' completate
+
+## Obiettivo (Originale)
 
 Creare un'applicazione web standalone con due strumenti collaborativi:
 1. **Matrice Eisenhower** - Prioritizzazione attività per urgenza/importanza
 2. **Estimation Room** - Sessioni di stima collaborative multi-metodo (ex Planning Poker)
+
+**Stato attuale**: L'app include 5 tool (Smart Todo, Eisenhower, Estimation Room, Retrospective Board, Agile Process Manager), sistema abbonamenti, localizzazione 4 lingue, e molto altro.
 
 Questa app è uno spinoff del PMO Dashboard, completamente **slegata** dal sistema originale.
 
@@ -227,13 +235,13 @@ firebase deploy --only hosting
 
 ---
 
-## Funzionalità Future (Opzionali)
+## Funzionalità Future (Originali - Stato Aggiornato)
 
-- [ ] Import attività da CSV
-- [ ] Import attività da testo incollato
-- [ ] Export risultati in CSV/PDF
-- [ ] Sistema workspace/team semplificato
-- [ ] Pricing/Subscription con Stripe
+- [ ] Import attività da CSV (ancora pendente)
+- [ ] Import attività da testo incollato (ancora pendente)
+- [x] ~~Export risultati~~ (Google Sheets export implementato per Agile Process)
+- [x] ~~Sistema workspace/team semplificato~~ (implementato con 5 tool completi)
+- [x] ~~Pricing/Subscription con Stripe~~ (implementato Free/Premium/Elite + Cloud Functions)
 
 ---
 

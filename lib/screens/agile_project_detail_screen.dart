@@ -35,6 +35,9 @@ import '../widgets/agile/team_capacity_widget.dart';
 import '../widgets/agile/skill_matrix_widget.dart';
 
 import '../widgets/agile/metrics_dashboard_widget.dart';
+import '../widgets/agile/sprint_health_card_widget.dart';
+import '../widgets/agile/sprint_burndown_live_widget.dart';
+import '../widgets/agile/team_workload_widget.dart';
 import '../widgets/agile/audit_log_viewer.dart';
 import '../widgets/agile/methodology_guide_dialog.dart';
 import '../widgets/agile/setup_checklist_widget.dart';
@@ -412,6 +415,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ? () => _showEditStoryDialog(story)
           : null,
       onStatusChange: (status) => _updateStoryStatus(story, status),
+      onCriterionToggle: (index, completed) => _toggleAcceptanceCriterion(story, index, completed),
+      onAssigneeChange: (email) => _updateStoryAssignee(story, email),
+      teamMembers: _teamMembers.map((m) => m.email).toList(),
+      sprints: _sprints,
     );
   }
 
@@ -494,6 +501,42 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       await _firestoreService.updateStory(widget.project.id, updated);
     } catch (e) {
       _showError('Errore aggiornamento status: $e');
+    }
+  }
+
+  Future<void> _toggleAcceptanceCriterion(UserStoryModel story, int index, bool completed) async {
+    try {
+      final criteria = List<String>.from(story.acceptanceCriteria);
+      if (index < 0 || index >= criteria.length) return;
+
+      final criterion = criteria[index];
+      final cleanText = criterion.replaceAll(RegExp(r'^\[[xX]\]\s*|^✓\s*'), '');
+
+      criteria[index] = completed ? '[x] $cleanText' : cleanText;
+
+      final updated = story.copyWith(acceptanceCriteria: criteria);
+      await _firestoreService.updateStory(widget.project.id, updated);
+    } catch (e) {
+      _showError('Errore aggiornamento criterio: $e');
+    }
+  }
+
+  Future<void> _updateStoryAssignee(UserStoryModel story, String? email) async {
+    try {
+      final updated = story.copyWith(assigneeEmail: email ?? '');
+      // If email is null, we need to clear the field in Firestore
+      if (email == null) {
+        await _firestoreService.updateStoryFields(widget.project.id, story.id, {
+          'assigneeEmail': null,
+        });
+      } else {
+        await _firestoreService.updateStory(widget.project.id, updated);
+      }
+      if (mounted) {
+        Navigator.of(context).pop(); // Close the detail dialog to refresh
+      }
+    } catch (e) {
+      _showError('Errore aggiornamento assegnatario: $e');
     }
   }
 
@@ -1733,6 +1776,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // ══════════════════════════════════════════════════════════════════════════
 
   Widget _buildKanbanTab(AgileProjectModel project) {
+    final l10n = AppLocalizations.of(context)!;
     final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
     var storiesToShow = _stories;
 
@@ -1746,21 +1790,26 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     return Column(
       children: [
         // Kanban Header con filtro sprint
-        if (activeSprint != null)
+        // Mostra quando c'è sprint attivo O quando il filtro è disattivato (per poterlo riattivare)
+        if (activeSprint != null || !_filterByActiveSprint)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: const Color(0xFF1E1E1E), // Match app background or slightly lighter
+            color: const Color(0xFF1E1E1E),
             child: Row(
               children: [
                 const Icon(Icons.filter_list, size: 16, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  'Filtro Sprint Attivo: ',
+                  activeSprint != null ? l10n.agileFilterActiveSprint : '${l10n.agileFilterActiveSprint.split(':').first}: ',
                   style: TextStyle(color: Colors.grey[400], fontSize: 13),
                 ),
                 Text(
-                  activeSprint.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  activeSprint?.name ?? l10n.agileNoActiveSprint,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: activeSprint != null ? null : Colors.grey[500],
+                  ),
                 ),
                 const Spacer(),
                 Switch(
@@ -1770,7 +1819,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                 _filterByActiveSprint ? 'Attivo' : 'Tutto',
+                 _filterByActiveSprint ? l10n.agileFilterActive : l10n.agileFilterAll,
                  style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -1792,8 +1841,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               children: [
                 const Icon(Icons.info_outline, size: 48, color: Colors.blue),
                 const SizedBox(height: 12),
-                const Text(
-                  'Nessuno Sprint Attivo',
+                Text(
+                  l10n.agileNoActiveSprint,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -1802,8 +1851,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'La Kanban Board mostra le stories dello sprint attivo.\n'
-                  'Per visualizzare le stories:',
+                  l10n.agileKanbanBoardHint,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey[400]),
                 ),
@@ -1811,21 +1859,21 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildKanbanInfoChip(Icons.play_arrow, 'Avvia uno sprint dalla tab Sprint'),
+                    _buildKanbanInfoChip(Icons.play_arrow, l10n.agileStartSprintFromTab),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildKanbanInfoChip(Icons.visibility, 'Oppure disattiva il filtro per vedere tutte le stories'),
+                    _buildKanbanInfoChip(Icons.visibility, l10n.agileDisableFilterHint),
                   ],
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: () => setState(() => _filterByActiveSprint = false),
                   icon: const Icon(Icons.visibility_off),
-                  label: const Text('Mostra tutte le stories'),
+                  label: Text(l10n.agileShowAllStories),
                 ),
               ],
             ),
@@ -1857,6 +1905,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                      project.canMoveOwnStory(_currentUserEmail),
             showWipConfig: _features.hasWipLimits && project.canManageSprints(_currentUserEmail),
             showPolicies: _features.hasWipLimits, // Mostra policy solo per Kanban/Hybrid
+            onAssigneeChange: (story, email) => _updateStoryAssignee(story, email),
+            teamMembers: _teamMembers.map((m) => m.email).toList(),
+            sprints: _sprints,
           ),
         ),
       ],
@@ -1975,6 +2026,14 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ),
           const SizedBox(height: 24),
 
+          // Team Workload - Distribuzione carico per persona
+          TeamWorkloadWidget(
+            teamMembers: _teamMembers,
+            stories: _stories,
+            currentSprint: _sprints.where((s) => s.status == SprintStatus.active).firstOrNull,
+          ),
+          const SizedBox(height: 24),
+
           // Skill matrix
           SkillMatrixWidget(
             teamMembers: _teamMembers,
@@ -2073,12 +2132,37 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Widget _buildMetricsTab() {
     final assignedHours = _calculateAssignedHours();
+    final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
 
-    return MetricsDashboardWidget(
-      sprints: _sprints,
-      stories: _stories,
-      teamAssignedHours: assignedHours,
-      framework: widget.project.framework,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Sprint Health Summary Card
+          SprintHealthCardWidget(
+            currentSprint: activeSprint,
+            stories: _stories,
+            sprints: _sprints,
+          ),
+          const SizedBox(height: 16),
+
+          // Sprint Burndown (live from stories)
+          SprintBurndownLiveWidget(
+            currentSprint: activeSprint,
+            stories: _stories,
+          ),
+          const SizedBox(height: 16),
+
+          // Existing Metrics Dashboard
+          MetricsDashboardWidget(
+            sprints: _sprints,
+            stories: _stories,
+            teamAssignedHours: assignedHours,
+            framework: widget.project.framework,
+          ),
+        ],
+      ),
     );
   }
 

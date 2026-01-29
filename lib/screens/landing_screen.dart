@@ -72,17 +72,32 @@ class _LandingScreenState extends State<LandingScreen> {
         child: Column(
           children: [
             _buildHeader(isMobile, isDark),
-            _buildHeroSection(isMobile, isDark),
-            _buildFeaturesSection(isMobile, isDark),
-            _buildSmartTodoSection(isMobile, isDark),
-            _buildEisenhowerSection(isMobile, isDark),
-            _buildAgileMethodologySection(isMobile, isDark),
-            _buildEstimationMethodsSection(isMobile, isDark),
-            _buildRetrospectiveTypesSection(isMobile, isDark),
+            if (isMobile) ...[
+              _buildHeroSection(isMobile, isDark),
+              _buildFeaturesSection(isMobile, isDark),
+              _buildSmartTodoSection(isMobile, isDark),
+              _buildEisenhowerSection(isMobile, isDark),
+              _buildAgileMethodologySection(isMobile, isDark),
+              _buildEstimationMethodsSection(isMobile, isDark),
+              _buildRetrospectiveTypesSection(isMobile, isDark),
+            ] else ...[
+              _buildIntegratedDesktopLayout(context, isDark),
+              // Optional: keep detail sections below if user scrolls?
+              // For now, let's keep them accessible but maybe the integrated view acts as the main landing
+              // User said "integrate them around", implying this replaces the top part.
+              // I will keep the detailed sections below for deep diving.
+              const SizedBox(height: 100),
+              _buildSmartTodoSection(isMobile, isDark),
+              _buildEisenhowerSection(isMobile, isDark),
+              _buildAgileMethodologySection(isMobile, isDark),
+              _buildEstimationMethodsSection(isMobile, isDark),
+              _buildRetrospectiveTypesSection(isMobile, isDark),
+            ],
             _buildWorkflowSection(isMobile, isDark),
             _buildCTASection(isMobile, isDark),
             _buildFullFooter(isMobile, isDark),
           ],
+
         ),
       ),
     );
@@ -478,7 +493,7 @@ class _LandingScreenState extends State<LandingScreen> {
   }) {
     return _HoverScaleCard(
       isDark: isDark,
-      child: Container(
+      builder: (context, _) => Container(
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
           color: context.surfaceColor,
@@ -540,6 +555,300 @@ class _LandingScreenState extends State<LandingScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildIntegratedDesktopLayout(BuildContext context, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Use MediaQuery because we are in a ScrollView, so LayoutBuilder gives infinite height
+    final screenHeight = MediaQuery.of(context).size.height;
+    // More aggressive compact mode for smaller laptop screens
+    final isCompact = screenHeight < 900;
+    
+    final verticalPadding = isCompact ? 16.0 : 40.0; // Further reduced
+    final spacerFlex = isCompact ? 1 : 2;
+    final gap = isCompact ? 8.0 : 24.0; // Further reduced
+    
+    return Container(
+      // Allow it to shrink for smaller screens, but keep reasonable min height
+      constraints: const BoxConstraints(minHeight: 600),
+      padding: EdgeInsets.symmetric(horizontal: 60, vertical: verticalPadding),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Center the whole block
+            children: [
+              // Top Row: Smart Todo & Eisenhower
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+              Expanded(
+                child: _buildCompactFeatureCard(
+                  icon: Icons.check_circle_outline_rounded,
+                      title: l10n.toolSmartTodo,
+                      description: l10n.toolSmartTodoDescShort,
+                      color: Colors.blue,
+                      isDark: isDark,
+                      isCompact: isCompact,
+                    ),
+                  ),
+                  Spacer(flex: spacerFlex), 
+                  Expanded(
+                    child: _buildCompactFeatureCard(
+                      icon: Icons.grid_view_rounded,
+                      title: l10n.toolEisenhower,
+                      description: l10n.landingEisenhowerSubtitle,
+                      color: AppColors.success,
+                      isDark: isDark,
+                      isCompact: isCompact,
+                    ),
+                  ),
+                ],
+              ),
+              
+              // Center Hero
+              SizedBox(height: gap),
+              _buildHeroCenterContent(isDark, isCompact: isCompact),
+              SizedBox(height: gap),
+
+              // Bottom Row: Agile & Retro
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildCompactFeatureCard(
+                      icon: Icons.rocket_launch_rounded,
+                      title: l10n.landingAgileTitle,
+                      description: l10n.landingAgileSubtitle,
+                      color: AppColors.primary,
+                      isDark: isDark,
+                      isCompact: isCompact,
+                    ),
+                  ),
+                  Spacer(flex: spacerFlex),
+                  Expanded(
+                    child: _buildCompactFeatureCard(
+                      icon: Icons.psychology_rounded,
+                      title: l10n.landingRetroTitle,
+                      description: l10n.landingRetroSubtitle,
+                      color: AppColors.pink,
+                      isDark: isDark,
+                      isCompact: isCompact,
+                    ),
+                  ),
+                ],
+              ),
+
+              // 5th Element: Estimation Room
+              SizedBox(height: gap),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: _buildCompactFeatureCard(
+                  icon: Icons.casino_rounded,
+                  title: l10n.toolEstimation,
+                  description: l10n.landingEstimationSubtitle,
+                  color: Colors.amber,
+                  isDark: isDark,
+                  centerAlign: true,
+                  isCompact: isCompact,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildHeroCenterContent(bool isDark, {bool isCompact = false}) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Force line break for compact mode if requested
+    String subtitle = l10n.landingHeroSubtitle;
+    if (isCompact && subtitle.contains('. All')) {
+      subtitle = subtitle.replaceFirst('. All', '.\nAll');
+    }
+
+    return Column(
+      children: [
+         // Badge
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: isCompact ? 12 : 16, 
+              vertical: isCompact ? 6 : 8
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.auto_awesome, size: isCompact ? 14 : 16, color: AppColors.primaryLight),
+                SizedBox(width: 8),
+                Text(
+                  l10n.landingBadge, 
+                  style: TextStyle(
+                    color: AppColors.primaryLight,
+                    fontWeight: FontWeight.w500,
+                    fontSize: isCompact ? 12 : 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: isCompact ? 16 : 24),
+          Text(
+            l10n.landingHeroTitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: isCompact ? 42 : 64, // Reduced further for compact
+              fontWeight: FontWeight.bold,
+              height: 1.1,
+              letterSpacing: -1.5,
+              color: context.textPrimaryColor,
+            ),
+          ),
+          SizedBox(height: isCompact ? 12 : 24),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isCompact ? 15 : 20, 
+                color: context.textSecondaryColor,
+                height: 1.5,
+              ),
+            ),
+          ),
+          SizedBox(height: isCompact ? 20 : 40),
+           _HoverButton(
+            onTap: _signInWithGoogle,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 24 : 32, 
+                vertical: isCompact ? 16 : 20
+              ),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.4),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.landingStartFree,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: isCompact ? 16 : 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildCompactFeatureCard({
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    required bool isDark,
+    bool centerAlign = false,
+    bool isCompact = false,
+  }) {
+    // Cleaner version of feature card for the integrated view
+    // Less padding, slightly smaller text to fit nicely
+    return _HoverScaleCard(
+      isDark: isDark,
+      glowColor: color, // Pass the color for value-based glow
+      builder: (context, isHovered) {
+        return Container(
+          // Constrain width to make tiles narrower as requested
+          constraints: const BoxConstraints(maxWidth: 280), 
+          padding: EdgeInsets.all(isCompact ? 12 : 24), // Reduced padding
+          decoration: BoxDecoration(
+            color: isHovered 
+                ? null // Use gradient if hovered
+                : context.surfaceColor.withOpacity(0.8), 
+            gradient: isHovered
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      context.surfaceColor.withOpacity(0.9),
+                      color.withValues(alpha: 0.15), // Subtle tint of the icon color
+                    ],
+                  )
+                : null,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isHovered 
+                  ? color.withValues(alpha: 0.5) // Brighter border on hover
+                  : context.borderColor.withOpacity(0.5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: centerAlign ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(isCompact ? 8 : 12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: isCompact ? 18 : 24),
+              ),
+              SizedBox(height: isCompact ? 8 : 16),
+              Text(
+                title,
+                textAlign: centerAlign ? TextAlign.center : TextAlign.start,
+                style: TextStyle(
+                  fontSize: isCompact ? 14 : 16,
+                  fontWeight: FontWeight.bold,
+                  color: context.textPrimaryColor,
+                ),
+              ),
+              SizedBox(height: isCompact ? 4 : 8),
+              Text(
+                description,
+                textAlign: centerAlign ? TextAlign.center : TextAlign.start,
+                style: TextStyle(
+                  fontSize: isCompact ? 12 : 13,
+                  color: context.textSecondaryColor,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -2326,18 +2635,23 @@ ClipRRect(
       child: Icon(icon, color: color, size: 20),
     );
   }
+
+
 }
 
-/// Widget per effetto hover con scale
+
+/// Widget per effetto hover con scale e glow colorato
 class _HoverScaleCard extends StatefulWidget {
-  final Widget child;
+  final Widget Function(BuildContext, bool) builder; // Changed to builder
   final double scale;
   final bool isDark;
+  final Color? glowColor;
 
   const _HoverScaleCard({
-    required this.child,
+    required this.builder,
     this.scale = 1.03,
     required this.isDark,
+    this.glowColor,
   });
 
   @override
@@ -2353,25 +2667,31 @@ class _HoverScaleCardState extends State<_HoverScaleCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutCubic,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutQuart,
         transform: Matrix4.identity()..scale(_isHovered ? widget.scale : 1.0),
         transformAlignment: Alignment.center,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20), // Match child radius
             boxShadow: _isHovered
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: widget.isDark ? 0.2 : 0.15),
+                      color: (widget.glowColor ?? AppColors.primary).withValues(alpha: widget.isDark ? 0.25 : 0.3),
                       blurRadius: 30,
                       offset: const Offset(0, 10),
+                      spreadRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: (widget.glowColor ?? AppColors.primary).withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: Offset.zero,
                     ),
                   ]
                 : [],
           ),
-          child: widget.child,
+          child: widget.builder(context, _isHovered), // Use builder
         ),
       ),
     );

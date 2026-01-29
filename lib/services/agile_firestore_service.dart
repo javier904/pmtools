@@ -343,6 +343,19 @@ class AgileFirestoreService {
     });
   }
 
+  /// Aggiorna campi specifici di una story (utile per impostare campi a null)
+  Future<void> updateStoryFields(String projectId, String storyId, Map<String, dynamic> fields) async {
+    // Convert null values to FieldValue.delete() for Firestore
+    final firestoreFields = fields.map((key, value) =>
+      MapEntry(key, value ?? FieldValue.delete()),
+    );
+    await _storiesRef(projectId).doc(storyId).update(firestoreFields);
+
+    await _projectsRef.doc(projectId).update({
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   /// Aggiorna lo status di una story
   Future<void> updateStoryStatus(
     String projectId,
