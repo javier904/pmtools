@@ -504,8 +504,9 @@ class SprintReview {
   final String conductedBy; // Email di chi ha condotto la review
   final String conductedByName;
 
-  // Partecipanti (email list)
-  final List<String> attendees;
+  // Partecipanti con ruoli (enhanced)
+  final List<String> attendees; // Legacy: solo email per backward compatibility
+  final List<ReviewAttendee> attendeesWithRoles; // New: con ruoli
 
   // Contenuto della review
   final String demoNotes; // Note sulla demo del lavoro completato
@@ -519,11 +520,18 @@ class SprintReview {
   final int pointsCompleted;
   final String marketConditionsNotes; // Note su cambiamenti di mercato/business
 
+  // NEW: Decisioni formali prese durante la review
+  final List<ReviewDecision> decisions;
+
+  // NEW: Valutazione per-story con esito
+  final List<StoryReviewOutcome> storyOutcomes;
+
   const SprintReview({
     required this.date,
     required this.conductedBy,
     required this.conductedByName,
     this.attendees = const [],
+    this.attendeesWithRoles = const [],
     this.demoNotes = '',
     this.feedback = '',
     this.backlogUpdates = const [],
@@ -532,14 +540,32 @@ class SprintReview {
     this.storiesNotCompleted = 0,
     this.pointsCompleted = 0,
     this.marketConditionsNotes = '',
+    this.decisions = const [],
+    this.storyOutcomes = const [],
   });
 
   factory SprintReview.fromMap(Map<String, dynamic> data) {
+    // Parse attendees with roles
+    final attendeesWithRolesList = (data['attendeesWithRoles'] as List<dynamic>? ?? [])
+        .map((a) => ReviewAttendee.fromMap(a as Map<String, dynamic>))
+        .toList();
+
+    // Parse decisions
+    final decisionsList = (data['decisions'] as List<dynamic>? ?? [])
+        .map((d) => ReviewDecision.fromMap(d as Map<String, dynamic>))
+        .toList();
+
+    // Parse story outcomes
+    final storyOutcomesList = (data['storyOutcomes'] as List<dynamic>? ?? [])
+        .map((s) => StoryReviewOutcome.fromMap(s as Map<String, dynamic>))
+        .toList();
+
     return SprintReview(
       date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
       conductedBy: data['conductedBy'] ?? '',
       conductedByName: data['conductedByName'] ?? '',
       attendees: List<String>.from(data['attendees'] ?? []),
+      attendeesWithRoles: attendeesWithRolesList,
       demoNotes: data['demoNotes'] ?? '',
       feedback: data['feedback'] ?? '',
       backlogUpdates: List<String>.from(data['backlogUpdates'] ?? []),
@@ -548,6 +574,8 @@ class SprintReview {
       storiesNotCompleted: data['storiesNotCompleted'] ?? 0,
       pointsCompleted: data['pointsCompleted'] ?? 0,
       marketConditionsNotes: data['marketConditionsNotes'] ?? '',
+      decisions: decisionsList,
+      storyOutcomes: storyOutcomesList,
     );
   }
 
@@ -557,6 +585,7 @@ class SprintReview {
       'conductedBy': conductedBy,
       'conductedByName': conductedByName,
       'attendees': attendees,
+      'attendeesWithRoles': attendeesWithRoles.map((a) => a.toMap()).toList(),
       'demoNotes': demoNotes,
       'feedback': feedback,
       'backlogUpdates': backlogUpdates,
@@ -565,6 +594,8 @@ class SprintReview {
       'storiesNotCompleted': storiesNotCompleted,
       'pointsCompleted': pointsCompleted,
       'marketConditionsNotes': marketConditionsNotes,
+      'decisions': decisions.map((d) => d.toMap()).toList(),
+      'storyOutcomes': storyOutcomes.map((s) => s.toMap()).toList(),
     };
   }
 
@@ -573,8 +604,290 @@ class SprintReview {
       demoNotes.isNotEmpty ||
       feedback.isNotEmpty ||
       backlogUpdates.isNotEmpty ||
-      nextSprintFocus.isNotEmpty;
+      nextSprintFocus.isNotEmpty ||
+      decisions.isNotEmpty ||
+      storyOutcomes.isNotEmpty;
 
   /// Verifica se ci sono aggiornamenti al backlog
   bool get hasBacklogUpdates => backlogUpdates.isNotEmpty;
+
+  /// Verifica se ci sono decisioni formali
+  bool get hasDecisions => decisions.isNotEmpty;
+
+  /// Verifica se ci sono story da riportare nel backlog
+  List<StoryReviewOutcome> get storiesNeedingRefinement =>
+      storyOutcomes.where((s) => s.outcome == ReviewOutcomeType.needsRefinement).toList();
+
+  /// Verifica se ci sono story approvate
+  List<StoryReviewOutcome> get approvedStories =>
+      storyOutcomes.where((s) => s.outcome == ReviewOutcomeType.approved).toList();
+
+  /// Verifica se ci sono story rifiutate
+  List<StoryReviewOutcome> get rejectedStories =>
+      storyOutcomes.where((s) => s.outcome == ReviewOutcomeType.rejected).toList();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SPRINT REVIEW SUPPORTING CLASSES
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Tipo di esito della valutazione di una story nella Sprint Review
+enum ReviewOutcomeType {
+  /// Story approvata e accettata dal Product Owner / stakeholder
+  approved,
+
+  /// Story necessita ulteriore lavoro, torna nel backlog
+  needsRefinement,
+
+  /// Story rifiutata, non soddisfa i criteri di acceptance
+  rejected,
+}
+
+/// Estensione per ReviewOutcomeType
+extension ReviewOutcomeTypeExtension on ReviewOutcomeType {
+  String get displayName {
+    switch (this) {
+      case ReviewOutcomeType.approved:
+        return 'Approvata';
+      case ReviewOutcomeType.needsRefinement:
+        return 'Da Rifinire';
+      case ReviewOutcomeType.rejected:
+        return 'Rifiutata';
+    }
+  }
+
+  String get displayNameEn {
+    switch (this) {
+      case ReviewOutcomeType.approved:
+        return 'Approved';
+      case ReviewOutcomeType.needsRefinement:
+        return 'Needs Refinement';
+      case ReviewOutcomeType.rejected:
+        return 'Rejected';
+    }
+  }
+
+  int get colorValue {
+    switch (this) {
+      case ReviewOutcomeType.approved:
+        return 0xFF4CAF50; // Green
+      case ReviewOutcomeType.needsRefinement:
+        return 0xFFFF9800; // Orange
+      case ReviewOutcomeType.rejected:
+        return 0xFFF44336; // Red
+    }
+  }
+
+  String get icon {
+    switch (this) {
+      case ReviewOutcomeType.approved:
+        return '✅';
+      case ReviewOutcomeType.needsRefinement:
+        return '🔄';
+      case ReviewOutcomeType.rejected:
+        return '❌';
+    }
+  }
+}
+
+/// Esito della valutazione di una singola story durante la Sprint Review
+class StoryReviewOutcome {
+  final String storyId;
+  final String storyTitle;
+  final ReviewOutcomeType outcome;
+  final String? notes;
+  final int? storyPoints;
+
+  const StoryReviewOutcome({
+    required this.storyId,
+    required this.storyTitle,
+    required this.outcome,
+    this.notes,
+    this.storyPoints,
+  });
+
+  factory StoryReviewOutcome.fromMap(Map<String, dynamic> data) {
+    return StoryReviewOutcome(
+      storyId: data['storyId'] ?? '',
+      storyTitle: data['storyTitle'] ?? '',
+      outcome: ReviewOutcomeType.values.firstWhere(
+        (o) => o.name == data['outcome'],
+        orElse: () => ReviewOutcomeType.approved,
+      ),
+      notes: data['notes'],
+      storyPoints: data['storyPoints'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'storyId': storyId,
+      'storyTitle': storyTitle,
+      'outcome': outcome.name,
+      if (notes != null) 'notes': notes,
+      if (storyPoints != null) 'storyPoints': storyPoints,
+    };
+  }
+}
+
+/// Tipo di decisione presa durante la Sprint Review
+enum ReviewDecisionType {
+  /// Azione da eseguire (action item)
+  actionItem,
+
+  /// Modifica al backlog
+  backlogChange,
+
+  /// Cambiamento di scope
+  scopeChange,
+
+  /// Decisione tecnica
+  technical,
+
+  /// Decisione di business
+  business,
+}
+
+/// Estensione per ReviewDecisionType
+extension ReviewDecisionTypeExtension on ReviewDecisionType {
+  String get displayName {
+    switch (this) {
+      case ReviewDecisionType.actionItem:
+        return 'Action Item';
+      case ReviewDecisionType.backlogChange:
+        return 'Modifica Backlog';
+      case ReviewDecisionType.scopeChange:
+        return 'Cambio Scope';
+      case ReviewDecisionType.technical:
+        return 'Tecnica';
+      case ReviewDecisionType.business:
+        return 'Business';
+    }
+  }
+
+  int get colorValue {
+    switch (this) {
+      case ReviewDecisionType.actionItem:
+        return 0xFF2196F3; // Blue
+      case ReviewDecisionType.backlogChange:
+        return 0xFF9C27B0; // Purple
+      case ReviewDecisionType.scopeChange:
+        return 0xFFFF9800; // Orange
+      case ReviewDecisionType.technical:
+        return 0xFF607D8B; // BlueGrey
+      case ReviewDecisionType.business:
+        return 0xFF4CAF50; // Green
+    }
+  }
+}
+
+/// Decisione formale presa durante la Sprint Review
+class ReviewDecision {
+  final String description;
+  final ReviewDecisionType type;
+  final String? assignee; // Email di chi deve eseguire
+  final String? assigneeName;
+  final DateTime? dueDate;
+  final bool isCompleted;
+
+  const ReviewDecision({
+    required this.description,
+    required this.type,
+    this.assignee,
+    this.assigneeName,
+    this.dueDate,
+    this.isCompleted = false,
+  });
+
+  factory ReviewDecision.fromMap(Map<String, dynamic> data) {
+    return ReviewDecision(
+      description: data['description'] ?? '',
+      type: ReviewDecisionType.values.firstWhere(
+        (t) => t.name == data['type'],
+        orElse: () => ReviewDecisionType.actionItem,
+      ),
+      assignee: data['assignee'],
+      assigneeName: data['assigneeName'],
+      dueDate: (data['dueDate'] as Timestamp?)?.toDate(),
+      isCompleted: data['isCompleted'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'description': description,
+      'type': type.name,
+      if (assignee != null) 'assignee': assignee,
+      if (assigneeName != null) 'assigneeName': assigneeName,
+      if (dueDate != null) 'dueDate': Timestamp.fromDate(dueDate!),
+      'isCompleted': isCompleted,
+    };
+  }
+}
+
+/// Partecipante alla Sprint Review con ruolo
+class ReviewAttendee {
+  final String email;
+  final String name;
+  final String role; // 'po', 'sm', 'dev', 'stakeholder', 'guest'
+  final bool isPresent;
+
+  const ReviewAttendee({
+    required this.email,
+    required this.name,
+    required this.role,
+    this.isPresent = true,
+  });
+
+  factory ReviewAttendee.fromMap(Map<String, dynamic> data) {
+    return ReviewAttendee(
+      email: data['email'] ?? '',
+      name: data['name'] ?? '',
+      role: data['role'] ?? 'guest',
+      isPresent: data['isPresent'] ?? true,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'name': name,
+      'role': role,
+      'isPresent': isPresent,
+    };
+  }
+
+  /// Icona per il ruolo
+  String get roleIcon {
+    switch (role) {
+      case 'po':
+        return '📋';
+      case 'sm':
+        return '🎯';
+      case 'dev':
+        return '💻';
+      case 'stakeholder':
+        return '👔';
+      case 'guest':
+      default:
+        return '👤';
+    }
+  }
+
+  /// Nome visualizzato del ruolo
+  String get roleDisplayName {
+    switch (role) {
+      case 'po':
+        return 'Product Owner';
+      case 'sm':
+        return 'Scrum Master';
+      case 'dev':
+        return 'Developer';
+      case 'stakeholder':
+        return 'Stakeholder';
+      case 'guest':
+      default:
+        return 'Guest';
+    }
+  }
 }

@@ -4,6 +4,8 @@ import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../models/framework_features.dart';
+import 'package:agile_tools/l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
 
 /// Dashboard principale per metriche Agile
 ///
@@ -39,17 +41,18 @@ class MetricsDashboardWidget extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Summary cards row (differenti per framework)
-          _buildSummaryRow(),
+          _buildSummaryRow(context),
           const SizedBox(height: 24),
 
           // Metriche specifiche per framework
-          ..._buildFrameworkSpecificMetrics(),
+          ..._buildFrameworkSpecificMetrics(context),
         ],
       ),
     );
   }
 
   Widget _buildFrameworkHeader(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       color: _features.primaryColor.withOpacity(0.1),
       child: Padding(
@@ -70,7 +73,7 @@ class MetricsDashboardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Metriche ${framework.displayName}',
+                    l10n.agileMetricsTitle(framework.displayName),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: _features.primaryColor,
@@ -98,6 +101,7 @@ class MetricsDashboardWidget extends StatelessWidget {
   }
 
   void _showMetricsInfo(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -109,7 +113,7 @@ class MetricsDashboardWidget extends StatelessWidget {
                     ? Icons.view_kanban
                     : Icons.all_inclusive),
             const SizedBox(width: 8),
-            Text('Metriche ${framework.displayName}'),
+            Text(l10n.agileMetricsTitle(framework.displayName)),
           ],
         ),
         content: SingleChildScrollView(
@@ -119,9 +123,8 @@ class MetricsDashboardWidget extends StatelessWidget {
             children: [
               if (_features.hasVelocityTracking) ...[
                 _buildInfoSection(
-                  'Velocity',
-                  'Misura la quantità di story points completati per sprint. '
-                  'Aiuta a prevedere la capacità del team nei prossimi sprint.',
+                  l10n.agileMetricsVelocityTitle,
+                  l10n.agileMetricsVelocityDesc,
                   Icons.speed,
                   Colors.purple,
                 ),
@@ -129,34 +132,30 @@ class MetricsDashboardWidget extends StatelessWidget {
               ],
               if (_features.hasFlowMetrics) ...[
                 _buildInfoSection(
-                  'Lead Time',
-                  'Tempo totale dalla creazione della story al completamento. '
-                  'Include il tempo di attesa nel backlog.',
+                  l10n.agileLeadTime,
+                  l10n.agileMetricsLeadTimeDesc,
                   Icons.hourglass_full,
                   Colors.indigo,
                 ),
                 const SizedBox(height: 16),
                 _buildInfoSection(
-                  'Cycle Time',
-                  'Tempo dall\'inizio del lavoro al completamento. '
-                  'Misura l\'efficienza del processo di sviluppo.',
+                  l10n.agileCycleTime,
+                  l10n.agileMetricsCycleTimeDesc,
                   Icons.timer,
                   Colors.blue,
                 ),
                 const SizedBox(height: 16),
                 _buildInfoSection(
-                  'Throughput',
-                  'Numero di item completati per unità di tempo. '
-                  'Indica la produttività del team.',
+                  l10n.agileThroughput,
+                  l10n.agileMetricsThroughputDesc,
                   Icons.trending_up,
                   Colors.teal,
                 ),
                 const SizedBox(height: 16),
               ],
               _buildInfoSection(
-                'Distribuzione Stories',
-                'Visualizza la distribuzione delle stories per stato. '
-                'Aiuta a identificare colli di bottiglia.',
+                l10n.agileDistribution,
+                l10n.agileMetricsDistributionDesc,
                 Icons.layers,
                 Colors.teal,
               ),
@@ -166,7 +165,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Chiudi'),
+            child: Text(l10n.ok),
           ),
         ],
       ),
@@ -199,19 +198,20 @@ class MetricsDashboardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryRow() {
+  Widget _buildSummaryRow(BuildContext context) {
     // Metriche diverse per framework
     if (framework == AgileFramework.kanban) {
-      return _buildKanbanSummary();
+      return _buildKanbanSummary(context);
     } else if (framework == AgileFramework.scrum) {
-      return _buildScrumSummary();
+      return _buildScrumSummary(context);
     } else {
       // Hybrid: mostra mix
-      return _buildHybridSummary();
+      return _buildHybridSummary(context);
     }
   }
 
-  Widget _buildScrumSummary() {
+  Widget _buildScrumSummary(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedSprints = sprints.where((s) => s.status == SprintStatus.completed).length;
     final avgVelocity = _calculateAverageVelocity();
     final totalStories = stories.length;
@@ -221,7 +221,7 @@ class MetricsDashboardWidget extends StatelessWidget {
       children: [
         Expanded(
           child: _buildSummaryCard(
-            'Sprint Completati',
+            l10n.agileStatsCompleted,
             '$completedSprints',
             '${sprints.length} totali',
             Icons.flag,
@@ -233,7 +233,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Velocity Media',
+            l10n.agileAverageVelocity,
             avgVelocity.toStringAsFixed(1),
             'pts/sprint',
             Icons.speed,
@@ -246,7 +246,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Stories Completate',
+            '${l10n.agileStatsStories} ${l10n.agileStatsCompleted}',
             '$completedStories',
             '$totalStories totali',
             Icons.check_circle,
@@ -259,7 +259,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Story Points',
+            l10n.agileStatsPoints,
             '${_getTotalCompletedPoints()}',
             '${_getTotalPlannedPoints()} pianificati',
             Icons.stars,
@@ -272,7 +272,8 @@ class MetricsDashboardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildKanbanSummary() {
+  Widget _buildKanbanSummary(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final totalItems = stories.length;
     final completedItems = stories.where((s) => s.status == StoryStatus.done).length;
     final inProgressItems = stories.where((s) => s.status == StoryStatus.inProgress).length;
@@ -283,7 +284,7 @@ class MetricsDashboardWidget extends StatelessWidget {
       children: [
         Expanded(
           child: _buildSummaryCard(
-            'Items Completati',
+            l10n.agileItemsCompleted,
             '$completedItems',
             '$totalItems totali',
             Icons.done_all,
@@ -295,7 +296,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'In Lavorazione',
+            l10n.agileInProgress,
             '$inProgressItems',
             'work in progress',
             Icons.engineering,
@@ -307,9 +308,9 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Cycle Time Medio',
+            l10n.agileCycleTime,
             avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-',
-            'giorni',
+            l10n.timeDays,
             Icons.timer,
             Colors.blue,
             tooltip: 'Tempo medio dall\'inizio lavoro al completamento.\n'
@@ -320,7 +321,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Throughput',
+            l10n.agileThroughput,
             throughput > 0 ? throughput.toStringAsFixed(1) : '-',
             'items/settimana',
             Icons.trending_up,
@@ -333,7 +334,8 @@ class MetricsDashboardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildHybridSummary() {
+  Widget _buildHybridSummary(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedSprints = sprints.where((s) => s.status == SprintStatus.completed).length;
     final avgVelocity = _calculateAverageVelocity();
     final avgCycleTime = _calculateAverageCycleTime();
@@ -343,7 +345,7 @@ class MetricsDashboardWidget extends StatelessWidget {
       children: [
         Expanded(
           child: _buildSummaryCard(
-            'Sprint',
+            l10n.agileSprintTitle,
             '$completedSprints',
             '${sprints.length} totali',
             Icons.flag,
@@ -354,7 +356,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Velocity',
+            l10n.agileMetricsVelocityTitle,
             avgVelocity.toStringAsFixed(1),
             'pts/sprint',
             Icons.speed,
@@ -366,9 +368,9 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Cycle Time',
+            l10n.agileCycleTime,
             avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-',
-            'giorni',
+            l10n.timeDays,
             Icons.timer,
             Colors.green,
             tooltip: 'Tempo medio dall\'inizio lavoro al completamento.\n'
@@ -378,7 +380,7 @@ class MetricsDashboardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-            'Completate',
+            l10n.agileStatsCompleted,
             '$completedStories',
             '${stories.length} totali',
             Icons.check_circle,
@@ -391,7 +393,7 @@ class MetricsDashboardWidget extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildFrameworkSpecificMetrics() {
+  List<Widget> _buildFrameworkSpecificMetrics(BuildContext context) {
     final widgets = <Widget>[];
 
     // Scrum-specific: Velocity Trend
@@ -592,13 +594,14 @@ class VelocityTrendWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedSprints = sprints
         .where((s) => s.status == SprintStatus.completed && s.velocity != null)
         .toList()
       ..sort((a, b) => a.number.compareTo(b.number));
 
     if (completedSprints.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     final avgVelocity = completedSprints.fold<double>(0, (sum, s) => sum + s.velocity!) /
@@ -725,7 +728,7 @@ class VelocityTrendWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -735,11 +738,11 @@ class VelocityTrendWidget extends StatelessWidget {
             Icon(Icons.trending_up, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato velocity',
+              l10n.agileNoDataVelocity,
               style: TextStyle(color: Colors.grey[600]),
             ),
             Text(
-              'Completa almeno uno sprint per vedere il trend',
+              l10n.agileVelocityNoDataHint,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
@@ -760,12 +763,13 @@ class LeadTimeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedStories = stories.where(
       (s) => s.status == StoryStatus.done && s.completedAt != null
     ).toList();
 
     if (completedStories.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     // Calculate lead times
@@ -794,9 +798,9 @@ class LeadTimeWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.hourglass_full, color: Colors.indigo),
                 const SizedBox(width: 8),
-                const Text(
-                  'Lead Time',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.agileLeadTime,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Tooltip(
@@ -818,7 +822,7 @@ class LeadTimeWidget extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 8),
             Text(
-              'Prevedibilità',
+              l10n.agilePredictability,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -839,7 +843,7 @@ class LeadTimeWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Il 85% degli item viene completato in ≤$p85 giorni',
+              l10n.agilePredictabilityDesc(p85),
               style: TextStyle(fontSize: 11, color: Colors.grey[600]),
             ),
           ],
@@ -907,7 +911,7 @@ class LeadTimeWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -917,11 +921,11 @@ class LeadTimeWidget extends StatelessWidget {
             Icon(Icons.hourglass_full, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato lead time',
+              l10n.agileNoDataLeadTime,
               style: TextStyle(color: Colors.grey[600]),
             ),
             Text(
-              'Completa almeno un item per calcolare',
+              l10n.agileStartFinishOneItem,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
@@ -942,12 +946,13 @@ class ThroughputWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedStories = stories.where(
       (s) => s.status == StoryStatus.done && s.completedAt != null
     ).toList();
 
     if (completedStories.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     // Calculate weekly throughput for last 8 weeks
@@ -978,9 +983,9 @@ class ThroughputWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.trending_up, color: Colors.teal),
                 const SizedBox(width: 8),
-                const Text(
-                  'Throughput',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.agileThroughput,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Container(
@@ -1042,7 +1047,7 @@ class ThroughputWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Items completati per settimana (ultime 8 settimane)',
+              l10n.agileThroughputWeekly(8),
               style: TextStyle(fontSize: 11, color: Colors.grey[600]),
             ),
           ],
@@ -1051,7 +1056,7 @@ class ThroughputWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -1061,11 +1066,11 @@ class ThroughputWidget extends StatelessWidget {
             Icon(Icons.trending_up, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato throughput',
+              l10n.agileNoDataThroughput,
               style: TextStyle(color: Colors.grey[600]),
             ),
             Text(
-              'Completa almeno un item per calcolare',
+              l10n.agileStartFinishOneItem,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
@@ -1086,6 +1091,7 @@ class CumulativeFlowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final statusCounts = <StoryStatus, int>{};
     for (final status in StoryStatus.values) {
       statusCounts[status] = stories.where((s) => s.status == status).length;
@@ -1099,20 +1105,20 @@ class CumulativeFlowWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.layers, color: Colors.teal),
-                SizedBox(width: 8),
+                const Icon(Icons.layers, color: Colors.teal),
+                const SizedBox(width: 8),
                 Text(
-                  'Distribuzione Items',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  l10n.agileDistribution,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 24),
             if (total == 0)
-              const Center(
-                child: Text('Nessun item', style: TextStyle(color: Colors.grey)),
+              Center(
+                child: Text(l10n.agileNoItems, style: const TextStyle(color: Colors.grey)),
               )
             else ...[
               // Stacked bar
@@ -1193,6 +1199,7 @@ class StoryCompletionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final totalStories = stories.length;
     final completedStories = stories.where((s) => s.status == StoryStatus.done).length;
     final completionRate = totalStories > 0 ? completedStories / totalStories : 0.0;
@@ -1211,13 +1218,13 @@ class StoryCompletionWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.pie_chart, color: Colors.green),
-                SizedBox(width: 8),
+                const Icon(Icons.pie_chart, color: Colors.green),
+                const SizedBox(width: 8),
                 Text(
-                  'Completion Rate',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  l10n.estimationProgress(completedStories, totalStories, (completionRate * 100).round().toString()),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -1254,14 +1261,14 @@ class StoryCompletionWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$completedStories su $totalStories',
+                        l10n.agileItemsOfTotal(completedStories, totalStories),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        'items completati',
+                        l10n.agileItemsCompletedLabel,
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
@@ -1339,12 +1346,13 @@ class CycleTimeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedStories = stories.where(
       (s) => s.status == StoryStatus.done && s.startedAt != null && s.completedAt != null
     ).toList();
 
     if (completedStories.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     // Calculate cycle times
@@ -1366,13 +1374,13 @@ class CycleTimeWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.timer, color: Colors.blue),
                 const SizedBox(width: 8),
-                const Text(
-                  'Cycle Time',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.agileCycleTime,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Tooltip(
-                  message: 'Tempo dall\'inizio lavoro al completamento',
+                  message: l10n.agileMetricsCycleTimeDesc,
                   child: Icon(Icons.info_outline, size: 18, color: Colors.grey[400]),
                 ),
               ],
@@ -1432,7 +1440,7 @@ class CycleTimeWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -1442,11 +1450,11 @@ class CycleTimeWidget extends StatelessWidget {
             Icon(Icons.timer, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato cycle time',
+              l10n.agileNoDataCycleTime,
               style: TextStyle(color: Colors.grey[600]),
             ),
             Text(
-              'Completa almeno un item per calcolare',
+              l10n.agileStartFinishOneItem,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
@@ -1467,12 +1475,13 @@ class EstimationAccuracyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final completedSprints = sprints.where(
       (s) => s.status == SprintStatus.completed && s.plannedPoints > 0
     ).toList();
 
     if (completedSprints.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     // Calculate accuracy for each sprint
@@ -1492,8 +1501,8 @@ class EstimationAccuracyWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.analytics, color: Colors.orange),
                 const SizedBox(width: 8),
-                const Text(
-                  'Estimation Accuracy',
+                Text(
+                  l10n.agileEstimationAccuracy,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
@@ -1570,7 +1579,7 @@ class EstimationAccuracyWidget extends StatelessWidget {
     return Colors.red;
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -1580,11 +1589,11 @@ class EstimationAccuracyWidget extends StatelessWidget {
             Icon(Icons.analytics, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nessun dato accuracy',
+              l10n.agileNoDataAccuracy,
               style: TextStyle(color: Colors.grey[600]),
             ),
             Text(
-              'Completa almeno uno sprint',
+              l10n.agileCompleteOneSprintFirst,
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
@@ -1613,6 +1622,7 @@ class MetricsQuickViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -1626,9 +1636,9 @@ class MetricsQuickViewWidget extends StatelessWidget {
                 children: [
                   Icon(Icons.analytics, color: _features.primaryColor),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Metriche',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.toolAgileProcessDescShort,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
