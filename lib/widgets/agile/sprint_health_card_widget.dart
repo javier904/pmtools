@@ -6,7 +6,6 @@ import '../../models/agile_enums.dart';
 import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../themes/app_colors.dart';
-import '../../themes/app_theme.dart';
 
 /// Sprint Health Summary Card
 ///

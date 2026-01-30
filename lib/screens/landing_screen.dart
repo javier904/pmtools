@@ -48,7 +48,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Future<void> _launchEmail(String subjectPrefix) async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'suppkesien@gmail.com',
+      path: 'support@keisenapp.com',
       query: 'subject=$subjectPrefix',
     );
     try {
@@ -77,8 +77,8 @@ class _LandingScreenState extends State<LandingScreen> {
               _buildFeaturesSection(isMobile, isDark),
               _buildSmartTodoSection(isMobile, isDark),
               _buildEisenhowerSection(isMobile, isDark),
-              _buildAgileMethodologySection(isMobile, isDark),
               _buildEstimationMethodsSection(isMobile, isDark),
+              _buildAgileMethodologySection(isMobile, isDark),
               _buildRetrospectiveTypesSection(isMobile, isDark),
             ] else ...[
               _buildIntegratedDesktopLayout(context, isDark),
@@ -89,8 +89,8 @@ class _LandingScreenState extends State<LandingScreen> {
               const SizedBox(height: 100),
               _buildSmartTodoSection(isMobile, isDark),
               _buildEisenhowerSection(isMobile, isDark),
-              _buildAgileMethodologySection(isMobile, isDark),
               _buildEstimationMethodsSection(isMobile, isDark),
+              _buildAgileMethodologySection(isMobile, isDark),
               _buildRetrospectiveTypesSection(isMobile, isDark),
             ],
             _buildWorkflowSection(isMobile, isDark),
@@ -127,7 +127,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
-                    'assets/icons/app_icon.png',
+                    'assets/icons/app_icon.webp',
                     height: 40,
                     filterQuality: FilterQuality.medium,
                   ),
@@ -463,6 +463,14 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: AppColors.primary,
                       isDark: isDark,
                       features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Coming Soon: Agile Process Manager'),
+                            duration: Duration(seconds: 2),
+                          ),
+                         );
+                      },
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
@@ -490,9 +498,11 @@ class _LandingScreenState extends State<LandingScreen> {
     required Color color,
     required bool isDark,
     List<String> features = const [],
+    VoidCallback? onTap,
   }) {
     return _HoverScaleCard(
       isDark: isDark,
+      onTap: onTap,
       builder: (context, _) => Container(
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
@@ -567,16 +577,31 @@ class _LandingScreenState extends State<LandingScreen> {
     final isCompact = screenHeight < 900;
     
     final verticalPadding = isCompact ? 16.0 : 40.0; // Further reduced
-    final spacerFlex = isCompact ? 1 : 2;
+    final spacerFlex = 1; // Always 1 to let tiles be wider
     final gap = isCompact ? 8.0 : 24.0; // Further reduced
     
     return Container(
       // Allow it to shrink for smaller screens, but keep reasonable min height
       constraints: const BoxConstraints(minHeight: 600),
+      // Diagonal gradient background as requested
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.blue.withValues(alpha: 0.08),      // Smart Todo
+            AppColors.success.withValues(alpha: 0.08), // Eisenhower
+            Colors.amber.withValues(alpha: 0.08),      // Estimation
+            AppColors.primary.withValues(alpha: 0.08), // Agile
+            AppColors.pink.withValues(alpha: 0.08),    // Retro
+          ],
+          stops: const [0.1, 0.3, 0.5, 0.7, 0.9],
+        ),
+      ),
       padding: EdgeInsets.symmetric(horizontal: 60, vertical: verticalPadding),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
+          constraints: const BoxConstraints(maxWidth: 1400),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Center the whole block
             children: [
@@ -613,16 +638,16 @@ class _LandingScreenState extends State<LandingScreen> {
               _buildHeroCenterContent(isDark, isCompact: isCompact),
               SizedBox(height: gap),
 
-              // Bottom Row: Agile & Retro
+              // Bottom Row: Estimation Room & Retro
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: _buildCompactFeatureCard(
-                      icon: Icons.rocket_launch_rounded,
-                      title: l10n.landingAgileTitle,
-                      description: l10n.landingAgileSubtitle,
-                      color: AppColors.primary,
+                      icon: Icons.casino_rounded,
+                      title: l10n.toolEstimation,
+                      description: l10n.landingEstimationSubtitle,
+                      color: Colors.amber,
                       isDark: isDark,
                       isCompact: isCompact,
                     ),
@@ -641,18 +666,26 @@ class _LandingScreenState extends State<LandingScreen> {
                 ],
               ),
 
-              // 5th Element: Estimation Room
+              // 5th Element: Agile Process Manager (Coming Soon)
               SizedBox(height: gap),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 400),
                 child: _buildCompactFeatureCard(
-                  icon: Icons.casino_rounded,
-                  title: l10n.toolEstimation,
-                  description: l10n.landingEstimationSubtitle,
-                  color: Colors.amber,
+                  icon: Icons.rocket_launch_rounded,
+                  title: l10n.landingAgileTitle,
+                  description: l10n.landingAgileSubtitle,
+                  color: AppColors.primary,
                   isDark: isDark,
-                  centerAlign: true,
                   isCompact: isCompact,
+                  centerAlign: true,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Coming Soon: Agile Process Manager'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -662,13 +695,12 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-
   Widget _buildHeroCenterContent(bool isDark, {bool isCompact = false}) {
     final l10n = AppLocalizations.of(context)!;
     
-    // Force line break for compact mode if requested
+    // Force line break for better typography on all screens
     String subtitle = l10n.landingHeroSubtitle;
-    if (isCompact && subtitle.contains('. All')) {
+    if (subtitle.contains('. All')) {
       subtitle = subtitle.replaceFirst('. All', '.\nAll');
     }
 
@@ -774,35 +806,42 @@ class _LandingScreenState extends State<LandingScreen> {
     required bool isDark,
     bool centerAlign = false,
     bool isCompact = false,
+    VoidCallback? onTap,
   }) {
     // Cleaner version of feature card for the integrated view
     // Less padding, slightly smaller text to fit nicely
     return _HoverScaleCard(
       isDark: isDark,
+      onTap: onTap,
       glowColor: color, // Pass the color for value-based glow
       builder: (context, isHovered) {
         return Container(
-          // Constrain width to make tiles narrower as requested
-          constraints: const BoxConstraints(maxWidth: 280), 
-          padding: EdgeInsets.all(isCompact ? 12 : 24), // Reduced padding
+          // Wider tiles with horizontal emphasis as requested
+          constraints: BoxConstraints(maxWidth: isCompact ? 280 : 800), 
+          padding: isCompact 
+              ? const EdgeInsets.all(12) 
+              : const EdgeInsets.symmetric(horizontal: 32, vertical: 24), 
           decoration: BoxDecoration(
             color: isHovered 
-                ? null // Use gradient if hovered
-                : context.surfaceColor.withOpacity(0.8), 
-            gradient: isHovered
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
+                ? null // Use gradient if hovered (handled by gradient prop)
+                : null, // Also use gradient for idle state
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isHovered
+                  ? [
                       context.surfaceColor.withOpacity(0.9),
-                      color.withValues(alpha: 0.15), // Subtle tint of the icon color
+                      color.withValues(alpha: 0.15), // Stranger tint on hover
+                    ]
+                  : [
+                      context.surfaceColor,
+                      Color.lerp(context.surfaceColor, color, 0.04)!, // Slightly more visible but still ultra-subtle
                     ],
-                  )
-                : null,
+            ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isHovered 
-                  ? color.withValues(alpha: 0.5) // Brighter border on hover
+                  ? color.withValues(alpha: 0.5) 
                   : context.borderColor.withOpacity(0.5),
             ),
             boxShadow: [
@@ -830,7 +869,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 title,
                 textAlign: centerAlign ? TextAlign.center : TextAlign.start,
                 style: TextStyle(
-                  fontSize: isCompact ? 14 : 16,
+                  fontSize: isCompact ? 14 : 18,
                   fontWeight: FontWeight.bold,
                   color: context.textPrimaryColor,
                 ),
@@ -840,7 +879,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 description,
                 textAlign: centerAlign ? TextAlign.center : TextAlign.start,
                 style: TextStyle(
-                  fontSize: isCompact ? 12 : 13,
+                  fontSize: isCompact ? 12 : 14,
                   color: context.textSecondaryColor,
                   height: 1.5,
                 ),
@@ -869,7 +908,7 @@ class _LandingScreenState extends State<LandingScreen> {
           end: Alignment.bottomRight,
           colors: [
             context.surfaceColor,
-            context.backgroundColor,
+            Colors.blue.withValues(alpha: 0.025), // Balanced Blue
           ],
         ),
       ),
@@ -977,7 +1016,14 @@ class _LandingScreenState extends State<LandingScreen> {
         vertical: 80,
       ),
       decoration: BoxDecoration(
-        color: context.backgroundColor,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+             Colors.blue.withValues(alpha: 0.025), 
+             AppColors.success.withValues(alpha: 0.025), 
+          ],
+        ),
         border: Border(
           top: BorderSide(color: context.borderSubtleColor),
         ),
@@ -1265,11 +1311,11 @@ class _LandingScreenState extends State<LandingScreen> {
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            context.surfaceColor,
-            context.backgroundColor,
+            Colors.amber.withValues(alpha: 0.025), 
+            AppColors.primary.withValues(alpha: 0.025), 
           ],
         ),
       ),
@@ -1339,7 +1385,14 @@ class _LandingScreenState extends State<LandingScreen> {
         vertical: 80,
       ),
       decoration: BoxDecoration(
-        color: context.backgroundColor,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.success.withValues(alpha: 0.025), 
+            Colors.amber.withValues(alpha: 0.025), 
+          ],
+        ),
         border: Border(
           top: BorderSide(color: context.borderSubtleColor),
         ),
@@ -1563,8 +1616,8 @@ class _LandingScreenState extends State<LandingScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            context.surfaceColor,
-            context.backgroundColor,
+            AppColors.primary.withValues(alpha: 0.025), 
+            AppColors.pink.withValues(alpha: 0.025), 
           ],
         ),
       ),
@@ -2019,6 +2072,8 @@ class _LandingScreenState extends State<LandingScreen> {
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             l10n.landingCtaTitle, // 'Ready to start?'
@@ -2093,70 +2148,53 @@ class _LandingScreenState extends State<LandingScreen> {
       ),
       child: Column(
         children: [
-          // Footer content
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 700;
-
-              if (isWide) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Brand column
-                    Expanded(
-                      flex: 2,
-                      child: _buildFooterBrand(),
+          // Centered Brand Section
+          _buildFooterBrand(center: true),
+          
+          const SizedBox(height: 64),
+          
+          // Centered Legal Section
+          Column(
+            children: [
+              Text(
+                l10n.landingFooterLegal,
+                style: TextStyle(
+                  color: context.textPrimaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Wrap(
+                spacing: 32,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: [
+                  _buildFooterLink(
+                    l10n.landingFooterPrivacy,
+                    onTap: () => launchUrl(Uri.parse('https://keisenapp.com/privacy')),
+                  ),
+                  _buildFooterLink(
+                    l10n.landingFooterTerms,
+                    onTap: () => launchUrl(Uri.parse('https://keisenapp.com/terms')),
+                  ),
+                  _buildFooterLink(
+                    l10n.landingFooterCookies,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CookiePolicyScreen()),
                     ),
-                    const SizedBox(width: 48),
-                    // Links columns
-                    Expanded(child: _buildFooterColumn(l10n.landingFooterProduct, [
-                      l10n.landingFooterFeatures,
-                      l10n.landingFooterPricing,
-                      l10n.landingFooterChangelog,
-                      l10n.landingFooterRoadmap,
-                    ])),
-                    Expanded(child: _buildFooterColumn(l10n.landingFooterResources, [
-                      l10n.landingFooterDocs,
-                      l10n.landingFooterAgileGuides,
-                      l10n.landingFooterBlog,
-                      l10n.landingFooterCommunity,
-                    ])),
-                    Expanded(child: _buildFooterColumn(l10n.landingFooterCompany, [
-                      l10n.landingFooterAbout,
-                      l10n.landingFooterContact,
-                      l10n.landingFooterJobs,
-                      l10n.landingFooterPress,
-                    ])),
-                    Expanded(child: _buildFooterColumn(l10n.landingFooterLegal, [
-                      l10n.landingFooterPrivacy,
-                      l10n.landingFooterTerms,
-                      l10n.landingFooterCookies,
-                      l10n.landingFooterGdpr,
-                    ])),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    _buildFooterBrand(),
-                    const SizedBox(height: 32),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildFooterColumn(l10n.landingFooterProduct, [
-                          l10n.landingFooterFeatures,
-                          l10n.landingFooterPricing,
-                        ])),
-                        Expanded(child: _buildFooterColumn(l10n.landingFooterLegal, [
-                          l10n.landingFooterPrivacy,
-                          l10n.landingFooterTerms,
-                        ])),
-                      ],
+                  ),
+                  _buildFooterLink(
+                    l10n.landingFooterGdpr,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const GdprScreen()),
                     ),
-                  ],
-                );
-              }
-            },
+                  ),
+                ],
+              ),
+            ],
           ),
 
           const SizedBox(height: 48),
@@ -2210,17 +2248,20 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  Widget _buildFooterBrand() {
+  Widget _buildFooterBrand({bool center = false}) {
     final l10n = AppLocalizations.of(context)!;
+    final alignment = center ? CrossAxisAlignment.center : CrossAxisAlignment.start;
+    
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: alignment,
       children: [
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
 ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
-                'assets/icons/app_icon.png',
+                'assets/icons/app_icon.webp',
                 height: 32,
                 filterQuality: FilterQuality.medium,
               ),
@@ -2240,20 +2281,22 @@ ClipRRect(
         const SizedBox(height: 16),
         Text(
           l10n.landingFooterBrandDesc, // 'Strumenti collaborativi...'
+          textAlign: center ? TextAlign.center : TextAlign.start,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 14,
             color: context.textSecondaryColor,
-            height: 1.5,
+            height: 1.6,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         // Contact email
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.email_outlined, size: 16, color: context.textMutedColor),
             const SizedBox(width: 8),
             Text(
-              'suppkesien@gmail.com',
+              'support@keisenapp.com',
               style: TextStyle(
                 fontSize: 13,
                 color: context.textSecondaryColor,
@@ -2271,12 +2314,26 @@ ClipRRect(
         const SizedBox(height: 8),
         _buildSupportLink(
           icon: Icons.lightbulb_outline,
-          label: l10n.localeName == 'it' ? 'Richiedi Feature' : 'Request Feature',
-          onTap: () => _launchEmail(l10n.localeName == 'it' ? '[Richiesta Feature] ' : '[Feature Request] '),
+          label: l10n.localeName == 'it' ? 'Suggerisci Funzionalità' : 'Suggest Feature',
+          onTap: () => _launchEmail(l10n.localeName == 'it' ? '[Suggerimento] ' : '[Feature Request] '),
         ),
       ],
     );
   }
+
+  Widget _buildFooterLink(String text, {VoidCallback? onTap}) {
+    return _HoverButton(
+      onTap: onTap ?? () {},
+      child: Text(
+        text,
+        style: TextStyle(
+          color: context.textSecondaryColor,
+          fontSize: 13,
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildSupportLink({
     required IconData icon,
@@ -2342,9 +2399,11 @@ ClipRRect(
     Widget? screen;
     
     if (link == l10n.landingFooterPrivacy) {
-      screen = PrivacyPolicyScreen();
+      launchUrl(Uri.parse('https://keisenapp.com/privacy'));
+      return;
     } else if (link == l10n.landingFooterTerms) {
-      screen = TermsOfServiceScreen();
+      launchUrl(Uri.parse('https://keisenapp.com/terms'));
+      return;
     }
     else if (link == l10n.landingFooterCookies) {
       screen = CookiePolicyScreen();
@@ -2645,12 +2704,14 @@ class _HoverScaleCard extends StatefulWidget {
   final Widget Function(BuildContext, bool) builder; // Changed to builder
   final double scale;
   final bool isDark;
+  final VoidCallback? onTap;
   final Color? glowColor;
 
   const _HoverScaleCard({
     required this.builder,
     this.scale = 1.03,
     required this.isDark,
+    this.onTap,
     this.glowColor,
   });
 
@@ -2663,18 +2724,18 @@ class _HoverScaleCardState extends State<_HoverScaleCard> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutQuart,
-        transform: Matrix4.identity()..scale(_isHovered ? widget.scale : 1.0),
-        transformAlignment: Alignment.center,
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutQuart,
+          transform: Matrix4.identity()..scale(_isHovered ? widget.scale : 1.0),
+          transformAlignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20), // Match child radius
+            borderRadius: BorderRadius.circular(20),
             boxShadow: _isHovered
                 ? [
                     BoxShadow(
@@ -2691,7 +2752,7 @@ class _HoverScaleCardState extends State<_HoverScaleCard> {
                   ]
                 : [],
           ),
-          child: widget.builder(context, _isHovered), // Use builder
+          child: widget.builder(context, _isHovered),
         ),
       ),
     );

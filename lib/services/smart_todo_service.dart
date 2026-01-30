@@ -8,6 +8,7 @@ import '../models/smart_todo/smart_todo_audit_log_model.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import 'subscription/subscription_limits_service.dart';
 import 'smart_todo_audit_service.dart';
+import 'favorite_service.dart';
 
 class SmartTodoService {
   final FirebaseFirestore _firestore;
@@ -119,6 +120,9 @@ class SmartTodoService {
 
   Future<void> deleteList(String listId, {String? listTitle, String? performedBy, String? performedByName}) async {
     await _firestore.collection(_listsCollection).doc(listId).delete();
+
+    // ⭐️ Rimuovi dai preferiti
+    FavoriteService().removeFavorite(listId);
 
     // 📋 Audit log
     if (performedBy != null) {

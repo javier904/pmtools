@@ -1044,10 +1044,100 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroNoRetros => 'Sin retrospectivas';
 
   @override
+  String get retroNoRetrosFound => 'No se encontraron retrospectivas';
+
+  @override
   String get retroCreateNew => 'Crear Nueva';
 
   @override
+  String get retroChooseMode => 'Scegli Modalità Retrospettiva';
+
+  @override
+  String get retroQuickForm => 'Form Rapido';
+
+  @override
+  String get retroInteractiveBoard => 'Board Interattiva';
+
+  @override
+  String get retroQuickModeDesc =>
+      'Compila un form veloce per registrare i punti salienti dello sprint.';
+
+  @override
+  String get retroInteractiveModeDesc =>
+      'Avvia una board in tempo reale per collaborare con tutto il team.';
+
+  @override
+  String get retroNoOperationsReview => 'Nessuna Operations Review';
+
+  @override
+  String get retroOperationsReview => 'Operations Review';
+
+  @override
+  String get retroOperationsReviewDesc =>
+      'Crea una Operations Review per migliorare il flusso di lavoro';
+
+  @override
+  String get retroWentWell => 'Cosa è andato bene?';
+
+  @override
+  String get retroToImprove => 'Cosa migliorare?';
+
+  @override
+  String get retroWentWellHint => 'Aggiungi un punto positivo...';
+
+  @override
+  String get retroToImproveHint => 'Aggiungi un punto da migliorare...';
+
+  @override
+  String get retroActionItemHint => 'Aggiungi un action item...';
+
+  @override
+  String get retroSave => 'Salva Retrospettiva';
+
+  @override
+  String get retroOpenInteractiveBoard => 'Apri Board Interattiva';
+
+  @override
+  String get retroSentimentTeam => 'Sentiment del Team';
+
+  @override
+  String get retroExcellent => 'Eccellente';
+
+  @override
+  String get retroGood => 'Buono';
+
+  @override
+  String get retroNormal => 'Nella norma';
+
+  @override
+  String get retroNeedsImprovement => 'Da migliorare';
+
+  @override
+  String get retroCritical => 'Critico';
+
+  @override
+  String get retroNoElements => 'Nessun elemento';
+
+  @override
+  String get retroNoActionItemsFound => 'Nessun action item';
+
+  @override
+  String retroAssignedTo(String email) {
+    return 'Assegnato a: $email';
+  }
+
+  @override
+  String retroVotesCount(int count) {
+    return '+$count voti';
+  }
+
+  @override
   String get retroGuidance => 'Guía de Retrospectivas';
+
+  @override
+  String retroResultLabel(String score, String label) {
+    return 'Sentiment medio: $score ($label)';
+  }
 
   @override
   String get retroSearchHint => 'Buscar retrospectiva...';
@@ -1168,12 +1258,16 @@ class AppLocalizationsEs extends AppLocalizations {
       'Daily Scrum: Sincronización diaria del equipo (15 minutos)';
 
   @override
-  String get scrumEventsReview =>
-      'Sprint Review: Demo del trabajo completado a los stakeholders (máx 4h)';
-
-  @override
   String get scrumEventsRetro =>
       'Sprint Retrospective: Reflexión del equipo para mejora continua (máx 3h)';
+
+  @override
+  String get scrumEventsRetroContent =>
+      'Crea una retrospettiva per analizzare l\'ultimo sprint e identificare aree di miglioramento.';
+
+  @override
+  String get scrumEventsReview =>
+      'Sprint Review: Demo del trabajo completado a los stakeholders (máx 4h)';
 
   @override
   String get scrumArtifactsTitle => 'Los Artefactos Scrum';
@@ -1668,6 +1762,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String retroSprintLabel(int number, String name) {
     return 'Sprint $number: $name';
   }
+
+  @override
+  String retroSprintOnlyLabel(int number) {
+    return 'Sprint $number';
+  }
+
+  @override
+  String get retroOwner => 'Proprietario';
+
+  @override
+  String get retroGuest => 'Ospite';
 
   @override
   String get retroSessionTitle => 'Título de Sesión';
@@ -3552,9 +3657,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroAddCardButton => 'Añadir Tarjeta';
-
-  @override
-  String get retroNoRetrosFound => 'No se encontraron retrospectivas';
 
   @override
   String get retroDeleteRetro => 'Eliminar Retrospectiva';
@@ -10027,104 +10129,209 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eisenhowerImportErrorReadFile => 'No se puede leer el archivo';
 
   @override
-  String get agileSprintHealthTitle => 'Sprint Health';
+  String get agileSprintHealthTitle => 'Salud del Sprint';
 
   @override
-  String get agileSprintHealthNoSprint => 'Nessuno sprint attivo';
+  String get agileSprintHealthNoSprint => 'Ningún sprint activo';
 
   @override
   String get agileSprintHealthNoSprintDesc =>
-      'Avvia uno sprint per vedere le metriche di salute';
+      'Inicia un sprint para ver las métricas de salud';
 
   @override
-  String get agileSprintHealthGoal => 'Sprint Goal';
+  String get agileSprintHealthGoal => 'Objetivo del Sprint';
 
   @override
-  String get agileSprintHealthOnTrack => 'In Linea';
+  String get agileSprintHealthOnTrack => 'En Curso';
 
   @override
-  String get agileSprintHealthAtRisk => 'A Rischio';
+  String get agileSprintHealthAtRisk => 'En Riesgo';
 
   @override
-  String get agileSprintHealthOffTrack => 'In Ritardo';
+  String get agileSprintHealthOffTrack => 'Con Retraso';
 
   @override
-  String get agileSprintHealthTime => 'Tempo';
+  String get agileSprintHealthTime => 'Tiempo';
 
   @override
-  String get agileSprintHealthWork => 'Lavoro';
+  String get agileSprintHealthWork => 'Trabajo';
 
   @override
-  String get agileSprintHealthDaysLeft => 'giorni rimasti';
+  String get agileSprintHealthDaysLeft => 'días restantes';
 
   @override
-  String get agileSprintHealthSpRemaining => 'SP rimasti';
+  String get agileSprintHealthSpRemaining => 'SP restantes';
 
   @override
-  String get agileSprintHealthStoriesDone => 'Stories Fatte';
+  String get agileSprintHealthStoriesDone => 'Stories Completadas';
 
   @override
-  String get agileSprintHealthCommitment => 'Affidabilità';
+  String get agileSprintHealthCommitment => 'Compromiso';
 
   @override
-  String get agileSprintHealthDailyVelocity => 'Vel. Giornaliera';
+  String get agileSprintHealthDailyVelocity => 'Velocidad Diaria';
 
   @override
-  String get agileSprintHealthPrediction => 'Previsione';
+  String get agileSprintHealthPrediction => 'Predicción';
 
   @override
-  String get agileSprintHealthOnTime => 'In tempo';
+  String get agileSprintHealthOnTime => 'A tiempo';
 
   @override
-  String get agileSprintHealthStoriesBreakdown => 'Distribuzione Stories';
+  String get agileSprintHealthStoriesBreakdown => 'Distribución de Stories';
 
   @override
   String get agileSprintBurndownTitle => 'Sprint Burndown';
 
   @override
-  String get agileSprintBurndownNoData => 'Nessun dato burndown';
+  String get agileSprintBurndownNoData => 'Sin datos de burndown';
 
   @override
   String get agileSprintBurndownNoDataDesc =>
-      'Assegna stories allo sprint per vedere il burndown';
+      'Asigna stories al sprint para ver el burndown';
 
   @override
-  String get agileWorkloadTitle => 'Carico del Team';
+  String get agileWorkloadTitle => 'Carga del Equipo';
 
   @override
-  String get agileWorkloadBalanced => 'Bilanciato';
+  String get agileWorkloadBalanced => 'Equilibrado';
 
   @override
-  String get agileWorkloadUnbalanced => 'Sbilanciato';
+  String get agileWorkloadUnbalanced => 'Desequilibrado';
 
   @override
-  String get agileWorkloadTotalStories => 'Stories Totali';
+  String get agileWorkloadTotalStories => 'Stories Totales';
 
   @override
-  String get agileWorkloadAssigned => 'Assegnate';
+  String get agileWorkloadAssigned => 'Asignadas';
 
   @override
-  String get agileWorkloadAvgSp => 'SP Medi/Persona';
+  String get agileWorkloadAvgSp => 'SP Prom./Persona';
 
   @override
   String get agileWorkloadStories => 'stories';
 
   @override
-  String get agileWorkloadInProgress => 'in corso';
+  String get agileWorkloadInProgress => 'en progreso';
 
   @override
-  String get agileWorkloadUnassigned => 'Non assegnate';
+  String get agileWorkloadUnassigned => 'Sin asignar';
 
   @override
-  String get agileWorkloadUnassignedWarning => 'stories senza assegnatario';
+  String get agileWorkloadUnassignedWarning => 'stories sin asignar';
 
   @override
-  String get agileWorkloadNoStories => 'Nessuna story da analizzare';
+  String get agileWorkloadNoStories => 'No hay stories para analizar';
 
   @override
   String get agileWorkloadNoStoriesDesc =>
-      'Crea stories e assegnale ai membri del team';
+      'Crea stories y asígnalas a los miembros del equipo';
 
   @override
-  String get agileWorkloadOverloaded => 'Sovraccaricato';
+  String get agileWorkloadOverloaded => 'Sobrecargado';
+
+  @override
+  String get agileCommitmentTrendTitle => 'Tendencia Fiabilidad Compromiso';
+
+  @override
+  String get agileCommitmentTrendNoData => 'Sin datos disponibles';
+
+  @override
+  String get agileCommitmentTrendNoDataDesc =>
+      'Completa al menos un sprint para ver la tendencia';
+
+  @override
+  String get agileCommitmentTrendPlanned => 'Planificados';
+
+  @override
+  String get agileCommitmentTrendCompleted => 'Completados';
+
+  @override
+  String get agileCommitmentTrendAvg => 'Promedio';
+
+  @override
+  String get agileFlowEfficiencyTitle => 'Eficiencia del Flujo & WIP';
+
+  @override
+  String get agileFlowEfficiencyNoData => 'Sin datos disponibles';
+
+  @override
+  String get agileFlowEfficiencyNoDataDesc =>
+      'Agrega stories para ver el análisis del flujo';
+
+  @override
+  String get agileFlowEfficiency => 'Eficiencia del Flujo';
+
+  @override
+  String get agileFlowCycleTime => 'Tiempo de Ciclo';
+
+  @override
+  String get agileFlowLeadTime => 'Tiempo Total';
+
+  @override
+  String get agileFlowDays => 'días';
+
+  @override
+  String get agileFlowWipByStatus => 'WIP por Estado';
+
+  @override
+  String get agileFlowAvg => 'prom';
+
+  @override
+  String get agileBlockedItemsTitle => 'Elementos Bloqueados';
+
+  @override
+  String get agileBlockedItemsNone => 'Sin elementos bloqueados';
+
+  @override
+  String get agileBlockedItemsNoneDesc =>
+      'Todas las dependencias están satisfechas';
+
+  @override
+  String agileBlockedItemsCount(Object count) {
+    return '$count bloqueados';
+  }
+
+  @override
+  String get agileBlockedItemsSp => 'SP bloqueados';
+
+  @override
+  String get agileBlockedItemsBlockedBy => 'Bloqueado por';
+
+  @override
+  String get agileBlockedItemsDependency => 'dependencia';
+
+  @override
+  String get agileBlockedItemsDependencies => 'dependencias';
+
+  @override
+  String get agileSprintScopeTitle => 'Scope del Sprint';
+
+  @override
+  String get agileSprintScopeNoSprint => 'Sin sprint activo';
+
+  @override
+  String get agileSprintScopeNoSprintDesc =>
+      'Inicia un sprint para monitorear los cambios de scope';
+
+  @override
+  String get agileSprintScopeOriginal => 'Original';
+
+  @override
+  String get agileSprintScopeCurrent => 'Actual';
+
+  @override
+  String get agileSprintScopeDelta => 'Delta';
+
+  @override
+  String get agileSprintScopeCreep => 'Scope Creep';
+
+  @override
+  String get agileSprintScopeReduction => 'Reducción de Scope';
+
+  @override
+  String get agileSprintScopeStable => 'Estable';
+
+  @override
+  String get agileSprintScopeSp => 'SP';
 }

@@ -1037,10 +1037,100 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroNoRetros => 'No retrospectives';
 
   @override
+  String get retroNoRetrosFound => 'No retrospective found';
+
+  @override
   String get retroCreateNew => 'Create New';
 
   @override
+  String get retroChooseMode => 'Choose Retrospective Mode';
+
+  @override
+  String get retroQuickForm => 'Quick Form';
+
+  @override
+  String get retroInteractiveBoard => 'Interactive Board';
+
+  @override
+  String get retroQuickModeDesc =>
+      'Fill a quick form to record the highlights of the sprint.';
+
+  @override
+  String get retroInteractiveModeDesc =>
+      'Start a real-time board to collaborate with the whole team.';
+
+  @override
+  String get retroNoOperationsReview => 'No Operations Review';
+
+  @override
+  String get retroOperationsReview => 'Operations Review';
+
+  @override
+  String get retroOperationsReviewDesc =>
+      'Create an Operations Review to improve the workflow';
+
+  @override
+  String get retroWentWell => 'What went well?';
+
+  @override
+  String get retroToImprove => 'What to improve?';
+
+  @override
+  String get retroWentWellHint => 'Add a positive point...';
+
+  @override
+  String get retroToImproveHint => 'Add a point to improve...';
+
+  @override
+  String get retroActionItemHint => 'Add an action item...';
+
+  @override
+  String get retroSave => 'Save Retrospective';
+
+  @override
+  String get retroOpenInteractiveBoard => 'Open Interactive Board';
+
+  @override
+  String get retroSentimentTeam => 'Team Sentiment';
+
+  @override
+  String get retroExcellent => 'Excellent';
+
+  @override
+  String get retroGood => 'Good';
+
+  @override
+  String get retroNormal => 'Normal';
+
+  @override
+  String get retroNeedsImprovement => 'Needs Improvement';
+
+  @override
+  String get retroCritical => 'Critical';
+
+  @override
+  String get retroNoElements => 'No elements';
+
+  @override
+  String get retroNoActionItemsFound => 'No action items';
+
+  @override
+  String retroAssignedTo(String email) {
+    return 'Assigned to: $email';
+  }
+
+  @override
+  String retroVotesCount(int count) {
+    return '+$count votes';
+  }
+
+  @override
   String get retroGuidance => 'Retrospective Guide';
+
+  @override
+  String retroResultLabel(String score, String label) {
+    return 'Average sentiment: $score ($label)';
+  }
 
   @override
   String get retroSearchHint => 'Search retrospective...';
@@ -1160,12 +1250,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Daily Scrum: Daily team synchronization (15 minutes)';
 
   @override
-  String get scrumEventsReview =>
-      'Sprint Review: Demo of completed work to stakeholders (max 4h)';
-
-  @override
   String get scrumEventsRetro =>
       'Sprint Retrospective: Team reflection for continuous improvement (max 3h)';
+
+  @override
+  String get scrumEventsRetroContent =>
+      'Create a retrospective to analyze the last sprint and identify areas for improvement.';
+
+  @override
+  String get scrumEventsReview =>
+      'Sprint Review: Demo of completed work to stakeholders (max 4h)';
 
   @override
   String get scrumArtifactsTitle => 'Scrum Artifacts';
@@ -1645,6 +1739,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String retroSprintLabel(int number, String name) {
     return 'Sprint $number: $name';
   }
+
+  @override
+  String retroSprintOnlyLabel(int number) {
+    return 'Sprint $number';
+  }
+
+  @override
+  String get retroOwner => 'Owner';
+
+  @override
+  String get retroGuest => 'Guest';
 
   @override
   String get retroSessionTitle => 'Session Title';
@@ -3516,9 +3621,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retroAddCardButton => 'Add Card';
-
-  @override
-  String get retroNoRetrosFound => 'No retrospective found';
 
   @override
   String get retroDeleteRetro => 'Delete Retrospective';
@@ -10045,4 +10147,108 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileWorkloadOverloaded => 'Overloaded';
+
+  @override
+  String get agileCommitmentTrendTitle => 'Commitment Reliability Trend';
+
+  @override
+  String get agileCommitmentTrendNoData => 'No data available';
+
+  @override
+  String get agileCommitmentTrendNoDataDesc =>
+      'Complete at least one sprint to view the trend';
+
+  @override
+  String get agileCommitmentTrendPlanned => 'Planned';
+
+  @override
+  String get agileCommitmentTrendCompleted => 'Completed';
+
+  @override
+  String get agileCommitmentTrendAvg => 'Average';
+
+  @override
+  String get agileFlowEfficiencyTitle => 'Flow Efficiency & WIP';
+
+  @override
+  String get agileFlowEfficiencyNoData => 'No data available';
+
+  @override
+  String get agileFlowEfficiencyNoDataDesc =>
+      'Add stories to view flow analysis';
+
+  @override
+  String get agileFlowEfficiency => 'Flow Efficiency';
+
+  @override
+  String get agileFlowCycleTime => 'Cycle Time';
+
+  @override
+  String get agileFlowLeadTime => 'Lead Time';
+
+  @override
+  String get agileFlowDays => 'days';
+
+  @override
+  String get agileFlowWipByStatus => 'WIP by Status';
+
+  @override
+  String get agileFlowAvg => 'avg';
+
+  @override
+  String get agileBlockedItemsTitle => 'Blocked Items';
+
+  @override
+  String get agileBlockedItemsNone => 'No blocked items';
+
+  @override
+  String get agileBlockedItemsNoneDesc => 'All dependencies are satisfied';
+
+  @override
+  String agileBlockedItemsCount(Object count) {
+    return '$count blocked';
+  }
+
+  @override
+  String get agileBlockedItemsSp => 'SP blocked';
+
+  @override
+  String get agileBlockedItemsBlockedBy => 'Blocked by';
+
+  @override
+  String get agileBlockedItemsDependency => 'dependency';
+
+  @override
+  String get agileBlockedItemsDependencies => 'dependencies';
+
+  @override
+  String get agileSprintScopeTitle => 'Sprint Scope';
+
+  @override
+  String get agileSprintScopeNoSprint => 'No active sprint';
+
+  @override
+  String get agileSprintScopeNoSprintDesc =>
+      'Start a sprint to monitor scope changes';
+
+  @override
+  String get agileSprintScopeOriginal => 'Original';
+
+  @override
+  String get agileSprintScopeCurrent => 'Current';
+
+  @override
+  String get agileSprintScopeDelta => 'Delta';
+
+  @override
+  String get agileSprintScopeCreep => 'Scope Creep';
+
+  @override
+  String get agileSprintScopeReduction => 'Scope Reduction';
+
+  @override
+  String get agileSprintScopeStable => 'Stable';
+
+  @override
+  String get agileSprintScopeSp => 'SP';
 }

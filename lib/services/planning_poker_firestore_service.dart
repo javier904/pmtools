@@ -5,6 +5,7 @@ import '../models/planning_poker_participant_model.dart';
 import '../models/estimation_mode.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'favorite_service.dart';
 
 /// Service per la gestione Firestore del Planning Poker
 ///
@@ -318,6 +319,10 @@ class PlanningPokerFirestoreService {
 
       // Poi elimina la sessione
       batch.delete(_sessionsCollection.doc(sessionId));
+
+      // ⭐️ Rimuovi dai preferiti
+      FavoriteService().removeFavorite(sessionId);
+
       await batch.commit();
 
       print('✅ [PlanningPoker] Sessione eliminata con ${storiesSnapshot.docs.length} stories');

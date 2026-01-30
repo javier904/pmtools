@@ -1,11 +1,4 @@
-# Agile Tools - robots.txt
-# https://pm-agile-tools-app.web.app/
-
 User-agent: *
 Allow: /
+Sitemap: https://keisenapp.com/sitemap.xml
 
-# Sitemap location
-Sitemap: https://pm-agile-tools-app.web.app/sitemap.xml
-
-# Crawl delay (optional - be kind to crawlers)
-Crawl-delay: 1

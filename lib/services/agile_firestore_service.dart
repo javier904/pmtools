@@ -5,6 +5,7 @@ import '../models/team_member_model.dart';
 import '../models/user_story_model.dart';
 import '../models/sprint_model.dart';
 import '../models/retrospective_model.dart';
+import 'favorite_service.dart';
 
 /// Servizio Firestore per Agile Process Manager
 ///
@@ -146,6 +147,9 @@ class AgileFirestoreService {
 
     // Elimina il progetto
     await _projectsRef.doc(projectId).delete();
+
+    // ⭐️ Rimuovi dai preferiti
+    FavoriteService().removeFavorite(projectId);
   }
 
   // =========================================================================

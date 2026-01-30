@@ -7,6 +7,7 @@ import '../models/raci_models.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import 'auth_service.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'favorite_service.dart';
 
 /// Servizio Firestore per la Matrice di Eisenhower
 ///
@@ -333,6 +334,10 @@ class EisenhowerFirestoreService {
 
       // Poi elimina la matrice
       await _matricesRef.doc(matrixId).delete();
+
+      // ⭐️ Rimuovi dai preferiti
+      FavoriteService().removeFavorite(matrixId);
+
       print('✅ Matrice eliminata: $matrixId');
       return true;
     } catch (e) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/favorite_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
@@ -234,7 +235,33 @@ class _FavoriteItemTile extends StatelessWidget {
     }
   }
 
-  void _navigateToResource(BuildContext context) {
+  void _navigateToResource(BuildContext context) async {
+    // 🛡️ Verifica che la risorsa esista ancora prima di navigare
+    // Questo gestisce il caso in cui la risorsa sia stata eliminata da un altro utente
+    // e lo stream non l'abbia ancora rimossa localmente (o per sicurezza extra)
+    final doc = await FirebaseFirestore.instance
+        .collection(_getCollectionName(item.type))
+        .doc(item.resourceId)
+        .get();
+
+    if (!doc.exists) {
+      if (!context.mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Questa risorsa non è più disponibile o è stata eliminata.'),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      
+      // Rimuovi dai preferiti
+      await FavoriteService().removeFavorite(item.resourceId);
+      return;
+    }
+
+    if (!context.mounted) return;
+
     switch (item.type) {
       case 'todo_list':
         Navigator.pushNamed(context, '/smart-todo', arguments: {'id': item.resourceId});
@@ -253,6 +280,25 @@ class _FavoriteItemTile extends StatelessWidget {
       case 'planning_poker':
         Navigator.pushNamed(context, '/estimation-room', arguments: {'id': item.resourceId});
         break;
+    }
+  }
+
+  String _getCollectionName(String type) {
+    switch (type) {
+      case 'todo_list':
+        return 'smart_todo_lists';
+      case 'eisenhower_matrix':
+        return 'eisenhower_matrices';
+      case 'agile_project':
+        return 'agile_projects';
+      case 'poker':
+      case 'planning_poker':
+        return 'planning_poker_sessions';
+      case 'retro':
+      case 'retrospective':
+        return 'retrospectives';
+      default:
+        return 'unknown';
     }
   }
 }

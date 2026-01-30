@@ -38,6 +38,10 @@ import '../widgets/agile/metrics_dashboard_widget.dart';
 import '../widgets/agile/sprint_health_card_widget.dart';
 import '../widgets/agile/sprint_burndown_live_widget.dart';
 import '../widgets/agile/team_workload_widget.dart';
+import '../widgets/agile/commitment_trend_widget.dart';
+import '../widgets/agile/flow_efficiency_widget.dart';
+import '../widgets/agile/blocked_items_widget.dart';
+import '../widgets/agile/sprint_scope_widget.dart';
 import '../widgets/agile/audit_log_viewer.dart';
 import '../widgets/agile/methodology_guide_dialog.dart';
 import '../widgets/agile/setup_checklist_widget.dart';
@@ -2154,6 +2158,31 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ),
           const SizedBox(height: 16),
 
+          // Sprint Scope Changes
+          SprintScopeWidget(
+            currentSprint: activeSprint,
+            stories: _stories,
+          ),
+          const SizedBox(height: 16),
+
+          // Commitment Reliability Trend
+          CommitmentTrendWidget(
+            sprints: _sprints,
+          ),
+          const SizedBox(height: 16),
+
+          // Flow Efficiency & WIP Analysis
+          FlowEfficiencyWidget(
+            stories: _stories,
+          ),
+          const SizedBox(height: 16),
+
+          // Blocked Items
+          BlockedItemsWidget(
+            stories: _stories,
+          ),
+          const SizedBox(height: 16),
+
           // Existing Metrics Dashboard
           MetricsDashboardWidget(
             sprints: _sprints,
@@ -2195,34 +2224,30 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Lista retro esistenti
+              // Lista retro esistenti (include lo stato vuoto integrato)
               RetroListWidget(
                 retrospectives: retrospectives,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 onTap: (retro) => _showRetroDetail(retro),
-                // Kanban: può sempre creare retro (Operations Review)
-                // Scrum/Hybrid: richiede sprint completato
                 onCreateNew: isKanban
                     ? _createKanbanRetro
                     : (latestSprint != null
-                        ? () { _createNewRetro(latestSprint!); }
+                        ? () => _showRetroCreationChoice(latestSprint!)
                         : () => _showNoSprintForRetroWarning()),
                 currentUserEmail: _currentUserEmail,
                 onDelete: _confirmDeleteRetro,
               ),
               const SizedBox(height: 24),
 
-              // Board ultima retro o nuova (mostra ultima se esiste, altrimenti placeholder)
+              // Board dell'ultima retro (solo se esistono retro)
               if (retrospectives.isNotEmpty)
                 RetroBoardWidget(
-                  retro: retrospectives.first, // Mostra la più recente (ordinata per data)
+                  retro: retrospectives.first,
                   currentUserEmail: _currentUserEmail,
                   currentUserName: _currentUserEmail.split('@').first,
                   isIncognito: false,
-                )
-              else
-                _buildEmptyRetroState(),
+                ),
             ],
           ),
         );
@@ -2261,47 +2286,96 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     );
   }
 
-  Widget _buildEmptyRetroState() {
-    final isKanban = widget.project.framework == AgileFramework.kanban;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(48),
-        child: Column(
+  Future<void> _showRetroCreationChoice(SprintModel sprint) async {
+    final l10n = AppLocalizations.of(context)!;
+    
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.retroChooseMode),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.history, size: 64, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              isKanban ? 'Nessuna Operations Review' : 'Nessuna retrospettiva',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              isKanban
-                  ? 'Crea una Operations Review per migliorare il flusso di lavoro'
-                  : 'Completa uno sprint per creare la prima retrospettiva',
-              style: TextStyle(color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            ),
-            if (isKanban) ...[
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: _createKanbanRetro,
-                icon: const Icon(Icons.add),
-                label: const Text('Crea Operations Review'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _features.primaryColor,
-                  foregroundColor: Colors.white,
-                ),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Colors.blue,
+                child: Icon(Icons.flash_on, color: Colors.white),
               ),
-            ],
+              title: Text(l10n.retroQuickForm),
+              subtitle: Text(l10n.retroQuickModeDesc),
+              onTap: () => Navigator.pop(context, 'quick'),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Colors.purple,
+                child: Icon(Icons.groups, color: Colors.white),
+              ),
+              title: Text(l10n.retroInteractiveBoard),
+              subtitle: Text(l10n.retroInteractiveModeDesc),
+              onTap: () => Navigator.pop(context, 'interactive'),
+            ),
           ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.actionCancel),
+          ),
+        ],
       ),
     );
+
+    if (choice == 'quick') {
+      _showQuickRetroDialog(sprint);
+    } else if (choice == 'interactive') {
+      _createInteractiveRetro(sprint);
+    }
+  }
+
+  Future<void> _createInteractiveRetro(SprintModel sprint) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final now = DateTime.now();
+      final retro = RetrospectiveModel(
+        id: '',
+        projectId: widget.project.id,
+        sprintId: sprint.id,
+        sprintName: sprint.name,
+        sprintNumber: _sprints.indexOf(sprint) + 1,
+        createdAt: now,
+        createdBy: _currentUserEmail,
+        status: RetroStatus.active,
+        currentPhase: RetroPhase.icebreaker,
+        columns: RetroTemplateExt(RetroTemplate.startStopContinue).defaultColumns,
+        items: [],
+        actionItems: [],
+        timer: RetroTimer(durationMinutes: 60),
+      );
+
+      final created = await _retroService.createRetrospective(retro);
+      
+      if (mounted) {
+        _showSuccess(l10n.stateSuccess);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RetroBoardScreen(
+            retroId: created,
+              currentUserEmail: _currentUserEmail,
+              currentUserName: _currentUserName,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      _showError(l10n.errorSaving);
+    }
   }
 
   Future<void> _showRetroDetail(RetrospectiveModel retro) async {
+    final l10n = AppLocalizations.of(context)!;
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -2313,9 +2387,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Retrospettiva'),
+                  Text(l10n.scrumEventsRetro),
                   Text(
-                    'Creata il ${retro.createdAt.day}/${retro.createdAt.month}/${retro.createdAt.year}',
+                    '${l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName)} - ${_formatDate(retro.createdAt)}',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.normal),
                   ),
                 ],
@@ -2324,7 +2398,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             if (!retro.isCompleted)
               IconButton(
                 icon: const Icon(Icons.launch, color: Colors.blue),
-                tooltip: 'Apri Board Interattiva',
+                tooltip: l10n.retroOpenInteractiveBoard,
                 onPressed: () {
                   Navigator.pop(context); // Close dialog
                   Navigator.push(
@@ -2332,8 +2406,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                     MaterialPageRoute(
                       builder: (context) => RetroBoardScreen(
                         retroId: retro.id,
-                        currentUserEmail: 'user@example.com', // TODO: Get real user
-                        currentUserName: 'User', // TODO: Get real user
+                        currentUserEmail: _currentUserEmail,
+                        currentUserName: _currentUserName,
                       ),
                     ),
                   );
@@ -2365,9 +2439,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Sentiment del Team', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(l10n.retroSentimentTeam, style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text(
-                                '${retro.averageSentiment!.toStringAsFixed(1)}/5 - ${_getSentimentLabel(retro.averageSentiment!)}',
+                                l10n.retroResultLabel(retro.averageSentiment!.toStringAsFixed(1), _getSentimentLabel(retro.averageSentiment!)),
                                 style: TextStyle(color: Colors.grey[700]),
                               ),
                             ],
@@ -2381,7 +2455,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
                 // What went well
                 _buildRetroSection(
-                  'Cosa è andato bene',
+                  l10n.retroWentWell,
                   retro.wentWell,
                   Icons.thumb_up,
                   Colors.green,
@@ -2390,7 +2464,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
                 // What to improve
                 _buildRetroSection(
-                  'Cosa migliorare',
+                  l10n.retroToImprove,
                   retro.toImprove,
                   Icons.thumb_down,
                   Colors.orange,
@@ -2406,7 +2480,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Chiudi'),
+            child: Text(l10n.actionClose),
           ),
         ],
       ),
@@ -2456,19 +2530,20 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   Widget _buildActionItemsSection(List<ActionItem> items) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.assignment_turned_in, color: Colors.blue, size: 20),
+            const Icon(Icons.assignment_turned_in, color: Colors.blue, size: 20),
             const SizedBox(width: 8),
-            const Text('Action Items', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+            Text(l10n.retroActionItemsLabel, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
           ],
         ),
         const SizedBox(height: 8),
         if (items.isEmpty)
-          Text('Nessun action item', style: TextStyle(color: Colors.grey[500], fontStyle: FontStyle.italic))
+          Text(l10n.retroNoActionItemsFound, style: TextStyle(color: Colors.grey[500], fontStyle: FontStyle.italic))
         else
           ...items.map((item) => Card(
             child: ListTile(
@@ -2484,7 +2559,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 ),
               ),
               subtitle: item.assigneeEmail != null
-                  ? Text('Assegnato a: ${item.assigneeEmail}')
+                  ? Text(l10n.retroAssignedTo(item.assigneeEmail!))
                   : null,
             ),
           )),
@@ -2505,15 +2580,17 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   String _getSentimentLabel(double sentiment) {
-    if (sentiment >= 4.5) return 'Eccellente';
-    if (sentiment >= 4) return 'Buono';
-    if (sentiment >= 3) return 'Nella norma';
-    if (sentiment >= 2) return 'Da migliorare';
-    return 'Critico';
+    final l10n = AppLocalizations.of(context)!;
+    if (sentiment >= 4.5) return l10n.retroExcellent;
+    if (sentiment >= 4) return l10n.retroGood;
+    if (sentiment >= 3) return l10n.retroNormal;
+    if (sentiment >= 2) return l10n.retroNeedsImprovement;
+    return l10n.retroCritical;
   }
 
-  Future<void> _createNewRetro(SprintModel sprint) async {
-    // Dialog per creare una nuova retrospettiva
+  Future<void> _showQuickRetroDialog(SprintModel sprint) async {
+    final l10n = AppLocalizations.of(context)!;
+    // Dialog per creare una nuova retrospettiva rapida
     final wentWell = <String>[];
     final toImprove = <String>[];
     final actionItems = <String>[];
@@ -2526,7 +2603,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             children: [
               const Icon(Icons.psychology, color: Colors.purple),
               const SizedBox(width: 8),
-              Expanded(child: Text('Retrospettiva - ${sprint.name}')),
+              Expanded(child: Text('${l10n.scrumEventsRetro} - ${sprint.name}')),
             ],
           ),
           content: SizedBox(
@@ -2577,12 +2654,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annulla'),
+              child: Text(l10n.actionCancel),
             ),
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context, true),
               icon: const Icon(Icons.save),
-              label: const Text('Salva Retrospettiva'),
+              label: Text(l10n.retroSave),
             ),
           ],
         ),
@@ -2644,9 +2721,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         // Salva usando il service corretto (Root Collection)
         await _retroService.createRetrospective(retro);
 
-        _showSuccess('Retrospettiva creata!');
+        _showSuccess(l10n.stateSuccess);
       } catch (e) {
-        _showError('Errore creazione retrospettiva: $e');
+        _showError('${l10n.stateError}: $e');
       }
     }
   }
@@ -2655,6 +2732,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   /// In Kanban, le retrospettive sono chiamate "Operations Review" o "Service Delivery Review"
   /// e fanno parte della practice "Feedback Loops" (David Anderson)
   Future<void> _createKanbanRetro() async {
+    final l10n = AppLocalizations.of(context)!;
     final wentWell = <String>[];
     final toImprove = <String>[];
     final actionItems = <String>[];

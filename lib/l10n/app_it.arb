@@ -484,8 +484,59 @@
   },
   "retroTitle": "Le mie Retrospettive",
   "retroNoRetros": "Nessuna retrospettiva",
+  "retroNoRetrosFound": "Nessuna retrospettiva trovata",
   "retroCreateNew": "Crea Nuova",
+  "retroChooseMode": "Scegli Modalità Retrospettiva",
+  "retroQuickForm": "Form Rapido",
+  "retroInteractiveBoard": "Board Interattiva",
+  "retroQuickModeDesc": "Compila un form veloce per registrare i punti salienti dello sprint.",
+  "retroInteractiveModeDesc": "Avvia una board in tempo reale per collaborare con tutto il team.",
+  "retroNoOperationsReview": "Nessuna Operations Review",
+  "retroOperationsReview": "Operations Review",
+  "retroOperationsReviewDesc": "Crea una Operations Review per migliorare il flusso di lavoro",
+  "retroWentWell": "Cosa è andato bene?",
+  "retroToImprove": "Cosa migliorare?",
+  "retroWentWellHint": "Aggiungi un punto positivo...",
+  "retroToImproveHint": "Aggiungi un punto da migliorare...",
+  "retroActionItemHint": "Aggiungi un action item...",
+  "retroSave": "Salva Retrospettiva",
+  "retroOpenInteractiveBoard": "Apri Board Interattiva",
+  "retroSentimentTeam": "Sentiment del Team",
+  "retroExcellent": "Eccellente",
+  "retroGood": "Buono",
+  "retroNormal": "Nella norma",
+  "retroNeedsImprovement": "Da migliorare",
+  "retroCritical": "Critico",
+  "retroNoElements": "Nessun elemento",
+  "retroNoActionItemsFound": "Nessun action item",
+  "retroAssignedTo": "Assegnato a: {email}",
+  "@retroAssignedTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "retroVotesCount": "+{count} voti",
+  "@retroVotesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "retroGuidance": "Guida alle Retrospettive",
+  "retroResultLabel": "Sentiment medio: {score} ({label})",
+  "@retroResultLabel": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "retroSearchHint": "Cerca retrospettiva...",
   "agileProcessTitle": "Agile Process Manager",
   "agileSearchProjects": "Cerca progetti...",
@@ -521,8 +572,9 @@
   "scrumEventsContent": "Scrum prevede eventi regolari per creare regolarità e minimizzare riunioni non pianificate.",
   "scrumEventsPlanning": "Sprint Planning: Pianificazione del lavoro dello Sprint (max 8h per Sprint di 4 settimane)",
   "scrumEventsDaily": "Daily Scrum: Sincronizzazione giornaliera del team (15 minuti)",
+  "scrumEventsRetro": "Retrospective",
+  "scrumEventsRetroContent": "Crea una retrospettiva per analizzare l'ultimo sprint e identificare aree di miglioramento.",
   "scrumEventsReview": "Sprint Review: Demo del lavoro completato agli stakeholder (max 4h)",
-  "scrumEventsRetro": "Sprint Retrospective: Riflessione del team per miglioramento continuo (max 3h)",
   "scrumArtifactsTitle": "Gli Artefatti Scrum",
   "scrumArtifactsContent": "Gli artefatti rappresentano lavoro o valore e sono progettati per massimizzare la trasparenza.",
   "scrumArtifactsPB": "Product Backlog: Lista ordinata di tutto ciò che potrebbe servire nel prodotto",
@@ -676,6 +728,17 @@
   "retroNoProjectFound": "Nessun progetto trovato.",
   "retroSelectProject": "Seleziona Progetto",
   "retroSelectSprint": "Seleziona Sprint",
+  "retroSprintLabel": "Sprint {number}: {name}",
+  "retroSprintOnlyLabel": "Sprint {number}",
+  "@retroSprintOnlyLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "retroOwner": "Proprietario",
+  "retroGuest": "Ospite",
   "retroSprintLabel": "Sprint {number}: {name}",
   "@retroSprintLabel": {
     "placeholders": {
@@ -4632,5 +4695,42 @@
   "agileWorkloadUnassignedWarning": "stories senza assegnatario",
   "agileWorkloadNoStories": "Nessuna story da analizzare",
   "agileWorkloadNoStoriesDesc": "Crea stories e assegnale ai membri del team",
-  "agileWorkloadOverloaded": "Sovraccaricato"
+  "agileWorkloadOverloaded": "Sovraccaricato",
+
+  "agileCommitmentTrendTitle": "Trend Affidabilità Commitment",
+  "agileCommitmentTrendNoData": "Nessun dato disponibile",
+  "agileCommitmentTrendNoDataDesc": "Completa almeno uno sprint per visualizzare il trend",
+  "agileCommitmentTrendPlanned": "Pianificati",
+  "agileCommitmentTrendCompleted": "Completati",
+  "agileCommitmentTrendAvg": "Media",
+
+  "agileFlowEfficiencyTitle": "Flow Efficiency & WIP",
+  "agileFlowEfficiencyNoData": "Nessun dato disponibile",
+  "agileFlowEfficiencyNoDataDesc": "Aggiungi stories per visualizzare l'analisi del flusso",
+  "agileFlowEfficiency": "Flow Efficiency",
+  "agileFlowCycleTime": "Cycle Time",
+  "agileFlowLeadTime": "Lead Time",
+  "agileFlowDays": "giorni",
+  "agileFlowWipByStatus": "WIP per Stato",
+  "agileFlowAvg": "media",
+
+  "agileBlockedItemsTitle": "Elementi Bloccati",
+  "agileBlockedItemsNone": "Nessun elemento bloccato",
+  "agileBlockedItemsNoneDesc": "Tutte le dipendenze sono soddisfatte",
+  "agileBlockedItemsCount": "{count} bloccati",
+  "agileBlockedItemsSp": "SP bloccati",
+  "agileBlockedItemsBlockedBy": "Bloccato da",
+  "agileBlockedItemsDependency": "dipendenza",
+  "agileBlockedItemsDependencies": "dipendenze",
+
+  "agileSprintScopeTitle": "Scope Sprint",
+  "agileSprintScopeNoSprint": "Nessuno sprint attivo",
+  "agileSprintScopeNoSprintDesc": "Avvia uno sprint per monitorare le variazioni di scope",
+  "agileSprintScopeOriginal": "Originale",
+  "agileSprintScopeCurrent": "Attuale",
+  "agileSprintScopeDelta": "Delta",
+  "agileSprintScopeCreep": "Scope Creep",
+  "agileSprintScopeReduction": "Riduzione Scope",
+  "agileSprintScopeStable": "Stabile",
+  "agileSprintScopeSp": "SP"
 }

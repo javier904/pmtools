@@ -188,7 +188,7 @@ class RetroListWidget extends StatelessWidget {
                 children: [
                   // Icona template con status dot
                   Tooltip(
-                    message: '${retro.template.getLocalizedDisplayName(l10n)} - $statusLabel',
+                    message: '${retro.sprintName.isNotEmpty ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) : l10n.retroSprintOnlyLabel(retro.sprintNumber)} - $statusLabel',
                     child: Container(
                       width: 26,
                       height: 26,
@@ -222,9 +222,13 @@ class RetroListWidget extends StatelessWidget {
                   // Titolo con tooltip
                   Expanded(
                     child: Tooltip(
-                      message: retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
+                      message: retro.sprintName.isNotEmpty 
+                          ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) 
+                          : l10n.retroSprintOnlyLabel(retro.sprintNumber),
                       child: Text(
-                        retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
+                        retro.sprintName.isNotEmpty 
+                            ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) 
+                            : l10n.retroSprintOnlyLabel(retro.sprintNumber),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -254,7 +258,9 @@ class RetroListWidget extends StatelessWidget {
                   FavoriteStar(
                     resourceId: retro.id,
                     type: 'retrospective',
-                    title: retro.sprintName.isNotEmpty ? retro.sprintName : 'Sprint ${retro.sprintNumber}',
+                    title: retro.sprintName.isNotEmpty 
+                        ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) 
+                        : l10n.retroSprintOnlyLabel(retro.sprintNumber),
                     colorHex: '#E91E63',
                     size: 16,
                   ),
@@ -359,12 +365,12 @@ class RetroListWidget extends StatelessWidget {
     final participantLines = <String>[];
 
     // Owner (createdBy)
-    participantLines.add('${retro.createdBy} - 👑 Owner');
+    participantLines.add('${retro.createdBy} - 👑 ${l10n.retroOwner}');
 
     // Partecipanti (non-owner)
     for (final email in retro.participantEmails) {
       if (email == retro.createdBy) continue;
-      participantLines.add('$email - 👥 ${l10n.retroParticipantsLabel}');
+      participantLines.add('$email - 👥 ${l10n.retroGuest}');
     }
 
     final tooltipText = '${l10n.participants}:\n${participantLines.join('\n')}';

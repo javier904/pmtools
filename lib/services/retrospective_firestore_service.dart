@@ -5,6 +5,7 @@ import '../models/audit_log_model.dart';
 import '../models/audit_log_model.dart';
 import '../models/agile_enums.dart';
 import '../models/user_story_model.dart';
+import 'favorite_service.dart';
 
 class RetrospectiveFirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -75,6 +76,9 @@ class RetrospectiveFirestoreService {
   /// Elimina definitivamente una retrospettiva
   Future<void> deleteRetrospective(String retroId) async {
     await _retrosCollection.doc(retroId).delete();
+
+    // ⭐️ Rimuovi dai preferiti
+    FavoriteService().removeFavorite(retroId);
   }
 
   /// Stream di una singola retrospettiva (Real-time sync)

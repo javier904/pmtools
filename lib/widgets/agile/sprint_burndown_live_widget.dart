@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
-import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 

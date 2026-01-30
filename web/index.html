@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 
 <head>
   <base href="$FLUTTER_BASE_HREF">
@@ -8,37 +8,48 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Umami Analytics -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d8eb3e84-4871-4c5e-9944-dbec3d03508a"></script>
+
   <!-- SEO Meta Tags -->
-  <meta name="google-site-verification" content="SjUTXKwYCAf64b2rGYEnVaaSgweVRAmcjkYB3IXscBU" />
-  <title>Keisen - L'Ecosistema Agile Definitivo</title>
+  <meta name="google-site-verification" content="doC_EkzwYVnwXeL_57vedKdGVXdqahAgqcoN_bkiPP8" />
+  <title>Keisen - The Agile Platform for Modern Teams</title>
   <meta name="description"
-    content="Keisen: Smart Todo, Planning Poker, Matrice Eisenhower, Gestione Sprint e Backlog. Strumenti gratuiti per team Scrum, Kanban e metodologie agili.">
+    content="Optimize your workflow with Keisen: Smart Todo, Planning Poker and Sprint Management. The all-in-one solution for agile teams based on Scrum and Kanban.">
   <meta name="keywords"
     content="agile tools, planning poker, eisenhower matrix, scrum, kanban, sprint planning, backlog, team collaboration, estimation, todo list">
   <meta name="author" content="Keisen">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://pm-agile-tools-app.web.app/">
+  <link rel="canonical" href="https://keisenapp.com/">
+
+  <!-- Multi-language signals for Google -->
+  <link rel="alternate" hreflang="it" href="https://keisenapp.com/">
+  <link rel="alternate" hreflang="en" href="https://keisenapp.com/">
+  <link rel="alternate" hreflang="es" href="https://keisenapp.com/">
+  <link rel="alternate" hreflang="fr" href="https://keisenapp.com/">
+  <link rel="alternate" hreflang="x-default" href="https://keisenapp.com/">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://pm-agile-tools-app.web.app/">
-  <meta property="og:title" content="Keisen - L'Ecosistema Agile Definitivo">
+  <meta property="og:url" content="https://keisenapp.com/">
+  <meta property="og:title" content="Keisen - La Piattaforma Agile per Team Moderni">
   <meta property="og:description"
-    content="Smart Todo, Planning Poker, Matrice Eisenhower, Sprint Planning. Collabora in tempo reale con il tuo team.">
-  <meta property="og:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
+    content="Ottimizza il tuo workflow con Smart Todo, Planning Poker e Gestione Sprint in un'unica piattaforma collaborativa.">
+  <meta property="og:image" content="https://keisenapp.com/icons/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="it_IT">
   <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:locale:alternate" content="fr_FR">
   <meta property="og:site_name" content="Keisen">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://pm-agile-tools-app.web.app/">
-  <meta name="twitter:title" content="Keisen - L'Ecosistema Agile Definitivo">
+  <meta name="twitter:url" content="https://keisenapp.com/">
+  <meta name="twitter:title" content="Keisen - La Piattaforma Agile per Team Moderni">
   <meta name="twitter:description"
-    content="Smart Todo, Planning Poker, Matrice Eisenhower e Sprint Planning. Collabora in tempo reale.">
-  <meta name="twitter:image" content="https://pm-agile-tools-app.web.app/icons/og-image.png">
+    content="La soluzione all-in-one per team agili. Smart Todo, Planning Poker e Sprint Planning.">
+  <meta name="twitter:image" content="https://keisenapp.com/icons/og-image.png">
 
   <!-- Google Sign-In Client ID -->
   <meta name="google-signin-client_id" content="1869753247-v367eltmlo66cat4cug513qk4esou5hu.apps.googleusercontent.com">
@@ -56,7 +67,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/Icon-512.png">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="shortcut icon" href="favicon.ico">
+
+  <!-- Specific for Search Result Thumbnail -->
+  <meta name="thumbnail" content="https://keisenapp.com/icons/Icon-512.png">
+  <link rel="image_src" href="https://keisenapp.com/icons/Icon-512.png">
 
   <!-- Theme Color -->
   <meta name="theme-color" content="#1a1a2e">
@@ -80,7 +97,8 @@
     }
 
     /* Prevent browser back/forward navigation on horizontal swipe (macOS trackpad) */
-    html, body {
+    html,
+    body {
       overscroll-behavior-x: none;
       overscroll-behavior: none;
     }
@@ -152,17 +170,79 @@
       pointer-events: none;
       transition: opacity 0.3s ease;
     }
+
+    .seo-footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 14px;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @media (prefers-color-scheme: light) {
+      .seo-footer {
+        background: var(--bg-light);
+        color: var(--text-light);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .seo-footer a {
+      color: #74b9ff;
+      text-decoration: underline;
+      margin: 0 8px;
+    }
+
+    @media (prefers-color-scheme: light) {
+      .seo-footer a {
+        color: #0984e3;
+      }
+    }
+
+    .seo-footer a:hover {
+      opacity: 0.8;
+    }
   </style>
 </head>
 
 <body>
   <!-- Loading Screen - Minimal -->
   <div id="loading-screen" class="loading-screen">
+
     <div class="logo-container">
       <img src="icons/Icon-192.png" alt="Keisen Logo" class="logo">
     </div>
     <h1 class="app-title">Keisen</h1>
   </div>
+
+  <!-- SEO Footer - visible to crawlers and Google verification bot -->
+  <footer class="seo-footer">
+    <a href="/privacy">Privacy Policy (Norme sulla Privacy)</a> |
+    <a href="/terms">Terms of Service (Termini di Servizio)</a>
+  </footer>
+
+  <!-- Noscript fallback for bots/crawlers that don't execute JavaScript -->
+  <noscript>
+    <div style="padding: 40px; text-align: center; font-family: sans-serif;">
+      <h1>Keisen - La Piattaforma Agile per Team Moderni</h1>
+      <p>Ottimizza il tuo workflow con Keisen: Smart Todo, Planning Poker e Gestione Sprint.</p>
+      <p>
+        <a href="https://keisenapp.com/privacy">Privacy Policy</a> |
+        <a href="https://keisenapp.com/terms">Terms of Service</a>
+      </p>
+    </div>
+  </noscript>
+
+  <!-- Firebase SDKs - Pinned to 11.8.0 to avoid 11.9.1 assertion error -->
+  <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Also force modular SDKs to 11.8.0 by pre-loading them -->
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js">
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js">
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js">
 
   <script src="flutter_bootstrap.js" async></script>
 

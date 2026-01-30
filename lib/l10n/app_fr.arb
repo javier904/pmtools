@@ -4545,5 +4545,42 @@
   "agileWorkloadUnassignedWarning": "stories sans assigné",
   "agileWorkloadNoStories": "Aucune story à analyser",
   "agileWorkloadNoStoriesDesc": "Créez des stories et assignez-les aux membres de l'équipe",
-  "agileWorkloadOverloaded": "Surchargé"
+  "agileWorkloadOverloaded": "Surchargé",
+
+  "agileCommitmentTrendTitle": "Tendance Fiabilité Engagement",
+  "agileCommitmentTrendNoData": "Aucune donnée disponible",
+  "agileCommitmentTrendNoDataDesc": "Complétez au moins un sprint pour voir la tendance",
+  "agileCommitmentTrendPlanned": "Planifiés",
+  "agileCommitmentTrendCompleted": "Complétés",
+  "agileCommitmentTrendAvg": "Moyenne",
+
+  "agileFlowEfficiencyTitle": "Efficacité du Flux & WIP",
+  "agileFlowEfficiencyNoData": "Aucune donnée disponible",
+  "agileFlowEfficiencyNoDataDesc": "Ajoutez des stories pour voir l'analyse du flux",
+  "agileFlowEfficiency": "Efficacité du Flux",
+  "agileFlowCycleTime": "Temps de Cycle",
+  "agileFlowLeadTime": "Délai Total",
+  "agileFlowDays": "jours",
+  "agileFlowWipByStatus": "WIP par Statut",
+  "agileFlowAvg": "moy",
+
+  "agileBlockedItemsTitle": "Éléments Bloqués",
+  "agileBlockedItemsNone": "Aucun élément bloqué",
+  "agileBlockedItemsNoneDesc": "Toutes les dépendances sont satisfaites",
+  "agileBlockedItemsCount": "{count} bloqués",
+  "agileBlockedItemsSp": "SP bloqués",
+  "agileBlockedItemsBlockedBy": "Bloqué par",
+  "agileBlockedItemsDependency": "dépendance",
+  "agileBlockedItemsDependencies": "dépendances",
+
+  "agileSprintScopeTitle": "Scope du Sprint",
+  "agileSprintScopeNoSprint": "Aucun sprint actif",
+  "agileSprintScopeNoSprintDesc": "Démarrez un sprint pour surveiller les changements de scope",
+  "agileSprintScopeOriginal": "Original",
+  "agileSprintScopeCurrent": "Actuel",
+  "agileSprintScopeDelta": "Delta",
+  "agileSprintScopeCreep": "Dérive du Scope",
+  "agileSprintScopeReduction": "Réduction du Scope",
+  "agileSprintScopeStable": "Stable",
+  "agileSprintScopeSp": "SP"
 }

@@ -2034,17 +2034,179 @@ abstract class AppLocalizations {
   /// **'Nessuna retrospettiva'**
   String get retroNoRetros;
 
+  /// No description provided for @retroNoRetrosFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna retrospettiva trovata'**
+  String get retroNoRetrosFound;
+
   /// No description provided for @retroCreateNew.
   ///
   /// In it, this message translates to:
   /// **'Crea Nuova'**
   String get retroCreateNew;
 
+  /// No description provided for @retroChooseMode.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli Modalità Retrospettiva'**
+  String get retroChooseMode;
+
+  /// No description provided for @retroQuickForm.
+  ///
+  /// In it, this message translates to:
+  /// **'Form Rapido'**
+  String get retroQuickForm;
+
+  /// No description provided for @retroInteractiveBoard.
+  ///
+  /// In it, this message translates to:
+  /// **'Board Interattiva'**
+  String get retroInteractiveBoard;
+
+  /// No description provided for @retroQuickModeDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Compila un form veloce per registrare i punti salienti dello sprint.'**
+  String get retroQuickModeDesc;
+
+  /// No description provided for @retroInteractiveModeDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvia una board in tempo reale per collaborare con tutto il team.'**
+  String get retroInteractiveModeDesc;
+
+  /// No description provided for @retroNoOperationsReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna Operations Review'**
+  String get retroNoOperationsReview;
+
+  /// No description provided for @retroOperationsReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Operations Review'**
+  String get retroOperationsReview;
+
+  /// No description provided for @retroOperationsReviewDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una Operations Review per migliorare il flusso di lavoro'**
+  String get retroOperationsReviewDesc;
+
+  /// No description provided for @retroWentWell.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa è andato bene?'**
+  String get retroWentWell;
+
+  /// No description provided for @retroToImprove.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa migliorare?'**
+  String get retroToImprove;
+
+  /// No description provided for @retroWentWellHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi un punto positivo...'**
+  String get retroWentWellHint;
+
+  /// No description provided for @retroToImproveHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi un punto da migliorare...'**
+  String get retroToImproveHint;
+
+  /// No description provided for @retroActionItemHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi un action item...'**
+  String get retroActionItemHint;
+
+  /// No description provided for @retroSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Retrospettiva'**
+  String get retroSave;
+
+  /// No description provided for @retroOpenInteractiveBoard.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri Board Interattiva'**
+  String get retroOpenInteractiveBoard;
+
+  /// No description provided for @retroSentimentTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'Sentiment del Team'**
+  String get retroSentimentTeam;
+
+  /// No description provided for @retroExcellent.
+  ///
+  /// In it, this message translates to:
+  /// **'Eccellente'**
+  String get retroExcellent;
+
+  /// No description provided for @retroGood.
+  ///
+  /// In it, this message translates to:
+  /// **'Buono'**
+  String get retroGood;
+
+  /// No description provided for @retroNormal.
+  ///
+  /// In it, this message translates to:
+  /// **'Nella norma'**
+  String get retroNormal;
+
+  /// No description provided for @retroNeedsImprovement.
+  ///
+  /// In it, this message translates to:
+  /// **'Da migliorare'**
+  String get retroNeedsImprovement;
+
+  /// No description provided for @retroCritical.
+  ///
+  /// In it, this message translates to:
+  /// **'Critico'**
+  String get retroCritical;
+
+  /// No description provided for @retroNoElements.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun elemento'**
+  String get retroNoElements;
+
+  /// No description provided for @retroNoActionItemsFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun action item'**
+  String get retroNoActionItemsFound;
+
+  /// No description provided for @retroAssignedTo.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegnato a: {email}'**
+  String retroAssignedTo(String email);
+
+  /// No description provided for @retroVotesCount.
+  ///
+  /// In it, this message translates to:
+  /// **'+{count} voti'**
+  String retroVotesCount(int count);
+
   /// No description provided for @retroGuidance.
   ///
   /// In it, this message translates to:
   /// **'Guida alle Retrospettive'**
   String get retroGuidance;
+
+  /// No description provided for @retroResultLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Sentiment medio: {score} ({label})'**
+  String retroResultLabel(String score, String label);
 
   /// No description provided for @retroSearchHint.
   ///
@@ -2256,17 +2418,23 @@ abstract class AppLocalizations {
   /// **'Daily Scrum: Sincronizzazione giornaliera del team (15 minuti)'**
   String get scrumEventsDaily;
 
+  /// No description provided for @scrumEventsRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospective'**
+  String get scrumEventsRetro;
+
+  /// No description provided for @scrumEventsRetroContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una retrospettiva per analizzare l\'ultimo sprint e identificare aree di miglioramento.'**
+  String get scrumEventsRetroContent;
+
   /// No description provided for @scrumEventsReview.
   ///
   /// In it, this message translates to:
   /// **'Sprint Review: Demo del lavoro completato agli stakeholder (max 4h)'**
   String get scrumEventsReview;
-
-  /// No description provided for @scrumEventsRetro.
-  ///
-  /// In it, this message translates to:
-  /// **'Sprint Retrospective: Riflessione del team per miglioramento continuo (max 3h)'**
-  String get scrumEventsRetro;
 
   /// No description provided for @scrumArtifactsTitle.
   ///
@@ -3107,6 +3275,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Sprint {number}: {name}'**
   String retroSprintLabel(int number, String name);
+
+  /// No description provided for @retroSprintOnlyLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint {number}'**
+  String retroSprintOnlyLabel(int number);
+
+  /// No description provided for @retroOwner.
+  ///
+  /// In it, this message translates to:
+  /// **'Proprietario'**
+  String get retroOwner;
+
+  /// No description provided for @retroGuest.
+  ///
+  /// In it, this message translates to:
+  /// **'Ospite'**
+  String get retroGuest;
 
   /// No description provided for @retroSessionTitle.
   ///
@@ -6507,12 +6693,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Aggiungi Card'**
   String get retroAddCardButton;
-
-  /// No description provided for @retroNoRetrosFound.
-  ///
-  /// In it, this message translates to:
-  /// **'Nessuna retrospettiva trovata'**
-  String get retroNoRetrosFound;
 
   /// No description provided for @retroDeleteRetro.
   ///
@@ -18243,6 +18423,204 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Sovraccaricato'**
   String get agileWorkloadOverloaded;
+
+  /// No description provided for @agileCommitmentTrendTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Trend Affidabilità Commitment'**
+  String get agileCommitmentTrendTitle;
+
+  /// No description provided for @agileCommitmentTrendNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato disponibile'**
+  String get agileCommitmentTrendNoData;
+
+  /// No description provided for @agileCommitmentTrendNoDataDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa almeno uno sprint per visualizzare il trend'**
+  String get agileCommitmentTrendNoDataDesc;
+
+  /// No description provided for @agileCommitmentTrendPlanned.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianificati'**
+  String get agileCommitmentTrendPlanned;
+
+  /// No description provided for @agileCommitmentTrendCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completati'**
+  String get agileCommitmentTrendCompleted;
+
+  /// No description provided for @agileCommitmentTrendAvg.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get agileCommitmentTrendAvg;
+
+  /// No description provided for @agileFlowEfficiencyTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Flow Efficiency & WIP'**
+  String get agileFlowEfficiencyTitle;
+
+  /// No description provided for @agileFlowEfficiencyNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato disponibile'**
+  String get agileFlowEfficiencyNoData;
+
+  /// No description provided for @agileFlowEfficiencyNoDataDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi stories per visualizzare l\'analisi del flusso'**
+  String get agileFlowEfficiencyNoDataDesc;
+
+  /// No description provided for @agileFlowEfficiency.
+  ///
+  /// In it, this message translates to:
+  /// **'Flow Efficiency'**
+  String get agileFlowEfficiency;
+
+  /// No description provided for @agileFlowCycleTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Cycle Time'**
+  String get agileFlowCycleTime;
+
+  /// No description provided for @agileFlowLeadTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Lead Time'**
+  String get agileFlowLeadTime;
+
+  /// No description provided for @agileFlowDays.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni'**
+  String get agileFlowDays;
+
+  /// No description provided for @agileFlowWipByStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'WIP per Stato'**
+  String get agileFlowWipByStatus;
+
+  /// No description provided for @agileFlowAvg.
+  ///
+  /// In it, this message translates to:
+  /// **'media'**
+  String get agileFlowAvg;
+
+  /// No description provided for @agileBlockedItemsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Bloccati'**
+  String get agileBlockedItemsTitle;
+
+  /// No description provided for @agileBlockedItemsNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun elemento bloccato'**
+  String get agileBlockedItemsNone;
+
+  /// No description provided for @agileBlockedItemsNoneDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le dipendenze sono soddisfatte'**
+  String get agileBlockedItemsNoneDesc;
+
+  /// No description provided for @agileBlockedItemsCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} bloccati'**
+  String agileBlockedItemsCount(Object count);
+
+  /// No description provided for @agileBlockedItemsSp.
+  ///
+  /// In it, this message translates to:
+  /// **'SP bloccati'**
+  String get agileBlockedItemsSp;
+
+  /// No description provided for @agileBlockedItemsBlockedBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Bloccato da'**
+  String get agileBlockedItemsBlockedBy;
+
+  /// No description provided for @agileBlockedItemsDependency.
+  ///
+  /// In it, this message translates to:
+  /// **'dipendenza'**
+  String get agileBlockedItemsDependency;
+
+  /// No description provided for @agileBlockedItemsDependencies.
+  ///
+  /// In it, this message translates to:
+  /// **'dipendenze'**
+  String get agileBlockedItemsDependencies;
+
+  /// No description provided for @agileSprintScopeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Scope Sprint'**
+  String get agileSprintScopeTitle;
+
+  /// No description provided for @agileSprintScopeNoSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuno sprint attivo'**
+  String get agileSprintScopeNoSprint;
+
+  /// No description provided for @agileSprintScopeNoSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvia uno sprint per monitorare le variazioni di scope'**
+  String get agileSprintScopeNoSprintDesc;
+
+  /// No description provided for @agileSprintScopeOriginal.
+  ///
+  /// In it, this message translates to:
+  /// **'Originale'**
+  String get agileSprintScopeOriginal;
+
+  /// No description provided for @agileSprintScopeCurrent.
+  ///
+  /// In it, this message translates to:
+  /// **'Attuale'**
+  String get agileSprintScopeCurrent;
+
+  /// No description provided for @agileSprintScopeDelta.
+  ///
+  /// In it, this message translates to:
+  /// **'Delta'**
+  String get agileSprintScopeDelta;
+
+  /// No description provided for @agileSprintScopeCreep.
+  ///
+  /// In it, this message translates to:
+  /// **'Scope Creep'**
+  String get agileSprintScopeCreep;
+
+  /// No description provided for @agileSprintScopeReduction.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduzione Scope'**
+  String get agileSprintScopeReduction;
+
+  /// No description provided for @agileSprintScopeStable.
+  ///
+  /// In it, this message translates to:
+  /// **'Stabile'**
+  String get agileSprintScopeStable;
+
+  /// No description provided for @agileSprintScopeSp.
+  ///
+  /// In it, this message translates to:
+  /// **'SP'**
+  String get agileSprintScopeSp;
 }
 
 class _AppLocalizationsDelegate

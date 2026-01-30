@@ -6,7 +6,6 @@ import '../../models/sprint_model.dart';
 import '../../models/team_member_model.dart';
 import '../../models/user_story_model.dart';
 import '../../themes/app_colors.dart';
-import '../../themes/app_theme.dart';
 
 class TeamWorkloadWidget extends StatelessWidget {
   final List<TeamMemberModel> teamMembers;
