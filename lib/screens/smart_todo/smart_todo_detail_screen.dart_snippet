@@ -1,0 +1,19 @@
+  Future<void> _exportToCsv(TodoListModel list) async {
+    try {
+      // Fetch fresh tasks
+      final tasks = await _todoService.getTasks(list.id);
+      await _csvExportService.exportToCsv(list, tasks);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Export CSV completato!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore export CSV: $e')),
+        );
+      }
+    }
+  }

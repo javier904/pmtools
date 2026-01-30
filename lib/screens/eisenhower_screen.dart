@@ -10,7 +10,7 @@ import '../models/eisenhower_participant_model.dart';
 import '../models/agile_enums.dart';
 import '../services/eisenhower_firestore_service.dart';
 import '../services/invite_service.dart';
-import '../services/eisenhower_sheets_export_service.dart';
+import '../services/eisenhower_csv_export_service.dart';
 import '../models/unified_invite_model.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
@@ -72,7 +72,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   final EisenhowerFirestoreService _firestoreService = EisenhowerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final InviteService _inviteService = InviteService();
-  final EisenhowerSheetsExportService _sheetsExportService = EisenhowerSheetsExportService();
+  final EisenhowerCsvExportService _csvExportService = EisenhowerCsvExportService();
   final AuthService _authService = AuthService();
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
@@ -433,17 +433,17 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                   tooltip: l10n.exportFromEisenhower,
                   onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
                 ),
-                // Export to Sprint (Agile Process Manager)
-                IconButton(
-                  icon: const Icon(Icons.rocket_launch),
-                  tooltip: l10n.exportToSprint,
-                  onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
-                ),
                 // Export to Estimation Room
                 IconButton(
                   icon: const Icon(Icons.casino),
                   tooltip: l10n.exportToEstimation,
                   onPressed: _activities.isNotEmpty ? _showExportToEstimationDialog : null,
+                ),
+                // Export to Sprint (Agile Process Manager)
+                IconButton(
+                  icon: const Icon(Icons.rocket_launch),
+                  tooltip: l10n.exportToUserStories,
+                  onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
                 ),
                 // Separator
                 const SizedBox(width: 8),
@@ -489,13 +489,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                             color: context.textPrimaryColor,
                           ),
                         )
-                      : const Icon(Icons.upload_file),
-                  tooltip: l10n.eisenhowerExportSheets,
-                  onPressed: _isExporting ? null : _exportToGoogleSheets,
+                      : const Icon(Icons.download), // Changed from upload_file to download
+                  tooltip: l10n.actionExportCsv,
+                  onPressed: _isExporting ? null : _showExportCsvDialog,
                 ),
                 // Import CSV
                 IconButton(
-                  icon: const Icon(Icons.file_download),
+                  icon: const Icon(Icons.upload_file),
                   tooltip: l10n.eisenhowerImportCsv,
                   onPressed: _showImportCsvDialog,
                 ),
@@ -517,23 +517,24 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
             ],
             // Archived toggle
             const SizedBox(width: 8),
-            FilterChip(
-              label: Text(
-                _showArchived
-                    ? (l10n.archiveHideArchived ?? 'Hide archived')
-                    : (l10n.archiveShowArchived ?? 'Show archived'),
-                style: const TextStyle(fontSize: 12),
+            if (_selectedMatrix == null)
+              FilterChip(
+                label: Text(
+                  _showArchived
+                      ? (l10n.archiveHideArchived ?? 'Hide archived')
+                      : (l10n.archiveShowArchived ?? 'Show archived'),
+                  style: const TextStyle(fontSize: 12),
+                ),
+                selected: _showArchived,
+                onSelected: (value) => setState(() => _showArchived = value),
+                avatar: Icon(
+                  _showArchived ? Icons.visibility_off : Icons.visibility,
+                  size: 16,
+                  color: AppColors.success,
+                ),
+                selectedColor: AppColors.warning.withOpacity(0.2),
+                showCheckmark: false,
               ),
-              selected: _showArchived,
-              onSelected: (value) => setState(() => _showArchived = value),
-              avatar: Icon(
-                _showArchived ? Icons.visibility_off : Icons.visibility,
-                size: 16,
-                color: AppColors.success,
-              ),
-              selectedColor: AppColors.warning.withOpacity(0.2),
-              showCheckmark: false,
-            ),
             // Home button - sempre ultimo a destra
             const SizedBox(width: 8),
             IconButton(
@@ -2029,61 +2030,98 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   }
 
   // ============================================================
-  // EXPORT GOOGLE SHEETS
+  // EXPORT CSV
   // ============================================================
 
-  /// Esporta la matrice corrente su Google Sheets
-  Future<void> _exportToGoogleSheets() async {
+  Future<void> _showExportCsvDialog() async {
     final l10n = AppLocalizations.of(context)!;
-    if (_selectedMatrix == null) return;
-
-    setState(() => _isExporting = true);
-
-    try {
-      final url = await _sheetsExportService.exportToGoogleSheets(
-        matrix: _selectedMatrix!,
-        activities: _activities,
-      );
-
-      if (url != null) {
-        _showSuccess(l10n.eisenhowerExportCompleted);
-
-        // Chiedi se aprire il foglio
-        if (mounted) {
-          final shouldOpen = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.eisenhowerExportCompletedDialog),
-              content: Text(l10n.eisenhowerExportDialogContent),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(l10n.no),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text(l10n.eisenhowerOpen),
-                ),
-              ],
+    await showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.actionExportCsv),
+        children: [
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportAllData();
+            },
+            child: ListTile(
+              leading: const Icon(Icons.collections_bookmark, color: Colors.orange),
+              title: Text(l10n.eisenhowerExportAll),
             ),
-          );
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportMatrixSummary();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.grid_4x4, color: Colors.blue),
+              title: Text('Export Matrix Summary'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportVotes();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.how_to_vote, color: Colors.green),
+              title: Text('Export Votes'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportRaci();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.table_chart, color: Colors.purple),
+              title: Text('Export RACI Matrix'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-          if (shouldOpen == true) {
-            final uri = Uri.parse(url);
-            if (await canLaunchUrl(uri)) {
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
-            }
-          }
-        }
-      } else {
-        _showError(l10n.errorExport);
-      }
+  Future<void> _exportAllData() async {
+    if (_selectedMatrix == null) return;
+    try {
+      await _csvExportService.exportAllToCsv(_selectedMatrix!, _activities);
+      _showSuccess('Export completed!');
     } catch (e) {
-      _showError('${l10n.errorExport}: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _isExporting = false);
-      }
+      _showError('Error exporting: $e');
+    }
+  }
+
+  Future<void> _exportMatrixSummary() async {
+    if (_selectedMatrix == null) return;
+    try {
+      await _csvExportService.exportMatrixSummaryToCsv(_selectedMatrix!, _activities);
+      _showSuccess('Matrix Summary exported!');
+    } catch (e) {
+      _showError('Error exporting matrix: $e');
+    }
+  }
+
+  Future<void> _exportVotes() async {
+    if (_selectedMatrix == null) return;
+    try {
+      await _csvExportService.exportVotesToCsv(_selectedMatrix!, _activities);
+      _showSuccess('Votes exported!');
+    } catch (e) {
+      _showError('Error exporting votes: $e');
+    }
+  }
+
+  Future<void> _exportRaci() async {
+    if (_selectedMatrix == null) return;
+    try {
+      await _csvExportService.exportRaciToCsv(_selectedMatrix!, _activities);
+      _showSuccess('RACI exported!');
+    } catch (e) {
+      _showError('Error exporting RACI: $e');
     }
   }
 
@@ -2323,16 +2361,6 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         );
         projectId = createdProject.id;
 
-        // Create new sprint in the project
-        final createdSprint = await agileService.createSprint(
-          projectId: projectId,
-          name: 'Sprint 1',
-          goal: 'Stories imported from ${_selectedMatrix!.title}',
-          startDate: DateTime.now(),
-          endDate: DateTime.now().add(Duration(days: result.newProjectConfig!.sprintDurationDays)),
-          createdBy: userEmail,
-        );
-        targetSprint = createdSprint;
       } else if (result.existingProject != null) {
         // Use existing project
         projectId = result.existingProject!.id;
@@ -2362,10 +2390,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       }
 
       if (mounted) {
-        final sprintName = targetSprint?.name ?? 'Backlog';
+        final projectName = result.existingProject?.name ?? result.newProjectConfig?.name ?? 'Project';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.activitiesExportedToSprint(createdCount, sprintName)),
+            content: Text(l10n.storiesAddedToProject(createdCount, projectName)),
             backgroundColor: Colors.green,
           ),
         );

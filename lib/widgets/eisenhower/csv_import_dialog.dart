@@ -52,6 +52,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AlertDialog(
       title: Row(
@@ -114,7 +115,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                 title: Text(l10n.eisenhowerImportMarkRevealed),
                 subtitle: Text(
                   l10n.eisenhowerImportMarkRevealedHint,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                 ),
                 controlAffinity: ListTileControlAffinity.leading,
                 dense: true,
@@ -137,7 +138,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
         ),
         FilledButton.icon(
           onPressed: _canImport ? _handleImport : null,
-          icon: const Icon(Icons.file_download),
+          icon: const Icon(Icons.upload_file),
           label: Text(l10n.actionImport),
         ),
       ],
@@ -146,25 +147,26 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
 
   /// Card con istruzioni sul formato CSV
   Widget _buildInstructionsCard(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: isDark ? Colors.blue.withOpacity(0.15) : Colors.blue.shade50,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue.shade200),
+        border: Border.all(color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, size: 18, color: Colors.blue.shade700),
+              Icon(Icons.info_outline, size: 18, color: isDark ? Colors.blue.shade200 : Colors.blue.shade700),
               const SizedBox(width: 8),
               Text(
                 l10n.eisenhowerImportInstructionsTitle,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
+                  color: isDark ? Colors.blue.shade200 : Colors.blue.shade700,
                 ),
               ),
             ],
@@ -172,22 +174,22 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
           const SizedBox(height: 8),
           Text(
             l10n.eisenhowerImportInstructionsBody,
-            style: TextStyle(fontSize: 12, color: Colors.blue.shade800),
+            style: TextStyle(fontSize: 12, color: isDark ? Colors.blue.shade100 : Colors.blue.shade800),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? Colors.black26 : Colors.white,
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: Colors.blue.shade100),
+              border: Border.all(color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.shade100),
             ),
             child: Text(
               l10n.eisenhowerImportExampleFormat,
               style: TextStyle(
                 fontSize: 11,
                 fontFamily: 'monospace',
-                color: Colors.grey[800],
+                color: isDark ? Colors.grey[300] : Colors.grey[800],
               ),
             ),
           ),
@@ -197,6 +199,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   }
 
   Widget _buildFilePickerArea(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: _pickFile,
       borderRadius: BorderRadius.circular(12),
@@ -204,11 +207,15 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           border: Border.all(
-            color: _fileName != null ? Colors.green.shade300 : Colors.blue.shade200,
+            color: _fileName != null
+                ? (isDark ? Colors.green.withOpacity(0.5) : Colors.green.shade300)
+                : (isDark ? Colors.blue.withOpacity(0.5) : Colors.blue.shade200),
             width: 2,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: _fileName != null ? Colors.green.shade50 : Colors.blue.shade50,
+          color: _fileName != null
+              ? (isDark ? Colors.green.withOpacity(0.15) : Colors.green.shade50)
+              : (isDark ? Colors.blue.withOpacity(0.15) : Colors.blue.shade50),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -216,7 +223,9 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
             Icon(
               _fileName != null ? Icons.check_circle : Icons.cloud_upload,
               size: 28,
-              color: _fileName != null ? Colors.green.shade700 : Colors.blue.shade700,
+              color: _fileName != null
+                  ? (isDark ? Colors.green.shade300 : Colors.green.shade700)
+                  : (isDark ? Colors.blue.shade300 : Colors.blue.shade700),
             ),
             const SizedBox(width: 12),
             Column(
@@ -226,12 +235,14 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                   _fileName ?? l10n.eisenhowerImportClickToSelect,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: _fileName != null ? Colors.green.shade700 : Colors.blue.shade700,
+                    color: _fileName != null
+                        ? (isDark ? Colors.green.shade300 : Colors.green.shade700)
+                        : (isDark ? Colors.blue.shade300 : Colors.blue.shade700),
                   ),
                 ),
                 Text(
                   l10n.eisenhowerImportSupportedFormats,
-                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                 ),
               ],
             ),
@@ -250,28 +261,34 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   }
 
   Widget _buildErrorCard(String message, {bool isError = true}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isError ? Colors.red : Colors.orange;
+    final shade700 = isError 
+        ? (isDark ? Colors.red.shade300 : Colors.red.shade700)
+        : (isDark ? Colors.orange.shade300 : Colors.orange.shade700);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isError ? Colors.red.shade50 : Colors.orange.shade50,
+        color: isDark ? baseColor.withOpacity(0.15) : (isError ? Colors.red.shade50 : Colors.orange.shade50),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isError ? Colors.red.shade200 : Colors.orange.shade200,
+          color: isDark ? baseColor.withOpacity(0.3) : (isError ? Colors.red.shade200 : Colors.orange.shade200),
         ),
       ),
       child: Row(
         children: [
           Icon(
             isError ? Icons.error_outline : Icons.warning_amber,
-            color: isError ? Colors.red.shade700 : Colors.orange.shade700,
+            color: shade700,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
               style: TextStyle(
-                color: isError ? Colors.red.shade700 : Colors.orange.shade700,
+                color: shade700,
               ),
             ),
           ),
@@ -283,27 +300,28 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   Widget _buildParseErrorsSummary(AppLocalizations l10n) {
     final errors = _parseResult!.errors;
     if (errors.isEmpty) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.orange.shade50,
+        color: isDark ? Colors.orange.withOpacity(0.15) : Colors.orange.shade50,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.orange.shade200),
+        border: Border.all(color: isDark ? Colors.orange.withOpacity(0.3) : Colors.orange.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber, color: Colors.orange.shade700, size: 18),
+              Icon(Icons.warning_amber, color: isDark ? Colors.orange.shade300 : Colors.orange.shade700, size: 18),
               const SizedBox(width: 8),
               Text(
                 l10n.eisenhowerImportSkippedRows(_parseResult!.skippedRows),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.orange.shade700,
+                  color: isDark ? Colors.orange.shade300 : Colors.orange.shade700,
                 ),
               ),
             ],
@@ -313,7 +331,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
             padding: const EdgeInsets.only(left: 26, bottom: 4),
             child: Text(
               _translateError(error, l10n),
-              style: TextStyle(fontSize: 12, color: Colors.orange.shade800),
+              style: TextStyle(fontSize: 12, color: isDark ? Colors.orange.shade200 : Colors.orange.shade800),
             ),
           )),
           if (errors.length > 5)
@@ -324,7 +342,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                 style: TextStyle(
                   fontSize: 12,
                   fontStyle: FontStyle.italic,
-                  color: Colors.orange.shade600,
+                  color: isDark ? Colors.orange.shade200 : Colors.orange.shade600,
                 ),
               ),
             ),
@@ -353,23 +371,23 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   Widget _buildSuccessSummary(AppLocalizations l10n) {
     final result = _parseResult!;
     final validCount = result.activities.length;
-    final selectedCount = result.activities.where((a) => a.selected).length;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: isDark ? Colors.green.withOpacity(0.15) : Colors.green.shade50,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.green.shade200),
+        border: Border.all(color: isDark ? Colors.green.withOpacity(0.3) : Colors.green.shade200),
       ),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: Colors.green.shade700),
+          Icon(Icons.check_circle, color: isDark ? Colors.green.shade300 : Colors.green.shade700),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               l10n.eisenhowerImportFoundActivities(validCount, result.totalRows),
-              style: TextStyle(color: Colors.green.shade700),
+              style: TextStyle(color: isDark ? Colors.green.shade300 : Colors.green.shade700),
             ),
           ),
           TextButton.icon(
@@ -406,6 +424,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   Widget _buildActivityTile(CsvActivityRow activity, AppLocalizations l10n) {
     final urgencyColor = _getUrgencyColor(activity.urgencyInt);
     final importanceColor = _getImportanceColor(activity.importanceInt);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -430,7 +449,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                     Expanded(
                       child: Text(
                         activity.description,
-                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                        style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -443,12 +462,12 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                   padding: const EdgeInsets.only(top: 4),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, size: 12, color: Colors.orange[700]),
+                      Icon(Icons.info_outline, size: 12, color: isDark ? Colors.orange[300] : Colors.orange[700]),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           activity.warning!,
-                          style: TextStyle(fontSize: 10, color: Colors.orange[700]),
+                          style: TextStyle(fontSize: 10, color: isDark ? Colors.orange[300] : Colors.orange[700]),
                         ),
                       ),
                     ],
@@ -458,7 +477,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
           ),
           dense: true,
         ),
-        Divider(height: 1, color: Colors.grey.shade200),
+        Divider(height: 1, color: isDark ? Colors.white10 : Colors.grey.shade200),
       ],
     );
   }
@@ -479,15 +498,16 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   }
 
   Widget _buildInitialState(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.description, size: 48, color: Colors.grey[400]),
+          Icon(Icons.description, size: 48, color: isDark ? Colors.grey[600] : Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             l10n.eisenhowerImportSelectFile,
-            style: TextStyle(color: Colors.grey[600], fontSize: 16),
+            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 16),
           ),
         ],
       ),
@@ -495,15 +515,16 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
   }
 
   Widget _buildEmptyState(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.inbox, size: 48, color: Colors.grey[400]),
+          Icon(Icons.inbox, size: 48, color: isDark ? Colors.grey[600] : Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             l10n.eisenhowerImportNoActivities,
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
           ),
         ],
       ),

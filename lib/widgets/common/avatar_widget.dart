@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 /// Un widget avatar robusto che gestisce errori di caricamento immagini
 /// e fornisce fallback eleganti (iniziali o icona).
@@ -26,7 +27,7 @@ class AvatarWidget extends StatelessWidget {
       return CircleAvatar(
         radius: radius,
         backgroundColor: backgroundColor ?? _getAvatarColor(email ?? name ?? ''),
-        backgroundImage: NetworkImage(imageUrl!),
+        backgroundImage: CachedNetworkImageProvider(imageUrl!),
         onBackgroundImageError: (exception, stackTrace) {
           // Fallback gestito silenziosamente - mostrerà il child
           debugPrint('Error loading avatar image: $exception');

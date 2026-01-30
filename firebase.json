@@ -33,6 +33,10 @@
         "destination": "/terms.html"
       },
       {
+        "source": "/changelog",
+        "destination": "/changelog.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

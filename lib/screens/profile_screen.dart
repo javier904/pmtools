@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import '../models/user_profile/user_profile_model.dart';
 import '../models/user_profile/subscription_model.dart';
@@ -203,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               radius: 48,
               backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
               backgroundImage: _profile?.photoUrl != null
-                  ? NetworkImage(_profile!.photoUrl!)
+                  ? CachedNetworkImageProvider(_profile!.photoUrl!)
                   : null,
               child: _profile?.photoUrl == null
                   ? Text(

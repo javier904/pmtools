@@ -1,10 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:googleapis/gmail/v1.dart' as gmail;
 import '../../models/unified_invite_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
-import 'package:http/http.dart' as http;
-import '../../l10n/app_localizations.dart';
 
 class SmartTodoInviteDialog extends StatefulWidget {
   final String listId;
@@ -114,22 +110,9 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
       }
 
       // 2. Send Email if requested
+      // 2. Send Email if requested (Backend handled)
       if (_sendEmail) {
-        // Use GoogleSignIn account to get headers
-        final googleUser = _authService.googleSignIn.currentUser;
-        if (googleUser == null) {
-          throw Exception(l10n?.smartTodoGoogleLoginRequired ?? 'Google login required to send email');
-        }
-
-        final authHeaders = await googleUser.authHeaders;
-        final httpClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(httpClient);
-
-        await _inviteService.sendInviteEmail(
-          invite: invite,
-          senderEmail: currentUser.email!,
-          gmailApi: gmailApi,
-        );
+        // Backend Cloud Function logic handles this.
       }
 
       if (mounted) {
@@ -157,15 +140,4 @@ class _SmartTodoInviteDialogState extends State<SmartTodoInviteDialog> {
 // Simple Client wrapper (copied pattern)
 
 
-class _GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
-  final http.Client _client = http.Client();
-
-  _GoogleAuthClient(this._headers);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    request.headers.addAll(_headers);
-    return _client.send(request);
-  }
-}
+// Simple Client wrapper removed

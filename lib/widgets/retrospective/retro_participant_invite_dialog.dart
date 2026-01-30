@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:googleapis/gmail/v1.dart' as gmail;
-import 'package:http/http.dart' as http;
 import '../../models/unified_invite_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
@@ -70,7 +68,6 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
 
   String _selectedRole = 'participant'; // participant, observer
   bool _isLoading = false;
-  bool _sendEmailWithInvite = true;
   String? _generatedLink;
   List<UnifiedInviteModel> _invites = [];
 
@@ -113,11 +110,6 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
 
       if (invite != null) {
         final link = _inviteService.generateInviteLink(invite);
-        bool emailSent = false;
-
-        if (_sendEmailWithInvite) {
-          emailSent = await _sendEmailInvite(invite);
-        }
 
         setState(() {
           _generatedLink = link;
@@ -128,9 +120,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
           final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(_sendEmailWithInvite && emailSent
-                  ? l10n?.inviteSentByEmail(invite.email) ?? 'Invito inviato via email a ${invite.email}'
-                  : l10n?.inviteCreatedFor(invite.email) ?? 'Invito creato per ${invite.email}'),
+              content: Text(l10n?.inviteCreatedFor(invite.email) ?? 'Invito creato per ${invite.email}. Email in arrivo...'),
               backgroundColor: Colors.green,
             ),
           );
@@ -150,112 +140,6 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
       if (mounted) {
         setState(() => _isLoading = false);
       }
-    }
-  }
-
-  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
-    try {
-      print('📧 [RETRO EMAIL] Inizio invio email a ${invite.email}');
-
-      String? accessToken;
-      String? senderEmail;
-
-      if (kIsWeb) {
-        accessToken = _authService.webAccessToken;
-        senderEmail = _authService.currentUserEmail;
-
-        if (accessToken == null) {
-          if (mounted) {
-            final l10n = AppLocalizations.of(context);
-            final shouldReauth = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text(l10n?.inviteGmailAuthTitle ?? 'Autorizzazione Gmail'),
-                content: Text(
-                  l10n?.inviteGmailAuthMessage ??
-                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\nVuoi procedere?'
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: Text(l10n?.inviteGmailAuthNo ?? 'No, solo link'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: Text(l10n?.inviteGmailAuthYes ?? 'Autorizza'),
-                  ),
-                ],
-              ),
-            );
-
-            if (shouldReauth == true) {
-              accessToken = await _authService.refreshWebAccessToken();
-            }
-          }
-        }
-
-        if (accessToken == null || senderEmail == null) {
-          if (mounted) {
-            final l10n = AppLocalizations.of(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n?.inviteGmailNotAvailable ?? 'Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        final authHeaders = {'Authorization': 'Bearer $accessToken'};
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-
-        return await _inviteService.sendInviteEmail(
-          invite: invite,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-      } else {
-        var googleAccount = _authService.googleSignIn.currentUser;
-        googleAccount ??= await _authService.googleSignIn.signInSilently();
-        googleAccount ??= await _authService.googleSignIn.signIn();
-
-        if (googleAccount == null) {
-          return false;
-        }
-
-        final hasGmailScope = await _authService.googleSignIn.requestScopes([
-          'https://www.googleapis.com/auth/gmail.send',
-        ]);
-
-        if (!hasGmailScope) {
-          if (mounted) {
-            final l10n = AppLocalizations.of(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n?.inviteGmailNoPermission ?? 'Permesso Gmail non concesso.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        final authHeaders = await googleAccount.authHeaders;
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        senderEmail = googleAccount.email;
-
-        return await _inviteService.sendInviteEmail(
-          invite: invite,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-      }
-    } catch (e) {
-      print('❌ [RETRO EMAIL] Errore: $e');
-      return false;
     }
   }
 
@@ -401,45 +285,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
                     ),
                     const SizedBox(height: 12),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: _sendEmailWithInvite
-                            ? Colors.green.withValues(alpha: 0.1)
-                            : Colors.grey.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: _sendEmailWithInvite
-                              ? Colors.green.withValues(alpha: 0.3)
-                              : Colors.grey.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            _sendEmailWithInvite ? Icons.email : Icons.email_outlined,
-                            size: 20,
-                            color: _sendEmailWithInvite ? Colors.green : Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              l10n?.inviteSendEmailNotification ?? 'Invia notifica email',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: _sendEmailWithInvite ? Colors.green[700] : Colors.grey[600],
-                              ),
-                            ),
-                          ),
-                          Switch(
-                            value: _sendEmailWithInvite,
-                            onChanged: (value) => setState(() => _sendEmailWithInvite = value),
-                            activeColor: Colors.green,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+
 
                     SizedBox(
                       width: double.infinity,
@@ -686,19 +532,4 @@ class _InviteStatusInfo {
   });
 }
 
-class _GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
-  final http.Client _client = http.Client();
 
-  _GoogleAuthClient(this._headers);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    return _client.send(request..headers.addAll(_headers));
-  }
-
-  @override
-  void close() {
-    _client.close();
-  }
-}

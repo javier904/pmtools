@@ -14,6 +14,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import Stripe from 'stripe';
+import * as nodemailer from 'nodemailer';
 
 // Inizializza Firebase Admin
 admin.initializeApp();
@@ -702,3 +703,102 @@ export const checkTrialExpirations = functions.pubsub
 
     return null;
   });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EMAIL NOTIFICATIONS (Backend Delegation)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Trigger: Invio email quando viene creato un nuovo invito
+ * Listening on: invitations/{inviteId}
+ */
+export const onInviteCreated = functions.firestore
+  .document('invitations/{inviteId}')
+  .onCreate(async (snap, context) => {
+    const invite = snap.data();
+    if (!invite) return;
+
+    // Solo se lo status è pending
+    if (invite.status !== 'pending') return;
+
+    // Configurazione SMTP (Aruba) da Firebase Cloud Functions Environment Config
+    // Settare via terminal con:
+    // firebase functions:config:set smtp.email="invites@keisenapp.com" smtp.password="PASSWORD"
+    const smtpEmail = functions.config().smtp?.email;
+    const smtpPassword = functions.config().smtp?.password;
+
+    if (!smtpEmail || !smtpPassword) {
+      console.error('❌ SMTP credentials not configured.');
+      return;
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: "smtps.aruba.it",
+      port: 465,
+      secure: true, // SSL
+      auth: {
+        user: smtpEmail,
+        pass: smtpPassword,
+      },
+    });
+
+    try {
+      console.log(`📧 Sending email to ${invite.email} from ${smtpEmail}`);
+
+      const mailOptions = {
+        from: `"Keisen App" <${smtpEmail}>`,
+        to: invite.email,
+        subject: _getEmailSubject(invite.sourceType, invite.sourceName),
+        html: _buildEmailHtml(invite, context.params.inviteId),
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log(`✅ Email sent to ${invite.email}`);
+
+    } catch (error) {
+      console.error('❌ Error sending email:', error);
+    }
+  });
+
+function _getEmailSubject(type: string, name: string): string {
+  switch (type) {
+    case 'eisenhower': return `📊 Invito Matrice Eisenhower: ${name}`;
+    case 'estimationRoom': return `🎯 Invito Estimation Room: ${name}`;
+    case 'agileProject': return `📋 Invito Progetto Agile: ${name}`;
+    case 'smartTodo': return `✅ Invito Smart Todo: ${name}`;
+    case 'retroBoard': return `🔄 Invito Retrospettiva: ${name}`;
+    default: return `Invito su Keisen App`;
+  }
+}
+
+function _buildEmailHtml(invite: any, inviteId: string): string {
+  // Deep link per accettare l'invito
+  const baseUrl = 'https://pm-agile-tools-app.web.app';
+  // Genera link diretto (logica simile al frontend)
+  let typePath = '';
+  switch (invite.sourceType) {
+    case 'eisenhower': typePath = 'eisenhower'; break;
+    case 'estimationRoom': typePath = 'estimation-room'; break;
+    case 'agileProject': typePath = 'agile-project'; break;
+    case 'smartTodo': typePath = 'smart-todo'; break;
+    case 'retroBoard': typePath = 'retro'; break;
+  }
+  
+  const link = `${baseUrl}/#/invite/${typePath}/${invite.sourceId}`;
+  
+  return `
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+      <h2 style="color: #2196F3;">Sei stato invitato su Keisen!</h2>
+      <p>Ciao,</p>
+      <p><strong>${invite.invitedByName || 'Un utente'}</strong> ti ha invitato a collaborare su:</p>
+      <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0; font-size: 16px;"><strong>${invite.sourceName}</strong></p>
+        <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Ruolo: ${invite.role}</p>
+      </div>
+      <p>Clicca sul pulsante qui sotto per accettare:</p>
+      <a href="${link}" style="display: inline-block; background: #2196F3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Accetta Invito</a>
+      <p style="margin-top: 30px; font-size: 12px; color: #999;">Se il pulsante non funziona, copia questo link: ${link}</p>
+    </div>
+  `;
+}
+

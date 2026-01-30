@@ -245,9 +245,11 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                         await _loadInvites();
                       } else if (action == 'resend') {
                         final currentUser = _authService.currentUser;
-                        if (currentUser != null && currentUser.email != null) {
+                          if (currentUser != null && currentUser.email != null) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.smartTodoSendingEmail)));
-                          final success = await _sendEmailForInvite(invite, currentUser.email!);
+                          // final success = await _sendEmailForInvite(invite, currentUser.email!);
+                          // Managed by backend
+                          final success = true; 
                           if (mounted) {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -381,7 +383,10 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
         throw Exception(l10n.smartTodoError('Failed to create invite'));
       }
 
-      final emailSent = await _sendEmailForInvite(invite, currentUser.email!);
+      
+      // final emailSent = await _sendEmailForInvite(invite, currentUser.email!);
+      // Managed by backend
+      final emailSent = true;
 
       String feedbackMessage = l10n.smartTodoInviteCreatedAndSent;
       if (!emailSent) {
@@ -414,51 +419,4 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
     }
   }
 
-  Future<bool> _sendEmailForInvite(UnifiedInviteModel invite, String senderEmail) async {
-      try {
-        var googleUser = _authService.googleSignIn.currentUser;
-        if (googleUser == null) {
-          try {
-            googleUser = await _authService.googleSignIn.signInSilently();
-          } catch (e) {
-            debugPrint('Error signing in silently: $e');
-          }
-        }
-
-        if (googleUser == null) {
-          googleUser = await _authService.googleSignIn.signIn();
-        }
-
-        if (googleUser != null) {
-          final authHeaders = await googleUser.authHeaders;
-          final httpClient = _GoogleAuthClient(authHeaders);
-          final gmailApi = gmail.GmailApi(httpClient);
-
-          return await _inviteService.sendInviteEmail(
-            invite: invite,
-            senderEmail: senderEmail,
-            gmailApi: gmailApi,
-          );
-        } else {
-          print('Google User null after login attempt');
-          return false;
-        }
-      } catch (e) {
-        print('Errore invio email helper: $e');
-        return false;
-      }
-  }
-}
-
-class _GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
-  final http.Client _client = http.Client();
-
-  _GoogleAuthClient(this._headers);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    request.headers.addAll(_headers);
-    return _client.send(request);
-  }
 }

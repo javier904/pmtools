@@ -2,8 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://keisenapp.com/</loc>
-    <lastmod>2026-01-29</lastmod>
+    <lastmod>2026-01-30</lastmod>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://keisenapp.com/privacy</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://keisenapp.com/terms</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://keisenapp.com/changelog</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.5</priority>
   </url>
 </urlset>
 

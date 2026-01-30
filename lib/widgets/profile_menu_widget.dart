@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_profile/user_profile_model.dart';
 import '../models/user_profile/subscription_model.dart';
@@ -280,7 +281,7 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
     return CircleAvatar(
       radius: size / 2,
       backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-      backgroundImage: _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+      backgroundImage: _photoUrl != null ? CachedNetworkImageProvider(_photoUrl!) : null,
       child: _photoUrl == null
           ? Text(
               _initials,
@@ -368,7 +369,7 @@ class ProfileAvatarWidget extends StatelessWidget {
         radius: size / 2,
         backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
         backgroundImage:
-            profile?.photoUrl != null ? NetworkImage(profile!.photoUrl!) : null,
+            profile?.photoUrl != null ? CachedNetworkImageProvider(profile!.photoUrl!) : null,
         child: profile?.photoUrl == null
             ? Text(
                 profile?.initials ?? '?',

@@ -533,7 +533,7 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
                   ElevatedButton.icon(
                     onPressed: _canExport() ? _export : null,
                     icon: const Icon(Icons.rocket_launch_rounded, size: 18),
-                    label: Text(l10n.exportToSprint),
+                    label: Text(l10n.actionSend),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
@@ -881,7 +881,7 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
     if (_createNewProject) {
       return _newProjectConfig != null;
     } else {
-      return _selectedProject != null && _selectedSprint != null;
+      return _selectedProject != null;
     }
   }
 
@@ -890,14 +890,19 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
         .where((s) => _selectedStoryIds.contains(s.id))
         .toList();
 
-    Navigator.pop(
-      context,
-      ExportToAgileSprintResult(
-        selectedStories: selectedStories,
-        existingProject: _createNewProject ? null : _selectedProject,
-        sprint: _createNewProject ? null : _selectedSprint,
-        newProjectConfig: _createNewProject ? _newProjectConfig : null,
-      ),
-    );
+    // Wrap pop in microtask to avoid MouseTracker crash on Web
+    Future.microtask(() {
+      if (mounted) {
+        Navigator.pop(
+          context,
+          ExportToAgileSprintResult(
+            selectedStories: selectedStories,
+            existingProject: _createNewProject ? null : _selectedProject,
+            sprint: _createNewProject ? null : _selectedSprint,
+            newProjectConfig: _createNewProject ? _newProjectConfig : null,
+          ),
+        );
+      }
+    });
   }
 }

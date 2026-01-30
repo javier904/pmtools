@@ -121,25 +121,6 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
       _availableSprints = [];
     });
 
-    if (project != null) {
-      setState(() => _loadingSprints = true);
-      try {
-        final sprints = await widget.getProjectSprints(project.id);
-        if (mounted) {
-          setState(() {
-            _availableSprints = sprints.where((s) =>
-              s.status == SprintStatus.planning ||
-              s.status == SprintStatus.active
-            ).toList();
-            _loadingSprints = false;
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() => _loadingSprints = false);
-        }
-      }
-    }
   }
 
   void _openProjectFormDialog() async {
@@ -275,7 +256,7 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
                         _showQ4
                             ? (l10n?.hideQ4 ?? 'Nascondi Q4')
                             : (l10n?.showQ4 ?? 'Mostra Q4'),
-                        style: const TextStyle(fontSize: 12),
+                        style: const TextStyle(fontSize: 12, color: Color(0xFFFFFFFF)),
                       ),
                     ),
                   ],
@@ -398,13 +379,13 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
                             }
                           });
                         },
-                        child: Text(l10n?.selectAll ?? 'Seleziona tutti'),
+                        child: Text(l10n?.selectAll ?? 'Seleziona tutti', style: const TextStyle(color: Color(0xFFFFFFFF))),
                       ),
                       TextButton(
                         onPressed: () {
                           setState(() => _selectedActivityIds.clear());
                         },
-                        child: Text(l10n?.deselectAll ?? 'Deseleziona tutti'),
+                        child: Text(l10n?.deselectAll ?? 'Deseleziona tutti', style: const TextStyle(color: Color(0xFFFFFFFF))),
                       ),
                     ],
                   ),
@@ -447,7 +428,7 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
                       const SizedBox(width: 12),
                       ElevatedButton.icon(
                         onPressed: _canExport ? _onExport : null,
-                        icon: const Icon(Icons.upload),
+                        icon: const Icon(Icons.rocket_launch),
                         label: Text(l10n?.actionExport ?? 'Esporta'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -515,28 +496,7 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
           ),
           const SizedBox(height: 12),
 
-          // Sprint dropdown
-          if (_selectedProject != null)
-            _loadingSprints
-                ? const Center(child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ))
-                : DropdownButtonFormField<SprintModel>(
-                    value: _selectedSprint,
-                    decoration: InputDecoration(
-                      labelText: l10n?.selectSprint ?? 'Seleziona sprint',
-                      border: const OutlineInputBorder(),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    ),
-                    items: _availableSprints.map((sprint) {
-                      return DropdownMenuItem(
-                        value: sprint,
-                        child: Text(sprint.name, overflow: TextOverflow.ellipsis),
-                      );
-                    }).toList(),
-                    onChanged: (sprint) => setState(() => _selectedSprint = sprint),
-                  ),
+
         ],
       ],
     );
@@ -664,7 +624,7 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
     if (_createNewProject) {
       return _newProjectConfig != null;
     }
-    return _selectedProject != null && _selectedSprint != null;
+    return _selectedProject != null;
   }
 
   void _onExport() {

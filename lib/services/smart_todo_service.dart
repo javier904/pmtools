@@ -244,6 +244,23 @@ class SmartTodoService {
         });
   }
 
+  /// Get all tasks for a list once (for Export/Sync)
+  Future<List<TodoTaskModel>> getTasks(String listId) async {
+    final snapshot = await _firestore
+        .collection(_listsCollection)
+        .doc(listId)
+        .collection(_tasksSubcollection)
+        .get();
+
+    final tasks = snapshot.docs
+        .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
+        .toList();
+    
+    // Sort by position ascending
+    tasks.sort((a, b) => a.position.compareTo(b.position));
+    return tasks;
+  }
+
   /// Crea un nuovo task in una lista
   /// Lancia [LimitExceededException] se il limite task per entita' e' raggiunto
   Future<String> createTask(String listId, TodoTaskModel task, {String? performedBy, String? performedByName}) async {

@@ -18,7 +18,8 @@ import '../../widgets/smart_todo/export_to_estimation_dialog.dart';
 import '../../widgets/smart_todo/export_to_eisenhower_dialog.dart';
 import '../../widgets/smart_todo/export_to_user_stories_dialog.dart';
 import '../../widgets/estimation_room/session_form_dialog.dart';
-import '../../services/smart_todo_sheets_export_service.dart';
+
+import '../../services/smart_todo_csv_export_service.dart';
 import '../../services/agile_firestore_service.dart';
 import '../../models/agile_project_model.dart';
 import '../../models/agile_enums.dart';
@@ -45,6 +46,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   final EisenhowerFirestoreService _eisenhowerService = EisenhowerFirestoreService();
   final AgileFirestoreService _agileService = AgileFirestoreService();
   final AuthService _authService = AuthService();
+  final SmartTodoCsvExportService _csvExportService = SmartTodoCsvExportService();
   
   TodoViewMode? _viewMode = TodoViewMode.kanban;
   final TextEditingController _searchController = TextEditingController();
@@ -146,8 +148,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     final tasks = taskSnapshot.data ?? [];
                     final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
                     return IconButton(
-                      icon: const Icon(Icons.auto_stories_rounded),
-                      tooltip: AppLocalizations.of(context)?.exportToUserStories ?? 'Send to User Stories',
+                      icon: const Icon(Icons.rocket_launch),
+                      tooltip: AppLocalizations.of(context)?.exportToUserStories ?? 'Move to Agile project',
                       onPressed: hasNonDoneTasks
                           ? () => _showExportToUserStoriesDialog(currentList, tasks)
                           : null,
@@ -212,12 +214,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   tooltip: AppLocalizations.of(context)?.smartTodoActionImport ?? 'Importa Task',
                   onPressed: () => _showImportDialog(currentList),
                 ),
-                // Export button
+                  // Export button (CSV - SAFE)
                 IconButton(
-                  icon: const Icon(Icons.table_chart),
-                  tooltip: AppLocalizations.of(context)?.smartTodoActionExportSheets ?? 'Esporta su Sheets',
-                  onPressed: () => _exportToSheets(currentList),
+                  icon: const Icon(Icons.download), // Icon mismatch fix? Table chart was for sheets.
+                  tooltip: 'Export to CSV', // TODO: Localize
+                  onPressed: () => _exportToCsv(currentList),
                 ),
+
                 IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () => _showListSettings(currentList),
@@ -1763,145 +1766,27 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     );
   }
 
-  Future<void> _exportToSheets(TodoListModel list) async {
-    final l10n = AppLocalizations.of(context);
-    final existingUrl = list.googleSheetsUrl;
-
-    // Se esiste già un URL, mostra dialog con opzioni
-    if (existingUrl != null && existingUrl.isNotEmpty) {
-      final action = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(l10n?.smartTodoSheetsExportTitle ?? 'Google Sheets Export'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n?.smartTodoSheetsExportExists ?? 'A Google Sheets document already exists for this list.'),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.table_chart, color: Colors.green.shade700, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        existingUrl,
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n?.actionCancel ?? 'Cancel'),
-            ),
-            TextButton.icon(
-              icon: const Icon(Icons.open_in_new, size: 18),
-              label: Text(l10n?.smartTodoSheetsOpen ?? 'Open'),
-              onPressed: () => Navigator.pop(context, 'open'),
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.refresh, size: 18),
-              label: Text(l10n?.smartTodoSheetsUpdate ?? 'Update'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () => Navigator.pop(context, 'update'),
-            ),
-          ],
-        ),
-      );
-
-      if (action == null) return;
-
-      if (action == 'open') {
-        await _openSheetsUrl(existingUrl);
-        return;
-      }
-
-      // action == 'update' - continua con l'export/aggiornamento
-    }
-
-    // Mostra snackbar di caricamento
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(existingUrl != null
-          ? (l10n?.smartTodoSheetsUpdating ?? 'Updating Google Sheets...')
-          : (l10n?.smartTodoSheetsCreating ?? 'Creating Google Sheets...')),
-        duration: const Duration(seconds: 30),
-      ),
-    );
-
+  Future<void> _exportToCsv(TodoListModel list) async {
     try {
-      final tasks = await _todoService.streamTasks(list.id).first;
-
-      final url = await SmartTodoSheetsExportService().exportTodoListToGoogleSheets(
-        list: list,
-        tasks: tasks,
-        existingUrl: existingUrl,
-      );
-
-      if (url != null && mounted) {
-        // Salva l'URL nel modello se è nuovo
-        if (existingUrl == null || existingUrl.isEmpty) {
-          await _todoService.updateList(
-            list.copyWith(googleSheetsUrl: url),
-            previousList: list,
-            performedBy: _currentUserEmail,
-            performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
-          );
-        }
-
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      // Fetch fresh tasks
+      final tasks = await _todoService.getTasks(list.id);
+      await _csvExportService.exportToCsv(list, tasks);
+      
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(existingUrl != null
-              ? (l10n?.smartTodoSheetsUpdated ?? 'Google Sheets updated!')
-              : (l10n?.smartTodoSheetsCreated ?? 'Google Sheets created!')),
-            action: SnackBarAction(
-              label: l10n?.smartTodoSheetsOpen ?? 'Open',
-              onPressed: () => _openSheetsUrl(url),
-            ),
-          ),
-        );
-
-        // Apri automaticamente il link in una nuova scheda
-        await _openSheetsUrl(url);
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n?.smartTodoSheetsError ?? 'Error during export (see log)')),
+          const SnackBar(content: Text('Export CSV completato!')),
         );
       }
-
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n?.error ?? "Error"}: $e')),
+          SnackBar(content: Text('Errore export CSV: $e')),
         );
       }
     }
   }
 
-  Future<void> _openSheetsUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
+
 
   void _showTagsDialog(TodoListModel list) {
     showDialog(

@@ -319,7 +319,7 @@
   "estimationRoleVoters": "Votants",
   "estimationRoleObservers": "Observateurs",
   "estimationYouSuffix": "(vous)",
-  "estimationDecimalTitle": "Estimation Décimale",
+  "estimationDecimalTitle": "Estimation décimale",
   "estimationDecimalHint": "Entrez votre estimation en jours (ex: 1.5, 2.25)",
   "estimationQuickSelect": "Sélection rapide:",
   "estimationDaysSuffix": "jours",
@@ -354,8 +354,12 @@
   "estimationVotesCountFormatted": "{count}/{total} votes",
   "@estimationVotesCountFormatted": {
     "placeholders": {
-      "count": { "type": "int" },
-      "total": { "type": "int" }
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "estimationConsensusReached": "Consensus atteint !",
@@ -388,8 +392,8 @@
   "raciTypePerson": "Personne (Participant)",
   "raciTypeCustom": "Personnalisé (Équipe/Autre)",
   "raciSelectParticipant": "Sélectionner un participant",
-  "raciColumnName": "Nom de la Colonne",
-  "raciColumnNameHint": "Ex. Équipe Juridique",
+  "raciColumnName": "Nom de la colonne",
+  "raciColumnNameHint": "Ex. : Équipe développement",
   "raciDeleteColumnTitle": "Supprimer la Colonne",
   "raciDeleteColumnConfirm": "Supprimer la colonne '{name}' ? Les assignations seront perdues.",
   "@raciDeleteColumnConfirm": {
@@ -743,7 +747,7 @@
       }
     }
   },
-  "participantYou": "Vous",
+  "participantYou": "(vous)",
   "participantMakeVoter": "Rendre votant",
   "participantMakeObserver": "Rendre observateur",
   "participantRemoveTitle": "Retirer le participant",
@@ -809,10 +813,10 @@
       }
     }
   },
-  "inviteCopyLink": "Copier le lien d'invitation",
+  "inviteCopyLink": "Copier le lien",
   "inviteRevokeAction": "Révoquer l'invitation",
   "inviteDeleteAction": "Supprimer l'invitation",
-  "inviteRevokeTitle": "Révoquer l'invitation",
+  "inviteRevokeTitle": "Révoquer l'invitation ?",
   "inviteRevokeConfirm": "Êtes-vous sûr de vouloir révoquer l'invitation pour {email} ?",
   "@inviteRevokeConfirm": {
     "placeholders": {
@@ -847,7 +851,7 @@
       }
     }
   },
-  "inviteLinkCopied": "Lien d'invitation copié dans le presse-papiers",
+  "inviteLinkCopied": "Lien copié !",
   "linkCopied": "Lien copié dans le presse-papiers",
   "enterValidEmail": "Entrez une adresse email valide",
   "sessionCreatedSuccess": "Session créée avec succès",
@@ -1159,7 +1163,7 @@
   "landingEisenhowerEliminateDesc": "Distractions, réseaux sociaux, pertes de temps",
   "landingFooterFeatures": "Fonctionnalités",
   "landingFooterPricing": "Tarifs",
-  "landingFooterChangelog": "Journal des modifications",
+  "landingFooterChangelog": "Notes de Version",
   "landingFooterRoadmap": "Feuille de route",
   "landingFooterDocs": "Documentation",
   "landingFooterAgileGuides": "Guides Agile",
@@ -1180,14 +1184,13 @@
   "agileScrumbanShortDesc": "Mix de Sprints et flux continu. Idéal pour les équipes souhaitant de la flexibilité.",
   "agileRolePODesc": "Gère le backlog et les priorités",
   "agileRoleSMDesc": "Facilite le processus et supprime les obstacles",
-  "agileRoleDevTeamDesc": "Livre les incréments de produit",
+  "agileRoleDevTeamDesc": "Membres développant le produit",
   "agileRoleStakeholdersDesc": "Fournissent du feedback et des exigences",
   "agileRoleSRMDesc": "Gère les demandes entrantes",
   "agileRoleSDMDesc": "Optimise le flux de travail",
   "agileRoleTeamDesc": "Exécute le travail en respectant les limites WIP",
   "agileRoleFlowMasterDesc": "Optimise le flux et facilite",
   "agileRoleTeamHybridDesc": "Pluridisciplinaire, auto-organisé",
-
   "scrumOverview": "Scrum est un framework Agile itératif et incrémental pour la gestion du développement de produits.\nIl repose sur des cycles de travail à durée fixe appelés Sprints, généralement de 2 à 4 semaines.\n\nScrum est idéal pour :\n• Les équipes travaillant sur des produits avec des exigences évolutives\n• Les projets bénéficiant d'un feedback régulier\n• Les organisations souhaitant améliorer la prévisibilité et la transparence",
   "scrumRolesTitle": "Les Rôles Scrum",
   "scrumRolesContent": "Scrum définit trois rôles clés qui collaborent pour le succès du projet.",
@@ -1231,7 +1234,6 @@
   "scrumFAQ3A": "Le Sprint Goal ne devrait pas changer, mais le Sprint Backlog peut évoluer. L'équipe peut négocier avec le PO le remplacement d'items de valeur égale. Si le Sprint Goal devient obsolète, le PO peut annuler le Sprint.",
   "scrumFAQ4Q": "Comment calculer la Vélocité initiale ?",
   "scrumFAQ4A": "Pour les 3 premiers Sprints, faites des estimations conservatrices. Après 3 Sprints, vous aurez une Vélocité fiable. N'utilisez pas la Vélocité d'autres équipes comme référence.",
-
   "kanbanOverview": "Kanban est une méthode de gestion du travail qui met l'accent sur la visualisation du flux,\nla limitation du Work In Progress (WIP) et l'amélioration continue du processus.\n\nKanban est idéal pour :\n• Les équipes de support/maintenance avec des demandes continues\n• Les environnements où les priorités changent fréquemment\n• Quand il n'est pas possible de planifier en itérations fixes\n• Une transition graduelle vers l'Agile",
   "kanbanPrinciplesTitle": "Les Principes Kanban",
   "kanbanPrinciplesContent": "Kanban repose sur des principes de changement incrémental et de respect des rôles existants.",
@@ -1241,7 +1243,7 @@
   "kanbanPrinciple4": "Rendez les politiques explicites : Définissez des règles claires",
   "kanbanPrinciple5": "Implémentez des boucles de feedback : Améliorez continuellement",
   "kanbanPrinciple6": "Améliorez collaborativement : Évoluez en expérimentant",
-  "kanbanBoardTitle": "Le Tableau Kanban",
+  "kanbanBoardTitle": "Tableau Kanban",
   "kanbanBoardContent": "Le tableau visualise le flux de travail à travers ses phases.\nChaque colonne représente un état du travail (ex. À faire, En cours, Terminé).\n\nÉléments clés du tableau :\n• Colonnes : États du workflow\n• Carte/Ticket : Unités de travail\n• Limites WIP : Limites par colonne\n• Swimlanes : Groupements horizontaux (optionnel)",
   "kanbanWIPTitle": "Limites WIP",
   "kanbanWIPContent": "Les limites de Work In Progress (WIP) sont le cœur de Kanban.\nLimiter le WIP :\n\n• Réduit le changement de contexte\n• Met en évidence les goulots d'étranglement\n• Accélère le throughput\n• Améliore la qualité (moins d'erreurs de multitâche)\n• Augmente la prévisibilité\n\nComment définir les limites WIP :\n• Commencez avec membres de l'équipe × 2 par colonne\n• Observez le flux et ajustez\n• La limite \"correcte\" crée une légère tension",
@@ -1256,7 +1258,7 @@
   "kanbanCadencesContent": "Contrairement à Scrum, Kanban ne prescrit pas d'événements fixes.\nCependant, des cadences régulières aident à l'amélioration continue :\n\n• Standup Meeting : Synchronisation quotidienne devant le tableau\n• Replenishment Meeting : Priorisation du backlog\n• Delivery Planning : Planification des releases\n• Service Delivery Review : Revue des métriques\n• Risk Review : Analyse des risques et obstacles\n• Operations Review : Amélioration du processus",
   "kanbanSwimlanesTitle": "Swimlanes",
   "kanbanSwimlanesContent": "Les swimlanes sont des lignes horizontales qui regroupent les cartes sur le tableau par un attribut commun.\n\nTypes de swimlane disponibles :\n• Classe de Service : Regrouper par priorité/urgence\n• Assigné : Regrouper par membre de l'équipe\n• Priorité : Regrouper par niveau MoSCoW\n• Tag : Regrouper par étiquettes des stories\n\nLes swimlanes aident à :\n• Visualiser la charge de travail par personne\n• Gérer différentes classes de service (urgent, standard)\n• Identifier les goulots d'étranglement par type de travail",
-  "kanbanPoliciesTitle": "Politiques Explicites",
+  "kanbanPoliciesTitle": "Politiques de Colonne",
   "kanbanPoliciesContent": "Pratique Kanban #4 : 'Rendre les politiques explicites' nécessite de définir des règles claires pour chaque colonne.\n\nExemples de politiques :\n• 'Max 24h dans cette colonne' - temps maximum\n• 'Nécessite une code review approuvée' - critères de sortie\n• 'Max 1 item par personne' - limite individuelle\n• 'Mise à jour quotidienne obligatoire' - communication\n\nLes politiques :\n• Rendent les attentes transparentes pour tous\n• Réduisent l'ambiguïté et les conflits\n• Facilitent l'intégration de nouveaux membres\n• Permettent d'identifier quand les règles sont violées",
   "kanbanBP1": "Visualisez TOUT le travail, y compris le travail caché",
   "kanbanBP2": "Respectez rigoureusement les limites WIP",
@@ -1282,7 +1284,6 @@
   "kanbanFAQ3A": "Formule de départ : (membres de l'équipe + 1) par colonne. Observez pendant 2 semaines et réduisez graduellement jusqu'à créer une légère tension. La limite optimale varie pour chaque équipe et contexte.",
   "kanbanFAQ4Q": "Combien de temps faut-il pour voir des résultats avec Kanban ?",
   "kanbanFAQ4A": "Les premières améliorations (visibilité) sont immédiates. La réduction du Lead Time se voit en 2-4 semaines. Des améliorations significatives du processus nécessitent 2-3 mois.",
-
   "hybridOverview": "Scrumban combine des éléments de Scrum et Kanban pour créer une approche flexible\nqui s'adapte au contexte de l'équipe. Il maintient la structure de Sprint avec\nla flexibilité du flux continu et les limites WIP.\n\nScrumban est idéal pour :\n• Les équipes souhaitant passer de Scrum à Kanban (ou vice versa)\n• Les projets avec un mix de développement de fonctionnalités et de maintenance\n• Les équipes voulant des Sprints mais avec plus de flexibilité\n• Quand Scrum \"pur\" est trop rigide pour le contexte",
   "hybridFromScrumTitle": "De Scrum : Structure",
   "hybridFromScrumContent": "Scrumban maintient certains éléments structurés de Scrum pour la prévisibilité.",
@@ -1326,7 +1327,6 @@
   "hybridFAQ3A": "Si vous venez de Scrum : ajoutez des limites WIP et visualisez le flux. Si vous venez de Kanban : ajoutez des cadences régulières pour review et planning. Partez de ce que l'équipe connaît et ajoutez de manière incrémentale.",
   "hybridFAQ4Q": "Scrumban est-il \"moins Agile\" que Scrum pur ?",
   "hybridFAQ4A": "Non. Agile ne signifie pas suivre un framework spécifique. Scrumban peut être plus Agile car il s'adapte au contexte. L'important est d'inspecter et d'adapter continuellement.",
-
   "agileGuide": "Guide",
   "agileAddToSprint": "Ajouter au Sprint",
   "agileEstimate": "ESTIMER",
@@ -1463,7 +1463,6 @@
   "kanbanWipWhatToDo": "Que faire si une limite est dépassée ?",
   "kanbanWipWhatToDoDesc": "1. Terminez ou déplacez les éléments existants avant d'en commencer de nouveaux\n2. Aidez les collègues à débloquer les éléments en revue\n3. Analysez pourquoi la limite a été dépassée",
   "kanbanUnderstood": "Compris",
-  "kanbanBoardTitle": "Tableau Kanban",
   "sprintTitle": "Sprint ({count})",
   "@sprintTitle": {
     "placeholders": {
@@ -1578,8 +1577,8 @@
   "storyFormDetailsTab": "Détails",
   "storyFormAcceptanceTab": "Critères d'acceptation",
   "storyFormOtherTab": "Autre",
-  "storyFormTitleLabel": "Titre",
-  "storyFormTitleHint": "Brève description de la fonctionnalité",
+  "storyFormTitleLabel": "Titre *",
+  "storyFormTitleHint": "Ex: US-123: En tant qu'utilisateur je veux...",
   "storyFormTitleRequired": "Entrez un titre",
   "storyFormUseTemplate": "Utiliser le modèle User Story",
   "storyFormTemplateSubtitle": "En tant que... Je veux... Afin de...",
@@ -1591,7 +1590,7 @@
   "storyFormSoThat": "Afin de...",
   "storyFormSoThatHint": "obtenir un avantage...",
   "storyFormDescriptionLabel": "Description",
-  "storyFormDescriptionHint": "Description libre de la story",
+  "storyFormDescriptionHint": "Critères d'acceptation, notes...",
   "storyFormDescriptionRequired": "Entrez une description",
   "storyFormPreview": "Aperçu :",
   "storyFormEmptyDescription": "(description vide)",
@@ -1852,7 +1851,9 @@
   "smartTodoImportStatusHint": "Colonnes disponibles pour STATUS: {columns}",
   "@smartTodoImportStatusHint": {
     "placeholders": {
-      "columns": { "type": "String" }
+      "columns": {
+        "type": "String"
+      }
     }
   },
   "smartTodoImportEmptyColumn": "(colonne vide)",
@@ -1865,11 +1866,9 @@
   "smartTodoImportFieldEffort": "Effort",
   "smartTodoImportFieldTags": "Tags",
   "smartTodoImportPasteExample": "ex. Acheter du lait\nAppeler Marie\nFinir le rapport",
-
   "smartTodoDeleteTaskTitle": "Supprimer la tâche",
   "smartTodoDeleteTaskContent": "Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action ne peut pas être annulée.",
   "smartTodoDeleteNoPermission": "Vous n'avez pas la permission de supprimer cette tâche",
-
   "smartTodoSheetsExportTitle": "Export Google Sheets",
   "smartTodoSheetsExportExists": "Un document Google Sheets existe déjà pour cette liste.",
   "smartTodoSheetsOpen": "Ouvrir",
@@ -1880,11 +1879,12 @@
   "smartTodoSheetsCreated": "Google Sheets créé !",
   "smartTodoSheetsError": "Erreur lors de l'export (voir log)",
   "error": "Erreur",
-
   "smartTodoAuditLogTitle": "Journal d'audit - {title}",
   "@smartTodoAuditLogTitle": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "smartTodoAuditFilterUser": "Utilisateur",
@@ -1898,7 +1898,9 @@
   "smartTodoAuditLastDays": "{days} derniers jours",
   "@smartTodoAuditLastDays": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "smartTodoAuditClearFilters": "Effacer les filtres",
@@ -1909,20 +1911,20 @@
   "smartTodoAuditActivities": "{count} activités",
   "@smartTodoAuditActivities": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoAuditNoUserActivity": "Aucune activité",
   "smartTodoAuditLoadMore": "Charger 50 de plus...",
   "smartTodoAuditEmptyValue": "(vide)",
-
   "smartTodoAuditEntityList": "Liste",
   "smartTodoAuditEntityTask": "Tâche",
   "smartTodoAuditEntityInvite": "Invitation",
   "smartTodoAuditEntityParticipant": "Participant",
   "smartTodoAuditEntityColumn": "Colonne",
   "smartTodoAuditEntityTag": "Étiquette",
-
   "smartTodoAuditActionCreate": "Créé",
   "smartTodoAuditActionUpdate": "Modifié",
   "smartTodoAuditActionDelete": "Supprimé",
@@ -1935,27 +1937,31 @@
   "smartTodoAuditActionRevoke": "Révoqué",
   "smartTodoAuditActionReorder": "Réordonné",
   "smartTodoAuditActionBatchCreate": "Import",
-
   "smartTodoAuditTimeNow": "Maintenant",
   "smartTodoAuditTimeMinutesAgo": "Il y a {count} min",
   "@smartTodoAuditTimeMinutesAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoAuditTimeHoursAgo": "Il y a {count} heures",
   "@smartTodoAuditTimeHoursAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "smartTodoAuditTimeDaysAgo": "Il y a {count} jours",
   "@smartTodoAuditTimeDaysAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "smartTodoCfdTitle": "CFD Analytics",
   "smartTodoCfdTooltip": "CFD Analytics",
   "smartTodoCfdDateRange": "Periode:",
@@ -2024,7 +2030,6 @@
   "smartTodoCfdToDo": "A Faire",
   "smartTodoCfdInProgress": "En Cours",
   "smartTodoCfdDone": "Fait",
-
   "smartTodoNewTaskDefault": "Nouvelle tâche",
   "smartTodoRename": "Renommer",
   "smartTodoParticipantManagement": "Gestion des participants",
@@ -2569,7 +2574,7 @@
   "searchResultTypeEisenhower": "Matrice Eisenhower",
   "searchResultTypeEstimation": "Estimation Room",
   "searchBackToDashboard": "Retour au Tableau de bord",
-  "exportToEstimation": "Envoyer à Estimation",
+  "exportToEstimation": "Exporter vers l'estimation",
   "exportToEstimationDesc": "Créer une session d'estimation avec ces tâches",
   "exportToEisenhower": "Envoyer à Eisenhower",
   "exportToEisenhowerDesc": "Créer une matrice Eisenhower avec ces tâches",
@@ -2589,14 +2594,14 @@
   "exportSuccess": "Exporté avec succès",
   "exportFromEstimation": "Exporter vers Liste",
   "exportFromEstimationDesc": "Exporter les histoires estimées vers une liste Smart Todo",
-  "selectDestinationList": "Sélectionner Liste Destination",
-  "createNewList": "Créer Nouvelle Liste",
-  "existingList": "Liste Existante",
-  "listName": "Nom de la Liste",
+  "selectDestinationList": "Sélectionner la liste de destination",
+  "createNewList": "Créer une nouvelle liste",
+  "existingList": "Liste existante",
+  "listName": "Nom de la liste",
   "listNameHint": "Entrez un nom pour la nouvelle liste",
-  "selectList": "Sélectionner Liste",
-  "selectListHint": "Choisissez une liste de destination",
-  "noListsAvailable": "Aucune liste disponible. Créez-en une nouvelle.",
+  "selectList": "Sélectionner une liste",
+  "selectListHint": "Choisissez une liste",
+  "noListsAvailable": "Aucune liste disponible. Une nouvelle sera créée.",
   "storiesSelectedCount": "{count} histoire(s) sélectionnée(s)",
   "@storiesSelectedCount": {
     "placeholders": {
@@ -2605,8 +2610,8 @@
       }
     }
   },
-  "selectAll": "Tout Sélectionner",
-  "deselectAll": "Tout Désélectionner",
+  "selectAll": "Tout sélectionner",
+  "deselectAll": "Tout désélectionner",
   "importStories": "Importer Histoires",
   "storiesImportedCount": "{count} histoire(s) importée(s)",
   "@storiesImportedCount": {
@@ -2644,11 +2649,11 @@
   "selectColumns": "Sélectionner Colonnes",
   "allTasks": "Toutes les Tâches",
   "filterByColumn": "Filtrer par colonne",
-  "exportFromEisenhower": "Exporter vers Smart Todo",
-  "exportFromEisenhowerDesc": "Créer des tâches à partir des activités priorisées",
-  "filterByQuadrant": "Filtrer par quadrant",
-  "allActivities": "Toutes les Activités",
-  "activitiesSelectedCount": "{count} activité(s) sélectionnée(s)",
+  "exportFromEisenhower": "Exporter depuis Eisenhower",
+  "exportFromEisenhowerDesc": "Sélectionnez les activités à exporter vers Smart Todo",
+  "filterByQuadrant": "Filtrer par quadrant :",
+  "allActivities": "Toutes",
+  "activitiesSelectedCount": "{count} activités sélectionnées",
   "@activitiesSelectedCount": {
     "placeholders": {
       "count": {
@@ -2656,8 +2661,8 @@
       }
     }
   },
-  "noActivitiesSelected": "Aucune activité disponible",
-  "unvoted": "Non votée",
+  "noActivitiesSelected": "Aucune activité dans ce filtre",
+  "unvoted": "NON VOTÉ",
   "tasksCreated": "{count} tâches créées",
   "@tasksCreated": {
     "placeholders": {
@@ -2669,11 +2674,11 @@
   "exportToUserStories": "Exporter vers User Stories",
   "exportToUserStoriesDesc": "Créer des user stories dans un projet Agile",
   "selectDestinationProject": "Sélectionner Projet Destination",
-  "existingProject": "Projet Existant",
-  "createNewProject": "Créer Nouveau Projet",
+  "existingProject": "Projet existant",
+  "createNewProject": "Créer un nouveau projet",
   "projectName": "Nom du Projet",
   "projectNameHint": "Entrez un nom pour le nouveau projet",
-  "selectProject": "Sélectionner Projet",
+  "selectProject": "Sélectionner un projet",
   "selectProjectHint": "Choisissez un projet de destination",
   "noProjectsAvailable": "Aucun projet disponible. Créez-en un nouveau.",
   "userStoryFieldMappingInfo": "Mapping : Titre → Titre story, Description → Description story, Effort → Story points, Priorité → Business value",
@@ -2685,14 +2690,14 @@
       }
     }
   },
-  "configureNewProject": "Configurer Nouveau Projet",
+  "configureNewProject": "Configurer un nouveau projet",
   "exportToAgileSprint": "Exporter vers Sprint",
   "exportToAgileSprintDesc": "Ajouter les stories estimées à un sprint Agile",
-  "selectSprint": "Sélectionner Sprint",
+  "selectSprint": "Sélectionner un sprint",
   "selectSprintHint": "Choisissez un sprint de destination",
   "noSprintsAvailable": "Aucun sprint disponible. Créez d'abord un sprint en planification.",
   "sprintExportFieldMappingInfo": "Mapping : Titre → Titre story, Description → Description, Estimation → Story points",
-  "exportToSprint": "Exporter vers Sprint",
+  "exportToSprint": "Exporter vers le sprint",
   "totalStoryPoints": "{count} story points au total",
   "@totalStoryPoints": {
     "placeholders": {
@@ -2759,8 +2764,8 @@
   },
   "archiveAction": "Archiver",
   "archiveRestoreAction": "Restaurer",
-  "archiveShowArchived": "Afficher les archivés",
-  "archiveHideArchived": "Masquer les archivés",
+  "archiveShowArchived": "Afficher Archivés",
+  "archiveHideArchived": "Masquer Archivés",
   "archiveConfirmTitle": "Archiver {itemType}",
   "@archiveConfirmTitle": {
     "placeholders": {
@@ -2779,15 +2784,15 @@
     }
   },
   "archiveRestoreConfirmMessage": "Voulez-vous restaurer cet élément des archives ?",
-  "archiveSuccessMessage": "Élément archivé avec succès",
-  "archiveRestoreSuccessMessage": "Élément restauré avec succès",
+  "archiveSuccessMessage": "Projet archivé",
+  "archiveRestoreSuccessMessage": "Projet restauré",
   "archiveErrorMessage": "Erreur lors de l'archivage",
   "archiveRestoreErrorMessage": "Erreur lors de la restauration",
   "archiveFilterLabel": "Archives",
   "archiveFilterActive": "Actifs",
   "archiveFilterArchived": "Archivés",
   "archiveFilterAll": "Tous",
-  "archiveBadge": "Archivé",
+  "archiveBadge": "ARCHIVÉ",
   "archiveEmptyMessage": "Aucun élément archivé",
   "completeAction": "Terminer",
   "reopenAction": "Rouvrir",
@@ -2803,24 +2808,21 @@
   "completeSuccessMessage": "Élément terminé avec succès",
   "reopenSuccessMessage": "Élément rouvert avec succès",
   "completedBadge": "Terminé",
-
   "inviteNewInvite": "NOUVELLE INVITATION",
   "inviteRole": "Rôle :",
   "inviteSendEmailNotification": "Envoyer une notification par email",
   "inviteSendInvite": "Envoyer l'invitation",
   "inviteLink": "Lien d'invitation :",
-  "inviteLinkCopied": "Lien copié !",
-  "inviteCopyLink": "Copier le lien",
   "inviteList": "INVITATIONS",
   "inviteResend": "Renvoyer",
-  "inviteRevoke": "Révoquer",
-  "inviteRevokeTitle": "Révoquer l'invitation ?",
   "inviteRevokeMessage": "L'invitation ne sera plus valide.",
   "inviteResent": "Invitation renvoyée",
   "inviteSentByEmail": "Invitation envoyée par email à {email}",
   "@inviteSentByEmail": {
     "placeholders": {
-      "email": {"type": "String"}
+      "email": {
+        "type": "String"
+      }
     }
   },
   "inviteStatusPending": "En attente",
@@ -2836,13 +2838,14 @@
   "inviteGmailNoPermission": "Permission Gmail non accordée.",
   "inviteEnterEmail": "Entrez un email",
   "inviteInvalidEmail": "Email invalide",
-
   "pendingInvites": "Invitations en attente",
   "noPendingInvites": "Aucune invitation en attente",
   "invitedBy": "Invité par {name}",
   "@invitedBy": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "inviteOpenInstance": "Ouvrir",
@@ -2858,18 +2861,21 @@
   "expiresInHours": "Expire dans {hours}h",
   "@expiresInHours": {
     "placeholders": {
-      "hours": {"type": "int"}
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "expiresInDays": "Expire dans {days}j",
   "@expiresInDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "close": "Fermer",
   "cancel": "Annuler",
-
   "raciTitle": "Matrice RACI",
   "raciNoActivities": "Aucune activité disponible",
   "raciAddActivity": "Ajouter une activité",
@@ -2886,22 +2892,23 @@
   "raciDuplicateRoles": "Rôles dupliqués",
   "raciNoResponsible": "Aucun Responsible (R) attribué",
   "raciTooManyInformed": "Trop d'Informed (I) : envisagez de réduire",
-  "raciColumnName": "Nom de la colonne",
-  "raciColumnNameHint": "Ex. : Équipe développement",
   "raciNewColumn": "Nouvelle colonne",
   "raciRemoveColumn": "Supprimer la colonne",
   "raciRemoveColumnConfirm": "Supprimer la colonne \"{name}\" ? Toutes les attributions de rôles pour cette colonne seront supprimées.",
   "@raciRemoveColumnConfirm": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
-
   "votingDialogTitle": "Voter",
   "votingDialogVoteOf": "Vote de {participant}",
   "@votingDialogVoteOf": {
     "placeholders": {
-      "participant": {"type": "String"}
+      "participant": {
+        "type": "String"
+      }
     }
   },
   "votingDialogUrgency": "URGENCE",
@@ -2912,13 +2919,11 @@
   "votingDialogVeryImportant": "Très important",
   "votingDialogConfirmVote": "Confirmer le vote",
   "votingDialogQuadrant": "Quadrant :",
-
   "voteCollectionTitle": "Collecter les votes",
   "voteCollectionParticipants": "participants",
   "voteCollectionResult": "Résultat :",
   "voteCollectionAverage": "Moyenne :",
   "voteCollectionSaveVotes": "Enregistrer les votes",
-
   "scatterChartTitle": "Distribution des activités",
   "scatterChartNoActivities": "Aucune activité votée",
   "scatterChartVoteToShow": "Votez les activités pour les afficher dans le graphique",
@@ -2931,42 +2936,8 @@
   "scatterChartQ3Label": "Q3 - DÉLÉGUER",
   "scatterChartQ4Label": "Q4 - ÉLIMINER",
   "scatterChartCardTitle": "Graphique de distribution",
-
   "votingStatusYou": "Vous",
   "votingStatusReset": "Réinitialiser",
-
-  "exportToEstimation": "Exporter vers l'estimation",
-  "exportToSprint": "Exporter vers le sprint",
-  "existingProject": "Projet existant",
-  "createNewProject": "Créer un nouveau projet",
-  "selectProject": "Sélectionner un projet",
-  "selectSprint": "Sélectionner un sprint",
-  "configureNewProject": "Configurer un nouveau projet",
-  "exportFromEisenhower": "Exporter depuis Eisenhower",
-  "exportFromEisenhowerDesc": "Sélectionnez les activités à exporter vers Smart Todo",
-  "selectDestinationList": "Sélectionner la liste de destination",
-  "existingList": "Liste existante",
-  "createNewList": "Créer une nouvelle liste",
-  "listName": "Nom de la liste",
-  "listNameHint": "Entrez un nom pour la nouvelle liste",
-  "selectList": "Sélectionner une liste",
-  "selectListHint": "Choisissez une liste",
-  "noListsAvailable": "Aucune liste disponible. Une nouvelle sera créée.",
-  "filterByQuadrant": "Filtrer par quadrant :",
-  "allActivities": "Toutes",
-  "activitiesSelectedCount": "{count} activités sélectionnées",
-  "@activitiesSelectedCount": {
-    "placeholders": {
-      "count": {"type": "int"}
-    }
-  },
-  "selectAll": "Tout sélectionner",
-  "deselectAll": "Tout désélectionner",
-  "noActivitiesSelected": "Aucune activité dans ce filtre",
-  "unvoted": "NON VOTÉ",
-
-  "estimationDecimalTitle": "Estimation décimale",
-  "estimationDecimalHint": "Entrez votre estimation en jours (ex: 1.5, 2.25)",
   "estimationDecimalHintPlaceholder": "Ex: 2.5",
   "estimationDecimalSuffixDays": "jours",
   "estimationDecimalVote": "Voter",
@@ -2997,7 +2968,6 @@
       }
     }
   },
-
   "estimationThreePointTitle": "Estimation à trois points (PERT)",
   "estimationThreePointOptimistic": "Optimiste (O)",
   "estimationThreePointRealistic": "Réaliste (M)",
@@ -3016,14 +2986,8 @@
   "estimationThreePointGuideP": "P : Estimation du pire cas (imprévus)",
   "estimationThreePointStdDev": "Écart type",
   "estimationThreePointDaysSuffix": "j",
-
   "storyFormNewStory": "Nouvelle Story",
-  "storyFormTitleLabel": "Titre *",
-  "storyFormTitleHint": "Ex: US-123: En tant qu'utilisateur je veux...",
-  "storyFormDescriptionLabel": "Description",
-  "storyFormDescriptionHint": "Critères d'acceptation, notes...",
   "storyFormEnterTitle": "Entrez un titre",
-
   "sessionSearchHint": "Rechercher des sessions...",
   "sessionSearchFilters": "Filtres",
   "sessionSearchFiltersTooltip": "Filtres",
@@ -3037,7 +3001,6 @@
   "sessionSearchRemoveFilters": "Supprimer les filtres",
   "sessionSearchActiveFilters": "Filtres actifs :",
   "sessionSearchRemoveAllFilters": "Tout supprimer",
-
   "participantsTitle": "Participants ({count})",
   "@participantsTitle": {
     "placeholders": {
@@ -3049,8 +3012,6 @@
   "participantRoleFacilitator": "Facilitateur",
   "participantRoleVoters": "Votants",
   "participantRoleObservers": "Observateurs",
-  "participantYou": "(vous)",
-
   "votingBoardVotesRevealed": "Votes révélés",
   "votingBoardVotingInProgress": "Vote en cours",
   "votingBoardVotesCount": "{voted}/{total} votes",
@@ -3064,7 +3025,6 @@
       }
     }
   },
-
   "estimationSelectYourEstimate": "Sélectionnez votre estimation",
   "estimationVoteSelected": "Vote sélectionné : {value}",
   "@estimationVoteSelected": {
@@ -3078,9 +3038,7 @@
   "estimationDotVotingDesc": "Mode de vote avec allocation de points.\nBientôt disponible...",
   "estimationBucketSystemTitle": "Bucket System",
   "estimationBucketSystemDesc": "Estimation par affinité avec regroupement.\nBientôt disponible...",
-
   "estimationModeTitle": "Mode d'estimation",
-
   "statisticsTitle": "Statistiques de vote",
   "statisticsAverage": "Moyenne",
   "statisticsMedian": "Médiane",
@@ -3092,11 +3050,9 @@
   "statisticsVariance": "Variance",
   "statisticsRange": "Plage :",
   "statisticsConsensusReached": "Consensus atteint !",
-
   "retroGuideTooltip": "Guide des Rétrospectives",
   "retroSearchPlaceholder": "Rechercher rétrospective...",
   "retroNoSearchResults": "Aucun résultat pour la recherche",
-  "retroNoRetrosFound": "Aucune rétrospective trouvée",
   "retroNewRetro": "Nouvelle Rétrospective",
   "retroLinkToSprint": "Lier au Sprint ?",
   "retroNoProjectsFound": "Aucun projet trouvé.",
@@ -3110,7 +3066,9 @@
   "retroDeleteMessage": "Êtes-vous sûr de vouloir supprimer définitivement la rétrospective \"{retroName}\" ?\n\nCette action est irréversible et supprimera toutes les données associées (cartes, votes, action items).",
   "@retroDeleteMessage": {
     "placeholders": {
-      "retroName": {"type": "String"}
+      "retroName": {
+        "type": "String"
+      }
     }
   },
   "retroDeletePermanently": "Supprimer définitivement",
@@ -3118,13 +3076,17 @@
   "retroDeleteError": "Erreur lors de la suppression : {error}",
   "@retroDeleteError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "errorPrefix": "Erreur : {error}",
   "@errorPrefix": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "loaderProjectIdMissing": "ID du projet manquant",
@@ -3144,7 +3106,9 @@
   "pokerInviteInvitedBy": "{name} vous a invité à participer",
   "@pokerInviteInvitedBy": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "pokerInviteSessionLabel": "Session",
@@ -3154,7 +3118,9 @@
   "pokerInviteExpiryDays": "Dans {days} jours",
   "@pokerInviteExpiryDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "pokerInviteDecline": "Refuser",
@@ -3162,37 +3128,46 @@
   "loadingMatrixError": "Erreur de chargement de la matrice : {error}",
   "@loadingMatrixError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "loadingDataError": "Erreur de chargement des données : {error}",
   "@loadingDataError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "loadingActivitiesError": "Erreur de chargement des activités : {error}",
   "@loadingActivitiesError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smartTodoSprintDays": "{days} jours/sprint",
   "@smartTodoSprintDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "smartTodoHoursPerDay": "{hours}h/jour",
   "@smartTodoHoursPerDay": {
     "placeholders": {
-      "hours": {"type": "int"}
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "smartTodoImageFromClipboardFound": "Image trouvée dans le presse-papiers",
   "smartTodoAddImageFromClipboard": "Ajouter une image depuis le presse-papiers",
   "smartTodoInviteCreatedAndSent": "Invitation créée et envoyée",
-
   "retroColumnDrop": "Supprimer",
   "retroColumnDropDesc": "Qu'est-ce qui n'apporte pas de valeur et devrait être éliminé?",
   "retroColumnAdd": "Ajouter",
@@ -3202,11 +3177,11 @@
   "retroColumnImprove": "Améliorer",
   "retroColumnImproveDesc": "Que pouvons-nous faire mieux?",
   "retroColumnStart": "Commencer",
-  "retroColumnStartDesc": "Quelles nouvelles activités devrions-nous commencer?",
+  "retroColumnStartDesc": "Quelles nouvelles activités ou processus devrions-nous commencer?",
   "retroColumnStop": "Arrêter",
-  "retroColumnStopDesc": "Que devrions-nous arrêter de faire?",
+  "retroColumnStopDesc": "Qu'est-ce qui n'apporte pas de valeur et que nous devrions arrêter?",
   "retroColumnContinue": "Continuer",
-  "retroColumnContinueDesc": "Que devrions-nous continuer à faire?",
+  "retroColumnContinueDesc": "Qu'est-ce qui fonctionne bien et que nous devons continuer?",
   "retroColumnLiked": "Aimé",
   "retroColumnLearned": "Appris",
   "retroColumnLacked": "Manqué",
@@ -3220,17 +3195,8 @@
   "retroColumnGoal": "Île",
   "retroColumnMore": "Plus",
   "retroColumnLess": "Moins",
-
   "retroActionType": "Type d'action",
   "retroActionNoType": "Aucun type spécifique",
-
-  "retroColumnDropDesc": "Qu'est-ce qui n'apporte pas de valeur et devrait être éliminé?",
-  "retroColumnAddDesc": "Quelles nouvelles pratiques devrions-nous introduire?",
-  "retroColumnKeepDesc": "Qu'est-ce qui fonctionne bien et devrait continuer?",
-  "retroColumnImproveDesc": "Que pouvons-nous faire mieux?",
-  "retroColumnStartDesc": "Quelles nouvelles activités ou processus devrions-nous commencer?",
-  "retroColumnStopDesc": "Qu'est-ce qui n'apporte pas de valeur et que nous devrions arrêter?",
-  "retroColumnContinueDesc": "Qu'est-ce qui fonctionne bien et que nous devons continuer?",
   "retroColumnLikedDesc": "Qu'est-ce que vous avez aimé dans ce sprint?",
   "retroColumnLearnedDesc": "Qu'avez-vous appris de nouveau?",
   "retroColumnLackedDesc": "Qu'est-ce qui a manqué dans ce sprint?",
@@ -3244,7 +3210,6 @@
   "retroColumnGoalDesc": "Quelle est notre destination idéale?",
   "retroColumnMoreDesc": "Que devrions-nous faire plus?",
   "retroColumnLessDesc": "Que devrions-nous faire moins?",
-
   "actionTypeMaintain": "Maintenir",
   "actionTypeStop": "Arrêter",
   "actionTypeBegin": "Commencer",
@@ -3263,7 +3228,6 @@
   "actionTypeEliminate": "Éliminer",
   "actionTypeImplement": "Implémenter",
   "actionTypeEnhance": "Améliorer",
-
   "coachTipSSCWriting": "Concentrez-vous sur des comportements concrets et observables. Chaque élément doit être quelque chose sur lequel l'équipe peut agir directement. Évitez les déclarations vagues.",
   "coachTipSSCVoting": "Votez en fonction de l'impact et de la faisabilité. Les éléments les plus votés deviendront vos engagements de sprint.",
   "coachTipSSCDiscuss": "Pour chaque élément le plus voté, définissez QUI fera QUOI et QUAND. Transformez les insights en actions spécifiques.",
@@ -3282,7 +3246,6 @@
   "coachTipStarfishWriting": "Utilisez les gradations: Garder (maintenir), Plus (augmenter), Moins (diminuer), Stop (éliminer), Start (commencer). Cela permet un feedback nuancé.",
   "coachTipStarfishVoting": "Considérez l'effort vs l'impact. Les éléments 'Plus' et 'Moins' peuvent être plus faciles à implémenter que 'Start' et 'Stop'.",
   "coachTipStarfishDiscuss": "Définissez des métriques spécifiques pour 'plus' et 'moins'. Combien de plus? Comment mesurer? Fixez des objectifs de calibration clairs.",
-
   "discussPromptSSCStart": "Quelle nouvelle pratique devrions-nous commencer? Pensez aux lacunes dans notre processus qu'une nouvelle habitude pourrait combler.",
   "discussPromptSSCStop": "Qu'est-ce qui gaspille notre temps ou énergie? Considérez les activités qui n'apportent pas de valeur proportionnelle à leur coût.",
   "discussPromptSSCContinue": "Qu'est-ce qui fonctionne bien? Reconnaissez et renforcez les pratiques efficaces.",
@@ -3307,7 +3270,6 @@
   "discussPromptStarfishStop": "Que devrions-nous éliminer complètement?",
   "discussPromptStarfishStart": "Quelle nouvelle chose devrions-nous commencer?",
   "discussPromptGeneric": "Quels insights ont émergé de cette colonne? Quels patterns voyez-vous?",
-
   "smartPromptSSCStartQuestion": "Quelle nouvelle pratique spécifique allez-vous commencer, et comment mesurerez-vous son adoption?",
   "smartPromptSSCStartExample": "ex., 'Commencer standup quotidien de 15 min à 9h30, suivre la présence pendant 2 semaines'",
   "smartPromptSSCStartPlaceholder": "Nous commencerons [pratique spécifique] d'ici [date], mesurée par [métrique]",
@@ -3317,7 +3279,6 @@
   "smartPromptSSCContinueQuestion": "Quelle pratique continuerez-vous, et comment vous assurerez-vous qu'elle ne disparaît pas?",
   "smartPromptSSCContinueExample": "ex., 'Continuer les revues de code en moins de 4 heures, ajouter à la Definition of Done'",
   "smartPromptSSCContinuePlaceholder": "Nous continuerons [pratique], renforcée par [mécanisme]",
-
   "smartPromptMSGMadQuestion": "Quelle action aborderait cette frustration et qui la dirigera?",
   "smartPromptMSGMadExample": "ex., 'Planifier réunion avec PM pour clarifier le processus des exigences - Maria d'ici vendredi'",
   "smartPromptMSGMadPlaceholder": "[Action pour traiter la frustration], responsable: [nom], d'ici: [date]",
@@ -3327,7 +3288,6 @@
   "smartPromptMSGGladQuestion": "Comment pouvons-nous répliquer ou amplifier ce qui nous a rendus heureux?",
   "smartPromptMSGGladExample": "ex., 'Documenter le format de session de pairing et partager avec d'autres équipes d'ici fin de semaine'",
   "smartPromptMSGGladPlaceholder": "[Action pour répliquer/amplifier], partager avec [audience]",
-
   "smartPrompt4LsLikedQuestion": "Comment pouvons-nous assurer que cette expérience positive continue?",
   "smartPrompt4LsLikedExample": "ex., 'Faire de la session de mob programming un événement hebdomadaire récurrent'",
   "smartPrompt4LsLikedPlaceholder": "[Action pour préserver l'expérience positive]",
@@ -3340,7 +3300,6 @@
   "smartPrompt4LsLongedQuestion": "Quelle première étape concrète vous rapprochera de ce souhait?",
   "smartPrompt4LsLongedExample": "ex., 'Rédiger proposition pour 20% du temps pour projets perso - partager avec team lead lundi'",
   "smartPrompt4LsLongedPlaceholder": "Première étape vers [souhait]: [action] d'ici [date]",
-
   "smartPromptSailboatWindQuestion": "Comment exploiterez-vous ce facilitateur pour accélérer les progrès?",
   "smartPromptSailboatWindExample": "ex., 'Utiliser forte expertise QA pour mentorer les juniors - planifier première session cette semaine'",
   "smartPromptSailboatWindPlaceholder": "Exploiter [facilitateur] par [action spécifique]",
@@ -3353,7 +3312,6 @@
   "smartPromptSailboatGoalQuestion": "Quelle milestone confirmera les progrès vers cet objectif?",
   "smartPromptSailboatGoalExample": "ex., 'Démo MVP aux stakeholders d'ici 15 fév, collecter feedback via sondage'",
   "smartPromptSailboatGoalPlaceholder": "Milestone vers [objectif]: [livrable] d'ici [date]",
-
   "smartPromptDAKIDropQuestion": "Qu'éliminerez-vous et comment vous assurerez-vous que ça ne revient pas?",
   "smartPromptDAKIDropExample": "ex., 'Supprimer étapes de déploiement manuelles - automatiser d'ici fin de sprint'",
   "smartPromptDAKIDropPlaceholder": "Éliminer [pratique], empêcher retour par [mécanisme]",
@@ -3366,7 +3324,6 @@
   "smartPromptDAKIImproveQuestion": "Quelle amélioration spécifique ferez-vous et comment mesurerez-vous l'amélioration?",
   "smartPromptDAKIImproveExample": "ex., 'Améliorer couverture tests de 60% à 80% - focus sur module paiement d'abord'",
   "smartPromptDAKIImprovePlaceholder": "Améliorer [pratique] de [actuel] à [cible] d'ici [date]",
-
   "smartPromptStarfishKeepQuestion": "Quelle pratique maintiendrez-vous et qui est responsable d'assurer la cohérence?",
   "smartPromptStarfishKeepExample": "ex., 'Garder démos du vendredi - Tom s'assure que la salle est réservée, agenda partagé d'ici jeudi'",
   "smartPromptStarfishKeepPlaceholder": "Garder [pratique], responsable: [nom]",
@@ -3382,18 +3339,15 @@
   "smartPromptStarfishStartQuestion": "Quelle nouvelle pratique commencerez-vous et quand sera la première occurrence?",
   "smartPromptStarfishStartExample": "ex., 'Commencer tech debt Tuesday - première session semaine prochaine, 2h de temps protégé'",
   "smartPromptStarfishStartPlaceholder": "Commencer [pratique], première occurrence: [date/heure]",
-
   "smartPromptGenericQuestion": "Quelle action spécifique traitera cet élément?",
   "smartPromptGenericExample": "ex., 'Définir action spécifique avec responsable, deadline, et critères de succès'",
   "smartPromptGenericPlaceholder": "[Action], responsable: [nom], d'ici: [date]",
-
   "methodologyFocusAction": "Orienté action: se concentre sur des changements comportementaux concrets",
   "methodologyFocusEmotion": "Focalisé émotions: explore les sentiments de l'équipe pour construire la sécurité psychologique",
   "methodologyFocusLearning": "Réflexif apprentissage: met l'accent sur la capture et le partage des connaissances",
   "methodologyFocusRisk": "Risque & Objectif: équilibre facilitateurs, bloqueurs, risques et objectifs",
   "methodologyFocusCalibration": "Calibration: utilise des gradations (plus/moins) pour des ajustements nuancés",
   "methodologyFocusDecision": "Décisionnel: guide les décisions claires de l'équipe sur les pratiques",
-
   "exportSheetOverview": "Aperçu",
   "exportSheetActionItems": "Actions",
   "exportSheetBoardItems": "Éléments du Board",
@@ -3402,7 +3356,6 @@
   "exportSheetRiskRegister": "Registre des Risques",
   "exportSheetCalibrationMatrix": "Matrice de Calibration",
   "exportSheetDecisionLog": "Journal des Décisions",
-
   "exportHeaderRetrospectiveReport": "RAPPORT RÉTROSPECTIVE",
   "exportHeaderTitle": "Titre:",
   "exportHeaderDate": "Date:",
@@ -3414,7 +3367,6 @@
   "exportHeaderTotalItems": "Total Éléments:",
   "exportHeaderActionItems": "Actions:",
   "exportHeaderSuggestedFollowUp": "Suivi Suggéré:",
-
   "exportTeamHealthTitle": "ANALYSE SANTÉ DE L'ÉQUIPE",
   "exportTeamHealthEmotionalDistribution": "Distribution Émotionnelle",
   "exportTeamHealthMadCount": "Éléments Mad:",
@@ -3427,7 +3379,6 @@
   "exportTeamHealthHighFrustration": "Niveau de frustration élevé détecté. Envisagez de faciliter une session focalisée sur la résolution de problèmes.",
   "exportTeamHealthBalanced": "État émotionnel équilibré. L'équipe montre des capacités de réflexion saines.",
   "exportTeamHealthPositive": "Moral de l'équipe positif. Utilisez cette énergie pour des améliorations ambitieuses.",
-
   "exportLessonsLearnedTitle": "REGISTRE DES LEÇONS APPRISES",
   "exportLessonsLearnedWhatWorked": "CE QUI A FONCTIONNÉ (Liked)",
   "exportLessonsLearnedNewSkills": "NOUVELLES COMPÉTENCES ET INSIGHTS (Learned)",
@@ -3436,7 +3387,6 @@
   "exportLessonsLearnedKnowledgeActions": "Actions de Partage des Connaissances",
   "exportLessonsLearnedDocumentationNeeded": "Documentation Nécessaire:",
   "exportLessonsLearnedTrainingNeeded": "Formation/Partage Nécessaire:",
-
   "exportRiskRegisterTitle": "REGISTRE RISQUES ET FACILITATEURS",
   "exportRiskRegisterEnablers": "FACILITATEURS (Vent)",
   "exportRiskRegisterBlockers": "BLOQUEURS (Ancre)",
@@ -3448,7 +3398,6 @@
   "exportRiskRegisterStatus": "Statut",
   "exportRiskRegisterGoalAlignment": "Vérification Alignement Objectifs:",
   "exportRiskRegisterGoalAlignmentNote": "Vérifier si les actions actuelles sont alignées avec les objectifs déclarés.",
-
   "exportCalibrationTitle": "MATRICE DE CALIBRATION",
   "exportCalibrationKeepDoing": "CONTINUER À FAIRE",
   "exportCalibrationDoMore": "FAIRE PLUS",
@@ -3460,7 +3409,6 @@
   "exportCalibrationTargetState": "État Cible",
   "exportCalibrationAdjustment": "Ajustement",
   "exportCalibrationNote": "La calibration se concentre sur l'affinage des pratiques existantes plutôt que sur des changements radicaux.",
-
   "exportDecisionLogTitle": "JOURNAL DES DÉCISIONS",
   "exportDecisionLogDrop": "DÉCISIONS À ABANDONNER",
   "exportDecisionLogAdd": "DÉCISIONS À AJOUTER",
@@ -3472,11 +3420,9 @@
   "exportDecisionLogDeadline": "Échéance",
   "exportDecisionLogPrioritizationNote": "Recommandation Priorité:",
   "exportDecisionLogPrioritizationHint": "Se concentrer d'abord sur les décisions DROP pour libérer de la capacité, puis ajouter de nouvelles pratiques.",
-
   "exportNoItems": "Aucun élément enregistré",
   "exportNoActionItems": "Aucune action",
   "exportNotApplicable": "N/A",
-
   "facilitatorGuideTitle": "Guide de Collecte d'Actions",
   "facilitatorGuideCoverage": "Couverture",
   "facilitatorGuideComplete": "Complète",
@@ -3489,14 +3435,12 @@
   "facilitatorGuideColumnNoAction": "Pas d'action",
   "facilitatorGuideRequired": "Requis",
   "facilitatorGuideOptional": "Optionnel",
-
   "collectionRationaleSSC": "D'abord Stop pour supprimer les bloqueurs, puis Start nouvelles pratiques, enfin Continue ce qui fonctionne.",
   "collectionRationaleMSG": "D'abord adresser les frustrations, puis les déceptions, puis célébrer les succès.",
   "collectionRationale4Ls": "D'abord combler les lacunes, puis planifier aspirations futures, maintenir ce qui fonctionne, partager apprentissages.",
   "collectionRationaleSailboat": "D'abord atténuer les risques, supprimer bloqueurs, puis exploiter facilitateurs et s'aligner aux objectifs.",
   "collectionRationaleStarfish": "Arrêter mauvaises pratiques, en réduire d'autres, maintenir les bonnes, augmenter les précieuses, en démarrer de nouvelles.",
   "collectionRationaleDAKI": "Drop pour libérer capacité, Add nouvelles pratiques, Improve existantes, Keep ce qui fonctionne.",
-
   "missingSuggestionSSCStop": "Considérez quelle pratique bloque l'équipe et devrait être arrêtée.",
   "missingSuggestionSSCStart": "Pensez à quelle nouvelle pratique pourrait aider l'équipe à s'améliorer.",
   "missingSuggestionMSGMad": "Adressez les frustrations de l'équipe - qu'est-ce qui cause la colère?",
@@ -3515,12 +3459,30 @@
   "agileDelete": "Supprimer",
   "agileDeleteProjectTitle": "Supprimer Projet",
   "agileDeleteProjectConfirm": "Êtes-vous sûr de vouloir supprimer \"{projectName}\" ?",
-  "@agileDeleteProjectConfirm": { "placeholders": { "projectName": { "type": "String" } } },
+  "@agileDeleteProjectConfirm": {
+    "placeholders": {
+      "projectName": {
+        "type": "String"
+      }
+    }
+  },
   "agileDeleteProjectWarning": "Cette action supprimera définitivement :",
   "agileDeleteWarningUserStories": "{count} user stories",
-  "@agileDeleteWarningUserStories": { "placeholders": { "count": { "type": "int" } } },
+  "@agileDeleteWarningUserStories": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "agileDeleteWarningSprints": "{count} sprints",
-  "@agileDeleteWarningSprints": { "placeholders": { "count": { "type": "int" } } },
+  "@agileDeleteWarningSprints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "agileDeleteProjectData": "Toutes les données du projet",
   "agileProjectSettingsTitle": "Paramètres du Projet",
   "agileKeyRoles": "Rôles Clés",
@@ -3530,12 +3492,17 @@
   "agileRoleScrumMaster": "Scrum Master",
   "agileRoleScrumMasterDesc": "Facilite le processus Scrum et élimine les obstacles",
   "agileRoleDevTeam": "Équipe de Développement",
-  "agileRoleDevTeamDesc": "Membres développant le produit",
   "agileNoDevTeamMembers": "Aucun membre. Cliquez + pour ajouter.",
   "agileRolesInfo": "Les rôles seront affichés avec des icônes dans la liste. Vous pouvez ajouter d'autres participants depuis l'équipe.",
   "agileAssignedTo": "Assigné à {name}",
-  "@agileAssignedTo": { "placeholders": { "name": { "type": "String" } } },
-  "agileUnassigned": "Non assigné",
+  "@agileAssignedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agileUnassigned": "Unassigned",
   "agileAssignableLater": "Assignable après création",
   "agileAddToTeam": "Ajouter à l'Équipe",
   "agileAllMembersAssigned": "Tous les participants ont déjà un rôle.",
@@ -3556,21 +3523,16 @@
   "agileAssignRolesHint": "Assigner rôles clés. Modifiable dans les paramètres.",
   "agileArchiveAction": "Archiver",
   "agileRestoreAction": "Restaurer",
-  "archiveHideArchived": "Masquer Archivés",
-  "archiveShowArchived": "Afficher Archivés",
-  "archiveBadge": "ARCHIVÉ",
-  "archiveSuccessMessage": "Projet archivé",
-  "archiveErrorMessage": "Erreur lors de l'archivage",
-  "archiveRestoreSuccessMessage": "Projet restauré",
-  "archiveRestoreErrorMessage": "Erreur lors de la restauration",
-  "archiveAction": "Archiver",
-  "archiveRestoreAction": "Restaurer",
   "agileSetupTitle": "Configuration du Projet",
   "agileStepComplete": "{completed} sur {total} étapes terminées",
   "@agileStepComplete": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "agileSetupCompleteTitle": "Configuration Terminée !",
@@ -3581,7 +3543,9 @@
   "agileChecklistCreateStories": "Créer premières {itemType}",
   "@agileChecklistCreateStories": {
     "placeholders": {
-      "itemType": { "type": "String" }
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "agileChecklistAddItems": "Ajouter au moins 3 items au backlog",
@@ -3592,7 +3556,9 @@
   "agileChecklistEstimate": "Estimer {itemType}",
   "@agileChecklistEstimate": {
     "placeholders": {
-      "itemType": { "type": "String" }
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "agileChecklistEstimateDesc": "Assigner Story Points pour mieux planifier",
@@ -3615,14 +3581,18 @@
   "agileNextStepBacklogDesc": "Ajouter premières {itemType} au backlog.",
   "@agileNextStepBacklogDesc": {
     "placeholders": {
-      "itemType": { "type": "String" }
+      "itemType": {
+        "type": "String"
+      }
     }
   },
   "agileNextStepSprintTitle": "Planifier un Sprint",
   "agileNextStepSprintDesc": "Vous avez {count} items prêts. Créez le Sprint !",
   "@agileNextStepSprintDesc": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileNextStepWipTitle": "Configurer Limites WIP",
@@ -3637,32 +3607,42 @@
   "agileBacklogToggleArchive": "Voir Archive ({count})",
   "@agileBacklogToggleArchive": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileBacklogArchiveBadge": "Archive ({count})",
   "@agileBacklogArchiveBadge": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileBacklogSearchHint": "Rechercher par titre, description ou ID...",
   "agileBacklogStatsStories": "{count} histoires",
   "@agileBacklogStatsStories": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileBacklogStatsPoints": "{points} pts",
   "@agileBacklogStatsPoints": {
     "placeholders": {
-      "points": { "type": "int" }
+      "points": {
+        "type": "int"
+      }
     }
   },
   "agileBacklogStatsEstimated": "{count} estimées",
   "@agileBacklogStatsEstimated": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileFiltersStatus": "État :",
@@ -3705,7 +3685,9 @@
   "agileEstResult": "Estimation : {value} points",
   "@agileEstResult": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "agileEstErrorThreePoint": "Entrez les trois valeurs",
@@ -3713,11 +3695,12 @@
   "agileEstExisting": "Estimations existantes ({count})",
   "@agileEstExisting": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileEstYou": "Vous",
-
   "scrumPermBacklogTitle": "Permissions du Backlog",
   "scrumPermBacklogDesc": "Seul le Product Owner peut créer, modifier, supprimer et prioriser les stories",
   "scrumPermSprintTitle": "Permissions du Sprint",
@@ -3728,7 +3711,6 @@
   "scrumPermKanbanDesc": "L'Équipe de Développement peut déplacer ses propres stories, PO et SM peuvent déplacer n'importe quelle story",
   "scrumPermTeamTitle": "Permissions de l'Équipe",
   "scrumPermTeamDesc": "PO et SM peuvent inviter des membres, seul le PO peut modifier les rôles",
-
   "scrumPermDeniedBacklogCreate": "Seul le Product Owner peut créer de nouvelles stories",
   "scrumPermDeniedBacklogEdit": "Seul le Product Owner peut modifier les stories",
   "scrumPermDeniedBacklogDelete": "Seul le Product Owner peut supprimer les stories",
@@ -3740,14 +3722,12 @@
   "scrumPermDeniedInvite": "Seuls PO et SM peuvent inviter de nouveaux membres",
   "scrumPermDeniedRoleChange": "Seul le Product Owner peut modifier les rôles de l'équipe",
   "scrumPermDeniedWipConfig": "Seul le Scrum Master peut configurer les limites WIP",
-
   "scrumRoleProductOwner": "Product Owner",
   "scrumRoleScrumMaster": "Scrum Master",
   "scrumRoleDeveloper": "Développeur",
   "scrumRoleDesigner": "Designer",
   "scrumRoleQA": "QA",
   "scrumRoleStakeholder": "Partie Prenante",
-
   "scrumMatrixTitle": "Matrice des Permissions Scrum",
   "scrumMatrixSubtitle": "Qui peut faire quoi selon le Guide Scrum 2020",
   "scrumMatrixLegend": "Légende",
@@ -3755,48 +3735,39 @@
   "scrumMatrixLegendPartial": "Partiel",
   "scrumMatrixLegendView": "Voir seul",
   "scrumMatrixLegendNone": "Aucun",
-
   "scrumMatrixCategoryBacklog": "BACKLOG",
   "scrumMatrixCategorySprint": "SPRINT",
   "scrumMatrixCategoryEstimation": "ESTIMATION",
   "scrumMatrixCategoryKanban": "KANBAN",
   "scrumMatrixCategoryTeam": "ÉQUIPE",
   "scrumMatrixCategoryRetro": "RÉTROSPECTIVE",
-
   "scrumMatrixActionCreateStory": "Créer Story",
   "scrumMatrixActionEditStory": "Modifier Story",
   "scrumMatrixActionDeleteStory": "Supprimer Story",
   "scrumMatrixActionPrioritize": "Prioriser Backlog",
   "scrumMatrixActionAddAcceptance": "Définir Critères d'Acceptation",
-
   "scrumMatrixActionCreateSprint": "Créer Sprint",
   "scrumMatrixActionStartSprint": "Démarrer Sprint",
   "scrumMatrixActionCompleteSprint": "Terminer Sprint",
   "scrumMatrixActionConfigWip": "Configurer Limites WIP",
-
   "scrumMatrixActionEstimate": "Estimer Story Points",
   "scrumMatrixActionFinalEstimate": "Définir Estimation Finale",
-
   "scrumMatrixActionMoveOwn": "Déplacer ses propres Stories",
   "scrumMatrixActionMoveAny": "Déplacer n'importe quelle Story",
   "scrumMatrixActionSelfAssign": "S'auto-assigner",
   "scrumMatrixActionAssignOthers": "Assigner d'autres",
   "scrumMatrixActionChangeStatus": "Changer statut Story",
-
   "scrumMatrixActionInvite": "Inviter membres",
   "scrumMatrixActionRemove": "Supprimer membres",
   "scrumMatrixActionChangeRole": "Changer rôles",
-
   "scrumMatrixActionFacilitateRetro": "Faciliter Rétrospective",
   "scrumMatrixActionParticipateRetro": "Participer à Rétrospective",
   "scrumMatrixActionAddRetroItem": "Ajouter item Rétro",
   "scrumMatrixActionVoteRetro": "Voter items",
-
   "scrumMatrixColPO": "PO",
   "scrumMatrixColSM": "SM",
   "scrumMatrixColDev": "Dev",
   "scrumMatrixColStake": "Stake",
-
   "agileInviteTitle": "Inviter à l'équipe",
   "agileInviteNew": "NOUVELLE INVITATION",
   "agileInviteEmailLabel": "E-mail",
@@ -3818,13 +3789,17 @@
   "agileInviteSentEmail": "Invitation envoyée par e-mail à {email}",
   "@agileInviteSentEmail": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "agileInviteCreated": "Invitation créée pour {email}",
   "@agileInviteCreated": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
   "agileInviteRevokeTitle": "Révoquer l'invitation ?",
@@ -3880,7 +3855,6 @@
   "agileExistingTags": "Existing tags:",
   "agileAssignTo": "Assign to",
   "agileSelectMemberHint": "Select a team member",
-  "agileUnassigned": "Unassigned",
   "agilePointsComplexityVeryLow": "Quick and simple task",
   "agilePointsComplexityLow": "Medium complexity task",
   "agilePointsComplexityMedium": "Complex task, requires analysis",
@@ -3919,8 +3893,6 @@
   "agileStatsVelocity": "velocity",
   "agileSelectAtLeastOne": "Select at least 1 story",
   "agileConfirmStories": "Confirmer ({count} stories)",
-
-  "kanbanPoliciesTitle": "Politiques de Colonne",
   "kanbanPoliciesDescription": "Les politiques explicites définissent les règles pour cette colonne (Pratique Kanban #4)",
   "kanbanPoliciesEmpty": "Aucune politique définie",
   "kanbanPoliciesAdd": "Ajouter une politique",
@@ -3928,10 +3900,11 @@
   "kanbanPoliciesIndicator": "Politiques actives: {count}",
   "@kanbanPoliciesIndicator": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "sprintReviewTitle": "Sprint Review",
   "sprintReviewSubtitle": "Revue du travail accompli avec les parties prenantes",
   "sprintReviewConductBy": "Animé par",
@@ -3957,7 +3930,6 @@
   "sprintReviewCompleteAnyway": "Terminer quand même",
   "sprintReviewDoReview": "Effectuer la Review",
   "sprintReviewCompleted": "Sprint Review terminée",
-
   "swimlaneTitle": "Swimlanes",
   "swimlaneDescription": "Regrouper les cartes par attribut",
   "swimlaneTypeNone": "Aucune",
@@ -3984,7 +3956,9 @@
   "eisenhowerImportSuccess": "{count} activités importées",
   "@eisenhowerImportSuccess": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "actionSelectAll": "Tout sélectionner",
@@ -3998,32 +3972,44 @@
   "eisenhowerImportSkippedRows": "{count} lignes ignorées à cause d'erreurs",
   "@eisenhowerImportSkippedRows": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportAndMore": "...et {count} autres lignes",
   "@eisenhowerImportAndMore": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportFoundActivities": "{valid} activités valides trouvées sur {total} lignes",
   "@eisenhowerImportFoundActivities": {
     "placeholders": {
-      "valid": {"type": "int"},
-      "total": {"type": "int"}
+      "valid": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorEmptyTitle": "Ligne {row} : titre vide",
   "@eisenhowerImportErrorEmptyTitle": {
     "placeholders": {
-      "row": {"type": "int"}
+      "row": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorInvalidRow": "Ligne {row} : format invalide",
   "@eisenhowerImportErrorInvalidRow": {
     "placeholders": {
-      "row": {"type": "int"}
+      "row": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorMissingColumn": "Colonne 'Activité' ou 'Title' non trouvée dans l'en-tête",
@@ -4032,7 +4018,9 @@
   "eisenhowerImportErrorRow": "Ligne {row}",
   "@eisenhowerImportErrorRow": {
     "placeholders": {
-      "row": {"type": "int"}
+      "row": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorReadFile": "Impossible de lire le fichier",
@@ -4546,14 +4534,12 @@
   "agileWorkloadNoStories": "Aucune story à analyser",
   "agileWorkloadNoStoriesDesc": "Créez des stories et assignez-les aux membres de l'équipe",
   "agileWorkloadOverloaded": "Surchargé",
-
   "agileCommitmentTrendTitle": "Tendance Fiabilité Engagement",
   "agileCommitmentTrendNoData": "Aucune donnée disponible",
   "agileCommitmentTrendNoDataDesc": "Complétez au moins un sprint pour voir la tendance",
   "agileCommitmentTrendPlanned": "Planifiés",
   "agileCommitmentTrendCompleted": "Complétés",
   "agileCommitmentTrendAvg": "Moyenne",
-
   "agileFlowEfficiencyTitle": "Efficacité du Flux & WIP",
   "agileFlowEfficiencyNoData": "Aucune donnée disponible",
   "agileFlowEfficiencyNoDataDesc": "Ajoutez des stories pour voir l'analyse du flux",
@@ -4563,7 +4549,6 @@
   "agileFlowDays": "jours",
   "agileFlowWipByStatus": "WIP par Statut",
   "agileFlowAvg": "moy",
-
   "agileBlockedItemsTitle": "Éléments Bloqués",
   "agileBlockedItemsNone": "Aucun élément bloqué",
   "agileBlockedItemsNoneDesc": "Toutes les dépendances sont satisfaites",
@@ -4572,7 +4557,6 @@
   "agileBlockedItemsBlockedBy": "Bloqué par",
   "agileBlockedItemsDependency": "dépendance",
   "agileBlockedItemsDependencies": "dépendances",
-
   "agileSprintScopeTitle": "Scope du Sprint",
   "agileSprintScopeNoSprint": "Aucun sprint actif",
   "agileSprintScopeNoSprintDesc": "Démarrez un sprint pour surveiller les changements de scope",
@@ -4582,5 +4566,106 @@
   "agileSprintScopeCreep": "Dérive du Scope",
   "agileSprintScopeReduction": "Réduction du Scope",
   "agileSprintScopeStable": "Stable",
-  "agileSprintScopeSp": "SP"
+  "agileSprintScopeSp": "SP",
+  "actionExportCsv": "Exporter CSV",
+  "agileActionInvite": "Inviter",
+  "agileAddSkill": "Ajouter une compétence",
+  "agileAddSkillsHint": "Ajoutez des compétences aux membres de l'équipe",
+  "agileAverageVelocityTooltip": "Moyenne des Story Points complétés par sprint.\nCalculée à partir des sprints terminés avec des stories au statut 'Done'.\nPlus élevée = équipe plus productive.",
+  "agileBasedOnCompletedItems": "Basé sur {count} items complétés",
+  "agileCriticalSkills": "Compétences critiques",
+  "agileCriticalSkillsWarning": "Seule 1 personne couvre : {skills}",
+  "agileCycleTimeTooltip": "Temps moyen du début du travail à l'achèvement.\nNécessite des items avec les dates 'Commencé' et 'Terminé' renseignées.\nPlus bas = équipe plus efficace.",
+  "agileDisableFilterHint": "Ou désactivez le filtre pour voir toutes les stories",
+  "agileFilterActive": "Actif",
+  "agileFilterActiveSprint": "Filtre Sprint Actif : ",
+  "agileFilterAll": "Tout",
+  "agileHybridCompletedTooltip": "Items au statut 'Done' par rapport au total.\nDéplacez les items dans la colonne 'Done' pour les compléter.",
+  "agileHybridSprintTooltip": "Sprints complétés par rapport au total.",
+  "agileInProgressTooltip": "Items actuellement en cours (WIP).\nMaintenez ce nombre bas pour améliorer le flux.",
+  "agileItems": "items",
+  "agileItemsCompletedTooltip": "Nombre de Work Items au statut 'Done'.\nDéplacez les items dans la colonne 'Done' pour les compléter.",
+  "agileKanbanBoardHint": "Le Kanban Board affiche les stories du sprint actif.\nPour visualiser les stories :",
+  "agileNewSkill": "Nouvelle compétence...",
+  "agileNewSkillDialogTitle": "Nouvelle Compétence",
+  "agileNewSkillHint": "Ex : Flutter, Python, AWS...",
+  "agileNewSkillName": "Nom de la compétence",
+  "agileNoActiveSprint": "Aucun Sprint Actif",
+  "agileNoMembers": "Aucun membre dans l'équipe",
+  "agileNoSkills": "Aucune compétence",
+  "agileNoSkillsAvailable": "Aucune skill disponible",
+  "agilePerWeekSuffix": "/sem",
+  "agileShowAllStories": "Afficher toutes les stories",
+  "agileSkillCoverage": "Couverture des Compétences",
+  "agileSkillMatrixTitle": "Matrice des Compétences",
+  "agileSkills": "Compétences",
+  "agileStartSprintFromTab": "Démarrez un sprint depuis l'onglet Sprint",
+  "agileStatsCompletedTooltip": "Nombre de sprints au statut 'Terminé'.\nCliquez sur 'Terminer Sprint' pour finaliser un sprint actif.",
+  "agileStatsItemsPerWeek": "items/semaine",
+  "agileStatsPlannedCount": "{count} planifiés",
+  "agileStatsPointsTooltip": "Somme des Story Points des stories complétées.\n'Planifiés' inclut toutes les stories estimées dans le backlog.",
+  "agileStatsPtsPerSprint": "pts/sprint",
+  "agileStatsStoriesCompletedTooltip": "Nombre de User Stories au statut 'Done'.\nPour augmenter cette valeur, déplacez les stories dans la colonne 'Done' du Kanban Board.",
+  "agileStatsTotalCount": "{count} au total",
+  "agileStatsWorkInProgress": "work in progress",
+  "agileTeamTitle": "Équipe ({count})",
+  "agileThroughputTooltip": "Moyenne d'items complétés par semaine (4 dernières semaines).\nIndique la productivité de l'équipe dans le temps.",
+  "agileYouBadge": "Vous",
+  "retroActionItemHint": "Ajoutez un action item...",
+  "retroAssignedTo": "Assigné à : {email}",
+  "retroBoard": "Éléments du Board",
+  "retroChooseMode": "Choisir le Mode de Rétrospective",
+  "retroCritical": "Critique",
+  "retroExcellent": "Excellent",
+  "retroGood": "Bon",
+  "retroGuest": "Invité",
+  "retroInteractiveBoard": "Board Interactif",
+  "retroInteractiveModeDesc": "Lancez un board en temps réel pour collaborer avec toute l'équipe.",
+  "retroNeedsImprovement": "À améliorer",
+  "retroNoActionItemsFound": "Aucun action item",
+  "retroNoElements": "Aucun élément",
+  "retroNoOperationsReview": "Aucune Operations Review",
+  "retroNormal": "Normal",
+  "retroOpenInteractiveBoard": "Ouvrir le Board Interactif",
+  "retroOperationsReview": "Operations Review",
+  "retroOperationsReviewDesc": "Créez une Operations Review pour améliorer le flux de travail",
+  "retroOwner": "Propriétaire",
+  "retroQuickForm": "Formulaire Rapide",
+  "retroQuickModeDesc": "Remplissez un formulaire rapide pour enregistrer les points clés du sprint.",
+  "retroResultLabel": "Sentiment moyen : {score} ({label})",
+  "retroSave": "Sauvegarder la Rétrospective",
+  "retroSentimentTeam": "Sentiment de l'Équipe",
+  "retroSprintOnlyLabel": "Sprint {number}",
+  "retroToImprove": "Quoi améliorer ?",
+  "retroToImproveHint": "Ajoutez un point à améliorer...",
+  "retroVotesCount": "+{count} votes",
+  "retroWentWell": "Qu'est-ce qui a bien fonctionné ?",
+  "retroWentWellHint": "Ajoutez un point positif...",
+  "scrumEventsRetroContent": "Créez une rétrospective pour analyser le dernier sprint et identifier les axes d'amélioration.",
+  "eisenhowerExportAll": "Exporter Toutes les Données",
+  "landingIntegrationBadge": "Intégration",
+  "landingIntegrationTitle": "Un écosystème connecté",
+  "landingIntegrationSubtitle": "Vos outils travaillent ensemble. Passez de l'idée à la livraison sans interruption.",
+  "landingIntegrationFlowTitle": "De la liste à la livraison, en un flux unique",
+  "landingIntegrationStep1": "Collectez",
+  "landingIntegrationStep1Desc": "Smart Todo",
+  "landingIntegrationStep2": "Priorisez",
+  "landingIntegrationStep2Desc": "Eisenhower",
+  "landingIntegrationStep3": "Estimez",
+  "landingIntegrationStep3Desc": "Estimation Room",
+  "landingIntegrationStep4": "Exécutez",
+  "landingIntegrationStep4Desc": "Agile Process",
+  "landingIntegrationStep5": "Améliorez",
+  "landingIntegrationStep5Desc": "Rétrospectives",
+  "landingIntegrationExport0Title": "Smart Todo → Eisenhower / Estimation / Sprint",
+  "landingIntegrationExport0Desc": "Transformez vos tâches en activités priorisées, stories d'estimation ou éléments du backlog sprint.",
+  "landingIntegrationExport1Title": "Eisenhower → Todo / Estimation / Sprint",
+  "landingIntegrationExport1Desc": "Exportez les activités priorisées vers des tâches, stories d'estimation ou user stories de sprint.",
+  "landingIntegrationExport2Title": "Estimation Room → Todo / Sprint",
+  "landingIntegrationExport2Desc": "Après l'estimation, envoyez les stories avec les points dans vos listes ou le backlog sprint.",
+  "landingIntegrationExport3Title": "Agile Process → Rétrospectives",
+  "landingIntegrationExport3Desc": "Liez les rétrospectives aux sprints avec les métriques disponibles en phase de discussion.",
+  "landingIntegrationDashboardTitle": "Dashboard Unifié",
+  "landingIntegrationDashboardDesc": "Favoris, échéances et invitations en attente de chaque outil en un seul endroit.",
+  "actionSend": "Envoyer"
 }

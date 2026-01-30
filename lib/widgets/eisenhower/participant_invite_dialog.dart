@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:googleapis/gmail/v1.dart' as gmail;
-import 'package:http/http.dart' as http;
 import '../../models/unified_invite_model.dart';
 import '../../models/eisenhower_participant_model.dart';
 import '../../services/invite_service.dart';
@@ -56,7 +54,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
   EisenhowerParticipantRole _selectedRole = EisenhowerParticipantRole.voter;
   bool _isLoading = false;
-  bool _sendEmailWithInvite = true; // Toggle per invio email
   String? _generatedLink;
   List<UnifiedInviteModel> _invites = [];
 
@@ -99,12 +96,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
 
       if (invite != null) {
         final link = _inviteService.generateInviteLink(invite);
-        bool emailSent = false;
-
-        // Invia email se richiesto
-        if (_sendEmailWithInvite) {
-          emailSent = await _sendEmailInvite(invite);
-        }
 
         setState(() {
           _generatedLink = link;
@@ -114,9 +105,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(_sendEmailWithInvite && emailSent
-                  ? 'Invito inviato via email a ${invite.email}'
-                  : 'Invito creato per ${invite.email}'),
+              content: Text('Invito creato per ${invite.email}. Email in arrivo...'),
               backgroundColor: Colors.green,
             ),
           );
@@ -135,166 +124,6 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
-    }
-  }
-
-  /// Invia email di invito usando Gmail API
-  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
-    try {
-      print('📧 ============================================');
-      print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
-      print('📧 [EMAIL] Destinatario: ${invite.email}');
-      print('📧 [EMAIL] Piattaforma: ${kIsWeb ? "WEB" : "MOBILE"}');
-      print('📧 ============================================');
-
-      String? accessToken;
-      String? senderEmail;
-
-      if (kIsWeb) {
-        // ===== WEB: usa il token OAuth memorizzato da Firebase Auth =====
-        print('📧 [EMAIL] [WEB] Uso token OAuth da Firebase Auth...');
-
-        accessToken = _authService.webAccessToken;
-        senderEmail = _authService.currentUserEmail;
-
-        print('📧 [EMAIL] [WEB] Token presente: ${accessToken != null}');
-        print('📧 [EMAIL] [WEB] Email utente: $senderEmail');
-
-        if (accessToken == null) {
-          // Token non presente, richiedi re-auth
-          print('📧 [EMAIL] [WEB] Token assente - richiedo re-autenticazione...');
-
-          if (mounted) {
-            final shouldReauth = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('Autorizzazione Gmail'),
-                content: const Text(
-                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\n'
-                  'Vuoi procedere?'
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('No, solo link'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('Autorizza'),
-                  ),
-                ],
-              ),
-            );
-
-            if (shouldReauth == true) {
-              accessToken = await _authService.refreshWebAccessToken();
-              print('📧 [EMAIL] [WEB] Nuovo token ottenuto: ${accessToken != null}');
-            }
-          }
-        }
-
-        if (accessToken == null || senderEmail == null) {
-          print('⚠️ [EMAIL] [WEB] FALLITO: Token o email non disponibili');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        // Crea client con token OAuth
-        final authHeaders = {'Authorization': 'Bearer $accessToken'};
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = Uri.base.origin;
-
-        print('📧 [EMAIL] [WEB] Invio email via Gmail API...');
-        print('📧 [EMAIL] [WEB] Da: $senderEmail');
-        print('📧 [EMAIL] [WEB] A: ${invite.email}');
-
-        final result = await _inviteService.sendInviteEmail(
-          invite: invite,
-          baseUrl: baseUrl,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [WEB] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-
-      } else {
-        // ===== MOBILE: usa GoogleSignIn =====
-        print('📧 [EMAIL] [MOBILE] Uso GoogleSignIn...');
-
-        var googleAccount = _authService.googleSignIn.currentUser;
-        print('📧 [EMAIL] [MOBILE] Account corrente: ${googleAccount?.email ?? "NULL"}');
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signInSilently();
-          print('📧 [EMAIL] [MOBILE] Dopo signInSilently: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signIn();
-          print('📧 [EMAIL] [MOBILE] Dopo signIn: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Nessun account Google');
-          return false;
-        }
-
-        // Verifica scope Gmail
-        final hasGmailScope = await _authService.googleSignIn.requestScopes([
-          'https://www.googleapis.com/auth/gmail.send',
-        ]);
-
-        if (!hasGmailScope) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Scope Gmail non autorizzato');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Permesso Gmail non concesso.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        final authHeaders = await googleAccount.authHeaders;
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = 'https://pm-agile-tools-app.web.app';
-        senderEmail = googleAccount.email;
-
-        print('📧 [EMAIL] [MOBILE] Invio email via Gmail API...');
-
-        final result = await _inviteService.sendInviteEmail(
-          invite: invite,
-          baseUrl: baseUrl,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [MOBILE] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-      }
-    } catch (e, stack) {
-      print('❌ ============================================');
-      print('❌ [EMAIL] ECCEZIONE NON GESTITA');
-      print('❌ [EMAIL] Errore: $e');
-      print('❌ [EMAIL] Stack: $stack');
-      print('❌ ============================================');
-      return false;
     }
   }
 
@@ -441,46 +270,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Toggle invio email
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: _sendEmailWithInvite
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: _sendEmailWithInvite
-                              ? Colors.green.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            _sendEmailWithInvite ? Icons.email : Icons.email_outlined,
-                            size: 20,
-                            color: _sendEmailWithInvite ? Colors.green : Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              l10n.inviteSendEmailNotification,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: _sendEmailWithInvite ? Colors.green[700] : Colors.grey[600],
-                              ),
-                            ),
-                          ),
-                          Switch(
-                            value: _sendEmailWithInvite,
-                            onChanged: (value) => setState(() => _sendEmailWithInvite = value),
-                            activeColor: Colors.green,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+
 
                     // Bottone invita
                     SizedBox(
@@ -723,19 +513,4 @@ class _InviteStatusInfo {
 }
 
 /// Client HTTP autenticato per le API Google (Gmail)
-class _GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
-  final http.Client _client = http.Client();
 
-  _GoogleAuthClient(this._headers);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    return _client.send(request..headers.addAll(_headers));
-  }
-
-  @override
-  void close() {
-    _client.close();
-  }
-}

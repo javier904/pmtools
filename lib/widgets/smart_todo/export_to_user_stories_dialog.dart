@@ -270,7 +270,7 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
                             }
                           });
                         },
-                        child: Text(l10n.selectAll),
+                        child: Text(l10n.selectAll, style: const TextStyle(color: Color(0xFFFFFFFF))),
                       ),
                       TextButton(
                         onPressed: () {
@@ -280,7 +280,7 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
                             }
                           });
                         },
-                        child: Text(l10n.deselectAll),
+                        child: Text(l10n.deselectAll, style: const TextStyle(color: Color(0xFFFFFFFF))),
                       ),
                     ],
                   ),
@@ -416,14 +416,14 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(l10n.actionCancel),
+                    child: Text(l10n.actionCancel, style: const TextStyle(color: Color(0xFFFFFFFF))),
                   ),
                   const SizedBox(width: 12),
-                  ElevatedButton.icon(
-                    onPressed: _canExport() ? _export : null,
-                    icon: const Icon(Icons.auto_stories_rounded, size: 18),
-                    label: Text(l10n.actionExport),
-                    style: ElevatedButton.styleFrom(
+                    ElevatedButton.icon(
+                      onPressed: _canExport() ? _export : null,
+                      icon: const Icon(Icons.rocket_launch, size: 18),
+                      label: Text(l10n.actionExport),
+                      style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

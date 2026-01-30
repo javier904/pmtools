@@ -16,7 +16,7 @@ import 'package:agile_tools/models/unified_invite_model.dart';
 import 'package:agile_tools/widgets/retrospective/action_items_table_widget.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/widgets/retrospective/action_collection_guide_widget.dart';
-import 'package:agile_tools/services/retrospective_sheets_export_service.dart';
+import 'package:agile_tools/services/retrospective_csv_export_service.dart';
 import 'package:agile_tools/widgets/retrospective/participant_presence_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
@@ -894,10 +894,25 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                       ),
                     const SizedBox(width: 8),
                     ElevatedButton.icon(
-                      onPressed: () => _exportToGoogleSheets(retro),
-                      icon: const Icon(Icons.table_view, color: Colors.white),
-                      label: Text(l10n?.todoExportSheets ?? 'Export Sheets', style: const TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F9D58)),
+                      onPressed: () => _showExportDialog(retro),
+                      icon: const Icon(Icons.download_rounded, color: Colors.white, size: 20),
+                      label: Text(
+                        l10n?.actionExportCsv ?? 'Export CSV', 
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        )
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.retroPrimary,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50), // Pill shape
+                        ),
+                      ),
                     ),
 
                   ],
@@ -959,35 +974,97 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
     );
   }
 
-  Future<void> _exportToGoogleSheets(RetrospectiveModel retro) async {
-    final l10n = AppLocalizations.of(context);
 
-    // Show loading dialog
-    showDialog(
+  Future<void> _showExportDialog(RetrospectiveModel retro) async {
+    final l10n = AppLocalizations.of(context);
+    await showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Row(
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 16),
-            Text(l10n?.retroGeneratingSheet ?? 'Generating Google Sheet...'),
-          ],
-        ),
+      builder: (context) => SimpleDialog(
+        title: Text(l10n?.actionExportCsv ?? 'Export CSV'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportActionItems(retro);
+            },
+            child: ListTile(
+              leading: const Icon(Icons.check_circle_outline, color: Colors.blue),
+              title: Text(l10n?.retroActionItemsLabel ?? 'Action Items'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportBoard(retro);
+            },
+            child: ListTile(
+              leading: const Icon(Icons.dashboard, color: Colors.orange),
+              title: Text(l10n?.retroBoard ?? 'Board Items'),
+            ),
+          ),
+          const Divider(),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportAllData(retro);
+            },
+            child: ListTile(
+              leading: const Icon(Icons.file_copy_rounded, color: Color(0xFF0F9D58)),
+              title: Text(l10n?.exportAllData ?? 'Export All Data (Full Report)'),
+              subtitle: const Text('Summary + Board + Action Items', style: TextStyle(fontSize: 12)),
+            ),
+          ),
+        ],
       ),
     );
+  }
 
-    final url = await RetrospectiveSheetsExportService().exportToGoogleSheets(retro);
-
-    if (mounted) {
-      Navigator.of(context).pop(); // Close loading dialog
-
-      if (url != null) {
-        // Show success dialog with copy/open options
-        _showExportSuccessDialog(url);
-      } else {
+  Future<void> _exportActionItems(RetrospectiveModel retro) async {
+    try {
+      await RetrospectiveCsvExportService().exportActionItemsToCsv(retro);
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n?.retroExportError ?? 'Error exporting to Sheets.')),
+          const SnackBar(content: Text('Action Items exported!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _exportBoard(RetrospectiveModel retro) async {
+    try {
+      await RetrospectiveCsvExportService().exportBoardItemsToCsv(retro);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Board exported!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _exportAllData(RetrospectiveModel retro) async {
+    try {
+      await RetrospectiveCsvExportService().exportAllDataToCsv(retro);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Full Snapshot exported!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
         );
       }
     }

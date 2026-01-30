@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:googleapis/gmail/v1.dart' as gmail;
+
 import 'package:http/http.dart' as http;
+
 import '../../models/unified_invite_model.dart';
 import '../../models/agile_enums.dart';
 import '../../services/invite_service.dart';
@@ -11,7 +12,6 @@ import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 
-/// Dialog per invitare partecipanti a un Progetto Agile
 ///
 /// Permette di:
 /// - Inserire email del partecipante
@@ -107,9 +107,12 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
         final link = _inviteService.generateInviteLink(invite);
         bool emailSent = false;
 
-        // Invia email se richiesto
+        // Invio email deferito al Backend (Cloud Functions)
         if (_sendEmailWithInvite) {
-          emailSent = await _sendEmailInvite(invite);
+           // Notificare l'utente che l'email verrà inviata dal sistema
+           // O semplicemente lasciare che accada.
+           // La checkbox _sendEmailWithInvite idealmente dovrebbe passare un flag al modello 'Invite',
+           // ma per ora il backend invia sempre su 'onCreate'.
         }
 
         setState(() {
@@ -120,9 +123,7 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(_sendEmailWithInvite && emailSent
-                  ? AppLocalizations.of(context)!.agileInviteSentEmail(invite.email)
-                  : AppLocalizations.of(context)!.agileInviteCreated(invite.email)),
+              content: Text(AppLocalizations.of(context)!.agileInviteCreated(invite.email)),
               backgroundColor: Colors.green,
             ),
           );
@@ -144,170 +145,10 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
     }
   }
 
-  /// Invia email di invito usando Gmail API
-  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
-    try {
-      print('📧 ============================================');
-      print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
-      print('📧 [EMAIL] Destinatario: ${invite.email}');
-      print('📧 [EMAIL] Piattaforma: ${kIsWeb ? "WEB" : "MOBILE"}');
-      print('📧 ============================================');
-
-      String? accessToken;
-      String? senderEmail;
-
-      if (kIsWeb) {
-        // ===== WEB: usa il token OAuth memorizzato da Firebase Auth =====
-        print('📧 [EMAIL] [WEB] Uso token OAuth da Firebase Auth...');
-
-        accessToken = _authService.webAccessToken;
-        senderEmail = _authService.currentUserEmail;
-
-        print('📧 [EMAIL] [WEB] Token presente: ${accessToken != null}');
-        print('📧 [EMAIL] [WEB] Email utente: $senderEmail');
-
-        if (accessToken == null) {
-          // Token non presente, richiedi re-auth
-          print('📧 [EMAIL] [WEB] Token assente - richiedo re-autenticazione...');
-
-          if (mounted) {
-            final shouldReauth = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text(AppLocalizations.of(context)!.agileInviteGmailAuthTitle),
-                content: Text(
-                  AppLocalizations.of(context)!.agileInviteGmailAuthContent
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: Text(AppLocalizations.of(context)!.agileInviteGmailAuthNo),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: Text(AppLocalizations.of(context)!.agileInviteGmailAuthYes),
-                  ),
-                ],
-              ),
-            );
-
-            if (shouldReauth == true) {
-              accessToken = await _authService.refreshWebAccessToken();
-              print('📧 [EMAIL] [WEB] Nuovo token ottenuto: ${accessToken != null}');
-            }
-          }
-        }
-
-        if (accessToken == null || senderEmail == null) {
-          print('⚠️ [EMAIL] [WEB] FALLITO: Token o email non disponibili');
-          if (mounted) {
-            final l10n = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.agileGmailAuthError),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        // Crea client con token OAuth
-        final authHeaders = {'Authorization': 'Bearer $accessToken'};
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = Uri.base.origin;
-
-        print('📧 [EMAIL] [WEB] Invio email via Gmail API...');
-        print('📧 [EMAIL] [WEB] Da: $senderEmail');
-        print('📧 [EMAIL] [WEB] A: ${invite.email}');
-
-        final result = await _inviteService.sendInviteEmail(
-          invite: invite,
-          baseUrl: baseUrl,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [WEB] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-
-      } else {
-        // ===== MOBILE: usa GoogleSignIn =====
-        print('📧 [EMAIL] [MOBILE] Uso GoogleSignIn...');
-
-        var googleAccount = _authService.googleSignIn.currentUser;
-        print('📧 [EMAIL] [MOBILE] Account corrente: ${googleAccount?.email ?? "NULL"}');
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signInSilently();
-          print('📧 [EMAIL] [MOBILE] Dopo signInSilently: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signIn();
-          print('📧 [EMAIL] [MOBILE] Dopo signIn: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Nessun account Google');
-          return false;
-        }
-
-        // Verifica scope Gmail
-        final hasGmailScope = await _authService.googleSignIn.requestScopes([
-          'https://www.googleapis.com/auth/gmail.send',
-        ]);
-
-        if (!hasGmailScope) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Scope Gmail non autorizzato');
-          if (mounted) {
-            final l10n = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.agileGmailPermissionDenied),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        final authHeaders = await googleAccount.authHeaders;
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = 'https://pm-agile-tools-app.web.app';
-        senderEmail = googleAccount.email;
-
-        print('📧 [EMAIL] [MOBILE] Invio email via Gmail API...');
-
-        final result = await _inviteService.sendInviteEmail(
-          invite: invite,
-          baseUrl: baseUrl,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [MOBILE] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-      }
-    } catch (e, stack) {
-      print('❌ ============================================');
-      print('❌ [EMAIL] ECCEZIONE NON GESTITA');
-      print('❌ [EMAIL] Errore: $e');
-      print('❌ [EMAIL] Stack: $stack');
-      print('❌ ============================================');
-      return false;
-    }
-  }
-
   Future<void> _revokeInvite(String inviteId) async {
     final confirmed = await showDialog<bool>(
       context: context,
+
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.agileInviteRevokeTitle),
         content: Text(AppLocalizations.of(context)!.agileInviteRevokeContent),

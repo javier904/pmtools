@@ -75,6 +75,7 @@ class _LandingScreenState extends State<LandingScreen> {
             if (isMobile) ...[
               _buildHeroSection(isMobile, isDark),
               _buildFeaturesSection(isMobile, isDark),
+              _buildIntegrationSection(isMobile, isDark),
               _buildSmartTodoSection(isMobile, isDark),
               _buildEisenhowerSection(isMobile, isDark),
               _buildEstimationMethodsSection(isMobile, isDark),
@@ -82,11 +83,8 @@ class _LandingScreenState extends State<LandingScreen> {
               _buildRetrospectiveTypesSection(isMobile, isDark),
             ] else ...[
               _buildIntegratedDesktopLayout(context, isDark),
-              // Optional: keep detail sections below if user scrolls?
-              // For now, let's keep them accessible but maybe the integrated view acts as the main landing
-              // User said "integrate them around", implying this replaces the top part.
-              // I will keep the detailed sections below for deep diving.
-              const SizedBox(height: 100),
+              _buildIntegrationSection(isMobile, isDark),
+
               _buildSmartTodoSection(isMobile, isDark),
               _buildEisenhowerSection(isMobile, isDark),
               _buildEstimationMethodsSection(isMobile, isDark),
@@ -1856,6 +1854,466 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // SEZIONE: INTEGRATION
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  Widget _buildIntegrationSection(bool isMobile, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 24 : 80,
+        vertical: 80,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.blueAccent.withValues(alpha: isDark ? 0.12 : 0.08),
+            Colors.indigoAccent.withValues(alpha: isDark ? 0.15 : 0.1),
+            Colors.deepPurpleAccent.withValues(alpha: isDark ? 0.18 : 0.12),
+          ],
+        ),
+        border: Border(
+          top: BorderSide(color: context.borderSubtleColor),
+          bottom: BorderSide(color: context.borderSubtleColor),
+        ),
+      ),
+      child: Column(
+        children: [
+          _buildSectionHeader(
+            badge: l10n.landingIntegrationBadge,
+            title: l10n.landingIntegrationTitle,
+            subtitle: l10n.landingIntegrationSubtitle,
+            isMobile: isMobile,
+          ),
+          const SizedBox(height: 60),
+
+          // ── Flow Pipeline ──
+          _buildIntegrationFlow(isMobile, isDark, l10n),
+          const SizedBox(height: 48),
+
+          // ── Export cards ──
+          _buildIntegrationExports(isMobile, isDark, l10n),
+          const SizedBox(height: 48),
+
+          // ── Dashboard card ──
+          Center(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Adaptive width: 100% on small, 70% on medium, 40% on large
+                double widthFactor = 0.4;
+                if (constraints.maxWidth < 800) {
+                  widthFactor = 1.0;
+                } else if (constraints.maxWidth < 1300) {
+                  widthFactor = 0.7;
+                }
+                
+                return FractionallySizedBox(
+                  widthFactor: widthFactor,
+                  child: _buildIntegrationDashboard(isMobile, isDark, l10n),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Pipeline: Collect → Prioritize → Estimate → Execute → Improve
+  Widget _buildIntegrationFlow(bool isMobile, bool isDark, dynamic l10n) {
+    final steps = <Map<String, dynamic>>[
+      {'verb': l10n.landingIntegrationStep1, 'tool': l10n.landingIntegrationStep1Desc, 'icon': Icons.checklist_rounded, 'color': Colors.blue},
+      {'verb': l10n.landingIntegrationStep2, 'tool': l10n.landingIntegrationStep2Desc, 'icon': Icons.apps_rounded, 'color': AppColors.success},
+      {'verb': l10n.landingIntegrationStep3, 'tool': l10n.landingIntegrationStep3Desc, 'icon': Icons.style_rounded, 'color': Colors.amber},
+      {'verb': l10n.landingIntegrationStep4, 'tool': l10n.landingIntegrationStep4Desc, 'icon': Icons.loop_rounded, 'color': AppColors.primary},
+      {'verb': l10n.landingIntegrationStep5, 'tool': l10n.landingIntegrationStep5Desc, 'icon': Icons.forum_rounded, 'color': Colors.pink},
+    ];
+
+    return Column(
+      children: [
+        Text(
+          l10n.landingIntegrationFlowTitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: context.textSecondaryColor,
+          ),
+        ),
+        const SizedBox(height: 28),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth > 700;
+            if (isWide) {
+              return Row(
+                children: _buildFlowStepsDesktop(steps, isDark),
+              );
+            } else {
+              return Column(
+                children: _buildFlowStepsMobile(steps, isDark),
+              );
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildFlowStepsDesktop(List<Map<String, dynamic>> steps, bool isDark) {
+    final widgets = <Widget>[];
+    for (var i = 0; i < steps.length; i++) {
+      widgets.add(Expanded(child: _buildFlowNode(steps[i], isDark)));
+      if (i < steps.length - 1) {
+        widgets.add(_buildFlowArrow(isDark));
+      }
+    }
+    return widgets;
+  }
+
+  List<Widget> _buildFlowStepsMobile(List<Map<String, dynamic>> steps, bool isDark) {
+    final widgets = <Widget>[];
+    for (var i = 0; i < steps.length; i++) {
+      widgets.add(_buildFlowNode(steps[i], isDark));
+      if (i < steps.length - 1) {
+        widgets.add(_buildFlowArrowVertical(isDark));
+      }
+    }
+    return widgets;
+  }
+
+  Widget _buildFlowNode(Map<String, dynamic> step, bool isDark) {
+    final Color color = step['color'] as Color;
+    return Column(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+            border: Border.all(color: color.withValues(alpha: 0.4), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.2),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Icon(step['icon'] as IconData, color: color, size: 24),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          step['verb'] as String,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          step['tool'] as String,
+          style: TextStyle(
+            fontSize: 11,
+            color: context.textTertiaryColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFlowArrow(bool isDark) {
+    return SizedBox(
+      width: 48,
+      child: Column(
+        children: [
+          ShaderMask(
+            shaderCallback: (bounds) => LinearGradient(
+              colors: [
+                AppColors.primary.withValues(alpha: 0.3),
+                AppColors.primary.withValues(alpha: 0.7),
+              ],
+            ).createShader(bounds),
+            child: const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlowArrowVertical(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: ShaderMask(
+        shaderCallback: (bounds) => LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.primary.withValues(alpha: 0.3),
+            AppColors.primary.withValues(alpha: 0.7),
+          ],
+        ).createShader(bounds),
+        child: const Icon(
+          Icons.arrow_downward_rounded,
+          color: Colors.white,
+          size: 28,
+        ),
+      ),
+    );
+  }
+
+  /// Export integration cards
+  Widget _buildIntegrationExports(bool isMobile, bool isDark, dynamic l10n) {
+    final exports = [
+      {
+        'title': l10n.landingIntegrationExport0Title,
+        'desc': l10n.landingIntegrationExport0Desc,
+        'icon': Icons.checklist_rounded,
+        'color': Colors.blue,
+      },
+      {
+        'title': l10n.landingIntegrationExport1Title,
+        'desc': l10n.landingIntegrationExport1Desc,
+        'icon': Icons.open_in_new_rounded,
+        'color': AppColors.success,
+      },
+      {
+        'title': l10n.landingIntegrationExport2Title,
+        'desc': l10n.landingIntegrationExport2Desc,
+        'icon': Icons.send_rounded,
+        'color': Colors.amber,
+      },
+      {
+        'title': l10n.landingIntegrationExport3Title,
+        'desc': l10n.landingIntegrationExport3Desc,
+        'icon': Icons.link_rounded,
+        'color': Colors.pink,
+      },
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isExtraWide = constraints.maxWidth > 1280;
+        final isWide = constraints.maxWidth > 650;
+
+        if (isExtraWide) {
+          // 4 cards in a single row - Equal height
+          return IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: exports.map((e) => Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: _buildExportCard(e, isDark),
+                ),
+              )).toList(),
+            ),
+          );
+        } else if (isWide) {
+          // 2x2 grid - Equal height per row
+          return Column(
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: exports.sublist(0, 2).map((e) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: _buildExportCard(e, isDark),
+                    ),
+                  )).toList(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: exports.sublist(2).map((e) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: _buildExportCard(e, isDark),
+                    ),
+                  )).toList(),
+                ),
+              ),
+            ],
+          );
+        } else {
+          // 1 column
+          return Column(
+            children: exports.map((e) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildExportCard(e, isDark),
+            )).toList(),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildExportCard(Map<String, dynamic> data, bool isDark) {
+    final Color color = data['color'] as Color;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(data['icon'] as IconData, color: color, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data['title'] as String,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: context.textPrimaryColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  data['desc'] as String,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: context.textSecondaryColor,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Unified dashboard highlight
+  Widget _buildIntegrationDashboard(bool isMobile, bool isDark, dynamic l10n) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 600;
+
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+          ),
+          child: isNarrow 
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.dashboard_rounded, color: AppColors.primary, size: 28),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.landingIntegrationDashboardTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: context.textPrimaryColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.landingIntegrationDashboardDesc,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: context.textSecondaryColor,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _buildMiniIconBox(Icons.star_rounded, Colors.amber),
+                    _buildMiniIconBox(Icons.schedule_rounded, Colors.orange),
+                    _buildMiniIconBox(Icons.mail_outline_rounded, AppColors.secondary),
+                  ],
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.dashboard_rounded, color: AppColors.primary, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.landingIntegrationDashboardTitle,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: context.textPrimaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.landingIntegrationDashboardDesc,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: context.textSecondaryColor,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildMiniIconBox(Icons.star_rounded, Colors.amber),
+                    _buildMiniIconBox(Icons.schedule_rounded, Colors.orange),
+                    _buildMiniIconBox(Icons.mail_outline_rounded, AppColors.secondary),
+                  ],
+                ),
+              ],
+            ),
+        );
+      },
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // SEZIONE: WORKFLOW
   // ═══════════════════════════════════════════════════════════════════════════
 
@@ -2172,11 +2630,11 @@ class _LandingScreenState extends State<LandingScreen> {
                 children: [
                   _buildFooterLink(
                     l10n.landingFooterPrivacy,
-                    onTap: () => launchUrl(Uri.parse('https://keisenapp.com/privacy')),
+                    onTap: () => launchUrl(Uri.parse('https://keisenapp.com/privacy'), mode: LaunchMode.externalApplication),
                   ),
                   _buildFooterLink(
                     l10n.landingFooterTerms,
-                    onTap: () => launchUrl(Uri.parse('https://keisenapp.com/terms')),
+                    onTap: () => launchUrl(Uri.parse('https://keisenapp.com/terms'), mode: LaunchMode.externalApplication),
                   ),
                   _buildFooterLink(
                     l10n.landingFooterCookies,
@@ -2317,6 +2775,12 @@ ClipRRect(
           label: l10n.localeName == 'it' ? 'Suggerisci Funzionalità' : 'Suggest Feature',
           onTap: () => _launchEmail(l10n.localeName == 'it' ? '[Suggerimento] ' : '[Feature Request] '),
         ),
+        const SizedBox(height: 8),
+        _buildSupportLink(
+          icon: Icons.new_releases_outlined,
+          label: l10n.landingFooterChangelog,
+          onTap: () => launchUrl(Uri.parse('https://keisenapp.com/changelog'), mode: LaunchMode.externalApplication),
+        ),
       ],
     );
   }
@@ -2399,10 +2863,10 @@ ClipRRect(
     Widget? screen;
     
     if (link == l10n.landingFooterPrivacy) {
-      launchUrl(Uri.parse('https://keisenapp.com/privacy'));
+      launchUrl(Uri.parse('https://keisenapp.com/privacy'), mode: LaunchMode.externalApplication);
       return;
     } else if (link == l10n.landingFooterTerms) {
-      launchUrl(Uri.parse('https://keisenapp.com/terms'));
+      launchUrl(Uri.parse('https://keisenapp.com/terms'), mode: LaunchMode.externalApplication);
       return;
     }
     else if (link == l10n.landingFooterCookies) {

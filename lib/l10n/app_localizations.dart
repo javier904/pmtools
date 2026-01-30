@@ -210,6 +210,12 @@ abstract class AppLocalizations {
   /// **'Riprova'**
   String get actionRetry;
 
+  /// No description provided for @exportAllData.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta Tutti i Dati (Report Completo)'**
+  String get exportAllData;
+
   /// No description provided for @actionConfirm.
   ///
   /// In it, this message translates to:
@@ -233,6 +239,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Esporta'**
   String get actionExport;
+
+  /// No description provided for @actionExportCsv.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta CSV'**
+  String get actionExportCsv;
+
+  /// No description provided for @retroBoard.
+  ///
+  /// In it, this message translates to:
+  /// **'Elementi Board'**
+  String get retroBoard;
 
   /// No description provided for @actionCopy.
   ///
@@ -887,6 +905,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Export completato!'**
   String get eisenhowerExportCompleted;
+
+  /// No description provided for @eisenhowerExportAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta Tutti i Dati'**
+  String get eisenhowerExportAll;
 
   /// No description provided for @eisenhowerExportCompletedDialog.
   ///
@@ -10393,7 +10417,7 @@ abstract class AppLocalizations {
   /// No description provided for @landingFooterChangelog.
   ///
   /// In it, this message translates to:
-  /// **'Changelog'**
+  /// **'Note di Rilascio'**
   String get landingFooterChangelog;
 
   /// No description provided for @landingFooterRoadmap.
@@ -11923,7 +11947,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportToEstimation.
   ///
   /// In it, this message translates to:
-  /// **'Esporta verso Stima'**
+  /// **'Invia a Estimation'**
   String get exportToEstimation;
 
   /// No description provided for @exportToEstimationDesc.
@@ -12205,7 +12229,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportFromEisenhower.
   ///
   /// In it, this message translates to:
-  /// **'Esporta da Eisenhower'**
+  /// **'Invia alla lista Todo'**
   String get exportFromEisenhower;
 
   /// No description provided for @exportFromEisenhowerDesc.
@@ -12253,13 +12277,13 @@ abstract class AppLocalizations {
   /// No description provided for @exportToUserStories.
   ///
   /// In it, this message translates to:
-  /// **'Esporta in User Stories'**
+  /// **'Invia al progetto Agile'**
   String get exportToUserStories;
 
   /// No description provided for @exportToUserStoriesDesc.
   ///
   /// In it, this message translates to:
-  /// **'Crea user stories in un progetto Agile'**
+  /// **'Invia user stories in un progetto Agile'**
   String get exportToUserStoriesDesc;
 
   /// No description provided for @selectDestinationProject.
@@ -12331,13 +12355,19 @@ abstract class AppLocalizations {
   /// No description provided for @exportToAgileSprint.
   ///
   /// In it, this message translates to:
-  /// **'Esporta in Sprint'**
+  /// **'Invia allo Sprint'**
   String get exportToAgileSprint;
+
+  /// No description provided for @actionSend.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia'**
+  String get actionSend;
 
   /// No description provided for @exportToAgileSprintDesc.
   ///
   /// In it, this message translates to:
-  /// **'Aggiungi le stories stimate a uno sprint Agile'**
+  /// **'Aggiungi storie stimate a un progetto Agile'**
   String get exportToAgileSprintDesc;
 
   /// No description provided for @selectSprint.
@@ -12367,7 +12397,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportToSprint.
   ///
   /// In it, this message translates to:
-  /// **'Esporta verso Sprint'**
+  /// **'Esporta in Agile Project'**
   String get exportToSprint;
 
   /// No description provided for @totalStoryPoints.
@@ -12391,7 +12421,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportEisenhowerToSprintDesc.
   ///
   /// In it, this message translates to:
-  /// **'Trasforma le attività Eisenhower in User Stories'**
+  /// **'Trasforma le attività Eisenhower in User Stories nel progetto Agile'**
   String get exportEisenhowerToSprintDesc;
 
   /// No description provided for @exportEisenhowerToEstimationDesc.
@@ -12451,7 +12481,7 @@ abstract class AppLocalizations {
   /// No description provided for @estimationExportInfo.
   ///
   /// In it, this message translates to:
-  /// **'Le attività verranno aggiunte come storie da stimare. La priorità Q non verrà trasferita.'**
+  /// **'Le attività verranno aggiunte come storie da stimare. Le attività Q4 non verranno trasferite.'**
   String get estimationExportInfo;
 
   /// No description provided for @createSession.
@@ -18621,6 +18651,150 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'SP'**
   String get agileSprintScopeSp;
+
+  /// No description provided for @landingIntegrationBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'Integrazione'**
+  String get landingIntegrationBadge;
+
+  /// No description provided for @landingIntegrationTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Un ecosistema connesso'**
+  String get landingIntegrationTitle;
+
+  /// No description provided for @landingIntegrationSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'I tuoi strumenti lavorano insieme. Passa dall\'idea alla delivery senza interruzioni.'**
+  String get landingIntegrationSubtitle;
+
+  /// No description provided for @landingIntegrationFlowTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Dalla lista alla consegna, in un flusso unico'**
+  String get landingIntegrationFlowTitle;
+
+  /// No description provided for @landingIntegrationStep1.
+  ///
+  /// In it, this message translates to:
+  /// **'Raccogli'**
+  String get landingIntegrationStep1;
+
+  /// No description provided for @landingIntegrationStep1Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Smart Todo'**
+  String get landingIntegrationStep1Desc;
+
+  /// No description provided for @landingIntegrationStep2.
+  ///
+  /// In it, this message translates to:
+  /// **'Prioritizza'**
+  String get landingIntegrationStep2;
+
+  /// No description provided for @landingIntegrationStep2Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Eisenhower'**
+  String get landingIntegrationStep2Desc;
+
+  /// No description provided for @landingIntegrationStep3.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima'**
+  String get landingIntegrationStep3;
+
+  /// No description provided for @landingIntegrationStep3Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Estimation Room'**
+  String get landingIntegrationStep3Desc;
+
+  /// No description provided for @landingIntegrationStep4.
+  ///
+  /// In it, this message translates to:
+  /// **'Esegui'**
+  String get landingIntegrationStep4;
+
+  /// No description provided for @landingIntegrationStep4Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Agile Process'**
+  String get landingIntegrationStep4Desc;
+
+  /// No description provided for @landingIntegrationStep5.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliora'**
+  String get landingIntegrationStep5;
+
+  /// No description provided for @landingIntegrationStep5Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospettive'**
+  String get landingIntegrationStep5Desc;
+
+  /// No description provided for @landingIntegrationExport0Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Smart Todo → Eisenhower / Stima / Sprint'**
+  String get landingIntegrationExport0Title;
+
+  /// No description provided for @landingIntegrationExport0Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Trasforma i tuoi task in attività prioritizzate, stories di stima o elementi del backlog sprint.'**
+  String get landingIntegrationExport0Desc;
+
+  /// No description provided for @landingIntegrationExport1Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Eisenhower → Todo / Stima / Sprint'**
+  String get landingIntegrationExport1Title;
+
+  /// No description provided for @landingIntegrationExport1Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta le attività prioritizzate verso task, stories di stima o user stories sprint.'**
+  String get landingIntegrationExport1Desc;
+
+  /// No description provided for @landingIntegrationExport2Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Estimation Room → Todo / Sprint'**
+  String get landingIntegrationExport2Title;
+
+  /// No description provided for @landingIntegrationExport2Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Dopo la stima, invia le stories con i punti nelle tue liste o nel backlog sprint.'**
+  String get landingIntegrationExport2Desc;
+
+  /// No description provided for @landingIntegrationExport3Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Agile Process → Retrospettive'**
+  String get landingIntegrationExport3Title;
+
+  /// No description provided for @landingIntegrationExport3Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Collega le retrospettive agli sprint con metriche disponibili in fase di discussione.'**
+  String get landingIntegrationExport3Desc;
+
+  /// No description provided for @landingIntegrationDashboardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Dashboard Unificata'**
+  String get landingIntegrationDashboardTitle;
+
+  /// No description provided for @landingIntegrationDashboardDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Preferiti, scadenze e inviti pendenti da ogni strumento in un unico punto.'**
+  String get landingIntegrationDashboardDesc;
 }
 
 class _AppLocalizationsDelegate

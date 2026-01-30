@@ -2,8 +2,8 @@
   "@@locale": "en",
   "smartTodoListOrigin": "List origin",
   "smartTodoSortTooltip": "Sort Options",
-  "smartTodoSortManual": "Manual (Drag & Drop)",
-  "smartTodoSortDate": "Recently Updated",
+  "smartTodoSortManual": "Manual",
+  "smartTodoSortDate": "Recent",
   "smartTodoActionSortPriority": "Reorder by Priority",
   "smartTodoActionSortDeadline": "Reorder by Deadline",
   "smartTodoOrderUpdated": "Order updated manually",
@@ -18,10 +18,13 @@
   "actionAdd": "Add",
   "actionClose": "Close",
   "actionRetry": "Retry",
+  "exportAllData": "Export All Data (Full Report)",
   "actionConfirm": "Confirm",
   "actionSearch": "Search",
   "actionFilter": "Filter",
   "actionExport": "Export",
+  "actionExportCsv": "Export CSV",
+  "retroBoard": "Board Items",
   "actionCopy": "Copy",
   "actionShare": "Share",
   "actionDone": "Done",
@@ -194,6 +197,7 @@
   "eisenhowerActivityDeleted": "Activity deleted",
   "eisenhowerVotesSaved": "Votes saved",
   "eisenhowerExportCompleted": "Export completed!",
+  "eisenhowerExportAll": "Export All Data",
   "eisenhowerExportCompletedDialog": "Export Completed",
   "eisenhowerExportDialogContent": "The Google Sheets has been created.\nDo you want to open it in the browser?",
   "eisenhowerOpen": "Open",
@@ -740,7 +744,6 @@
   },
   "retroOwner": "Owner",
   "retroGuest": "Guest",
-  "retroSprintLabel": "Sprint {number}: {name}",
   "@retroSprintLabel": {
     "placeholders": {
       "number": {
@@ -1748,7 +1751,6 @@
     }
   },
   "retroAddCardButton": "Add Card",
-  "retroNoRetrosFound": "No retrospective found",
   "retroDeleteRetro": "Delete Retrospective",
   "retroParticipantsLabel": "Participants",
   "retroNotesCreated": "Notes created",
@@ -1909,7 +1911,7 @@
   "landingEisenhowerEliminateDesc": "Distractions, social, time wasters",
   "landingFooterFeatures": "Features",
   "landingFooterPricing": "Pricing",
-  "landingFooterChangelog": "Changelog",
+  "landingFooterChangelog": "Release Notes",
   "landingFooterRoadmap": "Roadmap",
   "landingFooterDocs": "Documentation",
   "landingFooterAgileGuides": "Agile Guides",
@@ -1927,7 +1929,6 @@
   "agileAddToSprint": "Add to Sprint",
   "agileEstimate": "ESTIMATE",
   "agileEstimated": "Estimated",
-  "agileEstimateRequired": "Estimate required (click to estimate)",
   "agilePoints": "pts",
   "agilePointsValue": "{points} pts",
   "@agilePointsValue": {
@@ -2294,8 +2295,6 @@
   "smartTodoImageUrl": "Image URL",
   "smartTodoEditComment": "Edit",
   "smartTodoSortBy": "Sort by",
-  "smartTodoSortDate": "Recent",
-  "smartTodoSortManual": "Manual",
   "smartTodoColumnSortTitle": "Sort Column",
   "smartTodoPendingTasks": "Tasks to complete",
   "smartTodoCompletedTasks": "Completed tasks",
@@ -3145,7 +3144,7 @@
   "searchResultTypeEisenhower": "Eisenhower Matrix",
   "searchResultTypeEstimation": "Estimation Room",
   "searchBackToDashboard": "Back to Dashboard",
-  "exportToEstimation": "Export to Estimation",
+  "exportToEstimation": "Send to Estimation",
   "exportToEstimationDesc": "Create an estimation session with these tasks",
   "exportToEisenhower": "Send to Eisenhower",
   "exportToEisenhowerDesc": "Create an Eisenhower matrix with these tasks",
@@ -3220,7 +3219,7 @@
   "selectColumns": "Select Columns",
   "allTasks": "All Tasks",
   "filterByColumn": "Filter by column",
-  "exportFromEisenhower": "Export from Eisenhower",
+  "exportFromEisenhower": "Send to Todo list",
   "exportFromEisenhowerDesc": "Select activities to export to Smart Todo",
   "filterByQuadrant": "Filter by quadrant:",
   "allActivities": "All",
@@ -3242,8 +3241,8 @@
       }
     }
   },
-  "exportToUserStories": "Export to User Stories",
-  "exportToUserStoriesDesc": "Create user stories in an Agile project",
+  "exportToUserStories": "Send to Agile project",
+  "exportToUserStoriesDesc": "Send user stories to an Agile project",
   "selectDestinationProject": "Select Destination Project",
   "existingProject": "Existing project",
   "createNewProject": "Create new project",
@@ -3262,13 +3261,14 @@
     }
   },
   "configureNewProject": "Configure new project",
-  "exportToAgileSprint": "Export to Sprint",
-  "exportToAgileSprintDesc": "Add estimated stories to an Agile sprint",
+  "exportToAgileSprint": "Send to Sprint",
+  "actionSend": "Send",
+  "exportToAgileSprintDesc": "Add estimated stories to an Agile project",
   "selectSprint": "Select sprint",
   "selectSprintHint": "Choose a destination sprint",
   "noSprintsAvailable": "No sprints available. Create a sprint in planning state first.",
   "sprintExportFieldMappingInfo": "Mapping: Title → Story title, Description → Description, Estimate → Story points",
-  "exportToSprint": "Export to Sprint",
+  "exportToSprint": "Export to Agile Project",
   "totalStoryPoints": "{count} total story points",
   "@totalStoryPoints": {
     "placeholders": {
@@ -3299,7 +3299,7 @@
       }
     }
   },
-  "exportEisenhowerToSprintDesc": "Transform Eisenhower activities into User Stories",
+  "exportEisenhowerToSprintDesc": "Transform Eisenhower activities into User Stories in Agile Project",
   "exportEisenhowerToEstimationDesc": "Create an estimation session from activities",
   "selectedActivities": "activities selected",
   "noActivitiesToExport": "No activities to export",
@@ -3310,7 +3310,7 @@
   "hideQ4": "Hide Q4",
   "actionHide": "Hide Cards",
   "eisenhowerMappingInfo": "Q1→Must, Q2→Should, Q3→Could, Q4→Won't. Importance→Business Value.",
-  "estimationExportInfo": "Activities will be added as stories to estimate. Q priority will not be transferred.",
+  "estimationExportInfo": "Activities will be added as stories to estimate. Q4 activities will not be transferred.",
   "createSession": "Create Session",
   "activitiesExportedToSprint": "{count} activities exported to sprint {sprintName}",
   "@activitiesExportedToSprint": {
@@ -4749,7 +4749,6 @@
   "agileSprintReviewSaveSuccess": "Sprint Review saved",
   "agileEstimationAccuracy": "Estimation Accuracy",
   "agileCompleteOneSprintFirst": "Complete at least one sprint",
-  "agileTeamComposition": "Team Composition",
   "agileScrumGuideRecommends": "The Scrum Guide recommends planning based on historical Velocity, not hours.",
   "agileNoSkillsDefined": "No skills defined",
   "agileAddSkillsToMembers": "Add skills to team members",
@@ -4786,7 +4785,9 @@
   "eisenhowerImportSuccess": "Imported {count} activities",
   "@eisenhowerImportSuccess": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "actionSelectAll": "Select All",
@@ -4800,32 +4801,44 @@
   "eisenhowerImportSkippedRows": "{count} rows skipped due to errors",
   "@eisenhowerImportSkippedRows": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportAndMore": "...and {count} more rows",
   "@eisenhowerImportAndMore": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportFoundActivities": "Found {valid} valid activities out of {total} rows",
   "@eisenhowerImportFoundActivities": {
     "placeholders": {
-      "valid": {"type": "int"},
-      "total": {"type": "int"}
+      "valid": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorEmptyTitle": "Row {row}: empty title",
   "@eisenhowerImportErrorEmptyTitle": {
     "placeholders": {
-      "row": {"type": "int"}
+      "row": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorInvalidRow": "Row {row}: invalid format",
   "@eisenhowerImportErrorInvalidRow": {
     "placeholders": {
-      "row": {"type": "int"}
+      "row": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorMissingColumn": "'Activity' or 'Title' column not found in header",
@@ -4834,35 +4847,48 @@
   "eisenhowerImportErrorRow": "Row {row}",
   "@eisenhowerImportErrorRow": {
     "placeholders": {
-      "row": {"type": "int"}
+      "row": {
+        "type": "int"
+      }
     }
   },
   "eisenhowerImportErrorReadFile": "Unable to read file",
-
   "subscriptionPlanName": "Current Plan: {plan}",
   "@subscriptionPlanName": {
     "placeholders": {
-      "plan": { "type": "String" }
+      "plan": {
+        "type": "String"
+      }
     }
   },
   "activitiesAddedToSprint": "{count} activities added to {sprintName}",
   "@activitiesAddedToSprint": {
     "placeholders": {
-      "count": { "type": "int" },
-      "sprintName": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "activitiesAddedToProject": "{count} activities added to project {projectName}",
   "@activitiesAddedToProject": {
     "placeholders": {
-      "count": { "type": "int" },
-      "projectName": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "projectName": {
+        "type": "String"
+      }
     }
   },
   "estimationSessionCreated": "Estimation session created with {count} activities",
   "@estimationSessionCreated": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "agileNoDataAccuracyFix": "No accuracy data",
@@ -4899,14 +4925,12 @@
   "agileWorkloadNoStories": "No stories to analyze",
   "agileWorkloadNoStoriesDesc": "Create stories and assign them to team members",
   "agileWorkloadOverloaded": "Overloaded",
-
   "agileCommitmentTrendTitle": "Commitment Reliability Trend",
   "agileCommitmentTrendNoData": "No data available",
   "agileCommitmentTrendNoDataDesc": "Complete at least one sprint to view the trend",
   "agileCommitmentTrendPlanned": "Planned",
   "agileCommitmentTrendCompleted": "Completed",
   "agileCommitmentTrendAvg": "Average",
-
   "agileFlowEfficiencyTitle": "Flow Efficiency & WIP",
   "agileFlowEfficiencyNoData": "No data available",
   "agileFlowEfficiencyNoDataDesc": "Add stories to view flow analysis",
@@ -4916,7 +4940,6 @@
   "agileFlowDays": "days",
   "agileFlowWipByStatus": "WIP by Status",
   "agileFlowAvg": "avg",
-
   "agileBlockedItemsTitle": "Blocked Items",
   "agileBlockedItemsNone": "No blocked items",
   "agileBlockedItemsNoneDesc": "All dependencies are satisfied",
@@ -4925,7 +4948,6 @@
   "agileBlockedItemsBlockedBy": "Blocked by",
   "agileBlockedItemsDependency": "dependency",
   "agileBlockedItemsDependencies": "dependencies",
-
   "agileSprintScopeTitle": "Sprint Scope",
   "agileSprintScopeNoSprint": "No active sprint",
   "agileSprintScopeNoSprintDesc": "Start a sprint to monitor scope changes",
@@ -4935,5 +4957,29 @@
   "agileSprintScopeCreep": "Scope Creep",
   "agileSprintScopeReduction": "Scope Reduction",
   "agileSprintScopeStable": "Stable",
-  "agileSprintScopeSp": "SP"
+  "agileSprintScopeSp": "SP",
+  "landingIntegrationBadge": "Integration",
+  "landingIntegrationTitle": "A connected ecosystem",
+  "landingIntegrationSubtitle": "Your tools work together. Go from idea to delivery without interruptions.",
+  "landingIntegrationFlowTitle": "From list to delivery, in a single flow",
+  "landingIntegrationStep1": "Collect",
+  "landingIntegrationStep1Desc": "Smart Todo",
+  "landingIntegrationStep2": "Prioritize",
+  "landingIntegrationStep2Desc": "Eisenhower",
+  "landingIntegrationStep3": "Estimate",
+  "landingIntegrationStep3Desc": "Estimation Room",
+  "landingIntegrationStep4": "Execute",
+  "landingIntegrationStep4Desc": "Agile Process",
+  "landingIntegrationStep5": "Improve",
+  "landingIntegrationStep5Desc": "Retrospectives",
+  "landingIntegrationExport0Title": "Smart Todo → Eisenhower / Estimate / Sprint",
+  "landingIntegrationExport0Desc": "Turn your tasks into prioritized activities, estimation stories, or sprint backlog items.",
+  "landingIntegrationExport1Title": "Eisenhower → Todo / Estimate / Sprint",
+  "landingIntegrationExport1Desc": "Export prioritized activities into tasks, estimation stories, or sprint user stories.",
+  "landingIntegrationExport2Title": "Estimation Room → Todo / Sprint",
+  "landingIntegrationExport2Desc": "After estimation, push stories with agreed points into your lists or sprint backlog.",
+  "landingIntegrationExport3Title": "Agile Process → Retrospectives",
+  "landingIntegrationExport3Desc": "Link retrospectives to sprints with metrics available during the discussion phase.",
+  "landingIntegrationDashboardTitle": "Unified Dashboard",
+  "landingIntegrationDashboardDesc": "Favorites, deadlines, and pending invites from every tool in one place."
 }

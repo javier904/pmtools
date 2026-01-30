@@ -15,7 +15,7 @@ import 'package:agile_tools/screens/retrospective_board_screen.dart';
 import 'package:agile_tools/services/agile_firestore_service.dart';
 import 'package:agile_tools/services/retrospective_firestore_service.dart';
 import '../services/agile_audit_service.dart';
-import '../services/agile_sheets_service.dart';
+import '../services/agile_csv_export_service.dart';
 import '../services/auth_service.dart';
 import '../widgets/agile/backlog_list_widget.dart';
 import '../widgets/agile/story_form_dialog.dart';
@@ -75,7 +75,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   final AgileFirestoreService _firestoreService = AgileFirestoreService();
   final RetrospectiveFirestoreService _retroService = RetrospectiveFirestoreService();
   final AgileAuditService _auditService = AgileAuditService();
-  final AgileSheetsService _sheetsService = AgileSheetsService();
+  final AgileCsvExportService _csvService = AgileCsvExportService();
   final AuthService _authService = AuthService();
   bool _filterByActiveSprint = true;
   SwimlaneType _currentSwimlaneType = SwimlaneType.none;
@@ -147,9 +147,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ),
           // Export to Sheets
           IconButton(
-            icon: const Icon(Icons.table_chart),
-            tooltip: l10n.actionExportSheets,
-            onPressed: _exportToSheets,
+            icon: const Icon(Icons.download),
+            tooltip: l10n.actionExportCsv,
+            onPressed: _showExportDialog,
           ),
           // Audit log
           IconButton(
@@ -3010,21 +3010,137 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   // EXPORT
   // ══════════════════════════════════════════════════════════════════════════
 
-  Future<void> _exportToSheets() async {
-    _showSuccess('Esportazione in corso...');
 
-    final url = await _sheetsService.exportProjectToSheets(
-      project: widget.project,
-      stories: _stories,
-      sprints: _sprints,
-      teamMembers: _teamMembers,
-      retrospectives: _retrospectives,
+  Future<void> _showExportDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    await showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.actionExportCsv),
+        children: [
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportAllData();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.download_for_offline, color: Colors.indigo),
+              title: Text('Export All Data'),
+              subtitle: Text('Backlog, Sprints, Team, Kanban, Metrics'),
+            ),
+          ),
+          const Divider(),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportBacklog();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.list_alt, color: Colors.blue),
+              title: Text('Export Backlog'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportSprints();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.directions_run, color: Colors.green),
+              title: Text('Export Sprints'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportTeam();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.people, color: Colors.purple),
+              title: Text('Export Team'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportKanban();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.view_column, color: Colors.orange),
+              title: Text('Export Kanban'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+              _exportMetrics();
+            },
+            child: const ListTile(
+              leading: Icon(Icons.insights, color: Colors.teal),
+              title: Text('Export Metrics'),
+            ),
+          ),
+        ],
+      ),
     );
+  }
 
-    if (url != null && mounted) {
-      _showSuccess('Export completato! Apri: $url');
-    } else if (mounted) {
-      _showError('Errore durante l\'export');
+  Future<void> _exportBacklog() async {
+    try {
+      await _csvService.exportBacklogToCsv(widget.project.name, _stories);
+      _showSuccess('Backlog esportato!');
+    } catch (e) {
+      _showError('Errore export: $e');
+    }
+  }
+
+  Future<void> _exportSprints() async {
+    try {
+      await _csvService.exportSprintsToCsv(widget.project.name, _sprints, _stories);
+      _showSuccess('Sprints esportati!');
+    } catch (e) {
+      _showError('Errore export: $e');
+    }
+  }
+
+  Future<void> _exportTeam() async {
+    try {
+      await _csvService.exportTeamToCsv(widget.project.name, _teamMembers);
+      _showSuccess('Team esportato!');
+    } catch (e) {
+      _showError('Errore export: $e');
+    }
+  }
+
+  Future<void> _exportKanban() async {
+    try {
+      await _csvService.exportKanbanToCsv(widget.project.name, _stories);
+      _showSuccess('Kanban esportato!');
+    } catch (e) {
+      _showError('Errore export: $e');
+    }
+  }
+
+  Future<void> _exportMetrics() async {
+    try {
+      await _csvService.exportMetricsToCsv(widget.project.name, _sprints, _stories);
+      _showSuccess('Metrics esportato!');
+    } catch (e) {
+      _showError('Errore export: $e');
+    }
+  }
+
+  Future<void> _exportAllData() async {
+    try {
+      await _csvService.exportAllDataToCsv(
+        widget.project.name,
+        _stories,
+        _sprints,
+        _teamMembers,
+      );
+      _showSuccess('Export completo riuscito!');
+    } catch (e) {
+      _showError('Errore export: $e');
     }
   }
 

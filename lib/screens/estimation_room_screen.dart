@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'package:googleapis/gmail/v1.dart' as gmail;
-import 'package:http/http.dart' as http;
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../l10n/app_localizations.dart';
@@ -2210,10 +2208,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           createdStoryIds.add(userStory.id);
           createdCount++;
         }
-      } else if (result.existingProject != null && result.sprint != null) {
-        // Use existing project and sprint
+      } else if (result.existingProject != null) {
+        // Use existing project (and optional sprint)
         targetProject = result.existingProject!;
-        targetSprint = result.sprint!;
+        targetSprint = result.sprint;
 
         for (final story in result.selectedStories) {
           int? storyPoints;
@@ -2228,6 +2226,18 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
             createdBy: _currentUserEmail,
           );
 
+          // Determine status and sprintId
+          String? sprintId;
+          var status = agile.StoryStatus.backlog; // Default to backlog
+
+          if (targetSprint != null) {
+            sprintId = targetSprint.id;
+            // set status based on sprint status if assigned
+            status = targetSprint.status == agile.SprintStatus.active
+                ? agile.StoryStatus.inSprint
+                : agile.StoryStatus.ready;
+          }
+
           final updatedStory = UserStoryModel(
             id: userStory.id,
             projectId: targetProject.id,
@@ -2236,10 +2246,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
             storyPoints: storyPoints,
             finalEstimate: story.finalEstimate,
             estimationType: agile.EstimationType.planningPoker,
-            sprintId: targetSprint.id,
-            status: targetSprint.status == agile.SprintStatus.active
-                ? agile.StoryStatus.inSprint
-                : agile.StoryStatus.ready,
+            sprintId: sprintId,
+            status: status,
             createdAt: userStory.createdAt,
             createdBy: _currentUserEmail,
             order: userStory.order,
@@ -2250,17 +2258,19 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           createdCount++;
         }
 
-        // Update sprint with new story IDs and points
-        final totalNewPoints = result.selectedStories.fold<int>(0, (sum, story) {
-          return sum + (_convertEstimateToStoryPoints(story.finalEstimate ?? '0'));
-        });
+        // Update sprint with new story IDs and points ONLY if sprint was selected
+        if (targetSprint != null) {
+          final totalNewPoints = result.selectedStories.fold<int>(0, (sum, story) {
+            return sum + (_convertEstimateToStoryPoints(story.finalEstimate ?? '0'));
+          });
 
-        final updatedSprint = targetSprint.copyWith(
-          storyIds: [...targetSprint.storyIds, ...createdStoryIds],
-          plannedPoints: targetSprint.plannedPoints + totalNewPoints,
-        );
+          final updatedSprint = targetSprint.copyWith(
+            storyIds: [...targetSprint.storyIds, ...createdStoryIds],
+            plannedPoints: targetSprint.plannedPoints + totalNewPoints,
+          );
 
-        await _agileService.updateSprint(targetProject.id, updatedSprint);
+          await _agileService.updateSprint(targetProject.id, updatedSprint);
+        }
       } else {
         // Invalid state
         return;
@@ -3931,9 +3941,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
 
       bool emailSent = false;
 
-      // Invia email se richiesto
+      // Invia email se richiesto (Managed by Backend)
       if (_sendEmailWithInvite) {
-        emailSent = await _sendEmailInvite(invite);
+        emailSent = true; 
       }
 
       _inviteEmailController.clear();
@@ -3964,165 +3974,7 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     }
   }
 
-  /// Invia email di invito usando Gmail API
-  Future<bool> _sendEmailInvite(UnifiedInviteModel invite) async {
-    try {
-      print('📧 ============================================');
-      print('📧 [EMAIL] INIZIO PROCESSO INVIO EMAIL');
-      print('📧 [EMAIL] Destinatario: ${invite.email}');
-      print('📧 [EMAIL] Piattaforma: ${kIsWeb ? "WEB" : "MOBILE"}');
-      print('📧 ============================================');
 
-      String? accessToken;
-      String? senderEmail;
-
-      if (kIsWeb) {
-        // ===== WEB: usa il token OAuth memorizzato da Firebase Auth =====
-        print('📧 [EMAIL] [WEB] Uso token OAuth da Firebase Auth...');
-
-        accessToken = _authService.webAccessToken;
-        senderEmail = _authService.currentUserEmail;
-
-        print('📧 [EMAIL] [WEB] Token presente: ${accessToken != null}');
-        print('📧 [EMAIL] [WEB] Email utente: $senderEmail');
-
-        if (accessToken == null) {
-          // Token non presente, richiedi re-auth
-          print('📧 [EMAIL] [WEB] Token assente - richiedo re-autenticazione...');
-
-          if (mounted) {
-            final shouldReauth = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('Autorizzazione Gmail'),
-                content: const Text(
-                  'Per inviare email di invito, è necessario ri-autenticarsi con Google.\n\n'
-                  'Vuoi procedere?'
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('No, solo link'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('Autorizza'),
-                  ),
-                ],
-              ),
-            );
-
-            if (shouldReauth == true) {
-              accessToken = await _authService.refreshWebAccessToken();
-              print('📧 [EMAIL] [WEB] Nuovo token ottenuto: ${accessToken != null}');
-            }
-          }
-        }
-
-        if (accessToken == null || senderEmail == null) {
-          print('⚠️ [EMAIL] [WEB] FALLITO: Token o email non disponibili');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Autorizzazione Gmail non disponibile. Prova a fare logout e login.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        // Crea client con token OAuth
-        final authHeaders = {'Authorization': 'Bearer $accessToken'};
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = Uri.base.origin;
-
-        print('📧 [EMAIL] [WEB] Invio email via Gmail API...');
-        print('📧 [EMAIL] [WEB] Da: $senderEmail');
-        print('📧 [EMAIL] [WEB] A: ${invite.email}');
-
-        final result = await _inviteService.sendInviteEmail(
-          invite: invite,
-          baseUrl: baseUrl,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [WEB] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-
-      } else {
-        // ===== MOBILE: usa GoogleSignIn =====
-        print('📧 [EMAIL] [MOBILE] Uso GoogleSignIn...');
-
-        var googleAccount = _authService.googleSignIn.currentUser;
-        print('📧 [EMAIL] [MOBILE] Account corrente: ${googleAccount?.email ?? "NULL"}');
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signInSilently();
-          print('📧 [EMAIL] [MOBILE] Dopo signInSilently: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          googleAccount = await _authService.googleSignIn.signIn();
-          print('📧 [EMAIL] [MOBILE] Dopo signIn: ${googleAccount?.email ?? "NULL"}');
-        }
-
-        if (googleAccount == null) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Nessun account Google');
-          return false;
-        }
-
-        // Verifica scope Gmail
-        final hasGmailScope = await _authService.googleSignIn.requestScopes([
-          'https://www.googleapis.com/auth/gmail.send',
-        ]);
-
-        if (!hasGmailScope) {
-          print('⚠️ [EMAIL] [MOBILE] FALLITO: Scope Gmail non autorizzato');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Permesso Gmail non concesso.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return false;
-        }
-
-        final authHeaders = await googleAccount.authHeaders;
-        final authClient = _GoogleAuthClient(authHeaders);
-        final gmailApi = gmail.GmailApi(authClient);
-        final baseUrl = 'https://pm-agile-tools-app.web.app';
-        senderEmail = googleAccount.email;
-
-        print('📧 [EMAIL] [MOBILE] Invio email via Gmail API...');
-
-        final result = await _inviteService.sendInviteEmail(
-          invite: invite,
-          baseUrl: baseUrl,
-          senderEmail: senderEmail,
-          gmailApi: gmailApi,
-        );
-
-        print('📧 ============================================');
-        print('📧 [EMAIL] [MOBILE] RISULTATO: ${result ? "SUCCESSO" : "FALLITO"}');
-        print('📧 ============================================');
-        return result;
-      }
-    } catch (e, stack) {
-      print('❌ ============================================');
-      print('❌ [EMAIL] ECCEZIONE NON GESTITA');
-      print('❌ [EMAIL] Errore: $e');
-      print('❌ [EMAIL] Stack: $stack');
-      print('❌ ============================================');
-      return false;
-    }
-  }
 
   void _copyInviteLink(UnifiedInviteModel invite) {
     final l10n = AppLocalizations.of(context)!;
@@ -4431,23 +4283,5 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
         );
       }
     }
-  }
-}
-
-/// Client HTTP autenticato per le API Google (Gmail)
-class _GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
-  final http.Client _client = http.Client();
-
-  _GoogleAuthClient(this._headers);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    return _client.send(request..headers.addAll(_headers));
-  }
-
-  @override
-  void close() {
-    _client.close();
   }
 }

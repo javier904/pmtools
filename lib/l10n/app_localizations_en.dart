@@ -63,6 +63,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionRetry => 'Retry';
 
   @override
+  String get exportAllData => 'Export All Data (Full Report)';
+
+  @override
   String get actionConfirm => 'Confirm';
 
   @override
@@ -73,6 +76,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actionExport => 'Export';
+
+  @override
+  String get actionExportCsv => 'Export CSV';
+
+  @override
+  String get retroBoard => 'Board Items';
 
   @override
   String get actionCopy => 'Copy';
@@ -419,6 +428,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eisenhowerExportCompleted => 'Export completed!';
+
+  @override
+  String get eisenhowerExportAll => 'Export All Data';
 
   @override
   String get eisenhowerExportCompletedDialog => 'Export Completed';
@@ -5668,7 +5680,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get landingFooterPricing => 'Pricing';
 
   @override
-  String get landingFooterChangelog => 'Changelog';
+  String get landingFooterChangelog => 'Release Notes';
 
   @override
   String get landingFooterRoadmap => 'Roadmap';
@@ -6514,7 +6526,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get priorityLow => 'LOW';
 
   @override
-  String get exportToEstimation => 'Export to Estimation';
+  String get exportToEstimation => 'Send to Estimation';
 
   @override
   String get exportToEstimationDesc =>
@@ -6669,7 +6681,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterByColumn => 'Filter by column';
 
   @override
-  String get exportFromEisenhower => 'Export from Eisenhower';
+  String get exportFromEisenhower => 'Send to Todo list';
 
   @override
   String get exportFromEisenhowerDesc =>
@@ -6698,11 +6710,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get exportToUserStories => 'Export to User Stories';
+  String get exportToUserStories => 'Send to Agile project';
 
   @override
-  String get exportToUserStoriesDesc =>
-      'Create user stories in an Agile project';
+  String get exportToUserStoriesDesc => 'Send user stories to an Agile project';
 
   @override
   String get selectDestinationProject => 'Select Destination Project';
@@ -6741,11 +6752,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get configureNewProject => 'Configure new project';
 
   @override
-  String get exportToAgileSprint => 'Export to Sprint';
+  String get exportToAgileSprint => 'Send to Sprint';
+
+  @override
+  String get actionSend => 'Send';
 
   @override
   String get exportToAgileSprintDesc =>
-      'Add estimated stories to an Agile sprint';
+      'Add estimated stories to an Agile project';
 
   @override
   String get selectSprint => 'Select sprint';
@@ -6762,7 +6776,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Mapping: Title → Story title, Description → Description, Estimate → Story points';
 
   @override
-  String get exportToSprint => 'Export to Sprint';
+  String get exportToSprint => 'Export to Agile Project';
 
   @override
   String totalStoryPoints(int count) {
@@ -6781,7 +6795,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportEisenhowerToSprintDesc =>
-      'Transform Eisenhower activities into User Stories';
+      'Transform Eisenhower activities into User Stories in Agile Project';
 
   @override
   String get exportEisenhowerToEstimationDesc =>
@@ -6814,7 +6828,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get estimationExportInfo =>
-      'Activities will be added as stories to estimate. Q priority will not be transferred.';
+      'Activities will be added as stories to estimate. Q4 activities will not be transferred.';
 
   @override
   String get createSession => 'Create Session';
@@ -10251,4 +10265,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileSprintScopeSp => 'SP';
+
+  @override
+  String get landingIntegrationBadge => 'Integration';
+
+  @override
+  String get landingIntegrationTitle => 'A connected ecosystem';
+
+  @override
+  String get landingIntegrationSubtitle =>
+      'Your tools work together. Go from idea to delivery without interruptions.';
+
+  @override
+  String get landingIntegrationFlowTitle =>
+      'From list to delivery, in a single flow';
+
+  @override
+  String get landingIntegrationStep1 => 'Collect';
+
+  @override
+  String get landingIntegrationStep1Desc => 'Smart Todo';
+
+  @override
+  String get landingIntegrationStep2 => 'Prioritize';
+
+  @override
+  String get landingIntegrationStep2Desc => 'Eisenhower';
+
+  @override
+  String get landingIntegrationStep3 => 'Estimate';
+
+  @override
+  String get landingIntegrationStep3Desc => 'Estimation Room';
+
+  @override
+  String get landingIntegrationStep4 => 'Execute';
+
+  @override
+  String get landingIntegrationStep4Desc => 'Agile Process';
+
+  @override
+  String get landingIntegrationStep5 => 'Improve';
+
+  @override
+  String get landingIntegrationStep5Desc => 'Retrospectives';
+
+  @override
+  String get landingIntegrationExport0Title =>
+      'Smart Todo → Eisenhower / Estimate / Sprint';
+
+  @override
+  String get landingIntegrationExport0Desc =>
+      'Turn your tasks into prioritized activities, estimation stories, or sprint backlog items.';
+
+  @override
+  String get landingIntegrationExport1Title =>
+      'Eisenhower → Todo / Estimate / Sprint';
+
+  @override
+  String get landingIntegrationExport1Desc =>
+      'Export prioritized activities into tasks, estimation stories, or sprint user stories.';
+
+  @override
+  String get landingIntegrationExport2Title =>
+      'Estimation Room → Todo / Sprint';
+
+  @override
+  String get landingIntegrationExport2Desc =>
+      'After estimation, push stories with agreed points into your lists or sprint backlog.';
+
+  @override
+  String get landingIntegrationExport3Title => 'Agile Process → Retrospectives';
+
+  @override
+  String get landingIntegrationExport3Desc =>
+      'Link retrospectives to sprints with metrics available during the discussion phase.';
+
+  @override
+  String get landingIntegrationDashboardTitle => 'Unified Dashboard';
+
+  @override
+  String get landingIntegrationDashboardDesc =>
+      'Favorites, deadlines, and pending invites from every tool in one place.';
 }

@@ -13,9 +13,6 @@ class AuthService {
     scopes: [
       'email',
       'profile',
-      'https://www.googleapis.com/auth/gmail.send', // Per invio email inviti
-      'https://www.googleapis.com/auth/spreadsheets', // Per export Sheets
-      'https://www.googleapis.com/auth/drive.file', // Per creare file Drive
     ],
   );
 
@@ -50,13 +47,10 @@ class AuthService {
   Future<UserCredential?> signInWithGoogle() async {
     try {
       if (kIsWeb) {
-        // Web: usa popup con tutti gli scope necessari
+        // Web: usa popup con scope base
         final GoogleAuthProvider googleProvider = GoogleAuthProvider();
         googleProvider.addScope('email');
         googleProvider.addScope('profile');
-        googleProvider.addScope('https://www.googleapis.com/auth/gmail.send'); // Per invio email
-        googleProvider.addScope('https://www.googleapis.com/auth/spreadsheets'); // Per export Sheets
-        googleProvider.addScope('https://www.googleapis.com/auth/drive.file'); // Per creare file Drive
 
         final userCredential = await _auth.signInWithPopup(googleProvider);
 
@@ -104,9 +98,6 @@ class AuthService {
       final GoogleAuthProvider googleProvider = GoogleAuthProvider();
       googleProvider.addScope('email');
       googleProvider.addScope('profile');
-      googleProvider.addScope('https://www.googleapis.com/auth/gmail.send');
-      googleProvider.addScope('https://www.googleapis.com/auth/spreadsheets');
-      googleProvider.addScope('https://www.googleapis.com/auth/drive.file');
 
       final userCredential = await _auth.signInWithPopup(googleProvider);
       final oauthCredential = userCredential.credential as OAuthCredential?;

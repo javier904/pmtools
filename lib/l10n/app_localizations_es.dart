@@ -63,6 +63,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actionRetry => 'Reintentar';
 
   @override
+  String get exportAllData => 'Esporta Tutti i Dati (Report Completo)';
+
+  @override
   String get actionConfirm => 'Confirmar';
 
   @override
@@ -73,6 +76,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get actionExport => 'Exportar';
+
+  @override
+  String get actionExportCsv => 'Exportar CSV';
+
+  @override
+  String get retroBoard => 'Elementos Board';
 
   @override
   String get actionCopy => 'Copiar';
@@ -419,6 +428,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eisenhowerExportCompleted => '¡Exportación completada!';
+
+  @override
+  String get eisenhowerExportAll => 'Exportar Todos los Datos';
 
   @override
   String get eisenhowerExportCompletedDialog => 'Exportación Completada';
@@ -1050,85 +1062,85 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroCreateNew => 'Crear Nueva';
 
   @override
-  String get retroChooseMode => 'Scegli Modalità Retrospettiva';
+  String get retroChooseMode => 'Elige Modalidad de Retrospectiva';
 
   @override
-  String get retroQuickForm => 'Form Rapido';
+  String get retroQuickForm => 'Formulario Rápido';
 
   @override
-  String get retroInteractiveBoard => 'Board Interattiva';
+  String get retroInteractiveBoard => 'Board Interactiva';
 
   @override
   String get retroQuickModeDesc =>
-      'Compila un form veloce per registrare i punti salienti dello sprint.';
+      'Rellena un formulario rápido para registrar los puntos destacados del sprint.';
 
   @override
   String get retroInteractiveModeDesc =>
-      'Avvia una board in tempo reale per collaborare con tutto il team.';
+      'Inicia una board en tiempo real para colaborar con todo el equipo.';
 
   @override
-  String get retroNoOperationsReview => 'Nessuna Operations Review';
+  String get retroNoOperationsReview => 'Ninguna Operations Review';
 
   @override
   String get retroOperationsReview => 'Operations Review';
 
   @override
   String get retroOperationsReviewDesc =>
-      'Crea una Operations Review per migliorare il flusso di lavoro';
+      'Crea una Operations Review para mejorar el flujo de trabajo';
 
   @override
-  String get retroWentWell => 'Cosa è andato bene?';
+  String get retroWentWell => '¿Qué fue bien?';
 
   @override
-  String get retroToImprove => 'Cosa migliorare?';
+  String get retroToImprove => '¿Qué mejorar?';
 
   @override
-  String get retroWentWellHint => 'Aggiungi un punto positivo...';
+  String get retroWentWellHint => 'Añade un punto positivo...';
 
   @override
-  String get retroToImproveHint => 'Aggiungi un punto da migliorare...';
+  String get retroToImproveHint => 'Añade un punto a mejorar...';
 
   @override
-  String get retroActionItemHint => 'Aggiungi un action item...';
+  String get retroActionItemHint => 'Añade un action item...';
 
   @override
-  String get retroSave => 'Salva Retrospettiva';
+  String get retroSave => 'Guardar Retrospectiva';
 
   @override
-  String get retroOpenInteractiveBoard => 'Apri Board Interattiva';
+  String get retroOpenInteractiveBoard => 'Abrir Board Interactiva';
 
   @override
-  String get retroSentimentTeam => 'Sentiment del Team';
+  String get retroSentimentTeam => 'Sentiment del Equipo';
 
   @override
-  String get retroExcellent => 'Eccellente';
+  String get retroExcellent => 'Excelente';
 
   @override
-  String get retroGood => 'Buono';
+  String get retroGood => 'Bueno';
 
   @override
-  String get retroNormal => 'Nella norma';
+  String get retroNormal => 'Normal';
 
   @override
-  String get retroNeedsImprovement => 'Da migliorare';
+  String get retroNeedsImprovement => 'Necesita mejorar';
 
   @override
-  String get retroCritical => 'Critico';
+  String get retroCritical => 'Crítico';
 
   @override
-  String get retroNoElements => 'Nessun elemento';
+  String get retroNoElements => 'Ningún elemento';
 
   @override
-  String get retroNoActionItemsFound => 'Nessun action item';
+  String get retroNoActionItemsFound => 'Ningún action item';
 
   @override
   String retroAssignedTo(String email) {
-    return 'Assegnato a: $email';
+    return 'Asignado a: $email';
   }
 
   @override
   String retroVotesCount(int count) {
-    return '+$count voti';
+    return '+$count votos';
   }
 
   @override
@@ -1263,7 +1275,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get scrumEventsRetroContent =>
-      'Crea una retrospettiva per analizzare l\'ultimo sprint e identificare aree di miglioramento.';
+      'Crea una retrospectiva para analizar el último sprint e identificar áreas de mejora.';
 
   @override
   String get scrumEventsReview =>
@@ -1769,10 +1781,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get retroOwner => 'Proprietario';
+  String get retroOwner => 'Propietario';
 
   @override
-  String get retroGuest => 'Ospite';
+  String get retroGuest => 'Invitado';
 
   @override
   String get retroSessionTitle => 'Título de Sesión';
@@ -2144,53 +2156,54 @@ class AppLocalizationsEs extends AppLocalizations {
       'Estimación requerida (haz clic para estimar)';
 
   @override
-  String get agileNoActiveSprint => 'Nessuno Sprint Attivo';
+  String get agileNoActiveSprint => 'Ningún Sprint Activo';
 
   @override
   String get agileKanbanBoardHint =>
-      'La Kanban Board mostra le stories dello sprint attivo.\nPer visualizzare le stories:';
+      'La Kanban Board muestra las stories del sprint activo.\nPara visualizar las stories:';
 
   @override
-  String get agileStartSprintFromTab => 'Avvia uno sprint dalla tab Sprint';
+  String get agileStartSprintFromTab =>
+      'Inicia un sprint desde la pestaña Sprint';
 
   @override
   String get agileDisableFilterHint =>
-      'Oppure disattiva il filtro per vedere tutte le stories';
+      'O desactiva el filtro para ver todas las stories';
 
   @override
-  String get agileShowAllStories => 'Mostra tutte le stories';
+  String get agileShowAllStories => 'Mostrar todas las stories';
 
   @override
-  String get agileFilterActiveSprint => 'Filtro Sprint Attivo: ';
+  String get agileFilterActiveSprint => 'Filtro Sprint Activo: ';
 
   @override
-  String get agileFilterActive => 'Attivo';
+  String get agileFilterActive => 'Activo';
 
   @override
-  String get agileFilterAll => 'Tutto';
+  String get agileFilterAll => 'Todo';
 
   @override
-  String get agileActionInvite => 'Invita';
+  String get agileActionInvite => 'Invitar';
 
   @override
   String agileTeamTitle(int count) {
-    return 'Team ($count)';
+    return 'Equipo ($count)';
   }
 
   @override
-  String get agileNoMembers => 'Nessun membro nel team';
+  String get agileNoMembers => 'Ningún miembro en el equipo';
 
   @override
-  String get agileYouBadge => 'Tu';
+  String get agileYouBadge => 'Tú';
 
   @override
   String agileStatsPlannedCount(int count) {
-    return '$count pianificati';
+    return '$count planificados';
   }
 
   @override
   String agileStatsTotalCount(int count) {
-    return '$count totali';
+    return '$count totales';
   }
 
   @override
@@ -2200,92 +2213,93 @@ class AppLocalizationsEs extends AppLocalizations {
   String get agileStatsWorkInProgress => 'work in progress';
 
   @override
-  String get agileStatsItemsPerWeek => 'items/settimana';
+  String get agileStatsItemsPerWeek => 'items/semana';
 
   @override
   String get agileStatsCompletedTooltip =>
-      'Numero di sprint con status \'Completato\'.\nClicca \'Completa Sprint\' per finalizzare uno sprint attivo.';
+      'Número de sprints con estado \"Completado\".\nHaz clic en \"Completar Sprint\" para finalizar un sprint activo.';
 
   @override
   String get agileAverageVelocityTooltip =>
-      'Media degli Story Points completati per sprint.\nCalcolata dagli sprint completati che hanno stories in stato \'Done\'.\nPiù alta = team più produttivo.';
+      'Media de Story Points completados por sprint.\nCalculada a partir de sprints completados con stories en estado \"Done\".\nMás alta = equipo más productivo.';
 
   @override
   String get agileStatsStoriesCompletedTooltip =>
-      'Numero di User Stories con status \'Done\'.\nPer incrementare questo valore, sposta le stories nella colonna \'Done\' della Kanban Board.';
+      'Número de User Stories con estado \"Done\".\nPara incrementar este valor, mueve las stories a la columna \"Done\" de la Kanban Board.';
 
   @override
   String get agileStatsPointsTooltip =>
-      'Somma degli Story Points delle stories completate.\n\'Pianificati\' include tutte le stories stimate nel backlog.';
+      'Suma de los Story Points de las stories completadas.\n\"Planificados\" incluye todas las stories estimadas en el backlog.';
 
   @override
   String get agileItemsCompletedTooltip =>
-      'Numero di Work Items con status \'Done\'.\nSposta gli items nella colonna \'Done\' per completarli.';
+      'Número de Work Items con estado \"Done\".\nMueve los items a la columna \"Done\" para completarlos.';
 
   @override
   String get agileInProgressTooltip =>
-      'Items attualmente in lavorazione (WIP).\nTieni questo numero basso per migliorare il flusso.';
+      'Items actualmente en progreso (WIP).\nMantén este número bajo para mejorar el flujo.';
 
   @override
   String get agileCycleTimeTooltip =>
-      'Tempo medio dall\'inizio lavoro al completamento.\nRichiede items con date \'Iniziato\' e \'Completato\' valorizzate.\nPiù basso = team più efficiente.';
+      'Tiempo medio desde el inicio del trabajo hasta la finalización.\nRequiere items con fechas \"Iniciado\" y \"Completado\" valoradas.\nMás bajo = equipo más eficiente.';
 
   @override
   String get agileThroughputTooltip =>
-      'Media items completati per settimana (ultime 4 settimane).\nIndica la produttività del team nel tempo.';
+      'Media de items completados por semana (últimas 4 semanas).\nIndica la productividad del equipo en el tiempo.';
 
   @override
   String get agileHybridSprintTooltip =>
-      'Sprint completati rispetto al totale.';
+      'Sprints completados respecto al total.';
 
   @override
   String get agileHybridCompletedTooltip =>
-      'Items con status \'Done\' rispetto al totale.\nSposta items nella colonna \'Done\' per completarli.';
+      'Items con estado \"Done\" respecto al total.\nMueve los items a la columna \"Done\" para completarlos.';
 
   @override
-  String get agileAddSkillsHint => 'Aggiungi competenze ai membri del team';
+  String get agileAddSkillsHint =>
+      'Añade competencias a los miembros del equipo';
 
   @override
-  String get agileSkillMatrixTitle => 'Matrice Competenze';
+  String get agileSkillMatrixTitle => 'Matriz de Competencias';
 
   @override
-  String get agileCriticalSkills => 'Competenze critiche';
+  String get agileCriticalSkills => 'Competencias críticas';
 
   @override
   String agileCriticalSkillsWarning(String skills) {
-    return 'Solo 1 persona copre: $skills';
+    return 'Solo 1 persona cubre: $skills';
   }
 
   @override
-  String get agileSkills => 'Competenze';
+  String get agileSkills => 'Competencias';
 
   @override
-  String get agileNoSkills => 'Nessuna competenza';
+  String get agileNoSkills => 'Ninguna competencia';
 
   @override
-  String get agileAddSkill => 'Aggiungi competenza';
+  String get agileAddSkill => 'Añadir competencia';
 
   @override
-  String get agileNewSkill => 'Nuova competenza...';
+  String get agileNewSkill => 'Nueva competencia...';
 
   @override
-  String get agileNewSkillDialogTitle => 'Nuova Competenza';
+  String get agileNewSkillDialogTitle => 'Nueva Competencia';
 
   @override
-  String get agileNewSkillName => 'Nome competenza';
+  String get agileNewSkillName => 'Nombre competencia';
 
   @override
-  String get agileNewSkillHint => 'Es: Flutter, Python, AWS...';
+  String get agileNewSkillHint => 'Ej: Flutter, Python, AWS...';
 
   @override
-  String get agileSkillCoverage => 'Copertura Competenze';
+  String get agileSkillCoverage => 'Cobertura de Competencias';
 
   @override
-  String get agileNoSkillsAvailable => 'Nessuna skill disponibile';
+  String get agileNoSkillsAvailable => 'Ninguna skill disponible';
 
   @override
   String agileBasedOnCompletedItems(int count) {
-    return 'Basato su $count items completati';
+    return 'Basado en $count items completados';
   }
 
   @override
@@ -5721,7 +5735,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get landingFooterPricing => 'Precios';
 
   @override
-  String get landingFooterChangelog => 'Registro de cambios';
+  String get landingFooterChangelog => 'Notas de Versión';
 
   @override
   String get landingFooterRoadmap => 'Hoja de ruta';
@@ -6806,6 +6820,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get exportToAgileSprint => 'Exportar a Sprint';
+
+  @override
+  String get actionSend => 'Enviar';
 
   @override
   String get exportToAgileSprintDesc =>
@@ -9798,7 +9815,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get agileItems => 'items';
 
   @override
-  String get agilePerWeekSuffix => '/sett';
+  String get agilePerWeekSuffix => '/sem';
 
   @override
   String get average => 'Promedio';
@@ -10334,4 +10351,86 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get agileSprintScopeSp => 'SP';
+
+  @override
+  String get landingIntegrationBadge => 'Integración';
+
+  @override
+  String get landingIntegrationTitle => 'Un ecosistema conectado';
+
+  @override
+  String get landingIntegrationSubtitle =>
+      'Tus herramientas trabajan juntas. Pasa de la idea a la entrega sin interrupciones.';
+
+  @override
+  String get landingIntegrationFlowTitle =>
+      'De la lista a la entrega, en un flujo único';
+
+  @override
+  String get landingIntegrationStep1 => 'Recopila';
+
+  @override
+  String get landingIntegrationStep1Desc => 'Smart Todo';
+
+  @override
+  String get landingIntegrationStep2 => 'Prioriza';
+
+  @override
+  String get landingIntegrationStep2Desc => 'Eisenhower';
+
+  @override
+  String get landingIntegrationStep3 => 'Estima';
+
+  @override
+  String get landingIntegrationStep3Desc => 'Estimation Room';
+
+  @override
+  String get landingIntegrationStep4 => 'Ejecuta';
+
+  @override
+  String get landingIntegrationStep4Desc => 'Agile Process';
+
+  @override
+  String get landingIntegrationStep5 => 'Mejora';
+
+  @override
+  String get landingIntegrationStep5Desc => 'Retrospectivas';
+
+  @override
+  String get landingIntegrationExport0Title =>
+      'Smart Todo → Eisenhower / Estimación / Sprint';
+
+  @override
+  String get landingIntegrationExport0Desc =>
+      'Convierte tus tareas en actividades priorizadas, stories de estimación o elementos del backlog de sprint.';
+
+  @override
+  String get landingIntegrationExport1Title =>
+      'Eisenhower → Todo / Estimación / Sprint';
+
+  @override
+  String get landingIntegrationExport1Desc =>
+      'Exporta las actividades priorizadas a tareas, stories de estimación o user stories de sprint.';
+
+  @override
+  String get landingIntegrationExport2Title =>
+      'Estimation Room → Todo / Sprint';
+
+  @override
+  String get landingIntegrationExport2Desc =>
+      'Después de estimar, envía las stories con los puntos a tus listas o al backlog del sprint.';
+
+  @override
+  String get landingIntegrationExport3Title => 'Agile Process → Retrospectivas';
+
+  @override
+  String get landingIntegrationExport3Desc =>
+      'Vincula las retrospectivas a los sprints con métricas disponibles en la fase de discusión.';
+
+  @override
+  String get landingIntegrationDashboardTitle => 'Dashboard Unificado';
+
+  @override
+  String get landingIntegrationDashboardDesc =>
+      'Favoritos, plazos e invitaciones pendientes de cada herramienta en un solo lugar.';
 }
