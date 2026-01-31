@@ -63,7 +63,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actionRetry => 'Reintentar';
 
   @override
-  String get exportAllData => 'Esporta Tutti i Dati (Report Completo)';
+  String get exportAllData => 'Exportar Todos los Datos (Informe Completo)';
 
   @override
   String get actionConfirm => 'Confirmar';
@@ -229,6 +229,78 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authNoAccount => '¿No tienes una cuenta?';
+
+  @override
+  String get authForgotPassword => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get authResetPasswordSent =>
+      'Email de restablecimiento enviado. Revisa tu bandeja de entrada.';
+
+  @override
+  String get authVerifyEmail => 'Verifica tu email';
+
+  @override
+  String authVerifyEmailDesc(String email) {
+    return 'Te hemos enviado un email de verificación a $email. Haz clic en el enlace para activar tu cuenta.';
+  }
+
+  @override
+  String get authResendVerification => 'Reenviar email de verificación';
+
+  @override
+  String get authVerificationSent => '¡Email de verificación enviado!';
+
+  @override
+  String get authEmailVerified => '¡Email verificado!';
+
+  @override
+  String get authIVerified => 'Ya verifiqué mi email';
+
+  @override
+  String get authWaitingVerification => 'Esperando verificación...';
+
+  @override
+  String get authChangePassword => 'Cambiar contraseña';
+
+  @override
+  String get authCurrentPassword => 'Contraseña actual';
+
+  @override
+  String get authNewPassword => 'Nueva contraseña';
+
+  @override
+  String get authConfirmNewPassword => 'Confirmar nueva contraseña';
+
+  @override
+  String get authPasswordChanged => 'Contraseña cambiada con éxito';
+
+  @override
+  String get authPasswordMismatch => 'Las contraseñas no coinciden';
+
+  @override
+  String get authPasswordTooShort => 'Mínimo 6 caracteres';
+
+  @override
+  String get authReauthRequired => 'Confirma tu identidad';
+
+  @override
+  String get authReauthDesc =>
+      'Por seguridad, confirma tu identidad para continuar.';
+
+  @override
+  String get authSignInWithEmail => 'Iniciar sesión con Email';
+
+  @override
+  String get authWrongCurrentPassword => 'La contraseña actual es incorrecta';
+
+  @override
+  String get profileSecurity => 'Seguridad';
+
+  @override
+  String authCooldownWait(int seconds) {
+    return 'Espera ${seconds}s antes de reenviar';
+  }
 
   @override
   String get navHome => 'Inicio';

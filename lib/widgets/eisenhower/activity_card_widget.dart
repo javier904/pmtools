@@ -4,6 +4,7 @@ import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_participant_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../themes/app_colors.dart';
+import '../../themes/app_theme.dart';
 import 'voting_status_widget.dart';
 
 /// Card per visualizzare una singola attività nella matrice
@@ -107,7 +108,7 @@ class ActivityCardWidget extends StatelessWidget {
   Widget _buildCompactCard(BuildContext context, Color color, AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
-      color: isDark ? const Color(0xFF2D3748) : Colors.white,
+      color: context.surfaceColor,
       borderRadius: BorderRadius.circular(8),
       elevation: 1,
       child: InkWell(
@@ -138,7 +139,7 @@ class ActivityCardWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white : null,
+                    color: context.textPrimaryColor,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -178,7 +179,7 @@ class ActivityCardWidget extends StatelessWidget {
                     icon: Icon(
                       activity.hasVotes ? Icons.edit : Icons.how_to_vote,
                       size: 16,
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      color: context.textSecondaryColor,
                     ),
                     onPressed: onVoteTap,
                     padding: EdgeInsets.zero,
@@ -193,7 +194,7 @@ class ActivityCardWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.close,
                       size: 16,
-                      color: isDark ? Colors.grey[500] : Colors.grey[400],
+                      color: context.textTertiaryColor,
                     ),
                     onPressed: onDeleteTap,
                     padding: EdgeInsets.zero,
@@ -313,7 +314,7 @@ class ActivityCardWidget extends StatelessWidget {
                   activity.description,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: context.textSecondaryColor,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -329,14 +330,14 @@ class ActivityCardWidget extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: context.surfaceVariantColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         tag,
                         style: TextStyle(
                           fontSize: 10,
-                          color: Colors.grey[700],
+                          color: context.textSecondaryColor,
                         ),
                       ),
                     );
@@ -352,6 +353,7 @@ class ActivityCardWidget extends StatelessWidget {
                   children: [
                     // Urgenza
                     _buildScoreIndicator(
+                      context,
                       l10n.eisenhowerUrgency,
                       activity.aggregatedUrgency,
                       Colors.orange,
@@ -359,6 +361,7 @@ class ActivityCardWidget extends StatelessWidget {
                     const SizedBox(width: 16),
                     // Importanza
                     _buildScoreIndicator(
+                      context,
                       l10n.eisenhowerImportance,
                       activity.aggregatedImportance,
                       Colors.green,
@@ -368,20 +371,20 @@ class ActivityCardWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: context.surfaceVariantColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.how_to_vote, size: 12, color: Colors.grey[600]),
+                          Icon(Icons.how_to_vote, size: 12, color: context.textSecondaryColor),
                           const SizedBox(width: 4),
                           Text(
                             '${activity.voteCount}',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey[700],
+                              color: context.textSecondaryColor,
                             ),
                           ),
                         ],
@@ -449,12 +452,12 @@ class ActivityCardWidget extends StatelessWidget {
               // STATO 1: In attesa - facilitatore può avviare, voter può pre-votare
               if (activity.isWaitingForVoting && _totalExpectedVoters > 1) ...[
                 const SizedBox(height: 12),
-                _buildWaitingForVotingSection(l10n),
+                _buildWaitingForVotingSection(context, l10n),
               ]
               // STATO 2: Votazione in corso - voti nascosti fino al reveal
               else if (activity.isVotingInProgress) ...[
                 const SizedBox(height: 12),
-                _buildVotingInProgressSection(l10n),
+                _buildVotingInProgressSection(context, l10n),
               ],
               // STATO 3: Rivelata - i risultati sono già mostrati sopra nel footer
             ],
@@ -469,16 +472,16 @@ class ActivityCardWidget extends StatelessWidget {
   /// - Facilitatore: vede "Avvia Votazione" e può pre-votare
   /// - Voter: può pre-votare (voto nascosto a tutti)
   /// - Observer: vede solo messaggio "In attesa"
-  Widget _buildWaitingForVotingSection(AppLocalizations l10n) {
+  Widget _buildWaitingForVotingSection(BuildContext context, AppLocalizations l10n) {
     // Conta i pre-voti esistenti
     final preVoteCount = activity.votes.length;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.05),
+        color: context.surfaceVariantColor.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: context.borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,20 +492,20 @@ class ActivityCardWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.15),
+                  color: context.surfaceVariantColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.hourglass_empty, size: 14, color: Colors.grey[600]),
+                    Icon(Icons.hourglass_empty, size: 14, color: context.textSecondaryColor),
                     const SizedBox(width: 4),
                     Text(
                       l10n.eisenhowerWaitingForStart,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
+                        color: context.textSecondaryColor,
                       ),
                     ),
                   ],
@@ -534,7 +537,7 @@ class ActivityCardWidget extends StatelessWidget {
             // Observer: solo messaggio
             Text(
               l10n.eisenhowerObserverWaiting,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
+              style: TextStyle(fontSize: 12, color: context.textSecondaryColor, fontStyle: FontStyle.italic),
             ),
           ] else ...[
             // Facilitatore o Voter: possono pre-votare e facilitatore può avviare
@@ -614,7 +617,7 @@ class ActivityCardWidget extends StatelessWidget {
   /// - Facilitatore: vede progresso (X/Y), NON i valori voti, può rivelare quando tutti pronti
   /// - Voter: vede solo il proprio voto, può votare se non ha ancora votato
   /// - Observer: vede solo il progresso, nessun voto
-  Widget _buildVotingInProgressSection(AppLocalizations l10n) {
+  Widget _buildVotingInProgressSection(BuildContext context, AppLocalizations l10n) {
     final readyCount = activity.readyVoters.length;
     final allReady = _areAllVotersReady;
     final hasCurrentUserVoted = currentUserEmail != null &&
@@ -656,7 +659,7 @@ class ActivityCardWidget extends StatelessWidget {
             child: LinearProgressIndicator(
               value: _totalExpectedVoters > 0 ? readyCount / _totalExpectedVoters : 0.0,
               minHeight: 6,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: context.surfaceVariantColor,
               valueColor: AlwaysStoppedAnimation(
                 allReady ? Colors.green : Colors.green,
               ),
@@ -669,14 +672,14 @@ class ActivityCardWidget extends StatelessWidget {
             children: [
               Text(
                 l10n.eisenhowerVotedParticipants(readyCount, _totalExpectedVoters),
-                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
               ),
               const Spacer(),
               // Tooltip con lista chi manca
               if (!allReady)
                 Tooltip(
                   message: l10n.eisenhowerWaitingForAllVotes,
-                  child: Icon(Icons.info_outline, size: 14, color: Colors.grey[500]),
+                  child: Icon(Icons.info_outline, size: 14, color: context.textTertiaryColor),
                 ),
             ],
           ),
@@ -688,7 +691,7 @@ class ActivityCardWidget extends StatelessWidget {
             Center(
               child: Text(
                 l10n.eisenhowerObserverWaitingVotes,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
+                style: TextStyle(fontSize: 12, color: context.textSecondaryColor, fontStyle: FontStyle.italic),
               ),
             ),
           ] else ...[
@@ -809,7 +812,7 @@ class ActivityCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreIndicator(String label, double value, Color color) {
+  Widget _buildScoreIndicator(BuildContext context, String label, double value, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -817,7 +820,7 @@ class ActivityCardWidget extends StatelessWidget {
           '$label: ',
           style: TextStyle(
             fontSize: 11,
-            color: Colors.grey[600],
+            color: context.textSecondaryColor,
           ),
         ),
         Container(

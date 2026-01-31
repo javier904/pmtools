@@ -155,6 +155,62 @@ class AuthService {
     }
   }
 
+  /// Invia email di verifica all'utente corrente
+  Future<void> sendEmailVerification() async {
+    try {
+      await _auth.currentUser?.sendEmailVerification();
+    } catch (e) {
+      if (kDebugMode) print('❌ Errore invio email verifica: $e');
+      rethrow;
+    }
+  }
+
+  /// Verifica se l'email dell'utente è verificata
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
+
+  /// Ricarica i dati utente da Firebase (per aggiornare emailVerified)
+  Future<void> reloadUser() async {
+    await _auth.currentUser?.reload();
+  }
+
+  /// Aggiorna la password dell'utente corrente
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      await _auth.currentUser?.updatePassword(newPassword);
+    } catch (e) {
+      if (kDebugMode) print('❌ Errore aggiornamento password: $e');
+      rethrow;
+    }
+  }
+
+  /// Re-autenticazione con email/password (richiesta per operazioni sensibili)
+  Future<void> reauthenticateWithEmail(String email, String password) async {
+    final credential = EmailAuthProvider.credential(email: email, password: password);
+    await _auth.currentUser?.reauthenticateWithCredential(credential);
+  }
+
+  /// Re-autenticazione con Google (richiesta per operazioni sensibili)
+  Future<void> reauthenticateWithGoogle() async {
+    try {
+      if (kIsWeb) {
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        await _auth.signInWithPopup(googleProvider);
+      } else {
+        final googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) throw Exception('Google sign-in cancelled');
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        await _auth.currentUser?.reauthenticateWithCredential(credential);
+      }
+    } catch (e) {
+      if (kDebugMode) print('❌ Errore re-autenticazione Google: $e');
+      rethrow;
+    }
+  }
+
   /// Logout
   Future<void> signOut() async {
     try {

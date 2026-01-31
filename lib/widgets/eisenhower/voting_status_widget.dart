@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_participant_model.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
 
 /// Widget che mostra lo stato della votazione indipendente
 ///
@@ -93,7 +94,7 @@ class VotingStatusWidget extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: context.surfaceVariantColor,
               valueColor: AlwaysStoppedAnimation(
                 allReady ? Colors.green : Colors.green,
               ),
@@ -123,7 +124,7 @@ class VotingStatusWidget extends StatelessWidget {
                     icon: const Icon(Icons.refresh, size: 18),
                     label: const Text('Reset'),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[600],
+                      foregroundColor: context.textSecondaryColor,
                     ),
                   ),
                 const Spacer(),
@@ -259,7 +260,7 @@ class VotingStatusWidget extends StatelessWidget {
                 ),
                 Text(
                   participant.role.displayName,
-                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                  style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
                 ),
               ],
             ),
@@ -316,7 +317,7 @@ class VotingStatusWidget extends StatelessWidget {
                     height: 12,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.grey[400],
+                      color: context.textTertiaryColor,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -324,7 +325,7 @@ class VotingStatusWidget extends StatelessWidget {
                     l10n.eisenhowerWaiting,
                     style: TextStyle(
                       fontSize: 11,
-                      color: Colors.grey[600],
+                      color: context.textSecondaryColor,
                     ),
                   ),
                 ],

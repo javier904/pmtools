@@ -22,23 +22,23 @@
   <link rel="canonical" href="https://keisenapp.com/">
 
   <!-- Multi-language signals for Google -->
-  <link rel="alternate" hreflang="it" href="https://keisenapp.com/">
   <link rel="alternate" hreflang="en" href="https://keisenapp.com/">
-  <link rel="alternate" hreflang="es" href="https://keisenapp.com/">
-  <link rel="alternate" hreflang="fr" href="https://keisenapp.com/">
+  <link rel="alternate" hreflang="it" href="https://keisenapp.com/it/">
+  <link rel="alternate" hreflang="es" href="https://keisenapp.com/es/">
+  <link rel="alternate" hreflang="fr" href="https://keisenapp.com/fr/">
   <link rel="alternate" hreflang="x-default" href="https://keisenapp.com/">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://keisenapp.com/">
-  <meta property="og:title" content="Keisen - La Piattaforma Agile per Team Moderni">
+  <meta property="og:title" content="Keisen - The Agile Platform for Modern Teams">
   <meta property="og:description"
-    content="Ottimizza il tuo workflow con Smart Todo, Planning Poker e Gestione Sprint in un'unica piattaforma collaborativa.">
+    content="Optimize your workflow with Smart Todo, Planning Poker and Sprint Management in one collaborative platform.">
   <meta property="og:image" content="https://keisenapp.com/icons/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:locale" content="it_IT">
-  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="it_IT">
   <meta property="og:locale:alternate" content="es_ES">
   <meta property="og:locale:alternate" content="fr_FR">
   <meta property="og:site_name" content="Keisen">
@@ -46,10 +46,34 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://keisenapp.com/">
-  <meta name="twitter:title" content="Keisen - La Piattaforma Agile per Team Moderni">
+  <meta name="twitter:title" content="Keisen - The Agile Platform for Modern Teams">
   <meta name="twitter:description"
-    content="La soluzione all-in-one per team agili. Smart Todo, Planning Poker e Sprint Planning.">
+    content="The all-in-one solution for agile teams. Smart Todo, Planning Poker and Sprint Planning.">
   <meta name="twitter:image" content="https://keisenapp.com/icons/og-image.png">
+
+  <!-- Structured Data - JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Keisen",
+    "url": "https://keisenapp.com",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "description": "The all-in-one agile platform for modern teams. Smart Todo, Planning Poker, Eisenhower Matrix, Sprint Management, and Retrospective Board.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Keisen",
+      "url": "https://keisenapp.com"
+    },
+    "featureList": "Smart Todo, Planning Poker, Eisenhower Matrix, Agile Process Manager, Retrospective Board"
+  }
+  </script>
 
   <!-- Google Sign-In Client ID -->
   <meta name="google-signin-client_id" content="1869753247-v367eltmlo66cat4cug513qk4esou5hu.apps.googleusercontent.com">
@@ -207,13 +231,32 @@
 </head>
 
 <body>
-  <!-- Loading Screen - Minimal -->
+  <!-- Loading Screen with SEO content -->
   <div id="loading-screen" class="loading-screen">
 
     <div class="logo-container">
-      <img src="icons/Icon-192.png" alt="Keisen Logo" class="logo">
+      <img src="icons/Icon-192.png" alt="Keisen - Agile Platform for Modern Teams" class="logo">
     </div>
     <h1 class="app-title">Keisen</h1>
+    <p style="max-width:600px; margin:16px auto 0; opacity:0.7; font-size:15px; line-height:1.6;">
+      The all-in-one agile platform for modern teams.
+    </p>
+
+    <!-- SEO-rich content: visible during load, hidden by Flutter -->
+    <div style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+      <h2>Smart Todo & Kanban Board</h2>
+      <p>Collaborative task management with custom columns, drag and drop, WIP monitoring, CFD analytics and cross-tool integration.</p>
+      <h2>Planning Poker & Estimation Room</h2>
+      <p>7 estimation modes including Fibonacci, T-Shirt sizing and PERT. Real-time collaborative voting with statistics and consensus detection.</p>
+      <h2>Eisenhower Matrix</h2>
+      <p>4-quadrant prioritization by urgency and importance with voting, scatter charts and RACI matrix. Share matrices with your team.</p>
+      <h2>Agile Process Manager</h2>
+      <p>Full Scrum, Kanban and Hybrid sprint lifecycle with backlog management, velocity tracking, burndown charts and team workload analysis.</p>
+      <h2>Retrospective Board</h2>
+      <p>6 retrospective templates with guided phases, action items, sentiment tracking and Agile Coach overlay for continuous improvement.</p>
+      <h2>Free agile tools for Scrum and Kanban teams</h2>
+      <p>Keisen is a free web application that helps agile teams collaborate effectively. Use Planning Poker for estimation, Eisenhower Matrix for prioritization, Smart Todo for task management and Retrospective Board for continuous improvement. No installation required, works in your browser.</p>
+    </div>
   </div>
 
   <!-- SEO Footer - visible to crawlers and Google verification bot -->
@@ -226,8 +269,8 @@
   <!-- Noscript fallback for bots/crawlers that don't execute JavaScript -->
   <noscript>
     <div style="padding: 40px; text-align: center; font-family: sans-serif;">
-      <h1>Keisen - La Piattaforma Agile per Team Moderni</h1>
-      <p>Ottimizza il tuo workflow con Keisen: Smart Todo, Planning Poker e Gestione Sprint.</p>
+      <h1>Keisen - The Agile Platform for Modern Teams</h1>
+      <p>Optimize your workflow with Keisen: Smart Todo, Planning Poker and Sprint Management. The all-in-one solution for agile teams based on Scrum and Kanban.</p>
       <p>
         <a href="https://keisenapp.com/privacy">Privacy Policy</a> |
         <a href="https://keisenapp.com/terms">Terms of Service</a> |

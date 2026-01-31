@@ -26,6 +26,7 @@ import 'screens/legal/terms_of_service_screen.dart';
 import 'screens/legal/cookie_policy_screen.dart';
 import 'screens/legal/gdpr_screen.dart';
 import 'screens/invite_landing_screen.dart';
+import 'screens/verify_email_screen.dart';
 import 'widgets/legal/cookie_consent_banner.dart';
 import 'models/unified_invite_model.dart';
 
@@ -199,6 +200,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
               home: const AuthWrapper(),
               routes: {
                 '/login': (context) => const LoginScreen(),
+                '/verify-email': (context) => const VerifyEmailScreen(),
                 '/home': (context) => const _AuthGuard(child: HomeScreen()),
                 '/profile': (context) => const _AuthGuard(child: ProfileScreen()),
                 // '/eisenhower' gestito in onGenerateRoute per supportare arguments
@@ -322,6 +324,11 @@ class _AuthGuard extends StatelessWidget {
           );
         }
         if (snapshot.hasData) {
+          final user = snapshot.data!;
+          final isEmailProvider = user.providerData.any((p) => p.providerId == 'password');
+          if (isEmailProvider && !user.emailVerified) {
+            return const VerifyEmailScreen();
+          }
           return child;
         }
         return const LandingScreen();
@@ -365,8 +372,14 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        // Autenticato → Home
+        // Autenticato
         if (snapshot.hasData) {
+          final user = snapshot.data!;
+          // Se provider email e non ha verificato → VerifyEmailScreen
+          final isEmailProvider = user.providerData.any((p) => p.providerId == 'password');
+          if (isEmailProvider && !user.emailVerified) {
+            return const VerifyEmailScreen();
+          }
           return const HomeScreen();
         }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
 import 'activity_card_widget.dart';
 
 /// Widget che visualizza la griglia 2x2 della Matrice di Eisenhower
@@ -43,7 +44,7 @@ class MatrixGridWidget extends StatelessWidget {
     return Column(
       children: [
         // Header con etichette
-        _buildAxisLabels(l10n),
+        _buildAxisLabels(context, l10n),
         const SizedBox(height: 8),
         // Griglia 2x2
         Expanded(
@@ -51,7 +52,7 @@ class MatrixGridWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Etichetta verticale "IMPORTANTE"
-              _buildVerticalLabel(l10n),
+              _buildVerticalLabel(context, l10n),
               // Colonna sinistra (NON URGENTE)
               Expanded(
                 child: Column(
@@ -124,7 +125,7 @@ class MatrixGridWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildAxisLabels(AppLocalizations l10n) {
+  Widget _buildAxisLabels(BuildContext context, AppLocalizations l10n) {
     return Row(
       children: [
         const SizedBox(width: 24), // Spazio per etichetta verticale
@@ -135,7 +136,7 @@ class MatrixGridWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: context.textSecondaryColor,
               ),
             ),
           ),
@@ -147,7 +148,7 @@ class MatrixGridWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: context.textSecondaryColor,
               ),
             ),
           ),
@@ -156,7 +157,7 @@ class MatrixGridWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalLabel(AppLocalizations l10n) {
+  Widget _buildVerticalLabel(BuildContext context, AppLocalizations l10n) {
     return SizedBox(
       width: 24,
       child: RotatedBox(
@@ -167,7 +168,7 @@ class MatrixGridWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+              color: context.textSecondaryColor,
             ),
           ),
         ),

@@ -6,6 +6,7 @@ import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../main.dart';
 import '../services/user_profile_service.dart';
+import '../models/user_profile/user_profile_model.dart' show AuthProvider;
 import 'legal/privacy_policy_screen.dart';
 import 'legal/terms_of_service_screen.dart';
 import 'legal/cookie_policy_screen.dart';
@@ -31,7 +32,7 @@ class _LandingScreenState extends State<LandingScreen> {
       final credential = await _authService.signInWithGoogle();
       if (credential != null && credential.user != null) {
         // Crea/Aggiorna profilo utente su Firestore
-        await UserProfileService().createOrUpdateProfileFromAuth();
+        await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.google);
       }
     } catch (e) {
       if (mounted) {
@@ -181,7 +182,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   ),
                 )
               : _HoverButton(
-                  onTap: _signInWithGoogle,
+                  onTap: () => Navigator.pushNamed(context, '/login'),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
@@ -195,7 +196,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         const Icon(Icons.login, color: Colors.white, size: 18),
                         const SizedBox(width: 8),
                         Text(
-                          isMobile ? l10n.authLogin : l10n.authSignInGoogle,
+                          l10n.authLogin,
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -309,6 +310,24 @@ class _LandingScreenState extends State<LandingScreen> {
                       SizedBox(width: 8),
                       Icon(Icons.arrow_forward, color: Colors.white, size: 18),
                     ],
+                  ),
+                ),
+              ),
+              _HoverButton(
+                onTap: () => Navigator.pushNamed(context, '/login'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: context.borderColor),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    l10n.authSignInWithEmail,
+                    style: TextStyle(
+                      color: context.textPrimaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -757,40 +776,68 @@ class _LandingScreenState extends State<LandingScreen> {
             ),
           ),
           SizedBox(height: isCompact ? 20 : 40),
-           _HoverButton(
-            onTap: _signInWithGoogle,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: isCompact ? 24 : 32, 
-                vertical: isCompact ? 16 : 20
-              ),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.4),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            alignment: WrapAlignment.center,
+            children: [
+              _HoverButton(
+                onTap: _signInWithGoogle,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isCompact ? 24 : 32,
+                    vertical: isCompact ? 16 : 20
                   ),
-                ],
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.4),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.landingStartFree,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isCompact ? 16 : 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                    ],
+                  ),
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.landingStartFree,
+              _HoverButton(
+                onTap: () => Navigator.pushNamed(context, '/login'),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isCompact ? 24 : 32,
+                    vertical: isCompact ? 16 : 20
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: context.borderColor),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    l10n.authSignInWithEmail,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: context.textPrimaryColor,
                       fontSize: isCompact ? 16 : 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
       ],
     );
@@ -2553,34 +2600,70 @@ class _LandingScreenState extends State<LandingScreen> {
             ),
           ),
           const SizedBox(height: 32),
-          _HoverButton(
-            onTap: _signInWithGoogle,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white : AppColors.primary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.login,
-                    color: isDark ? AppColors.primary : Colors.white,
-                    size: 20,
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            alignment: WrapAlignment.center,
+            children: [
+              _HoverButton(
+                onTap: _signInWithGoogle,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white : AppColors.primary,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(width: 10),
-                  Text(
-                    l10n.authSignInGoogle, // 'Accedi con Google' - REUSED
-                    style: TextStyle(
-                      color: isDark ? AppColors.primary : Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.login,
+                        color: isDark ? AppColors.primary : Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        l10n.authSignInGoogle,
+                        style: TextStyle(
+                          color: isDark ? AppColors.primary : Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              _HoverButton(
+                onTap: () => Navigator.pushNamed(context, '/login'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: context.borderColor),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.email_outlined,
+                        color: context.textPrimaryColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        l10n.authSignInWithEmail,
+                        style: TextStyle(
+                          color: context.textPrimaryColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

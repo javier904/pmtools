@@ -8,6 +8,7 @@ import '../services/user_profile_service.dart';
 import '../services/auth_service.dart';
 import '../services/gdpr_service.dart';
 import '../controllers/locale_controller.dart';
+import '../widgets/reauthentication_dialog.dart';
 import 'dart:html' as html;
 import 'dart:convert';
 
@@ -167,6 +168,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Sezione Impostazioni
                           _buildSettingsSection(theme, isDark),
                           const SizedBox(height: 16),
+
+                          // Sezione Sicurezza (solo utenti email)
+                          if (_profile?.authProvider == AuthProvider.email) ...[
+                            _buildSecuritySection(theme, isDark),
+                            const SizedBox(height: 16),
+                          ],
 
                           // Sezione Feature Flags
                           _buildFeatureFlagsSection(theme, isDark),
@@ -566,6 +573,121 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildSecuritySection(ThemeData theme, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return _buildExpandableSection(
+      title: l10n.profileSecurity,
+      icon: Icons.security,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.lock_outline),
+          title: Text(l10n.authChangePassword),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => _showChangePasswordDialog(),
+        ),
+      ],
+    );
+  }
+
+  void _showChangePasswordDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    String? dialogError;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l10n.authChangePassword),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: currentPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: l10n.authCurrentPassword,
+                  prefixIcon: const Icon(Icons.lock),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: l10n.authNewPassword,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: l10n.authConfirmNewPassword,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              if (dialogError != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  dialogError!,
+                  style: const TextStyle(color: Colors.red, fontSize: 13),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l10n.actionCancel),
+            ),
+            FilledButton(
+              onPressed: () async {
+                // Validazioni
+                if (newPasswordController.text.length < 6) {
+                  setDialogState(() => dialogError = l10n.authPasswordTooShort);
+                  return;
+                }
+                if (newPasswordController.text != confirmPasswordController.text) {
+                  setDialogState(() => dialogError = l10n.authPasswordMismatch);
+                  return;
+                }
+
+                try {
+                  // Re-auth con password attuale
+                  final email = _authService.currentUser?.email ?? '';
+                  await _authService.reauthenticateWithEmail(email, currentPasswordController.text);
+                  // Aggiorna password
+                  await _authService.updatePassword(newPasswordController.text);
+                  if (mounted) {
+                    Navigator.pop(dialogContext);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.authPasswordChanged)),
+                    );
+                  }
+                } catch (e) {
+                  if (e.toString().contains('wrong-password') || e.toString().contains('invalid-credential')) {
+                    setDialogState(() => dialogError = l10n.authWrongCurrentPassword);
+                  } else {
+                    setDialogState(() => dialogError = e.toString());
+                  }
+                }
+              },
+              child: Text(l10n.actionConfirm),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFeatureFlagsSection(ThemeData theme, bool isDark) {
     if (_settings == null) return const SizedBox.shrink();
 
@@ -836,6 +958,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _deleteAccount() async {
+    // Step 1: Re-autenticazione
+    final reauthed = await ReauthenticationDialog.show(context);
+    if (reauthed != true) return;
+
+    // Step 2: Procedi con cancellazione
     setState(() => _isSaving = true);
     final l10n = AppLocalizations.of(context)!;
     try {

@@ -571,7 +571,7 @@ class InviteService {
   /// Genera il link di invito per deep linking
   String generateInviteLink(
     UnifiedInviteModel invite, {
-    String baseUrl = 'https://pm-agile-tools-app.web.app',
+    String baseUrl = 'https://keisenapp.com',
   }) {
     final typePath = _getTypePathForDeepLink(invite.sourceType);
     return '$baseUrl/#/invite/$typePath/${invite.sourceId}';

@@ -231,6 +231,78 @@ class AppLocalizationsIt extends AppLocalizations {
   String get authNoAccount => 'Non hai un account?';
 
   @override
+  String get authForgotPassword => 'Password dimenticata?';
+
+  @override
+  String get authResetPasswordSent =>
+      'Email di reset inviata. Controlla la posta.';
+
+  @override
+  String get authVerifyEmail => 'Verifica la tua email';
+
+  @override
+  String authVerifyEmailDesc(String email) {
+    return 'Ti abbiamo inviato un\'email di verifica a $email. Clicca il link per attivare il tuo account.';
+  }
+
+  @override
+  String get authResendVerification => 'Reinvia email di verifica';
+
+  @override
+  String get authVerificationSent => 'Email di verifica inviata!';
+
+  @override
+  String get authEmailVerified => 'Email verificata!';
+
+  @override
+  String get authIVerified => 'Ho verificato la mia email';
+
+  @override
+  String get authWaitingVerification => 'In attesa di verifica...';
+
+  @override
+  String get authChangePassword => 'Cambia password';
+
+  @override
+  String get authCurrentPassword => 'Password attuale';
+
+  @override
+  String get authNewPassword => 'Nuova password';
+
+  @override
+  String get authConfirmNewPassword => 'Conferma nuova password';
+
+  @override
+  String get authPasswordChanged => 'Password modificata con successo';
+
+  @override
+  String get authPasswordMismatch => 'Le password non coincidono';
+
+  @override
+  String get authPasswordTooShort => 'Minimo 6 caratteri';
+
+  @override
+  String get authReauthRequired => 'Conferma la tua identità';
+
+  @override
+  String get authReauthDesc =>
+      'Per sicurezza, conferma la tua identità per continuare.';
+
+  @override
+  String get authSignInWithEmail => 'Accedi con Email';
+
+  @override
+  String get authWrongCurrentPassword => 'La password attuale non è corretta';
+
+  @override
+  String get profileSecurity => 'Sicurezza';
+
+  @override
+  String authCooldownWait(int seconds) {
+    return 'Attendi ${seconds}s prima di reinviare';
+  }
+
+  @override
   String get navHome => 'Home';
 
   @override

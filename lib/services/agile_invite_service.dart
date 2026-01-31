@@ -409,7 +409,7 @@ class AgileInviteService {
   // ============================================================
 
   /// Genera il link di invito - nuovo formato deep link
-  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? projectId}) {
+  String generateInviteLink(String token, {String baseUrl = 'https://keisenapp.com', String? projectId}) {
     if (projectId != null) {
       return '$baseUrl/#/invite/agile-project/$projectId';
     }

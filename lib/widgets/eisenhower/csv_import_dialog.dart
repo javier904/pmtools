@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
 import '../../services/csv_import_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
 
 /// Dialog per importare attività da file CSV
 ///
@@ -115,7 +116,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                 title: Text(l10n.eisenhowerImportMarkRevealed),
                 subtitle: Text(
                   l10n.eisenhowerImportMarkRevealedHint,
-                  style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: context.textTertiaryColor),
                 ),
                 controlAffinity: ListTileControlAffinity.leading,
                 dense: true,
@@ -180,7 +181,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? Colors.black26 : Colors.white,
+              color: context.surfaceVariantColor,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.shade100),
             ),
@@ -189,7 +190,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
               style: TextStyle(
                 fontSize: 11,
                 fontFamily: 'monospace',
-                color: isDark ? Colors.grey[300] : Colors.grey[800],
+                color: context.textPrimaryColor,
               ),
             ),
           ),
@@ -242,7 +243,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                 ),
                 Text(
                   l10n.eisenhowerImportSupportedFormats,
-                  style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                  style: TextStyle(fontSize: 11, color: context.textTertiaryColor),
                 ),
               ],
             ),
@@ -331,7 +332,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
             padding: const EdgeInsets.only(left: 26, bottom: 4),
             child: Text(
               _translateError(error, l10n),
-              style: TextStyle(fontSize: 12, color: isDark ? Colors.orange.shade200 : Colors.orange.shade800),
+              style: TextStyle(fontSize: 12, color: isDark ? Colors.orange.shade300 : Colors.orange.shade800),
             ),
           )),
           if (errors.length > 5)
@@ -342,7 +343,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                 style: TextStyle(
                   fontSize: 12,
                   fontStyle: FontStyle.italic,
-                  color: isDark ? Colors.orange.shade200 : Colors.orange.shade600,
+                  color: context.textTertiaryColor,
                 ),
               ),
             ),
@@ -449,7 +450,7 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                     Expanded(
                       child: Text(
                         activity.description,
-                        style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                        style: TextStyle(fontSize: 11, color: context.textTertiaryColor),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -503,11 +504,11 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.description, size: 48, color: isDark ? Colors.grey[600] : Colors.grey[400]),
+          Icon(Icons.description, size: 48, color: context.textTertiaryColor),
           const SizedBox(height: 16),
           Text(
             l10n.eisenhowerImportSelectFile,
-            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 16),
+            style: TextStyle(color: context.textSecondaryColor, fontSize: 16),
           ),
         ],
       ),
@@ -520,11 +521,11 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.inbox, size: 48, color: isDark ? Colors.grey[600] : Colors.grey[400]),
+          Icon(Icons.inbox, size: 48, color: context.textTertiaryColor),
           const SizedBox(height: 16),
           Text(
             l10n.eisenhowerImportNoActivities,
-            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+            style: TextStyle(color: context.textSecondaryColor),
           ),
         ],
       ),

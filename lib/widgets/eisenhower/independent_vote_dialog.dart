@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/eisenhower_activity_model.dart';
+import '../../themes/app_theme.dart';
 
 /// Dialog per inserire il voto indipendente su un'attivita'
 ///
@@ -70,7 +71,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
                   widget.activity.title,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: context.textSecondaryColor,
                     fontWeight: FontWeight.normal,
                   ),
                   maxLines: 1,
@@ -112,7 +113,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
-                  Icon(Icons.lock, size: 16, color: Colors.grey[400]),
+                  Icon(Icons.lock, size: 16, color: context.textTertiaryColor),
                 ],
               ),
             ),
@@ -192,7 +193,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
+                color: context.textSecondaryColor,
               ),
             ),
             const Spacer(),
@@ -239,11 +240,11 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
             children: [
               Text(
                 lowLabel,
-                style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
               ),
               Text(
                 highLabel,
-                style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
               ),
             ],
           ),
@@ -285,7 +286,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
                 ),
                 Text(
                   quadrantInfo.action,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
                 ),
               ],
             ),

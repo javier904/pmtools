@@ -63,7 +63,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get actionRetry => 'Réessayer';
 
   @override
-  String get exportAllData => 'Esporta Tutti i Dati (Report Completo)';
+  String get exportAllData => 'Exporter Toutes les Données (Rapport Complet)';
 
   @override
   String get actionConfirm => 'Confirmer';
@@ -229,6 +229,78 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authNoAccount => 'Vous n\'avez pas de compte ?';
+
+  @override
+  String get authForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get authResetPasswordSent =>
+      'Email de réinitialisation envoyé. Vérifiez votre boîte de réception.';
+
+  @override
+  String get authVerifyEmail => 'Vérifiez votre email';
+
+  @override
+  String authVerifyEmailDesc(String email) {
+    return 'Nous vous avons envoyé un email de vérification à $email. Cliquez sur le lien pour activer votre compte.';
+  }
+
+  @override
+  String get authResendVerification => 'Renvoyer l\'email de vérification';
+
+  @override
+  String get authVerificationSent => 'Email de vérification envoyé !';
+
+  @override
+  String get authEmailVerified => 'Email vérifié !';
+
+  @override
+  String get authIVerified => 'J\'ai vérifié mon email';
+
+  @override
+  String get authWaitingVerification => 'En attente de vérification...';
+
+  @override
+  String get authChangePassword => 'Changer le mot de passe';
+
+  @override
+  String get authCurrentPassword => 'Mot de passe actuel';
+
+  @override
+  String get authNewPassword => 'Nouveau mot de passe';
+
+  @override
+  String get authConfirmNewPassword => 'Confirmer le nouveau mot de passe';
+
+  @override
+  String get authPasswordChanged => 'Mot de passe modifié avec succès';
+
+  @override
+  String get authPasswordMismatch => 'Les mots de passe ne correspondent pas';
+
+  @override
+  String get authPasswordTooShort => 'Minimum 6 caractères';
+
+  @override
+  String get authReauthRequired => 'Confirmez votre identité';
+
+  @override
+  String get authReauthDesc =>
+      'Par sécurité, veuillez confirmer votre identité pour continuer.';
+
+  @override
+  String get authSignInWithEmail => 'Se connecter avec Email';
+
+  @override
+  String get authWrongCurrentPassword => 'Le mot de passe actuel est incorrect';
+
+  @override
+  String get profileSecurity => 'Sécurité';
+
+  @override
+  String authCooldownWait(int seconds) {
+    return 'Attendez ${seconds}s avant de renvoyer';
+  }
 
   @override
   String get navHome => 'Accueil';

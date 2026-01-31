@@ -231,6 +231,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authNoAccount => 'Don\'t have an account?';
 
   @override
+  String get authForgotPassword => 'Forgot password?';
+
+  @override
+  String get authResetPasswordSent =>
+      'Password reset email sent. Check your inbox.';
+
+  @override
+  String get authVerifyEmail => 'Verify your email';
+
+  @override
+  String authVerifyEmailDesc(String email) {
+    return 'We sent a verification email to $email. Click the link to activate your account.';
+  }
+
+  @override
+  String get authResendVerification => 'Resend verification email';
+
+  @override
+  String get authVerificationSent => 'Verification email sent!';
+
+  @override
+  String get authEmailVerified => 'Email verified!';
+
+  @override
+  String get authIVerified => 'I\'ve verified my email';
+
+  @override
+  String get authWaitingVerification => 'Waiting for verification...';
+
+  @override
+  String get authChangePassword => 'Change password';
+
+  @override
+  String get authCurrentPassword => 'Current password';
+
+  @override
+  String get authNewPassword => 'New password';
+
+  @override
+  String get authConfirmNewPassword => 'Confirm new password';
+
+  @override
+  String get authPasswordChanged => 'Password changed successfully';
+
+  @override
+  String get authPasswordMismatch => 'Passwords don\'t match';
+
+  @override
+  String get authPasswordTooShort => 'Minimum 6 characters';
+
+  @override
+  String get authReauthRequired => 'Confirm your identity';
+
+  @override
+  String get authReauthDesc =>
+      'For security, please confirm your identity to continue.';
+
+  @override
+  String get authSignInWithEmail => 'Sign in with Email';
+
+  @override
+  String get authWrongCurrentPassword => 'Current password is incorrect';
+
+  @override
+  String get profileSecurity => 'Security';
+
+  @override
+  String authCooldownWait(int seconds) {
+    return 'Wait ${seconds}s before resending';
+  }
+
+  @override
   String get navHome => 'Home';
 
   @override

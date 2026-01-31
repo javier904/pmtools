@@ -23,23 +23,63 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
+    "headers": [
       {
-        "source": "/privacy",
-        "destination": "/privacy.html"
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico|woff|woff2)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        ]
       },
       {
-        "source": "/terms",
-        "destination": "/terms.html"
-      },
-      {
-        "source": "/changelog",
-        "destination": "/changelog.html"
+        "source": "**/*.@(js|css)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=86400" }
+        ]
       },
       {
         "source": "**",
-        "destination": "/index.html"
+        "headers": [
+          { "key": "X-Content-Type-Options", "value": "nosniff" },
+          { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        ]
       }
+    ],
+    "rewrites": [
+      { "source": "/privacy", "destination": "/privacy.html" },
+      { "source": "/terms", "destination": "/terms.html" },
+      { "source": "/changelog", "destination": "/changelog.html" },
+
+      { "source": "/smart-todo", "destination": "/smart-todo.html" },
+      { "source": "/eisenhower", "destination": "/eisenhower.html" },
+      { "source": "/estimation-room", "destination": "/estimation-room.html" },
+      { "source": "/agile-process", "destination": "/agile-process.html" },
+      { "source": "/retrospective-list", "destination": "/retrospective.html" },
+
+      { "source": "/it", "destination": "/it/index.html" },
+      { "source": "/it/", "destination": "/it/index.html" },
+      { "source": "/it/smart-todo", "destination": "/it/smart-todo.html" },
+      { "source": "/it/eisenhower", "destination": "/it/eisenhower.html" },
+      { "source": "/it/estimation-room", "destination": "/it/estimation-room.html" },
+      { "source": "/it/agile-process", "destination": "/it/agile-process.html" },
+      { "source": "/it/retrospective-list", "destination": "/it/retrospective.html" },
+
+      { "source": "/es", "destination": "/es/index.html" },
+      { "source": "/es/", "destination": "/es/index.html" },
+      { "source": "/es/smart-todo", "destination": "/es/smart-todo.html" },
+      { "source": "/es/eisenhower", "destination": "/es/eisenhower.html" },
+      { "source": "/es/estimation-room", "destination": "/es/estimation-room.html" },
+      { "source": "/es/agile-process", "destination": "/es/agile-process.html" },
+      { "source": "/es/retrospective-list", "destination": "/es/retrospective.html" },
+
+      { "source": "/fr", "destination": "/fr/index.html" },
+      { "source": "/fr/", "destination": "/fr/index.html" },
+      { "source": "/fr/smart-todo", "destination": "/fr/smart-todo.html" },
+      { "source": "/fr/eisenhower", "destination": "/fr/eisenhower.html" },
+      { "source": "/fr/estimation-room", "destination": "/fr/estimation-room.html" },
+      { "source": "/fr/agile-process", "destination": "/fr/agile-process.html" },
+      { "source": "/fr/retrospective-list", "destination": "/fr/retrospective.html" },
+
+      { "source": "**", "destination": "/index.html" }
     ]
   },
   "flutter": {

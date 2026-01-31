@@ -1,11 +1,11 @@
 {
-    "name": "Keisen - La Piattaforma Agile per Team Moderni",
+    "name": "Keisen - The Agile Platform for Modern Teams",
     "short_name": "Keisen",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#1a1a2e",
     "theme_color": "#1a1a2e",
-    "description": "Ottimizza il tuo workflow con Keisen: Smart Todo, Planning Poker e Gestione Sprint. La soluzione all-in-one per team agili basata su Scrum e Kanban.",
+    "description": "Optimize your workflow with Keisen: Smart Todo, Planning Poker and Sprint Management. The all-in-one solution for agile teams based on Scrum and Kanban.",
     "orientation": "any",
     "prefer_related_applications": false,
     "categories": [
@@ -13,7 +13,7 @@
         "business",
         "utilities"
     ],
-    "lang": "it",
+    "lang": "en",
     "scope": "/",
     "icons": [
         {

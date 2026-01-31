@@ -522,6 +522,138 @@ abstract class AppLocalizations {
   /// **'Non hai un account?'**
   String get authNoAccount;
 
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In it, this message translates to:
+  /// **'Password dimenticata?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authResetPasswordSent.
+  ///
+  /// In it, this message translates to:
+  /// **'Email di reset inviata. Controlla la posta.'**
+  String get authResetPasswordSent;
+
+  /// No description provided for @authVerifyEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica la tua email'**
+  String get authVerifyEmail;
+
+  /// No description provided for @authVerifyEmailDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Ti abbiamo inviato un\'email di verifica a {email}. Clicca il link per attivare il tuo account.'**
+  String authVerifyEmailDesc(String email);
+
+  /// No description provided for @authResendVerification.
+  ///
+  /// In it, this message translates to:
+  /// **'Reinvia email di verifica'**
+  String get authResendVerification;
+
+  /// No description provided for @authVerificationSent.
+  ///
+  /// In it, this message translates to:
+  /// **'Email di verifica inviata!'**
+  String get authVerificationSent;
+
+  /// No description provided for @authEmailVerified.
+  ///
+  /// In it, this message translates to:
+  /// **'Email verificata!'**
+  String get authEmailVerified;
+
+  /// No description provided for @authIVerified.
+  ///
+  /// In it, this message translates to:
+  /// **'Ho verificato la mia email'**
+  String get authIVerified;
+
+  /// No description provided for @authWaitingVerification.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa di verifica...'**
+  String get authWaitingVerification;
+
+  /// No description provided for @authChangePassword.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambia password'**
+  String get authChangePassword;
+
+  /// No description provided for @authCurrentPassword.
+  ///
+  /// In it, this message translates to:
+  /// **'Password attuale'**
+  String get authCurrentPassword;
+
+  /// No description provided for @authNewPassword.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova password'**
+  String get authNewPassword;
+
+  /// No description provided for @authConfirmNewPassword.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma nuova password'**
+  String get authConfirmNewPassword;
+
+  /// No description provided for @authPasswordChanged.
+  ///
+  /// In it, this message translates to:
+  /// **'Password modificata con successo'**
+  String get authPasswordChanged;
+
+  /// No description provided for @authPasswordMismatch.
+  ///
+  /// In it, this message translates to:
+  /// **'Le password non coincidono'**
+  String get authPasswordMismatch;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In it, this message translates to:
+  /// **'Minimo 6 caratteri'**
+  String get authPasswordTooShort;
+
+  /// No description provided for @authReauthRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma la tua identità'**
+  String get authReauthRequired;
+
+  /// No description provided for @authReauthDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Per sicurezza, conferma la tua identità per continuare.'**
+  String get authReauthDesc;
+
+  /// No description provided for @authSignInWithEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Accedi con Email'**
+  String get authSignInWithEmail;
+
+  /// No description provided for @authWrongCurrentPassword.
+  ///
+  /// In it, this message translates to:
+  /// **'La password attuale non è corretta'**
+  String get authWrongCurrentPassword;
+
+  /// No description provided for @profileSecurity.
+  ///
+  /// In it, this message translates to:
+  /// **'Sicurezza'**
+  String get profileSecurity;
+
+  /// No description provided for @authCooldownWait.
+  ///
+  /// In it, this message translates to:
+  /// **'Attendi {seconds}s prima di reinviare'**
+  String authCooldownWait(int seconds);
+
   /// No description provided for @navHome.
   ///
   /// In it, this message translates to:

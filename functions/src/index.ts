@@ -14,7 +14,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import Stripe from 'stripe';
-import * as nodemailer from 'nodemailer';
 
 // Inizializza Firebase Admin
 admin.initializeApp();
@@ -708,9 +707,16 @@ export const checkTrialExpirations = functions.pubsub
 // EMAIL NOTIFICATIONS (Backend Delegation)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import * as brevo from '@getbrevo/brevo';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EMAIL NOTIFICATIONS (Brevo API Integration)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 /**
  * Trigger: Invio email quando viene creato un nuovo invito
  * Listening on: invitations/{inviteId}
+ * Using Brevo API Transactional Emails
  */
 export const onInviteCreated = functions.firestore
   .document('invitations/{inviteId}')
@@ -721,42 +727,35 @@ export const onInviteCreated = functions.firestore
     // Solo se lo status è pending
     if (invite.status !== 'pending') return;
 
-    // Configurazione SMTP (Aruba) da Firebase Cloud Functions Environment Config
-    // Settare via terminal con:
-    // firebase functions:config:set smtp.email="invites@keisenapp.com" smtp.password="PASSWORD"
-    const smtpEmail = functions.config().smtp?.email;
-    const smtpPassword = functions.config().smtp?.password;
+    // Configurazione Brevo via Firebase Environment Config
+    // firebase functions:config:set brevo.key="YOUR_API_KEY"
+    const brevoApiKey = functions.config().brevo?.key;
 
-    if (!smtpEmail || !smtpPassword) {
-      console.error('❌ SMTP credentials not configured.');
+    if (!brevoApiKey) {
+      console.error('❌ Brevo API Key not configured.');
       return;
     }
 
-    const transporter = nodemailer.createTransport({
-      host: "smtps.aruba.it",
-      port: 465,
-      secure: true, // SSL
-      auth: {
-        user: smtpEmail,
-        pass: smtpPassword,
-      },
-    });
+    // Inizializza Brevo SDK
+    const apiInstance = new brevo.TransactionalEmailsApi();
+    apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, brevoApiKey);
 
     try {
-      console.log(`📧 Sending email to ${invite.email} from ${smtpEmail}`);
+      console.log(`📧 Sending Brevo email to ${invite.email}`);
 
-      const mailOptions = {
-        from: `"Keisen App" <${smtpEmail}>`,
-        to: invite.email,
-        subject: _getEmailSubject(invite.sourceType, invite.sourceName),
-        html: _buildEmailHtml(invite, context.params.inviteId),
-      };
+      const sendSmtpEmail = new brevo.SendSmtpEmail();
 
-      await transporter.sendMail(mailOptions);
-      console.log(`✅ Email sent to ${invite.email}`);
+      sendSmtpEmail.subject = _getEmailSubject(invite.sourceType, invite.sourceName);
+      sendSmtpEmail.htmlContent = _buildEmailHtml(invite, context.params.inviteId);
+      sendSmtpEmail.sender = { "name": "Keisen App", "email": "invites@keisenapp.com" };
+      sendSmtpEmail.to = [{ "email": invite.email }];
+      sendSmtpEmail.replyTo = { "email": "support@keisenapp.com", "name": "Support Keisen" };
+
+      const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log('✅ Brevo API called successfully. Message ID: ' + data.body.messageId);
 
     } catch (error) {
-      console.error('❌ Error sending email:', error);
+      console.error('❌ Error sending email via Brevo:', error);
     }
   });
 
@@ -773,7 +772,7 @@ function _getEmailSubject(type: string, name: string): string {
 
 function _buildEmailHtml(invite: any, inviteId: string): string {
   // Deep link per accettare l'invito
-  const baseUrl = 'https://pm-agile-tools-app.web.app';
+  const baseUrl = 'https://keisenapp.com';
   // Genera link diretto (logica simile al frontend)
   let typePath = '';
   switch (invite.sourceType) {
@@ -783,9 +782,9 @@ function _buildEmailHtml(invite: any, inviteId: string): string {
     case 'smartTodo': typePath = 'smart-todo'; break;
     case 'retroBoard': typePath = 'retro'; break;
   }
-  
+
   const link = `${baseUrl}/#/invite/${typePath}/${invite.sourceId}`;
-  
+
   return `
     <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
       <h2 style="color: #2196F3;">Sei stato invitato su Keisen!</h2>

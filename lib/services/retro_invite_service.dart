@@ -437,7 +437,7 @@ class RetroInviteService {
 
   /// Genera il link di invito
   /// Formato deep link: /invite/retro/{boardId}
-  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? boardId}) {
+  String generateInviteLink(String token, {String baseUrl = 'https://keisenapp.com', String? boardId}) {
     if (boardId != null) {
       return '$baseUrl/#/invite/retro/$boardId';
     }

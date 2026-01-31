@@ -638,7 +638,7 @@ ${base64Encode(utf8.encode(htmlBody))}
 
   /// Genera il link di invito
   /// Nuovo formato deep link: /invite/estimation-room/{sessionId}
-  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? sessionId}) {
+  String generateInviteLink(String token, {String baseUrl = 'https://keisenapp.com', String? sessionId}) {
     if (sessionId != null) {
       return '$baseUrl/#/invite/estimation-room/$sessionId';
     }

@@ -254,7 +254,7 @@ class UnifiedInviteModel {
   }
 
   /// Genera il deep link per questo invito
-  String generateDeepLink({String baseUrl = 'https://pm-agile-tools-app.web.app'}) {
+  String generateDeepLink({String baseUrl = 'https://keisenapp.com'}) {
     switch (sourceType) {
       case InviteSourceType.eisenhower:
         return '$baseUrl/#/invite/eisenhower/$token';

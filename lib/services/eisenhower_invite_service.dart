@@ -414,7 +414,7 @@ class EisenhowerInviteService {
 
   /// Genera il link di invito
   /// Nuovo formato deep link: /invite/eisenhower/{matrixId}/{token}
-  String generateInviteLink(String token, {String baseUrl = 'https://pm-agile-tools-app.web.app', String? matrixId}) {
+  String generateInviteLink(String token, {String baseUrl = 'https://keisenapp.com', String? matrixId}) {
     if (matrixId != null) {
       return '$baseUrl/#/invite/eisenhower/$matrixId';
     }

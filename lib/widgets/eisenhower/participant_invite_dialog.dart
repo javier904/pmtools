@@ -159,7 +159,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       final invite = await _inviteService.resendInvite(inviteId);
       if (invite != null) {
         final link = _inviteService.generateInviteLink(invite);
-        setState(() => _generatedLink = link);
+        setState(() => _generatedLink = link.replaceFirst('pm-agile-tools-app.web.app', 'keisenapp.com'));
         await _loadInvites();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -194,7 +194,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                   widget.matrixTitle,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -336,7 +336,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                       const SizedBox(height: 4),
                       SelectableText(
                         _generatedLink!,
-                        style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+                        style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color),
                       ),
                     ],
                   ),
@@ -380,9 +380,9 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -411,7 +411,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
                   children: [
                     Text(
                       roleDisplayName,
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color),
                     ),
                     const SizedBox(width: 8),
                     Container(

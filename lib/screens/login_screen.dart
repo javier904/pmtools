@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../themes/app_colors.dart';
 import '../services/user_profile_service.dart';
+import '../models/user_profile/user_profile_model.dart' show AuthProvider;
 
 /// Login Screen - Autenticazione Google e Email/Password con tema
 class LoginScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final credential = await _authService.signInWithGoogle();
       if (credential != null && credential.user != null) {
-        await UserProfileService().createOrUpdateProfileFromAuth();
+        await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.google);
         // Chiama callback se presente
         widget.onLoginSuccess?.call();
       }
@@ -75,6 +76,19 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    // Validazione formato email
+    final email = _emailController.text.trim();
+    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+      setState(() => _errorMessage = l10n.authInvalidEmail);
+      return;
+    }
+
+    // Validazione password minima in registrazione
+    if (_isRegisterMode && _passwordController.text.length < 6) {
+      setState(() => _errorMessage = l10n.authPasswordTooShort);
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -91,17 +105,24 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
         final credential = await _authService.registerWithEmail(
-          _emailController.text.trim(),
+          email,
           _passwordController.text,
           _nameController.text.trim(),
         );
         if (credential != null && credential.user != null) {
+          // Invia email di verifica
+          await _authService.sendEmailVerification();
           await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.email);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.authVerificationSent)),
+            );
+          }
           widget.onLoginSuccess?.call();
         }
       } else {
         final credential = await _authService.signInWithEmail(
-          _emailController.text.trim(),
+          email,
           _passwordController.text,
         );
         if (credential != null && credential.user != null) {
@@ -128,6 +149,52 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _showForgotPasswordDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    final resetEmailController = TextEditingController(text: _emailController.text);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.authForgotPassword),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: resetEmailController,
+              decoration: InputDecoration(
+                labelText: l10n.profileEmail,
+                prefixIcon: const Icon(Icons.email),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.actionCancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              try {
+                await _authService.resetPassword(resetEmailController.text.trim());
+              } catch (_) {
+                // Non rivelare se l'email esiste (sicurezza)
+              }
+              if (mounted) {
+                Navigator.pop(dialogContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.authResetPasswordSent)),
+                );
+              }
+            },
+            child: Text(l10n.actionSend),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -157,16 +224,12 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Logo
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.rocket_launch,
-                    size: 48,
-                    color: Colors.white,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    'icons/Icon-192.png',
+                    width: 80,
+                    height: 80,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -267,6 +330,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   onSubmitted: (_) => _signInWithEmail(),
                   context: context,
                 ),
+                if (!_isRegisterMode) ...[
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _showForgotPasswordDialog,
+                      child: Text(
+                        l10n.authForgotPassword,
+                        style: TextStyle(fontSize: 13, color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
 
                 if (_isRegisterMode) ...[
