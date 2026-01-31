@@ -1871,7 +1871,7 @@ class _LandingScreenState extends State<LandingScreen> {
             style: TextStyle(
               fontSize: 13,
               color: context.textSecondaryColor,
-              height: 1.4,
+              height: 1.3,
             ),
           ),
           const SizedBox(height: 16),
@@ -2208,7 +2208,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _buildExportCard(Map<String, dynamic> data, bool isDark) {
     final Color color = data['color'] as Color;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Reduced from 14
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2223,6 +2223,7 @@ class _LandingScreenState extends State<LandingScreen> {
           const SizedBox(width: 14),
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min, // Added
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -2233,13 +2234,13 @@ class _LandingScreenState extends State<LandingScreen> {
                     color: context.textPrimaryColor,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1), // Reduced from 2
                 Text(
                   data['desc'] as String,
                   style: TextStyle(
                     fontSize: 13,
                     color: context.textSecondaryColor,
-                    height: 1.4,
+                    height: 1.3, // Reduced from 1.4
                   ),
                 ),
               ],
@@ -2292,7 +2293,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   style: TextStyle(
                     fontSize: 13,
                     color: context.textSecondaryColor,
-                    height: 1.4,
+                    height: 1.3, // Reduced from 1.4
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -2337,7 +2338,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         style: TextStyle(
                           fontSize: 13,
                           color: context.textSecondaryColor,
-                          height: 1.4,
+                          height: 1.3,
                         ),
                       ),
                     ],
@@ -2531,7 +2532,7 @@ class _LandingScreenState extends State<LandingScreen> {
             style: TextStyle(
               fontSize: 13,
               color: context.textSecondaryColor,
-              height: 1.4,
+              height: 1.3,
             ),
           ),
         ],

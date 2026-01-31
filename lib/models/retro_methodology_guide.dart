@@ -562,6 +562,91 @@ class RetroMethodologyGuide {
       default: return fallbackTitle;
     }
   }
+
+  // ===== POST-RETRO METHODOLOGY GUIDE =====
+
+  /// Gets action tracking best practices guide content
+  static PostRetroGuideSection getActionTrackingGuide(AppLocalizations l10n) {
+    return PostRetroGuideSection(
+      title: l10n.guideActionTrackingTitle,
+      description: l10n.guideActionTrackingDesc,
+      icon: Icons.assignment_turned_in,
+      color: Colors.blue,
+      tips: [
+        'Make each action item Specific and Measurable',
+        'Assign exactly ONE owner per action item',
+        'Set due dates within the current or next sprint',
+        'Review carry-forward items at the start of each retro',
+        'Use status transitions: Open → In Progress → Completed',
+        'Defer items only when explicitly deprioritized by the team',
+      ],
+    );
+  }
+
+  /// Gets lessons learned framework guide content
+  static PostRetroGuideSection getLessonsLearnedGuide(AppLocalizations l10n) {
+    return PostRetroGuideSection(
+      title: l10n.guideLessonsLearnedTitle,
+      description: l10n.guideLessonsLearnedDesc,
+      icon: Icons.school,
+      color: Colors.purple,
+      tips: [
+        'Categorize lessons by area: process, technical, team, communication, tools, quality, estimation',
+        'Classify as Strength (replicate), Weakness (improve), or Recommendation (act on)',
+        'Always document Root Cause for weaknesses',
+        'Add concrete Recommendations for actionable follow-up',
+        'Use tags to enable cross-project search and reuse',
+        'Mark recurring lessons to identify systemic patterns',
+        'Import relevant lessons from other projects to avoid repeating mistakes',
+      ],
+    );
+  }
+
+  /// Gets continuous improvement cycle guide content
+  static PostRetroGuideSection getContinuousImprovementGuide(AppLocalizations l10n) {
+    return PostRetroGuideSection(
+      title: l10n.guideContinuousImprovementTitle,
+      description: l10n.guideContinuousImprovementDesc,
+      icon: Icons.trending_up,
+      color: Colors.green,
+      tips: [
+        'Track sentiment trends across retrospectives to measure team morale',
+        'Monitor action completion rate to gauge follow-through',
+        'Carry forward uncompleted actions to maintain accountability',
+        'Review lessons learned register before sprint planning',
+        'Import cross-project lessons to leverage organizational learning',
+        'Focus on systemic improvements over quick fixes',
+        'Celebrate improving trends to reinforce positive behaviors',
+      ],
+    );
+  }
+
+  /// Gets carry forward process guide content
+  static PostRetroGuideSection getCarryForwardGuide(AppLocalizations l10n) {
+    return PostRetroGuideSection(
+      title: l10n.guideCarryForwardTitle,
+      description: l10n.guideCarryForwardDesc,
+      icon: Icons.forward,
+      color: Colors.orange,
+      tips: [
+        'Review all open and in-progress items from previous retros',
+        'Re-prioritize items in the context of the new sprint',
+        'Consider deferring items that are no longer relevant',
+        'Discuss repeatedly carried-forward items as potential systemic issues',
+        'Limit carry-forward to maintain focus - defer low-priority items',
+      ],
+    );
+  }
+
+  /// Gets all post-retro guide sections
+  static List<PostRetroGuideSection> getAllPostRetroGuides(AppLocalizations l10n) {
+    return [
+      getActionTrackingGuide(l10n),
+      getLessonsLearnedGuide(l10n),
+      getContinuousImprovementGuide(l10n),
+      getCarryForwardGuide(l10n),
+    ];
+  }
 }
 
 /// Prompt per aiutare a scrivere azioni SMART
@@ -619,6 +704,23 @@ class ExportConfig {
     this.groupActionsByDecision = false,
     this.groupActionsByCategory = false,
     this.suggestedFollowUp = '',
+  });
+}
+
+/// Guide section for post-retrospective processes
+class PostRetroGuideSection {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final List<String> tips;
+
+  const PostRetroGuideSection({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    required this.tips,
   });
 }
 

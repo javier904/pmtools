@@ -60,6 +60,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actionClose => 'Cerrar';
 
   @override
+  String get actionHide => 'Ocultar Tarjetas';
+
+  @override
   String get actionRetry => 'Reintentar';
 
   @override
@@ -1132,6 +1135,42 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroCreateNew => 'Crear Nueva';
+
+  @override
+  String get retroContinueAction => 'Continuar';
+
+  @override
+  String get retroCurrentPhase => 'Fase';
+
+  @override
+  String get retroNoCompletedRetros => 'No hay retrospectivas completadas';
+
+  @override
+  String get retroStandalone => 'Independiente';
+
+  @override
+  String get retroCompletedOn => 'Completada';
+
+  @override
+  String get retroSummaryDetails => 'Detalles';
+
+  @override
+  String get retroSummaryCompleted => 'Completada';
+
+  @override
+  String get retroSummaryFacilitator => 'Facilitador';
+
+  @override
+  String get retroSummaryNotAvailable => 'N/D';
+
+  @override
+  String get retroSummarySprint => 'Sprint';
+
+  @override
+  String get retroSummaryFeedback => 'Feedback';
+
+  @override
+  String get retroSummaryNoCards => 'Sin tarjetas';
 
   @override
   String get retroChooseMode => 'Elige Modalidad de Retrospectiva';
@@ -3675,6 +3714,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroTableOwner => 'Responsable';
+
+  @override
+  String get retroTablePriority => 'Prioridad';
+
+  @override
+  String get retroTableDueDate => 'Fecha Límite';
 
   @override
   String get retroIcebreakerTwoTruths => 'Dos Verdades y una Mentira';
@@ -7854,6 +7899,391 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get actionTypeEnhance => 'Mejorar';
+
+  @override
+  String get actionItemStatus => 'Estado';
+
+  @override
+  String get actionStatusOpen => 'Abierto';
+
+  @override
+  String get actionStatusInProgress => 'En Progreso';
+
+  @override
+  String get actionStatusCompleted => 'Completado';
+
+  @override
+  String get actionStatusDeferred => 'Diferido';
+
+  @override
+  String get retroSectionActive => 'Activa';
+
+  @override
+  String get retroSectionHistory => 'Historial';
+
+  @override
+  String get retroSectionActionTracker => 'Action Items';
+
+  @override
+  String get retroSectionLessonsLearned => 'Lecciones Aprendidas';
+
+  @override
+  String get retroNoActiveRetro => 'Sin retrospectiva activa';
+
+  @override
+  String get retroStartNew => 'Nueva Retrospectiva';
+
+  @override
+  String get retroHistoryEmpty => 'Sin retrospectivas completadas';
+
+  @override
+  String get retroViewSummary => 'Ver Resumen';
+
+  @override
+  String get retroSummaryTitle => 'Resumen de Retrospectiva';
+
+  @override
+  String retroSummaryCards(Object count) {
+    return 'Tarjetas ($count)';
+  }
+
+  @override
+  String retroSummaryActions(Object count) {
+    return 'Action Items ($count)';
+  }
+
+  @override
+  String get retroSummarySentiment => 'Sentimiento del Equipo';
+
+  @override
+  String get actionTrackerTitle => 'Tracker de Action Items';
+
+  @override
+  String get actionTrackerEmpty => 'Sin action items en las retrospectivas';
+
+  @override
+  String get actionTrackerFilterByAssignee => 'Filtrar por asignado';
+
+  @override
+  String get actionTrackerFilterByStatus => 'Filtrar por estado';
+
+  @override
+  String get actionTrackerFilterByRetro => 'Filtrar por retrospectiva';
+
+  @override
+  String get actionTrackerCompletionRate => 'Tasa de Completado';
+
+  @override
+  String get actionTrackerCarryForward => 'Trasladar';
+
+  @override
+  String get actionTrackerCarryForwardDesc =>
+      'Estos action items de retrospectivas anteriores siguen abiertos:';
+
+  @override
+  String get actionTrackerCarryForwardConfirm =>
+      'Trasladar elementos seleccionados';
+
+  @override
+  String get lessonsLearnedTitle => 'Registro de Lecciones Aprendidas';
+
+  @override
+  String get lessonsLearnedEmpty => 'Sin lecciones aprendidas registradas';
+
+  @override
+  String get lessonsLearnedCreate => 'Agregar Lección Aprendida';
+
+  @override
+  String get lessonsLearnedEdit => 'Editar Lección Aprendida';
+
+  @override
+  String get lessonsLearnedDelete => 'Eliminar Lección Aprendida';
+
+  @override
+  String get lessonsLearnedDeleteConfirm =>
+      '¿Estás seguro de eliminar esta lección?';
+
+  @override
+  String get lessonCategoryProcess => 'Proceso';
+
+  @override
+  String get lessonCategoryTechnical => 'Técnico';
+
+  @override
+  String get lessonCategoryTeam => 'Equipo';
+
+  @override
+  String get lessonCategoryCommunication => 'Comunicación';
+
+  @override
+  String get lessonCategoryTools => 'Herramientas';
+
+  @override
+  String get lessonCategoryQuality => 'Calidad';
+
+  @override
+  String get lessonCategoryEstimation => 'Estimación';
+
+  @override
+  String get lessonTypeStrength => 'Fortaleza';
+
+  @override
+  String get lessonTypeWeakness => 'Debilidad';
+
+  @override
+  String get lessonTypeRecommendation => 'Recomendación';
+
+  @override
+  String get lessonFieldTitle => 'Título';
+
+  @override
+  String get lessonFieldDescription => 'Descripción';
+
+  @override
+  String get lessonFieldRootCause => 'Causa Raíz';
+
+  @override
+  String get lessonFieldRecommendation => 'Recomendación';
+
+  @override
+  String get lessonFieldTags => 'Etiquetas';
+
+  @override
+  String get lessonIsRecurring => 'Patrón Recurrente';
+
+  @override
+  String lessonOccurrenceCount(Object count) {
+    return 'Ocurrencias: $count';
+  }
+
+  @override
+  String get lessonIsResolved => 'Resuelta';
+
+  @override
+  String get generateLessonsTitle => 'Generar Lecciones Aprendidas';
+
+  @override
+  String get generateLessonsDesc =>
+      'Revisa los insights de esta retrospectiva y guárdalos como lecciones aprendidas.';
+
+  @override
+  String get generateLessonsFromCards => 'Sugeridos de tarjetas';
+
+  @override
+  String get generateLessonsFromActions => 'Sugeridos de action items';
+
+  @override
+  String get generateLessonsSelectToSave => 'Selecciona elementos para guardar';
+
+  @override
+  String get generateLessonsSave => 'Guardar Lecciones Seleccionadas';
+
+  @override
+  String get retroTrendTitle => 'Tendencias de Mejora del Equipo';
+
+  @override
+  String get retroTrendSentiment => 'Sentimiento en el Tiempo';
+
+  @override
+  String get retroTrendActionCompletion => 'Tasa de Completado de Acciones';
+
+  @override
+  String get retroTrendImproving => '¡El equipo está mejorando!';
+
+  @override
+  String get retroTrendStable => 'Rendimiento estable';
+
+  @override
+  String get retroTrendDeclining => 'Atención necesaria';
+
+  @override
+  String get crossProjectImport => 'Importar de Otros Proyectos';
+
+  @override
+  String get crossProjectImportActions => 'Importar Action Items';
+
+  @override
+  String get crossProjectImportLessons => 'Importar Lecciones Aprendidas';
+
+  @override
+  String get crossProjectSelectProject => 'Seleccionar Proyecto';
+
+  @override
+  String get crossProjectNoProjects => 'No se encontraron otros proyectos';
+
+  @override
+  String crossProjectImportSuccess(Object count) {
+    return '$count elementos importados exitosamente';
+  }
+
+  @override
+  String get crossProjectAggregatedView => 'Lecciones Cross-Proyecto';
+
+  @override
+  String get tooltipTrackerStatusClick => 'Haz clic para cambiar el estado';
+
+  @override
+  String get tooltipTrackerFilterStatus => 'Filtrar acciones por estado actual';
+
+  @override
+  String get tooltipTrackerFilterAssignee =>
+      'Filtrar por persona asignada a la accion';
+
+  @override
+  String get tooltipTrackerFilterRetro => 'Filtrar por retrospectiva de origen';
+
+  @override
+  String get tooltipTrackerCompletionRate =>
+      'Porcentaje de todas las acciones completadas';
+
+  @override
+  String get tooltipTrackerOverdue => 'Esta accion ha superado su fecha limite';
+
+  @override
+  String get tooltipPriorityCritical =>
+      'Critica: Debe abordarse inmediatamente';
+
+  @override
+  String get tooltipPriorityHigh => 'Alta: Abordar dentro del sprint';
+
+  @override
+  String get tooltipPriorityMedium => 'Media: Planificar para proximos sprints';
+
+  @override
+  String get tooltipPriorityLow => 'Baja: Abordar cuando sea posible';
+
+  @override
+  String get tooltipLessonCategoryFilter =>
+      'Filtrar lecciones por area de impacto';
+
+  @override
+  String get tooltipLessonTypeFilter =>
+      'Filtrar por tipo: fortaleza, debilidad o recomendacion';
+
+  @override
+  String get tooltipLessonResolvedFilter =>
+      'Mostrar todas, solo sin resolver, o solo resueltas';
+
+  @override
+  String get tooltipLessonRecurring =>
+      'Esta leccion se ha observado varias veces en las retrospectivas';
+
+  @override
+  String get tooltipLessonResolved =>
+      'Esta leccion ha sido abordada y resuelta';
+
+  @override
+  String get tooltipLessonImport =>
+      'Importar lecciones aprendidas de otros proyectos que posees';
+
+  @override
+  String get tooltipLessonAdd =>
+      'Registrar una nueva leccion aprendida para este proyecto';
+
+  @override
+  String get tooltipLessonLongPressDelete =>
+      'Manten presionada una leccion para eliminarla';
+
+  @override
+  String get tooltipCarryForwardDesc =>
+      'Traer acciones no completadas de retrospectivas anteriores a la nueva';
+
+  @override
+  String get tooltipCarryForwardSelectAll =>
+      'Seleccionar o deseleccionar todas las acciones pendientes';
+
+  @override
+  String get tooltipCrossProjectImportDesc =>
+      'Las lecciones se copiaran al proyecto actual con referencia al origen';
+
+  @override
+  String get tooltipTrendSentiment =>
+      'Puntuacion media del sentimiento del equipo (1-5) a lo largo del tiempo';
+
+  @override
+  String get tooltipTrendCompletion =>
+      'Porcentaje de acciones completadas por retrospectiva a lo largo del tiempo';
+
+  @override
+  String get tooltipTrendImproving => 'Las metricas del equipo estan mejorando';
+
+  @override
+  String get tooltipTrendDeclining =>
+      'Las metricas del equipo estan en declive - considera abordar las causas';
+
+  @override
+  String get tooltipTrendStable =>
+      'Las metricas del equipo son estables en las retrospectivas recientes';
+
+  @override
+  String get tooltipHistoryRetroCard =>
+      'Haz clic para ver el resumen completo de la retrospectiva';
+
+  @override
+  String get tooltipHistorySentiment =>
+      'Sentimiento medio del equipo para esta retrospectiva';
+
+  @override
+  String get tooltipHistoryActionCount =>
+      'Acciones completadas vs totales de esta retrospectiva';
+
+  @override
+  String get tooltipFormRootCause =>
+      'Describe la causa subyacente que llevo a esta observacion';
+
+  @override
+  String get tooltipFormRecommendation =>
+      'Sugiere acciones concretas para abordar o replicar este hallazgo';
+
+  @override
+  String get tooltipFormTags =>
+      'Agrega etiquetas separadas por comas para categorizar y buscar';
+
+  @override
+  String get tooltipFormRecurring =>
+      'Activa si esta leccion ha aparecido en multiples retrospectivas';
+
+  @override
+  String get tooltipFormResolved =>
+      'Marca como resuelta cuando el equipo haya abordado esta leccion';
+
+  @override
+  String get guideActionTrackingTitle => 'Mejores Practicas para Acciones';
+
+  @override
+  String get guideActionTrackingDesc =>
+      'Usa criterios SMART: Especifico, Medible, Alcanzable, Relevante, con Tiempo definido. Asigna un unico responsable, establece una fecha limite dentro del sprint y revisa el progreso en la proxima retrospectiva.';
+
+  @override
+  String get guideLessonsLearnedTitle => 'Marco de Lecciones Aprendidas';
+
+  @override
+  String get guideLessonsLearnedDesc =>
+      'Captura tanto fortalezas (a replicar) como debilidades (a mejorar). Documenta causas raiz y recomendaciones. Etiqueta las lecciones para reutilizacion entre proyectos y marca como resueltas cuando se aborden.';
+
+  @override
+  String get guideContinuousImprovementTitle => 'Ciclo de Mejora Continua';
+
+  @override
+  String get guideContinuousImprovementDesc =>
+      'Monitorea tendencias en las retrospectivas para medir el progreso. Lleva adelante acciones no completadas. Importa lecciones de otros proyectos. Enfocate en cambios sistemicos sobre correcciones individuales.';
+
+  @override
+  String get guideCarryForwardTitle => 'Proceso de Carry Forward';
+
+  @override
+  String get guideCarryForwardDesc =>
+      'Al crear una nueva retrospectiva, revisa las acciones abiertas y en curso de las anteriores. Lleva adelante los elementos aun relevantes y re-priorizalos en el nuevo contexto.';
+
+  @override
+  String retroFromSprint(Object name) {
+    return 'De: Sprint $name';
+  }
+
+  @override
+  String actionItemsCompleted(Object completed, Object total) {
+    return '$completed/$total completados';
+  }
 
   @override
   String get coachTipSSCWriting =>

@@ -573,6 +573,52 @@ class RetroItem {
 // ... [Insert ActionItem, SprintReviewData, enums from previous file version] ...
 // To be safe and concise, I will paste the ENTIRE file content including the unmodified parts.
 
+/// Status per action items (sostituisce il boolean isCompleted)
+enum ActionItemStatus {
+  open,
+  inProgress,
+  completed,
+  deferred;
+}
+
+extension ActionItemStatusExt on ActionItemStatus {
+  String get displayName {
+    switch (this) {
+      case ActionItemStatus.open: return 'Open';
+      case ActionItemStatus.inProgress: return 'In Progress';
+      case ActionItemStatus.completed: return 'Completed';
+      case ActionItemStatus.deferred: return 'Deferred';
+    }
+  }
+
+  String getLocalizedName(AppLocalizations l10n) {
+    switch (this) {
+      case ActionItemStatus.open: return l10n.actionStatusOpen;
+      case ActionItemStatus.inProgress: return l10n.actionStatusInProgress;
+      case ActionItemStatus.completed: return l10n.actionStatusCompleted;
+      case ActionItemStatus.deferred: return l10n.actionStatusDeferred;
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case ActionItemStatus.open: return const Color(0xFF2196F3); // Blue
+      case ActionItemStatus.inProgress: return const Color(0xFFFF9800); // Orange
+      case ActionItemStatus.completed: return const Color(0xFF4CAF50); // Green
+      case ActionItemStatus.deferred: return const Color(0xFF9E9E9E); // Grey
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case ActionItemStatus.open: return Icons.radio_button_unchecked;
+      case ActionItemStatus.inProgress: return Icons.timelapse;
+      case ActionItemStatus.completed: return Icons.check_circle;
+      case ActionItemStatus.deferred: return Icons.pause_circle;
+    }
+  }
+}
+
 /// Action item dalla retrospettiva
 class ActionItem {
   final String id;
@@ -582,9 +628,10 @@ class ActionItem {
   final String? assigneeName;
   final DateTime createdAt;
   final DateTime? dueDate;
-  final bool isCompleted;
+  final bool isCompleted; // Backward compat - derived from status
   final DateTime? completedAt;
   final ActionPriority priority;
+  final ActionItemStatus status; // V4: replaces isCompleted boolean
 
   // V2 Fields
   final String? resources; // e.g., "Budget: 500$"
@@ -597,6 +644,9 @@ class ActionItem {
   final ActionType? actionType; // Tipo azione suggerito dalla metodologia
 
   String get title => description; // Legacy compatibility
+  bool get isOpen => status == ActionItemStatus.open;
+  bool get isInProgress => status == ActionItemStatus.inProgress;
+  bool get isDeferred => status == ActionItemStatus.deferred;
 
   const ActionItem({
     required this.id,
@@ -609,6 +659,7 @@ class ActionItem {
     this.isCompleted = false,
     this.completedAt,
     this.priority = ActionPriority.medium,
+    this.status = ActionItemStatus.open,
     this.resources,
     this.monitoring,
     this.sourceRefId,
@@ -618,6 +669,16 @@ class ActionItem {
   });
 
   factory ActionItem.fromMap(Map<String, dynamic> data) {
+    // Backward compat: derive status from isCompleted if status field is missing
+    final hasStatus = data['status'] != null;
+    final legacyCompleted = data['isCompleted'] ?? false;
+    final parsedStatus = hasStatus
+        ? ActionItemStatus.values.firstWhere(
+            (s) => s.name == data['status'],
+            orElse: () => legacyCompleted ? ActionItemStatus.completed : ActionItemStatus.open,
+          )
+        : (legacyCompleted ? ActionItemStatus.completed : ActionItemStatus.open);
+
     return ActionItem(
       id: data['id'] ?? '',
       description: data['description'] ?? '',
@@ -626,12 +687,13 @@ class ActionItem {
       assigneeName: data['assigneeName'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dueDate: (data['dueDate'] as Timestamp?)?.toDate(),
-      isCompleted: data['isCompleted'] ?? false,
+      isCompleted: parsedStatus == ActionItemStatus.completed,
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
       priority: ActionPriority.values.firstWhere(
         (p) => p.name == data['priority'],
         orElse: () => ActionPriority.medium,
       ),
+      status: parsedStatus,
       resources: data['resources'],
       monitoring: data['monitoring'],
       sourceRefId: data['sourceRefId'],
@@ -657,6 +719,7 @@ class ActionItem {
     bool? isCompleted,
     DateTime? completedAt,
     ActionPriority? priority,
+    ActionItemStatus? status,
     String? resources,
     String? monitoring,
     String? sourceRefId,
@@ -664,6 +727,7 @@ class ActionItem {
     String? sourceColumnId,
     ActionType? actionType,
   }) {
+    final newStatus = status ?? this.status;
     return ActionItem(
       id: id ?? this.id,
       description: description ?? this.description,
@@ -672,9 +736,10 @@ class ActionItem {
       assigneeName: assigneeName ?? this.assigneeName,
       createdAt: createdAt ?? this.createdAt,
       dueDate: dueDate ?? this.dueDate,
-      isCompleted: isCompleted ?? this.isCompleted,
+      isCompleted: isCompleted ?? (newStatus == ActionItemStatus.completed),
       completedAt: completedAt ?? this.completedAt,
       priority: priority ?? this.priority,
+      status: newStatus,
       resources: resources ?? this.resources,
       monitoring: monitoring ?? this.monitoring,
       sourceRefId: sourceRefId ?? this.sourceRefId,
@@ -693,7 +758,8 @@ class ActionItem {
       if (assigneeName != null) 'assigneeName': assigneeName,
       'createdAt': Timestamp.fromDate(createdAt),
       if (dueDate != null) 'dueDate': Timestamp.fromDate(dueDate!),
-      'isCompleted': isCompleted,
+      'isCompleted': status == ActionItemStatus.completed, // backward compat
+      'status': status.name, // V4 field
       if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt!),
       'priority': priority.name,
       'resources': resources,

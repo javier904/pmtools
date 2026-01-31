@@ -23,6 +23,8 @@ import '../widgets/agile/story_detail_dialog.dart';
 import '../widgets/agile/story_estimation_dialog.dart';
 import '../widgets/retrospective/retro_list_widget.dart';
 import '../widgets/retrospective/retro_board_widget.dart';
+import '../widgets/retrospective/retro_tab_sections_widget.dart';
+import '../widgets/retrospective/retro_summary_dialog.dart';
 import '../widgets/agile/sprint_widgets.dart';
 import '../widgets/agile/kanban_board_widget.dart';
 import '../widgets/agile/team_list_widget.dart';
@@ -2210,7 +2212,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     // Per Kanban: le retro si chiamano "Operations Review" e non richiedono sprint
     final isKanban = widget.project.framework == AgileFramework.kanban;
 
-    // Stream delle retrospettive
+    // Stream delle retrospettive con nuovo layout a 4 sub-tab
     return StreamBuilder<List<RetrospectiveModel>>(
       stream: _retroService.streamProjectRetrospectives(widget.project.id),
       builder: (context, snapshot) {
@@ -2220,38 +2222,27 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
         final retrospectives = snapshot.data ?? [];
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Lista retro esistenti (include lo stato vuoto integrato)
-              RetroListWidget(
-                retrospectives: retrospectives,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                onTap: (retro) => _showRetroDetail(retro),
-                onCreateNew: isKanban
-                    ? _createKanbanRetro
-                    : (latestSprint != null
-                        ? () => _showRetroCreationChoice(latestSprint!)
-                        : () => _showNoSprintForRetroWarning()),
-                currentUserEmail: _currentUserEmail,
-                onDelete: _confirmDeleteRetro,
-              ),
-              const SizedBox(height: 24),
-
-              // Board dell'ultima retro (solo se esistono retro)
-              if (retrospectives.isNotEmpty)
-                RetroBoardWidget(
-                  retro: retrospectives.first,
-                  currentUserEmail: _currentUserEmail,
-                  currentUserName: _currentUserEmail.split('@').first,
-                  isIncognito: false,
-                ),
-            ],
-          ),
+        return RetroTabSectionsWidget(
+          projectId: widget.project.id,
+          retrospectives: retrospectives,
+          currentUserEmail: _currentUserEmail,
+          onCreateNew: isKanban
+              ? _createKanbanRetro
+              : (latestSprint != null
+                  ? () => _showRetroCreationChoice(latestSprint!)
+                  : () => _showNoSprintForRetroWarning()),
+          onTapRetro: (retro) => _showRetroDetail(retro),
+          onDeleteRetro: _confirmDeleteRetro,
+          sprints: _sprints,
         );
       },
+    );
+  }
+
+  void _showRetroSummary(RetrospectiveModel retro) {
+    showDialog(
+      context: context,
+      builder: (context) => RetroSummaryDialog(retro: retro),
     );
   }
 

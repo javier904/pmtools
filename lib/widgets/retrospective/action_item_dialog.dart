@@ -38,6 +38,7 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
   String? _assigneeEmail;
   DateTime? _dueDate;
   ActionPriority _priority = ActionPriority.medium;
+  ActionItemStatus _status = ActionItemStatus.open;
   String? _selectedSourceRefId;
   ActionType? _actionType;
   String? _selectedSourceColumnId;
@@ -52,6 +53,7 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
       _assigneeEmail = widget.item!.assigneeEmail;
       _dueDate = widget.item!.dueDate;
       _priority = widget.item!.priority;
+      _status = widget.item!.status;
       _selectedSourceRefId = widget.item!.sourceRefId;
       _selectedSourceColumnId = widget.item!.sourceColumnId;
       _actionType = widget.item!.actionType;
@@ -229,14 +231,14 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                           DropdownMenuItem(value: null, child: Text(l10n.retroActionNoAssignee)),
                           ...widget.participants.map((email) => DropdownMenuItem(
                             value: email,
-                            child: Text(email, overflow: TextOverflow.ellipsis), 
+                            child: Text(email, overflow: TextOverflow.ellipsis),
                           ))
                         ],
                         onChanged: (val) => setState(() => _assigneeEmail = val),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    
+
                     // Priority
                     Expanded(
                       flex: 2,
@@ -260,6 +262,36 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+
+                // Status (only shown when editing existing item)
+                if (widget.item != null)
+                  DropdownButtonFormField<ActionItemStatus>(
+                    value: _status,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: l10n.actionItemStatus,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: Icon(
+                        _status.icon,
+                        color: _status.color,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    ),
+                    items: ActionItemStatus.values.map((s) => DropdownMenuItem(
+                      value: s,
+                      child: Row(
+                        children: [
+                          Icon(s.icon, color: s.color, size: 20),
+                          const SizedBox(width: 8),
+                          Text(s.getLocalizedName(l10n)),
+                        ],
+                      ),
+                    )).toList(),
+                    onChanged: (val) {
+                      if (val != null) setState(() => _status = val);
+                    },
+                  ),
                 const SizedBox(height: 16),
 
                 // Due Date
@@ -359,10 +391,13 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
         createdAt: widget.item?.createdAt ?? DateTime.now(),
         dueDate: _dueDate,
         priority: _priority,
+        status: _status,
         resources: _resourcesController.text.trim(),
         monitoring: _monitoringController.text.trim(),
-        isCompleted: widget.item?.isCompleted ?? false,
-        completedAt: widget.item?.completedAt,
+        isCompleted: _status == ActionItemStatus.completed,
+        completedAt: _status == ActionItemStatus.completed
+            ? (widget.item?.completedAt ?? DateTime.now())
+            : null,
         sourceRefId: _selectedSourceRefId,
         sourceRefContent: sourceContent ?? widget.item?.sourceRefContent,
         sourceColumnId: sourceColumnId ?? widget.item?.sourceColumnId,

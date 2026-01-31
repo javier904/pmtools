@@ -456,6 +456,35 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
     });
   }
 
+  /// Aggiorna lo status di un Action Item
+  Future<void> updateActionItemStatus(String retroId, String actionItemId, ActionItemStatus newStatus) async {
+    final docRef = _retrosCollection.doc(retroId);
+
+    return _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      if (!snapshot.exists) return;
+
+      final retro = RetrospectiveModel.fromFirestore(snapshot);
+      final index = retro.actionItems.indexWhere((i) => i.id == actionItemId);
+
+      if (index == -1) return;
+
+      final item = retro.actionItems[index];
+      final updatedItem = item.copyWith(
+        status: newStatus,
+        isCompleted: newStatus == ActionItemStatus.completed,
+        completedAt: newStatus == ActionItemStatus.completed ? DateTime.now() : null,
+      );
+
+      final newItems = List<ActionItem>.from(retro.actionItems);
+      newItems[index] = updatedItem;
+
+      transaction.update(docRef, {
+        'actionItems': newItems.map((i) => i.toMap()).toList(),
+      });
+    });
+  }
+
   /// Promuove un Action Item a User Story
   Future<void> promoteActionToStory(String retroId, ActionItem actionItem, String projectId, String userId, String userName) async {
     final storiesCollection = _getStoriesCollection(projectId);

@@ -98,6 +98,16 @@ class AgileFirestoreService {
     });
   }
 
+  /// Get IDs of projects owned by this user (for cross-project import)
+  Future<List<AgileProjectModel>> getOwnedProjects(String userEmail) async {
+    final query = await _projectsRef
+        .where('createdBy', isEqualTo: userEmail.toLowerCase())
+        .get();
+    return query.docs
+        .map((doc) => AgileProjectModel.fromFirestore(doc))
+        .toList();
+  }
+
   /// Lista progetti di un utente
   Future<List<AgileProjectModel>> getUserProjects(String userEmail) async {
     final query = await _projectsRef

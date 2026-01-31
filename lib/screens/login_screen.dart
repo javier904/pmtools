@@ -53,8 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final credential = await _authService.signInWithGoogle();
       if (credential != null && credential.user != null) {
         await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.google);
-        // Chiama callback se presente
-        widget.onLoginSuccess?.call();
+        _handleLoginSuccess();
       }
     } catch (e) {
       final l10n = AppLocalizations.of(context)!;
@@ -118,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SnackBar(content: Text(l10n.authVerificationSent)),
             );
           }
-          widget.onLoginSuccess?.call();
+          _handleLoginSuccess();
         }
       } else {
         final credential = await _authService.signInWithEmail(
@@ -127,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         if (credential != null && credential.user != null) {
           await UserProfileService().createOrUpdateProfileFromAuth(provider: AuthProvider.email);
-          widget.onLoginSuccess?.call();
+          _handleLoginSuccess();
         }
       }
     } catch (e) {
@@ -147,6 +146,16 @@ class _LoginScreenState extends State<LoginScreen> {
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _handleLoginSuccess() {
+    if (widget.onLoginSuccess != null) {
+      widget.onLoginSuccess!();
+    } else {
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     }
   }
@@ -227,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset(
-                    'icons/Icon-192.png',
+                    'assets/icons/app_icon.png',
                     width: 80,
                     height: 80,
                   ),
@@ -433,15 +442,24 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(
-                'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
-                width: 20,
-                height: 20,
-                errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 20),
-              ),
+              _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                    ),
+                  )
+                : Image.network(
+                    'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
+                    width: 20,
+                    height: 20,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 20),
+                  ),
               const SizedBox(width: 12),
               Text(
-                l10n.authSignInGoogle,
+                _isLoading ? l10n.stateLoading : l10n.authSignInGoogle,
                 style: TextStyle(
                   color: context.textPrimaryColor,
                   fontWeight: FontWeight.w500,

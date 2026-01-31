@@ -197,7 +197,10 @@ class FavoriteService {
       
       return _ResourceStatus.exists;
     } catch (e) {
-      print('Error checking resource status: $e');
+      // Silently handle permission-denied (user may not have access to the resource)
+      if (!e.toString().contains('permission-denied')) {
+        print('Error checking resource status: $e');
+      }
       return _ResourceStatus.exists; // Default on error
     }
   }

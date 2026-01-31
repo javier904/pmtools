@@ -6,7 +6,7 @@ import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-class ActionItemsTableWidget extends StatelessWidget {
+class ActionItemsTableWidget extends StatefulWidget {
   final List<ActionItem> actionItems;
   final String retroId;
   final bool isFacilitator;
@@ -31,9 +31,14 @@ class ActionItemsTableWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ActionItemsTableWidget> createState() => _ActionItemsTableWidgetState();
+}
+
+class _ActionItemsTableWidgetState extends State<ActionItemsTableWidget> {
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (actionItems.isEmpty) {
+    if (widget.actionItems.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -62,24 +67,25 @@ class ActionItemsTableWidget extends StatelessWidget {
               SizedBox(width: 90, child: Text(l10n.retroTableSourceColumn, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               Expanded(flex: 2, child: Text(l10n.retroTableDescription, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               SizedBox(width: 90, child: Text(l10n.retroActionType, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+              SizedBox(width: 100, child: Text(l10n.actionItemStatus, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               SizedBox(width: 110, child: Text(l10n.retroTableOwner, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               SizedBox(width: 90, child: Text(l10n.retroActionPriority, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               SizedBox(width: 90, child: Text(l10n.retroActionDueDate, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               Expanded(flex: 2, child: Text(l10n.retroSupportResources, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               Expanded(flex: 2, child: Text(l10n.retroMonitoringMethod, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
               Expanded(flex: 2, child: Text(l10n.retroTableActions, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
-              if (!readOnly) const SizedBox(width: 80, child: SizedBox.shrink()), // Space for actions
+              if (!widget.readOnly) const SizedBox(width: 80, child: SizedBox.shrink()), // Space for actions
             ],
           ),
         ),
-        
+
         // Data Rows
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(), // Scroll handled by parent or page
-          itemCount: actionItems.length,
+          itemCount: widget.actionItems.length,
           itemBuilder: (context, index) {
-            final item = actionItems[index];
+            final item = widget.actionItems[index];
             return Container(
                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                decoration: BoxDecoration(
@@ -136,6 +142,17 @@ class ActionItemsTableWidget extends StatelessWidget {
                           )
                         : Text('-', style: TextStyle(color: context.textMutedColor)),
                      ),
+                   ),
+                   // Status
+                   SizedBox(
+                     width: 100,
+                     child: widget.readOnly
+                       ? _buildStatusChip(item.status, l10n)
+                       : InkWell(
+                           onTap: () => _showStatusMenu(context, item, l10n),
+                           borderRadius: BorderRadius.circular(8),
+                           child: _buildStatusChip(item.status, l10n),
+                         ),
                    ),
                    // Owner
                    SizedBox(
@@ -240,7 +257,7 @@ class ActionItemsTableWidget extends StatelessWidget {
                      ),
                    ),
                    // Actions Buttons (Fixed Width)
-                   if (!readOnly)
+                   if (!widget.readOnly)
                      SizedBox(
                        width: 80,
                        child: Row(
@@ -253,7 +270,7 @@ class ActionItemsTableWidget extends StatelessWidget {
                              visualDensity: VisualDensity.compact,
                              padding: EdgeInsets.zero,
                            ),
-                           if (isFacilitator)
+                           if (widget.isFacilitator)
                              IconButton(
                                icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
                                onPressed: () => _deleteItem(context, item),
@@ -286,6 +303,65 @@ class ActionItemsTableWidget extends StatelessWidget {
     }
   }
 
+  Widget _buildStatusChip(ActionItemStatus status, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: status.color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: status.color.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(status.icon, size: 14, color: status.color),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              status.getLocalizedName(l10n),
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: status.color),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showStatusMenu(BuildContext context, ActionItem item, AppLocalizations l10n) {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<ActionItemStatus>(
+      context: context,
+      position: position,
+      items: ActionItemStatus.values.map((s) => PopupMenuItem(
+        value: s,
+        child: Row(
+          children: [
+            Icon(s.icon, color: s.color, size: 18),
+            const SizedBox(width: 8),
+            Text(s.getLocalizedName(l10n)),
+          ],
+        ),
+      )).toList(),
+    ).then((newStatus) {
+      if (newStatus != null && newStatus != item.status) {
+        RetrospectiveFirestoreService().updateActionItemStatus(
+          widget.retroId, item.id, newStatus,
+        );
+      }
+    });
+  }
+
   /// Builds a badge showing the source column name with its color
   Widget _buildSourceColumnBadge(BuildContext context, ActionItem item, AppLocalizations l10n) {
     if (item.sourceColumnId == null || item.sourceColumnId!.isEmpty) {
@@ -293,7 +369,7 @@ class ActionItemsTableWidget extends StatelessWidget {
     }
 
     // Find the column by ID
-    final column = columns.where((c) => c.id == item.sourceColumnId).firstOrNull;
+    final column = widget.columns.where((c) => c.id == item.sourceColumnId).firstOrNull;
     if (column == null) {
       return Text(item.sourceColumnId!, style: TextStyle(fontSize: 11, color: context.textMutedColor));
     }
@@ -324,16 +400,16 @@ class ActionItemsTableWidget extends StatelessWidget {
       context: context,
       builder: (context) => ActionItemDialog(
         item: item,
-        participants: participants,
-        currentUserEmail: currentUserEmail,
-        availableCards: items,
-        template: template,
-        columns: columns,
+        participants: widget.participants,
+        currentUserEmail: widget.currentUserEmail,
+        availableCards: widget.items,
+        template: widget.template,
+        columns: widget.columns,
       ),
     );
 
     if (updatedItem != null) {
-      await RetrospectiveFirestoreService().updateActionItem(retroId, updatedItem);
+      await RetrospectiveFirestoreService().updateActionItem(widget.retroId, updatedItem);
     }
   }
 
@@ -358,7 +434,7 @@ class ActionItemsTableWidget extends StatelessWidget {
     );
 
     if (confirm == true) {
-      await RetrospectiveFirestoreService().deleteActionItem(retroId, item.id);
+      await RetrospectiveFirestoreService().deleteActionItem(widget.retroId, item.id);
     }
   }
 }

@@ -205,6 +205,31 @@
 - [x] Traduzioni Smart Todo (sorting, actions, audit)
 - [x] Traduzioni Estimation Room e Eisenhower
 
+### 21. Retrospective History, Action Tracker & Lessons Learned
+- [x] **Fase 1 - ActionItem Status**: Enum `ActionItemStatus` (open/inProgress/completed/deferred) con backward compat
+- [x] **Fase 2 - Tab Retro Ristrutturato**: 4 sub-tab (Active, History, Action Items, Lessons Learned)
+  - [x] `retro_tab_sections_widget.dart` - Container principale con TabBar
+  - [x] `retro_active_section_widget.dart` - Retro attiva o bottone creazione
+  - [x] `retro_history_section_widget.dart` - Storico raggruppato per sprint
+  - [x] `retro_summary_dialog.dart` - Vista read-only retro completata
+- [x] **Fase 3 - Action Items Tracker**: Vista cross-retro aggregata
+  - [x] `action_items_tracker_widget.dart` - Filtri status/assignee/retro, cambio status inline
+  - [x] `carry_forward_dialog.dart` - Porta avanti items non completati in nuova retro
+- [x] **Fase 4 - Lessons Learned**: Registro PMBOK-style
+  - [x] `lesson_learned_model.dart` - Modello con 7 categorie + 3 tipi
+  - [x] `lessons_learned_service.dart` - CRUD Firestore subcollection
+  - [x] `lessons_learned_section_widget.dart` - Lista con filtri categoria/tipo/resolved
+  - [x] `lesson_learned_dialog.dart` - Dialog crea/modifica lesson
+- [x] **Fase 5 - Trend Visualization**: `retro_trend_chart_widget.dart` (fl_chart)
+  - [x] Linea sentiment medio + linea action completion rate
+  - [x] Indicatore trend (improving/stable/declining)
+- [x] **Fase 6 - Cross-Project Import**
+  - [x] `cross_project_import_dialog.dart` - Import lessons da altri progetti (solo owner)
+  - [x] `getOwnedProjects()` in AgileFirestoreService
+- [x] Firestore security rules per subcollection `lessons_learned`
+- [x] Fix StreamBuilder stability (stream caching in initState)
+- [x] Localizzazione completa 4 lingue (EN, IT, ES, FR) - ~65 nuove chiavi
+
 ---
 
 ## Attivita' Pendenti

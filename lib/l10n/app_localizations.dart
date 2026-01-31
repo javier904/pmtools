@@ -204,6 +204,12 @@ abstract class AppLocalizations {
   /// **'Chiudi'**
   String get actionClose;
 
+  /// No description provided for @actionHide.
+  ///
+  /// In it, this message translates to:
+  /// **'Nascondi Carte'**
+  String get actionHide;
+
   /// No description provided for @actionRetry.
   ///
   /// In it, this message translates to:
@@ -2201,6 +2207,78 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Crea Nuova'**
   String get retroCreateNew;
+
+  /// No description provided for @retroContinueAction.
+  ///
+  /// In it, this message translates to:
+  /// **'Continua'**
+  String get retroContinueAction;
+
+  /// No description provided for @retroCurrentPhase.
+  ///
+  /// In it, this message translates to:
+  /// **'Fase'**
+  String get retroCurrentPhase;
+
+  /// No description provided for @retroNoCompletedRetros.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna retrospettiva completata'**
+  String get retroNoCompletedRetros;
+
+  /// No description provided for @retroStandalone.
+  ///
+  /// In it, this message translates to:
+  /// **'Standalone'**
+  String get retroStandalone;
+
+  /// No description provided for @retroCompletedOn.
+  ///
+  /// In it, this message translates to:
+  /// **'Completata'**
+  String get retroCompletedOn;
+
+  /// No description provided for @retroSummaryDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'Dettagli'**
+  String get retroSummaryDetails;
+
+  /// No description provided for @retroSummaryCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completata'**
+  String get retroSummaryCompleted;
+
+  /// No description provided for @retroSummaryFacilitator.
+  ///
+  /// In it, this message translates to:
+  /// **'Facilitatore'**
+  String get retroSummaryFacilitator;
+
+  /// No description provided for @retroSummaryNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'N/D'**
+  String get retroSummaryNotAvailable;
+
+  /// No description provided for @retroSummarySprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint'**
+  String get retroSummarySprint;
+
+  /// No description provided for @retroSummaryFeedback.
+  ///
+  /// In it, this message translates to:
+  /// **'Feedback'**
+  String get retroSummaryFeedback;
+
+  /// No description provided for @retroSummaryNoCards.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna card'**
+  String get retroSummaryNoCards;
 
   /// No description provided for @retroChooseMode.
   ///
@@ -6723,6 +6801,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Owner'**
   String get retroTableOwner;
+
+  /// No description provided for @retroTablePriority.
+  ///
+  /// In it, this message translates to:
+  /// **'Priorità'**
+  String get retroTablePriority;
+
+  /// No description provided for @retroTableDueDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Scadenza'**
+  String get retroTableDueDate;
 
   /// No description provided for @retroIcebreakerTwoTruths.
   ///
@@ -14223,6 +14313,684 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Migliorare'**
   String get actionTypeEnhance;
+
+  /// No description provided for @actionItemStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato'**
+  String get actionItemStatus;
+
+  /// No description provided for @actionStatusOpen.
+  ///
+  /// In it, this message translates to:
+  /// **'Aperto'**
+  String get actionStatusOpen;
+
+  /// No description provided for @actionStatusInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso'**
+  String get actionStatusInProgress;
+
+  /// No description provided for @actionStatusCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato'**
+  String get actionStatusCompleted;
+
+  /// No description provided for @actionStatusDeferred.
+  ///
+  /// In it, this message translates to:
+  /// **'Differito'**
+  String get actionStatusDeferred;
+
+  /// No description provided for @retroSectionActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Attiva'**
+  String get retroSectionActive;
+
+  /// No description provided for @retroSectionHistory.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico'**
+  String get retroSectionHistory;
+
+  /// No description provided for @retroSectionActionTracker.
+  ///
+  /// In it, this message translates to:
+  /// **'Action Items'**
+  String get retroSectionActionTracker;
+
+  /// No description provided for @retroSectionLessonsLearned.
+  ///
+  /// In it, this message translates to:
+  /// **'Lessons Learned'**
+  String get retroSectionLessonsLearned;
+
+  /// No description provided for @retroNoActiveRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna retrospettiva attiva'**
+  String get retroNoActiveRetro;
+
+  /// No description provided for @retroStartNew.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova Retrospettiva'**
+  String get retroStartNew;
+
+  /// No description provided for @retroHistoryEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna retrospettiva completata'**
+  String get retroHistoryEmpty;
+
+  /// No description provided for @retroViewSummary.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi Riepilogo'**
+  String get retroViewSummary;
+
+  /// No description provided for @retroSummaryTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Riepilogo Retrospettiva'**
+  String get retroSummaryTitle;
+
+  /// No description provided for @retroSummaryCards.
+  ///
+  /// In it, this message translates to:
+  /// **'Card ({count})'**
+  String retroSummaryCards(Object count);
+
+  /// No description provided for @retroSummaryActions.
+  ///
+  /// In it, this message translates to:
+  /// **'Action Items ({count})'**
+  String retroSummaryActions(Object count);
+
+  /// No description provided for @retroSummarySentiment.
+  ///
+  /// In it, this message translates to:
+  /// **'Sentiment del Team'**
+  String get retroSummarySentiment;
+
+  /// No description provided for @actionTrackerTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Tracker Action Items'**
+  String get actionTrackerTitle;
+
+  /// No description provided for @actionTrackerEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun action item nelle retrospettive'**
+  String get actionTrackerEmpty;
+
+  /// No description provided for @actionTrackerFilterByAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per assegnatario'**
+  String get actionTrackerFilterByAssignee;
+
+  /// No description provided for @actionTrackerFilterByStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per stato'**
+  String get actionTrackerFilterByStatus;
+
+  /// No description provided for @actionTrackerFilterByRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per retrospettiva'**
+  String get actionTrackerFilterByRetro;
+
+  /// No description provided for @actionTrackerCompletionRate.
+  ///
+  /// In it, this message translates to:
+  /// **'Tasso di Completamento'**
+  String get actionTrackerCompletionRate;
+
+  /// No description provided for @actionTrackerCarryForward.
+  ///
+  /// In it, this message translates to:
+  /// **'Riporta'**
+  String get actionTrackerCarryForward;
+
+  /// No description provided for @actionTrackerCarryForwardDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Questi action items dalle retrospettive precedenti sono ancora aperti:'**
+  String get actionTrackerCarryForwardDesc;
+
+  /// No description provided for @actionTrackerCarryForwardConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Riporta gli elementi selezionati'**
+  String get actionTrackerCarryForwardConfirm;
+
+  /// No description provided for @lessonsLearnedTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Registro Lessons Learned'**
+  String get lessonsLearnedTitle;
+
+  /// No description provided for @lessonsLearnedEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna lesson learned registrata'**
+  String get lessonsLearnedEmpty;
+
+  /// No description provided for @lessonsLearnedCreate.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Lesson Learned'**
+  String get lessonsLearnedCreate;
+
+  /// No description provided for @lessonsLearnedEdit.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Lesson Learned'**
+  String get lessonsLearnedEdit;
+
+  /// No description provided for @lessonsLearnedDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Lesson Learned'**
+  String get lessonsLearnedDelete;
+
+  /// No description provided for @lessonsLearnedDeleteConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare questa lesson?'**
+  String get lessonsLearnedDeleteConfirm;
+
+  /// No description provided for @lessonCategoryProcess.
+  ///
+  /// In it, this message translates to:
+  /// **'Processo'**
+  String get lessonCategoryProcess;
+
+  /// No description provided for @lessonCategoryTechnical.
+  ///
+  /// In it, this message translates to:
+  /// **'Tecnico'**
+  String get lessonCategoryTechnical;
+
+  /// No description provided for @lessonCategoryTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'Team'**
+  String get lessonCategoryTeam;
+
+  /// No description provided for @lessonCategoryCommunication.
+  ///
+  /// In it, this message translates to:
+  /// **'Comunicazione'**
+  String get lessonCategoryCommunication;
+
+  /// No description provided for @lessonCategoryTools.
+  ///
+  /// In it, this message translates to:
+  /// **'Strumenti'**
+  String get lessonCategoryTools;
+
+  /// No description provided for @lessonCategoryQuality.
+  ///
+  /// In it, this message translates to:
+  /// **'Qualità'**
+  String get lessonCategoryQuality;
+
+  /// No description provided for @lessonCategoryEstimation.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima'**
+  String get lessonCategoryEstimation;
+
+  /// No description provided for @lessonTypeStrength.
+  ///
+  /// In it, this message translates to:
+  /// **'Punto di Forza'**
+  String get lessonTypeStrength;
+
+  /// No description provided for @lessonTypeWeakness.
+  ///
+  /// In it, this message translates to:
+  /// **'Debolezza'**
+  String get lessonTypeWeakness;
+
+  /// No description provided for @lessonTypeRecommendation.
+  ///
+  /// In it, this message translates to:
+  /// **'Raccomandazione'**
+  String get lessonTypeRecommendation;
+
+  /// No description provided for @lessonFieldTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo'**
+  String get lessonFieldTitle;
+
+  /// No description provided for @lessonFieldDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get lessonFieldDescription;
+
+  /// No description provided for @lessonFieldRootCause.
+  ///
+  /// In it, this message translates to:
+  /// **'Causa Radice'**
+  String get lessonFieldRootCause;
+
+  /// No description provided for @lessonFieldRecommendation.
+  ///
+  /// In it, this message translates to:
+  /// **'Raccomandazione'**
+  String get lessonFieldRecommendation;
+
+  /// No description provided for @lessonFieldTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag'**
+  String get lessonFieldTags;
+
+  /// No description provided for @lessonIsRecurring.
+  ///
+  /// In it, this message translates to:
+  /// **'Pattern Ricorrente'**
+  String get lessonIsRecurring;
+
+  /// No description provided for @lessonOccurrenceCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Occorrenze: {count}'**
+  String lessonOccurrenceCount(Object count);
+
+  /// No description provided for @lessonIsResolved.
+  ///
+  /// In it, this message translates to:
+  /// **'Risolta'**
+  String get lessonIsResolved;
+
+  /// No description provided for @generateLessonsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Genera Lessons Learned'**
+  String get generateLessonsTitle;
+
+  /// No description provided for @generateLessonsDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Rivedi gli insight di questa retrospettiva e salvali come lessons learned.'**
+  String get generateLessonsDesc;
+
+  /// No description provided for @generateLessonsFromCards.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggeriti dalle card'**
+  String get generateLessonsFromCards;
+
+  /// No description provided for @generateLessonsFromActions.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggeriti dagli action items'**
+  String get generateLessonsFromActions;
+
+  /// No description provided for @generateLessonsSelectToSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona gli elementi da salvare'**
+  String get generateLessonsSelectToSave;
+
+  /// No description provided for @generateLessonsSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Lessons Selezionate'**
+  String get generateLessonsSave;
+
+  /// No description provided for @retroTrendTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Trend di Miglioramento del Team'**
+  String get retroTrendTitle;
+
+  /// No description provided for @retroTrendSentiment.
+  ///
+  /// In it, this message translates to:
+  /// **'Sentiment nel Tempo'**
+  String get retroTrendSentiment;
+
+  /// No description provided for @retroTrendActionCompletion.
+  ///
+  /// In it, this message translates to:
+  /// **'Tasso Completamento Azioni'**
+  String get retroTrendActionCompletion;
+
+  /// No description provided for @retroTrendImproving.
+  ///
+  /// In it, this message translates to:
+  /// **'Il team sta migliorando!'**
+  String get retroTrendImproving;
+
+  /// No description provided for @retroTrendStable.
+  ///
+  /// In it, this message translates to:
+  /// **'Performance stabile'**
+  String get retroTrendStable;
+
+  /// No description provided for @retroTrendDeclining.
+  ///
+  /// In it, this message translates to:
+  /// **'Attenzione necessaria'**
+  String get retroTrendDeclining;
+
+  /// No description provided for @crossProjectImport.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa da Altri Progetti'**
+  String get crossProjectImport;
+
+  /// No description provided for @crossProjectImportActions.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa Action Items'**
+  String get crossProjectImportActions;
+
+  /// No description provided for @crossProjectImportLessons.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa Lessons Learned'**
+  String get crossProjectImportLessons;
+
+  /// No description provided for @crossProjectSelectProject.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Progetto'**
+  String get crossProjectSelectProject;
+
+  /// No description provided for @crossProjectNoProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun altro progetto trovato'**
+  String get crossProjectNoProjects;
+
+  /// No description provided for @crossProjectImportSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} elementi importati con successo'**
+  String crossProjectImportSuccess(Object count);
+
+  /// No description provided for @crossProjectAggregatedView.
+  ///
+  /// In it, this message translates to:
+  /// **'Lessons Cross-Progetto'**
+  String get crossProjectAggregatedView;
+
+  /// No description provided for @tooltipTrackerStatusClick.
+  ///
+  /// In it, this message translates to:
+  /// **'Clicca per cambiare lo stato'**
+  String get tooltipTrackerStatusClick;
+
+  /// No description provided for @tooltipTrackerFilterStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra le azioni per stato corrente'**
+  String get tooltipTrackerFilterStatus;
+
+  /// No description provided for @tooltipTrackerFilterAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per persona assegnata all\'azione'**
+  String get tooltipTrackerFilterAssignee;
+
+  /// No description provided for @tooltipTrackerFilterRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per retrospettiva di origine'**
+  String get tooltipTrackerFilterRetro;
+
+  /// No description provided for @tooltipTrackerCompletionRate.
+  ///
+  /// In it, this message translates to:
+  /// **'Percentuale di tutte le azioni completate'**
+  String get tooltipTrackerCompletionRate;
+
+  /// No description provided for @tooltipTrackerOverdue.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione ha superato la data di scadenza'**
+  String get tooltipTrackerOverdue;
+
+  /// No description provided for @tooltipPriorityCritical.
+  ///
+  /// In it, this message translates to:
+  /// **'Critica: Da affrontare immediatamente'**
+  String get tooltipPriorityCritical;
+
+  /// No description provided for @tooltipPriorityHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Alta: Da affrontare entro lo sprint'**
+  String get tooltipPriorityHigh;
+
+  /// No description provided for @tooltipPriorityMedium.
+  ///
+  /// In it, this message translates to:
+  /// **'Media: Da pianificare per i prossimi sprint'**
+  String get tooltipPriorityMedium;
+
+  /// No description provided for @tooltipPriorityLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Bassa: Da affrontare quando possibile'**
+  String get tooltipPriorityLow;
+
+  /// No description provided for @tooltipLessonCategoryFilter.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra le lezioni per area di impatto'**
+  String get tooltipLessonCategoryFilter;
+
+  /// No description provided for @tooltipLessonTypeFilter.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtra per tipo: punto di forza, debolezza o raccomandazione'**
+  String get tooltipLessonTypeFilter;
+
+  /// No description provided for @tooltipLessonResolvedFilter.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra tutte, solo non risolte, o solo risolte'**
+  String get tooltipLessonResolvedFilter;
+
+  /// No description provided for @tooltipLessonRecurring.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa lezione e\' stata osservata piu\' volte nelle retrospettive'**
+  String get tooltipLessonRecurring;
+
+  /// No description provided for @tooltipLessonResolved.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa lezione e\' stata affrontata e risolta'**
+  String get tooltipLessonResolved;
+
+  /// No description provided for @tooltipLessonImport.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa lezioni apprese da altri progetti di cui sei owner'**
+  String get tooltipLessonImport;
+
+  /// No description provided for @tooltipLessonAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Registra una nuova lezione appresa per questo progetto'**
+  String get tooltipLessonAdd;
+
+  /// No description provided for @tooltipLessonLongPressDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Tieni premuto su una lezione per eliminarla'**
+  String get tooltipLessonLongPressDelete;
+
+  /// No description provided for @tooltipCarryForwardDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Porta le azioni non completate dalle retrospettive precedenti nella nuova'**
+  String get tooltipCarryForwardDesc;
+
+  /// No description provided for @tooltipCarryForwardSelectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona o deseleziona tutte le azioni in sospeso'**
+  String get tooltipCarryForwardSelectAll;
+
+  /// No description provided for @tooltipCrossProjectImportDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Le lezioni saranno copiate nel progetto corrente con riferimento alla fonte'**
+  String get tooltipCrossProjectImportDesc;
+
+  /// No description provided for @tooltipTrendSentiment.
+  ///
+  /// In it, this message translates to:
+  /// **'Punteggio medio del sentiment del team (1-5) nel tempo'**
+  String get tooltipTrendSentiment;
+
+  /// No description provided for @tooltipTrendCompletion.
+  ///
+  /// In it, this message translates to:
+  /// **'Percentuale di azioni completate per retrospettiva nel tempo'**
+  String get tooltipTrendCompletion;
+
+  /// No description provided for @tooltipTrendImproving.
+  ///
+  /// In it, this message translates to:
+  /// **'Le metriche del team stanno migliorando'**
+  String get tooltipTrendImproving;
+
+  /// No description provided for @tooltipTrendDeclining.
+  ///
+  /// In it, this message translates to:
+  /// **'Le metriche del team sono in calo - considera di affrontare le cause'**
+  String get tooltipTrendDeclining;
+
+  /// No description provided for @tooltipTrendStable.
+  ///
+  /// In it, this message translates to:
+  /// **'Le metriche del team sono stabili nelle retrospettive recenti'**
+  String get tooltipTrendStable;
+
+  /// No description provided for @tooltipHistoryRetroCard.
+  ///
+  /// In it, this message translates to:
+  /// **'Clicca per vedere il riepilogo completo della retrospettiva'**
+  String get tooltipHistoryRetroCard;
+
+  /// No description provided for @tooltipHistorySentiment.
+  ///
+  /// In it, this message translates to:
+  /// **'Sentiment medio del team per questa retrospettiva'**
+  String get tooltipHistorySentiment;
+
+  /// No description provided for @tooltipHistoryActionCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Azioni completate vs totali di questa retrospettiva'**
+  String get tooltipHistoryActionCount;
+
+  /// No description provided for @tooltipFormRootCause.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrivi la causa sottostante che ha portato a questa osservazione'**
+  String get tooltipFormRootCause;
+
+  /// No description provided for @tooltipFormRecommendation.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggerisci azioni concrete per affrontare o replicare questa scoperta'**
+  String get tooltipFormRecommendation;
+
+  /// No description provided for @tooltipFormTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi tag separati da virgola per categorizzare e cercare'**
+  String get tooltipFormTags;
+
+  /// No description provided for @tooltipFormRecurring.
+  ///
+  /// In it, this message translates to:
+  /// **'Attiva se questa lezione e\' apparsa in piu\' retrospettive'**
+  String get tooltipFormRecurring;
+
+  /// No description provided for @tooltipFormResolved.
+  ///
+  /// In it, this message translates to:
+  /// **'Segna come risolta quando il team ha affrontato questa lezione'**
+  String get tooltipFormResolved;
+
+  /// No description provided for @guideActionTrackingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Best Practice per le Azioni'**
+  String get guideActionTrackingTitle;
+
+  /// No description provided for @guideActionTrackingDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa i criteri SMART: Specifico, Misurabile, Raggiungibile, Rilevante, Temporizzato. Assegna un unico responsabile, imposta una scadenza entro lo sprint e verifica il progresso nella prossima retrospettiva.'**
+  String get guideActionTrackingDesc;
+
+  /// No description provided for @guideLessonsLearnedTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Framework Lezioni Apprese'**
+  String get guideLessonsLearnedTitle;
+
+  /// No description provided for @guideLessonsLearnedDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cattura sia i punti di forza (da replicare) che le debolezze (da migliorare). Documenta le cause profonde e le raccomandazioni. Tagga le lezioni per il riuso cross-progetto e segna come risolte quando affrontate.'**
+  String get guideLessonsLearnedDesc;
+
+  /// No description provided for @guideContinuousImprovementTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ciclo di Miglioramento Continuo'**
+  String get guideContinuousImprovementTitle;
+
+  /// No description provided for @guideContinuousImprovementDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora i trend nelle retrospettive per misurare il progresso. Porta avanti le azioni non completate. Importa lezioni da altri progetti. Concentrati su cambiamenti sistemici rispetto a fix individuali.'**
+  String get guideContinuousImprovementDesc;
+
+  /// No description provided for @guideCarryForwardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Processo di Carry Forward'**
+  String get guideCarryForwardTitle;
+
+  /// No description provided for @guideCarryForwardDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Quando crei una nuova retrospettiva, rivedi le azioni aperte e in corso dalle precedenti. Porta avanti gli elementi ancora rilevanti e ri-prioritizzali nel nuovo contesto.'**
+  String get guideCarryForwardDesc;
+
+  /// No description provided for @retroFromSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Da: Sprint {name}'**
+  String retroFromSprint(Object name);
+
+  /// No description provided for @actionItemsCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'{completed}/{total} completati'**
+  String actionItemsCompleted(Object completed, Object total);
 
   /// No description provided for @coachTipSSCWriting.
   ///

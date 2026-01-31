@@ -342,6 +342,14 @@ service cloud.firestore {
                          get(/databases/$(database)/documents/agile_projects/$(projectId))
                        );
       }
+
+      match /lessons_learned/{lessonId} {
+        // Lessons Learned: lettura e scrittura per partecipanti del progetto
+        allow read, write: if isAuthenticated() &&
+                             canAccessByParticipantEmails(
+                               get(/databases/$(database)/documents/agile_projects/$(projectId))
+                             );
+      }
     }
 
     // ════════════════════════════════════════════════════════════════════════════
