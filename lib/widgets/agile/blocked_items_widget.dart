@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../models/sprint_model.dart';
 import '../../models/user_story_model.dart';
 import '../../themes/app_colors.dart';
 
@@ -10,15 +11,30 @@ import '../../themes/app_colors.dart';
 /// Each blocked story shows its blocking dependencies.
 class BlockedItemsWidget extends StatelessWidget {
   final List<UserStoryModel> stories;
+  final SprintModel? currentSprint;
 
-  const BlockedItemsWidget({super.key, required this.stories});
+  const BlockedItemsWidget({
+    super.key,
+    required this.stories,
+    this.currentSprint,
+  });
 
   // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
 
   List<UserStoryModel> _blockedStories() {
-    return stories
+    var source = stories;
+    if (currentSprint != null) {
+      // If we have an active sprint context, only show blocked items 
+      // that are IN this sprint (and not Backlog/Refinement).
+      source = stories.where((s) => 
+        s.sprintId == currentSprint!.id && 
+        !s.status.needsRefinement
+      ).toList();
+    }
+    
+    return source
         .where((s) => !s.isCompleted && s.isBlockedBy(stories))
         .toList();
   }

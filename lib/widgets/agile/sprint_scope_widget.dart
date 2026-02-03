@@ -25,7 +25,10 @@ class SprintScopeWidget extends StatelessWidget {
 
   int _currentSP(SprintModel sprint) {
     return stories
-        .where((s) => sprint.storyIds.contains(s.id))
+        .where((s) => 
+            s.sprintId == sprint.id && 
+            !s.status.needsRefinement // Exclude Backlog/Refinement/Ready
+        )
         .fold<int>(0, (acc, s) => acc + (s.storyPoints ?? 0));
   }
 

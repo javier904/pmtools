@@ -2915,6 +2915,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           // Blocked Items
           BlockedItemsWidget(
             stories: _stories,
+            currentSprint: activeSprint,
           ),
           const SizedBox(height: 16),
 
