@@ -371,27 +371,42 @@ class StoryWorkflowDialog extends StatelessWidget {
     bool isSmallScreen, {
     bool inCycle = false,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Optional/Alternate indicator (left)
-        if (!inCycle && (node.isOptional || node.hasAlternatePath))
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: _buildIndicatorBadge(context, node, isSmallScreen),
+    final nodeWidth = isSmallScreen ? 130.0 : 160.0;
+    
+    // Use Stack to keep status node centered and badge to the side
+    return SizedBox(
+      width: isSmallScreen ? 280 : 350,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Centered: Optional indicator + Status node
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Optional/Alternate indicator (left)
+              if (!inCycle && (node.isOptional || node.hasAlternatePath))
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: _buildIndicatorBadge(context, node, isSmallScreen),
+                ),
+              
+              // Status node (fixed width for alignment)
+              SizedBox(
+                width: nodeWidth,
+                child: _buildStatusNode(context, node, isSmallScreen),
+              ),
+            ],
           ),
-        
-        // Status node
-        _buildStatusNode(context, node, isSmallScreen),
-        
-        // Right side - "Any" badge
-        if (node.canTransitionFromAny)
-          Padding(
-            padding: const EdgeInsets.only(left: 6),
-            child: _buildAnyBadge(context, l10n, isSmallScreen),
-          ),
-      ],
+          
+          // Right side - "From Any" badge (positioned to the right)
+          if (node.canTransitionFromAny)
+            Positioned(
+              right: 0,
+              child: _buildAnyBadge(context, l10n, isSmallScreen),
+            ),
+        ],
+      ),
     );
   }
 

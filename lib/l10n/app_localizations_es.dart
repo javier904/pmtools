@@ -1979,7 +1979,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get scrumWorkflowStatusContent =>
-      'En Scrum, el ciclo de vida de una historia sigue estos estados:\n\n1. **Product Backlog**: Donde nacen las ideas. Aquí ocurre el \'Refinement\'.\n2. **Ready**: La historia está lista para trabajarse (cumple con Definition of Ready).\n3. **Sprint Backlog**: Durante la Planificación, las historias \'Ready\' se mueven al Sprint y se convierten en el trabajo pendiente.\n4. **In Sprint**: La historia está activa en el tablero del Sprint actual.\n5. **Done**: La historia está completada y verificada.';
+      'En Scrum, el ciclo de vida de una historia sigue estos estados:\n\n1. **Product Backlog**: Donde nacen las ideas. La etiqueta \'Refinement\' indica que la historia está siendo analizada/detallada (no es una columna del tablero, solo un indicador).\n2. **Ready**: La historia está lista para trabajarse (cumple con Definition of Ready).\n3. **In Sprint**: Durante la Planificación, las historias \'Ready\' se mueven al Sprint.\n4. **In Progress**: La historia está siendo trabajada activamente.\n5. **In Review**: La historia está en fase de revisión/code review.\n6. **Done**: La historia está completada y verificada.';
 
   @override
   String get kanbanWorkflowStatusContent =>
