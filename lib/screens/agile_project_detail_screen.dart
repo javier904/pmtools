@@ -453,11 +453,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         );
         
         // Se assegnata a uno sprint, aggiorna anche lo sprint
+        // FIX: Use withStory helper to update BOTH storyIds AND plannedPoints
         if (story.sprintId != null) {
            final sprint = _sprints.firstWhere((s) => s.id == story.sprintId);
            if (!sprint.storyIds.contains(story.id)) {
-              final updatedIds = List<String>.from(sprint.storyIds)..add(story.id);
-              await _firestoreService.updateSprint(widget.project.id, sprint.copyWith(storyIds: updatedIds));
+              final updatedSprint = sprint.withStory(story.id, story.storyPoints ?? 0);
+              await _firestoreService.updateSprint(widget.project.id, updatedSprint);
            }
         }
 
