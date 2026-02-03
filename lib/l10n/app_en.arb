@@ -5239,8 +5239,11 @@
   "workflowTitle": "Story Workflow",
   "workflowShowButton": "Show Workflow",
   "workflowDiagramTitle": "Status Flow Diagram",
-  "workflowLegend": "Status Legend",
+  "workflowLegend": "Legend",
   "workflowScrumDesc": "In Scrum, stories flow through Sprint Planning, Development, Review, and Done. The flow is iterative with time-boxed sprints.",
   "workflowKanbanDesc": "In Kanban, work flows continuously. Stories are pulled through the system based on WIP limits and capacity.",
-  "workflowHybridDesc": "Hybrid combines Scrum sprints with Kanban flow. Stories can be pulled continuously or planned in sprints."
+  "workflowHybridDesc": "Hybrid combines Scrum sprints with Kanban flow. Stories can be pulled continuously or planned in sprints.",
+  "workflowFromAny": "From Any",
+  "workflowFromAnyDesc": "Can transition from any status",
+  "workflowCycleDesc": "Bidirectional transition (cycle)"
 }

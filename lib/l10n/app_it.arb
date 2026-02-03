@@ -5025,8 +5025,11 @@
   "workflowTitle": "Flusso di Lavoro",
   "workflowShowButton": "Mostra Flusso",
   "workflowDiagramTitle": "Diagramma Flusso Stati",
-  "workflowLegend": "Legenda Stati",
+  "workflowLegend": "Legenda",
   "workflowScrumDesc": "In Scrum, le storie fluiscono attraverso Sprint Planning, Sviluppo, Review e Done. Il flusso è iterativo con sprint a tempo definito.",
   "workflowKanbanDesc": "In Kanban, il lavoro fluisce continuamente. Le storie vengono tirate (pull) nel sistema in base ai limiti WIP e alla capacità.",
-  "workflowHybridDesc": "Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint."
+  "workflowHybridDesc": "Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.",
+  "workflowFromAny": "Da Qualunque",
+  "workflowFromAnyDesc": "Può transitare da qualunque stato",
+  "workflowCycleDesc": "Transizione bidirezionale (ciclo)"
 }

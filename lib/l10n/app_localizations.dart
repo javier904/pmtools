@@ -20097,7 +20097,7 @@ abstract class AppLocalizations {
   /// No description provided for @workflowLegend.
   ///
   /// In it, this message translates to:
-  /// **'Legenda Stati'**
+  /// **'Legenda'**
   String get workflowLegend;
 
   /// No description provided for @workflowScrumDesc.
@@ -20117,6 +20117,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.'**
   String get workflowHybridDesc;
+
+  /// No description provided for @workflowFromAny.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Qualunque'**
+  String get workflowFromAny;
+
+  /// No description provided for @workflowFromAnyDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Può transitare da qualunque stato'**
+  String get workflowFromAnyDesc;
+
+  /// No description provided for @workflowCycleDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Transizione bidirezionale (ciclo)'**
+  String get workflowCycleDesc;
 }
 
 class _AppLocalizationsDelegate

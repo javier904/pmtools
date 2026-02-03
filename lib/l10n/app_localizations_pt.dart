@@ -11088,7 +11088,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get workflowDiagramTitle => 'Diagramma Flusso Stati';
 
   @override
-  String get workflowLegend => 'Legenda Stati';
+  String get workflowLegend => 'Legenda';
 
   @override
   String get workflowScrumDesc =>
@@ -11101,4 +11101,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get workflowHybridDesc =>
       'Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.';
+
+  @override
+  String get workflowFromAny => 'Da Qualunque';
+
+  @override
+  String get workflowFromAnyDesc => 'Può transitare da qualunque stato';
+
+  @override
+  String get workflowCycleDesc => 'Transizione bidirezionale (ciclo)';
 }

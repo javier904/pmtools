@@ -3,7 +3,8 @@ import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 
-/// Dialog che mostra il flusso di lavoro delle stories in base alla metodologia
+/// Dialog che mostra il flusso di lavoro delle stories in stile Jira
+/// Layout verticale con nodi, connettori e badge "Da qualunque stato"
 class StoryWorkflowDialog extends StatelessWidget {
   final AgileFramework framework;
 
@@ -26,8 +27,8 @@ class StoryWorkflowDialog extends StatelessWidget {
     
     return Dialog(
       child: Container(
-        width: 700,
-        constraints: const BoxConstraints(maxHeight: 700),
+        width: 500,
+        constraints: const BoxConstraints(maxHeight: 750),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -43,9 +44,7 @@ class StoryWorkflowDialog extends StatelessWidget {
                   children: [
                     _buildMethodologyInfo(context, l10n),
                     const SizedBox(height: 24),
-                    _buildWorkflowDiagram(context, l10n),
-                    const SizedBox(height: 24),
-                    _buildLegend(context, l10n),
+                    _buildVerticalWorkflow(context, l10n),
                   ],
                 ),
               ),
@@ -145,9 +144,9 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkflowDiagram(BuildContext context, AppLocalizations l10n) {
-    // Definiamo le transizioni in base alla metodologia
-    final transitions = _getTransitions();
+  /// Build the vertical workflow diagram (Jira-style)
+  Widget _buildVerticalWorkflow(BuildContext context, AppLocalizations l10n) {
+    final workflow = _getWorkflowForFramework();
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,285 +158,292 @@ class StoryWorkflowDialog extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        // Workflow visualizer
-        _buildVisualWorkflow(context, transitions),
-      ],
-    );
-  }
-
-  List<_WorkflowTransition> _getTransitions() {
-    // Transizioni comuni a tutte le metodologie
-    final common = <_WorkflowTransition>[
-      _WorkflowTransition(
-        from: null,
-        to: StoryStatus.backlog,
-        label: 'Create',
-        isStart: true,
-      ),
-      _WorkflowTransition(
-        from: StoryStatus.backlog,
-        to: StoryStatus.refinement,
-        label: 'Start Refinement',
-      ),
-      _WorkflowTransition(
-        from: StoryStatus.refinement,
-        to: StoryStatus.ready,
-        label: 'Mark Ready',
-      ),
-    ];
-
-    switch (framework) {
-      case AgileFramework.scrum:
-        return [
-          ...common,
-          _WorkflowTransition(
-            from: StoryStatus.ready,
-            to: StoryStatus.inSprint,
-            label: 'Sprint Planning',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inSprint,
-            to: StoryStatus.inProgress,
-            label: 'Start Work',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inProgress,
-            to: StoryStatus.inReview,
-            label: 'Submit for Review',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inReview,
-            to: StoryStatus.done,
-            label: 'Approve',
-          ),
-          // Reverse transitions
-          _WorkflowTransition(
-            from: StoryStatus.inReview,
-            to: StoryStatus.inProgress,
-            label: 'Request Changes',
-            isReverse: true,
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inSprint,
-            to: StoryStatus.backlog,
-            label: 'Return to Backlog',
-            isReverse: true,
-          ),
-        ];
-
-      case AgileFramework.kanban:
-        return [
-          ...common,
-          _WorkflowTransition(
-            from: StoryStatus.ready,
-            to: StoryStatus.inProgress,
-            label: 'Pull',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inProgress,
-            to: StoryStatus.inReview,
-            label: 'Submit for Review',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inReview,
-            to: StoryStatus.done,
-            label: 'Complete',
-          ),
-          // Reverse transitions
-          _WorkflowTransition(
-            from: StoryStatus.inReview,
-            to: StoryStatus.inProgress,
-            label: 'Rework',
-            isReverse: true,
-          ),
-        ];
-
-      case AgileFramework.hybrid:
-        return [
-          ...common,
-          _WorkflowTransition(
-            from: StoryStatus.ready,
-            to: StoryStatus.inSprint,
-            label: 'Sprint Planning (Optional)',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.ready,
-            to: StoryStatus.inProgress,
-            label: 'Pull (Continuous)',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inSprint,
-            to: StoryStatus.inProgress,
-            label: 'Start Work',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inProgress,
-            to: StoryStatus.inReview,
-            label: 'Submit for Review',
-          ),
-          _WorkflowTransition(
-            from: StoryStatus.inReview,
-            to: StoryStatus.done,
-            label: 'Approve',
-          ),
-          // Reverse
-          _WorkflowTransition(
-            from: StoryStatus.inReview,
-            to: StoryStatus.inProgress,
-            label: 'Request Changes',
-            isReverse: true,
-          ),
-        ];
-    }
-  }
-
-  Widget _buildVisualWorkflow(BuildContext context, List<_WorkflowTransition> transitions) {
-    // Determina i nodi principali (forward flow only per il diagramma principale)
-    final forwardTransitions = transitions.where((t) => !t.isReverse && !t.isStart).toList();
-    final reverseTransitions = transitions.where((t) => t.isReverse).toList();
-
-    // Estrai tutti gli stati unici nell'ordine del flusso
-    final states = <StoryStatus>[];
-    for (final t in forwardTransitions) {
-      if (t.from != null && !states.contains(t.from)) {
-        states.add(t.from!);
-      }
-      if (!states.contains(t.to)) {
-        states.add(t.to);
-      }
-    }
-
-    // Gestione speciale: assicuriamoci che backlog sia primo
-    if (!states.contains(StoryStatus.backlog)) {
-      states.insert(0, StoryStatus.backlog);
-    }
-
-    return Column(
-      children: [
-        // Main flow (horizontal)
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        
+        // Vertical workflow
+        Center(
+          child: SizedBox(
+            width: 380,
+            child: Column(
               children: [
                 // Start node
-                _buildStartNode(context),
-                _buildArrow(context, 'Create', false),
+                _buildStartNode(context, l10n),
+                _buildVerticalConnector(context),
+                
                 // Status nodes
-                for (int i = 0; i < states.length; i++) ...[
-                  _buildStatusNode(context, states[i]),
-                  if (i < states.length - 1)
-                    _buildArrow(
-                      context,
-                      _getTransitionLabel(forwardTransitions, states[i], states[i + 1]),
-                      false,
-                    ),
+                for (int i = 0; i < workflow.length; i++) ...[
+                  _buildStatusRow(context, workflow[i], l10n),
+                  if (i < workflow.length - 1)
+                    _buildVerticalConnector(context),
                 ],
               ],
             ),
           ),
         ),
-
-        // Reverse transitions (below)
-        if (reverseTransitions.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.undo, size: 16, color: Colors.orange),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Reverse Transitions',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange[700],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 16,
-                  runSpacing: 8,
-                  children: reverseTransitions.map((t) => _buildReverseTransition(context, t)).toList(),
-                ),
-              ],
-            ),
-          ),
-        ],
+        
+        const SizedBox(height: 24),
+        _buildLegend(context, l10n),
       ],
     );
   }
 
-  String _getTransitionLabel(List<_WorkflowTransition> transitions, StoryStatus from, StoryStatus to) {
-    for (final t in transitions) {
-      if (t.from == from && t.to == to) {
-        return t.label;
-      }
+  List<_WorkflowNode> _getWorkflowForFramework() {
+    switch (framework) {
+      case AgileFramework.scrum:
+        return [
+          _WorkflowNode(
+            status: StoryStatus.backlog,
+            canTransitionFromAny: true,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.refinement,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.ready,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inSprint,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inProgress,
+            canTransitionFromAny: false,
+            hasCycleBack: true,
+            cycleBackTo: 'inReview ↔ inProgress',
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inReview,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.done,
+            canTransitionFromAny: true,
+            isEndState: true,
+          ),
+        ];
+
+      case AgileFramework.kanban:
+        return [
+          _WorkflowNode(
+            status: StoryStatus.backlog,
+            canTransitionFromAny: true,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.refinement,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.ready,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inProgress,
+            canTransitionFromAny: false,
+            hasCycleBack: true,
+            cycleBackTo: 'inReview ↔ inProgress',
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inReview,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.done,
+            canTransitionFromAny: true,
+            isEndState: true,
+          ),
+        ];
+
+      case AgileFramework.hybrid:
+        return [
+          _WorkflowNode(
+            status: StoryStatus.backlog,
+            canTransitionFromAny: true,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.refinement,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.ready,
+            canTransitionFromAny: false,
+            hasCycleBack: true,
+            cycleBackTo: 'Pull o Sprint',
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inSprint,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inProgress,
+            canTransitionFromAny: false,
+            hasCycleBack: true,
+            cycleBackTo: 'inReview ↔ inProgress',
+          ),
+          _WorkflowNode(
+            status: StoryStatus.inReview,
+            canTransitionFromAny: false,
+          ),
+          _WorkflowNode(
+            status: StoryStatus.done,
+            canTransitionFromAny: true,
+            isEndState: true,
+          ),
+        ];
     }
-    return '';
   }
 
-  Widget _buildStartNode(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        shape: BoxShape.circle,
-      ),
-      child: const Center(
-        child: Icon(Icons.play_arrow, color: Colors.white, size: 20),
-      ),
+  Widget _buildStartNode(BuildContext context, AppLocalizations l10n) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.grey[800],
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'START',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildStatusNode(BuildContext context, StoryStatus status) {
-    final isEndState = status == StoryStatus.done;
+  Widget _buildVerticalConnector(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 2,
+          height: 24,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.grey[400]!,
+                Colors.grey[500]!,
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusRow(BuildContext context, _WorkflowNode node, AppLocalizations l10n) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Left side spacer
+        const SizedBox(width: 40),
+        
+        // Cycle indicator (left side)
+        SizedBox(
+          width: 60,
+          child: node.hasCycleBack
+              ? _buildCycleIndicator(context, node.cycleBackTo ?? '')
+              : null,
+        ),
+        
+        // Status node
+        _buildStatusNode(context, node),
+        
+        // Right side - "Any" badge
+        SizedBox(
+          width: 120,
+          child: node.canTransitionFromAny
+              ? _buildAnyBadge(context, l10n)
+              : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCycleIndicator(BuildContext context, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.orange.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.sync, size: 10, color: Colors.orange[700]),
+              const SizedBox(width: 2),
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(fontSize: 8, color: Colors.orange[700]),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusNode(BuildContext context, _WorkflowNode node) {
+    final status = node.status;
+    final isEndState = node.isEndState;
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      width: 160,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        color: isEndState ? status.color : Colors.white,
+        color: isEndState ? status.color.withValues(alpha: 0.2) : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: status.color,
-          width: isEndState ? 3 : 2,
+          color: isEndState ? status.color : Colors.grey[300]!,
+          width: isEndState ? 3 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: status.color.withValues(alpha: 0.3),
-            blurRadius: 8,
+            color: status.color.withValues(alpha: 0.15),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             status.icon,
-            color: isEndState ? Colors.white : status.color,
-            size: 24,
+            color: status.color,
+            size: 18,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(width: 8),
           Text(
-            status.displayName,
+            status.displayName.toUpperCase(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 12,
-              color: isEndState ? Colors.white : status.color,
+              color: isEndState ? status.color : Colors.grey[700],
             ),
           ),
         ],
@@ -445,69 +451,38 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildArrow(BuildContext context, String label, bool isReverse) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              color: isReverse ? Colors.orange : context.textSecondaryColor,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          Icon(
-            isReverse ? Icons.arrow_back : Icons.arrow_forward,
-            color: isReverse ? Colors.orange : context.textSecondaryColor,
-            size: 24,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReverseTransition(BuildContext context, _WorkflowTransition t) {
+  Widget _buildAnyBadge(BuildContext context, AppLocalizations l10n) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
+        // Arrow pointing to node
+        Container(
+          width: 20,
+          height: 2,
+          color: Colors.grey[400],
+        ),
+        Icon(Icons.arrow_back, size: 12, color: Colors.grey[400]),
+        const SizedBox(width: 4),
+        // Badge
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: t.from!.color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
+            color: Colors.grey[800],
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(
-            t.from!.displayName,
-            style: TextStyle(fontSize: 11, color: t.from!.color),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Column(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Icon(Icons.bolt, size: 12, color: Colors.amber),
+              const SizedBox(width: 4),
               Text(
-                t.label,
-                style: TextStyle(fontSize: 9, color: context.textMutedColor),
+                l10n.workflowFromAny,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              const Icon(Icons.arrow_forward, size: 14, color: Colors.orange),
             ],
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: t.to.color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            t.to.displayName,
-            style: TextStyle(fontSize: 11, color: t.to.color),
           ),
         ),
       ],
@@ -532,27 +507,55 @@ class StoryWorkflowDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Wrap(
-            spacing: 16,
+            spacing: 12,
             runSpacing: 8,
-            children: StoryStatus.values.map((status) => Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: status.color,
-                    borderRadius: BorderRadius.circular(4),
+            children: [
+              // Any badge explanation
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[800],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.bolt, size: 10, color: Colors.amber),
+                        const SizedBox(width: 2),
+                        Text(l10n.workflowFromAny, style: const TextStyle(color: Colors.white, fontSize: 9)),
+                      ],
+                    ),
                   ),
-                  child: Icon(status.icon, size: 12, color: Colors.white),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  status.displayName,
-                  style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
-                ),
-              ],
-            )).toList(),
+                  const SizedBox(width: 4),
+                  Text(
+                    '= ${l10n.workflowFromAnyDesc}',
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  ),
+                ],
+              ),
+              // Cycle explanation
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Icon(Icons.sync, size: 10, color: Colors.orange[700]),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '= ${l10n.workflowCycleDesc}',
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -560,18 +563,18 @@ class StoryWorkflowDialog extends StatelessWidget {
   }
 }
 
-class _WorkflowTransition {
-  final StoryStatus? from;
-  final StoryStatus to;
-  final String label;
-  final bool isReverse;
-  final bool isStart;
+class _WorkflowNode {
+  final StoryStatus status;
+  final bool canTransitionFromAny;
+  final bool isEndState;
+  final bool hasCycleBack;
+  final String? cycleBackTo;
 
-  const _WorkflowTransition({
-    required this.from,
-    required this.to,
-    required this.label,
-    this.isReverse = false,
-    this.isStart = false,
+  const _WorkflowNode({
+    required this.status,
+    required this.canTransitionFromAny,
+    this.isEndState = false,
+    this.hasCycleBack = false,
+    this.cycleBackTo,
   });
 }
