@@ -1947,6 +1947,160 @@ class AppLocalizationsPt extends AppLocalizations {
       'Scrumban usa un approccio ibrido:\n\n• Puoi usare Sprint per la pianificazione, ma gestire il flusso giornaliero come Kanban.\n• Le storie \'Ready\' possono essere tirate (pull) quando c\'è capacità, indipendentemente dallo Sprint planning, se il team lo preferisce.';
 
   @override
+  String get contextualHelpButton => 'Aiuto';
+
+  @override
+  String get contextualHelpTips => 'Suggerimenti';
+
+  @override
+  String get contextualHelpBacklogTitle => 'Product Backlog';
+
+  @override
+  String get contextualHelpBacklogDesc =>
+      'Il backlog è la lista prioritizzata di tutto il lavoro da fare. Le storie in alto sono le più importanti.';
+
+  @override
+  String get contextualHelpBacklogTip1 =>
+      'Mantieni il backlog ordinato per priorità';
+
+  @override
+  String get contextualHelpBacklogTip2 =>
+      'Fai refinement regolare per dettagliare le storie';
+
+  @override
+  String get contextualHelpBacklogTip3 =>
+      'Una storia è \'Ready\' quando soddisfa la Definition of Ready';
+
+  @override
+  String get contextualHelpSprintTitle => 'Sprint';
+
+  @override
+  String get contextualHelpSprintDesc =>
+      'Lo sprint è un periodo di tempo fisso (1-4 settimane) durante il quale il team lavora sulle storie selezionate.';
+
+  @override
+  String get contextualHelpSprintTip1 => 'Non cambiare scope durante lo sprint';
+
+  @override
+  String get contextualHelpSprintTip2 =>
+      'Monitora il burndown per verificare il progresso';
+
+  @override
+  String get contextualHelpSprintTip3 =>
+      'Fai daily standup per allineare il team';
+
+  @override
+  String get contextualHelpKanbanTitle => 'Kanban Board';
+
+  @override
+  String get contextualHelpKanbanDescFlow =>
+      'La board Kanban visualizza il flusso di lavoro. Gli item si muovono da sinistra a destra attraverso le colonne.';
+
+  @override
+  String get contextualHelpKanbanDescScrum =>
+      'In Scrum, la board mostra lo stato delle storie dello sprint corrente.';
+
+  @override
+  String get contextualHelpKanbanTip1 =>
+      'Rispetta i WIP limits per evitare colli di bottiglia';
+
+  @override
+  String get contextualHelpKanbanTip2 =>
+      'Tira (pull) nuovo lavoro solo quando c\'è capacità';
+
+  @override
+  String get contextualHelpKanbanTip3 =>
+      'Monitora l\'età degli item per identificare blocchi';
+
+  @override
+  String get contextualHelpKanbanTipScrum1 =>
+      'Muovi le card da sinistra a destra mentre lavori';
+
+  @override
+  String get contextualHelpKanbanTipScrum2 =>
+      'Completa una storia prima di iniziarne un\'altra';
+
+  @override
+  String get contextualHelpTeamTitle => 'Team';
+
+  @override
+  String get contextualHelpTeamDesc =>
+      'Qui puoi gestire i membri del team, i loro ruoli e le competenze.';
+
+  @override
+  String get contextualHelpTeamTip1 => 'Assegna ruoli chiari a ogni membro';
+
+  @override
+  String get contextualHelpTeamTip2 =>
+      'Bilancia il carico di lavoro tra i membri';
+
+  @override
+  String get contextualHelpMetricsTitle => 'Metriche';
+
+  @override
+  String get contextualHelpMetricsDescScrum =>
+      'Monitora velocity, burndown e accuratezza delle stime per migliorare la prevedibilità.';
+
+  @override
+  String get contextualHelpMetricsDescKanban =>
+      'Monitora Lead Time, Cycle Time e Throughput per ottimizzare il flusso.';
+
+  @override
+  String get contextualHelpMetricsDescHybrid =>
+      'Combina metriche Scrum e Kanban per un quadro completo.';
+
+  @override
+  String get contextualHelpMetricsTipScrum1 =>
+      'Usa la velocity media per pianificare gli sprint futuri';
+
+  @override
+  String get contextualHelpMetricsTipScrum2 =>
+      'Analizza le stime per migliorare la precisione';
+
+  @override
+  String get contextualHelpMetricsTipKanban1 =>
+      'Riduci il Lead Time per consegnare valore più velocemente';
+
+  @override
+  String get contextualHelpMetricsTipKanban2 =>
+      'Monitora il Throughput settimanale per la prevedibilità';
+
+  @override
+  String get contextualHelpMetricsTipKanban3 =>
+      'Usa l\'età degli item per identificare blocchi';
+
+  @override
+  String get contextualHelpMetricsTipHybrid1 =>
+      'Bilancia velocity e flow metrics';
+
+  @override
+  String get contextualHelpMetricsTipHybrid2 =>
+      'Adatta le metriche al tuo modo di lavorare';
+
+  @override
+  String get contextualHelpRetroTitle => 'Retrospettiva';
+
+  @override
+  String get contextualHelpRetroDescScrum =>
+      'La retrospettiva è un momento per riflettere su cosa è andato bene e cosa migliorare.';
+
+  @override
+  String get contextualHelpRetroDescKanban =>
+      'In Kanban, la retrospettiva (Operations Review) è un momento per analizzare il processo.';
+
+  @override
+  String get contextualHelpRetroTip1 =>
+      'Focalizzati su azioni concrete e misurabili';
+
+  @override
+  String get contextualHelpRetroTip2 =>
+      'Celebra i successi, non solo i problemi';
+
+  @override
+  String get contextualHelpRetroTip3 =>
+      'Porta le azioni nella prossima iterazione';
+
+  @override
   String get retroStatusCompleted => 'Concluída';
 
   @override
@@ -10342,6 +10496,24 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get agileItems => 'itens';
+
+  @override
+  String get agileItemsMore => 'altri items';
+
+  @override
+  String get wipAgeTitle => 'Età Work Items';
+
+  @override
+  String get wipAgeEmpty => 'Nessun item in lavorazione';
+
+  @override
+  String wipAgeDays(int count) {
+    return '$count giorni';
+  }
+
+  @override
+  String get wipAgeWarning =>
+      'Alcuni item sono in lavorazione da troppo tempo. Potrebbero esserci blocchi.';
 
   @override
   String get agilePerWeekSuffix => '/sem';

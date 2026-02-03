@@ -28,6 +28,7 @@ import '../widgets/retrospective/retro_tab_sections_widget.dart';
 import '../widgets/retrospective/retro_summary_dialog.dart';
 import '../widgets/agile/sprint_widgets.dart';
 import '../widgets/agile/kanban_board_widget.dart';
+import '../widgets/agile/contextual_help_button.dart';
 import '../widgets/agile/agile_board_widget.dart';
 import '../widgets/agile/team_list_widget.dart';
 import '../widgets/agile/team_member_form_dialog.dart';
@@ -153,9 +154,20 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ],
         ),
         actions: [
-          // Guida metodologia
+          // Help contestuale per tab corrente
+          AnimatedBuilder(
+            animation: _tabController,
+            builder: (context, child) {
+              final currentTab = _features.visibleTabs[_tabController.index];
+              return ContextualHelpButton(
+                currentTab: currentTab,
+                framework: widget.project.framework,
+              );
+            },
+          ),
+          // Guida metodologia completa
           IconButton(
-            icon: const Icon(Icons.help_outline),
+            icon: const Icon(Icons.menu_book),
             tooltip: l10n.actionGuide(widget.project.framework.displayName),
             onPressed: () => MethodologyGuideDialog.show(
               context,

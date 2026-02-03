@@ -5,7 +5,7 @@ import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../models/framework_features.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
-import '../../themes/app_theme.dart';
+
 
 /// Dashboard principale per metriche Agile
 ///
@@ -51,7 +51,7 @@ class MetricsDashboardWidget extends StatelessWidget {
   Widget _buildFrameworkHeader(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Card(
-      color: _features.primaryColor.withOpacity(0.1),
+      color: _features.primaryColor.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -402,6 +402,9 @@ class MetricsDashboardWidget extends StatelessWidget {
         ),
       );
       widgets.add(const SizedBox(height: 24));
+      
+      // Work Item Age (early warning for aging items)
+      widgets.add(WorkItemAgeWidget(stories: stories));
     }
 
     // Common: Distribution & Cycle Time
@@ -527,18 +530,7 @@ class MetricsDashboardWidget extends StatelessWidget {
     return cycleTimes.reduce((a, b) => a + b) / cycleTimes.length;
   }
 
-  double _calculateAverageLeadTime() {
-    final completedStories = stories.where(
-      (s) => s.status == StoryStatus.done && s.completedAt != null
-    ).toList();
-    if (completedStories.isEmpty) return 0;
 
-    final leadTimes = completedStories.map((s) =>
-      s.completedAt!.difference(s.createdAt).inDays.toDouble()
-    ).toList();
-
-    return leadTimes.reduce((a, b) => a + b) / leadTimes.length;
-  }
 
   double _calculateWeeklyThroughput() {
     final completedStories = stories.where(
@@ -1061,6 +1053,180 @@ class ThroughputWidget extends StatelessWidget {
     );
   }
 }
+
+/// Widget Work Item Age (Kanban/Hybrid-specific)
+/// Shows in-progress items ordered by age for early warning
+class WorkItemAgeWidget extends StatelessWidget {
+  final List<UserStoryModel> stories;
+
+  const WorkItemAgeWidget({
+    super.key,
+    required this.stories,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Filter only in-progress items (inProgress or inReview)
+    final wipStories = stories.where((s) => s.status.isInProgress).toList();
+    
+    if (wipStories.isEmpty) {
+      return _buildEmptyState(l10n);
+    }
+
+    // Calculate age for each story and sort by oldest first
+    final storiesWithAge = wipStories.map((story) {
+      final startDate = story.startedAt ?? story.createdAt;
+      final age = DateTime.now().difference(startDate).inDays;
+      return (story: story, age: age);
+    }).toList();
+    
+    storiesWithAge.sort((a, b) => b.age.compareTo(a.age)); // Oldest first
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.hourglass_bottom, color: Colors.orange),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.wipAgeTitle,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${storiesWithAge.length} ${l10n.agileItems}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // Warning if any item is aging
+            if (storiesWithAge.any((s) => s.age > 7))
+              Container(
+                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.warning_amber, color: Colors.orange, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.wipAgeWarning,
+                        style: const TextStyle(fontSize: 12, color: Colors.orange),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+            // List of items
+            ...storiesWithAge.take(5).map((item) => _buildAgeItem(context, item.story, item.age)),
+            
+            if (storiesWithAge.length > 5)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  '+${storiesWithAge.length - 5} ${l10n.agileItemsMore}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAgeItem(BuildContext context, UserStoryModel story, int days) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Color coding: green < 3 days, yellow 3-7 days, red > 7 days
+    Color ageColor;
+    IconData ageIcon;
+    if (days <= 2) {
+      ageColor = Colors.green;
+      ageIcon = Icons.check_circle;
+    } else if (days <= 7) {
+      ageColor = Colors.orange;
+      ageIcon = Icons.watch_later;
+    } else {
+      ageColor = Colors.red;
+      ageIcon = Icons.error;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(ageIcon, size: 16, color: ageColor),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              story.title,
+              style: const TextStyle(fontSize: 13),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: ageColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              l10n.wipAgeDays(days),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: ageColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.hourglass_empty, size: 48, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              l10n.wipAgeEmpty,
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 /// Widget Cumulative Flow Diagram
 class CumulativeFlowWidget extends StatelessWidget {

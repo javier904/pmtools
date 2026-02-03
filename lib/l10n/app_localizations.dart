@@ -3686,6 +3686,252 @@ abstract class AppLocalizations {
   /// **'Scrumban usa un approccio ibrido:\n\n• Puoi usare Sprint per la pianificazione, ma gestire il flusso giornaliero come Kanban.\n• Le storie \'Ready\' possono essere tirate (pull) quando c\'è capacità, indipendentemente dallo Sprint planning, se il team lo preferisce.'**
   String get hybridWorkflowStatusContent;
 
+  /// No description provided for @contextualHelpButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Aiuto'**
+  String get contextualHelpButton;
+
+  /// No description provided for @contextualHelpTips.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggerimenti'**
+  String get contextualHelpTips;
+
+  /// No description provided for @contextualHelpBacklogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Product Backlog'**
+  String get contextualHelpBacklogTitle;
+
+  /// No description provided for @contextualHelpBacklogDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Il backlog è la lista prioritizzata di tutto il lavoro da fare. Le storie in alto sono le più importanti.'**
+  String get contextualHelpBacklogDesc;
+
+  /// No description provided for @contextualHelpBacklogTip1.
+  ///
+  /// In it, this message translates to:
+  /// **'Mantieni il backlog ordinato per priorità'**
+  String get contextualHelpBacklogTip1;
+
+  /// No description provided for @contextualHelpBacklogTip2.
+  ///
+  /// In it, this message translates to:
+  /// **'Fai refinement regolare per dettagliare le storie'**
+  String get contextualHelpBacklogTip2;
+
+  /// No description provided for @contextualHelpBacklogTip3.
+  ///
+  /// In it, this message translates to:
+  /// **'Una storia è \'Ready\' quando soddisfa la Definition of Ready'**
+  String get contextualHelpBacklogTip3;
+
+  /// No description provided for @contextualHelpSprintTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint'**
+  String get contextualHelpSprintTitle;
+
+  /// No description provided for @contextualHelpSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Lo sprint è un periodo di tempo fisso (1-4 settimane) durante il quale il team lavora sulle storie selezionate.'**
+  String get contextualHelpSprintDesc;
+
+  /// No description provided for @contextualHelpSprintTip1.
+  ///
+  /// In it, this message translates to:
+  /// **'Non cambiare scope durante lo sprint'**
+  String get contextualHelpSprintTip1;
+
+  /// No description provided for @contextualHelpSprintTip2.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora il burndown per verificare il progresso'**
+  String get contextualHelpSprintTip2;
+
+  /// No description provided for @contextualHelpSprintTip3.
+  ///
+  /// In it, this message translates to:
+  /// **'Fai daily standup per allineare il team'**
+  String get contextualHelpSprintTip3;
+
+  /// No description provided for @contextualHelpKanbanTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Kanban Board'**
+  String get contextualHelpKanbanTitle;
+
+  /// No description provided for @contextualHelpKanbanDescFlow.
+  ///
+  /// In it, this message translates to:
+  /// **'La board Kanban visualizza il flusso di lavoro. Gli item si muovono da sinistra a destra attraverso le colonne.'**
+  String get contextualHelpKanbanDescFlow;
+
+  /// No description provided for @contextualHelpKanbanDescScrum.
+  ///
+  /// In it, this message translates to:
+  /// **'In Scrum, la board mostra lo stato delle storie dello sprint corrente.'**
+  String get contextualHelpKanbanDescScrum;
+
+  /// No description provided for @contextualHelpKanbanTip1.
+  ///
+  /// In it, this message translates to:
+  /// **'Rispetta i WIP limits per evitare colli di bottiglia'**
+  String get contextualHelpKanbanTip1;
+
+  /// No description provided for @contextualHelpKanbanTip2.
+  ///
+  /// In it, this message translates to:
+  /// **'Tira (pull) nuovo lavoro solo quando c\'è capacità'**
+  String get contextualHelpKanbanTip2;
+
+  /// No description provided for @contextualHelpKanbanTip3.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora l\'età degli item per identificare blocchi'**
+  String get contextualHelpKanbanTip3;
+
+  /// No description provided for @contextualHelpKanbanTipScrum1.
+  ///
+  /// In it, this message translates to:
+  /// **'Muovi le card da sinistra a destra mentre lavori'**
+  String get contextualHelpKanbanTipScrum1;
+
+  /// No description provided for @contextualHelpKanbanTipScrum2.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa una storia prima di iniziarne un\'altra'**
+  String get contextualHelpKanbanTipScrum2;
+
+  /// No description provided for @contextualHelpTeamTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Team'**
+  String get contextualHelpTeamTitle;
+
+  /// No description provided for @contextualHelpTeamDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Qui puoi gestire i membri del team, i loro ruoli e le competenze.'**
+  String get contextualHelpTeamDesc;
+
+  /// No description provided for @contextualHelpTeamTip1.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegna ruoli chiari a ogni membro'**
+  String get contextualHelpTeamTip1;
+
+  /// No description provided for @contextualHelpTeamTip2.
+  ///
+  /// In it, this message translates to:
+  /// **'Bilancia il carico di lavoro tra i membri'**
+  String get contextualHelpTeamTip2;
+
+  /// No description provided for @contextualHelpMetricsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Metriche'**
+  String get contextualHelpMetricsTitle;
+
+  /// No description provided for @contextualHelpMetricsDescScrum.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora velocity, burndown e accuratezza delle stime per migliorare la prevedibilità.'**
+  String get contextualHelpMetricsDescScrum;
+
+  /// No description provided for @contextualHelpMetricsDescKanban.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora Lead Time, Cycle Time e Throughput per ottimizzare il flusso.'**
+  String get contextualHelpMetricsDescKanban;
+
+  /// No description provided for @contextualHelpMetricsDescHybrid.
+  ///
+  /// In it, this message translates to:
+  /// **'Combina metriche Scrum e Kanban per un quadro completo.'**
+  String get contextualHelpMetricsDescHybrid;
+
+  /// No description provided for @contextualHelpMetricsTipScrum1.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa la velocity media per pianificare gli sprint futuri'**
+  String get contextualHelpMetricsTipScrum1;
+
+  /// No description provided for @contextualHelpMetricsTipScrum2.
+  ///
+  /// In it, this message translates to:
+  /// **'Analizza le stime per migliorare la precisione'**
+  String get contextualHelpMetricsTipScrum2;
+
+  /// No description provided for @contextualHelpMetricsTipKanban1.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduci il Lead Time per consegnare valore più velocemente'**
+  String get contextualHelpMetricsTipKanban1;
+
+  /// No description provided for @contextualHelpMetricsTipKanban2.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora il Throughput settimanale per la prevedibilità'**
+  String get contextualHelpMetricsTipKanban2;
+
+  /// No description provided for @contextualHelpMetricsTipKanban3.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa l\'età degli item per identificare blocchi'**
+  String get contextualHelpMetricsTipKanban3;
+
+  /// No description provided for @contextualHelpMetricsTipHybrid1.
+  ///
+  /// In it, this message translates to:
+  /// **'Bilancia velocity e flow metrics'**
+  String get contextualHelpMetricsTipHybrid1;
+
+  /// No description provided for @contextualHelpMetricsTipHybrid2.
+  ///
+  /// In it, this message translates to:
+  /// **'Adatta le metriche al tuo modo di lavorare'**
+  String get contextualHelpMetricsTipHybrid2;
+
+  /// No description provided for @contextualHelpRetroTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Retrospettiva'**
+  String get contextualHelpRetroTitle;
+
+  /// No description provided for @contextualHelpRetroDescScrum.
+  ///
+  /// In it, this message translates to:
+  /// **'La retrospettiva è un momento per riflettere su cosa è andato bene e cosa migliorare.'**
+  String get contextualHelpRetroDescScrum;
+
+  /// No description provided for @contextualHelpRetroDescKanban.
+  ///
+  /// In it, this message translates to:
+  /// **'In Kanban, la retrospettiva (Operations Review) è un momento per analizzare il processo.'**
+  String get contextualHelpRetroDescKanban;
+
+  /// No description provided for @contextualHelpRetroTip1.
+  ///
+  /// In it, this message translates to:
+  /// **'Focalizzati su azioni concrete e misurabili'**
+  String get contextualHelpRetroTip1;
+
+  /// No description provided for @contextualHelpRetroTip2.
+  ///
+  /// In it, this message translates to:
+  /// **'Celebra i successi, non solo i problemi'**
+  String get contextualHelpRetroTip2;
+
+  /// No description provided for @contextualHelpRetroTip3.
+  ///
+  /// In it, this message translates to:
+  /// **'Porta le azioni nella prossima iterazione'**
+  String get contextualHelpRetroTip3;
+
   /// No description provided for @retroStatusCompleted.
   ///
   /// In it, this message translates to:
@@ -18743,6 +18989,36 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'items'**
   String get agileItems;
+
+  /// No description provided for @agileItemsMore.
+  ///
+  /// In it, this message translates to:
+  /// **'altri items'**
+  String get agileItemsMore;
+
+  /// No description provided for @wipAgeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Età Work Items'**
+  String get wipAgeTitle;
+
+  /// No description provided for @wipAgeEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun item in lavorazione'**
+  String get wipAgeEmpty;
+
+  /// No description provided for @wipAgeDays.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} giorni'**
+  String wipAgeDays(int count);
+
+  /// No description provided for @wipAgeWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Alcuni item sono in lavorazione da troppo tempo. Potrebbero esserci blocchi.'**
+  String get wipAgeWarning;
 
   /// No description provided for @agilePerWeekSuffix.
   ///
