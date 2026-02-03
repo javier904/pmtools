@@ -27,8 +27,8 @@ class StoryWorkflowDialog extends StatelessWidget {
     
     return Dialog(
       child: Container(
-        width: 500,
-        constraints: const BoxConstraints(maxHeight: 750),
+        width: 520,
+        constraints: const BoxConstraints(maxHeight: 780),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -162,19 +162,15 @@ class StoryWorkflowDialog extends StatelessWidget {
         // Vertical workflow
         Center(
           child: SizedBox(
-            width: 380,
+            width: 400,
             child: Column(
               children: [
                 // Start node
                 _buildStartNode(context, l10n),
                 _buildVerticalConnector(context),
                 
-                // Status nodes
-                for (int i = 0; i < workflow.length; i++) ...[
-                  _buildStatusRow(context, workflow[i], l10n),
-                  if (i < workflow.length - 1)
-                    _buildVerticalConnector(context),
-                ],
+                // Status nodes with cycle groups
+                ..._buildWorkflowNodes(context, workflow, l10n),
               ],
             ),
           ),
@@ -186,109 +182,187 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
+  /// Build workflow nodes, grouping cycle pairs together
+  List<Widget> _buildWorkflowNodes(
+    BuildContext context,
+    List<_WorkflowNode> workflow,
+    AppLocalizations l10n,
+  ) {
+    final widgets = <Widget>[];
+    
+    for (int i = 0; i < workflow.length; i++) {
+      final node = workflow[i];
+      
+      // Check if this node starts a cycle pair (inProgress + inReview)
+      if (node.isCycleStart && i + 1 < workflow.length) {
+        final nextNode = workflow[i + 1];
+        // Build a grouped cycle block
+        widgets.add(_buildCycleGroup(context, node, nextNode, l10n));
+        i++; // Skip the next node since we included it in the group
+      } else {
+        widgets.add(_buildStatusRow(context, node, l10n));
+      }
+      
+      if (i < workflow.length - 1) {
+        widgets.add(_buildVerticalConnector(context));
+      }
+    }
+    
+    return widgets;
+  }
+
+  /// Build a grouped cycle showing two states with bidirectional arrow
+  Widget _buildCycleGroup(
+    BuildContext context,
+    _WorkflowNode node1,
+    _WorkflowNode node2,
+    AppLocalizations l10n,
+  ) {
+    return Stack(
+      children: [
+        // Main column with nodes
+        Column(
+          children: [
+            _buildStatusRow(context, node1, l10n),
+            _buildVerticalConnector(context),
+            _buildStatusRow(context, node2, l10n),
+          ],
+        ),
+        // Left side cycle bracket
+        Positioned(
+          left: 20,
+          top: 0,
+          bottom: 0,
+          child: _buildCycleBracket(context, l10n),
+        ),
+      ],
+    );
+  }
+
+  /// Build a visual bracket on the left showing bidirectional cycle
+  Widget _buildCycleBracket(BuildContext context, AppLocalizations l10n) {
+    return Container(
+      width: 60,
+      child: Stack(
+        children: [
+          // Vertical bracket line
+          Positioned(
+            left: 48,
+            top: 20,
+            bottom: 20,
+            child: Container(
+              width: 2,
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ),
+          // Top horizontal line
+          Positioned(
+            left: 48,
+            top: 20,
+            child: Container(
+              width: 12,
+              height: 2,
+              color: Colors.orange,
+            ),
+          ),
+          // Bottom horizontal line
+          Positioned(
+            left: 48,
+            bottom: 20,
+            child: Container(
+              width: 12,
+              height: 2,
+              color: Colors.orange,
+            ),
+          ),
+          // Up arrow (bottom)
+          Positioned(
+            left: 40,
+            bottom: 50,
+            child: Icon(Icons.arrow_upward, size: 16, color: Colors.orange),
+          ),
+          // Down arrow (top)
+          Positioned(
+            left: 40,
+            top: 50,
+            child: Icon(Icons.arrow_downward, size: 16, color: Colors.orange),
+          ),
+          // Cycle label
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: RotatedBox(
+                quarterTurns: -1,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.orange.withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.sync, size: 12, color: Colors.orange[700]),
+                      const SizedBox(width: 4),
+                      Text(
+                        l10n.workflowCycleLabel,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   List<_WorkflowNode> _getWorkflowForFramework() {
     switch (framework) {
       case AgileFramework.scrum:
         return [
-          _WorkflowNode(
-            status: StoryStatus.backlog,
-            canTransitionFromAny: true,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.refinement,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.ready,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inSprint,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inProgress,
-            canTransitionFromAny: false,
-            hasCycleBack: true,
-            cycleBackTo: 'inReview ↔ inProgress',
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inReview,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.done,
-            canTransitionFromAny: true,
-            isEndState: true,
-          ),
+          _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
+          _WorkflowNode(status: StoryStatus.refinement),
+          _WorkflowNode(status: StoryStatus.ready),
+          _WorkflowNode(status: StoryStatus.inSprint),
+          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true),
+          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true),
+          _WorkflowNode(status: StoryStatus.done, canTransitionFromAny: true, isEndState: true),
         ];
 
       case AgileFramework.kanban:
+        // Kanban: No inSprint, continuous flow with WIP focus
         return [
-          _WorkflowNode(
-            status: StoryStatus.backlog,
-            canTransitionFromAny: true,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.refinement,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.ready,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inProgress,
-            canTransitionFromAny: false,
-            hasCycleBack: true,
-            cycleBackTo: 'inReview ↔ inProgress',
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inReview,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.done,
-            canTransitionFromAny: true,
-            isEndState: true,
-          ),
+          _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
+          _WorkflowNode(status: StoryStatus.refinement),
+          _WorkflowNode(status: StoryStatus.ready),
+          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true),
+          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true),
+          _WorkflowNode(status: StoryStatus.done, canTransitionFromAny: true, isEndState: true),
         ];
 
       case AgileFramework.hybrid:
+        // Hybrid: Optional inSprint, can skip directly from ready to inProgress
         return [
-          _WorkflowNode(
-            status: StoryStatus.backlog,
-            canTransitionFromAny: true,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.refinement,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.ready,
-            canTransitionFromAny: false,
-            hasCycleBack: true,
-            cycleBackTo: 'Pull o Sprint',
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inSprint,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inProgress,
-            canTransitionFromAny: false,
-            hasCycleBack: true,
-            cycleBackTo: 'inReview ↔ inProgress',
-          ),
-          _WorkflowNode(
-            status: StoryStatus.inReview,
-            canTransitionFromAny: false,
-          ),
-          _WorkflowNode(
-            status: StoryStatus.done,
-            canTransitionFromAny: true,
-            isEndState: true,
-          ),
+          _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
+          _WorkflowNode(status: StoryStatus.refinement),
+          _WorkflowNode(status: StoryStatus.ready, hasAlternatePath: true, alternateNote: 'Sprint o Pull'),
+          _WorkflowNode(status: StoryStatus.inSprint, isOptional: true),
+          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true),
+          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true),
+          _WorkflowNode(status: StoryStatus.done, canTransitionFromAny: true, isEndState: true),
         ];
     }
   }
@@ -332,16 +406,9 @@ class StoryWorkflowDialog extends StatelessWidget {
       children: [
         Container(
           width: 2,
-          height: 24,
+          height: 20,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.grey[400]!,
-                Colors.grey[500]!,
-              ],
-            ),
+            color: Colors.grey[400],
           ),
         ),
       ],
@@ -352,15 +419,39 @@ class StoryWorkflowDialog extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Left side spacer
-        const SizedBox(width: 40),
+        // Left side spacer for cycle bracket
+        const SizedBox(width: 70),
         
-        // Cycle indicator (left side)
+        // Optional indicator
         SizedBox(
-          width: 60,
-          child: node.hasCycleBack
-              ? _buildCycleIndicator(context, node.cycleBackTo ?? '')
-              : null,
+          width: 50,
+          child: node.isOptional
+              ? Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'OPT',
+                    style: TextStyle(fontSize: 9, color: Colors.grey[600]),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : node.hasAlternatePath
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        node.alternateNote ?? '',
+                        style: TextStyle(fontSize: 8, color: Colors.blue[700]),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : null,
         ),
         
         // Status node
@@ -368,7 +459,7 @@ class StoryWorkflowDialog extends StatelessWidget {
         
         // Right side - "Any" badge
         SizedBox(
-          width: 120,
+          width: 130,
           child: node.canTransitionFromAny
               ? _buildAnyBadge(context, l10n)
               : null,
@@ -377,73 +468,60 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildCycleIndicator(BuildContext context, String label) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: Colors.orange.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.sync, size: 10, color: Colors.orange[700]),
-              const SizedBox(width: 2),
-              Flexible(
-                child: Text(
-                  label,
-                  style: TextStyle(fontSize: 8, color: Colors.orange[700]),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildStatusNode(BuildContext context, _WorkflowNode node) {
     final status = node.status;
     final isEndState = node.isEndState;
+    final isOptional = node.isOptional;
     
     return Container(
       width: 160,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isEndState ? status.color.withValues(alpha: 0.2) : Colors.white,
+        color: isEndState 
+            ? status.color.withValues(alpha: 0.15) 
+            : isOptional 
+                ? Colors.grey[100] 
+                : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isEndState ? status.color : Colors.grey[300]!,
+          color: isEndState 
+              ? status.color 
+              : isOptional 
+                  ? Colors.grey[400]! 
+                  : Colors.grey[300]!,
           width: isEndState ? 3 : 1.5,
+          // Dashed border effect for optional nodes would require custom paint
         ),
         boxShadow: [
           BoxShadow(
-            color: status.color.withValues(alpha: 0.15),
+            color: (isOptional ? Colors.grey : status.color).withValues(alpha: 0.15),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             status.icon,
-            color: status.color,
+            color: isOptional ? Colors.grey[600] : status.color,
             size: 18,
           ),
           const SizedBox(width: 8),
-          Text(
-            status.displayName.toUpperCase(),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: isEndState ? status.color : Colors.grey[700],
+          Flexible(
+            child: Text(
+              status.displayName.toUpperCase(),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: isOptional 
+                    ? Colors.grey[600] 
+                    : isEndState 
+                        ? status.color 
+                        : Colors.grey[700],
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -456,7 +534,7 @@ class StoryWorkflowDialog extends StatelessWidget {
       children: [
         // Arrow pointing to node
         Container(
-          width: 20,
+          width: 16,
           height: 2,
           color: Colors.grey[400],
         ),
@@ -507,58 +585,83 @@ class StoryWorkflowDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Wrap(
-            spacing: 12,
+            spacing: 16,
             runSpacing: 8,
             children: [
               // Any badge explanation
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[800],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.bolt, size: 10, color: Colors.amber),
-                        const SizedBox(width: 2),
-                        Text(l10n.workflowFromAny, style: const TextStyle(color: Colors.white, fontSize: 9)),
-                      ],
-                    ),
+              _buildLegendItem(
+                context,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '= ${l10n.workflowFromAnyDesc}',
-                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.bolt, size: 10, color: Colors.amber),
+                      const SizedBox(width: 2),
+                      Text(l10n.workflowFromAny, style: const TextStyle(color: Colors.white, fontSize: 9)),
+                    ],
                   ),
-                ],
+                ),
+                l10n.workflowFromAnyDesc,
               ),
               // Cycle explanation
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+              _buildLegendItem(
+                context,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.orange.withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.sync, size: 10, color: Colors.orange[700]),
+                      const SizedBox(width: 2),
+                      Text(l10n.workflowCycleLabel, style: TextStyle(color: Colors.orange[700], fontSize: 9)),
+                    ],
+                  ),
+                ),
+                l10n.workflowCycleDesc,
+              ),
+              // Optional state
+              if (framework == AgileFramework.hybrid)
+                _buildLegendItem(
+                  context,
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.2),
+                      color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.grey[400]!),
                     ),
-                    child: Icon(Icons.sync, size: 10, color: Colors.orange[700]),
+                    child: Text('OPT', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '= ${l10n.workflowCycleDesc}',
-                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-                  ),
-                ],
-              ),
+                  l10n.workflowOptionalDesc,
+                ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLegendItem(BuildContext context, Widget icon, String description) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        const SizedBox(width: 6),
+        Text(
+          '= $description',
+          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+        ),
+      ],
     );
   }
 }
@@ -567,14 +670,20 @@ class _WorkflowNode {
   final StoryStatus status;
   final bool canTransitionFromAny;
   final bool isEndState;
-  final bool hasCycleBack;
-  final String? cycleBackTo;
+  final bool isCycleStart;
+  final bool isCycleEnd;
+  final bool isOptional;
+  final bool hasAlternatePath;
+  final String? alternateNote;
 
   const _WorkflowNode({
     required this.status,
-    required this.canTransitionFromAny,
+    this.canTransitionFromAny = false,
     this.isEndState = false,
-    this.hasCycleBack = false,
-    this.cycleBackTo,
+    this.isCycleStart = false,
+    this.isCycleEnd = false,
+    this.isOptional = false,
+    this.hasAlternatePath = false,
+    this.alternateNote,
   });
 }

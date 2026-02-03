@@ -11102,5 +11102,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workflowFromAnyDesc => 'Can transition from any status';
 
   @override
+  String get workflowCycleLabel => 'Rework';
+
+  @override
   String get workflowCycleDesc => 'Bidirectional transition (cycle)';
+
+  @override
+  String get workflowOptionalDesc => 'Optional step (can skip)';
 }

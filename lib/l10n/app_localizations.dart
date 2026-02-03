@@ -20130,11 +20130,23 @@ abstract class AppLocalizations {
   /// **'Può transitare da qualunque stato'**
   String get workflowFromAnyDesc;
 
+  /// No description provided for @workflowCycleLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Rework'**
+  String get workflowCycleLabel;
+
   /// No description provided for @workflowCycleDesc.
   ///
   /// In it, this message translates to:
   /// **'Transizione bidirezionale (ciclo)'**
   String get workflowCycleDesc;
+
+  /// No description provided for @workflowOptionalDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Step opzionale (può saltare)'**
+  String get workflowOptionalDesc;
 }
 
 class _AppLocalizationsDelegate

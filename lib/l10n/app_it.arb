@@ -5031,5 +5031,7 @@
   "workflowHybridDesc": "Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.",
   "workflowFromAny": "Da Qualunque",
   "workflowFromAnyDesc": "Può transitare da qualunque stato",
-  "workflowCycleDesc": "Transizione bidirezionale (ciclo)"
+  "workflowCycleLabel": "Rework",
+  "workflowCycleDesc": "Transizione bidirezionale (ciclo)",
+  "workflowOptionalDesc": "Step opzionale (può saltare)"
 }

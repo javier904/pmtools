@@ -5245,5 +5245,7 @@
   "workflowHybridDesc": "Hybrid combines Scrum sprints with Kanban flow. Stories can be pulled continuously or planned in sprints.",
   "workflowFromAny": "From Any",
   "workflowFromAnyDesc": "Can transition from any status",
-  "workflowCycleDesc": "Bidirectional transition (cycle)"
+  "workflowCycleLabel": "Rework",
+  "workflowCycleDesc": "Bidirectional transition (cycle)",
+  "workflowOptionalDesc": "Optional step (can skip)"
 }
