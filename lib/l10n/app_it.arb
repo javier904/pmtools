@@ -5018,10 +5018,7 @@
   "guideToolsTitle": "Strumenti & Integrazioni",
   "guideJiraContent": "L'app si integra con Jira per mantenere sincronizzato il lavoro.\n\nFunzionalità principali:\n• **Import**: Le storie create in Jira appaiono qui.\n• **Link**: Cliccando sull'ID della storia (es. PROJ-123) si apre direttamente Jira.\n• **Sync**: Lo stato si aggiorna bidirezionalmente (se configurato).",
   "guideWorkflowTitle": "Workflow & Qualità",
-  "guideAcceptanceCriteriaContent": "Per garantire la qualità, ogni storia deve avere Criteri di Accettazione chiari.\n\n• **Aggiunta Rapida**: Puoi aggiungere criteri direttamente dal dettaglio della storia.\n• **Verifica**: Spunta i criteri man mano che vengono soddisfatti.\n• **Definition of Done**: Una storia è 'Done' solo quando tutti i criteri sono soddisfatti.",
-  "scrumWorkflowStatusContent": "In Scrum, il ciclo di vita di una storia segue questi stati:\n\n1. **Product Backlog**: Dove nascono le idee. Qui avviene il 'Refinement'.\n2. **Ready**: La storia è pronta per essere lavorata (rispetta la Definition of Ready).\n3. **Sprint Backlog**: Durante il Planning, le storie 'Ready' vengono spostate nello Sprint e diventano il lavoro da fare.\n4. **In Sprint**: La storia è attiva sulla board dello Sprint corrente.\n5. **Done**: La storia è completata e verificata.",
-  "kanbanWorkflowStatusContent": "In Kanban, il flusso è continuo:\n\n1. **Refinement**: Colonna dedicata per analizzare le richieste in ingresso.\n2. **Ready**: Code di attesa per il lavoro pronto (pull system).\n3. **Active Board**: Le storie fluiscono attraverso le colonne di lavoro.\n4. **WIP Limits**: Ogni colonna ha un limite per evitare colli di bottiglia.",
-  "hybridWorkflowStatusContent": "Scrumban usa un approccio ibrido:\n\n• Puoi usare Sprint per la pianificazione, ma gestire il flusso giornaliero come Kanban.\n• Le storie 'Ready' possono essere tirate (pull) quando c'è capacità, indipendentemente dallo Sprint planning, se il team lo preferisce.",
+
   "workflowTitle": "Flusso di Lavoro",
   "workflowShowButton": "Mostra Flusso",
   "workflowDiagramTitle": "Diagramma Flusso Stati",
