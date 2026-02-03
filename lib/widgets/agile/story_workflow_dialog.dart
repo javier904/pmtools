@@ -5,6 +5,7 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Dialog che mostra il flusso di lavoro delle stories in stile Jira
 /// Layout verticale con nodi, connettori e badge "Da qualunque stato"
+/// Responsive per schermi piccoli
 class StoryWorkflowDialog extends StatelessWidget {
   final AgileFramework framework;
 
@@ -23,28 +24,35 @@ class StoryWorkflowDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 500;
+    final dialogWidth = isSmallScreen ? screenWidth * 0.95 : 500.0;
     
     return Dialog(
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 8 : 40,
+        vertical: 24,
+      ),
       child: Container(
-        width: 520,
+        width: dialogWidth,
         constraints: const BoxConstraints(maxHeight: 780),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
-            _buildHeader(context, l10n),
+            _buildHeader(context, l10n, isSmallScreen),
             
             // Body
             Flexible(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(isSmallScreen ? 12 : 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildMethodologyInfo(context, l10n),
-                    const SizedBox(height: 24),
-                    _buildVerticalWorkflow(context, l10n),
+                    _buildMethodologyInfo(context, l10n, isSmallScreen),
+                    const SizedBox(height: 16),
+                    _buildVerticalWorkflow(context, l10n, isSmallScreen),
                   ],
                 ),
               ),
@@ -52,10 +60,10 @@ class StoryWorkflowDialog extends StatelessWidget {
             
             // Footer
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               child: TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(l10n.actionClose),
+                child: Text(l10n?.actionClose ?? 'Close'),
               ),
             ),
           ],
@@ -64,9 +72,9 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
+  Widget _buildHeader(BuildContext context, AppLocalizations? l10n, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         borderRadius: const BorderRadius.only(
@@ -76,54 +84,60 @@ class StoryWorkflowDialog extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.route, color: Theme.of(context).primaryColor),
-          const SizedBox(width: 12),
-          Text(
-            l10n.workflowTitle,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+          Icon(Icons.route, color: Theme.of(context).primaryColor, size: isSmallScreen ? 20 : 24),
+          SizedBox(width: isSmallScreen ? 8 : 12),
+          Expanded(
+            child: Text(
+              l10n?.workflowTitle ?? 'Workflow',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: isSmallScreen ? 16 : 20,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Spacer(),
-          Chip(
-            label: Text(framework.displayName),
-            avatar: Icon(framework.icon, size: 16),
-            backgroundColor: framework == AgileFramework.scrum
-                ? Colors.blue.withValues(alpha: 0.2)
-                : framework == AgileFramework.kanban
-                    ? Colors.purple.withValues(alpha: 0.2)
-                    : Colors.orange.withValues(alpha: 0.2),
-          ),
+          if (!isSmallScreen)
+            Chip(
+              label: Text(framework.displayName, style: const TextStyle(fontSize: 12)),
+              avatar: Icon(framework.icon, size: 14),
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity.compact,
+              backgroundColor: framework == AgileFramework.scrum
+                  ? Colors.blue.withValues(alpha: 0.2)
+                  : framework == AgileFramework.kanban
+                      ? Colors.purple.withValues(alpha: 0.2)
+                      : Colors.orange.withValues(alpha: 0.2),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildMethodologyInfo(BuildContext context, AppLocalizations l10n) {
+  Widget _buildMethodologyInfo(BuildContext context, AppLocalizations? l10n, bool isSmallScreen) {
     String description;
     IconData icon;
     Color color;
 
     switch (framework) {
       case AgileFramework.scrum:
-        description = l10n.workflowScrumDesc;
+        description = l10n?.workflowScrumDesc ?? 'Scrum flow';
         icon = Icons.loop;
         color = Colors.blue;
         break;
       case AgileFramework.kanban:
-        description = l10n.workflowKanbanDesc;
+        description = l10n?.workflowKanbanDesc ?? 'Kanban flow';
         icon = Icons.view_column;
         color = Colors.purple;
         break;
       case AgileFramework.hybrid:
-        description = l10n.workflowHybridDesc;
+        description = l10n?.workflowHybridDesc ?? 'Hybrid flow';
         icon = Icons.merge_type;
         color = Colors.orange;
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 10 : 16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -131,12 +145,15 @@ class StoryWorkflowDialog extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(width: 16),
+          Icon(icon, color: color, size: isSmallScreen ? 24 : 32),
+          SizedBox(width: isSmallScreen ? 10 : 16),
           Expanded(
             child: Text(
               description,
-              style: TextStyle(color: context.textSecondaryColor),
+              style: TextStyle(
+                color: context.textSecondaryColor,
+                fontSize: isSmallScreen ? 12 : 14,
+              ),
             ),
           ),
         ],
@@ -145,39 +162,37 @@ class StoryWorkflowDialog extends StatelessWidget {
   }
 
   /// Build the vertical workflow diagram (Jira-style)
-  Widget _buildVerticalWorkflow(BuildContext context, AppLocalizations l10n) {
+  Widget _buildVerticalWorkflow(BuildContext context, AppLocalizations? l10n, bool isSmallScreen) {
     final workflow = _getWorkflowForFramework();
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.workflowDiagramTitle,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          l10n?.workflowDiagramTitle ?? 'Flow',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
+            fontSize: isSmallScreen ? 14 : 16,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         
-        // Vertical workflow
+        // Vertical workflow - centered
         Center(
-          child: SizedBox(
-            width: 400,
-            child: Column(
-              children: [
-                // Start node
-                _buildStartNode(context, l10n),
-                _buildVerticalConnector(context),
-                
-                // Status nodes with cycle groups
-                ..._buildWorkflowNodes(context, workflow, l10n),
-              ],
-            ),
+          child: Column(
+            children: [
+              // Start node
+              _buildStartNode(context, isSmallScreen),
+              _buildVerticalConnector(context),
+              
+              // Status nodes with cycle groups
+              ..._buildWorkflowNodes(context, workflow, l10n, isSmallScreen),
+            ],
           ),
         ),
         
-        const SizedBox(height: 24),
-        _buildLegend(context, l10n),
+        const SizedBox(height: 16),
+        _buildLegend(context, l10n, isSmallScreen),
       ],
     );
   }
@@ -186,7 +201,8 @@ class StoryWorkflowDialog extends StatelessWidget {
   List<Widget> _buildWorkflowNodes(
     BuildContext context,
     List<_WorkflowNode> workflow,
-    AppLocalizations l10n,
+    AppLocalizations? l10n,
+    bool isSmallScreen,
   ) {
     final widgets = <Widget>[];
     
@@ -197,10 +213,10 @@ class StoryWorkflowDialog extends StatelessWidget {
       if (node.isCycleStart && i + 1 < workflow.length) {
         final nextNode = workflow[i + 1];
         // Build a grouped cycle block
-        widgets.add(_buildCycleGroup(context, node, nextNode, l10n));
+        widgets.add(_buildCycleGroup(context, node, nextNode, l10n, isSmallScreen));
         i++; // Skip the next node since we included it in the group
       } else {
-        widgets.add(_buildStatusRow(context, node, l10n));
+        widgets.add(_buildStatusRow(context, node, l10n, isSmallScreen));
       }
       
       if (i < workflow.length - 1) {
@@ -216,114 +232,58 @@ class StoryWorkflowDialog extends StatelessWidget {
     BuildContext context,
     _WorkflowNode node1,
     _WorkflowNode node2,
-    AppLocalizations l10n,
+    AppLocalizations? l10n,
+    bool isSmallScreen,
   ) {
-    return Stack(
-      children: [
-        // Main column with nodes
-        Column(
-          children: [
-            _buildStatusRow(context, node1, l10n),
-            _buildVerticalConnector(context),
-            _buildStatusRow(context, node2, l10n),
-          ],
-        ),
-        // Left side cycle bracket
-        Positioned(
-          left: 20,
-          top: 0,
-          bottom: 0,
-          child: _buildCycleBracket(context, l10n),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.5), width: 2),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.orange.withValues(alpha: 0.05),
+      ),
+      child: Column(
+        children: [
+          // Cycle label
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.sync, size: 14, color: Colors.orange[700]),
+              const SizedBox(width: 4),
+              Text(
+                l10n?.workflowCycleLabel ?? 'Rework',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange[700],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          _buildStatusRow(context, node1, l10n, isSmallScreen, inCycle: true),
+          _buildBidirectionalConnector(context),
+          _buildStatusRow(context, node2, l10n, isSmallScreen, inCycle: true),
+        ],
+      ),
     );
   }
 
-  /// Build a visual bracket on the left showing bidirectional cycle
-  Widget _buildCycleBracket(BuildContext context, AppLocalizations l10n) {
-    return Container(
-      width: 60,
-      child: Stack(
+  /// Bidirectional connector with up/down arrows
+  Widget _buildBidirectionalConnector(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Vertical bracket line
-          Positioned(
-            left: 48,
-            top: 20,
-            bottom: 20,
-            child: Container(
-              width: 2,
-              decoration: BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
+          Icon(Icons.arrow_upward, size: 14, color: Colors.orange),
+          Container(
+            width: 2,
+            height: 16,
+            color: Colors.orange,
           ),
-          // Top horizontal line
-          Positioned(
-            left: 48,
-            top: 20,
-            child: Container(
-              width: 12,
-              height: 2,
-              color: Colors.orange,
-            ),
-          ),
-          // Bottom horizontal line
-          Positioned(
-            left: 48,
-            bottom: 20,
-            child: Container(
-              width: 12,
-              height: 2,
-              color: Colors.orange,
-            ),
-          ),
-          // Up arrow (bottom)
-          Positioned(
-            left: 40,
-            bottom: 50,
-            child: Icon(Icons.arrow_upward, size: 16, color: Colors.orange),
-          ),
-          // Down arrow (top)
-          Positioned(
-            left: 40,
-            top: 50,
-            child: Icon(Icons.arrow_downward, size: 16, color: Colors.orange),
-          ),
-          // Cycle label
-          Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            child: Center(
-              child: RotatedBox(
-                quarterTurns: -1,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.orange.withValues(alpha: 0.4)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.sync, size: 12, color: Colors.orange[700]),
-                      const SizedBox(width: 4),
-                      Text(
-                        l10n.workflowCycleLabel,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+          Icon(Icons.arrow_downward, size: 14, color: Colors.orange),
         ],
       ),
     );
@@ -358,7 +318,7 @@ class StoryWorkflowDialog extends StatelessWidget {
         return [
           _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
           _WorkflowNode(status: StoryStatus.refinement),
-          _WorkflowNode(status: StoryStatus.ready, hasAlternatePath: true, alternateNote: 'Sprint o Pull'),
+          _WorkflowNode(status: StoryStatus.ready, hasAlternatePath: true, alternateNote: 'Sprint/Pull'),
           _WorkflowNode(status: StoryStatus.inSprint, isOptional: true),
           _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true),
           _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true),
@@ -367,115 +327,115 @@ class StoryWorkflowDialog extends StatelessWidget {
     }
   }
 
-  Widget _buildStartNode(BuildContext context, AppLocalizations l10n) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.grey[800],
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+  Widget _buildStartNode(BuildContext context, bool isSmallScreen) {
+    final size = isSmallScreen ? 44.0 : 56.0;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          child: Center(
-            child: Text(
-              'START',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 11,
-              ),
-            ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          'START',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: isSmallScreen ? 9 : 11,
           ),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildVerticalConnector(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 2,
-          height: 20,
-          decoration: BoxDecoration(
-            color: Colors.grey[400],
-          ),
-        ),
-      ],
+    return Container(
+      width: 2,
+      height: 16,
+      color: Colors.grey[400],
     );
   }
 
-  Widget _buildStatusRow(BuildContext context, _WorkflowNode node, AppLocalizations l10n) {
+  Widget _buildStatusRow(
+    BuildContext context,
+    _WorkflowNode node,
+    AppLocalizations? l10n,
+    bool isSmallScreen, {
+    bool inCycle = false,
+  }) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Left side spacer for cycle bracket
-        const SizedBox(width: 70),
-        
-        // Optional indicator
-        SizedBox(
-          width: 50,
-          child: node.isOptional
-              ? Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    'OPT',
-                    style: TextStyle(fontSize: 9, color: Colors.grey[600]),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : node.hasAlternatePath
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        node.alternateNote ?? '',
-                        style: TextStyle(fontSize: 8, color: Colors.blue[700]),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  : null,
-        ),
+        // Optional/Alternate indicator (left)
+        if (!inCycle && (node.isOptional || node.hasAlternatePath))
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: _buildIndicatorBadge(context, node, isSmallScreen),
+          ),
         
         // Status node
-        _buildStatusNode(context, node),
+        _buildStatusNode(context, node, isSmallScreen),
         
         // Right side - "Any" badge
-        SizedBox(
-          width: 130,
-          child: node.canTransitionFromAny
-              ? _buildAnyBadge(context, l10n)
-              : null,
-        ),
+        if (node.canTransitionFromAny)
+          Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: _buildAnyBadge(context, l10n, isSmallScreen),
+          ),
       ],
     );
   }
 
-  Widget _buildStatusNode(BuildContext context, _WorkflowNode node) {
+  Widget _buildIndicatorBadge(BuildContext context, _WorkflowNode node, bool isSmallScreen) {
+    if (node.isOptional) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 4 : 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          'OPT',
+          style: TextStyle(fontSize: isSmallScreen ? 8 : 9, color: Colors.grey[600]),
+        ),
+      );
+    } else if (node.hasAlternatePath) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 4 : 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: Colors.blue.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          node.alternateNote ?? '',
+          style: TextStyle(fontSize: isSmallScreen ? 7 : 8, color: Colors.blue[700]),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildStatusNode(BuildContext context, _WorkflowNode node, bool isSmallScreen) {
     final status = node.status;
     final isEndState = node.isEndState;
     final isOptional = node.isOptional;
+    final nodeWidth = isSmallScreen ? 120.0 : 150.0;
     
     return Container(
-      width: 160,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      width: nodeWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 10 : 14,
+        vertical: isSmallScreen ? 8 : 10,
+      ),
       decoration: BoxDecoration(
         color: isEndState 
             ? status.color.withValues(alpha: 0.15) 
@@ -489,32 +449,32 @@ class StoryWorkflowDialog extends StatelessWidget {
               : isOptional 
                   ? Colors.grey[400]! 
                   : Colors.grey[300]!,
-          width: isEndState ? 3 : 1.5,
-          // Dashed border effect for optional nodes would require custom paint
+          width: isEndState ? 2.5 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
             color: (isOptional ? Colors.grey : status.color).withValues(alpha: 0.15),
-            blurRadius: 6,
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             status.icon,
             color: isOptional ? Colors.grey[600] : status.color,
-            size: 18,
+            size: isSmallScreen ? 14 : 16,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Flexible(
             child: Text(
               status.displayName.toUpperCase(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 11,
+                fontSize: isSmallScreen ? 9 : 10,
                 color: isOptional 
                     ? Colors.grey[600] 
                     : isEndState 
@@ -529,47 +489,37 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildAnyBadge(BuildContext context, AppLocalizations l10n) {
-    return Row(
-      children: [
-        // Arrow pointing to node
-        Container(
-          width: 16,
-          height: 2,
-          color: Colors.grey[400],
-        ),
-        Icon(Icons.arrow_back, size: 12, color: Colors.grey[400]),
-        const SizedBox(width: 4),
-        // Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.grey[800],
-            borderRadius: BorderRadius.circular(12),
+  Widget _buildAnyBadge(BuildContext context, AppLocalizations? l10n, bool isSmallScreen) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 6 : 8,
+        vertical: isSmallScreen ? 3 : 4,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.bolt, size: isSmallScreen ? 10 : 12, color: Colors.amber),
+          SizedBox(width: isSmallScreen ? 2 : 4),
+          Text(
+            l10n?.workflowFromAny ?? 'Any',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isSmallScreen ? 8 : 10,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.bolt, size: 12, color: Colors.amber),
-              const SizedBox(width: 4),
-              Text(
-                l10n.workflowFromAny,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildLegend(BuildContext context, AppLocalizations l10n) {
+  Widget _buildLegend(BuildContext context, AppLocalizations? l10n, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 10 : 14),
       decoration: BoxDecoration(
         color: context.surfaceVariantColor,
         borderRadius: BorderRadius.circular(8),
@@ -578,71 +528,38 @@ class StoryWorkflowDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.workflowLegend,
+            l10n?.workflowLegend ?? 'Legend',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
+              fontSize: isSmallScreen ? 12 : 14,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Wrap(
-            spacing: 16,
-            runSpacing: 8,
+            spacing: 12,
+            runSpacing: 6,
             children: [
               // Any badge explanation
               _buildLegendItem(
                 context,
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[800],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.bolt, size: 10, color: Colors.amber),
-                      const SizedBox(width: 2),
-                      Text(l10n.workflowFromAny, style: const TextStyle(color: Colors.white, fontSize: 9)),
-                    ],
-                  ),
-                ),
-                l10n.workflowFromAnyDesc,
+                Icon(Icons.bolt, size: 12, color: Colors.amber),
+                l10n?.workflowFromAnyDesc ?? 'From any',
+                isSmallScreen,
               ),
               // Cycle explanation
               _buildLegendItem(
                 context,
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.orange.withValues(alpha: 0.4)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.sync, size: 10, color: Colors.orange[700]),
-                      const SizedBox(width: 2),
-                      Text(l10n.workflowCycleLabel, style: TextStyle(color: Colors.orange[700], fontSize: 9)),
-                    ],
-                  ),
-                ),
-                l10n.workflowCycleDesc,
+                Icon(Icons.sync, size: 12, color: Colors.orange[700]),
+                l10n?.workflowCycleDesc ?? 'Cycle',
+                isSmallScreen,
               ),
-              // Optional state
+              // Optional state (Hybrid only)
               if (framework == AgileFramework.hybrid)
                 _buildLegendItem(
                   context,
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.grey[400]!),
-                    ),
-                    child: Text('OPT', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
-                  ),
-                  l10n.workflowOptionalDesc,
+                  Text('OPT', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                  l10n?.workflowOptionalDesc ?? 'Optional',
+                  isSmallScreen,
                 ),
             ],
           ),
@@ -651,15 +568,15 @@ class StoryWorkflowDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem(BuildContext context, Widget icon, String description) {
+  Widget _buildLegendItem(BuildContext context, Widget icon, String description, bool isSmallScreen) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         icon,
-        const SizedBox(width: 6),
+        const SizedBox(width: 4),
         Text(
-          '= $description',
-          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+          description,
+          style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: context.textSecondaryColor),
         ),
       ],
     );
