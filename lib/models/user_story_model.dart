@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'agile_enums.dart';
+import 'external_integration_model.dart';
 
 /// Modello per una User Story in un progetto Agile
 ///
@@ -44,6 +45,9 @@ class UserStoryModel {
   // Actual hours (for tracking)
   final int? actualHours;
 
+  // External Integration (Jira, etc.)
+  final ExternalIntegration? externalIntegration;
+
   const UserStoryModel({
     required this.id,
     required this.projectId,
@@ -69,6 +73,7 @@ class UserStoryModel {
     this.estimationType,
     this.sprintId,
     this.actualHours,
+    this.externalIntegration,
   });
 
   /// Crea da documento Firestore
@@ -127,6 +132,9 @@ class UserStoryModel {
           : null,
       sprintId: data['sprintId'],
       actualHours: data['actualHours'],
+      externalIntegration: data['externalIntegration'] != null
+          ? ExternalIntegration.fromMap(data['externalIntegration'])
+          : null,
     );
   }
 
@@ -156,6 +164,7 @@ class UserStoryModel {
       if (estimationType != null) 'estimationType': estimationType!.name,
       if (sprintId != null) 'sprintId': sprintId,
       if (actualHours != null) 'actualHours': actualHours,
+      if (externalIntegration != null) 'externalIntegration': externalIntegration!.toMap(),
     };
   }
 
@@ -185,6 +194,7 @@ class UserStoryModel {
     EstimationType? estimationType,
     String? sprintId,
     int? actualHours,
+    ExternalIntegration? externalIntegration,
   }) {
     return UserStoryModel(
       id: id ?? this.id,
@@ -211,6 +221,7 @@ class UserStoryModel {
       estimationType: estimationType ?? this.estimationType,
       sprintId: sprintId ?? this.sprintId,
       actualHours: actualHours ?? this.actualHours,
+      externalIntegration: externalIntegration ?? this.externalIntegration,
     );
   }
 

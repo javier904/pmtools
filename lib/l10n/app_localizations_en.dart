@@ -60,6 +60,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionClose => 'Close';
 
   @override
+  String get agileSprint => 'Sprint';
+
+  @override
   String get actionHide => 'Hide Cards';
 
   @override
@@ -1899,7 +1902,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroStatusActive => 'In Progress';
 
   @override
+  String get agileBurndownInfoTitle => 'How to read the Burndown Chart';
+
+  @override
+  String get agileBurndownInfoIdeal =>
+      'The **Ideal** line (dashed) shows target progress if work was completed evenly.';
+
+  @override
+  String get agileBurndownInfoActual =>
+      'The **Actual** line (solid) shows remaining work. Completed stories lower this line.';
+
+  @override
+  String get agileBurndownInfoGoal =>
+      'Your goal is to keep the Actual line below the Ideal line to finish on time.';
+
+  @override
+  String get guideToolsTitle => 'Tools & Integrations';
+
+  @override
+  String get guideJiraContent =>
+      'The app integrates with Jira to keep work synchronized.\n\nKey features:\n• **Import**: Stories created in Jira appear here.\n• **Link**: Clicking the story ID (e.g. PROJ-123) opens Jira directly.\n• **Sync**: Status updates bidirectionally (if configured).';
+
+  @override
+  String get guideWorkflowTitle => 'Workflow & Quality';
+
+  @override
+  String get guideAcceptanceCriteriaContent =>
+      'To ensure quality, every story must have clear Acceptance Criteria.\n\n• **Quick Add**: You can add criteria directly from story details.\n• **Verify**: Check off criteria as they are met.\n• **Definition of Done**: A story is \'Done\' only when all criteria are satisfied.';
+
+  @override
+  String get scrumWorkflowStatusContent =>
+      'In Scrum, a story\'s lifecycle follows these states:\n\n1. **Product Backlog**: Where ideas are born. \'Refinement\' happens here.\n2. **Ready**: The story is ready to be worked on (meets Definition of Ready).\n3. **Sprint Backlog**: During Planning, \'Ready\' stories move to the Sprint and become to-do work.\n4. **In Sprint**: The story is active on the current Sprint board.\n5. **Done**: The story is completed and verified.';
+
+  @override
+  String get kanbanWorkflowStatusContent =>
+      'In Kanban, flow is continuous:\n\n1. **Refinement**: Dedicated column for analyzing incoming requests.\n2. **Ready**: Queues for ready work (pull system).\n3. **Active Board**: Stories flow through work columns.\n4. **WIP Limits**: Each column has a limit to prevent bottlenecks.';
+
+  @override
+  String get hybridWorkflowStatusContent =>
+      'Scrumban uses a hybrid approach:\n\n• You can use Sprints for planning, but manage daily flow like Kanban.\n• \'Ready\' stories can be pulled when there is capacity, regardless of Sprint planning, if the team prefers.';
+
+  @override
   String get retroStatusCompleted => 'Completed';
+
+  @override
+  String get profileIntegrations => 'Integrations';
+
+  @override
+  String get profileJiraIntegration => 'Jira Integration';
+
+  @override
+  String get profileJiraIntegrationDesc => 'Connect to import stories';
+
+  @override
+  String get jiraDomain => 'Jira Domain';
+
+  @override
+  String get jiraEmail => 'Atlassian Email';
+
+  @override
+  String get jiraApiToken => 'API Token';
+
+  @override
+  String get jiraConnect => 'Connect';
+
+  @override
+  String get jiraDisconnect => 'Disconnect';
+
+  @override
+  String get jiraSettingsSaved => 'Settings saved';
+
+  @override
+  String get jiraSettingsCleared => 'Settings cleared';
 
   @override
   String get retroTemplateStartStopContinue => 'Start, Stop, Continue';
@@ -5804,6 +5878,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get landingFooterDocs => 'Documentation';
+
+  @override
+  String jiraConnectedSuccess(String name) {
+    return 'Connected as $name';
+  }
 
   @override
   String get landingFooterAgileGuides => 'Agile Guides';
@@ -10442,6 +10521,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileAddDecision => 'Add Decision';
 
   @override
+  String get agileNoDecisions => 'No decisions added';
+
+  @override
+  String get agileTooltipApproved => 'Approved';
+
+  @override
+  String get agileTooltipRefinement => 'Needs Refinement';
+
+  @override
+  String get agileTooltipRejected => 'Rejected';
+
+  @override
+  String get agileReviewGuidance =>
+      'Select outcome. \'Needs Refinement\' and \'Rejected\' move the story back to Backlog.';
+
+  @override
   String get agileEvaluateStories => 'Evaluate Stories';
 
   @override
@@ -10847,4 +10942,105 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get landingIntegrationDashboardDesc =>
       'Favorites, deadlines, and pending invites from every tool in one place.';
+
+  @override
+  String jiraTransitionTitle(Object transitionName) {
+    return 'Complete Transition: $transitionName';
+  }
+
+  @override
+  String get jiraTransitionInfo =>
+      'Jira requires additional information for this transition.';
+
+  @override
+  String get jiraTransitionConfirm => 'Confirm';
+
+  @override
+  String get jiraTransitionCancel => 'Cancel';
+
+  @override
+  String get jiraFieldRequired => 'Required field';
+
+  @override
+  String jiraSyncSuccess(Object transitionName) {
+    return 'Jira: $transitionName completed';
+  }
+
+  @override
+  String jiraSyncedTo(Object statusName) {
+    return 'Jira: Synced to $statusName';
+  }
+
+  @override
+  String jiraSyncFromSuccess(Object issueKey) {
+    return 'Synced from Jira: $issueKey';
+  }
+
+  @override
+  String jiraSyncFailed(Object error) {
+    return 'Sync failed: $error';
+  }
+
+  @override
+  String jiraSyncWarning(Object warning) {
+    return 'Jira Sync Warning: $warning';
+  }
+
+  @override
+  String get actionSyncJira => 'Sync with Jira';
+
+  @override
+  String get validationRequired => 'Required';
+
+  @override
+  String get jiraInvalidDomain => 'Invalid domain';
+
+  @override
+  String get jiraInvalidEmail => 'Invalid email';
+
+  @override
+  String get jiraCreateTokenLink => 'Create API Token >';
+
+  @override
+  String get agileHelpTitle => 'Quick Guide';
+
+  @override
+  String get agileHelpStep1Title => 'Populate Backlog';
+
+  @override
+  String get agileHelpStep1Desc =>
+      'Create User Stories in the Backlog tab to define the work.';
+
+  @override
+  String get agileHelpStep2Title => 'Plan Sprint';
+
+  @override
+  String get agileHelpStep2Desc =>
+      'Go to Sprint tab, create a new sprint, and select stories from the backlog.';
+
+  @override
+  String get agileHelpStep3Title => 'Work on Board';
+
+  @override
+  String get agileHelpStep3Desc =>
+      'Use the Board tab to visualize progress. Drag cards to update their status.';
+
+  @override
+  String get agileHelpStep4Title => 'Sync & Close';
+
+  @override
+  String get agileHelpStep4Desc =>
+      'If Jira is connected, status updates sync automatically. Use \'Complete Sprint\' to finish.';
+
+  @override
+  String get actionNext => 'Next';
+
+  @override
+  String get actionBack => 'Back';
+
+  @override
+  String get actionFinish => 'Finish';
+
+  @override
+  String get agileStartSprintHint => 'Start Sprint to see active stories';
 }

@@ -60,6 +60,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actionClose => 'Cerrar';
 
   @override
+  String get agileSprint => 'Sprint';
+
+  @override
   String get actionHide => 'Ocultar Tarjetas';
 
   @override
@@ -1922,7 +1925,78 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retroStatusActive => 'En Progreso';
 
   @override
+  String get agileBurndownInfoTitle => 'Cómo leer el Burndown Chart';
+
+  @override
+  String get agileBurndownInfoIdeal =>
+      'La línea **Ideal** (punteada) muestra el progreso objetivo si el trabajo se completara de manera uniforme.';
+
+  @override
+  String get agileBurndownInfoActual =>
+      'La línea **Real** (continua) muestra el trabajo restante. Las historias completadas bajan esta línea.';
+
+  @override
+  String get agileBurndownInfoGoal =>
+      'Tu objetivo es mantener la línea Real por debajo de la Ideal para terminar a tiempo.';
+
+  @override
+  String get guideToolsTitle => 'Herramientas e Integraciones';
+
+  @override
+  String get guideJiraContent =>
+      'La aplicación se integra con Jira para mantener el trabajo sincronizado.\n\nFuncionalidades principales:\n• **Importar**: Las historias creadas en Jira aparecen aquí.\n• **Enlace**: Al hacer clic en el ID de la historia (ej. PROJ-123) se abre Jira directamente.\n• **Sincronización**: El estado se actualiza bidireccionalmente (si está configurado).';
+
+  @override
+  String get guideWorkflowTitle => 'Flujo de trabajo y Calidad';
+
+  @override
+  String get guideAcceptanceCriteriaContent =>
+      'Para garantizar la calidad, cada historia debe tener Criterios de Aceptación claros.\n\n• **Añadir Rápido**: Puedes añadir criterios directamente desde el detalle de la historia.\n• **Verificar**: Marca los criterios a medida que se cumplen.\n• **Definition of Done**: Una historia está \'Done\' solo cuando se satisfacen todos los criterios.';
+
+  @override
+  String get scrumWorkflowStatusContent =>
+      'En Scrum, el ciclo de vida de una historia sigue estos estados:\n\n1. **Product Backlog**: Donde nacen las ideas. Aquí ocurre el \'Refinement\'.\n2. **Ready**: La historia está lista para trabajarse (cumple con Definition of Ready).\n3. **Sprint Backlog**: Durante la Planificación, las historias \'Ready\' se mueven al Sprint y se convierten en el trabajo pendiente.\n4. **In Sprint**: La historia está activa en el tablero del Sprint actual.\n5. **Done**: La historia está completada y verificada.';
+
+  @override
+  String get kanbanWorkflowStatusContent =>
+      'En Kanban, el flujo es continuo:\n\n1. **Refinement**: Columna dedicada para analizar las solicitudes entrantes.\n2. **Ready**: Colas para el trabajo listo (sistema pull).\n3. **Active Board**: Las historias fluyen a través de las columnas de trabajo.\n4. **WIP Limits**: Cada columna tiene un límite para evitar cuellos de botella.';
+
+  @override
+  String get hybridWorkflowStatusContent =>
+      'Scrumban utiliza un enfoque híbrido:\n\n• Puedes usar Sprints para planificación, pero gestionar el flujo diario como Kanban.\n• Las historias \'Ready\' pueden ser retiradas (pull) cuando hay capacidad, independientemente de la planificación del Sprint, si el equipo lo prefiere.';
+
+  @override
   String get retroStatusCompleted => 'Completada';
+
+  @override
+  String get profileIntegrations => 'Integraciones';
+
+  @override
+  String get profileJiraIntegration => 'Integración Jira';
+
+  @override
+  String get profileJiraIntegrationDesc => 'Conectar para importar historias';
+
+  @override
+  String get jiraDomain => 'Dominio Jira';
+
+  @override
+  String get jiraEmail => 'Email Atlassian';
+
+  @override
+  String get jiraApiToken => 'API Token';
+
+  @override
+  String get jiraConnect => 'Conectar';
+
+  @override
+  String get jiraDisconnect => 'Desconectar';
+
+  @override
+  String get jiraSettingsSaved => 'Configuración guardada';
+
+  @override
+  String get jiraSettingsCleared => 'Configuración eliminada';
 
   @override
   String get retroTemplateStartStopContinue => 'Start, Stop, Continue';
@@ -5859,6 +5933,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get landingFooterDocs => 'Documentación';
+
+  @override
+  String jiraConnectedSuccess(String name) {
+    return 'Connesso come $name';
+  }
 
   @override
   String get landingFooterAgileGuides => 'Guías Ágiles';
@@ -10494,7 +10573,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Completa un sprint y realiza una Sprint Review para verla aquí';
 
   @override
-  String get agileAttendees => 'Participantes';
+  String get agileAttendees => 'Asistentes';
 
   @override
   String get agileStoryEvaluations => 'Evaluación de Historias';
@@ -10521,7 +10600,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get agileAddAttendee => 'Añadir Participante';
 
   @override
-  String get agileAddDecision => 'Añadir Decisión';
+  String get agileAddDecision => 'Añadir decisión';
+
+  @override
+  String get agileNoDecisions => 'No se han añadido decisiones';
+
+  @override
+  String get agileTooltipApproved => 'Approvata';
+
+  @override
+  String get agileTooltipRefinement => 'Da raffinare';
+
+  @override
+  String get agileTooltipRejected => 'Rifiutata';
+
+  @override
+  String get agileReviewGuidance =>
+      'Seleziona l\'esito. \'Da raffinare\' e \'Rifiutata\' riportano la storia nel Backlog.';
 
   @override
   String get agileEvaluateStories => 'Evaluar Historias';
@@ -10935,4 +11030,106 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get landingIntegrationDashboardDesc =>
       'Favoritos, plazos e invitaciones pendientes de cada herramienta en un solo lugar.';
+
+  @override
+  String jiraTransitionTitle(Object transitionName) {
+    return 'Completar Transición: $transitionName';
+  }
+
+  @override
+  String get jiraTransitionInfo =>
+      'Jira requiere información adicional para esta transición.';
+
+  @override
+  String get jiraTransitionConfirm => 'Confirmar';
+
+  @override
+  String get jiraTransitionCancel => 'Cancelar';
+
+  @override
+  String get jiraFieldRequired => 'Campo obligatorio';
+
+  @override
+  String jiraSyncSuccess(Object transitionName) {
+    return 'Jira: $transitionName completada';
+  }
+
+  @override
+  String jiraSyncedTo(Object statusName) {
+    return 'Jira: Sincronizado a $statusName';
+  }
+
+  @override
+  String jiraSyncFromSuccess(Object issueKey) {
+    return 'Sincronizado desde Jira: $issueKey';
+  }
+
+  @override
+  String jiraSyncFailed(Object error) {
+    return 'Sincronización fallida: $error';
+  }
+
+  @override
+  String jiraSyncWarning(Object warning) {
+    return 'Aviso Sync Jira: $warning';
+  }
+
+  @override
+  String get actionSyncJira => 'Sincronizar con Jira';
+
+  @override
+  String get validationRequired => 'Obligatorio';
+
+  @override
+  String get jiraInvalidDomain => 'Dominio no válido';
+
+  @override
+  String get jiraInvalidEmail => 'Email no válido';
+
+  @override
+  String get jiraCreateTokenLink => 'Crear Token API >';
+
+  @override
+  String get agileHelpTitle => 'Guía Rápida';
+
+  @override
+  String get agileHelpStep1Title => 'Rellena el Backlog';
+
+  @override
+  String get agileHelpStep1Desc =>
+      'Crea User Stories en la pestaña Backlog para definir el trabajo a realizar.';
+
+  @override
+  String get agileHelpStep2Title => 'Planifica el Sprint';
+
+  @override
+  String get agileHelpStep2Desc =>
+      'Ve a la pestaña Sprint, crea un nuevo sprint y selecciona las historias del backlog.';
+
+  @override
+  String get agileHelpStep3Title => 'Trabaja en la Board';
+
+  @override
+  String get agileHelpStep3Desc =>
+      'Usa la pestaña Board para visualizar el progreso. Arrastra las tarjetas para actualizar el estado.';
+
+  @override
+  String get agileHelpStep4Title => 'Sincroniza y Cierra';
+
+  @override
+  String get agileHelpStep4Desc =>
+      'Si Jira está conectado, los estados se actualizan automáticamente. Usa \'Completar Sprint\' para terminar.';
+
+  @override
+  String get actionNext => 'Siguiente';
+
+  @override
+  String get actionBack => 'Atrás';
+
+  @override
+  String get actionFinish => 'Finalizar';
+
+  @override
+  String get agileStartSprintHint =>
+      'Inicia el Sprint para ver las historias activas';
 }

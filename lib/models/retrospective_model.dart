@@ -287,6 +287,7 @@ class RetrospectiveModel {
     String? createdBy,
     bool? showAuthorNames,
     bool? isActionItemsVisible,
+    bool? isCompleted,
   }) {
     return RetrospectiveModel(
       id: id ?? this.id,
@@ -308,7 +309,7 @@ class RetrospectiveModel {
       reviewData: reviewData,
       createdAt: createdAt,
       createdBy: createdBy ?? this.createdBy,
-      isCompleted: isCompleted,
+      isCompleted: isCompleted ?? this.isCompleted,
       isArchived: isArchived,
       archivedAt: archivedAt,
       status: status ?? this.status,

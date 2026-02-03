@@ -27,7 +27,7 @@ class AvatarWidget extends StatelessWidget {
       return CircleAvatar(
         radius: radius,
         backgroundColor: backgroundColor ?? _getAvatarColor(email ?? name ?? ''),
-        backgroundImage: CachedNetworkImageProvider(imageUrl!),
+        backgroundImage: NetworkImage(imageUrl!),
         onBackgroundImageError: (exception, stackTrace) {
           // Fallback gestito silenziosamente - mostrerà il child
           debugPrint('Error loading avatar image: $exception');

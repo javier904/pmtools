@@ -5,7 +5,10 @@ import '../../models/sprint_model.dart';
 import '../../models/framework_features.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../services/secure_storage_service.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'story_card_widget.dart';
 
 /// Kanban Board con drag & drop tra colonne e supporto WIP limits
 ///
@@ -23,6 +26,9 @@ class KanbanBoardWidget extends StatefulWidget {
   final void Function(String columnId, List<String> policies)? onPoliciesChange;
   final void Function(SwimlaneType)? onSwimlaneChange;
   final void Function(UserStoryModel story, String? email)? onAssigneeChange;
+  final void Function(UserStoryModel story, int? points)? onStoryPointsChange;
+  final void Function(String storyId, String newTitle)? onTitleChange;
+  final void Function(String storyId, StoryPriority newPriority)? onPriorityChange;
   final SwimlaneType swimlaneType;
   final bool canEdit;
   final bool showWipConfig;
@@ -41,6 +47,9 @@ class KanbanBoardWidget extends StatefulWidget {
     this.onPoliciesChange,
     this.onSwimlaneChange,
     this.onAssigneeChange,
+    this.onStoryPointsChange,
+    this.onTitleChange,
+    this.onPriorityChange,
     this.swimlaneType = SwimlaneType.none,
     this.canEdit = true,
     this.showWipConfig = false,
@@ -341,57 +350,14 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   padding: const EdgeInsets.all(4),
                   itemCount: stories.length,
                   itemBuilder: (context, index) =>
-                      _buildCompactCard(stories[index]),
+                      _buildKanbanCard(stories[index]),
                 ),
         );
       },
     );
   }
 
-  Widget _buildCompactCard(UserStoryModel story) {
-    return GestureDetector(
-      onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 4),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: story.priority.color,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  story.title,
-                  style: const TextStyle(fontSize: 11),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (story.storyPoints != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    '${story.storyPoints}',
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   List<_SwimlaneData> _getSwimlanes() {
     switch (widget.swimlaneType) {
@@ -971,318 +937,60 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildKanbanCard(UserStoryModel story) {
+    final sprint = widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
+
     return Draggable<UserStoryModel>(
       data: story,
       feedback: Material(
         elevation: 8,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-          width: 250,
-          child: _buildCardContent(story, isDragging: true),
+          width: 280,
+          child: Opacity(
+            opacity: 0.9,
+            child: StoryCardWidget(
+               story: story,
+               sprintName: sprint?.name,
+               isSprintCompleted: sprint?.status == SprintStatus.completed,
+               teamMembers: widget.teamMembers,
+             ),
+          ),
         ),
       ),
       childWhenDragging: Opacity(
         opacity: 0.5,
-        child: _buildCardContent(story),
-      ),
-      child: _buildCardContent(story),
-    );
-  }
-
-  Widget _buildCardContent(UserStoryModel story, {bool isDragging = false}) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      elevation: isDragging ? 8 : 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          color: story.priority.color.withValues(alpha: 0.3),
-          width: 1,
+        child: StoryCardWidget(
+          story: story,
+          sprintName: sprint?.name,
+          isSprintCompleted: sprint?.status == SprintStatus.completed,
+          teamMembers: widget.teamMembers,
         ),
       ),
-      child: InkWell(
-        onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header row
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: context.surfaceVariantColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: Text(
-                      story.storyId,
-                      style: const TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  // Class of Service (solo se non è Standard)
-                  if (story.classOfService != ClassOfService.standard) ...[
-                    Tooltip(
-                      message: story.classOfService.description,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: story.classOfService.color.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(story.classOfService.icon, size: 10, color: story.classOfService.color),
-                            const SizedBox(width: 2),
-                            Text(
-                              story.classOfService.shortName,
-                              style: TextStyle(
-                                fontSize: 9,
-                                color: story.classOfService.color,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                  ],
-                  // Priority
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: story.priority.color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      story.priority.displayName,
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: story.priority.color,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-
-              // Title
-              Text(
-                story.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-
-              // Tags
-              if (story.tags.isNotEmpty) ...[
-                Wrap(
-                  spacing: 4,
-                  runSpacing: 2,
-                  children: story.tags.take(3).map((tag) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: Text(
-                      tag,
-                      style: const TextStyle(fontSize: 8, color: Colors.blue),
-                    ),
-                  )).toList(),
-                ),
-                const SizedBox(height: 8),
-              ],
-
-              // Sprint name badge
-              if (story.sprintId != null) ...[
-                Builder(builder: (context) {
-                  final sprint = widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
-                  if (sprint == null) return const SizedBox.shrink();
-                  final isCompleted = sprint.status == SprintStatus.completed;
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: (isCompleted ? Colors.green : Colors.blue).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: (isCompleted ? Colors.green : Colors.blue).withValues(alpha: 0.25),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isCompleted ? Icons.check_circle : Icons.flag,
-                          size: 10,
-                          color: isCompleted ? Colors.green : Colors.blue,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          sprint.name,
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w500,
-                            color: isCompleted ? Colors.green : Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-                const SizedBox(height: 8),
-              ],
-
-              // Footer
-              Row(
-                children: [
-                  // Points (solo se framework supporta)
-                  if (_features.hasStoryPoints && story.storyPoints != null) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.stars, size: 10, color: Colors.green),
-                          const SizedBox(width: 2),
-                          Text(
-                            '${story.storyPoints}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                  // Acceptance criteria
-                  if (story.acceptanceCriteria.isNotEmpty) ...[
-                    Icon(Icons.checklist, size: 12, color: context.textSecondaryColor),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
-                      style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
-                    ),
-                  ],
-                  const Spacer(),
-                  // Assignee (clickable)
-                  _buildAssigneeAvatar(story),
-                ],
-              ),
-            ],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: StoryCardWidget(
+          story: story,
+          sprintName: sprint?.name,
+          isSprintCompleted: sprint?.status == SprintStatus.completed,
+          teamMembers: widget.teamMembers,
+          onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
+          onStatusChange: widget.onStatusChange != null 
+              ? (status) => widget.onStatusChange!(story.id, status) 
+              : null,
+          onPriorityChange: widget.onPriorityChange != null 
+              ? (priority) => widget.onPriorityChange!(story.id, priority) 
+              : null,
+          onTitleChange: widget.onTitleChange != null 
+              ? (title) => widget.onTitleChange!(story.id, title) 
+              : null,
+          onStoryPointsChange: widget.onStoryPointsChange != null
+              ? (points) => widget.onStoryPointsChange!(story, points)
+              : null,
+          onAssigneeChange: widget.onAssigneeChange != null
+              ? (email) => widget.onAssigneeChange!(story, email)
+              : null,
+          compactMode: true,
         ),
-      ),
-    );
-  }
-
-  Widget _buildAssigneeAvatar(UserStoryModel story) {
-    final hasAssignee = story.assigneeEmail != null;
-    final canAssign = widget.onAssigneeChange != null && widget.teamMembers.isNotEmpty;
-
-    final avatar = Tooltip(
-      message: hasAssignee ? story.assigneeEmail! : '',
-      child: CircleAvatar(
-        radius: 10,
-        backgroundColor: hasAssignee
-            ? AppColors.primary.withValues(alpha: 0.2)
-            : context.surfaceVariantColor,
-        child: hasAssignee
-            ? Text(
-                story.assigneeEmail![0].toUpperCase(),
-                style: const TextStyle(fontSize: 8, color: AppColors.primary),
-              )
-            : Icon(
-                Icons.person_add,
-                size: 11,
-                color: context.textSecondaryColor,
-              ),
-      ),
-    );
-
-    if (!canAssign) {
-      return hasAssignee ? avatar : const SizedBox.shrink();
-    }
-
-    return GestureDetector(
-      onTap: () => _showQuickAssignDialog(story),
-      child: avatar,
-    );
-  }
-
-  void _showQuickAssignDialog(UserStoryModel story) {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: Text(l10n.agileAssignee),
-        children: [
-          // Unassign option
-          SimpleDialogOption(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              widget.onAssigneeChange?.call(story, null);
-            },
-            child: Row(
-              children: [
-                Icon(Icons.person_off, color: context.textSecondaryColor),
-                const SizedBox(width: 12),
-                Text(
-                  l10n.agileNoAssignee,
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: context.textSecondaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
-          ...widget.teamMembers.map((email) => SimpleDialogOption(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              widget.onAssigneeChange?.call(story, email);
-            },
-            child: Row(
-              children: [
-                Icon(
-                  email == story.assigneeEmail ? Icons.check_circle : Icons.person,
-                  color: email == story.assigneeEmail ? AppColors.primary : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    email,
-                    style: TextStyle(
-                      fontWeight: email == story.assigneeEmail ? FontWeight.bold : null,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
       ),
     );
   }

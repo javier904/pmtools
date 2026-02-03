@@ -281,7 +281,8 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
     return CircleAvatar(
       radius: size / 2,
       backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-      backgroundImage: _photoUrl != null ? CachedNetworkImageProvider(_photoUrl!) : null,
+      backgroundImage: _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+      onBackgroundImageError: (_, __) {},
       child: _photoUrl == null
           ? Text(
               _initials,
@@ -369,7 +370,8 @@ class ProfileAvatarWidget extends StatelessWidget {
         radius: size / 2,
         backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
         backgroundImage:
-            profile?.photoUrl != null ? CachedNetworkImageProvider(profile!.photoUrl!) : null,
+            profile?.photoUrl != null ? NetworkImage(profile!.photoUrl!) : null,
+        onBackgroundImageError: (_, __) {},
         child: profile?.photoUrl == null
             ? Text(
                 profile?.initials ?? '?',

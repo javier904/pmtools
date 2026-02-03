@@ -27,6 +27,11 @@ class BacklogListWidget extends StatefulWidget {
   final void Function(String storyId)? onStoryDelete;
   final void Function(List<String> newOrder)? onReorder;
   final void Function(String storyId, StoryStatus newStatus)? onStatusChange;
+  final void Function(String storyId, StoryPriority newPriority)? onPriorityChange;
+  final void Function(String storyId, String newTitle)? onTitleChange;
+  final void Function(String storyId, int? newPoints)? onStoryPointsChange;
+  final void Function(String storyId, String? newAssigneeEmail)? onAssigneeChange;
+  final List<String> teamMembers;
   final void Function(UserStoryModel story)? onStoryEstimate;
   final void Function(UserStoryModel story)? onAddToSprint;
   final VoidCallback? onAddStory;
@@ -42,6 +47,11 @@ class BacklogListWidget extends StatefulWidget {
     this.onStoryDelete,
     this.onReorder,
     this.onStatusChange,
+    this.onPriorityChange,
+    this.onTitleChange,
+    this.onStoryPointsChange,
+    this.onAssigneeChange,
+    this.teamMembers = const [],
     this.onStoryEstimate,
     this.onAddToSprint,
     this.onAddStory,
@@ -198,12 +208,16 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                 color: _showArchive ? Colors.grey : AppColors.primary,
               ),
               const SizedBox(width: 8),
-              Text(
-                _showArchive ? l10n.agileBacklogArchiveTitle : l10n.agileBacklogTitle,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: context.textPrimaryColor,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  _showArchive ? l10n.agileBacklogArchiveTitle : l10n.agileBacklogTitle,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.textPrimaryColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const Spacer(),
@@ -552,6 +566,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         story: story,
         sprintName: sprintName,
         isSprintCompleted: isSprintCompleted,
+        teamMembers: widget.teamMembers,
         onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
         onEdit: widget.canEdit && widget.onStoryEdit != null
             ? () => widget.onStoryEdit!(story)
@@ -561,6 +576,18 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
             : null,
         onStatusChange: widget.canEdit && widget.onStatusChange != null
             ? (status) => widget.onStatusChange!(story.id, status)
+            : null,
+        onPriorityChange: widget.canEdit && widget.onPriorityChange != null
+            ? (priority) => widget.onPriorityChange!(story.id, priority)
+            : null,
+        onTitleChange: widget.canEdit && widget.onTitleChange != null
+            ? (title) => widget.onTitleChange!(story.id, title)
+            : null,
+        onStoryPointsChange: widget.canEdit && widget.onStoryPointsChange != null
+            ? (points) => widget.onStoryPointsChange!(story.id, points)
+            : null,
+        onAssigneeChange: widget.canEdit && widget.onAssigneeChange != null
+            ? (assignee) => widget.onAssigneeChange!(story.id, assignee)
             : null,
         onEstimate: widget.canEdit && widget.onStoryEstimate != null
             ? () => widget.onStoryEstimate!(story)

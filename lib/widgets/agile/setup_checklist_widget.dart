@@ -11,10 +11,11 @@ import '../../l10n/app_localizations.dart';
 /// Checklist di setup per un nuovo progetto Agile
 ///
 /// Mostra i passi da completare per iniziare a lavorare in modo efficace.
-class SetupChecklistWidget extends StatelessWidget {
+class SetupChecklistWidget extends StatefulWidget {
   final AgileProjectModel project;
   final List<UserStoryModel> stories;
   final List<SprintModel> sprints;
+  final bool isSetupComplete;
   final VoidCallback? onAddTeamMember;
   final VoidCallback? onAddStory;
   final VoidCallback? onStartSprint;
@@ -25,13 +26,43 @@ class SetupChecklistWidget extends StatelessWidget {
     required this.project,
     required this.stories,
     required this.sprints,
+    this.isSetupComplete = false,
     this.onAddTeamMember,
     this.onAddStory,
     this.onStartSprint,
     this.onConfigureWip,
   });
 
-  FrameworkFeatures get _features => FrameworkFeatures(project.framework);
+  @override
+  State<SetupChecklistWidget> createState() => _SetupChecklistWidgetState();
+}
+
+class _SetupChecklistWidgetState extends State<SetupChecklistWidget> {
+  // Keeps track of the expansion state locally.
+  // Ideally this would be persisted, but local state handles the session experience.
+  late bool _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to Expanded if setup is NOT complete, Collapsed if it IS complete.
+    // This provides the "fixed bar" experience the user requested.
+    // Default to Collapsed as requested by user ("il default, collapsed").
+    _isExpanded = false;
+  }
+
+  // Update expansion state if completion status changes drastically (optional, but good for UX)
+  @override
+  void didUpdateWidget(SetupChecklistWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Auto-collapse when setup becomes complete
+    if (!oldWidget.isSetupComplete && widget.isSetupComplete) {
+       setState(() => _isExpanded = false);
+    }
+  }
+
+
+  FrameworkFeatures get _features => FrameworkFeatures(widget.project.framework);
 
   @override
   Widget build(BuildContext context) {
@@ -40,81 +71,98 @@ class SetupChecklistWidget extends StatelessWidget {
     final completedCount = checklist.where((item) => item.isCompleted).length;
     final totalCount = checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
-
-    // Se tutto completato, mostra solo un messaggio di successo
-    if (completedCount == totalCount && totalCount > 0) {
-      return _buildCompletedState(l10n);
-    }
+    
+    final isAllComplete = completedCount == totalCount && totalCount > 0;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                Icon(
-                  Icons.checklist,
-                  color: _features.primaryColor,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.agileSetupTitle,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: _isExpanded,
+          onExpansionChanged: (value) => setState(() => _isExpanded = value),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          
+          // Header content
+          title: Row(
+            children: [
+              Icon(
+                isAllComplete ? Icons.verified : Icons.checklist,
+                color: isAllComplete ? Colors.green : _features.primaryColor,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.agileSetupTitle,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Builder(
-                        builder: (context) => Text(
-                          l10n.agileStepComplete(completedCount, totalCount),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: context.textSecondaryColor,
-                          ),
-                        ),
+                    ),
+                    Text(
+                      isAllComplete 
+                          ? l10n.agileSetupCompleteTitle
+                          : l10n.agileStepComplete(completedCount, totalCount),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isAllComplete ? Colors.green : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // Progress indicator
+              ),
+              if (!isAllComplete)
                 SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Stack(
-                    children: [
-                      Builder(
-                        builder: (context) => CircularProgressIndicator(
-                          value: progress,
-                          strokeWidth: 4,
-                          backgroundColor: context.borderColor,
-                          valueColor: AlwaysStoppedAnimation(_features.primaryColor),
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          '${(progress * 100).round()}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: _features.primaryColor,
-                          ),
-                        ),
-                      ),
-                    ],
+                  width: 32,
+                  height: 32,
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 3,
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    valueColor: AlwaysStoppedAnimation(_features.primaryColor),
                   ),
                 ),
-              ],
+            ],
+          ),
+          
+          // Body content (Checklist)
+          children: [
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: checklist.map((item) => _buildChecklistItem(context, l10n, item)).toList(),
+              ),
             ),
-            const SizedBox(height: 16),
-            // Checklist items
-            ...checklist.map((item) => _buildChecklistItem(context, l10n, item)),
+            if (isAllComplete)
+               Container(
+                 width: double.infinity,
+                 padding: const EdgeInsets.all(12),
+                 margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                 decoration: BoxDecoration(
+                   color: Colors.green.withOpacity(0.1),
+                   borderRadius: BorderRadius.circular(8),
+                 ),
+                 child: Row(
+                   children: [
+                     const Icon(Icons.celebration, color: Colors.green, size: 20),
+                     const SizedBox(width: 8),
+                     Expanded(
+                       child: Text(
+                         l10n.agileSetupCompleteMessage,
+                         style: const TextStyle(color: Colors.green, fontSize: 13),
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
           ],
         ),
       ),
@@ -122,40 +170,8 @@ class SetupChecklistWidget extends StatelessWidget {
   }
 
   Widget _buildCompletedState(AppLocalizations l10n) {
-    return Card(
-      color: Colors.green.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.agileSetupCompleteTitle,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                  Text(
-                    l10n.agileSetupCompleteMessage,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+     // Deprecated in favor of the expansion tile completed state
+     return const SizedBox.shrink();
   }
 
   Widget _buildChecklistItem(BuildContext context, AppLocalizations l10n, ChecklistItem item) {
@@ -238,8 +254,8 @@ class SetupChecklistWidget extends StatelessWidget {
       order: order++,
       title: l10n.agileChecklistAddMembers,
       description: l10n.agileChecklistAddMembersDesc,
-      isCompleted: project.participantCount > 1,
-      action: onAddTeamMember,
+      isCompleted: widget.project.participantCount > 1,
+      action: widget.onAddTeamMember,
       actionLabel: l10n.agileChecklistInvite,
     ));
 
@@ -248,28 +264,28 @@ class SetupChecklistWidget extends StatelessWidget {
       order: order++,
       title: l10n.agileChecklistCreateStories(_features.workItemLabelPlural.toLowerCase()),
       description: l10n.agileChecklistAddItems,
-      isCompleted: stories.length >= 3,
-      action: onAddStory,
+      isCompleted: widget.stories.length >= 3,
+      action: widget.onAddStory,
       actionLabel: l10n.agileChecklistAdd,
     ));
 
     // 3. Framework-specific items
     if (_features.hasWipLimits) {
       // Kanban/Hybrid: Configura WIP limits
-      final hasCustomWip = project.kanbanColumns.any((c) => c.wipLimit != null);
+      final hasCustomWip = widget.project.kanbanColumns.any((c) => c.wipLimit != null);
       items.add(ChecklistItem(
         order: order++,
         title: l10n.agileChecklistWipLimits,
         description: l10n.agileChecklistWipLimitsDesc,
         isCompleted: hasCustomWip,
-        action: onConfigureWip,
+        action: widget.onConfigureWip,
         actionLabel: l10n.agileChecklistConfigure,
       ));
     }
 
     if (_features.hasStoryPoints) {
       // Scrum/Hybrid: Stima le stories
-      final estimatedStories = stories.where((s) => s.storyPoints != null && s.storyPoints! > 0).length;
+      final estimatedStories = widget.stories.where((s) => s.storyPoints != null && s.storyPoints! > 0).length;
       items.add(ChecklistItem(
         order: order++,
         title: l10n.agileChecklistEstimate(_features.workItemLabelPlural.toLowerCase()),
@@ -284,14 +300,14 @@ class SetupChecklistWidget extends StatelessWidget {
         order: order++,
         title: l10n.agileChecklistCreateSprint,
         description: l10n.agileChecklistSprintDesc,
-        isCompleted: sprints.isNotEmpty,
-        action: onStartSprint,
+        isCompleted: widget.sprints.isNotEmpty,
+        action: widget.onStartSprint,
         actionLabel: l10n.agileChecklistCreateSprintAction,
       ));
     }
 
     // 4. Start working (common)
-    final hasWorkInProgress = stories.any((s) =>
+    final hasWorkInProgress = widget.stories.any((s) =>
         s.status == StoryStatus.inProgress ||
         s.status == StoryStatus.inReview);
     items.add(ChecklistItem(
@@ -512,7 +528,7 @@ class NextStepWidget extends StatelessWidget {
   });
 
   @override
-  @override
+
   Widget build(BuildContext context) {
     final nextStep = _getNextStep(context);
     if (nextStep == null) return const SizedBox.shrink();

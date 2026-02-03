@@ -16,15 +16,16 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@getbrevo/brevo": "^2.0.0-beta.4",
+    "axios": "^1.13.4",
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^5.1.0",
-    "stripe": "^14.10.0",
-    "@getbrevo/brevo": "^2.0.0-beta.4"
+    "stripe": "^14.10.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
     "@types/node": "^20.10.5",
-    "@types/nodemailer": "^6.4.14"
+    "@types/nodemailer": "^6.4.14",
+    "typescript": "^5.3.3"
   },
   "private": true
 }

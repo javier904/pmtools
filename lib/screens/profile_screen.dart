@@ -11,6 +11,7 @@ import '../controllers/locale_controller.dart';
 import '../widgets/reauthentication_dialog.dart';
 import 'dart:html' as html;
 import 'dart:convert';
+import '../widgets/settings/jira_auth_dialog.dart';
 
 /// Schermata profilo utente completa
 ///
@@ -169,6 +170,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _buildSettingsSection(theme, isDark),
                           const SizedBox(height: 16),
 
+
+
+                          // Sezione Integrazioni
+                          _buildIntegrationsSection(theme, isDark),
+                          const SizedBox(height: 16),
+
                           // Sezione Sicurezza (solo utenti email)
                           if (_profile?.authProvider == AuthProvider.email) ...[
                             _buildSecuritySection(theme, isDark),
@@ -211,8 +218,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               radius: 48,
               backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
               backgroundImage: _profile?.photoUrl != null
-                  ? CachedNetworkImageProvider(_profile!.photoUrl!)
+                  ? NetworkImage(_profile!.photoUrl!)
                   : null,
+              onBackgroundImageError: (_, __) {},
               child: _profile?.photoUrl == null
                   ? Text(
                       _profile?.initials ?? '?',
@@ -568,6 +576,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
           subtitle: Text(l10n.profileAnimationsDesc),
           value: _settings!.enableAnimations,
           onChanged: _updateAnimations,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIntegrationsSection(ThemeData theme, bool isDark) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return _buildExpandableSection(
+      title: l10n.profileIntegrations,
+      icon: Icons.integration_instructions_outlined,
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.link, color: Colors.blue),
+          title: Text(l10n.profileJiraIntegration),
+          subtitle: Text(l10n.profileJiraIntegrationDesc),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => const JiraAuthDialog(),
+            );
+          },
         ),
       ],
     );

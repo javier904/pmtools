@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
+import '../../models/sprint_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/jira_service.dart';
+import '../../models/external_integration_model.dart';
 
 /// Dialog per creare o modificare una User Story
 ///
@@ -13,6 +16,7 @@ class StoryFormDialog extends StatefulWidget {
   final String projectId;
   final List<String> existingTags;
   final List<String> teamMembers; // emails
+  final List<SprintModel> sprints;
 
   const StoryFormDialog({
     super.key,
@@ -20,6 +24,7 @@ class StoryFormDialog extends StatefulWidget {
     required this.projectId,
     this.existingTags = const [],
     this.teamMembers = const [],
+    this.sprints = const [],
   });
 
   static Future<UserStoryModel?> show({
@@ -28,6 +33,7 @@ class StoryFormDialog extends StatefulWidget {
     UserStoryModel? story,
     List<String> existingTags = const [],
     List<String> teamMembers = const [],
+    List<SprintModel> sprints = const [],
   }) {
     return showDialog<UserStoryModel>(
       context: context,
@@ -36,6 +42,7 @@ class StoryFormDialog extends StatefulWidget {
         projectId: projectId,
         existingTags: existingTags,
         teamMembers: teamMembers,
+        sprints: sprints,
       ),
     );
   }
@@ -52,14 +59,18 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
   late TextEditingController _benefitController;
   late TextEditingController _tagController;
   late TextEditingController _criteriaController;
+  late TextEditingController _jiraIssueController;
 
   late StoryPriority _priority;
   late ClassOfService _classOfService;
   late int _businessValue;
   late List<String> _tags;
   late List<AcceptanceCriterion> _acceptanceCriteria;
+  late StoryStatus _status;
   String? _assigneeEmail;
+  String? _sprintId;
   bool _useTemplate = true;
+  bool _isLoadingJira = false;
   int? _storyPoints;
 
   // Fibonacci values for Story Points
@@ -95,8 +106,16 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
             .map((text) => AcceptanceCriterion(text: text, completed: false))
             .toList() ??
         []);
+    _status = widget.story?.status ?? StoryStatus.backlog;
     _assigneeEmail = widget.story?.assigneeEmail;
+    _sprintId = widget.story?.sprintId;
     _storyPoints = widget.story?.storyPoints;
+    
+    _jiraIssueController = TextEditingController(
+      text: widget.story?.externalIntegration?.provider == 'jira'
+          ? widget.story!.externalIntegration!.externalId
+          : '',
+    );
   }
 
   Map<String, dynamic> _parseDescription(String description) {
@@ -148,6 +167,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
     _benefitController.dispose();
     _tagController.dispose();
     _criteriaController.dispose();
+    _jiraIssueController.dispose();
     super.dispose();
   }
 
@@ -191,22 +211,39 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       classOfService: _classOfService,
       businessValue: _businessValue,
       storyPoints: _storyPoints,
-      status: widget.story?.status ?? StoryStatus.backlog,
+      status: _status,
       tags: _tags,
       acceptanceCriteria: _acceptanceCriteria.map((c) => c.text).toList(),
       order: widget.story?.order ?? 0,
       createdAt: widget.story?.createdAt ?? DateTime.now(),
       createdBy: widget.story?.createdBy ?? '',
       assigneeEmail: _assigneeEmail,
-      sprintId: widget.story?.sprintId,
+      sprintId: _sprintId,
       estimates: widget.story?.estimates ?? {},
       finalEstimate: widget.story?.finalEstimate,
       isEstimated: _storyPoints != null, // Imposta true se ha story points
       startedAt: widget.story?.startedAt,
       completedAt: widget.story?.completedAt,
+      externalIntegration: _createExternalIntegration(),
     );
 
     Navigator.pop(context, story);
+  }
+
+  ExternalIntegration? _createExternalIntegration() {
+    final jiraInput = _jiraIssueController.text.trim();
+    if (jiraInput.isEmpty) return widget.story?.externalIntegration;
+
+    final key = _extractIssueKey(jiraInput);
+    if (key == null) return widget.story?.externalIntegration; // Keep old if invalid? Or clear?
+
+    // If it's a new key or we confirm it's Jira
+    return ExternalIntegration(
+      provider: 'jira',
+      externalId: key,
+      lastSync: DateTime.now(), 
+      externalUrl: '', // Will be generated or we can parse from input if it was a URL
+    );
   }
 
   @override
@@ -490,6 +527,36 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Jira Link
+          Text('Jira Integration', style: const TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _jiraIssueController,
+                  decoration: const InputDecoration(
+                    labelText: 'Jira Issue Key / URL',
+                    hintText: 'PROJ-123',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.link),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FilledButton.icon(
+                onPressed: _isLoadingJira 
+                  ? null 
+                  : () => _fetchJiraDetails(_jiraIssueController.text.trim()),
+                icon: _isLoadingJira 
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Icon(Icons.download),
+                label: const Text('Import'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
           // Priority
           Text(l10n.agilePriorityMoscow, style: const TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
@@ -566,6 +633,25 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           Text(
             _getBusinessValueLabel(),
             style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+          ),
+          const SizedBox(height: 24),
+
+          // Status Selector
+          Text(l10n.agileFiltersStatus, style: const TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: StoryStatus.values.map((status) => ChoiceChip(
+              label: Text(status.displayName),
+              selected: _status == status,
+              onSelected: (_) {
+                setState(() => _status = status);
+                // Auto-clear logic or auto-assign sprint could go here, but let's keep it simple
+              },
+              avatar: Icon(Icons.circle, size: 12, color: status.color),
+              selectedColor: status.color.withOpacity(0.2),
+            )).toList(),
           ),
           const SizedBox(height: 24),
 
@@ -688,6 +774,43 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
               ],
               onChanged: (value) => setState(() => _assigneeEmail = value),
             ),
+            const SizedBox(height: 16),
+          ],
+
+          // Sprint
+          if (widget.sprints.any((s) => s.status != SprintStatus.completed)) ...[
+             Text(l10n.agileSprint, style: const TextStyle(fontWeight: FontWeight.w500)),
+             const SizedBox(height: 8),
+             DropdownButtonFormField<String?>(
+               value: _sprintId,
+               decoration: const InputDecoration(
+                 border: OutlineInputBorder(),
+                 hintText: 'Seleziona Sprint (Opzionale)',
+               ),
+               items: [
+                 const DropdownMenuItem(
+                   value: null,
+                   child: Text('Nessuno (Backlog)'),
+                 ),
+                 ...widget.sprints
+                     .where((s) => s.status != SprintStatus.completed)
+                     .map((s) => DropdownMenuItem(
+                           value: s.id,
+                           child: Row(
+                             children: [
+                               Icon(s.status == SprintStatus.active ? Icons.directions_run : Icons.date_range, 
+                                 size: 16, 
+                                 color: s.status == SprintStatus.active ? Colors.green : Colors.grey),
+                               const SizedBox(width: 8),
+                               Text(s.name, style: TextStyle(
+                                 fontWeight: s.status == SprintStatus.active ? FontWeight.bold : FontWeight.normal
+                               )),
+                             ],
+                           ),
+                         )),
+               ],
+               onChanged: (value) => setState(() => _sprintId = value),
+             ),
           ],
         ],
       ),
@@ -726,6 +849,63 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
       case StoryPriority.wont:
         return l10n.agilePriorityWont;
     }
+  }
+
+  Future<void> _fetchJiraDetails(String issueIdOrUrl) async {
+    final issueKey = _extractIssueKey(issueIdOrUrl);
+    if (issueKey == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.jiraInvalidDomain)),
+      );
+      return;
+    }
+
+    setState(() => _isLoadingJira = true);
+
+    try {
+      final jiraService = JiraService();
+      final issueData = await jiraService.getIssue(issueKey);
+      final fields = issueData['fields'] as Map<String, dynamic>;
+
+      setState(() {
+        _titleController.text = fields['summary'] ?? '';
+        
+        final desc = fields['description'] is String 
+            ? fields['description'] 
+            : ''; // Handle rich text if needed later
+        
+        // Simple heuristic to populate template
+        _featureController.text = desc;
+        _useTemplate = false;
+
+        if (fields['customfield_10016'] != null) {
+          _storyPoints = (fields['customfield_10016'] as num).toInt();
+        }
+        
+        // Auto-add tag
+        if (!_tags.contains('Jira')) {
+          _tags.add('Jira');
+        }
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Import success!'), backgroundColor: Colors.green),
+      );
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoadingJira = false);
+    }
+  }
+
+  String? _extractIssueKey(String input) {
+    // Matches PROJ-123
+    final regex = RegExp(r'([A-Z]+-\d+)');
+    final match = regex.firstMatch(input.toUpperCase());
+    return match?.group(1);
   }
 }
 

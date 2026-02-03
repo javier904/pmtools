@@ -134,6 +134,16 @@ MethodologyGuide _buildScrumGuide(AppLocalizations l10n) {
         content: l10n.scrumStoryPointsContent,
         icon: Icons.speed,
       ),
+      MethodologySection(
+        title: l10n.guideWorkflowTitle,
+        content: '${l10n.guideAcceptanceCriteriaContent}\n\n${l10n.scrumWorkflowStatusContent}',
+        icon: Icons.check_circle_outline,
+      ),
+      MethodologySection(
+        title: l10n.guideToolsTitle,
+        content: l10n.guideJiraContent,
+        icon: Icons.integration_instructions,
+      ),
     ],
     bestPractices: [
       l10n.scrumBP1,
@@ -224,6 +234,16 @@ MethodologyGuide _buildKanbanGuide(AppLocalizations l10n) {
         content: l10n.kanbanPoliciesContent,
         icon: Icons.policy,
       ),
+      MethodologySection(
+        title: l10n.guideWorkflowTitle,
+        content: '${l10n.guideAcceptanceCriteriaContent}\n\n${l10n.kanbanWorkflowStatusContent}',
+        icon: Icons.check_circle_outline,
+      ),
+      MethodologySection(
+        title: l10n.guideToolsTitle,
+        content: l10n.guideJiraContent,
+        icon: Icons.integration_instructions,
+      ),
     ],
     bestPractices: [
       l10n.kanbanBP1,
@@ -297,6 +317,16 @@ MethodologyGuide _buildHybridGuide(AppLocalizations l10n) {
         title: l10n.hybridWhenTitle,
         content: l10n.hybridWhenContent,
         icon: Icons.balance,
+      ),
+      MethodologySection(
+        title: l10n.guideWorkflowTitle,
+        content: '${l10n.guideAcceptanceCriteriaContent}\n\n${l10n.hybridWorkflowStatusContent}',
+        icon: Icons.check_circle_outline,
+      ),
+      MethodologySection(
+        title: l10n.guideToolsTitle,
+        content: l10n.guideJiraContent,
+        icon: Icons.integration_instructions,
       ),
     ],
     bestPractices: [

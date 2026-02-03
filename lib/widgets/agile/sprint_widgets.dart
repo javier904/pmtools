@@ -14,6 +14,7 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 class SprintListWidget extends StatelessWidget {
   final List<SprintModel> sprints;
   final SprintModel? activeSprint;
+  final List<UserStoryModel>? stories;
   final bool canEdit;
   final void Function(SprintModel)? onSprintTap;
   final void Function(SprintModel)? onSprintEdit;
@@ -26,6 +27,7 @@ class SprintListWidget extends StatelessWidget {
     super.key,
     required this.sprints,
     this.activeSprint,
+    this.stories,
     this.canEdit = true,
     this.onSprintTap,
     this.onSprintEdit,
@@ -128,6 +130,28 @@ class SprintListWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isActive = sprint.status == SprintStatus.active;
     final isCompleted = sprint.status == SprintStatus.completed;
+
+    // Calculate dynamic stats if stories are provided
+    int plannedPoints = sprint.plannedPoints;
+    int completedPoints = sprint.completedPoints;
+    double progress = sprint.progress;
+
+    if (stories != null) {
+      final sprintStories = stories!.where((s) => s.sprintId == sprint.id).toList();
+      plannedPoints = sprintStories.fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+      final actualCompletedPoints = sprintStories
+          .where((s) => s.status == StoryStatus.done)
+          .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+      
+      // Use dynamic totals for active/planning sprints, but respect stored completedPoints for completed sprints if stories were moved
+      if (!isCompleted) {
+        completedPoints = actualCompletedPoints;
+      }
+      
+      if (plannedPoints > 0) {
+        progress = completedPoints / plannedPoints;
+      }
+    }
 
     return Card(
       margin: EdgeInsets.zero,
@@ -272,7 +296,7 @@ class SprintListWidget extends StatelessWidget {
                   ),
                   _buildCompactStat(
                     context,
-                    '${sprint.plannedPoints}',
+                    '$plannedPoints',
                     l10n.agileStatsPoints,
                     Colors.orange,
                     tooltip: l10n.agileStatsPoints,
@@ -280,7 +304,7 @@ class SprintListWidget extends StatelessWidget {
                   if (isCompleted) ...[
                     _buildCompactStat(
                       context,
-                      '${sprint.completedPoints}',
+                      '$completedPoints',
                       l10n.agileStatsCompleted,
                       Colors.green,
                       tooltip: l10n.agileStatsCompleted,
@@ -305,7 +329,7 @@ class SprintListWidget extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(3),
                         child: LinearProgressIndicator(
-                          value: sprint.progress,
+                          value: progress,
                           backgroundColor: context.surfaceVariantColor,
                           valueColor: const AlwaysStoppedAnimation(Colors.green),
                           minHeight: 4,
@@ -314,7 +338,7 @@ class SprintListWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '${(sprint.progress * 100).toInt()}%',
+                      '${(progress * 100).toInt()}%',
                       style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                     ),
                   ],

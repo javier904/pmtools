@@ -133,6 +133,12 @@ class SprintBurndownLiveWidget extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        const SizedBox(width: 8),
+        IconButton(
+          icon: Icon(Icons.info_outline, size: 20, color: theme.colorScheme.onSurfaceVariant),
+          onPressed: () => _showBurndownInfoDialog(context, l10n),
+          tooltip: l10n.agileBurndownInfoTitle,
+        ),
         const Spacer(),
         _buildLegendItem(
           context,
@@ -488,10 +494,19 @@ class SprintBurndownLiveWidget extends StatelessWidget {
   /// Builds the ideal burndown line from totalPoints at day 0 to 0 at the
   /// last working day, using [SprintModel.idealRemainingAtDay].
   List<FlSpot> _buildIdealLine(int totalPoints, int workingDayCount) {
-    if (workingDayCount == 0) return [];
+    if (workingDayCount == 0 || totalPoints == 0) {
+      if (workingDayCount > 0) {
+         // Se non ci sono punti, linea piatta a 0
+         return List.generate(workingDayCount + 1, (i) => FlSpot(i.toDouble(), 0));
+      }
+      return [];
+    }
+    
     final spots = <FlSpot>[];
+    final idealDailyBurn = totalPoints / workingDayCount;
+    
     for (int day = 0; day <= workingDayCount; day++) {
-      final remaining = currentSprint!.idealRemainingAtDay(day);
+      final remaining = (totalPoints - (idealDailyBurn * day)).clamp(0.0, totalPoints.toDouble());
       spots.add(FlSpot(day.toDouble(), remaining));
     }
     return spots;
@@ -601,6 +616,84 @@ class SprintBurndownLiveWidget extends StatelessWidget {
     return sprintStories
         .where((s) => s.status == StoryStatus.done)
         .fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+  }
+
+  void _showBurndownInfoDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.show_chart, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l10n.agileBurndownInfoTitle)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow(context, l10n.agileBurndownInfoIdeal, AppColors.secondary, isDashed: true),
+            const SizedBox(height: 12),
+            _buildInfoRow(context, l10n.agileBurndownInfoActual, AppColors.success, isDashed: false),
+            const SizedBox(height: 16),
+            Text(
+              l10n.agileBurndownInfoGoal,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.actionClose),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(BuildContext context, String text, Color color, {required bool isDashed}) {
+    // Parse markdown-like bold text (e.g., "**text**")
+    final parts = text.split('**');
+    final spans = <InlineSpan>[];
+    
+    for (int i = 0; i < parts.length; i++) {
+        if (i % 2 == 1) {
+            // Bold part
+            spans.add(TextSpan(
+                text: parts[i],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+            ));
+        } else {
+            // Regular part
+            spans.add(TextSpan(text: parts[i]));
+        }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+            children: [
+                SizedBox(
+                    width: 30,
+                    height: 10,
+                    child: CustomPaint(
+                        painter: _LegendLinePainter(color: color, isDashed: isDashed),
+                    ),
+                ),
+            ],
+        ),
+        const SizedBox(height: 4),
+        RichText(
+          text: TextSpan(
+            style: Theme.of(context).textTheme.bodyMedium,
+            children: spans,
+          ),
+        ),
+      ],
+    );
   }
 }
 

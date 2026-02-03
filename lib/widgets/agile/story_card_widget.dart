@@ -4,7 +4,9 @@ import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../common/avatar_widget.dart';
 import '../../themes/app_colors.dart';
+import '../../services/secure_storage_service.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Card per visualizzare una User Story
 ///
@@ -16,12 +18,27 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 /// - Tags
 /// - Assignee
 /// - Progress bar se in sprint
-class StoryCardWidget extends StatelessWidget {
+/// Card per visualizzare una User Story
+///
+/// Mostra:
+/// - ID e titolo (modificabile inline)
+/// - Priority badge (MoSCoW) (modificabile inline)
+/// - Story points
+/// - Status (modificabile inline)
+/// - Tags
+/// - Assignee
+/// - Progress bar se in sprint
+class StoryCardWidget extends StatefulWidget {
   final UserStoryModel story;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final void Function(StoryStatus)? onStatusChange;
+  final void Function(StoryPriority)? onPriorityChange;
+  final void Function(String)? onTitleChange;
+  final void Function(int?)? onStoryPointsChange;
+  final void Function(String?)? onAssigneeChange;
+  final List<String> teamMembers;
   final VoidCallback? onEstimate;
   final VoidCallback? onAddToSprint;
   final bool showDragHandle;
@@ -30,6 +47,7 @@ class StoryCardWidget extends StatelessWidget {
   final String? sprintName;
   /// Indica se lo sprint è completato
   final bool isSprintCompleted;
+  final bool compactMode;
 
   const StoryCardWidget({
     super.key,
@@ -38,13 +56,73 @@ class StoryCardWidget extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.onStatusChange,
+    this.onPriorityChange,
+    this.onTitleChange,
+    this.onStoryPointsChange,
+    this.onAssigneeChange,
+    this.teamMembers = const [],
     this.onEstimate,
     this.onAddToSprint,
     this.showDragHandle = false,
     this.compact = false,
     this.sprintName,
     this.isSprintCompleted = false,
+    this.compactMode = false,
   });
+
+  @override
+  State<StoryCardWidget> createState() => _StoryCardWidgetState();
+}
+
+class _StoryCardWidgetState extends State<StoryCardWidget> {
+  bool _isEditingTitle = false;
+  late TextEditingController _titleController;
+  final FocusNode _titleFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.story.title);
+  }
+
+  @override
+  void didUpdateWidget(StoryCardWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.story.title != oldWidget.story.title && !_isEditingTitle) {
+      _titleController.text = widget.story.title;
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _titleFocus.dispose();
+    super.dispose();
+  }
+
+  void _startEditingTitle() {
+    setState(() {
+      _isEditingTitle = true;
+    });
+    _titleFocus.requestFocus();
+  }
+
+  void _saveTitle() {
+    final newTitle = _titleController.text.trim();
+    if (newTitle.isNotEmpty && newTitle != widget.story.title) {
+      widget.onTitleChange?.call(newTitle);
+    }
+    setState(() {
+      _isEditingTitle = false;
+    });
+  }
+
+  void _cancelEditingTitle() {
+    setState(() {
+      _isEditingTitle = false;
+      _titleController.text = widget.story.title;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,16 +133,16 @@ class StoryCardWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: story.priority.color.withOpacity(0.3),
+          color: widget.story.priority.color.withOpacity(0.3),
           width: 1,
         ),
       ),
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: EdgeInsets.all(compact ? 8 : 12),
-          child: compact ? _buildCompactContent(context) : _buildFullContent(context),
+          padding: EdgeInsets.all(widget.compact ? 8 : 12),
+          child: widget.compact ? _buildCompactContent(context) : _buildFullContent(context),
         ),
       ),
     );
@@ -78,7 +156,7 @@ class StoryCardWidget extends StatelessWidget {
           width: 4,
           height: 40,
           decoration: BoxDecoration(
-            color: story.priority.color,
+            color: widget.story.priority.color,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -89,7 +167,7 @@ class StoryCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                story.title,
+                widget.story.title,
                 style: const TextStyle(fontWeight: FontWeight.w500),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -97,10 +175,19 @@ class StoryCardWidget extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    story.storyId,
+                    widget.story.storyId,
                     style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
-                  if (story.storyPoints != null) ...[
+                  if (widget.story.externalIntegration != null) ...[
+                    const SizedBox(width: 8),
+                    Icon(Icons.link, size: 12, color: Colors.blue[700]),
+                    const SizedBox(width: 2),
+                    Text(
+                      widget.story.externalIntegration!.externalId,
+                      style: TextStyle(fontSize: 11, color: Colors.blue[700], fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                  if (widget.story.storyPoints != null) ...[
                     const SizedBox(width: 8),
                     _buildPointsBadge(),
                   ],
@@ -116,160 +203,220 @@ class StoryCardWidget extends StatelessWidget {
   }
 
   Widget _buildFullContent(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header row
-        Row(
-          children: [
-            // Drag handle
-            if (showDragHandle)
-              ReorderableDragStartListener(
-                index: 0,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Icon(Icons.drag_handle, color: context.textMutedColor),
-                ),
-              ),
-            // Story ID
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: context.surfaceVariantColor,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                story.storyId,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'monospace',
-                ),
-              ),
-            ),
-            // Sprint badge (mostra nome sprint se appartiene a uno sprint)
-            if (sprintName != null) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: isSprintCompleted
-                      ? Colors.green.withOpacity(0.15)
-                      : Colors.blue.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                    color: isSprintCompleted
-                        ? Colors.green.withOpacity(0.3)
-                        : Colors.blue.withOpacity(0.3),
+    if (!widget.compactMode) {
+      return _buildBacklogLayout(context);
+    }
+    return _buildKanbanLayout(context);
+  }
+
+  Widget _buildBacklogLayout(BuildContext context) {
+    final story = widget.story;
+    
+    // Right Side Items (Priority, Points, Menu)
+    final headerRightItems = <Widget>[
+      if (widget.onPriorityChange != null)
+        _buildPriorityDropdown(context)
+      else
+        _buildPriorityBadge(),
+      const SizedBox(width: 8),
+      if (widget.onStoryPointsChange != null)
+        _buildPointsDropdown(context)
+      else if (story.storyPoints != null)
+        _buildPointsBadge(),
+       const SizedBox(width: 8),
+       _buildMenuButton(),
+    ];
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Left Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                 // Header Left: Drag, ID, Sprint, Jira
+                 Wrap(
+                   spacing: 6,
+                   runSpacing: 4,
+                   crossAxisAlignment: WrapCrossAlignment.center,
+                   children: [
+                     if (widget.showDragHandle)
+                       ReorderableDragStartListener(
+                         index: 0,
+                         child: Padding(
+                           padding: const EdgeInsets.only(right: 6),
+                           child: Icon(Icons.drag_handle, size: 16, color: context.textMutedColor),
+                         ),
+                       ),
+                     _buildIdBadge(context),
+                     if (widget.sprintName != null) _buildSprintBadge(),
+                     if (story.externalIntegration != null) _buildJiraBadge(),
+                   ],
+                 ),
+                 const SizedBox(height: 6),
+                 
+                 // Title
+                 _buildTitleRow(context),
+                 
+                 // Description
+                 if (story.description.isNotEmpty && !_isEditingTitle) ...[
+                   const SizedBox(height: 4),
+                   Text(
+                     story.description,
+                     style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+                     maxLines: 2,
+                     overflow: TextOverflow.ellipsis,
+                   ),
+                 ],
+                 
+                 const SizedBox(height: 8),
+                 
+                 // Left Footer: Status, Tags, Checklist
+                 Wrap(
+                   spacing: 8,
+                   runSpacing: 6,
+                   crossAxisAlignment: WrapCrossAlignment.center,
+                   children: [
+                      // Status
+                      widget.onStatusChange != null
+                          ? _buildStatusDropdown(context)
+                          : _buildStatusBadge(),
+                      
+                      // Tags
+                      ...story.tags.map((tag) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          tag,
+                          style: const TextStyle(fontSize: 9, color: Colors.blue),
+                        ),
+                      )),
+                      
+                      // Checklist
+                      if (story.acceptanceCriteria.isNotEmpty) 
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.checklist, size: 14, color: context.textSecondaryColor),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
+                              style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
+                            ),
+                          ],
+                        ),
+                   ],
+                 ),
+                 
+                 // Progress bar
+                if (story.status == StoryStatus.inProgress || story.status == StoryStatus.inReview) ...[
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: _calculateProgress(),
+                      backgroundColor: context.surfaceVariantColor,
+                      valueColor: AlwaysStoppedAnimation(story.status.color),
+                      minHeight: 4,
+                    ),
                   ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isSprintCompleted ? Icons.check_circle : Icons.flag,
-                      size: 12,
-                      color: isSprintCompleted ? Colors.green : Colors.blue,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      sprintName!,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: isSprintCompleted ? Colors.green : Colors.blue,
-                      ),
-                    ),
-                  ],
-                ),
+                ],
+              ],
+            ),
+          ),
+          
+          const SizedBox(width: 12),
+          
+          // Right Sidebar
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Top Actions
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: headerRightItems,
+              ),
+              // Bottom Assignee
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _buildAssigneeAvatar(context),
               ),
             ],
-            const Spacer(),
-            // Priority badge
-            _buildPriorityBadge(),
-            const SizedBox(width: 8),
-            // Points badge
-            if (story.storyPoints != null) _buildPointsBadge(),
-            // Actions
-            if (onEdit != null || onDelete != null || onAddToSprint != null)
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert, size: 20),
-                itemBuilder: (context) => [
-                  if (onAddToSprint != null)
-                    const PopupMenuItem(
-                      value: 'sprint',
-                      child: Row(
-                        children: [
-                          Icon(Icons.flag, size: 18, color: Colors.blue),
-                          SizedBox(width: 8),
-                          Text('Aggiungi a Sprint'),
-                        ],
-                      ),
-                    ),
-                  if (onEdit != null)
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, size: 18),
-                          SizedBox(width: 8),
-                          Text('Modifica'),
-                        ],
-                      ),
-                    ),
-                  if (onDelete != null)
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, size: 18, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Elimina', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                ],
-                onSelected: (value) {
-                  if (value == 'sprint') onAddToSprint?.call();
-                  if (value == 'edit') onEdit?.call();
-                  if (value == 'delete') onDelete?.call();
-                },
-              ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKanbanLayout(BuildContext context) {
+    // Current layout implementation for Kanban
+    final story = widget.story;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Expanded(
+               child: Wrap(
+                 spacing: 6,
+                 runSpacing: 4,
+                 crossAxisAlignment: WrapCrossAlignment.center,
+                 children: [
+                   if (widget.showDragHandle)
+                       ReorderableDragStartListener(
+                         index: 0,
+                         child: Padding(
+                           padding: const EdgeInsets.only(right: 6),
+                           child: Icon(Icons.drag_handle, size: 16, color: context.textMutedColor),
+                         ),
+                       ),
+                   _buildIdBadge(context),
+                   if (widget.sprintName != null) _buildSprintBadge(),
+                   if (story.externalIntegration != null) _buildJiraBadge(),
+                 ],
+               ),
+             ),
+             _buildMenuButton(),
           ],
         ),
+        
         const SizedBox(height: 8),
+        _buildTitleRow(context),
 
-        // Title
-        Text(
-          story.title,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        // Description preview
-        if (story.description.isNotEmpty) ...[
+        if (story.description.isNotEmpty && !_isEditingTitle) ...[
           const SizedBox(height: 4),
           Text(
             story.description,
-            style: TextStyle(
-              fontSize: 13,
-              color: context.textSecondaryColor,
-            ),
+            style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ],
         const SizedBox(height: 8),
 
-        // Tags
-        if (story.tags.isNotEmpty) ...[
-          Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            children: story.tags.map((tag) => Container(
+        Wrap(
+          spacing: 8,
+          runSpacing: 6,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+             if (widget.onPriorityChange != null)
+                _buildPriorityDropdown(context, compact: true)
+              else
+                _buildPriorityBadge(compact: true),
+             
+             if (widget.onStoryPointsChange != null)
+                _buildPointsDropdown(context)
+              else if (story.storyPoints != null)
+                _buildPointsBadge(),
+
+             ...story.tags.map((tag) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.blue.withOpacity(0.1),
@@ -277,106 +424,41 @@ class StoryCardWidget extends StatelessWidget {
               ),
               child: Text(
                 tag,
-                style: const TextStyle(fontSize: 10, color: Colors.blue),
+                style: const TextStyle(fontSize: 9, color: Colors.blue),
               ),
-            )).toList(),
-          ),
-          const SizedBox(height: 8),
-        ],
-
-        // Footer: status, assignee, acceptance criteria count
-        Row(
-          children: [
-            // Status dropdown
-            if (onStatusChange != null)
-              _buildStatusDropdown(context)
-            else
-              _buildStatusBadge(),
-            const Spacer(),
-            // Acceptance criteria indicator
-            if (story.acceptanceCriteria.isNotEmpty) ...[
-              Icon(Icons.checklist, size: 14, color: context.textSecondaryColor),
-              const SizedBox(width: 4),
-              Text(
-                '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
-                style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-              ),
-              const SizedBox(width: 12),
-            ],
-            // Estimated indicator
-            // Estimated indicator / Action button
-            if (onEstimate != null && !story.isEstimated)
-              InkWell(
-                onTap: onEstimate,
-                borderRadius: BorderRadius.circular(4),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
-                    border: Border.all(color: Colors.orange.withOpacity(0.5)),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calculate, size: 14, color: Colors.orange),
-                      const SizedBox(width: 4),
-                      Text(
-                        'STIMA',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else
-              InkWell(
-                onTap: onEstimate, // Permetti di cambiare stima anche se già fatta
-                borderRadius: BorderRadius.circular(4),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        story.isEstimated ? Icons.check_circle_outline : Icons.calculate_outlined,
-                        size: 14,
-                        color: story.isEstimated ? Colors.green : context.textMutedColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        story.isEstimated 
-                          ? (story.storyPoints != null ? '${story.storyPoints} pts' : 'Stimata')
-                          : l10n.agileEstimateRequired,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: story.isEstimated ? Colors.green : context.textMutedColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            // Assignee
-            if (story.assigneeEmail != null) ...[
-              const SizedBox(width: 12),
-              Tooltip(
-                message: story.assigneeEmail!,
-                child: AvatarWidget(
-                  name: story.assigneeEmail,
-                  email: story.assigneeEmail,
-                  radius: 10,
-                ),
-              ),
-            ],
+            )),
           ],
         ),
+        
+        const SizedBox(height: 8),
 
-        // Progress bar if in sprint
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                 Flexible(
+                   child: widget.onStatusChange != null
+                    ? _buildStatusDropdown(context, compact: true)
+                    : _buildStatusBadge(compact: true),
+                 ),
+                 const SizedBox(width: 8),
+                 if (story.acceptanceCriteria.isNotEmpty) ...[
+                    Icon(Icons.checklist, size: 14, color: context.textSecondaryColor),
+                    const SizedBox(width: 2),
+                    Text(
+                      '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
+                      style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
+                    ),
+                 ],
+              ],
+            ),
+            _buildAssigneeAvatar(context),
+          ],
+        ),
+        
         if (story.status == StoryStatus.inProgress || story.status == StoryStatus.inReview) ...[
           const SizedBox(height: 8),
           ClipRRect(
@@ -393,28 +475,288 @@ class StoryCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPriorityBadge() {
+  // Helper methods to reuse code
+  Widget _buildIdBadge(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+         decoration: BoxDecoration(
+           color: context.surfaceVariantColor,
+           borderRadius: BorderRadius.circular(4),
+         ),
+         child: Text(
+           widget.story.storyId,
+           style: const TextStyle(
+             fontSize: 10,
+             fontWeight: FontWeight.w500,
+             fontFamily: 'monospace',
+           ),
+         ),
+       );
+  }
+
+  Widget _buildSprintBadge() {
+    return Container(
+         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+         decoration: BoxDecoration(
+           color: widget.isSprintCompleted
+               ? Colors.green.withOpacity(0.15)
+               : Colors.blue.withOpacity(0.15),
+           borderRadius: BorderRadius.circular(4),
+           border: Border.all(
+             color: widget.isSprintCompleted
+                 ? Colors.green.withOpacity(0.3)
+                 : Colors.blue.withOpacity(0.3),
+           ),
+         ),
+           child: Row(
+             mainAxisSize: MainAxisSize.min,
+             children: [
+               Icon(
+                 widget.isSprintCompleted ? Icons.check_circle : Icons.flag,
+                 size: 10,
+                 color: widget.isSprintCompleted ? Colors.green : Colors.blue,
+               ),
+               const SizedBox(width: 4),
+               ConstrainedBox(
+                 constraints: const BoxConstraints(maxWidth: 80),
+                 child: Text(
+                   widget.sprintName!,
+                   style: TextStyle(
+                     fontSize: 10,
+                     fontWeight: FontWeight.w500,
+                     color: widget.isSprintCompleted ? Colors.green : Colors.blue,
+                   ),
+                   overflow: TextOverflow.ellipsis,
+                 ),
+               ),
+             ],
+           ),
+       );
+  }
+
+  Widget _buildJiraBadge() {
+     return InkWell(
+       onTap: () async {
+         final creds = await SecureStorageService().getJiraCredentials();
+         final domain = creds['domain'];
+         if (domain != null && domain.isNotEmpty) {
+           final url = Uri.parse('https://$domain/browse/${widget.story.externalIntegration!.externalId}');
+           if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+           }
+         }
+       },
+       borderRadius: BorderRadius.circular(4),
+       child: Container(
+         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+         decoration: BoxDecoration(
+           color: Colors.blue.withOpacity(0.1),
+           borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.blue.withOpacity(0.3)),
+         ),
+         child: Row(
+           mainAxisSize: MainAxisSize.min,
+           children: [
+             const Icon(Icons.link, size: 10, color: Colors.blue),
+             const SizedBox(width: 4),
+             Text(
+               widget.story.externalIntegration!.externalId,
+               style: const TextStyle(
+                 fontSize: 9,
+                 color: Colors.blue,
+                 fontWeight: FontWeight.bold,
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
+  }
+
+  Widget _buildTitleRow(BuildContext context) {
+      if (_isEditingTitle) {
+        return Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.check, color: Colors.green, size: 18),
+              onPressed: _saveTitle,
+              tooltip: 'Salva',
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.all(4),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close, color: Colors.red, size: 18),
+              onPressed: _cancelEditingTitle,
+              tooltip: 'Annulla',
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.all(4),
+            ),
+            Expanded(
+              child: TextField(
+                controller: _titleController,
+                focusNode: _titleFocus,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  border: UnderlineInputBorder(),
+                ),
+                onSubmitted: (_) => _saveTitle(),
+              ),
+            ),
+          ],
+        );
+      }
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              widget.story.title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          if (widget.onTitleChange != null)
+            InkWell(
+              onTap: _startEditingTitle,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Icon(Icons.edit, size: 14, color: context.textMutedColor),
+              ),
+            ),
+        ],
+      );
+  }
+
+  Widget _buildMenuButton() {
+    if (widget.onEdit == null && widget.onDelete == null && widget.onAddToSprint == null) {
+      return const SizedBox.shrink();
+    }
+    return PopupMenuButton<String>(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      icon: const Icon(Icons.more_vert, size: 20),
+      itemBuilder: (context) => [
+        if (widget.onAddToSprint != null)
+          const PopupMenuItem(
+            value: 'sprint',
+            child: Row(
+            children: [
+                Icon(Icons.flag, size: 18, color: Colors.blue),
+                SizedBox(width: 8),
+                Text('Aggiungi a Sprint'),
+              ],
+            ),
+          ),
+        if (widget.onEdit != null)
+          const PopupMenuItem(
+            value: 'edit',
+            child: Row(
+              children: [
+                Icon(Icons.edit, size: 18),
+                SizedBox(width: 8),
+                Text('Modifica'),
+              ],
+            ),
+          ),
+        if (widget.onDelete != null)
+          const PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                Icon(Icons.delete, size: 18, color: Colors.red),
+                SizedBox(width: 8),
+                Text('Elimina', style: TextStyle(color: Colors.red)),
+              ],
+            ),
+          ),
+      ],
+      onSelected: (value) {
+        if (value == 'sprint') widget.onAddToSprint?.call();
+        if (value == 'edit') widget.onEdit?.call();
+        if (value == 'delete') widget.onDelete?.call();
+      },
+    );
+  }
+
+  Widget _buildPriorityBadge({bool compact = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: story.priority.color.withOpacity(0.15),
+        color: widget.story.priority.color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: story.priority.color.withOpacity(0.3)),
+        border: Border.all(color: widget.story.priority.color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(story.priority.icon, size: 12, color: story.priority.color),
-          const SizedBox(width: 4),
-          Text(
-            story.priority.displayName,
-            style: TextStyle(
-              fontSize: 11,
-              color: story.priority.color,
-              fontWeight: FontWeight.w600,
+          Icon(widget.story.priority.icon, size: 12, color: widget.story.priority.color),
+          if (!compact) ...[
+            const SizedBox(width: 4),
+            Text(
+              widget.story.priority.displayName,
+              style: TextStyle(
+                fontSize: 10,
+                color: widget.story.priority.color,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildPriorityDropdown(BuildContext context, {bool compact = false}) {
+    return Tooltip(
+      message: widget.story.priority.displayName,
+      child: PopupMenuButton<StoryPriority>(
+        initialValue: widget.story.priority,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: widget.story.priority.color.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: widget.story.priority.color.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(widget.story.priority.icon, size: 12, color: widget.story.priority.color),
+              if (!compact) ...[
+                const SizedBox(width: 4),
+                Text(
+                  widget.story.priority.displayName,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: widget.story.priority.color,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Icon(Icons.arrow_drop_down, size: 14, color: widget.story.priority.color),
+              ],
+            ],
+          ),
+        ),
+        itemBuilder: (context) => StoryPriority.values.map((priority) => PopupMenuItem(
+          value: priority,
+          child: Row(
+            children: [
+              Icon(priority.icon, size: 18, color: priority.color),
+              const SizedBox(width: 8),
+              Text(priority.displayName),
+            ],
+          ),
+        )).toList(),
+        onSelected: widget.onPriorityChange,
       ),
     );
   }
@@ -432,7 +774,7 @@ class StoryCardWidget extends StatelessWidget {
           const Icon(Icons.stars, size: 12, color: Colors.green),
           const SizedBox(width: 4),
           Text(
-            '${story.storyPoints}',
+            '${widget.story.storyPoints}',
             style: const TextStyle(
               fontSize: 12,
               color: Colors.green,
@@ -444,55 +786,157 @@ class StoryCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildPointsDropdown(BuildContext context) {
+    // Fibonacci + usual values
+    final points = [1, 2, 3, 5, 8, 13, 21];
+    
+    return PopupMenuButton<int>(
+      initialValue: widget.story.storyPoints,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.green.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.stars, size: 12, color: Colors.green),
+            const SizedBox(width: 4),
+            Text(
+              widget.story.storyPoints != null ? '${widget.story.storyPoints} pts' : 'Stima',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+             const SizedBox(width: 4),
+            Icon(Icons.arrow_drop_down, size: 14, color: Colors.green[700]),
+          ],
+        ),
+      ),
+      itemBuilder: (context) => points.map((p) => PopupMenuItem(
+        value: p,
+        child: Text('$p pts'),
+      )).toList(),
+      onSelected: (val) => widget.onStoryPointsChange?.call(val),
+    );
+  }
+
+  Widget _buildAssigneeAvatar(BuildContext context) {
+    if (widget.onAssigneeChange == null) {
+      if (widget.story.assigneeEmail == null) return const SizedBox.shrink();
+      return Tooltip(
+        message: widget.story.assigneeEmail!,
+        child: AvatarWidget(
+          name: widget.story.assigneeEmail,
+          email: widget.story.assigneeEmail,
+          radius: 10,
+        ),
+      );
+    }
+
+    return PopupMenuButton<String?>(
+      tooltip: 'Assegna',
+      initialValue: widget.story.assigneeEmail,
+      child: widget.story.assigneeEmail != null
+          ? Tooltip(
+              message: widget.story.assigneeEmail!,
+              child: AvatarWidget(
+                name: widget.story.assigneeEmail,
+                email: widget.story.assigneeEmail,
+                radius: 10,
+              ),
+            )
+          : Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: context.textSecondaryColor, style: BorderStyle.solid),
+              ),
+              child: Icon(Icons.person_add, size: 14, color: context.textSecondaryColor),
+            ),
+      itemBuilder: (context) => [
+        const PopupMenuItem<String?>(
+          value: null,
+          child: Row(
+            children: [
+              Icon(Icons.person_off, size: 18, color: Colors.grey),
+              SizedBox(width: 8),
+              Text('Nessun assegnatario', style: TextStyle(fontStyle: FontStyle.italic)),
+            ],
+          ),
+        ),
+        ...widget.teamMembers.map((email) => PopupMenuItem<String?>(
+          value: email,
+          child: Row(
+            children: [
+              AvatarWidget(name: email, email: email, radius: 10),
+              SizedBox(width: 8),
+              Expanded(child: Text(email, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+        )),
+      ],
+      onSelected: (email) => widget.onAssigneeChange?.call(email),
+    );
+  }
+
+  Widget _buildStatusBadge({bool compact = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: story.status.color.withOpacity(0.15),
+        color: widget.story.status.color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(story.status.icon, size: 12, color: story.status.color),
-          const SizedBox(width: 4),
-          Text(
-            story.status.displayName,
-            style: TextStyle(
-              fontSize: 11,
-              color: story.status.color,
-              fontWeight: FontWeight.w500,
+          Icon(widget.story.status.icon, size: 12, color: widget.story.status.color),
+          if (!compact) ...[
+            const SizedBox(width: 4),
+            Text(
+              widget.story.status.displayName,
+              style: TextStyle(
+                fontSize: 11,
+                color: widget.story.status.color,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildStatusDropdown(BuildContext context) {
+  Widget _buildStatusDropdown(BuildContext context, {bool compact = false}) {
     return PopupMenuButton<StoryStatus>(
-      initialValue: story.status,
+      initialValue: widget.story.status,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: story.status.color.withOpacity(0.15),
+          color: widget.story.status.color.withOpacity(0.15),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(story.status.icon, size: 12, color: story.status.color),
-            const SizedBox(width: 4),
-            Text(
-              story.status.displayName,
-              style: TextStyle(
-                fontSize: 11,
-                color: story.status.color,
-                fontWeight: FontWeight.w500,
+            Icon(widget.story.status.icon, size: 12, color: widget.story.status.color),
+            if (!compact) ...[
+              const SizedBox(width: 4),
+              Text(
+                widget.story.status.displayName,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: widget.story.status.color,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            Icon(Icons.arrow_drop_down, size: 16, color: story.status.color),
+              const SizedBox(width: 4),
+              Icon(Icons.arrow_drop_down, size: 16, color: widget.story.status.color),
+            ],
           ],
         ),
       ),
@@ -506,14 +950,13 @@ class StoryCardWidget extends StatelessWidget {
           ],
         ),
       )).toList(),
-      onSelected: onStatusChange,
+      onSelected: widget.onStatusChange,
     );
   }
 
   double _calculateProgress() {
-    if (story.acceptanceCriteria.isEmpty) {
-      // Se non ci sono AC, usa lo status
-      switch (story.status) {
+    if (widget.story.acceptanceCriteria.isEmpty) {
+      switch (widget.story.status) {
         case StoryStatus.backlog:
         case StoryStatus.refinement:
         case StoryStatus.ready:
@@ -528,9 +971,7 @@ class StoryCardWidget extends StatelessWidget {
           return 1.0;
       }
     }
-
-    // Usa acceptance criteria completati
-    return story.completedAcceptanceCriteria / story.acceptanceCriteria.length;
+    return widget.story.completedAcceptanceCriteria / widget.story.acceptanceCriteria.length;
   }
 }
 

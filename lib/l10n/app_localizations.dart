@@ -9,6 +9,7 @@ import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_it.dart';
+import 'app_localizations_pt.dart';
 
 // ignore_for_file: type=lint
 
@@ -100,6 +101,7 @@ abstract class AppLocalizations {
     Locale('es'),
     Locale('fr'),
     Locale('it'),
+    Locale('pt'),
   ];
 
   /// No description provided for @smartTodoListOrigin.
@@ -203,6 +205,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Chiudi'**
   String get actionClose;
+
+  /// No description provided for @agileSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint'**
+  String get agileSprint;
 
   /// No description provided for @actionHide.
   ///
@@ -3576,11 +3584,137 @@ abstract class AppLocalizations {
   /// **'In Corso'**
   String get retroStatusActive;
 
+  /// No description provided for @agileBurndownInfoTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Come leggere il Burndown Chart'**
+  String get agileBurndownInfoTitle;
+
+  /// No description provided for @agileBurndownInfoIdeal.
+  ///
+  /// In it, this message translates to:
+  /// **'La linea **Ideale** (tratteggiata) mostra il progresso target se il lavoro fosse completato in modo uniforme.'**
+  String get agileBurndownInfoIdeal;
+
+  /// No description provided for @agileBurndownInfoActual.
+  ///
+  /// In it, this message translates to:
+  /// **'La linea **Effettiva** (continua) mostra il lavoro rimanente. Le storie completate abbassano questa linea.'**
+  String get agileBurndownInfoActual;
+
+  /// No description provided for @agileBurndownInfoGoal.
+  ///
+  /// In it, this message translates to:
+  /// **'Il tuo obiettivo è mantenere la linea Effettiva al di sotto di quella Ideale per finire in tempo.'**
+  String get agileBurndownInfoGoal;
+
+  /// No description provided for @guideToolsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Strumenti & Integrazioni'**
+  String get guideToolsTitle;
+
+  /// No description provided for @guideJiraContent.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'app si integra con Jira per mantenere sincronizzato il lavoro.\n\nFunzionalità principali:\n• **Import**: Le storie create in Jira appaiono qui.\n• **Link**: Cliccando sull\'ID della storia (es. PROJ-123) si apre direttamente Jira.\n• **Sync**: Lo stato si aggiorna bidirezionalmente (se configurato).'**
+  String get guideJiraContent;
+
+  /// No description provided for @guideWorkflowTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Workflow & Qualità'**
+  String get guideWorkflowTitle;
+
+  /// No description provided for @guideAcceptanceCriteriaContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Per garantire la qualità, ogni storia deve avere Criteri di Accettazione chiari.\n\n• **Aggiunta Rapida**: Puoi aggiungere criteri direttamente dal dettaglio della storia.\n• **Verifica**: Spunta i criteri man mano che vengono soddisfatti.\n• **Definition of Done**: Una storia è \'Done\' solo quando tutti i criteri sono soddisfatti.'**
+  String get guideAcceptanceCriteriaContent;
+
+  /// No description provided for @scrumWorkflowStatusContent.
+  ///
+  /// In it, this message translates to:
+  /// **'In Scrum, il ciclo di vita di una storia segue questi stati:\n\n1. **Product Backlog**: Dove nascono le idee. Qui avviene il \'Refinement\'.\n2. **Ready**: La storia è pronta per essere lavorata (rispetta la Definition of Ready).\n3. **Sprint Backlog**: Durante il Planning, le storie \'Ready\' vengono spostate nello Sprint e diventano il lavoro da fare.\n4. **In Sprint**: La storia è attiva sulla board dello Sprint corrente.\n5. **Done**: La storia è completata e verificata.'**
+  String get scrumWorkflowStatusContent;
+
+  /// No description provided for @kanbanWorkflowStatusContent.
+  ///
+  /// In it, this message translates to:
+  /// **'In Kanban, il flusso è continuo:\n\n1. **Refinement**: Colonna dedicata per analizzare le richieste in ingresso.\n2. **Ready**: Code di attesa per il lavoro pronto (pull system).\n3. **Active Board**: Le storie fluiscono attraverso le colonne di lavoro.\n4. **WIP Limits**: Ogni colonna ha un limite per evitare colli di bottiglia.'**
+  String get kanbanWorkflowStatusContent;
+
+  /// No description provided for @hybridWorkflowStatusContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrumban usa un approccio ibrido:\n\n• Puoi usare Sprint per la pianificazione, ma gestire il flusso giornaliero come Kanban.\n• Le storie \'Ready\' possono essere tirate (pull) quando c\'è capacità, indipendentemente dallo Sprint planning, se il team lo preferisce.'**
+  String get hybridWorkflowStatusContent;
+
   /// No description provided for @retroStatusCompleted.
   ///
   /// In it, this message translates to:
   /// **'Completata'**
   String get retroStatusCompleted;
+
+  /// No description provided for @profileIntegrations.
+  ///
+  /// In it, this message translates to:
+  /// **'Integrazioni'**
+  String get profileIntegrations;
+
+  /// No description provided for @profileJiraIntegration.
+  ///
+  /// In it, this message translates to:
+  /// **'Integrazione Jira'**
+  String get profileJiraIntegration;
+
+  /// No description provided for @profileJiraIntegrationDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Collega per importare storie'**
+  String get profileJiraIntegrationDesc;
+
+  /// No description provided for @jiraDomain.
+  ///
+  /// In it, this message translates to:
+  /// **'Dominio Jira'**
+  String get jiraDomain;
+
+  /// No description provided for @jiraEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Email Atlassian'**
+  String get jiraEmail;
+
+  /// No description provided for @jiraApiToken.
+  ///
+  /// In it, this message translates to:
+  /// **'API Token'**
+  String get jiraApiToken;
+
+  /// No description provided for @jiraConnect.
+  ///
+  /// In it, this message translates to:
+  /// **'Collega'**
+  String get jiraConnect;
+
+  /// No description provided for @jiraDisconnect.
+  ///
+  /// In it, this message translates to:
+  /// **'Scollega'**
+  String get jiraDisconnect;
+
+  /// No description provided for @jiraSettingsSaved.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni salvate'**
+  String get jiraSettingsSaved;
+
+  /// No description provided for @jiraSettingsCleared.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni cancellate'**
+  String get jiraSettingsCleared;
 
   /// No description provided for @retroTemplateStartStopContinue.
   ///
@@ -10653,6 +10787,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Documentazione'**
   String get landingFooterDocs;
+
+  /// No description provided for @jiraConnectedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Connesso come {name}'**
+  String jiraConnectedSuccess(String name);
 
   /// No description provided for @landingFooterAgileGuides.
   ///
@@ -18958,6 +19098,36 @@ abstract class AppLocalizations {
   /// **'Aggiungi Decisione'**
   String get agileAddDecision;
 
+  /// No description provided for @agileNoDecisions.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna decisione aggiunta'**
+  String get agileNoDecisions;
+
+  /// No description provided for @agileTooltipApproved.
+  ///
+  /// In it, this message translates to:
+  /// **'Approvata'**
+  String get agileTooltipApproved;
+
+  /// No description provided for @agileTooltipRefinement.
+  ///
+  /// In it, this message translates to:
+  /// **'Da raffinare'**
+  String get agileTooltipRefinement;
+
+  /// No description provided for @agileTooltipRejected.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiutata'**
+  String get agileTooltipRejected;
+
+  /// No description provided for @agileReviewGuidance.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona l\'esito. \'Da raffinare\' e \'Rifiutata\' riportano la storia nel Backlog.'**
+  String get agileReviewGuidance;
+
   /// No description provided for @agileEvaluateStories.
   ///
   /// In it, this message translates to:
@@ -19695,6 +19865,174 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Preferiti, scadenze e inviti pendenti da ogni strumento in un unico punto.'**
   String get landingIntegrationDashboardDesc;
+
+  /// No description provided for @jiraTransitionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa Transizione: {transitionName}'**
+  String jiraTransitionTitle(Object transitionName);
+
+  /// No description provided for @jiraTransitionInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Jira richiede informazioni aggiuntive per questa transizione.'**
+  String get jiraTransitionInfo;
+
+  /// No description provided for @jiraTransitionConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma'**
+  String get jiraTransitionConfirm;
+
+  /// No description provided for @jiraTransitionCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get jiraTransitionCancel;
+
+  /// No description provided for @jiraFieldRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Campo obbligatorio'**
+  String get jiraFieldRequired;
+
+  /// No description provided for @jiraSyncSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Jira: {transitionName} completata'**
+  String jiraSyncSuccess(Object transitionName);
+
+  /// No description provided for @jiraSyncedTo.
+  ///
+  /// In it, this message translates to:
+  /// **'Jira: Sincronizzato a {statusName}'**
+  String jiraSyncedTo(Object statusName);
+
+  /// No description provided for @jiraSyncFromSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Sincronizzato da Jira: {issueKey}'**
+  String jiraSyncFromSuccess(Object issueKey);
+
+  /// No description provided for @jiraSyncFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Sincronizzazione fallita: {error}'**
+  String jiraSyncFailed(Object error);
+
+  /// No description provided for @jiraSyncWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Avviso Sync Jira: {warning}'**
+  String jiraSyncWarning(Object warning);
+
+  /// No description provided for @actionSyncJira.
+  ///
+  /// In it, this message translates to:
+  /// **'Sincronizza con Jira'**
+  String get actionSyncJira;
+
+  /// No description provided for @validationRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Obbligatorio'**
+  String get validationRequired;
+
+  /// No description provided for @jiraInvalidDomain.
+  ///
+  /// In it, this message translates to:
+  /// **'Dominio non valido'**
+  String get jiraInvalidDomain;
+
+  /// No description provided for @jiraInvalidEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Email non valida'**
+  String get jiraInvalidEmail;
+
+  /// No description provided for @jiraCreateTokenLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Token API >'**
+  String get jiraCreateTokenLink;
+
+  /// No description provided for @agileHelpTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida Rapida'**
+  String get agileHelpTitle;
+
+  /// No description provided for @agileHelpStep1Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Popola il Backlog'**
+  String get agileHelpStep1Title;
+
+  /// No description provided for @agileHelpStep1Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea User Stories nel tab Backlog per definire il lavoro da svolgere.'**
+  String get agileHelpStep1Desc;
+
+  /// No description provided for @agileHelpStep2Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Pianifica lo Sprint'**
+  String get agileHelpStep2Title;
+
+  /// No description provided for @agileHelpStep2Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai nel tab Sprint, crea un nuovo sprint e seleziona le storie dal backlog.'**
+  String get agileHelpStep2Desc;
+
+  /// No description provided for @agileHelpStep3Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Lavora sulla Board'**
+  String get agileHelpStep3Title;
+
+  /// No description provided for @agileHelpStep3Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa il tab Board per visualizzare il progresso. Trascina le card per aggiornare lo stato.'**
+  String get agileHelpStep3Desc;
+
+  /// No description provided for @agileHelpStep4Title.
+  ///
+  /// In it, this message translates to:
+  /// **'Sincronizza e Chiudi'**
+  String get agileHelpStep4Title;
+
+  /// No description provided for @agileHelpStep4Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Se Jira è collegato, gli stati si aggiornano in automatico. Usa \'Completa Sprint\' per terminare.'**
+  String get agileHelpStep4Desc;
+
+  /// No description provided for @actionNext.
+  ///
+  /// In it, this message translates to:
+  /// **'Avanti'**
+  String get actionNext;
+
+  /// No description provided for @actionBack.
+  ///
+  /// In it, this message translates to:
+  /// **'Indietro'**
+  String get actionBack;
+
+  /// No description provided for @actionFinish.
+  ///
+  /// In it, this message translates to:
+  /// **'Fine'**
+  String get actionFinish;
+
+  /// No description provided for @agileStartSprintHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvia Sprint per vedere le storie attive'**
+  String get agileStartSprintHint;
 }
 
 class _AppLocalizationsDelegate
@@ -19708,7 +20046,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'fr', 'it'].contains(locale.languageCode);
+      <String>['en', 'es', 'fr', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -19725,6 +20063,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case 'it':
       return AppLocalizationsIt();
+    case 'pt':
+      return AppLocalizationsPt();
   }
 
   throw FlutterError(

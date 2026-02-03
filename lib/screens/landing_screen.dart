@@ -2208,7 +2208,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _buildExportCard(Map<String, dynamic> data, bool isDark) {
     final Color color = data['color'] as Color;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Reduced from 14
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Reduced from 12 for overflow
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2226,21 +2226,32 @@ class _LandingScreenState extends State<LandingScreen> {
               mainAxisSize: MainAxisSize.min, // Added
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  data['title'] as String,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: context.textPrimaryColor,
+                SizedBox(
+                  height: 20,
+                  child: Text(
+                    data['title'] as String,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: context.textPrimaryColor,
+                      height: 1.2,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 1), // Reduced from 2
-                Text(
-                  data['desc'] as String,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: context.textSecondaryColor,
-                    height: 1.3, // Reduced from 1.4
+                SizedBox(
+                  height: 36,
+                  child: Text(
+                    data['desc'] as String,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: context.textSecondaryColor,
+                      height: 1.3, // Reduced from 1.4
+                    ),
                   ),
                 ),
               ],

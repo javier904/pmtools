@@ -34,21 +34,23 @@ class RetroActiveSectionWidget extends StatelessWidget {
     final activeRetro = activeRetros.isNotEmpty ? activeRetros.first : null;
 
     if (activeRetro != null) {
-      return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildActiveRetroCard(context, activeRetro, l10n),
-            const SizedBox(height: 24),
-            RetroBoardWidget(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: _buildActiveRetroCard(context, activeRetro, l10n),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: RetroBoardWidget(
               retro: activeRetro,
               currentUserEmail: currentUserEmail,
               currentUserName: currentUserEmail.split('@').first,
               isIncognito: false,
             ),
-          ],
-        ),
+          ),
+        ],
       );
     } else {
       return _buildEmptyState(context, l10n);

@@ -35,19 +35,29 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   late String _currentUserEmail;
   late String _currentUserName;
 
+  // Cached stream to avoid Firestore SDK assertion errors on rebuild
+  late Stream<List<RetrospectiveModel>> _retrosStream;
+
   @override
   void initState() {
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
     _currentUserEmail = user?.email ?? '';
     _currentUserName = user?.displayName ?? 'User';
+    _retrosStream = _buildRetrosStream();
   }
 
-  Stream<List<RetrospectiveModel>> _getRetrosStream() {
+  Stream<List<RetrospectiveModel>> _buildRetrosStream() {
     return _retroService.streamRetrospectivesFiltered(
       userEmail: _currentUserEmail,
       includeArchived: _showArchived,
     );
+  }
+
+  void _updateRetrosStream() {
+    setState(() {
+      _retrosStream = _buildRetrosStream();
+    });
   }
 
   @override
@@ -90,7 +100,10 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
               style: const TextStyle(fontSize: 12),
             ),
             selected: _showArchived,
-            onSelected: (value) => setState(() => _showArchived = value),
+            onSelected: (value) {
+              _showArchived = value;
+              _updateRetrosStream();
+            },
             avatar: Icon(
               _showArchived ? Icons.visibility_off : Icons.visibility,
               size: 16,
@@ -134,7 +147,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           _buildSearchFilterSection(),
           Expanded(
             child: StreamBuilder<List<RetrospectiveModel>>(
-              stream: _getRetrosStream(),
+              stream: _retrosStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

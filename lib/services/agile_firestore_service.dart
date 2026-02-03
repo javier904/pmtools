@@ -5,6 +5,7 @@ import '../models/team_member_model.dart';
 import '../models/user_story_model.dart';
 import '../models/sprint_model.dart';
 import '../models/retrospective_model.dart';
+import '../models/framework_features.dart';
 import 'favorite_service.dart';
 
 /// Servizio Firestore per Agile Process Manager
@@ -147,6 +148,17 @@ class AgileFirestoreService {
     });
   }
 
+  /// Aggiorna le colonne kanban di un progetto
+  Future<void> updateProjectKanbanColumns(
+    String projectId,
+    List<KanbanColumnConfig> kanbanColumns,
+  ) async {
+    await _projectsRef.doc(projectId).update({
+      'kanbanColumns': kanbanColumns.map((c) => c.toFirestore()).toList(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   /// Elimina un progetto
   Future<void> deleteProject(String projectId) async {
     // Elimina tutte le subcollection
@@ -246,6 +258,9 @@ class AgileFirestoreService {
     int businessValue = 5,
     List<String> tags = const [],
     List<String> acceptanceCriteria = const [],
+    String? sprintId,
+    int? storyPoints,
+    StoryStatus status = StoryStatus.backlog,
   }) async {
     final docRef = _storiesRef(projectId).doc();
 
@@ -269,6 +284,10 @@ class AgileFirestoreService {
       order: maxOrder + 1,
       createdAt: DateTime.now(),
       createdBy: createdBy,
+      sprintId: sprintId,
+      storyPoints: storyPoints,
+      status: status,
+      isEstimated: storyPoints != null,
     );
 
     await docRef.set(story.toFirestore());

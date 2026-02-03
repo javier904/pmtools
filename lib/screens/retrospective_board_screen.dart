@@ -47,11 +47,15 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
   Timer? _heartbeatTimer;
   static const int _heartbeatIntervalSeconds = 15;
 
+  // Cached stream to avoid Firestore SDK assertion errors on rebuild
+  late Stream<RetrospectiveModel?> _retroStream;
+
   // UX State - Action Items visibility is synced via retro.isActionItemsVisible
 
   @override
   void initState() {
     super.initState();
+    _retroStream = _service.streamRetrospective(widget.retroId);
     WidgetsBinding.instance.addObserver(this);
     _setupWebBeforeUnload();
     _startHeartbeat();
@@ -230,7 +234,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return StreamBuilder<RetrospectiveModel?>(
-      stream: _service.streamRetrospective(widget.retroId),
+      stream: _retroStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(appBar: AppBar(), body: Center(child: Text(l10n?.errorLoading ?? 'Error: ${snapshot.error}')));
