@@ -167,6 +167,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     final estimatedCount = stories.where((s) => s.isEstimated || s.storyPoints != null).length;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Header con ricerca e filtri
         _buildHeader(stories.length, totalPoints, estimatedCount),
@@ -191,7 +192,6 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     final archivedCount = _archivedStories.length;
 
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.surfaceColor,
         border: Border(
@@ -201,130 +201,137 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
       child: Column(
         children: [
           // Riga superiore: titolo e pulsanti
-          Row(
-            children: [
-              Icon(
-                _showArchive ? Icons.archive : Icons.list_alt,
-                color: _showArchive ? Colors.grey : AppColors.primary,
-              ),
-              const SizedBox(width: 8),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  _showArchive ? l10n.agileBacklogArchiveTitle : l10n.agileBacklogTitle,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: context.textPrimaryColor,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 0, 0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Icon(
+                  _showArchive ? Icons.archive : Icons.list_alt,
+                  color: _showArchive ? Colors.grey : AppColors.primary,
                 ),
-              ),
-              const Spacer(),
-              // Stats badges
-              _buildStatBadge(l10n.agileBacklogStatsStories(count), Colors.blue),
-              const SizedBox(width: 8),
-              _buildStatBadge(l10n.agileBacklogStatsPoints(totalPoints), Colors.green),
-              const SizedBox(width: 8),
-              _buildStatBadge(l10n.agileBacklogStatsEstimated(estimatedCount), Colors.orange),
-              const SizedBox(width: 16),
-              // Toggle Archivio
-              Tooltip(
-                message: _showArchive
-                    ? l10n.agileBacklogToggleActive
-                    : l10n.agileBacklogToggleArchive(archivedCount),
-                child: InkWell(
-                  onTap: () => setState(() => _showArchive = !_showArchive),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: _showArchive
-                          ? Colors.grey.withOpacity(0.2)
-                          : Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
+                const SizedBox(width: 8),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    _showArchive ? l10n.agileBacklogArchiveTitle : l10n.agileBacklogTitle,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: context.textPrimaryColor,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const Spacer(),
+                // Stats badges - Moved to RIGHT side
+                _buildStatBadge(l10n.agileBacklogStatsStories(count), Colors.blue),
+                const SizedBox(width: 8),
+                _buildStatBadge(l10n.agileBacklogStatsPoints(totalPoints), Colors.green),
+                const SizedBox(width: 8),
+                _buildStatBadge(l10n.agileBacklogStatsEstimated(estimatedCount), Colors.orange),
+                const SizedBox(width: 16),
+                // Toggle Archivio
+                Tooltip(
+                  message: _showArchive
+                      ? l10n.agileBacklogToggleActive
+                      : l10n.agileBacklogToggleArchive(archivedCount),
+                  child: InkWell(
+                    onTap: () => setState(() => _showArchive = !_showArchive),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
                         color: _showArchive
-                            ? Colors.grey.withOpacity(0.3)
-                            : Colors.green.withOpacity(0.3),
+                            ? Colors.grey.withOpacity(0.2)
+                            : Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: _showArchive
+                              ? Colors.grey.withOpacity(0.3)
+                              : Colors.green.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _showArchive ? Icons.list_alt : Icons.archive,
+                            size: 16,
+                            color: _showArchive ? Colors.grey : Colors.green,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _showArchive ? l10n.agileBacklogTitle : l10n.agileBacklogArchiveBadge(archivedCount),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _showArchive ? Colors.grey : Colors.green,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _showArchive ? Icons.list_alt : Icons.archive,
-                          size: 16,
-                          color: _showArchive ? Colors.grey : Colors.green,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _showArchive ? l10n.agileBacklogTitle : l10n.agileBacklogArchiveBadge(archivedCount),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _showArchive ? Colors.grey : Colors.green,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Bottone filtri
+                IconButton(
+                  icon: Icon(
+                    _showFilters ? Icons.filter_list_off : Icons.filter_list,
+                    color: _hasActiveFilters ? AppColors.primary : context.textMutedColor,
+                  ),
+                  onPressed: () => setState(() => _showFilters = !_showFilters),
+                  tooltip: l10n.agileFiltersTitle,
+                ),
+                // Bottone aggiungi (solo nel backlog attivo)
+                if (widget.canEdit && widget.onAddStory != null && !_showArchive)
+                  ElevatedButton.icon(
+                    onPressed: widget.onAddStory,
+                    icon: const Icon(Icons.add, size: 18),
+                    label: Text(l10n.agileActionNewStory),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Bottone filtri
-              IconButton(
-                icon: Icon(
-                  _showFilters ? Icons.filter_list_off : Icons.filter_list,
-                  color: _hasActiveFilters ? AppColors.primary : context.textMutedColor,
-                ),
-                onPressed: () => setState(() => _showFilters = !_showFilters),
-                tooltip: l10n.agileFiltersTitle,
-              ),
-              // Bottone aggiungi (solo nel backlog attivo)
-              if (widget.canEdit && widget.onAddStory != null && !_showArchive)
-                ElevatedButton.icon(
-                  onPressed: widget.onAddStory,
-                  icon: const Icon(Icons.add, size: 18),
-                  label: Text(l10n.agileActionNewStory),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           // Riga ricerca
-          TextField(
-            style: TextStyle(color: context.textPrimaryColor),
-            decoration: InputDecoration(
-              hintText: l10n.agileBacklogSearchHint,
-              hintStyle: TextStyle(color: context.textMutedColor),
-              prefixIcon: Icon(Icons.search, color: context.textMutedColor),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear, color: context.textMutedColor),
-                      onPressed: () => setState(() => _searchQuery = ''),
-                    )
-                  : null,
-              filled: true,
-              fillColor: context.surfaceVariantColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: context.borderColor),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: TextField(
+              style: TextStyle(color: context.textPrimaryColor),
+              decoration: InputDecoration(
+                hintText: l10n.agileBacklogSearchHint,
+                hintStyle: TextStyle(color: context.textMutedColor),
+                prefixIcon: Icon(Icons.search, color: context.textMutedColor),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(Icons.clear, color: context.textMutedColor),
+                        onPressed: () => setState(() => _searchQuery = ''),
+                      )
+                    : null,
+                filled: true,
+                fillColor: context.surfaceVariantColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: context.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: context.borderColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: AppColors.primary),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: context.borderColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: AppColors.primary),
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              onChanged: (value) => setState(() => _searchQuery = value),
             ),
-            onChanged: (value) => setState(() => _searchQuery = value),
           ),
         ],
       ),

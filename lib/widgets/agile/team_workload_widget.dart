@@ -22,7 +22,7 @@ class TeamWorkloadWidget extends StatelessWidget {
   List<UserStoryModel> get _filteredStories {
     if (currentSprint != null) {
       return stories
-          .where((s) => s.sprintId == currentSprint!.id)
+          .where((s) => s.sprintId == currentSprint!.id && !s.status.needsRefinement)
           .toList();
     }
     return stories

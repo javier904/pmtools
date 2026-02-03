@@ -32,7 +32,10 @@ class SprintHealthCardWidget extends StatelessWidget {
   // ---------------------------------------------------------------------------
 
   _SprintHealthStatus _computeHealthStatus(SprintModel sprint) {
-    final completionRate = sprint.completionRate;
+    final planned = _calculatePlannedPoints(sprint);
+    final completed = _calculateCompletedPoints(sprint);
+    final completionRate = planned > 0 ? (completed / planned).clamp(0.0, 1.0) : 0.0;
+    
     final timeProgress = sprint.timeProgress;
 
     if (completionRate >= timeProgress * 0.8) {
@@ -72,8 +75,15 @@ class SprintHealthCardWidget extends StatelessWidget {
 
   /// Stories in the current sprint.
   List<UserStoryModel> _sprintStories(SprintModel sprint) {
+    // Robust filter: use sprintId property instead of relying solely on sprint.storyIds list
+    // AND exclude stories that are in Backlog/Refinement/Ready (even if they have sprintId set)
     return stories
-        .where((s) => sprint.storyIds.contains(s.id))
+        .where((s) => 
+            s.sprintId == sprint.id && 
+            s.status != StoryStatus.backlog &&
+            s.status != StoryStatus.refinement &&
+            s.status != StoryStatus.ready
+        )
         .toList();
   }
 
@@ -81,6 +91,32 @@ class SprintHealthCardWidget extends StatelessWidget {
     return _sprintStories(sprint)
         .where((s) => s.status == StoryStatus.done)
         .length;
+  }
+
+  int _storiesInProgressCount(SprintModel sprint) {
+    return _sprintStories(sprint)
+        .where((s) => s.status == StoryStatus.inProgress || s.status == StoryStatus.inReview)
+        .length;
+  }
+
+  /// Calculates total planned points dynamically from stories
+  int _calculatePlannedPoints(SprintModel sprint) {
+    return _sprintStories(sprint)
+        .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+  }
+
+  /// Calculates total completed points dynamically from stories
+  int _calculateCompletedPoints(SprintModel sprint) {
+    return _sprintStories(sprint)
+        .where((s) => s.status == StoryStatus.done)
+        .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+  }
+
+  /// Calculates points remaining
+  int _calculateRemainingPoints(SprintModel sprint) {
+    final planned = _calculatePlannedPoints(sprint);
+    final completed = _calculateCompletedPoints(sprint);
+    return (planned - completed).clamp(0, planned);
   }
 
   /// Commitment reliability: average(completedPoints / plannedPoints)
@@ -317,6 +353,11 @@ class SprintHealthCardWidget extends StatelessWidget {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
+    final planned = _calculatePlannedPoints(sprint);
+    final completed = _calculateCompletedPoints(sprint);
+    final remaining = _calculateRemainingPoints(sprint);
+    final completionRate = planned > 0 ? (completed / planned).clamp(0.0, 1.0) : 0.0;
+
     return Row(
       children: [
         // Time progress
@@ -335,10 +376,10 @@ class SprintHealthCardWidget extends StatelessWidget {
         Expanded(
           child: _buildCircularProgress(
             label: l10n.agileSprintHealthWork,
-            progress: sprint.completionRate,
-            centerText: '${sprint.completedPoints}/${sprint.plannedPoints}',
+            progress: completionRate,
+            centerText: '$completed/$planned',
             subtitle:
-                '${sprint.remainingPoints} ${l10n.agileSprintHealthSpRemaining}',
+                '$remaining ${l10n.agileSprintHealthSpRemaining}',
             color: AppColors.success,
             theme: theme,
           ),
@@ -448,6 +489,11 @@ class SprintHealthCardWidget extends StatelessWidget {
     return Row(
       children: [
         _buildMetricItem(
+          label: l10n.agileSprintHealthStoriesInProgress,
+          value: '${_storiesInProgressCount(sprint)}',
+          theme: theme,
+        ),
+        _buildMetricItem(
           label: l10n.agileSprintHealthStoriesDone,
           value: '$doneCount/${sprintStories.length}',
           theme: theme,
@@ -462,11 +508,8 @@ class SprintHealthCardWidget extends StatelessWidget {
           value: velocity.toStringAsFixed(1),
           theme: theme,
         ),
-        _buildMetricItem(
-          label: l10n.agileSprintHealthPrediction,
-          value: predictionText,
-          theme: theme,
-        ),
+        // Removed Prediction if space is tight, or keep it. user screen shows space.
+        // Let's try to fit 5 items or wrap.
       ],
     );
   }

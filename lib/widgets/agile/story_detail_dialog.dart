@@ -19,6 +19,7 @@ class StoryDetailDialog extends StatefulWidget {
   final void Function(int index)? onCriterionDelete; // Callback opzionale per cancellazione
   final void Function(String criterion)? onCriterionAdd; // NEW: Callback per aggiunta
   final void Function(String? email)? onAssigneeChange;
+  final void Function(int? progress)? onProgressChange;
   final List<String> teamMembers;
 
   final List<SprintModel> sprints;
@@ -33,6 +34,7 @@ class StoryDetailDialog extends StatefulWidget {
     this.onCriterionDelete, // NEW
     this.onCriterionAdd, // NEW
     this.onAssigneeChange,
+    this.onProgressChange,
     this.teamMembers = const [],
     this.sprints = const [],
     this.onJiraSync,
@@ -47,6 +49,7 @@ class StoryDetailDialog extends StatefulWidget {
     void Function(int index)? onCriterionDelete, // NEW
     void Function(String criterion)? onCriterionAdd, // NEW
     void Function(String? email)? onAssigneeChange,
+    void Function(int? progress)? onProgressChange,
     List<String> teamMembers = const [],
 
     List<SprintModel> sprints = const [],
@@ -62,6 +65,7 @@ class StoryDetailDialog extends StatefulWidget {
         onCriterionDelete: onCriterionDelete, // NEW
         onCriterionAdd: onCriterionAdd, // NEW
         onAssigneeChange: onAssigneeChange,
+        onProgressChange: onProgressChange,
         teamMembers: teamMembers,
         sprints: sprints,
         onJiraSync: onJiraSync,
@@ -75,13 +79,15 @@ class StoryDetailDialog extends StatefulWidget {
 
 class _StoryDetailDialogState extends State<StoryDetailDialog> {
   late List<String> _acceptanceCriteria;
-  late TextEditingController _newCriterionController; // NEW
+  late TextEditingController _newCriterionController;
+  int? _customProgress; // NEW: State for custom progress // NEW
 
   @override
   void initState() {
     super.initState();
     _acceptanceCriteria = List<String>.from(widget.story.acceptanceCriteria);
     _newCriterionController = TextEditingController(); // NEW
+    _customProgress = widget.story.customProgress;
   }
 
   @override
@@ -325,6 +331,12 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
                             ],
                           ),
                           const SizedBox(height: 24),
+
+                          // Progress Section
+                          if (widget.onProgressChange != null) ...[
+                            _buildProgressSection(context, l10n),
+                            const SizedBox(height: 16),
+                          ],
                           
                           // Description
                           _buildSection(
@@ -388,21 +400,38 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
                                       final isCompleted = _isCriterionCompleted(criterion);
                                       final cleanText = _cleanCriterionText(criterion);
 
-                                      return CheckboxListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Text(
-                                          cleanText,
-                                          style: TextStyle(
-                                            decoration: isCompleted ? TextDecoration.lineThrough : null,
-                                            color: isCompleted ? context.textMutedColor : null,
+                                      return Row(
+                                        children: [
+                                          Checkbox(
+                                            value: isCompleted,
+                                            onChanged: widget.onCriterionToggle != null
+                                              ? (value) => _toggleCriterion(index, value ?? false)
+                                              : null,
                                           ),
-                                        ),
-                                        value: isCompleted,
-                                        onChanged: widget.onCriterionToggle != null
-                                          ? (value) => _toggleCriterion(index, value ?? false)
-                                          : null,
-                                        controlAffinity: ListTileControlAffinity.leading,
-                                        dense: true,
+                                          Expanded(
+                                            child: Text(
+                                              cleanText,
+                                              style: TextStyle(
+                                                decoration: isCompleted ? TextDecoration.lineThrough : null,
+                                                color: isCompleted ? context.textMutedColor : null,
+                                              ),
+                                            ),
+                                          ),
+                                          if (widget.onCriterionDelete != null)
+                                            IconButton(
+                                              icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _acceptanceCriteria.removeAt(index);
+                                                });
+                                                widget.onCriterionDelete?.call(index);
+                                              },
+                                              tooltip: l10n.actionDelete,
+                                              padding: EdgeInsets.zero,
+                                              constraints: const BoxConstraints(),
+                                            ),
+                                          const SizedBox(width: 12), // Padding for scrollbar
+                                        ],
                                       );
                                     }),
                                   ),
@@ -509,6 +538,104 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
           child: Text(l10n.actionClose),
         ),
       ],
+    );
+  }
+
+  Widget _buildProgressSection(BuildContext context, AppLocalizations l10n) {
+    final isManual = _customProgress != null;
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: context.surfaceVariantColor.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.percent, size: 16, color: context.textSecondaryColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.agileProgress,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: context.textSecondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    isManual ? l10n.agileProgressManual : l10n.agileProgressAuto,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isManual ? Colors.orange : Colors.green,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Switch(
+                    value: isManual,
+                    activeColor: Colors.orange,
+                    onChanged: (val) {
+                      setState(() {
+                         if (val) {
+                           _customProgress = 50;
+                         } else {
+                           _customProgress = null;
+                         }
+                      });
+                      widget.onProgressChange?.call(_customProgress);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          if (isManual) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Slider(
+                    value: _customProgress?.toDouble() ?? 50,
+                    min: 0,
+                    max: 100,
+                    divisions: 20,
+                    activeColor: Colors.orange,
+                    label: '${_customProgress}%',
+                    onChanged: (val) {
+                      setState(() {
+                        _customProgress = val.round();
+                      });
+                    },
+                    onChangeEnd: (val) {
+                      widget.onProgressChange?.call(val.round());
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                  child: Text(
+                    '${_customProgress}%',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 

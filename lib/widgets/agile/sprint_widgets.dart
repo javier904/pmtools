@@ -137,7 +137,12 @@ class SprintListWidget extends StatelessWidget {
     double progress = sprint.progress;
 
     if (stories != null) {
-      final sprintStories = stories!.where((s) => s.sprintId == sprint.id).toList();
+      final sprintStories = stories!.where((s) => 
+          s.sprintId == sprint.id &&
+          s.status != StoryStatus.backlog &&
+          s.status != StoryStatus.refinement &&
+          s.status != StoryStatus.ready
+      ).toList();
       plannedPoints = sprintStories.fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
       final actualCompletedPoints = sprintStories
           .where((s) => s.status == StoryStatus.done)

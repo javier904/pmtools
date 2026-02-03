@@ -580,6 +580,36 @@
     }
   },
   "retroSearchHint": "Cerca retrospettiva...",
+  "agileProgressManual": "Manuale",
+  "agileProgress": "Avanzamento",
+  "agileProgressAuto": "Automatico",
+  "agileProgressTooltipManual": "Impostato manualmente al {percent}%",
+  "@agileProgressTooltipManual": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "agileProgressTooltipCriteria": "Completati {completed}/{total} criteri",
+  "@agileProgressTooltipCriteria": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "agileProgressTooltipStatus": "Stimato in base allo stato: {status}",
+  "@agileProgressTooltipStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
   "agileProcessTitle": "Agile Process Manager",
   "agileSearchProjects": "Cerca progetti...",
   "agileMethodologyGuide": "Guida Metodologie",
@@ -4876,6 +4906,7 @@
   "agileSprintHealthWork": "Lavoro",
   "agileSprintHealthDaysLeft": "giorni rimasti",
   "agileSprintHealthSpRemaining": "SP rimasti",
+  "agileSprintHealthStoriesInProgress": "In Corso",
   "agileSprintHealthStoriesDone": "Stories Fatte",
   "agileSprintHealthCommitment": "Affidabilità",
   "agileSprintHealthDailyVelocity": "Vel. Giornaliera",

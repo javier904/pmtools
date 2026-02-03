@@ -1262,6 +1262,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroSearchHint => 'Search retrospective...';
 
   @override
+  String get agileProgressManual => 'Manual';
+
+  @override
+  String get agileProgress => 'Progress';
+
+  @override
+  String get agileProgressAuto => 'Auto';
+
+  @override
+  String agileProgressTooltipManual(int percent) {
+    return 'Manually set to $percent%';
+  }
+
+  @override
+  String agileProgressTooltipCriteria(int completed, int total) {
+    return 'Completed $completed/$total criteria';
+  }
+
+  @override
+  String agileProgressTooltipStatus(String status) {
+    return 'Estimated based on status: $status';
+  }
+
+  @override
   String get agileProcessTitle => 'Agile Process Manager';
 
   @override
@@ -10688,6 +10712,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileSprintHealthSpRemaining => 'SP remaining';
+
+  @override
+  String get agileSprintHealthStoriesInProgress => 'Stories In Progress';
 
   @override
   String get agileSprintHealthStoriesDone => 'Stories Done';

@@ -578,6 +578,36 @@
     }
   },
   "retroSearchHint": "Search retrospective...",
+  "agileProgressManual": "Manual",
+  "agileProgress": "Progress",
+  "agileProgressAuto": "Auto",
+  "agileProgressTooltipManual": "Manually set to {percent}%",
+  "@agileProgressTooltipManual": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "agileProgressTooltipCriteria": "Completed {completed}/{total} criteria",
+  "@agileProgressTooltipCriteria": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "agileProgressTooltipStatus": "Estimated based on status: {status}",
+  "@agileProgressTooltipStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
   "agileProcessTitle": "Agile Process Manager",
   "agileSearchProjects": "Search projects...",
   "agileMethodologyGuide": "Methodology Guide",
@@ -5076,6 +5106,7 @@
   "agileSprintHealthWork": "Work",
   "agileSprintHealthDaysLeft": "days left",
   "agileSprintHealthSpRemaining": "SP remaining",
+  "agileSprintHealthStoriesInProgress": "Stories In Progress",
   "agileSprintHealthStoriesDone": "Stories Done",
   "agileSprintHealthCommitment": "Commitment",
   "agileSprintHealthDailyVelocity": "Daily Velocity",

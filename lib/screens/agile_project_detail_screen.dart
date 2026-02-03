@@ -488,7 +488,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           : null,
       onStatusChange: (status) => _updateStoryStatus(story, status),
       onCriterionToggle: (index, completed) => _toggleAcceptanceCriterion(story, index, completed),
+      onCriterionAdd: (text) => _addStoryAcceptanceCriterion(story, text),
+      onCriterionDelete: (index) => _deleteStoryAcceptanceCriterion(story, index),
       onAssigneeChange: (email) => _updateStoryAssignee(story, email),
+      onProgressChange: (progress) => _updateStoryProgress(story, progress), // NEW
       teamMembers: _teamMembers.map((m) => m.email).toList(),
       sprints: _sprints,
       onJiraSync: (story.externalIntegration?.provider == 'jira') 
@@ -515,17 +518,24 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
            // Rimuovi dal vecchio sprint
            if (story.sprintId != null) {
               final oldSprint = _sprints.firstWhere((s) => s.id == story.sprintId);
-              final updatedIds = List<String>.from(oldSprint.storyIds)..remove(story.id);
-              await _firestoreService.updateSprint(widget.project.id, oldSprint.copyWith(storyIds: updatedIds));
+              // Use helper to update points too
+              final updatedSprint = oldSprint.withoutStory(story.id, story.storyPoints ?? 0);
+              await _firestoreService.updateSprint(widget.project.id, updatedSprint);
            }
            // Aggiungi al nuovo sprint
            if (result.sprintId != null) {
               final newSprint = _sprints.firstWhere((s) => s.id == result.sprintId);
-              if (!newSprint.storyIds.contains(result.id)) {
-                 final updatedIds = List<String>.from(newSprint.storyIds)..add(result.id);
-                 await _firestoreService.updateSprint(widget.project.id, newSprint.copyWith(storyIds: updatedIds));
-              }
+              final updatedSprint = newSprint.withStory(result.id, result.storyPoints ?? 0);
+              await _firestoreService.updateSprint(widget.project.id, updatedSprint);
            }
+        } else if (story.sprintId != null && story.storyPoints != result.storyPoints) {
+           // Same sprint, but points changed -> update planned points
+           final sprint = _sprints.firstWhere((s) => s.id == story.sprintId);
+           final diff = (result.storyPoints ?? 0) - (story.storyPoints ?? 0);
+           final updatedSprint = sprint.copyWith(
+             plannedPoints: (sprint.plannedPoints + diff).clamp(0, 9999),
+           );
+           await _firestoreService.updateSprint(widget.project.id, updatedSprint);
         }
 
         _showSuccess('Story aggiornata!');
@@ -589,6 +599,14 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       // Logic for auto-assigning to active sprint if moving to In Progress/etc from Backlog
       // and not yet in a sprint.
       String? newSprintId = story.sprintId;
+      
+      // FIX: If moving to Backlog/Refinement/Ready, remove from Sprint
+      if (status == StoryStatus.backlog || 
+          status == StoryStatus.refinement || 
+          status == StoryStatus.ready) {
+        newSprintId = null;
+      }
+
       bool addedToSprint = false;
       SprintModel? activeSprint;
       
@@ -618,19 +636,66 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       
       await _firestoreService.updateStory(widget.project.id, updated);
       
-      // Update sprint if auto-assigned
-      if (addedToSprint && activeSprint != null) {
-         if (!activeSprint.storyIds.contains(story.id)) {
-            final updatedIds = List<String>.from(activeSprint.storyIds)..add(story.id);
-            await _firestoreService.updateSprint(widget.project.id, activeSprint.copyWith(storyIds: updatedIds));
-            _showSuccess('Story automatically added to active sprint: ${activeSprint.name}');
-         }
+      // Handle Sprint updates (add/remove)
+      
+      // 1. Remove from OLD sprint if sprintId changed (e.g. moved to Backlog)
+      //    OR if status changed to something that might imply removal (though usually sprintId change covers this)
+      if (story.sprintId != null && story.sprintId != newSprintId) {
+         try {
+           final oldSprint = _sprints.firstWhere((s) => s.id == story.sprintId);
+           final updatedSprint = oldSprint.withoutStory(story.id, story.storyPoints ?? 0);
+           await _firestoreService.updateSprint(widget.project.id, updatedSprint);
+         } catch (_) {}
+      }
+
+      // Self-healing: Check if active sprint metrics are out of sync and fix them
+      if (activeSprint != null) {
+         _reconcileActiveSprintMetrics(activeSprint);
+      } else if (newSprintId != null) {
+          // If we moved to a sprint that isn't the "active" one variable, try to find it
+          try {
+            final targetSprint = _sprints.firstWhere((s) => s.id == newSprintId);
+            _reconcileActiveSprintMetrics(targetSprint);
+          } catch (_) {}
+      }
+
+      // 2. Add to NEW sprint if it changed (e.g. auto-assigned)
+      if (newSprintId != null && newSprintId != story.sprintId) {
+         try {
+            final targetSprint = (addedToSprint && activeSprint != null) 
+                ? activeSprint 
+                : _sprints.firstWhere((s) => s.id == newSprintId);
+            
+            final updatedSprint = targetSprint.withStory(updated.id, updated.storyPoints ?? 0);
+            await _firestoreService.updateSprint(widget.project.id, updatedSprint);
+            
+            if (addedToSprint) {
+               _showSuccess('Story automatically added to active sprint: ${targetSprint.name}');
+            }
+         } catch (_) {}
+      } else if (addedToSprint && activeSprint != null) {
+         // Fallback if sprintId didn't change but we want to ensure it's added (defensive)
+         final updatedSprint = activeSprint.withStory(updated.id, updated.storyPoints ?? 0);
+         await _firestoreService.updateSprint(widget.project.id, updatedSprint);
       }
 
       // JIRA SYNC
       if (story.externalIntegration != null && story.externalIntegration!.provider == 'jira') {
         _syncJiraTransition(story, status);
       }
+      
+      // Audit log
+      await _auditService.logMove(
+        projectId: widget.project.id,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        fromStatus: story.status.name,
+        toStatus: status.name,
+        fromSprintId: story.sprintId,
+        toSprintId: newSprintId,
+      );
     } catch (e) {
       _showError('Errore aggiornamento status: $e');
     }
@@ -641,6 +706,19 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       final story = _stories.firstWhere((s) => s.id == storyId);
       final updated = story.copyWith(priority: priority);
       await _firestoreService.updateStory(widget.project.id, updated);
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: storyId,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        previousValue: {'priority': story.priority.name},
+        newValue: {'priority': priority.name},
+        description: 'Priority changed to ${priority.name}',
+        changedFields: ['priority'],
+      );
     } catch (e) {
       _showError('Errore aggiornamento priorità: $e');
     }
@@ -651,6 +729,19 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       final story = _stories.firstWhere((s) => s.id == storyId);
       final updated = story.copyWith(title: title);
       await _firestoreService.updateStory(widget.project.id, updated);
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: storyId,
+        entityName: story.title, // Use old title for reference
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        previousValue: {'title': story.title},
+        newValue: {'title': title},
+        description: 'Title changed',
+        changedFields: ['title'],
+      );
       
       // Audit log (opzionale ma utile per modifiche importanti come il titolo)
       // _auditService.logUpdate(...)
@@ -670,6 +761,19 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       } else {
         await _firestoreService.updateStory(widget.project.id, updated);
       }
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        previousValue: {'storyPoints': story.storyPoints},
+        newValue: {'storyPoints': points},
+        description: 'Story points updated to $points',
+        changedFields: ['storyPoints'],
+      );
     } catch (e) {
       _showError('Errore aggiornamento punti: $e');
     }
@@ -687,6 +791,17 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
       final updatedStory = story.copyWith(acceptanceCriteria: criteria);
       await _firestoreService.updateStory(widget.project.id, updatedStory);
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        description: 'Acceptance criterion ${completed ? 'completed' : 'uncompleted'}: $cleanText',
+        changedFields: ['acceptanceCriteria'],
+      );
     } catch (e) {
       _showError('Errore aggiornamento criterio: $e');
     }
@@ -696,8 +811,107 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     try {
       final updatedStory = story.withAcceptanceCriterion(text);
       await _firestoreService.updateStory(widget.project.id, updatedStory);
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        // previousValue: {'acceptanceCriteria': story.acceptanceCriteria}, // Optional, maybe too verbose
+        // newValue: {'acceptanceCriteria': updatedStory.acceptanceCriteria},
+        description: 'Added acceptance criterion: $text',
+        changedFields: ['acceptanceCriteria'],
+      );
     } catch (e) {
       _showError('Errore aggiunta criterio: $e');
+    }
+  }
+
+  Future<void> _deleteStoryAcceptanceCriterion(UserStoryModel story, int index) async {
+    try {
+      final updatedStory = story.withoutAcceptanceCriterion(index);
+      await _firestoreService.updateStory(widget.project.id, updatedStory);
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        description: 'Deleted acceptance criterion at index $index',
+        changedFields: ['acceptanceCriteria'],
+      );
+    } catch (e) {
+      _showError('Errore eliminazione criterio: $e');
+    }
+  }
+
+  Future<void> _updateStoryProgress(UserStoryModel story, int? progress) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final updated = story.copyWith(customProgress: progress);
+      // Note: customProgress is nullable. passing null removes the override.
+      // passing a value overrides the calculated progress.
+      
+      // We need to handle null explicitly if copyWith doesn't support setting to null via argument
+      // But looking at UserStoryModel.copyWith:
+      // customProgress: customProgress ?? this.customProgress,
+      // This means passing null will KEEP the old value. We need a way to unset it.
+      // Usually copyWith needs a specific sentinel or we reconstruct the object.
+      // Let's check UserStoryModel.copyWith implementation again.
+      // If it is `customProgress: customProgress ?? this.customProgress`, then we cannot unset it easily.
+      // I should update UserStoryModel.copyWith to allow nulling if that was the case, OR use a different approach.
+      // WAIT, I implemented copyWith as:
+      // customProgress: customProgress ?? this.customProgress
+      // This IS a problem for unsetting. 
+      // I will assume for now I can reconstruct or change UserStoryModel later. 
+      // For this method, I will construct a new object manually to be safe if I need to unset.
+      
+      UserStoryModel newStory;
+      if (progress == null) {
+        // We want to remove the custom progress.
+        // Since copyWith might not support unsetting, we can recreate it or strictly use a "sentinel" if we had one.
+        // A quick fix is to copy all fields.
+        newStory = UserStoryModel(
+          id: story.id,
+          projectId: widget.project.id, // Add projectId
+          title: story.title,
+          description: story.description,
+          status: story.status,
+          priority: story.priority,
+          storyPoints: story.storyPoints,
+          assigneeEmail: story.assigneeEmail,
+          tags: story.tags,
+          acceptanceCriteria: story.acceptanceCriteria,
+          createdAt: story.createdAt,
+          startedAt: story.startedAt,
+          completedAt: story.completedAt,
+          estimates: story.estimates,
+          finalEstimate: story.finalEstimate,
+          estimationType: story.estimationType,
+          sprintId: story.sprintId,
+          actualHours: story.actualHours,
+          customProgress: null, // Force null
+          externalIntegration: story.externalIntegration,
+          createdBy: story.createdBy, // Also missing createdBy
+        );
+      } else {
+        newStory = story.copyWith(customProgress: progress);
+      }
+
+      await _firestoreService.updateStory(widget.project.id, newStory);
+      
+      // Log audit?
+      // Maybe overkill for slider drag, but good for tracking.
+      // Let's log only if it's a significant change or just rely on the final value.
+      // Given the slider might fire frequently, we might want debouncing, but here it's onDialogClose or explicit.
+      // The callback onProgressChange in the dialog is called "onChangeEnd" (slider) or "onChanged" (switch).
+      // So it's safe to log.
+    } catch (e) {
+      _showError(l10n.errorGeneric(e.toString()));
     }
   }
 
@@ -709,12 +923,17 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         await _firestoreService.updateStoryFields(widget.project.id, story.id, {
           'assigneeEmail': null,
         });
-      } else {
-        await _firestoreService.updateStory(widget.project.id, updated);
       }
-      if (mounted) {
-        Navigator.of(context).pop(); // Close the detail dialog to refresh
-      }
+      
+      await _auditService.logAssign(
+        projectId: widget.project.id,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        previousAssignee: story.assigneeEmail,
+        newAssignee: email ?? 'Unassigned',
+      );
     } catch (e) {
       _showError('Errore aggiornamento assegnatario: $e');
     }
@@ -806,10 +1025,66 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       );
       
       await _firestoreService.updateStory(widget.project.id, updated);
+      
+      await _auditService.logUpdate(
+        projectId: widget.project.id,
+        entityType: AuditEntityType.story,
+        entityId: story.id,
+        entityName: story.title,
+        performedBy: _currentUserEmail,
+        performedByName: _currentUserName,
+        description: 'Synced from Jira (Title: $summary, Status: $newStatus)',
+        changedFields: ['title', 'status', 'externalIntegration'],
+      );
+      
       if (mounted) _showSuccess(AppLocalizations.of(context)!.jiraSyncFromSuccess(story.externalIntegration!.externalId));
     } catch (e) {
       if (mounted) _showError(AppLocalizations.of(context)!.jiraSyncFailed(e.toString()));
     }
+  }
+
+  /// Checks and repairs sprint metrics if they don't match actual stories.
+  /// This fixes "Ghost Points" from previous bugs.
+  Future<void> _reconcileActiveSprintMetrics(SprintModel sprint) async {
+     try {
+       // 1. Get actual stories in sprint
+       final actualStories = _stories.where((s) => s.sprintId == sprint.id).toList();
+       
+       // 2. Calculate totals
+       final plannedPoints = actualStories.fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+       final completedPoints = actualStories
+          .where((s) => s.status == StoryStatus.done)
+          .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+          
+       final actualIds = actualStories.map((s) => s.id).toList();
+       
+       // 3. Compare with stored values
+       bool needsUpdate = false;
+       if (sprint.plannedPoints != plannedPoints) needsUpdate = true;
+       if (sprint.completedPoints != completedPoints) needsUpdate = true;
+       
+       // Check if IDs list matches (ignoring order)
+       if (sprint.storyIds.length != actualIds.length) {
+          needsUpdate = true;
+       } else {
+          final setA = sprint.storyIds.toSet();
+          final setB = actualIds.toSet();
+          if (!setA.containsAll(setB)) needsUpdate = true;
+       }
+       
+       // 4. Update if needed
+       if (needsUpdate) {
+          final correctedSprint = sprint.copyWith(
+             plannedPoints: plannedPoints,
+             completedPoints: completedPoints,
+             storyIds: actualIds,
+          );
+          await _firestoreService.updateSprint(widget.project.id, correctedSprint);
+          print('🔧 Sprint corrected: ${sprint.name} (Pts: ${sprint.plannedPoints} -> $plannedPoints)');
+       }
+     } catch (e) {
+       print('Error reconciling sprint: $e');
+     }
   }
 
   StoryStatus _mapJiraStatusToInternal(String jiraStatus) {
@@ -1090,7 +1365,14 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     final l10n = AppLocalizations.of(context)!;
     
     // Calcola statistiche in tempo reale dalle storie caricate
-    final sprintStories = _stories.where((s) => s.sprintId == sprint.id).toList();
+    // FIX: Escludi storie in Backlog/Refinement/Ready anche se hanno sprintId (incongruenza storica)
+    final sprintStories = _stories.where((s) => 
+        s.sprintId == sprint.id && 
+        s.status != StoryStatus.backlog &&
+        s.status != StoryStatus.refinement &&
+        s.status != StoryStatus.ready
+    ).toList();
+    
     final completedPoints = sprintStories
         .where((s) => s.status == StoryStatus.done)
         .fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
@@ -1098,6 +1380,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         .fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
     
     final daysRemaining = sprint.daysRemaining;
+    final inProgressCount = sprintStories
+        .where((s) => s.status == StoryStatus.inProgress || s.status == StoryStatus.inReview)
+        .length;
+        
     final progress = plannedPoints > 0
         ? completedPoints / plannedPoints
         : 0.0;
@@ -1151,6 +1437,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 _buildSprintStat(l10n.agileDaysLabel, '$daysRemaining', l10n.agileStatRemaining),
                 _buildSprintStat(l10n.agileStatsCompletedLabel, '$completedPoints', l10n.agileStatsPoints),
                 _buildSprintStat(l10n.agileStatsPlannedLabel, '$plannedPoints', l10n.agileStatsPoints),
+                _buildSprintStat(l10n.agileSprintHealthStoriesInProgress, '$inProgressCount', ''), // Reuse localized string
                 _buildSprintStat(l10n.agileProgressLabel, '${(progress * 100).round()}', '%'),
               ],
             ),
@@ -1290,7 +1577,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Future<void> _showSprintDetail(SprintModel sprint) async {
     final l10n = AppLocalizations.of(context)!;
-    final sprintStories = _stories.where((s) => sprint.storyIds.contains(s.id)).toList();
+    // Robust filter: use sprintId instead of storyIds list
+    final sprintStories = _stories.where((s) => s.sprintId == sprint.id).toList();
     final completedStories = sprintStories.where((s) => s.status == StoryStatus.done).toList();
     
     // Calcola punti reali per la visualizzazione
@@ -1640,6 +1928,21 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         }
 
         _showSuccess(l10n.agileSprintCompleteSuccess(velocity.toStringAsFixed(1)));
+        
+        // Audit log
+        await _auditService.logSprintClose(
+          projectId: widget.project.id,
+          sprintId: sprint.id,
+          sprintName: sprint.name,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserName,
+          completedStories: completedCount,
+          totalStories: totalStories,
+          completedPoints: actualCompletedPoints,
+          plannedPoints: sprint.plannedPoints,
+          velocity: velocity,
+        );
+
       } catch (e) {
         _showError(l10n.errorGeneric(e.toString()));
       }

@@ -45,6 +45,9 @@ class UserStoryModel {
   // Actual hours (for tracking)
   final int? actualHours;
 
+  // Custom Progress (0-100) - Overrides calculation
+  final int? customProgress;
+
   // External Integration (Jira, etc.)
   final ExternalIntegration? externalIntegration;
 
@@ -73,6 +76,7 @@ class UserStoryModel {
     this.estimationType,
     this.sprintId,
     this.actualHours,
+    this.customProgress,
     this.externalIntegration,
   });
 
@@ -132,6 +136,7 @@ class UserStoryModel {
           : null,
       sprintId: data['sprintId'],
       actualHours: data['actualHours'],
+      customProgress: data['customProgress'],
       externalIntegration: data['externalIntegration'] != null
           ? ExternalIntegration.fromMap(data['externalIntegration'])
           : null,
@@ -164,6 +169,7 @@ class UserStoryModel {
       if (estimationType != null) 'estimationType': estimationType!.name,
       if (sprintId != null) 'sprintId': sprintId,
       if (actualHours != null) 'actualHours': actualHours,
+      'customProgress': customProgress,
       if (externalIntegration != null) 'externalIntegration': externalIntegration!.toMap(),
     };
   }
@@ -194,6 +200,7 @@ class UserStoryModel {
     EstimationType? estimationType,
     String? sprintId,
     int? actualHours,
+    int? customProgress,
     ExternalIntegration? externalIntegration,
   }) {
     return UserStoryModel(
@@ -221,6 +228,7 @@ class UserStoryModel {
       estimationType: estimationType ?? this.estimationType,
       sprintId: sprintId ?? this.sprintId,
       actualHours: actualHours ?? this.actualHours,
+      customProgress: customProgress ?? this.customProgress,
       externalIntegration: externalIntegration ?? this.externalIntegration,
     );
   }

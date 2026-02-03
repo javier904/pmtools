@@ -46,8 +46,12 @@ class SprintBurndownLiveWidget extends StatelessWidget {
       return _buildEmptyState(context, l10n, theme);
     }
 
+    // Exclude Backlog/Refinement/Ready stories even if they have sprintId
     final sprintStories = stories
-        .where((s) => s.sprintId == currentSprint!.id)
+        .where((s) => s.sprintId == currentSprint!.id &&
+            s.status != StoryStatus.backlog &&
+            s.status != StoryStatus.refinement &&
+            s.status != StoryStatus.ready)
         .toList();
 
     if (sprintStories.isEmpty) {

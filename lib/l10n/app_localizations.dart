@@ -2456,6 +2456,42 @@ abstract class AppLocalizations {
   /// **'Cerca retrospettiva...'**
   String get retroSearchHint;
 
+  /// No description provided for @agileProgressManual.
+  ///
+  /// In it, this message translates to:
+  /// **'Manuale'**
+  String get agileProgressManual;
+
+  /// No description provided for @agileProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'Avanzamento'**
+  String get agileProgress;
+
+  /// No description provided for @agileProgressAuto.
+  ///
+  /// In it, this message translates to:
+  /// **'Automatico'**
+  String get agileProgressAuto;
+
+  /// No description provided for @agileProgressTooltipManual.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostato manualmente al {percent}%'**
+  String agileProgressTooltipManual(int percent);
+
+  /// No description provided for @agileProgressTooltipCriteria.
+  ///
+  /// In it, this message translates to:
+  /// **'Completati {completed}/{total} criteri'**
+  String agileProgressTooltipCriteria(int completed, int total);
+
+  /// No description provided for @agileProgressTooltipStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stimato in base allo stato: {status}'**
+  String agileProgressTooltipStatus(String status);
+
   /// No description provided for @agileProcessTitle.
   ///
   /// In it, this message translates to:
@@ -19391,6 +19427,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'SP rimasti'**
   String get agileSprintHealthSpRemaining;
+
+  /// No description provided for @agileSprintHealthStoriesInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso'**
+  String get agileSprintHealthStoriesInProgress;
 
   /// No description provided for @agileSprintHealthStoriesDone.
   ///

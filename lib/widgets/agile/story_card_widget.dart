@@ -251,7 +251,10 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                          ),
                        ),
                      _buildIdBadge(context),
-                     if (widget.sprintName != null) _buildSprintBadge(),
+                     if (widget.sprintName != null && 
+                         story.status != StoryStatus.backlog && 
+                         story.status != StoryStatus.refinement && 
+                         story.status != StoryStatus.ready) _buildSprintBadge(),
                      if (story.externalIntegration != null) _buildJiraBadge(),
                    ],
                  ),
@@ -314,15 +317,21 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                  ),
                  
                  // Progress bar
-                if (story.status == StoryStatus.inProgress || story.status == StoryStatus.inReview) ...[
+                if (story.status == StoryStatus.inSprint || 
+                    story.status == StoryStatus.inProgress || 
+                    story.status == StoryStatus.inReview) ...[
                   const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: _calculateProgress(),
-                      backgroundColor: context.surfaceVariantColor,
-                      valueColor: AlwaysStoppedAnimation(story.status.color),
-                      minHeight: 4,
+                  const SizedBox(height: 8),
+                  Tooltip(
+                    message: _getProgressTooltip(context),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: _calculateProgress(),
+                        backgroundColor: context.surfaceVariantColor,
+                        valueColor: AlwaysStoppedAnimation(story.status.color),
+                        minHeight: 4,
+                      ),
                     ),
                   ),
                 ],
@@ -378,7 +387,11 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                          ),
                        ),
                    _buildIdBadge(context),
-                   if (widget.sprintName != null) _buildSprintBadge(),
+                   _buildIdBadge(context),
+                   if (widget.sprintName != null && 
+                       story.status != StoryStatus.backlog && 
+                       story.status != StoryStatus.refinement && 
+                       story.status != StoryStatus.ready) _buildSprintBadge(),
                    if (story.externalIntegration != null) _buildJiraBadge(),
                  ],
                ),
@@ -459,15 +472,20 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           ],
         ),
         
-        if (story.status == StoryStatus.inProgress || story.status == StoryStatus.inReview) ...[
+        if (story.status == StoryStatus.inSprint || 
+            story.status == StoryStatus.inProgress || 
+            story.status == StoryStatus.inReview) ...[
           const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: _calculateProgress(),
-              backgroundColor: context.surfaceVariantColor,
-              valueColor: AlwaysStoppedAnimation(story.status.color),
-              minHeight: 4,
+          Tooltip(
+            message: _getProgressTooltip(context),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: _calculateProgress(),
+                backgroundColor: context.surfaceVariantColor,
+                valueColor: AlwaysStoppedAnimation(story.status.color),
+                minHeight: 4,
+              ),
             ),
           ),
         ],
@@ -955,23 +973,57 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
   }
 
   double _calculateProgress() {
-    if (widget.story.acceptanceCriteria.isEmpty) {
-      switch (widget.story.status) {
-        case StoryStatus.backlog:
-        case StoryStatus.refinement:
-        case StoryStatus.ready:
-          return 0;
-        case StoryStatus.inSprint:
-          return 0.1;
-        case StoryStatus.inProgress:
-          return 0.5;
-        case StoryStatus.inReview:
-          return 0.8;
-        case StoryStatus.done:
-          return 1.0;
-      }
+    // 1. Custom Progress (Manual Override)
+    if (widget.story.customProgress != null) {
+      return widget.story.customProgress! / 100.0;
     }
-    return widget.story.completedAcceptanceCriteria / widget.story.acceptanceCriteria.length;
+
+    // 2. Acceptance Criteria
+    if (widget.story.acceptanceCriteria.isNotEmpty) {
+      final fraction = widget.story.completedAcceptanceCriteria / widget.story.acceptanceCriteria.length;
+      // Show minimum progress for active stories even if 0 criteria completed
+      if (fraction == 0.0 && 
+         (widget.story.status == StoryStatus.inSprint || 
+          widget.story.status == StoryStatus.inProgress || 
+          widget.story.status == StoryStatus.inReview)) {
+         return 0.05; 
+      }
+      return fraction;
+    }
+
+    // 3. Status Defaults
+    switch (widget.story.status) {
+      case StoryStatus.backlog:
+      case StoryStatus.refinement:
+      case StoryStatus.ready:
+        return 0;
+      case StoryStatus.inSprint:
+        return 0.1;
+      case StoryStatus.inProgress:
+        return 0.1; // Reduced from 0.5 to 0.1 as requested
+      case StoryStatus.inReview:
+        return 0.8;
+      case StoryStatus.done:
+        return 1.0;
+    }
+  }
+
+  String _getProgressTooltip(BuildContext context) {
+     final l10n = AppLocalizations.of(context)!;
+     
+     if (widget.story.customProgress != null) {
+       return l10n.agileProgressTooltipManual(widget.story.customProgress!);
+     }
+     
+     if (widget.story.acceptanceCriteria.isNotEmpty) {
+       return l10n.agileProgressTooltipCriteria(
+         widget.story.completedAcceptanceCriteria,
+         widget.story.acceptanceCriteria.length
+       );
+     }
+     
+     // Status based
+     return l10n.agileProgressTooltipStatus(widget.story.status.displayName);
   }
 }
 
