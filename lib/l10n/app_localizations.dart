@@ -20075,6 +20075,48 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Avvia Sprint per vedere le storie attive'**
   String get agileStartSprintHint;
+
+  /// No description provided for @workflowTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Flusso di Lavoro'**
+  String get workflowTitle;
+
+  /// No description provided for @workflowShowButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra Flusso'**
+  String get workflowShowButton;
+
+  /// No description provided for @workflowDiagramTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Diagramma Flusso Stati'**
+  String get workflowDiagramTitle;
+
+  /// No description provided for @workflowLegend.
+  ///
+  /// In it, this message translates to:
+  /// **'Legenda Stati'**
+  String get workflowLegend;
+
+  /// No description provided for @workflowScrumDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'In Scrum, le storie fluiscono attraverso Sprint Planning, Sviluppo, Review e Done. Il flusso è iterativo con sprint a tempo definito.'**
+  String get workflowScrumDesc;
+
+  /// No description provided for @workflowKanbanDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'In Kanban, il lavoro fluisce continuamente. Le storie vengono tirate (pull) nel sistema in base ai limiti WIP e alla capacità.'**
+  String get workflowKanbanDesc;
+
+  /// No description provided for @workflowHybridDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.'**
+  String get workflowHybridDesc;
 }
 
 class _AppLocalizationsDelegate

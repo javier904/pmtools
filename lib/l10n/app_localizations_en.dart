@@ -11070,4 +11070,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileStartSprintHint => 'Start Sprint to see active stories';
+
+  @override
+  String get workflowTitle => 'Story Workflow';
+
+  @override
+  String get workflowShowButton => 'Show Workflow';
+
+  @override
+  String get workflowDiagramTitle => 'Status Flow Diagram';
+
+  @override
+  String get workflowLegend => 'Status Legend';
+
+  @override
+  String get workflowScrumDesc =>
+      'In Scrum, stories flow through Sprint Planning, Development, Review, and Done. The flow is iterative with time-boxed sprints.';
+
+  @override
+  String get workflowKanbanDesc =>
+      'In Kanban, work flows continuously. Stories are pulled through the system based on WIP limits and capacity.';
+
+  @override
+  String get workflowHybridDesc =>
+      'Hybrid combines Scrum sprints with Kanban flow. Stories can be pulled continuously or planned in sprints.';
 }

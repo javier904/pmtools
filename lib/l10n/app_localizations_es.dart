@@ -11159,4 +11159,28 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get agileStartSprintHint =>
       'Inicia el Sprint para ver las historias activas';
+
+  @override
+  String get workflowTitle => 'Flusso di Lavoro';
+
+  @override
+  String get workflowShowButton => 'Mostra Flusso';
+
+  @override
+  String get workflowDiagramTitle => 'Diagramma Flusso Stati';
+
+  @override
+  String get workflowLegend => 'Legenda Stati';
+
+  @override
+  String get workflowScrumDesc =>
+      'In Scrum, le storie fluiscono attraverso Sprint Planning, Sviluppo, Review e Done. Il flusso è iterativo con sprint a tempo definito.';
+
+  @override
+  String get workflowKanbanDesc =>
+      'In Kanban, il lavoro fluisce continuamente. Le storie vengono tirate (pull) nel sistema in base ai limiti WIP e alla capacità.';
+
+  @override
+  String get workflowHybridDesc =>
+      'Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.';
 }

@@ -9,6 +9,7 @@ import '../../services/secure_storage_service.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'story_card_widget.dart';
+import 'story_workflow_dialog.dart';
 
 /// Kanban Board con drag & drop tra colonne e supporto WIP limits
 ///
@@ -95,8 +96,28 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Column(
       children: [
+        // Workflow button (top-right)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton.icon(
+                onPressed: () => StoryWorkflowDialog.show(context, widget.framework),
+                icon: const Icon(Icons.route, size: 18),
+                label: Text(l10n.workflowShowButton),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
         // Header con info framework
         if (_features.hasWipLimits) _buildWipInfoBanner(),
 
