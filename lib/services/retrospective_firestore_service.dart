@@ -90,15 +90,19 @@ class RetrospectiveFirestoreService {
   }
 
   /// Stream di tutte le retrospettive di un progetto
-  Stream<List<RetrospectiveModel>> streamProjectRetrospectives(String projectId) {
+  /// Stream di tutte le retrospettive di un progetto
+  Stream<List<RetrospectiveModel>> streamProjectRetrospectives(String projectId, String userEmail) {
     return _retrosCollection
         .where('projectId', isEqualTo: projectId)
-        .orderBy('createdAt', descending: true)
+        .where('participantEmails', arrayContains: userEmail)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
+      final list = snapshot.docs
           .map((doc) => RetrospectiveModel.fromFirestore(doc))
           .toList();
+      // Client-side sort
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list;
     });
   }
 

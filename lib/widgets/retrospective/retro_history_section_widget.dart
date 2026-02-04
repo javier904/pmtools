@@ -204,6 +204,20 @@ class RetroHistorySectionWidget extends StatelessWidget {
                 ),
 
               const SizedBox(width: 8),
+
+              // Delete button
+              if (onDeleteRetro != null)
+                Tooltip(
+                  message: l10n.actionDelete,
+                  child: IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.red[400], size: 20),
+                    onPressed: () => onDeleteRetro!(retro),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+
+              const SizedBox(width: 8),
               Icon(Icons.chevron_right, color: Colors.grey[400]),
             ],
           ),

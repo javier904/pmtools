@@ -2125,23 +2125,75 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contextualHelpRetroDescScrum =>
-      'La retrospettiva è un momento per riflettere su cosa è andato bene e cosa migliorare.';
+      'La retrospettiva è un motore di miglioramento continuo progettato per trasformare i feedback del team in una crescita misurabile attraverso 4 aree distinte.';
 
   @override
   String get contextualHelpRetroDescKanban =>
-      'In Kanban, la retrospettiva (Operations Review) è un momento per analizzare il processo.';
+      'In Kanban, la Retrospettiva (Operations Review) si concentra sull\'analisi del flusso di consegna, identificando i colli di bottiglia e ottimizzando i lead time.';
+
+  @override
+  String get contextualHelpRetroTabActiveTitle => 'Tab Active: Sessione Core';
+
+  @override
+  String get contextualHelpRetroTabActive =>
+      'Gestisci i brainstorm correnti. Durante la fase \'Writing\', le card sono nascoste per evitare l\'ancoraggio (anchoring bias). Usa la funzione \'Carry Forward\' all\'inizio di una sessione per selezionare i miglioramenti non risolti dai cicli precedenti e mantenere lo slancio.';
+
+  @override
+  String get contextualHelpRetroTabHistoryTitle =>
+      'Tab History: Trend & Insight';
+
+  @override
+  String get contextualHelpRetroTabHistory =>
+      'Revisiona le sessioni completate tramite un grafico dei trend. Analizza il \'Sentiment del Team\' (felicità) rispetto al \'Tasso di Completamento\' (efficacia). Se il sentiment è alto ma il completamento basso, focalizzati sul rendere le azioni più raggiungibili.';
+
+  @override
+  String get contextualHelpRetroTabActionItemsTitle => 'Action Items Tracker';
+
+  @override
+  String get contextualHelpRetroTabActionItems =>
+      'Dashboard di esecuzione strategica. Ogni azione dovrebbe seguire i criteri SMART (Specifico, Misurabile, Raggiungibile, Rilevante, Temporizzato). Usa i filtri per verificare gli item scaduti durante i check-in di metà sprint.';
+
+  @override
+  String get contextualHelpRetroTabLessonsLearnedTitle =>
+      'Lessons Learned register';
+
+  @override
+  String get contextualHelpRetroTabLessonsLearned =>
+      'Repository in stile PMBOK per la conoscenza istituzionale. Mentre gli Action Item sono tattici (risolvi ora), le Lessons Learned sono strategiche (non ripetere mai più l\'errore). Usa l\'import per sfruttare i successi da altri progetti.';
+
+  @override
+  String get contextualHelpRetroIntegrationTitle => 'Il Ciclo di Miglioramento';
+
+  @override
+  String get contextualHelpRetroIntegration =>
+      'Le card del board vengono distillate in Action Item. Questi item sono tracciati nella dashboard e il loro tasso di completamento alimenta i trend della History, mentre i pattern ricorrenti vengono formalizzati come Lessons Learned.';
+
+  @override
+  String get contextualHelpRetroModeQuickTitle =>
+      'Quick Form vs Board Interattiva';
+
+  @override
+  String get contextualHelpRetroModeQuick =>
+      'La Quick Form permette a un singolo utente di registrare highlight e Action Item direttamente. Usala se il brainstorming è avvenuto offline o se devi registrare rapidamente un riassunto. Effetto: Popola direttamente History e Action Item senza collaborazione in tempo reale.';
+
+  @override
+  String get contextualHelpRetroModeInteractiveTitle => 'Sessione Interattiva';
+
+  @override
+  String get contextualHelpRetroModeInteractive =>
+      'Guida il team attraverso Icebreaker, Brainstorming (Scrittura), Raggruppamento e Votazione. Effetto: Garantisce che la voce di tutti sia ascoltata, riduce i bias tramite card nascoste durante la scrittura e crea consenso sui miglioramenti prioritari.';
 
   @override
   String get contextualHelpRetroTip1 =>
-      'Focalizzati su azioni concrete e misurabili';
+      'Assegna un proprietario chiaro e una scadenza a ogni Action Item';
 
   @override
   String get contextualHelpRetroTip2 =>
-      'Celebra i successi, non solo i problemi';
+      'Celebra i \'Punti di Forza\' nel tab Lessons Learned per costruire su ciò che funziona';
 
   @override
   String get contextualHelpRetroTip3 =>
-      'Porta le azioni nella prossima iterazione';
+      'Usa la \'Quick Form\' per digitalizzare i risultati di workshop fisici o riunioni di stato ad alto livello';
 
   @override
   String get retroStatusCompleted => 'Completada';
@@ -7914,6 +7966,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retroDeletedSuccess => 'Retrospectiva eliminada con éxito';
+
+  @override
+  String retroDeleteActionItemsWarning(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Questo eliminerà anche $count action item collegati.',
+      one: 'Questo eliminerà anche 1 action item collegato.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get actionIrreversible => 'Questa azione non può essere annullata.';
+
+  @override
+  String get lessonsLearnedSearchPlaceholder => 'Cerca lezioni...';
 
   @override
   String errorPrefix(String error) {

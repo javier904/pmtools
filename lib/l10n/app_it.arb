@@ -877,11 +877,25 @@
   "contextualHelpMetricsTipHybrid1": "Bilancia velocity e flow metrics",
   "contextualHelpMetricsTipHybrid2": "Adatta le metriche al tuo modo di lavorare",
   "contextualHelpRetroTitle": "Retrospettiva",
-  "contextualHelpRetroDescScrum": "La retrospettiva è un momento per riflettere su cosa è andato bene e cosa migliorare.",
-  "contextualHelpRetroDescKanban": "In Kanban, la retrospettiva (Operations Review) è un momento per analizzare il processo.",
-  "contextualHelpRetroTip1": "Focalizzati su azioni concrete e misurabili",
-  "contextualHelpRetroTip2": "Celebra i successi, non solo i problemi",
-  "contextualHelpRetroTip3": "Porta le azioni nella prossima iterazione",
+  "contextualHelpRetroDescScrum": "La retrospettiva è un motore di miglioramento continuo progettato per trasformare i feedback del team in una crescita misurabile attraverso 4 aree distinte.",
+  "contextualHelpRetroDescKanban": "In Kanban, la Retrospettiva (Operations Review) si concentra sull'analisi del flusso di consegna, identificando i colli di bottiglia e ottimizzando i lead time.",
+  "contextualHelpRetroTabActiveTitle": "Tab Active: Sessione Core",
+  "contextualHelpRetroTabActive": "Gestisci i brainstorm correnti. Durante la fase 'Writing', le card sono nascoste per evitare l'ancoraggio (anchoring bias). Usa la funzione 'Carry Forward' all'inizio di una sessione per selezionare i miglioramenti non risolti dai cicli precedenti e mantenere lo slancio.",
+  "contextualHelpRetroTabHistoryTitle": "Tab History: Trend & Insight",
+  "contextualHelpRetroTabHistory": "Revisiona le sessioni completate tramite un grafico dei trend. Analizza il 'Sentiment del Team' (felicità) rispetto al 'Tasso di Completamento' (efficacia). Se il sentiment è alto ma il completamento basso, focalizzati sul rendere le azioni più raggiungibili.",
+  "contextualHelpRetroTabActionItemsTitle": "Action Items Tracker",
+  "contextualHelpRetroTabActionItems": "Dashboard di esecuzione strategica. Ogni azione dovrebbe seguire i criteri SMART (Specifico, Misurabile, Raggiungibile, Rilevante, Temporizzato). Usa i filtri per verificare gli item scaduti durante i check-in di metà sprint.",
+  "contextualHelpRetroTabLessonsLearnedTitle": "Lessons Learned register",
+  "contextualHelpRetroTabLessonsLearned": "Repository in stile PMBOK per la conoscenza istituzionale. Mentre gli Action Item sono tattici (risolvi ora), le Lessons Learned sono strategiche (non ripetere mai più l'errore). Usa l'import per sfruttare i successi da altri progetti.",
+  "contextualHelpRetroIntegrationTitle": "Il Ciclo di Miglioramento",
+  "contextualHelpRetroIntegration": "Le card del board vengono distillate in Action Item. Questi item sono tracciati nella dashboard e il loro tasso di completamento alimenta i trend della History, mentre i pattern ricorrenti vengono formalizzati come Lessons Learned.",
+  "contextualHelpRetroModeQuickTitle": "Quick Form vs Board Interattiva",
+  "contextualHelpRetroModeQuick": "La Quick Form permette a un singolo utente di registrare highlight e Action Item direttamente. Usala se il brainstorming è avvenuto offline o se devi registrare rapidamente un riassunto. Effetto: Popola direttamente History e Action Item senza collaborazione in tempo reale.",
+  "contextualHelpRetroModeInteractiveTitle": "Sessione Interattiva",
+  "contextualHelpRetroModeInteractive": "Guida il team attraverso Icebreaker, Brainstorming (Scrittura), Raggruppamento e Votazione. Effetto: Garantisce che la voce di tutti sia ascoltata, riduce i bias tramite card nascoste durante la scrittura e crea consenso sui miglioramenti prioritari.",
+  "contextualHelpRetroTip1": "Assegna un proprietario chiaro e una scadenza a ogni Action Item",
+  "contextualHelpRetroTip2": "Celebra i 'Punti di Forza' nel tab Lessons Learned per costruire su ciò che funziona",
+  "contextualHelpRetroTip3": "Usa la 'Quick Form' per digitalizzare i risultati di workshop fisici o riunioni di stato ad alto livello",
 
   "retroStatusCompleted": "Completata",
   "profileIntegrations": "Integrazioni",
@@ -3733,6 +3747,16 @@
   },
   "retroDeletePermanently": "Elimina definitivamente",
   "retroDeletedSuccess": "Retrospettiva eliminata con successo",
+  "retroDeleteActionItemsWarning": "{count, plural, one{Questo eliminerà anche 1 action item collegato.} other{Questo eliminerà anche {count} action item collegati.}}",
+  "@retroDeleteActionItemsWarning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionIrreversible": "Questa azione non può essere annullata.",
+  "lessonsLearnedSearchPlaceholder": "Cerca lezioni...",
   "errorPrefix": "Errore: {error}",
   "@errorPrefix": {
     "placeholders": {

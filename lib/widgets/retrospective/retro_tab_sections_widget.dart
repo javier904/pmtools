@@ -91,6 +91,7 @@ class _RetroTabSectionsWidgetState extends State<RetroTabSectionsWidget>
                 currentUserEmail: widget.currentUserEmail,
                 onCreateNew: widget.onCreateNew,
                 onTapRetro: widget.onTapRetro,
+                onDeleteRetro: widget.onDeleteRetro,
               ),
               // History Tab
               RetroHistorySectionWidget(

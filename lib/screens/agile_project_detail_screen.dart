@@ -114,7 +114,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     _projectStream = _firestoreService.streamProject(widget.project.id);
     _storiesStream = _firestoreService.streamProjectStories(widget.project.id);
     _sprintsStream = _firestoreService.streamProjectSprints(widget.project.id);
-    _retrosStream = _retroService.streamProjectRetrospectives(widget.project.id);
+    _retrosStream = _retroService.streamProjectRetrospectives(widget.project.id, _currentUserEmail);
 
     // Ripara silenziosamente dati storici mancanti
     _firestoreService.repairProjectSprints(widget.project.id);
@@ -3028,30 +3028,72 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   void _confirmDeleteRetro(RetrospectiveModel retro) {
+    final l10n = AppLocalizations.of(context)!;
+    final actionCount = retro.actionItems.length;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Retrospettiva'),
-        content: Text(
-            'Sei sicuro di voler eliminare definitivamente la retrospettiva "${retro.sprintName}"?\n\nQuesta azione è irreversibile e cancellerà tutti i dati associati.'),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.red[400]),
+            const SizedBox(width: 8),
+            Text(l10n.retroDeleteTitle),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.retroDeleteConfirm(retro.sprintName)),
+            if (actionCount > 0) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.assignment_late, color: Colors.orange, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.retroDeleteActionItemsWarning(actionCount),
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 12),
+            Text(
+              l10n.actionIrreversible,
+              style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla'),
+            child: Text(l10n.actionCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               final messenger = ScaffoldMessenger.of(context);
-              Navigator.pop(context); // Close dialog
+              Navigator.pop(context);
               try {
                 await _retroService.deleteRetrospective(retro.id);
-                messenger.showSnackBar(const SnackBar(content: Text('Retrospettiva eliminata')));
+                messenger.showSnackBar(SnackBar(content: Text(l10n.retroDeletedSuccess)));
               } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Errore durante l\'eliminazione: $e')));
+                messenger.showSnackBar(SnackBar(content: Text('${l10n.stateError}: $e')));
               }
             },
-            child: const Text('Elimina', style: TextStyle(color: Colors.white)),
+            child: Text(l10n.actionDelete, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -3511,7 +3553,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     final actionItems = <String>[];
 
     // Calcola il numero della review basandosi sulle retro esistenti
-    final existingRetros = await _retroService.streamProjectRetrospectives(widget.project.id).first;
+    final existingRetros = await _retroService.streamProjectRetrospectives(widget.project.id, _currentUserEmail).first;
     final reviewNumber = existingRetros.length + 1;
 
     if (!mounted) return;

@@ -106,6 +106,29 @@ class ContextualHelpButton extends StatelessWidget {
                     ),
                   )),
                 ],
+
+                if (help.sections != null && help.sections!.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  ...help.sections!.entries.map((entry) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          entry.key,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          entry.value,
+                          style: TextStyle(fontSize: 13, color: Colors.grey[700], height: 1.4),
+                        ),
+                      ],
+                    ),
+                  )),
+                ],
               ],
             ),
           ),
@@ -126,6 +149,7 @@ class ContextualHelpContent {
   final String title;
   final String description;
   final List<String> tips;
+  final Map<String, String>? sections; // New: Title -> Description
   final IconData icon;
   final Color color;
 
@@ -133,6 +157,7 @@ class ContextualHelpContent {
     required this.title,
     required this.description,
     required this.tips,
+    this.sections,
     required this.icon,
     required this.color,
   });
@@ -264,6 +289,15 @@ class ContextualHelp {
       description: framework == AgileFramework.kanban
           ? l10n.contextualHelpRetroDescKanban
           : l10n.contextualHelpRetroDescScrum,
+      sections: {
+        l10n.contextualHelpRetroTabActiveTitle: l10n.contextualHelpRetroTabActive,
+        l10n.contextualHelpRetroModeInteractiveTitle: l10n.contextualHelpRetroModeInteractive,
+        l10n.contextualHelpRetroModeQuickTitle: l10n.contextualHelpRetroModeQuick,
+        l10n.contextualHelpRetroTabHistoryTitle: l10n.contextualHelpRetroTabHistory,
+        l10n.contextualHelpRetroTabActionItemsTitle: l10n.contextualHelpRetroTabActionItems,
+        l10n.contextualHelpRetroTabLessonsLearnedTitle: l10n.contextualHelpRetroTabLessonsLearned,
+        l10n.contextualHelpRetroIntegrationTitle: l10n.contextualHelpRetroIntegration,
+      },
       tips: [
         l10n.contextualHelpRetroTip1,
         l10n.contextualHelpRetroTip2,

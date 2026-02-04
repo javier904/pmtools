@@ -341,7 +341,7 @@ class _ActionItemsTrackerWidgetState extends State<ActionItemsTrackerWidget> {
       constraints: const BoxConstraints(maxWidth: 220),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).dividerColor),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButtonHideUnderline(

@@ -13,6 +13,7 @@ class RetroActiveSectionWidget extends StatelessWidget {
   final String currentUserEmail;
   final VoidCallback onCreateNew;
   final Function(RetrospectiveModel) onTapRetro;
+  final Function(RetrospectiveModel)? onDeleteRetro;
 
   const RetroActiveSectionWidget({
     super.key,
@@ -20,6 +21,7 @@ class RetroActiveSectionWidget extends StatelessWidget {
     required this.currentUserEmail,
     required this.onCreateNew,
     required this.onTapRetro,
+    this.onDeleteRetro,
   });
 
   @override
@@ -39,7 +41,35 @@ class RetroActiveSectionWidget extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: _buildActiveRetroCard(context, activeRetro, l10n),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (activeRetros.length > 1)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.amber.shade700),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.warning_amber_rounded, size: 16, color: Colors.amber.shade700),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Found ${activeRetros.length} active retrospectives. Showing the most recent.',
+                            style: TextStyle(color: Colors.amber.shade900, fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                _buildActiveRetroCard(context, activeRetro, l10n),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -96,6 +126,13 @@ class RetroActiveSectionWidget extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (onDeleteRetro != null)
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.red[400]),
+                    tooltip: l10n.actionDelete,
+                    onPressed: () => onDeleteRetro!(retro),
+                  ),
+                const SizedBox(width: 8),
                 ElevatedButton.icon(
                   onPressed: () => onTapRetro(retro),
                   icon: const Icon(Icons.arrow_forward),

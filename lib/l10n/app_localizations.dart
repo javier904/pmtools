@@ -3905,31 +3905,115 @@ abstract class AppLocalizations {
   /// No description provided for @contextualHelpRetroDescScrum.
   ///
   /// In it, this message translates to:
-  /// **'La retrospettiva è un momento per riflettere su cosa è andato bene e cosa migliorare.'**
+  /// **'La retrospettiva è un motore di miglioramento continuo progettato per trasformare i feedback del team in una crescita misurabile attraverso 4 aree distinte.'**
   String get contextualHelpRetroDescScrum;
 
   /// No description provided for @contextualHelpRetroDescKanban.
   ///
   /// In it, this message translates to:
-  /// **'In Kanban, la retrospettiva (Operations Review) è un momento per analizzare il processo.'**
+  /// **'In Kanban, la Retrospettiva (Operations Review) si concentra sull\'analisi del flusso di consegna, identificando i colli di bottiglia e ottimizzando i lead time.'**
   String get contextualHelpRetroDescKanban;
+
+  /// No description provided for @contextualHelpRetroTabActiveTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Tab Active: Sessione Core'**
+  String get contextualHelpRetroTabActiveTitle;
+
+  /// No description provided for @contextualHelpRetroTabActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisci i brainstorm correnti. Durante la fase \'Writing\', le card sono nascoste per evitare l\'ancoraggio (anchoring bias). Usa la funzione \'Carry Forward\' all\'inizio di una sessione per selezionare i miglioramenti non risolti dai cicli precedenti e mantenere lo slancio.'**
+  String get contextualHelpRetroTabActive;
+
+  /// No description provided for @contextualHelpRetroTabHistoryTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Tab History: Trend & Insight'**
+  String get contextualHelpRetroTabHistoryTitle;
+
+  /// No description provided for @contextualHelpRetroTabHistory.
+  ///
+  /// In it, this message translates to:
+  /// **'Revisiona le sessioni completate tramite un grafico dei trend. Analizza il \'Sentiment del Team\' (felicità) rispetto al \'Tasso di Completamento\' (efficacia). Se il sentiment è alto ma il completamento basso, focalizzati sul rendere le azioni più raggiungibili.'**
+  String get contextualHelpRetroTabHistory;
+
+  /// No description provided for @contextualHelpRetroTabActionItemsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Action Items Tracker'**
+  String get contextualHelpRetroTabActionItemsTitle;
+
+  /// No description provided for @contextualHelpRetroTabActionItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Dashboard di esecuzione strategica. Ogni azione dovrebbe seguire i criteri SMART (Specifico, Misurabile, Raggiungibile, Rilevante, Temporizzato). Usa i filtri per verificare gli item scaduti durante i check-in di metà sprint.'**
+  String get contextualHelpRetroTabActionItems;
+
+  /// No description provided for @contextualHelpRetroTabLessonsLearnedTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Lessons Learned register'**
+  String get contextualHelpRetroTabLessonsLearnedTitle;
+
+  /// No description provided for @contextualHelpRetroTabLessonsLearned.
+  ///
+  /// In it, this message translates to:
+  /// **'Repository in stile PMBOK per la conoscenza istituzionale. Mentre gli Action Item sono tattici (risolvi ora), le Lessons Learned sono strategiche (non ripetere mai più l\'errore). Usa l\'import per sfruttare i successi da altri progetti.'**
+  String get contextualHelpRetroTabLessonsLearned;
+
+  /// No description provided for @contextualHelpRetroIntegrationTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Il Ciclo di Miglioramento'**
+  String get contextualHelpRetroIntegrationTitle;
+
+  /// No description provided for @contextualHelpRetroIntegration.
+  ///
+  /// In it, this message translates to:
+  /// **'Le card del board vengono distillate in Action Item. Questi item sono tracciati nella dashboard e il loro tasso di completamento alimenta i trend della History, mentre i pattern ricorrenti vengono formalizzati come Lessons Learned.'**
+  String get contextualHelpRetroIntegration;
+
+  /// No description provided for @contextualHelpRetroModeQuickTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Quick Form vs Board Interattiva'**
+  String get contextualHelpRetroModeQuickTitle;
+
+  /// No description provided for @contextualHelpRetroModeQuick.
+  ///
+  /// In it, this message translates to:
+  /// **'La Quick Form permette a un singolo utente di registrare highlight e Action Item direttamente. Usala se il brainstorming è avvenuto offline o se devi registrare rapidamente un riassunto. Effetto: Popola direttamente History e Action Item senza collaborazione in tempo reale.'**
+  String get contextualHelpRetroModeQuick;
+
+  /// No description provided for @contextualHelpRetroModeInteractiveTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sessione Interattiva'**
+  String get contextualHelpRetroModeInteractiveTitle;
+
+  /// No description provided for @contextualHelpRetroModeInteractive.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida il team attraverso Icebreaker, Brainstorming (Scrittura), Raggruppamento e Votazione. Effetto: Garantisce che la voce di tutti sia ascoltata, riduce i bias tramite card nascoste durante la scrittura e crea consenso sui miglioramenti prioritari.'**
+  String get contextualHelpRetroModeInteractive;
 
   /// No description provided for @contextualHelpRetroTip1.
   ///
   /// In it, this message translates to:
-  /// **'Focalizzati su azioni concrete e misurabili'**
+  /// **'Assegna un proprietario chiaro e una scadenza a ogni Action Item'**
   String get contextualHelpRetroTip1;
 
   /// No description provided for @contextualHelpRetroTip2.
   ///
   /// In it, this message translates to:
-  /// **'Celebra i successi, non solo i problemi'**
+  /// **'Celebra i \'Punti di Forza\' nel tab Lessons Learned per costruire su ciò che funziona'**
   String get contextualHelpRetroTip2;
 
   /// No description provided for @contextualHelpRetroTip3.
   ///
   /// In it, this message translates to:
-  /// **'Porta le azioni nella prossima iterazione'**
+  /// **'Usa la \'Quick Form\' per digitalizzare i risultati di workshop fisici o riunioni di stato ad alto livello'**
   String get contextualHelpRetroTip3;
 
   /// No description provided for @retroStatusCompleted.
@@ -14297,6 +14381,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Retrospettiva eliminata con successo'**
   String get retroDeletedSuccess;
+
+  /// No description provided for @retroDeleteActionItemsWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, one{Questo eliminerà anche 1 action item collegato.} other{Questo eliminerà anche {count} action item collegati.}}'**
+  String retroDeleteActionItemsWarning(int count);
+
+  /// No description provided for @actionIrreversible.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione non può essere annullata.'**
+  String get actionIrreversible;
+
+  /// No description provided for @lessonsLearnedSearchPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca lezioni...'**
+  String get lessonsLearnedSearchPlaceholder;
 
   /// No description provided for @errorPrefix.
   ///

@@ -31,11 +31,19 @@ class _LessonsLearnedSectionWidgetState
   LessonCategory? _selectedCategory;
   LessonType? _selectedType;
   bool? _resolvedFilter; // null = all, true = resolved, false = unresolved
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _lessonsStream = _service.streamProjectLessons(widget.projectId);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,6 +56,16 @@ class _LessonsLearnedSectionWidgetState
 
   List<LessonLearnedModel> _applyFilters(List<LessonLearnedModel> lessons) {
     return lessons.where((lesson) {
+      // Text search filter
+      if (_searchQuery.isNotEmpty) {
+        final query = _searchQuery.toLowerCase();
+        final titleMatch = lesson.title.toLowerCase().contains(query);
+        final descMatch = lesson.description.toLowerCase().contains(query);
+        final tagMatch = lesson.tags.any((tag) => tag.toLowerCase().contains(query));
+        if (!titleMatch && !descMatch && !tagMatch) {
+          return false;
+        }
+      }
       if (_selectedCategory != null && lesson.category != _selectedCategory) {
         return false;
       }
@@ -216,6 +234,43 @@ class _LessonsLearnedSectionWidgetState
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
+                  // Search field (compact)
+                  SizedBox(
+                    width: 180,
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: l10n.lessonsLearnedSearchPlaceholder,
+                        prefixIcon: const Icon(Icons.search, size: 18),
+                        suffixIcon: _searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, size: 16),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() => _searchQuery = '');
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              )
+                            : null,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                      ),
+                      style: const TextStyle(fontSize: 13),
+                      onChanged: (value) {
+                        setState(() => _searchQuery = value);
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(width: 16),
+
                   Icon(Icons.filter_list,
                       size: 18, color: Colors.grey.shade600),
                   const SizedBox(width: 8),
