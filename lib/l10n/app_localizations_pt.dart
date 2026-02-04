@@ -10453,7 +10453,48 @@ class AppLocalizationsPt extends AppLocalizations {
       'As horas sao uma referencia interna. Para o planejamento Scrum, use a visualizacao de Story Points.';
 
   @override
-  String get agileNoTeamMembers => 'Nenhum membro na equipe';
+  String agileWorkloadBalanceTooltip(String avg, String min, String max) {
+    return 'Media Team: $avg SP\nRange bilanciato: $min - $max SP\nLo status è basato sulla deviazione dalla media.';
+  }
+
+  @override
+  String get agileHealthTimeTooltip =>
+      'Giorni trascorsi / Totale giorni (basato su date Inizio/Fine).';
+
+  @override
+  String get agileHealthWorkTooltip =>
+      'Story Points completati su totalmente pianificati.';
+
+  @override
+  String get agileHealthProgressTooltip =>
+      'Numero di storie attualmente in lavorazione.';
+
+  @override
+  String get agileHealthDoneTooltip =>
+      'Storie completate su totale storie nello sprint.';
+
+  @override
+  String get agileHealthCommitmentTooltip =>
+      'Confiabilidade (Concluído/Planejado) com base em sprints anteriores.';
+
+  @override
+  String get agileHealthVelocityTooltip =>
+      'Média diária de Story Points concluídos neste sprint.';
+
+  @override
+  String get agileSprintScopeTooltip =>
+      'Acompanha as mudanças no escopo do sprint. \'Original\' são os pontos planejados quando o sprint começou, \'Atual\' são os pontos das histórias atualmente no sprint.';
+
+  @override
+  String get agileEstimationAccuracyTooltip =>
+      'Fórmula: (Pontos Concluídos / Pontos Planejados) x 100. Indica a confiabilidade da equipe em concluir o trabalho prometido no início do sprint.';
+
+  @override
+  String get agileCommitmentTrendTooltip =>
+      'Exibe a tendência de confiabilidade da equipe comparando Pontos Planejados vs Concluídos para cada sprint fechado.';
+
+  @override
+  String get agileNoTeamMembers => 'Sem membros da equipe';
 
   @override
   String get agileGmailAuthError =>
@@ -10520,6 +10561,53 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get average => 'Media';
+
+  @override
+  String get agileAvgVelocitySprint => 'Velocidade (Sprint)';
+
+  @override
+  String get agileAvgVelocityWeekly => 'Velocidade (Semanal)';
+
+  @override
+  String get agileAvgVelocitySprintTooltip =>
+      'Média de pontos de história concluídos por sprint.';
+
+  @override
+  String get agileAvgVelocityWeeklyTooltip =>
+      'Média de pontos de história concluídos por semana.';
+
+  @override
+  String get agileFiltersDoneTooltip =>
+      'Histórias concluídas ou de sprints fechados são arquivadas por padrão. Selecione este filtro para visualizá-las.';
+
+  @override
+  String agileBacklogDoneBadge(Object count) {
+    return '($count) Done';
+  }
+
+  @override
+  String get agileBacklogDoneBadgeTooltip =>
+      'Estas histórias estão ocultas por padrão. Use o filtro de status \'Done\' para visualizá-las.';
+
+  @override
+  String get agileFlowEfficiencyTooltip =>
+      'Fórmula: (Cycle Time / Lead Time) x 100. Representa a porcentagem de tempo que o trabalho está \'ativo\' em relação ao tempo total no sistema.';
+
+  @override
+  String get getAgileFlowCycleTimeTooltip =>
+      'Tempo médio para concluir uma história a partir do momento em que é iniciada (In Progress).';
+
+  @override
+  String get agileFlowLeadTimeTooltip =>
+      'Tempo médio total desde a criação da história até a sua conclusão (Done).';
+
+  @override
+  String get agileFlowWipTooltip =>
+      'Work In Progress: número di histórias em que se está trabalhando atualmente (excluindo Backlog e Done).';
+
+  @override
+  String get agileBlockedItemsTooltip =>
+      'Storie che hanno delle dipendenze non soddisfatte (altre storie non ancora completate).';
 
   @override
   String agileItemsCount(int count) {
@@ -10654,7 +10742,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get agileSprintReviewSaveSuccess => 'Sprint Review salva';
 
   @override
-  String get agileEstimationAccuracy => 'Precisao das Estimativas';
+  String get agileEstimationAccuracy => 'Confiabilidade do Planejamento';
 
   @override
   String get agileCompleteOneSprintFirst => 'Conclua pelo menos um sprint';

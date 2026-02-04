@@ -115,6 +115,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     _storiesStream = _firestoreService.streamProjectStories(widget.project.id);
     _sprintsStream = _firestoreService.streamProjectSprints(widget.project.id);
     _retrosStream = _retroService.streamProjectRetrospectives(widget.project.id);
+
+    // Ripara silenziosamente dati storici mancanti
+    _firestoreService.repairProjectSprints(widget.project.id);
   }
 
   @override
@@ -542,11 +545,16 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               await _firestoreService.updateSprint(widget.project.id, updatedSprint);
            }
         } else if (story.sprintId != null && story.storyPoints != result.storyPoints) {
-           // Same sprint, but points changed -> update planned points
+           // Same sprint, but points changed
            final sprint = _sprints.firstWhere((s) => s.id == story.sprintId);
            final diff = (result.storyPoints ?? 0) - (story.storyPoints ?? 0);
+           
+           // Update plannedPoints ONLY if in planning. 
+           // If active, it stays as original baseline (delta will show the change).
            final updatedSprint = sprint.copyWith(
-             plannedPoints: (sprint.plannedPoints + diff).clamp(0, 9999),
+             plannedPoints: sprint.isPlanning 
+                ? (sprint.plannedPoints + diff).clamp(0, 9999) 
+                : sprint.plannedPoints,
            );
            await _firestoreService.updateSprint(widget.project.id, updatedSprint);
         }
@@ -614,9 +622,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       String? newSprintId = story.sprintId;
       
       // FIX: If moving to Backlog/Refinement/Ready, remove from Sprint
+      // FIX: Only remove from sprint if moving to deep backlog/refinement.
+      // 'Ready' stories can be part of a sprint (Scrum: 'Sprint Backlog' column).
       if (status == StoryStatus.backlog || 
-          status == StoryStatus.refinement || 
-          status == StoryStatus.ready) {
+          status == StoryStatus.refinement) {
         newSprintId = null;
       }
 
@@ -638,16 +647,19 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
          }
       }
 
-      final updated = story.copyWith(
-        status: status,
-        sprintId: newSprintId,
-        startedAt: status == StoryStatus.inProgress && story.startedAt == null
-            ? DateTime.now()
-            : story.startedAt,
-        completedAt: status == StoryStatus.done ? DateTime.now() : story.completedAt,
-      );
-      
-      await _firestoreService.updateStory(widget.project.id, updated);
+      // 3. Update story status using specialized service method (Stopwatch logic)
+    await _firestoreService.updateStoryStatus(
+      widget.project.id, 
+      story.id, 
+      status, 
+      sprintId: newSprintId,
+    );
+    
+    // For local logic below, we still need an 'updated' object representing the new state
+    final updated = story.copyWith(
+      status: status,
+      sprintId: newSprintId,
+    );
       
       // Handle Sprint updates (add/remove)
       
@@ -1073,7 +1085,14 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
        
        // 3. Compare with stored values
        bool needsUpdate = false;
-       if (sprint.plannedPoints != plannedPoints) needsUpdate = true;
+       
+       // IMPORTANT: We only reconcile plannedPoints if it's 0 (broken) or if we are in Planning.
+       // If the sprint is ACTIVE, plannedPoints is the FROZEN baseline.
+       final targetPlannedPoints = (sprint.plannedPoints == 0 || sprint.isPlanning) 
+           ? plannedPoints 
+           : sprint.plannedPoints;
+
+       if (sprint.plannedPoints != targetPlannedPoints) needsUpdate = true;
        if (sprint.completedPoints != completedPoints) needsUpdate = true;
        
        // Check if IDs list matches (ignoring order)
@@ -1088,12 +1107,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
        // 4. Update if needed
        if (needsUpdate) {
           final correctedSprint = sprint.copyWith(
-             plannedPoints: plannedPoints,
+             plannedPoints: targetPlannedPoints,
              completedPoints: completedPoints,
              storyIds: actualIds,
           );
           await _firestoreService.updateSprint(widget.project.id, correctedSprint);
-          print('🔧 Sprint corrected: ${sprint.name} (Pts: ${sprint.plannedPoints} -> $plannedPoints)');
+          print('🔧 Sprint corrected: ${sprint.name} (Pts: ${sprint.plannedPoints} -> $targetPlannedPoints)');
        }
      } catch (e) {
        print('Error reconciling sprint: $e');
@@ -1918,17 +1937,23 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
     if (confirmed == true && mounted) {
       try {
-        // Calcola velocity = completedPoints / durata in settimane
-        final durationWeeks = sprint.endDate.difference(sprint.startDate).inDays / 7;
-        final velocity = durationWeeks > 0
-            ? actualCompletedPoints / durationWeeks
-            : actualCompletedPoints.toDouble();
+        // Calcola velocity STANDARD (punti completati totali nello sprint)
+        // La velocity settimanale viene calcolata dinamicamente nella dashboard.
+        final velocity = actualCompletedPoints.toDouble();
+
+        // Backfill plannedPoints se mancanti (per fix storico metrica commitment)
+        int? backfillPlannedPoints;
+        if (sprint.plannedPoints == 0) {
+          backfillPlannedPoints = sprintStories.fold<int>(
+              0, (sum, s) => sum + (s.storyPoints ?? 0));
+        }
 
         await _firestoreService.completeSprint(
           widget.project.id,
           sprint.id,
           completedPoints: actualCompletedPoints,
           velocity: velocity,
+          plannedPoints: backfillPlannedPoints,
         );
 
         // Riporta stories incomplete nel backlog
@@ -2919,16 +2944,25 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           ),
           const SizedBox(height: 16),
 
-          // Flow Efficiency & WIP Analysis
-          FlowEfficiencyWidget(
-            stories: _stories,
-          ),
-          const SizedBox(height: 16),
-
-          // Blocked Items
-          BlockedItemsWidget(
-            stories: _stories,
-            currentSprint: activeSprint,
+          // Flow Metrics Row (Efficiency & WIP + Blocked Items)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Flow Efficiency & WIP Analysis
+              Expanded(
+                child: FlowEfficiencyWidget(
+                  stories: _stories,
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Blocked Items
+              Expanded(
+                child: BlockedItemsWidget(
+                  stories: _stories,
+                  currentSprint: activeSprint,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
 

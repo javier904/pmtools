@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 
 import '../../l10n/app_localizations.dart';
 import '../../models/agile_enums.dart';
@@ -150,7 +150,7 @@ class SprintHealthCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     if (currentSprint == null) {
@@ -181,7 +181,7 @@ class SprintHealthCardWidget extends StatelessWidget {
             Icon(
               Icons.timer_off_outlined,
               size: 48,
-              color: theme.colorScheme.onSurface.withOpacity(0.38),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
             ),
             const SizedBox(height: 12),
             Text(
@@ -194,7 +194,7 @@ class SprintHealthCardWidget extends StatelessWidget {
             Text(
               l10n.agileSprintHealthNoSprintDesc,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -278,7 +278,7 @@ class SprintHealthCardWidget extends StatelessWidget {
         Text(
           l10n.agileSprintHealthTitle,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -299,7 +299,7 @@ class SprintHealthCardWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: statusColor.withOpacity(0.15),
+            color: statusColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -325,7 +325,7 @@ class SprintHealthCardWidget extends StatelessWidget {
         Text(
           '${l10n.agileSprintHealthGoal}: ',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -333,7 +333,7 @@ class SprintHealthCardWidget extends StatelessWidget {
           child: Text(
             goal,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               fontStyle: FontStyle.italic,
             ),
             maxLines: 2,
@@ -369,6 +369,7 @@ class SprintHealthCardWidget extends StatelessWidget {
             subtitle: '${sprint.daysRemaining} ${l10n.agileSprintHealthDaysLeft}',
             color: theme.colorScheme.primary,
             theme: theme,
+            tooltip: l10n.agileHealthTimeTooltip, // Nuova chiave
           ),
         ),
         const SizedBox(width: 16),
@@ -382,6 +383,7 @@ class SprintHealthCardWidget extends StatelessWidget {
                 '$remaining ${l10n.agileSprintHealthSpRemaining}',
             color: AppColors.success,
             theme: theme,
+            tooltip: l10n.agileHealthWorkTooltip, // Nuova chiave
           ),
         ),
       ],
@@ -395,16 +397,19 @@ class SprintHealthCardWidget extends StatelessWidget {
     required String subtitle,
     required Color color,
     required ThemeData theme,
+    String? tooltip, // Nuovo parametro opzionale
   }) {
     const double size = 72;
     const double strokeWidth = 6;
 
-    return Column(
+    return Tooltip(
+      message: tooltip ?? '',
+      child: Column(
       children: [
         Text(
           label,
           style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -422,7 +427,7 @@ class SprintHealthCardWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: 1.0,
                   strokeWidth: strokeWidth,
-                  color: theme.colorScheme.onSurface.withOpacity(0.08),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 ),
               ),
               // Foreground progress
@@ -451,12 +456,12 @@ class SprintHealthCardWidget extends StatelessWidget {
         Text(
           subtitle,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           textAlign: TextAlign.center,
         ),
       ],
-    );
+    ));
   }
 
   // ---------------------------------------------------------------------------
@@ -472,19 +477,8 @@ class SprintHealthCardWidget extends StatelessWidget {
     final doneCount = _storiesDoneCount(sprint);
     final commitment = _commitmentReliability();
     final velocity = sprint.dailyVelocity;
-    final prediction = sprint.predictedCompletionDate;
 
-    // Format prediction
-    String predictionText;
-    if (sprint.remainingPoints == 0) {
-      predictionText = l10n.agileSprintHealthOnTime;
-    } else if (prediction == null) {
-      predictionText = '-';
-    } else if (!prediction.isAfter(sprint.endDate)) {
-      predictionText = l10n.agileSprintHealthOnTime;
-    } else {
-      predictionText = DateFormat('dd/MM').format(prediction);
-    }
+    // predictionText calculation removed as it was unused
 
     return Row(
       children: [
@@ -492,21 +486,25 @@ class SprintHealthCardWidget extends StatelessWidget {
           label: l10n.agileSprintHealthStoriesInProgress,
           value: '${_storiesInProgressCount(sprint)}',
           theme: theme,
+          tooltip: l10n.agileHealthProgressTooltip, // Nuova chiave
         ),
         _buildMetricItem(
           label: l10n.agileSprintHealthStoriesDone,
           value: '$doneCount/${sprintStories.length}',
           theme: theme,
+          tooltip: l10n.agileHealthDoneTooltip, // Nuova chiave
         ),
         _buildMetricItem(
           label: l10n.agileSprintHealthCommitment,
           value: '${(commitment * 100).toStringAsFixed(0)}%',
           theme: theme,
+          tooltip: l10n.agileHealthCommitmentTooltip, // Nuova chiave
         ),
         _buildMetricItem(
           label: l10n.agileSprintHealthDailyVelocity,
           value: velocity.toStringAsFixed(1),
           theme: theme,
+          tooltip: l10n.agileHealthVelocityTooltip, // Nuova chiave
         ),
         // Removed Prediction if space is tight, or keep it. user screen shows space.
         // Let's try to fit 5 items or wrap.
@@ -518,28 +516,32 @@ class SprintHealthCardWidget extends StatelessWidget {
     required String label,
     required String value,
     required ThemeData theme,
+    String? tooltip, // Nuovo parametro
   }) {
     return Expanded(
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
+      child: Tooltip(
+        message: tooltip ?? '',
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -577,7 +579,7 @@ class SprintHealthCardWidget extends StatelessWidget {
         Text(
           l10n.agileSprintHealthStoriesBreakdown,
           style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -623,7 +625,7 @@ class SprintHealthCardWidget extends StatelessWidget {
                 Text(
                   '${status.displayName} ($count)',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],

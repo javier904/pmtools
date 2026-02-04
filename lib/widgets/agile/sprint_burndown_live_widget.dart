@@ -39,19 +39,19 @@ class SprintBurndownLiveWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     if (currentSprint == null) {
       return _buildEmptyState(context, l10n, theme);
     }
 
-    // Exclude Backlog/Refinement/Ready stories even if they have sprintId
+    // Exclude Backlog/Refinement stories even if they have sprintId
+    // 'Ready' stories ARE part of the sprint backlog and should be counted.
     final sprintStories = stories
         .where((s) => s.sprintId == currentSprint!.id &&
             s.status != StoryStatus.backlog &&
-            s.status != StoryStatus.refinement &&
-            s.status != StoryStatus.ready)
+            s.status != StoryStatus.refinement)
         .toList();
 
     if (sprintStories.isEmpty) {
@@ -529,39 +529,23 @@ class SprintBurndownLiveWidget extends StatelessWidget {
     int totalPoints,
     List<DateTime> workingDays,
   ) {
-    // Hybrid: prefer pre-recorded burndown data if available
-    if (currentSprint!.burndownData.isNotEmpty) {
-      return _buildActualLineFromBurndownData(workingDays);
-    }
-
-    return _buildActualLineFromStories(
+    final spots = _buildActualLineFromStories(
       sprintStories,
       totalPoints,
       workingDays,
     );
-  }
 
-  /// Builds the actual line from pre-recorded burndown data.
-  List<FlSpot> _buildActualLineFromBurndownData(List<DateTime> workingDays) {
-    final spots = <FlSpot>[];
-    for (final point in currentSprint!.burndownData) {
-      final normalizedDate = DateTime(
-        point.date.year,
-        point.date.month,
-        point.date.day,
-      );
-      final dayIndex = workingDays.indexWhere(
-        (d) => d.isAtSameMomentAs(normalizedDate),
-      );
-      if (dayIndex >= 0) {
-        spots.add(FlSpot(
-          dayIndex.toDouble(),
-          point.remainingPoints.toDouble(),
-        ));
-      }
+    // Hybrid with BurndownData: if we have points in Firestore BURNDOWN DB, 
+    // overlay them or use them to fill historical gaps if needed.
+    // However, we MUST ensure we have a point at (0, totalPoints) to start the line.
+    if (spots.isEmpty || spots.first.x > 0) {
+      spots.insert(0, FlSpot(0, totalPoints.toDouble()));
     }
+
     return spots;
   }
+
+
 
   /// Builds the actual line live from story completedAt dates.
   ///
@@ -591,7 +575,7 @@ class SprintBurndownLiveWidget extends StatelessWidget {
 
       int completedPoints = 0;
       for (final story in sprintStories) {
-        if (story.completedAt != null) {
+        if (story.completedAt != null && story.status == StoryStatus.done) {
           final completedDate = DateTime(
             story.completedAt!.year,
             story.completedAt!.month,

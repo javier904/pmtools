@@ -20,27 +20,39 @@ class FlowEfficiencyWidget extends StatelessWidget {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  /// Stories with both cycle and lead time available.
-  List<UserStoryModel> _storiesWithFlowData() {
+  /// Stories currently in the flow (Ready, InSprint, InProgress, InReview, Done)
+  /// Excludes Backlog and Refinement to measure the efficiency of the "Active System".
+  List<UserStoryModel> _storiesInFlow() {
     return stories
-        .where((s) => s.cycleTimeDays != null && s.leadTimeDays != null)
+        .where((s) =>
+            s.status != StoryStatus.backlog && 
+            s.status != StoryStatus.refinement &&
+            // Include anything that is technically "WIP" or "Done"
+            (s.status == StoryStatus.ready || 
+             s.status == StoryStatus.inSprint || 
+             s.status == StoryStatus.inProgress || 
+             s.status == StoryStatus.inReview || 
+             s.status == StoryStatus.done))
         .toList();
   }
 
   double _avgCycleTime(List<UserStoryModel> data) {
     if (data.isEmpty) return 0;
-    final sum = data.fold<int>(0, (acc, s) => acc + s.cycleTimeDays!);
-    return sum / data.length;
+    // Numeratore: solo il tempo attivo (In Progress / Review)
+    // Denominatore: TUTTI gli item nel flusso (anche quelli che aspettano in Ready)
+    final totalActive = data.fold<double>(0, (acc, s) => acc + s.activeTimeDaysLive);
+    return totalActive / data.length;
   }
 
   double _avgLeadTime(List<UserStoryModel> data) {
     if (data.isEmpty) return 0;
-    final sum = data.fold<int>(0, (acc, s) => acc + s.leadTimeDays!);
-    return sum / data.length;
+    // Tempo totale di permanenza nel sistema per TUTTI gli item
+    final totalSystem = data.fold<double>(0, (acc, s) => acc + s.systemTimeDaysLive);
+    return totalSystem / data.length;
   }
 
   double _flowEfficiency(double avgCycle, double avgLead) {
-    if (avgLead == 0) return 0;
+    if (avgLead <= 0.001) return 0;
     return (avgCycle / avgLead * 100).clamp(0, 100);
   }
 
@@ -115,7 +127,7 @@ class FlowEfficiencyWidget extends StatelessWidget {
   }
 
   Widget _buildCard(AppLocalizations l10n, ThemeData theme) {
-    final flowData = _storiesWithFlowData();
+    final flowData = _storiesInFlow();
     final avgCycle = _avgCycleTime(flowData);
     final avgLead = _avgLeadTime(flowData);
     final efficiency = _flowEfficiency(avgCycle, avgLead);
@@ -154,11 +166,21 @@ class FlowEfficiencyWidget extends StatelessWidget {
       children: [
         Icon(Icons.speed, size: 20, color: theme.colorScheme.primary),
         const SizedBox(width: 8),
-        Text(
-          l10n.agileFlowEfficiencyTitle,
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
-            fontWeight: FontWeight.w600,
+        Tooltip(
+          message: l10n.agileFlowEfficiencyTooltip,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.agileFlowEfficiencyTitle,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.info_outline, size: 14, color: theme.colorScheme.onSurface.withOpacity(0.4)),
+            ],
           ),
         ),
       ],
@@ -192,22 +214,28 @@ class FlowEfficiencyWidget extends StatelessWidget {
         Expanded(
           child: Column(
             children: [
-              _buildTimeMetric(
-                label: l10n.agileFlowCycleTime,
-                value: hasData
-                    ? '${avgCycle.toStringAsFixed(1)} ${l10n.agileFlowDays}'
-                    : '-',
-                color: AppColors.success,
-                theme: theme,
+              Tooltip(
+                message: l10n.getAgileFlowCycleTimeTooltip,
+                child: _buildTimeMetric(
+                  label: l10n.agileFlowCycleTime,
+                  value: hasData
+                      ? '${avgCycle.toStringAsFixed(1)} ${l10n.agileFlowDays}'
+                      : '-',
+                  color: AppColors.success,
+                  theme: theme,
+                ),
               ),
               const SizedBox(height: 8),
-              _buildTimeMetric(
-                label: l10n.agileFlowLeadTime,
-                value: hasData
-                    ? '${avgLead.toStringAsFixed(1)} ${l10n.agileFlowDays}'
-                    : '-',
-                color: AppColors.secondary,
-                theme: theme,
+              Tooltip(
+                message: l10n.agileFlowLeadTimeTooltip,
+                child: _buildTimeMetric(
+                  label: l10n.agileFlowLeadTime,
+                  value: hasData
+                      ? '${avgLead.toStringAsFixed(1)} ${l10n.agileFlowDays}'
+                      : '-',
+                  color: AppColors.secondary,
+                  theme: theme,
+                ),
               ),
             ],
           ),
@@ -334,11 +362,21 @@ class FlowEfficiencyWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '${l10n.agileFlowWipByStatus} ($totalWip)',
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
-            fontWeight: FontWeight.w600,
+        Tooltip(
+          message: l10n.agileFlowWipTooltip,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${l10n.agileFlowWipByStatus} ($totalWip)',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.info_outline, size: 12, color: theme.colorScheme.onSurface.withOpacity(0.4)),
+            ],
           ),
         ),
         const SizedBox(height: 8),

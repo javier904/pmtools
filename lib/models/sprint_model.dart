@@ -106,7 +106,7 @@ class SprintModel {
       number: data['number'] ?? 1,
       startDate: (data['startDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       endDate: (data['endDate'] as Timestamp?)?.toDate() ??
-               DateTime.now().add(const Duration(days: 14)),
+               DateTime.now().add(const Duration(days: 13)), // 14 days total (inclusive)
       status: SprintStatus.values.firstWhere(
         (s) => s.name == data['status'],
         orElse: () => SprintStatus.planning,
@@ -206,14 +206,26 @@ class SprintModel {
   // Helper per timeline
   // =========================================================================
 
-  /// Durata dello sprint in giorni
-  int get durationDays => endDate.difference(startDate).inDays + 1;
+  /// Normalizza una data a mezzanotte (00:00:00)
+  DateTime _toMidnight(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  /// Durata dello sprint in giorni (inclusiva)
+  int get durationDays {
+    final start = _toMidnight(startDate);
+    final end = _toMidnight(endDate);
+    return end.difference(start).inDays + 1;
+  }
 
   /// Giorni lavorativi nello sprint (esclude weekend)
   int get workingDays {
     int count = 0;
-    DateTime current = startDate;
-    while (current.isBefore(endDate) || current.isAtSameMomentAs(endDate)) {
+    // Usiamo copie normalizzate per il ciclo
+    DateTime current = _toMidnight(startDate);
+    final end = _toMidnight(endDate);
+    
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
       if (current.weekday != DateTime.saturday &&
           current.weekday != DateTime.sunday) {
         count++;
@@ -226,18 +238,33 @@ class SprintModel {
   /// Giorni rimanenti
   int get daysRemaining {
     if (status == SprintStatus.completed) return 0;
-    final now = DateTime.now();
-    if (now.isBefore(startDate)) return durationDays;
-    if (now.isAfter(endDate)) return 0;
-    return endDate.difference(now).inDays + 1;
+    
+    final now = _toMidnight(DateTime.now());
+    final start = _toMidnight(startDate);
+    final end = _toMidnight(endDate);
+
+    if (now.isBefore(start)) return durationDays;
+    if (now.isAfter(end)) return 0;
+    
+    // Inclusivo del giorno corrente: se oggi è l'ultimo giorno, rimane 1 giorno (oggi)
+    return end.difference(now).inDays + 1; 
   }
 
   /// Giorni trascorsi
   int get daysElapsed {
-    final now = DateTime.now();
-    if (now.isBefore(startDate)) return 0;
-    if (now.isAfter(endDate)) return durationDays;
-    return now.difference(startDate).inDays;
+    final now = _toMidnight(DateTime.now());
+    final start = _toMidnight(startDate);
+    final end = _toMidnight(endDate);
+
+    if (now.isBefore(start)) return 0;
+    if (now.isAfter(end)) return durationDays;
+    
+    // Giorni passati dall'inizio (escluso oggi, oppure inclusivo? Dipende dalla UI)
+    // Se la UI dice "Giorni Trascorsi + Rimanenti = Totale", allora:
+    // Se durata = 14. Oggi = giorno 1.
+    // Remaining = 14. Elapsed = 0. (Tot 14)
+    // Oggi = giorno 5. Remaining = 10. Elapsed = 4. (Tot 14)
+    return now.difference(start).inDays;
   }
 
   /// Percentuale di completamento temporale
@@ -280,18 +307,32 @@ class SprintModel {
   /// Aggiunge una story allo sprint
   SprintModel withStory(String storyId, int storyPoints) {
     if (storyIds.contains(storyId)) return this;
+    
+    // Incrementiamo plannedPoints SOLO se siamo ancora in fase di planning
+    // Altrimenti l'aggiunta di una story viene contata come scope creep (delta)
+    final newPlannedPoints = isPlanning 
+        ? plannedPoints + storyPoints 
+        : plannedPoints;
+
     return copyWith(
       storyIds: [...storyIds, storyId],
-      plannedPoints: plannedPoints + storyPoints,
+      plannedPoints: newPlannedPoints,
     );
   }
 
   /// Rimuove una story dallo sprint
   SprintModel withoutStory(String storyId, int storyPoints) {
     if (!storyIds.contains(storyId)) return this;
+
+    // Decrementiamo plannedPoints SOLO se siamo in planning
+    // Se lo sprint è attivo, rimuovere una storia è "scope reduction" (delta negativo)
+    final newPlannedPoints = isPlanning 
+        ? (plannedPoints - storyPoints).clamp(0, plannedPoints)
+        : plannedPoints;
+
     return copyWith(
       storyIds: storyIds.where((id) => id != storyId).toList(),
-      plannedPoints: (plannedPoints - storyPoints).clamp(0, plannedPoints),
+      plannedPoints: newPlannedPoints,
     );
   }
 

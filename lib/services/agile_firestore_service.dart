@@ -389,38 +389,87 @@ class AgileFirestoreService {
     });
   }
 
-  /// Aggiorna lo status di una story
-  Future<void> updateStoryStatus(
-    String projectId,
-    String storyId,
-    StoryStatus newStatus, {
-    String? sprintId,
-  }) async {
-    final updates = <String, dynamic>{
-      'status': newStatus.name,
-    };
+  /// Aggiorna lo status di una story con logica "Stopwatch" raffinata
+Future<void> updateStoryStatus(
+  String projectId,
+  String storyId,
+  StoryStatus newStatus, {
+  String? sprintId,
+}) async {
+  // 1. Recuperiamo lo stato attuale della storia
+  final storyDoc = await _storiesRef(projectId).doc(storyId).get();
+  if (!storyDoc.exists) return;
+  
+  final story = UserStoryModel.fromFirestore(storyDoc);
+  final oldStatus = story.status;
+  final now = DateTime.now();
+  
+  final updates = <String, dynamic>{
+    'status': newStatus.name,
+    'updatedAt': FieldValue.serverTimestamp(),
+  };
 
-    if (newStatus == StoryStatus.inProgress) {
-      updates['startedAt'] = FieldValue.serverTimestamp();
-    } else if (newStatus == StoryStatus.done) {
-      updates['completedAt'] = FieldValue.serverTimestamp();
-    }
-
-    if (sprintId != null) {
-      updates['sprintId'] = sprintId;
-    }
-
-    await _storiesRef(projectId).doc(storyId).update(updates);
-
-    await _projectsRef.doc(projectId).update({
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    // Auto-update burndown chart when story is completed
-    if (newStatus == StoryStatus.done) {
-      await _autoUpdateBurndownChart(projectId, sprintId);
+  int additionalMinutes = 0;
+  
+  // 2. Se la storia era in uno stato "Attivo" (Stopwatch ON), calcoliamo il tempo parziale dell'ultima sessione
+  if (oldStatus == StoryStatus.inProgress || oldStatus == StoryStatus.inReview) {
+    if (story.lastStartedAt != null) {
+      additionalMinutes = now.difference(story.lastStartedAt!).inMinutes;
+    } else if (story.startedAt != null) {
+      // Fallback per storie migrate o con il vecchio sistema
+      additionalMinutes = now.difference(story.startedAt!).inMinutes;
     }
   }
+
+  // 3. Applichiamo l'accumulo dei minuti
+  if (additionalMinutes > 0) {
+    updates['cumulativeActiveMinutes'] = (story.cumulativeActiveMinutes + additionalMinutes);
+  }
+
+  // 4. Gestione Timestamps (Inizio/Ripresa/Completamento)
+  if (newStatus == StoryStatus.inProgress || newStatus == StoryStatus.inReview) {
+    // Se è la primissima volta che viene iniziata, salviamo startedAt (Legacy/Reportistica)
+    if (story.startedAt == null) {
+      updates['startedAt'] = FieldValue.serverTimestamp();
+    }
+    // Inizia una nuova sessione di lavoro attiva
+    updates['lastStartedAt'] = FieldValue.serverTimestamp();
+  } else {
+    // Se usciamo dagli stati attivi, resettiamo lastStartedAt
+    updates['lastStartedAt'] = null;
+    
+    if (newStatus == StoryStatus.done) {
+      updates['completedAt'] = FieldValue.serverTimestamp();
+      
+      // Fix Cycle Time: Se la storia va direttamente in Done senza essere mai iniziata,
+      // impostiamo startedAt = completedAt (durata 0) per includerla nelle metriche.
+      if (story.startedAt == null) {
+        updates['startedAt'] = FieldValue.serverTimestamp();
+      }
+      
+      // Assicurati che lastStartedAt sia pulito
+      // (già gestito sopra, ma per chiarezza)
+    } else {
+      // Se riapriamo una storia completata, cancelliamo la data di completamento
+      updates['completedAt'] = null;
+    }
+  }
+
+  if (sprintId != null) {
+    updates['sprintId'] = sprintId;
+  }
+
+  // 5. Eseguiamo l'aggiornamento
+  await _storiesRef(projectId).doc(storyId).update(updates);
+
+  await _projectsRef.doc(projectId).update({
+    'updatedAt': FieldValue.serverTimestamp(),
+  });
+
+  // 6. Auto-update burndown chart
+  // Trigger on every status change to keep the chart responsive
+  await _autoUpdateBurndownChart(projectId, sprintId ?? story.sprintId);
+}
 
   /// Auto-aggiorna il burndown chart quando una story viene completata
   Future<void> _autoUpdateBurndownChart(String projectId, String? sprintId) async {
@@ -628,6 +677,19 @@ class AgileFirestoreService {
       'activeSprintId': sprintId,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+
+    // Calcola e salva i planned points
+    try {
+      final stories = await getSprintStories(projectId, sprintId);
+      final totalPoints =
+          stories.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+
+      await _sprintsRef(projectId).doc(sprintId).update({
+        'plannedPoints': totalPoints,
+      });
+    } catch (e) {
+      print('⚠️ Errore calcolo planned points: $e');
+    }
   }
 
   /// Completa uno sprint
@@ -636,12 +698,14 @@ class AgileFirestoreService {
     String sprintId, {
     required int completedPoints,
     required double velocity,
+    int? plannedPoints,
   }) async {
     await _sprintsRef(projectId).doc(sprintId).update({
       'status': SprintStatus.completed.name,
       'completedAt': FieldValue.serverTimestamp(),
       'completedPoints': completedPoints,
       'velocity': velocity,
+      if (plannedPoints != null) 'plannedPoints': plannedPoints,
     });
 
     // Aggiorna statistiche progetto
@@ -663,14 +727,96 @@ class AgileFirestoreService {
     }
   }
 
+
+  /// Ripara i dati degli sprint storici (backfill plannedPoints)
+  Future<void> repairProjectSprints(String projectId) async {
+    try {
+      final snapshot = await _sprintsRef(projectId)
+          .where('status', isEqualTo: SprintStatus.completed.name)
+          .get();
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final plannedPoints = data['plannedPoints'] as int?;
+
+        // Se plannedPoints manca o è 0, ricalcola
+        if (plannedPoints == null || plannedPoints == 0) {
+          final sprintId = doc.id;
+          List<UserStoryModel> stories = [];
+          
+          try {
+            stories = await getSprintStories(projectId, sprintId);
+          } catch (e) {
+            // ignore: avoid_print
+            print('⚠️ Query sprintId fallita (manca indice?): $e');
+          }
+
+          // Fallback: se la query per sprintId non restituisce nulla (o è fallita), usa storyIds dell'array
+          if (stories.isEmpty) {
+             final storyIds = List<String>.from(data['storyIds'] ?? []);
+             if (storyIds.isNotEmpty) {
+               for (final sid in storyIds) {
+                 final sDoc = await _storiesRef(projectId).doc(sid).get();
+                 if (sDoc.exists) {
+                   stories.add(UserStoryModel.fromFirestore(sDoc));
+                 }
+               }
+             }
+          }
+
+          final totalPoints =
+              stories.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+
+          if (totalPoints > 0) {
+            await doc.reference.update({'plannedPoints': totalPoints});
+            // ignore: avoid_print
+            print('🔧 Sprint $sprintId riparato: plannedPoints = $totalPoints');
+          }
+        }
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('⚠️ Errore durante la riparazione degli sprint: $e');
+    }
+  }
+
   /// Aggiunge un punto al burndown
   Future<void> addBurndownPoint(
     String projectId,
     String sprintId,
     BurndownPoint point,
   ) async {
-    await _sprintsRef(projectId).doc(sprintId).update({
-      'burndownData': FieldValue.arrayUnion([point.toMap()]),
+    // 1. Leggiamo lo sprint attuale per evitare duplicati giornalieri
+    final sprintRef = _sprintsRef(projectId).doc(sprintId);
+    final sprintDoc = await sprintRef.get();
+    
+    if (!sprintDoc.exists) return;
+
+    final sprintData = sprintDoc.data();
+    final List<dynamic> currentBurndown = sprintData?['burndownData'] ?? [];
+
+    // 2. Creiamo una lista aggiornata rimuovendo eventuali entry di OGGI
+    final today = DateTime(point.date.year, point.date.month, point.date.day);
+    
+    final updatedList = currentBurndown.where((entry) {
+      final date = (entry['date'] as Timestamp).toDate();
+      final entryDate = DateTime(date.year, date.month, date.day);
+      return !entryDate.isAtSameMomentAs(today);
+    }).toList();
+
+    // 3. Aggiungiamo il nuovo punto
+    updatedList.add(point.toMap());
+    
+    // Ordiniamo per data per sicurezza
+    updatedList.sort((a, b) {
+      final dateA = (a['date'] as Timestamp).toDate();
+      final dateB = (b['date'] as Timestamp).toDate();
+      return dateA.compareTo(dateB);
+    });
+
+    // 4. Salviamo la lista completa
+    await sprintRef.update({
+      'burndownData': updatedList,
     });
   }
 

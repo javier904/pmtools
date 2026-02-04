@@ -149,12 +149,26 @@ class CommitmentTrendWidget extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            l10n.agileCommitmentTrendTitle,
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-              fontWeight: FontWeight.w600,
-            ),
+          child: Row(
+            children: [
+              Text(
+                l10n.agileCommitmentTrendTitle,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Tooltip(
+                message: l10n.agileCommitmentTrendTooltip,
+                triggerMode: TooltipTriggerMode.tap,
+                child: Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
           ),
         ),
         // Average badge
@@ -181,7 +195,7 @@ class CommitmentTrendWidget extends StatelessWidget {
     int maxSP,
     ThemeData theme,
   ) {
-    const double maxBarHeight = 120;
+    const double maxBarHeight = 110;
     final ratio = sprint.plannedPoints > 0
         ? (sprint.completedPoints / sprint.plannedPoints).clamp(0.0, 2.0)
         : 0.0;

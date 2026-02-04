@@ -34,10 +34,6 @@ class MetricsDashboardWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header con info framework
-        _buildFrameworkHeader(context),
-        const SizedBox(height: 16),
-
         // Summary cards row (differenti per framework)
         _buildSummaryRow(context),
         const SizedBox(height: 24),
@@ -210,7 +206,8 @@ class MetricsDashboardWidget extends StatelessWidget {
   Widget _buildScrumSummary(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final completedSprints = sprints.where((s) => s.status == SprintStatus.completed).length;
-    final avgVelocity = _calculateAverageVelocity();
+    final avgSprintVelocity = _calculateAverageSprintVelocity();
+    final avgWeeklyVelocity = _calculateAverageWeeklyVelocity();
     final totalStories = stories.length;
     final completedStories = stories.where((s) => s.status == StoryStatus.done).length;
 
@@ -226,29 +223,40 @@ class MetricsDashboardWidget extends StatelessWidget {
             tooltip: l10n.agileStatsCompletedTooltip,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: _buildSummaryCard(
-            l10n.agileAverageVelocity,
-            avgVelocity.toStringAsFixed(1),
+            l10n.agileAvgVelocitySprint,
+            avgSprintVelocity.toStringAsFixed(1),
             l10n.agileStatsPtsPerSprint,
             Icons.speed,
             Colors.purple,
-            tooltip: l10n.agileAverageVelocityTooltip,
+            tooltip: l10n.agileAvgVelocitySprintTooltip,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: _buildSummaryCard(
-            '${l10n.agileStatsStories} ${l10n.agileStatsCompleted}',
+            l10n.agileAvgVelocityWeekly,
+            avgWeeklyVelocity.toStringAsFixed(1),
+            l10n.agilePerWeekSuffix,
+            Icons.shutter_speed,
+            Colors.deepPurple,
+            tooltip: l10n.agileAvgVelocityWeeklyTooltip,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _buildSummaryCard(
+            l10n.agileStatsCompleted, // Shortened to save space
             '$completedStories',
-            l10n.agileStatsTotalCount(totalStories),
+            '${l10n.agileStatsTotalCount(totalStories)} stories',
             Icons.check_circle,
             Colors.green,
             tooltip: l10n.agileStatsStoriesCompletedTooltip,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: _buildSummaryCard(
             l10n.agileStatsPoints,
@@ -511,10 +519,32 @@ class MetricsDashboardWidget extends StatelessWidget {
     return card;
   }
 
-  double _calculateAverageVelocity() {
-    final completed = sprints.where((s) => s.velocity != null).toList();
+  double _calculateAverageSprintVelocity() {
+    final completed = sprints.where((s) => s.status == SprintStatus.completed).toList();
     if (completed.isEmpty) return 0;
-    return completed.fold<double>(0, (sum, s) => sum + s.velocity!) / completed.length;
+    // Use actual completed points for "Sprint Velocity"
+    return completed.fold<double>(0, (sum, s) => sum + s.completedPoints.toDouble()) / completed.length;
+  }
+
+  double _calculateAverageWeeklyVelocity() {
+    final completed = sprints.where((s) => s.status == SprintStatus.completed).toList();
+    if (completed.isEmpty) return 0;
+    
+    // Calculate weekly velocity: Points / Duration(weeks)
+    // We sum up all weekly velocities and average them
+    double sumWeeklyVelocity = 0;
+    for (final s in completed) {
+      final weeks = s.durationDays / 7.0;
+      if (weeks > 0) {
+        sumWeeklyVelocity += (s.completedPoints / weeks);
+      }
+    }
+    return sumWeeklyVelocity / completed.length;
+  }
+
+  // Deprecated: used for backward compatibility if needed, but we now split it
+  double _calculateAverageVelocity() {
+    return _calculateAverageSprintVelocity(); 
   }
 
   double _calculateAverageCycleTime() {
@@ -579,7 +609,8 @@ class VelocityTrendWidget extends StatelessWidget {
       return _buildEmptyState(l10n);
     }
 
-    final avgVelocity = completedSprints.fold<double>(0, (sum, s) => sum + s.velocity!) /
+    // Use completedPoints for standard velocity trend
+    final avgVelocity = completedSprints.fold<double>(0, (sum, s) => sum + s.completedPoints.toDouble()) /
         completedSprints.length;
 
     return Card(
@@ -662,7 +693,7 @@ class VelocityTrendWidget extends StatelessWidget {
                     // Velocity line
                     LineChartBarData(
                       spots: completedSprints.asMap().entries.map((e) =>
-                        FlSpot(e.key.toDouble(), e.value.velocity!)
+                        FlSpot(e.key.toDouble(), e.value.completedPoints.toDouble())
                       ).toList(),
                       isCurved: true,
                       color: Colors.purple,
@@ -779,7 +810,7 @@ class LeadTimeWidget extends StatelessWidget {
                 ),
                 const Spacer(),
                 Tooltip(
-                  message: 'Tempo dalla creazione al completamento',
+                  message: l10n.agileFlowLeadTimeTooltip,
                   child: Icon(Icons.info_outline, size: 18, color: Colors.grey[400]),
                 ),
               ],
@@ -962,6 +993,11 @@ class ThroughputWidget extends StatelessWidget {
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
+                Tooltip(
+                  message: l10n.agileThroughputTooltip,
+                  child: Icon(Icons.info_outline, size: 18, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
@@ -1099,6 +1135,11 @@ class WorkItemAgeWidget extends StatelessWidget {
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
+                Tooltip(
+                  message: l10n.agileFlowWipTooltip,
+                  child: Icon(Icons.info_outline, size: 18, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -1384,20 +1425,23 @@ class StoryCompletionWidget extends StatelessWidget {
                   width: 80,
                   height: 80,
                   child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      CircularProgressIndicator(
-                        value: completionRate,
-                        strokeWidth: 8,
-                        backgroundColor: Colors.grey[200],
-                        valueColor: const AlwaysStoppedAnimation(Colors.green),
+                      SizedBox(
+                        width: 80,
+                        height: 80,
+                        child: CircularProgressIndicator(
+                          value: completionRate,
+                          strokeWidth: 6,
+                          backgroundColor: Colors.grey[200],
+                          valueColor: const AlwaysStoppedAnimation(Colors.green),
+                        ),
                       ),
-                      Center(
-                        child: Text(
-                          '${(completionRate * 100).round()}%',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                      Text(
+                        '${(completionRate * 100).round()}%',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ],
@@ -1496,21 +1540,46 @@ class CycleTimeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final completedStories = stories.where(
-      (s) => s.status == StoryStatus.done && s.startedAt != null && s.completedAt != null
+      (s) => s.status == StoryStatus.done && s.completedAt != null
     ).toList();
 
     if (completedStories.isEmpty) {
       return _buildEmptyState(l10n);
     }
 
-    // Calculate cycle times
-    final cycleTimes = completedStories.map((s) =>
-      s.completedAt!.difference(s.startedAt!).inDays
-    ).toList();
+    // Calculate cycle times in days (float)
+    final cycleTimes = completedStories.map((s) {
+      // Use cumulative active time if available (Stopwatch logic)
+      if (s.cumulativeActiveMinutes != null && s.cumulativeActiveMinutes! > 0) {
+         return s.cumulativeActiveMinutes! / (24 * 60);
+      }
+      
+      final start = s.startedAt ?? s.completedAt!;
+      final diff = s.completedAt!.difference(start);
+      // Fallback: use actual difference in minutes converted to days
+      // If 0, assume at least 1 minute to avoid 0.0 for items done instantly
+      final minutes = diff.inMinutes == 0 ? 1 : diff.inMinutes; 
+      return minutes / (24 * 60.0);
+    }).toList();
 
-    final avgCycleTime = cycleTimes.reduce((a, b) => a + b) / cycleTimes.length;
-    final minCycleTime = cycleTimes.reduce((a, b) => a < b ? a : b);
-    final maxCycleTime = cycleTimes.reduce((a, b) => a > b ? a : b);
+    var avg = 0.0;
+    var min = 0.0;
+    var max = 0.0;
+
+    if (cycleTimes.isNotEmpty) {
+      avg = cycleTimes.reduce((a, b) => a + b) / cycleTimes.length;
+      min = cycleTimes.reduce((a, b) => a < b ? a : b);
+      max = cycleTimes.reduce((a, b) => a > b ? a : b);
+    }
+    
+    // Helper to format days: "0.5" or "1.0" or "14"
+    String fmt(double d) {
+       if (d == 0) return "0";
+       if (d < 0.1) return "< 0.1";
+       // If integer, return no decimal
+       if (d % 1 == 0) return d.toInt().toString();
+       return d.toStringAsFixed(1);
+    }
 
     return Card(
       child: Padding(
@@ -1528,7 +1597,7 @@ class CycleTimeWidget extends StatelessWidget {
                 ),
                 const Spacer(),
                 Tooltip(
-                  message: l10n.agileMetricsCycleTimeDesc,
+                  message: l10n.agileCycleTimeTooltip, // Use correct key
                   child: Icon(Icons.info_outline, size: 18, color: Colors.grey[400]),
                 ),
               ],
@@ -1537,9 +1606,9 @@ class CycleTimeWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildTimeMetric('Media', avgCycleTime.toStringAsFixed(1), l10n.timeDays, Colors.blue),
-                _buildTimeMetric('Min', '$minCycleTime', l10n.timeDays, Colors.green),
-                _buildTimeMetric('Max', '$maxCycleTime', l10n.timeDays, Colors.red),
+                _buildTimeMetric('Media', fmt(avg), l10n.timeDays, Colors.blue),
+                _buildTimeMetric('Min', fmt(min), l10n.timeDays, Colors.green),
+                _buildTimeMetric('Max', fmt(max), l10n.timeDays, Colors.red),
               ],
             ),
             const SizedBox(height: 16),
@@ -1574,9 +1643,9 @@ class CycleTimeWidget extends StatelessWidget {
                 color: color,
               ),
             ),
-            const SizedBox(width: 2),
+            const SizedBox(width: 4),
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 5),
               child: Text(
                 unit,
                 style: TextStyle(fontSize: 11, color: Colors.grey[600]),
@@ -1649,9 +1718,19 @@ class EstimationAccuracyWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.analytics, color: Colors.orange),
                 const SizedBox(width: 8),
-                Text(
-                  l10n.agileEstimationAccuracy,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Tooltip(
+                  message: l10n.agileEstimationAccuracyTooltip,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.agileEstimationAccuracy,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(Icons.info_outline, size: 14, color: Colors.grey[400]),
+                    ],
+                  ),
                 ),
                 const Spacer(),
                 Container(
@@ -1881,13 +1960,14 @@ class MetricsQuickViewWidget extends StatelessWidget {
 
   double _calculateAverageCycleTime() {
     final completedStories = stories.where(
-      (s) => s.status == StoryStatus.done && s.startedAt != null && s.completedAt != null
+      (s) => s.status == StoryStatus.done && s.completedAt != null
     ).toList();
     if (completedStories.isEmpty) return 0;
 
-    final cycleTimes = completedStories.map((s) =>
-      s.completedAt!.difference(s.startedAt!).inDays.toDouble()
-    ).toList();
+    final cycleTimes = completedStories.map((s) {
+      final start = s.startedAt ?? s.completedAt!;
+      return s.completedAt!.difference(start).inDays.toDouble();
+    }).toList();
 
     return cycleTimes.reduce((a, b) => a + b) / cycleTimes.length;
   }

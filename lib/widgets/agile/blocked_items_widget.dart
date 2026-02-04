@@ -85,11 +85,21 @@ class BlockedItemsWidget extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            l10n.agileBlockedItemsTitle,
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-              fontWeight: FontWeight.w600,
+          child: Tooltip(
+            message: l10n.agileBlockedItemsTooltip,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.agileBlockedItemsTitle,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(Icons.info_outline, size: 14, color: theme.colorScheme.onSurface.withOpacity(0.4)),
+              ],
             ),
           ),
         ),

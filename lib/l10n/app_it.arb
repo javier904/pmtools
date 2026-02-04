@@ -1039,7 +1039,7 @@
   "agileStatsPointsTooltip": "Somma degli Story Points delle stories completate.\n'Pianificati' include tutte le stories stimate nel backlog.",
   "agileItemsCompletedTooltip": "Numero di Work Items con status 'Done'.\nSposta gli items nella colonna 'Done' per completarli.",
   "agileInProgressTooltip": "Items attualmente in lavorazione (WIP).\nTieni questo numero basso per migliorare il flusso.",
-  "agileCycleTimeTooltip": "Tempo medio dall'inizio lavoro al completamento.\nRichiede items con date 'Iniziato' e 'Completato' valorizzate.\nPiù basso = team più efficiente.",
+  "agileCycleTimeTooltip": "Tempo medio trascorso negli stati attivi (es. In Progress, Review).\nEsclude il tempo di attesa nel Backlog o Ready.\nI ticket completati rapidamente (< 1g) sono calcolati con precisione.",
   "agileThroughputTooltip": "Media items completati per settimana (ultime 4 settimane).\nIndica la produttività del team nel tempo.",
   "agileHybridSprintTooltip": "Sprint completati rispetto al totale.",
   "agileHybridCompletedTooltip": "Items con status 'Done' rispetto al totale.\nSposta items nella colonna 'Done' per completarli.",
@@ -1414,7 +1414,7 @@
   "estimationStoriesTotal": "Stories totali",
   "estimationStoriesCompleted": "Stories completate",
   "estimationParticipantsActive": "Partecipanti attivi",
-  "estimationProgress": "Avanzamento: {completed}/{total} stories ({percent}%)",
+  "estimationProgress": "Avanzamento: {completed}/{total} stories",
   "@estimationProgress": {
     "placeholders": {
       "completed": {
@@ -4651,7 +4651,7 @@
   "agileMetricsVelocityTitle": "Velocity",
   "agileMetricsVelocityDesc": "Misura la quantità di story points completati per sprint. Aiuta a prevedere la capacità del team.",
   "agileMetricsLeadTimeDesc": "Tempo totale dalla creazione al completamento. Include il tempo di attesa nel backlog.",
-  "agileMetricsCycleTimeDesc": "Tempo dall'inizio lavoro al completamento. Misura l'efficienza dello sviluppo.",
+  "agileMetricsCycleTimeDesc": "Formula: Tempo trascorso in stati attivi (In Progress / Review). Non include il tempo di attesa nel backlog.",
   "agileMetricsThroughputDesc": "Numero di item completati per unità di tempo. Indica la produttività.",
   "agileMetricsDistributionDesc": "Visualizza la distribuzione per stato. Aiuta a identificare colli di bottiglia.",
   "agilePredictability": "Prevedibilità",
@@ -4738,6 +4738,29 @@
   "agileSprints": "Sprint",
   "agileTeamComposition": "Composizione Team",
   "agileHoursNote": "Le ore sono un riferimento interno. Per la pianificazione Scrum, usa la vista Story Points.",
+  "agileWorkloadBalanceTooltip": "Media Team: {avg} SP\nRange bilanciato: {min} - {max} SP\nLo status è basato sulla deviazione dalla media.",
+  "@agileWorkloadBalanceTooltip": {
+    "placeholders": {
+      "avg": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "agileHealthTimeTooltip": "Giorni trascorsi / Totale giorni (basato su date Inizio/Fine).",
+  "agileHealthWorkTooltip": "Story Points completati su totalmente pianificati.",
+  "agileHealthProgressTooltip": "Numero di storie attualmente in lavorazione.",
+  "agileHealthDoneTooltip": "Storie completate su totale storie nello sprint.",
+  "agileHealthCommitmentTooltip": "Affidabilità (Completato / Pianificato) basata sugli sprint passati conclusi.",
+  "agileHealthVelocityTooltip": "Media giornaliera di Story Points completati in questo sprint.",
+  "agileSprintScopeTooltip": "Monitora il cambiamento del perimetro dello sprint. 'Original' sono i punti pianificati al momento dell'avvio dello sprint, 'Current' sono i punti delle storie attualmente presenti.",
+  "agileEstimationAccuracyTooltip": "Formula: (Punti Completati / Punti Pianificati) x 100. Indica l'affidabilità del team nel completare il lavoro promesso all'inizio dello sprint.",
+  "agileCommitmentTrendTooltip": "Visualizza la tendenza di affidabilità del team confrontando Punti Pianificati vs Completati per ogni sprint concluso.",
   "agileNoTeamMembers": "Nessun membro nel team",
   "agileGmailAuthError": "Autorizzazione Gmail non disponibile. Prova a fare logout e login.",
   "agileGmailPermissionDenied": "Permesso Gmail non concesso.",
@@ -4776,6 +4799,18 @@
   "wipAgeWarning": "Alcuni item sono in lavorazione da troppo tempo. Potrebbero esserci blocchi.",
   "agilePerWeekSuffix": "/sett",
   "average": "Media",
+  "agileAvgVelocitySprint": "Velocity (Sprint)",
+  "agileAvgVelocityWeekly": "Velocity (Sett.)",
+  "agileAvgVelocitySprintTooltip": "Media dei punti completati per sprint.",
+  "agileAvgVelocityWeeklyTooltip": "Media dei punti completati per settimana.",
+  "agileFiltersDoneTooltip": "Le storie completate o di sprint chiusi vengono archiviate di default. Seleziona questo filtro per visualizzarle.",
+  "agileBacklogDoneBadge": "({count}) Done",
+  "agileBacklogDoneBadgeTooltip": "Queste storie sono nascoste di default nel backlog attivo. Seleziona lo stato 'Done' nei filtri per visualizzarle.",
+  "agileFlowEfficiencyTooltip": "Formula: (Tempo Attivo Totale / Tempo Totale nel Sistema) x 100. Calcolato in tempo reale su tutti gli item nello Sprint (inclusi quelli in attesa).",
+  "getAgileFlowCycleTimeTooltip": "Tempo medio trascorso in stati attivi (In Progress / Review). Gli item in attesa (Ready) contribuiscono con 0 tempo attivo, abbassando la media.",
+  "agileFlowLeadTimeTooltip": "Tempo medio totale trascorso nel sistema (dalla creazione ad oggi o al completamento). Include sia il tempo di attesa che di lavoro.",
+  "agileFlowWipTooltip": "Work In Progress: numero di storie attualmente in lavorazione (esclusi Backlog e Done).",
+  "agileBlockedItemsTooltip": "Storie che hanno delle dipendenze non soddisfatte (altre storie non ancora completate).",
   "agileItemsCount": "{count} elementi",
   "@agileItemsCount": {
     "placeholders": {
@@ -4838,7 +4873,7 @@
     }
   },
   "agileSprintReviewSaveSuccess": "Sprint Review salvata",
-  "agileEstimationAccuracy": "Accuratezza Stime",
+  "agileEstimationAccuracy": "Affidabilità Pianificazione",
   "agileCompleteOneSprintFirst": "Completa almeno uno sprint",
   "agileNoDataAccuracyFix": "Nessun dato di accuratezza",
   "agileScrumGuideRecommends": "La Scrum Guide raccomanda la pianificazione basata sulla Velocity storica, non sulle ore.",

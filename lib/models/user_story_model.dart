@@ -50,6 +50,11 @@ class UserStoryModel {
 
   // External Integration (Jira, etc.)
   final ExternalIntegration? externalIntegration;
+  
+  /// Ultima volta in cui la sessione di lavoro è stata avviata/ripresa
+  final DateTime? lastStartedAt;
+
+  final int cumulativeActiveMinutes;
 
   const UserStoryModel({
     required this.id,
@@ -69,6 +74,7 @@ class UserStoryModel {
     required this.createdAt,
     required this.createdBy,
     this.startedAt,
+    this.lastStartedAt,
     this.completedAt,
     this.estimates = const {},
     this.isEstimated = false,
@@ -78,6 +84,7 @@ class UserStoryModel {
     this.actualHours,
     this.customProgress,
     this.externalIntegration,
+    this.cumulativeActiveMinutes = 0,
   });
 
   /// Crea da documento Firestore
@@ -124,6 +131,7 @@ class UserStoryModel {
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       createdBy: data['createdBy'] ?? '',
       startedAt: (data['startedAt'] as Timestamp?)?.toDate(),
+      lastStartedAt: (data['lastStartedAt'] as Timestamp?)?.toDate(),
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
       estimates: estimates,
       isEstimated: data['isEstimated'] ?? false,
@@ -140,6 +148,7 @@ class UserStoryModel {
       externalIntegration: data['externalIntegration'] != null
           ? ExternalIntegration.fromMap(data['externalIntegration'])
           : null,
+      cumulativeActiveMinutes: data['cumulativeActiveMinutes'] ?? 0,
     );
   }
 
@@ -162,6 +171,7 @@ class UserStoryModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'createdBy': createdBy,
       if (startedAt != null) 'startedAt': Timestamp.fromDate(startedAt!),
+      if (lastStartedAt != null) 'lastStartedAt': Timestamp.fromDate(lastStartedAt!),
       if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt!),
       'estimates': estimates.map((k, v) => MapEntry(k, v.toMap())),
       'isEstimated': isEstimated,
@@ -169,8 +179,9 @@ class UserStoryModel {
       if (estimationType != null) 'estimationType': estimationType!.name,
       if (sprintId != null) 'sprintId': sprintId,
       if (actualHours != null) 'actualHours': actualHours,
-      'customProgress': customProgress,
+      if (customProgress != null) 'customProgress': customProgress,
       if (externalIntegration != null) 'externalIntegration': externalIntegration!.toMap(),
+      'cumulativeActiveMinutes': cumulativeActiveMinutes,
     };
   }
 
@@ -193,6 +204,7 @@ class UserStoryModel {
     DateTime? createdAt,
     String? createdBy,
     DateTime? startedAt,
+    DateTime? lastStartedAt,
     DateTime? completedAt,
     Map<String, StoryEstimate>? estimates,
     bool? isEstimated,
@@ -202,6 +214,7 @@ class UserStoryModel {
     int? actualHours,
     int? customProgress,
     ExternalIntegration? externalIntegration,
+    int? cumulativeActiveMinutes,
   }) {
     return UserStoryModel(
       id: id ?? this.id,
@@ -221,6 +234,7 @@ class UserStoryModel {
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       startedAt: startedAt ?? this.startedAt,
+      lastStartedAt: lastStartedAt ?? this.lastStartedAt,
       completedAt: completedAt ?? this.completedAt,
       estimates: estimates ?? this.estimates,
       isEstimated: isEstimated ?? this.isEstimated,
@@ -230,6 +244,7 @@ class UserStoryModel {
       actualHours: actualHours ?? this.actualHours,
       customProgress: customProgress ?? this.customProgress,
       externalIntegration: externalIntegration ?? this.externalIntegration,
+      cumulativeActiveMinutes: cumulativeActiveMinutes ?? this.cumulativeActiveMinutes,
     );
   }
 
@@ -411,6 +426,33 @@ class UserStoryModel {
     // Assumendo 1 story point = 4 ore (convenzione comune)
     final estimatedHours = storyPoints! * 4;
     return actualHours! - estimatedHours;
+  }
+
+  /// Tempo di ciclo "live" (in giorni, precisione double)
+  /// Valido per storie InProgress, InReview o Done.
+  /// Se una storia è Ready o InSprint, la sua efficienza 'attiva' è 0.
+  double get activeTimeDaysLive {
+    if (lastStartedAt == null && cumulativeActiveMinutes == 0) return 0.0;
+    
+    double currentSessionMinutes = 0.0;
+
+    // Se la storia è ATTUALMENTE in lavorazione, calcoliamo i minuti dall'ultima ripresa ad ora
+    if (status == StoryStatus.inProgress || status == StoryStatus.inReview) {
+      if (lastStartedAt != null) {
+        currentSessionMinutes = DateTime.now().difference(lastStartedAt!).inMinutes.toDouble();
+      }
+    }
+
+    // Totale = Minuti accumulati in sessioni passate + Minuti della sessione corrente
+    final totalMinutes = cumulativeActiveMinutes + currentSessionMinutes;
+    return (totalMinutes / 1440.0).clamp(0.0, 999.0);
+  }
+
+  /// Lead time "live" (in giorni, precisione double)
+  /// Valido per storie in qualsiasi stato (To Do -> Done)
+  double get systemTimeDaysLive {
+    final end = completedAt ?? DateTime.now();
+    return end.difference(createdAt).inMinutes / 1440.0;
   }
 
   @override

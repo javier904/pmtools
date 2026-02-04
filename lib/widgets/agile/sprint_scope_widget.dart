@@ -27,7 +27,7 @@ class SprintScopeWidget extends StatelessWidget {
     return stories
         .where((s) => 
             s.sprintId == sprint.id && 
-            !s.status.needsRefinement // Exclude Backlog/Refinement/Ready
+            !s.status.needsRefinement // Exclude Backlog/Refinement (Ready items IN a sprint are part of scope)
         )
         .fold<int>(0, (acc, s) => acc + (s.storyPoints ?? 0));
   }
@@ -142,11 +142,26 @@ class SprintScopeWidget extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            l10n.agileSprintScopeTitle,
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-              fontWeight: FontWeight.w600,
+          child: Tooltip(
+            message: l10n.agileSprintScopeTooltip,
+            triggerMode: TooltipTriggerMode.tap,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.agileSprintScopeTitle,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+              ],
             ),
           ),
         ),

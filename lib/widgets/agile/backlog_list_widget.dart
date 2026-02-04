@@ -72,7 +72,6 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
   StoryPriority? _priorityFilter;
   String? _tagFilter;
   bool _showFilters = false;
-  bool _showArchive = false; // Toggle per mostrare archivio completate
 
   /// Helper per trovare lo sprint di una story
   SprintModel? _getSprintForStory(UserStoryModel story) {
@@ -80,45 +79,28 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
     return widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
   }
 
-  /// Stories attive (non completate o in sprint non completati)
-  List<UserStoryModel> get _activeStories {
-    return widget.stories.where((story) {
-      // Stories completate (Done) vanno nell'archivio
-      if (story.status == StoryStatus.done) return false;
-
-      // Stories in sprint completati vanno nell'archivio
-      if (story.sprintId != null) {
-        final sprint = _getSprintForStory(story);
-        if (sprint != null && sprint.status == SprintStatus.completed) {
-          return false;
-        }
+  /// Stories "Archiviate" (completate o in sprint completati)
+  bool _isArchived(UserStoryModel story) {
+    if (story.status == StoryStatus.done) return true;
+    if (story.sprintId != null) {
+      final sprint = _getSprintForStory(story);
+      if (sprint != null && sprint.status == SprintStatus.completed) {
+        return true;
       }
-
-      return true;
-    }).toList();
-  }
-
-  /// Stories archiviate (completate o in sprint completati)
-  List<UserStoryModel> get _archivedStories {
-    return widget.stories.where((story) {
-      // Stories completate (Done) sono archiviate
-      if (story.status == StoryStatus.done) return true;
-
-      // Stories in sprint completati sono archiviate
-      if (story.sprintId != null) {
-        final sprint = _getSprintForStory(story);
-        if (sprint != null && sprint.status == SprintStatus.completed) {
-          return true;
-        }
-      }
-
-      return false;
-    }).toList();
+    }
+    return false;
   }
 
   List<UserStoryModel> get _filteredStories {
-    // Scegli la lista base in base al toggle archivio
-    var filtered = _showArchive ? _archivedStories : _activeStories;
+    var filtered = widget.stories;
+
+    // Filtra per status: 
+    // Se "Tutti" (null), escludi le archiviate (Done o Sprint completati)
+    if (_statusFilter == null) {
+      filtered = filtered.where((s) => !_isArchived(s)).toList();
+    } else {
+      filtered = filtered.where((s) => s.status == _statusFilter).toList();
+    }
 
     // Filtra per ricerca
     if (_searchQuery.isNotEmpty) {
@@ -128,11 +110,6 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
           s.description.toLowerCase().contains(query) ||
           s.storyId.toLowerCase().contains(query)
       ).toList();
-    }
-
-    // Filtra per status
-    if (_statusFilter != null) {
-      filtered = filtered.where((s) => s.status == _statusFilter).toList();
     }
 
     // Filtra per priority
@@ -189,7 +166,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
 
   Widget _buildHeader(int count, int totalPoints, int estimatedCount) {
     final l10n = AppLocalizations.of(context)!;
-    final archivedCount = _archivedStories.length;
+    final archivedCount = widget.stories.where((s) => _isArchived(s)).length;
 
     return Container(
       decoration: BoxDecoration(
@@ -207,14 +184,14 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Icon(
-                  _showArchive ? Icons.archive : Icons.list_alt,
-                  color: _showArchive ? Colors.grey : AppColors.primary,
+                  Icons.list_alt,
+                  color: AppColors.primary,
                 ),
                 const SizedBox(width: 8),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
-                    _showArchive ? l10n.agileBacklogArchiveTitle : l10n.agileBacklogTitle,
+                    l10n.agileBacklogTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -230,51 +207,12 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                 _buildStatBadge(l10n.agileBacklogStatsPoints(totalPoints), Colors.green),
                 const SizedBox(width: 8),
                 _buildStatBadge(l10n.agileBacklogStatsEstimated(estimatedCount), Colors.orange),
-                const SizedBox(width: 16),
-                // Toggle Archivio
-                Tooltip(
-                  message: _showArchive
-                      ? l10n.agileBacklogToggleActive
-                      : l10n.agileBacklogToggleArchive(archivedCount),
-                  child: InkWell(
-                    onTap: () => setState(() => _showArchive = !_showArchive),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: _showArchive
-                            ? Colors.grey.withOpacity(0.2)
-                            : Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: _showArchive
-                              ? Colors.grey.withOpacity(0.3)
-                              : Colors.green.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            _showArchive ? Icons.list_alt : Icons.archive,
-                            size: 16,
-                            color: _showArchive ? Colors.grey : Colors.green,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            _showArchive ? l10n.agileBacklogTitle : l10n.agileBacklogArchiveBadge(archivedCount),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: _showArchive ? Colors.grey : Colors.green,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 const SizedBox(width: 8),
+                Tooltip(
+                  message: l10n.agileBacklogDoneBadgeTooltip,
+                  child: _buildStatBadge(l10n.agileBacklogDoneBadge(archivedCount), Colors.teal),
+                ),
+                const SizedBox(width: 16),
                 // Bottone filtri
                 IconButton(
                   icon: Icon(
@@ -284,8 +222,8 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                   onPressed: () => setState(() => _showFilters = !_showFilters),
                   tooltip: l10n.agileFiltersTitle,
                 ),
-                // Bottone aggiungi (solo nel backlog attivo)
-                if (widget.canEdit && widget.onAddStory != null && !_showArchive)
+                // Bottone aggiungi
+                if (widget.canEdit && widget.onAddStory != null)
                   ElevatedButton.icon(
                     onPressed: widget.onAddStory,
                     icon: const Icon(Icons.add, size: 18),
@@ -383,15 +321,29 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                 onSelected: (_) => setState(() => _statusFilter = null),
               ),
               const SizedBox(width: 4),
-              ...StoryStatus.values.map((status) => Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: FilterChip(
+              ...StoryStatus.values.map((status) {
+                final chip = FilterChip(
                   label: Text(status.displayName),
                   selected: _statusFilter == status,
                   onSelected: (_) => setState(() => _statusFilter = status),
                   selectedColor: status.color.withOpacity(0.2),
-                ),
-              )),
+                );
+
+                if (status == StoryStatus.done) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Tooltip(
+                      message: l10n.agileFiltersDoneTooltip,
+                      child: chip,
+                    ),
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: chip,
+                );
+              }),
             ],
           ),
           const SizedBox(height: 8),
@@ -600,10 +552,10 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
             ? () => widget.onStoryEstimate!(story)
             : null,
         // Non permettere di aggiungere a sprint se già in un altro sprint o se nell'archivio
-        onAddToSprint: widget.canEdit && widget.onAddToSprint != null && story.sprintId == null && !_showArchive
+        onAddToSprint: widget.canEdit && widget.onAddToSprint != null && story.sprintId == null && !_isArchived(story)
             ? () => widget.onAddToSprint!(story)
             : null,
-        showDragHandle: widget.canEdit && widget.onReorder != null && !_showArchive,
+        showDragHandle: widget.canEdit && widget.onReorder != null && !_isArchived(story),
       ),
     );
   }

@@ -2574,7 +2574,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileCycleTimeTooltip =>
-      'Average time from start of work to completion.\nRequires items with \'Started\' and \'Completed\' dates.\nLower = more efficient team.';
+      'Average time spent in active states (e.g. In Progress, Review).\nExcludes waiting time in Backlog or Ready.\nItems completed quickly (< 1d) are calculated with precision.';
 
   @override
   String get agileThroughputTooltip =>
@@ -3397,7 +3397,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String estimationProgress(int completed, int total, String percent) {
-    return 'Progress: $completed/$total stories ($percent%)';
+    return 'Progress: $completed/$total stories';
   }
 
   @override
@@ -10282,7 +10282,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileMetricsCycleTimeDesc =>
-      'Time from start of work to completion. Measures development process efficiency.';
+      'Formula: Time spent in active states (In Progress / Review). Does not include waiting time in the backlog.';
 
   @override
   String get agileMetricsThroughputDesc =>
@@ -10446,6 +10446,47 @@ class AppLocalizationsEn extends AppLocalizations {
       'Hours are an internal reference. For Scrum planning, use the Story Points view.';
 
   @override
+  String agileWorkloadBalanceTooltip(String avg, String min, String max) {
+    return 'Team Average: $avg SP\nBalanced Range: $min - $max SP\nStatus based on deviation from average.';
+  }
+
+  @override
+  String get agileHealthTimeTooltip =>
+      'Elapsed days / Total days (based on Start/End dates).';
+
+  @override
+  String get agileHealthWorkTooltip =>
+      'Completed vs Total Planned Story Points.';
+
+  @override
+  String get agileHealthProgressTooltip =>
+      'Number of stories currently in progress.';
+
+  @override
+  String get agileHealthDoneTooltip =>
+      'Stories completed vs Total stories in sprint.';
+
+  @override
+  String get agileHealthCommitmentTooltip =>
+      'Reliability (Completed / Planned) based on past completed sprints.';
+
+  @override
+  String get agileHealthVelocityTooltip =>
+      'Daily average of Story Points completed in this sprint.';
+
+  @override
+  String get agileSprintScopeTooltip =>
+      'Tracks changes in sprint scope. \'Original\' are the points planned when the sprint started, \'Current\' are the points of stories currently in the sprint.';
+
+  @override
+  String get agileEstimationAccuracyTooltip =>
+      'Formula: (Completed Points / Planned Points) x 100. Indicates the team\'s reliability in completing the work promised at the start of the sprint.';
+
+  @override
+  String get agileCommitmentTrendTooltip =>
+      'Displays the team\'s reliability trend by comparing Planned vs Completed Points for each closed sprint.';
+
+  @override
   String get agileNoTeamMembers => 'No team members';
 
   @override
@@ -10513,6 +10554,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get average => 'Average';
+
+  @override
+  String get agileAvgVelocitySprint => 'Velocity (Sprint)';
+
+  @override
+  String get agileAvgVelocityWeekly => 'Velocity (Weekly)';
+
+  @override
+  String get agileAvgVelocitySprintTooltip =>
+      'Average story points completed per sprint.';
+
+  @override
+  String get agileAvgVelocityWeeklyTooltip =>
+      'Average story points completed per week.';
+
+  @override
+  String get agileFiltersDoneTooltip =>
+      'Completed stories or stories from closed sprints are archived by default. Select this filter to view them.';
+
+  @override
+  String agileBacklogDoneBadge(Object count) {
+    return '($count) Done';
+  }
+
+  @override
+  String get agileBacklogDoneBadgeTooltip =>
+      'These stories are hidden by default. Use the \'Done\' status filter to view them.';
+
+  @override
+  String get agileFlowEfficiencyTooltip =>
+      'Formula: (Total Active Time / Total System Time) * 100. Calculated in real-time across all items in the flow (including those waiting in the Sprint Backlog).';
+
+  @override
+  String get getAgileFlowCycleTimeTooltip =>
+      'Average time spent in active states (InProgress / Review). Waiting items (Ready) contribute 0 active time, reducing the average.';
+
+  @override
+  String get agileFlowLeadTimeTooltip =>
+      'Average total time spent in the system (from creation to today or completion). Includes both waiting and working time.';
+
+  @override
+  String get agileFlowWipTooltip =>
+      'Work In Progress: number of stories currently being worked on (excluding Backlog and Done).';
+
+  @override
+  String get agileBlockedItemsTooltip =>
+      'Stories that have unsatisfied dependencies (other stories not yet completed).';
 
   @override
   String agileItemsCount(int count) {
@@ -10646,7 +10734,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileSprintReviewSaveSuccess => 'Sprint Review saved';
 
   @override
-  String get agileEstimationAccuracy => 'Estimation Accuracy';
+  String get agileEstimationAccuracy => 'Planning Accuracy';
 
   @override
   String get agileCompleteOneSprintFirst => 'Complete at least one sprint';

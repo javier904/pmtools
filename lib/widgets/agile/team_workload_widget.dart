@@ -75,15 +75,17 @@ class TeamWorkloadWidget extends StatelessWidget {
 
     final unassigned = grouped[null] ?? [];
 
-    final membersWithStories =
-        memberWorkloads.where((m) => m.assignedStories > 0).toList();
-    final avgSP = membersWithStories.isEmpty
+    // CHANGED: Use ALL filtered members for average, not just active ones
+    // This fixes the issue where 1 person with 3 stories and 1 with 0 was considered "Balanced"
+    final double avgSP = memberWorkloads.isEmpty
         ? 0.0
-        : membersWithStories.fold<int>(0, (sum, m) => sum + m.totalSP) /
-            membersWithStories.length;
+        : memberWorkloads.fold<int>(0, (sum, m) => sum + m.totalSP) /
+            memberWorkloads.length;
 
-    final isUnbalanced = membersWithStories.length > 1 &&
-        membersWithStories.any(
+    // A team is unbalanced if there is more than 1 member AND
+    // anyone is outside the tolerant range (0.5x - 1.5x average)
+    final isUnbalanced = memberWorkloads.length > 1 &&
+        memberWorkloads.any(
             (m) => m.totalSP > avgSP * 1.5 || m.totalSP < avgSP * 0.5);
 
     for (final m in memberWorkloads) {
@@ -156,13 +158,13 @@ class TeamWorkloadWidget extends StatelessWidget {
               Icon(
                 Icons.assignment_outlined,
                 size: 48,
-                color: colorScheme.onSurface.withOpacity(0.4),
+                color: colorScheme.onSurface.withValues(alpha: 0.4),
               ),
               const SizedBox(height: 12),
               Text(
                 l10n?.agileWorkloadNoStories ?? 'No stories to analyze',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(height: 4),
@@ -170,7 +172,7 @@ class TeamWorkloadWidget extends StatelessWidget {
                 l10n?.agileWorkloadNoStoriesDesc ??
                     'Create stories and assign them to team members',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.4),
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
               ),
             ],
@@ -214,33 +216,51 @@ class TeamWorkloadWidget extends StatelessWidget {
   ) {
     final isBalanced = !data.isUnbalanced;
     final badgeColor = isBalanced
-        ? AppColors.success.withOpacity(0.15)
-        : AppColors.warning.withOpacity(0.15);
+        ? AppColors.success.withValues(alpha: 0.15)
+        : AppColors.warning.withValues(alpha: 0.15);
     final textColor = isBalanced ? AppColors.success : AppColors.warning;
     final label = isBalanced
         ? (l10n?.agileWorkloadBalanced ?? 'Balanced')
         : (l10n?.agileWorkloadUnbalanced ?? 'Unbalanced');
     final icon = isBalanced ? Icons.check_circle_outline : Icons.warning_amber;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    // Calculate ranges for tooltip explanation
+    final minBalanced = (data.avgSP * 0.5).toStringAsFixed(1);
+    final maxBalanced = (data.avgSP * 1.5).toStringAsFixed(1);
+    final avgFormatted = data.avgSP.toStringAsFixed(1);
+
+    final tooltipMessage = l10n?.agileWorkloadBalanceTooltip(
+            avgFormatted, minBalanced, maxBalanced) ??
+        'Avg: $avgFormatted SP\nRange: $minBalanced - $maxBalanced SP';
+
+    return Tooltip(
+      message: tooltipMessage,
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: badgeColor,
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF2C2C2E), // Dark grey like existing tooltips
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: textColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w600,
+      textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: badgeColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: textColor),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -297,7 +317,7 @@ class TeamWorkloadWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -313,7 +333,7 @@ class TeamWorkloadWidget extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.6),
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
@@ -358,11 +378,11 @@ class TeamWorkloadWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(10),
           border: mw.isOverloaded
               ? Border.all(
-                  color: AppColors.warning.withOpacity(0.5), width: 1)
+                  color: AppColors.warning.withValues(alpha: 0.5), width: 1)
               : null,
         ),
         child: Column(
@@ -373,7 +393,7 @@ class TeamWorkloadWidget extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 16,
-                  backgroundColor: colorScheme.primary.withOpacity(0.15),
+                  backgroundColor: colorScheme.primary.withValues(alpha: 0.15),
                   child: Text(
                     initial,
                     style: theme.textTheme.labelMedium?.copyWith(
@@ -399,7 +419,7 @@ class TeamWorkloadWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.12),
+                    color: colorScheme.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -435,7 +455,7 @@ class TeamWorkloadWidget extends StatelessWidget {
                 ' \u00b7 ${mw.totalSP} SP'
                 ' \u00b7 ${mw.wipCount} ${l10n?.agileWorkloadInProgress ?? 'in progress'}',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.55),
+                  color: colorScheme.onSurface.withValues(alpha: 0.55),
                 ),
               ),
             ] else ...[
@@ -443,7 +463,7 @@ class TeamWorkloadWidget extends StatelessWidget {
               Text(
                 '0 ${l10n?.agileWorkloadStories ?? 'stories'}',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.4),
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
               ),
             ],
@@ -537,9 +557,9 @@ class TeamWorkloadWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.warning.withOpacity(0.08),
+        color: AppColors.warning.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -565,7 +585,7 @@ class TeamWorkloadWidget extends StatelessWidget {
                     text:
                         '${unassigned.length} ${l10n?.agileWorkloadUnassignedWarning ?? 'stories without assignee'}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.7),
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -596,8 +616,7 @@ class _MemberWorkload {
     required this.totalSP,
     required this.storiesByStatus,
     required this.wipCount,
-    this.isOverloaded = false,
-  });
+  }) : isOverloaded = false;
 }
 
 class _WorkloadData {

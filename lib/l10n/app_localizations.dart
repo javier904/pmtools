@@ -4745,7 +4745,7 @@ abstract class AppLocalizations {
   /// No description provided for @agileCycleTimeTooltip.
   ///
   /// In it, this message translates to:
-  /// **'Tempo medio dall\'inizio lavoro al completamento.\nRichiede items con date \'Iniziato\' e \'Completato\' valorizzate.\nPiù basso = team più efficiente.'**
+  /// **'Tempo medio trascorso negli stati attivi (es. In Progress, Review).\nEsclude il tempo di attesa nel Backlog o Ready.\nI ticket completati rapidamente (< 1g) sono calcolati con precisione.'**
   String get agileCycleTimeTooltip;
 
   /// No description provided for @agileThroughputTooltip.
@@ -6287,7 +6287,7 @@ abstract class AppLocalizations {
   /// No description provided for @estimationProgress.
   ///
   /// In it, this message translates to:
-  /// **'Avanzamento: {completed}/{total} stories ({percent}%)'**
+  /// **'Avanzamento: {completed}/{total} stories'**
   String estimationProgress(int completed, int total, String percent);
 
   /// No description provided for @estimationStart.
@@ -18615,7 +18615,7 @@ abstract class AppLocalizations {
   /// No description provided for @agileMetricsCycleTimeDesc.
   ///
   /// In it, this message translates to:
-  /// **'Tempo dall\'inizio lavoro al completamento. Misura l\'efficienza dello sviluppo.'**
+  /// **'Formula: Tempo trascorso in stati attivi (In Progress / Review). Non include il tempo di attesa nel backlog.'**
   String get agileMetricsCycleTimeDesc;
 
   /// No description provided for @agileMetricsThroughputDesc.
@@ -18906,6 +18906,66 @@ abstract class AppLocalizations {
   /// **'Le ore sono un riferimento interno. Per la pianificazione Scrum, usa la vista Story Points.'**
   String get agileHoursNote;
 
+  /// No description provided for @agileWorkloadBalanceTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Media Team: {avg} SP\nRange bilanciato: {min} - {max} SP\nLo status è basato sulla deviazione dalla media.'**
+  String agileWorkloadBalanceTooltip(String avg, String min, String max);
+
+  /// No description provided for @agileHealthTimeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Giorni trascorsi / Totale giorni (basato su date Inizio/Fine).'**
+  String get agileHealthTimeTooltip;
+
+  /// No description provided for @agileHealthWorkTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Story Points completati su totalmente pianificati.'**
+  String get agileHealthWorkTooltip;
+
+  /// No description provided for @agileHealthProgressTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Numero di storie attualmente in lavorazione.'**
+  String get agileHealthProgressTooltip;
+
+  /// No description provided for @agileHealthDoneTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie completate su totale storie nello sprint.'**
+  String get agileHealthDoneTooltip;
+
+  /// No description provided for @agileHealthCommitmentTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Affidabilità (Completato / Pianificato) basata sugli sprint passati conclusi.'**
+  String get agileHealthCommitmentTooltip;
+
+  /// No description provided for @agileHealthVelocityTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Media giornaliera di Story Points completati in questo sprint.'**
+  String get agileHealthVelocityTooltip;
+
+  /// No description provided for @agileSprintScopeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitora il cambiamento del perimetro dello sprint. \'Original\' sono i punti pianificati al momento dell\'avvio dello sprint, \'Current\' sono i punti delle storie attualmente presenti.'**
+  String get agileSprintScopeTooltip;
+
+  /// No description provided for @agileEstimationAccuracyTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Formula: (Punti Completati / Punti Pianificati) x 100. Indica l\'affidabilità del team nel completare il lavoro promesso all\'inizio dello sprint.'**
+  String get agileEstimationAccuracyTooltip;
+
+  /// No description provided for @agileCommitmentTrendTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Visualizza la tendenza di affidabilità del team confrontando Punti Pianificati vs Completati per ogni sprint concluso.'**
+  String get agileCommitmentTrendTooltip;
+
   /// No description provided for @agileNoTeamMembers.
   ///
   /// In it, this message translates to:
@@ -19031,6 +19091,78 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Media'**
   String get average;
+
+  /// No description provided for @agileAvgVelocitySprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Velocity (Sprint)'**
+  String get agileAvgVelocitySprint;
+
+  /// No description provided for @agileAvgVelocityWeekly.
+  ///
+  /// In it, this message translates to:
+  /// **'Velocity (Sett.)'**
+  String get agileAvgVelocityWeekly;
+
+  /// No description provided for @agileAvgVelocitySprintTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Media dei punti completati per sprint.'**
+  String get agileAvgVelocitySprintTooltip;
+
+  /// No description provided for @agileAvgVelocityWeeklyTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Media dei punti completati per settimana.'**
+  String get agileAvgVelocityWeeklyTooltip;
+
+  /// No description provided for @agileFiltersDoneTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Le storie completate o di sprint chiusi vengono archiviate di default. Seleziona questo filtro per visualizzarle.'**
+  String get agileFiltersDoneTooltip;
+
+  /// No description provided for @agileBacklogDoneBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'({count}) Done'**
+  String agileBacklogDoneBadge(Object count);
+
+  /// No description provided for @agileBacklogDoneBadgeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Queste storie sono nascoste di default nel backlog attivo. Seleziona lo stato \'Done\' nei filtri per visualizzarle.'**
+  String get agileBacklogDoneBadgeTooltip;
+
+  /// No description provided for @agileFlowEfficiencyTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Formula: (Tempo Attivo Totale / Tempo Totale nel Sistema) x 100. Calcolato in tempo reale su tutti gli item nello Sprint (inclusi quelli in attesa).'**
+  String get agileFlowEfficiencyTooltip;
+
+  /// No description provided for @getAgileFlowCycleTimeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempo medio trascorso in stati attivi (In Progress / Review). Gli item in attesa (Ready) contribuiscono con 0 tempo attivo, abbassando la media.'**
+  String get getAgileFlowCycleTimeTooltip;
+
+  /// No description provided for @agileFlowLeadTimeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Tempo medio totale trascorso nel sistema (dalla creazione ad oggi o al completamento). Include sia il tempo di attesa che di lavoro.'**
+  String get agileFlowLeadTimeTooltip;
+
+  /// No description provided for @agileFlowWipTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Work In Progress: numero di storie attualmente in lavorazione (esclusi Backlog e Done).'**
+  String get agileFlowWipTooltip;
+
+  /// No description provided for @agileBlockedItemsTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Storie che hanno delle dipendenze non soddisfatte (altre storie non ancora completate).'**
+  String get agileBlockedItemsTooltip;
 
   /// No description provided for @agileItemsCount.
   ///
@@ -19281,7 +19413,7 @@ abstract class AppLocalizations {
   /// No description provided for @agileEstimationAccuracy.
   ///
   /// In it, this message translates to:
-  /// **'Accuratezza Stime'**
+  /// **'Affidabilità Pianificazione'**
   String get agileEstimationAccuracy;
 
   /// No description provided for @agileCompleteOneSprintFirst.
