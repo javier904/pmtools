@@ -34,8 +34,18 @@ class TodoParticipant {
         (e) => e.name == map['role'],
         orElse: () => TodoParticipantRole.viewer,
       ),
-      joinedAt: DateTime.tryParse(map['joinedAt'] ?? '') ?? DateTime.now(),
+      joinedAt: _parseDate(map['joinedAt']),
     );
+  }
+
+  static DateTime _parseDate(dynamic value) {
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+    // Handle Firestore Timestamp if imported, or dynamic check
+    if (value != null && value.runtimeType.toString() == 'Timestamp') {
+       return (value as dynamic).toDate(); 
+    }
+    return DateTime.now();
   }
 
   TodoParticipant copyWith({

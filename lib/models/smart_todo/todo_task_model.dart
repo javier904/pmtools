@@ -110,7 +110,7 @@ class TodoComment {
       authorName: map['authorName'] ?? '',
       text: map['text'] ?? '',
       imageUrl: map['imageUrl'],
-      timestamp: DateTime.tryParse(map['timestamp'] ?? '') ?? DateTime.now(),
+      timestamp: TodoTaskModel._parseDate(map['timestamp']),
     );
   }
 }
@@ -235,8 +235,8 @@ class TodoTaskModel {
       tags: (map['tags'] as List?)
           ?.map((item) => TodoLabel.fromMap(item))
           .toList() ?? [],
-      startDate: map['startDate'] != null ? DateTime.tryParse(map['startDate']) : null,
-      dueDate: map['dueDate'] != null ? DateTime.tryParse(map['dueDate']) : null,
+      startDate: map['startDate'] != null ? _parseDate(map['startDate']) : null,
+      dueDate: map['dueDate'] != null ? _parseDate(map['dueDate']) : null,
       effort: map['effort'],
       attachments: (map['attachments'] as List?)
           ?.map((item) => TodoAttachment.fromMap(item))

@@ -983,7 +983,7 @@ abstract class AppLocalizations {
   /// No description provided for @eisenhowerNoVotesYet.
   ///
   /// In it, this message translates to:
-  /// **'Nessun voto ancora raccolto'**
+  /// **'Ancora nessun voto raccolto'**
   String get eisenhowerNoVotesYet;
 
   /// No description provided for @eisenhowerEditMatrix.
@@ -1301,13 +1301,13 @@ abstract class AppLocalizations {
   /// No description provided for @eisenhowerVoteSubmit.
   ///
   /// In it, this message translates to:
-  /// **'VOTA'**
+  /// **'Vota'**
   String get eisenhowerVoteSubmit;
 
   /// No description provided for @eisenhowerVotedSuccess.
   ///
   /// In it, this message translates to:
-  /// **'Hai votato'**
+  /// **'Voto inviato con successo!'**
   String get eisenhowerVotedSuccess;
 
   /// No description provided for @eisenhowerRevealVotes.
@@ -1351,6 +1351,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'I:'**
   String get eisenhowerImportanceShort;
+
+  /// No description provided for @eisenhowerVoting.
+  ///
+  /// In it, this message translates to:
+  /// **'Votazione'**
+  String get eisenhowerVoting;
 
   /// No description provided for @eisenhowerVotingInProgress.
   ///
@@ -1502,17 +1508,149 @@ abstract class AppLocalizations {
   /// **'{online} di {total} partecipanti online'**
   String eisenhowerOnlineParticipants(int online, int total);
 
-  /// No description provided for @eisenhowerVoting.
-  ///
-  /// In it, this message translates to:
-  /// **'Votazione'**
-  String get eisenhowerVoting;
-
   /// No description provided for @eisenhowerAllActivitiesVoted.
   ///
   /// In it, this message translates to:
   /// **'Tutte le attività sono state votate!'**
   String get eisenhowerAllActivitiesVoted;
+
+  /// No description provided for @eisenhowerAlreadyVotedError.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa attività è già stata votata. Il facilitatore deve riaprire la votazione per modificarla.'**
+  String get eisenhowerAlreadyVotedError;
+
+  /// No description provided for @eisenhowerYourVote.
+  ///
+  /// In it, this message translates to:
+  /// **'Il tuo voto: U={urgency}, I={importance}'**
+  String eisenhowerYourVote(Object urgency, Object importance);
+
+  /// No description provided for @eisenhowerVoterName.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto di {name}'**
+  String eisenhowerVoterName(Object name);
+
+  /// No description provided for @eisenhowerUrgencyLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Non urgente'**
+  String get eisenhowerUrgencyLow;
+
+  /// No description provided for @eisenhowerUrgencyHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Molto urgente'**
+  String get eisenhowerUrgencyHigh;
+
+  /// No description provided for @eisenhowerImportanceLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Non importante'**
+  String get eisenhowerImportanceLow;
+
+  /// No description provided for @eisenhowerImportanceHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Molto importante'**
+  String get eisenhowerImportanceHigh;
+
+  /// No description provided for @eisenhowerQuadrantLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Quadrante: {name}'**
+  String eisenhowerQuadrantLabel(Object name);
+
+  /// No description provided for @eisenhowerQ1Name.
+  ///
+  /// In it, this message translates to:
+  /// **'Q1 - FAI SUBITO'**
+  String get eisenhowerQ1Name;
+
+  /// No description provided for @eisenhowerQ1Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Urgente + Importante'**
+  String get eisenhowerQ1Desc;
+
+  /// No description provided for @eisenhowerQ2Name.
+  ///
+  /// In it, this message translates to:
+  /// **'Q2 - PIANIFICA'**
+  String get eisenhowerQ2Name;
+
+  /// No description provided for @eisenhowerQ2Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Non Urgente + Importante'**
+  String get eisenhowerQ2Desc;
+
+  /// No description provided for @eisenhowerQ3Name.
+  ///
+  /// In it, this message translates to:
+  /// **'Q3 - DELEGA'**
+  String get eisenhowerQ3Name;
+
+  /// No description provided for @eisenhowerQ3Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Urgente + Non Importante'**
+  String get eisenhowerQ3Desc;
+
+  /// No description provided for @eisenhowerQ4Name.
+  ///
+  /// In it, this message translates to:
+  /// **'Q4 - ELIMINA'**
+  String get eisenhowerQ4Name;
+
+  /// No description provided for @eisenhowerQ4Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Non Urgente + Non Importante'**
+  String get eisenhowerQ4Desc;
+
+  /// No description provided for @eisenhowerPreVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} pre-voti'**
+  String eisenhowerPreVotes(Object count);
+
+  /// No description provided for @eisenhowerVotesVisibleAfterReveal.
+  ///
+  /// In it, this message translates to:
+  /// **'I voti saranno visibili quando il facilitatore farà \"Rivela voti\"'**
+  String get eisenhowerVotesVisibleAfterReveal;
+
+  /// No description provided for @eisenhowerNextActivityError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore avvio prossima votazione: {error}'**
+  String eisenhowerNextActivityError(Object error);
+
+  /// No description provided for @eisenhowerReopenVotes.
+  ///
+  /// In it, this message translates to:
+  /// **'Riapri votazioni'**
+  String get eisenhowerReopenVotes;
+
+  /// No description provided for @eisenhowerReopenVotesTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Riavvia la votazione formale a partire dalle stime attuali'**
+  String get eisenhowerReopenVotesTooltip;
+
+  /// No description provided for @eisenhowerReopenVotesConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Riaprire tutte le votazioni?'**
+  String get eisenhowerReopenVotesConfirm;
+
+  /// No description provided for @eisenhowerReopenVotesDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa operazione riavvierà una sessione di voto formale per tutte le attività, mantenendo le stime attuali come punto di partenza. Vuoi procedere?'**
+  String get eisenhowerReopenVotesDesc;
 
   /// No description provided for @estimationTitle.
   ///
@@ -1807,6 +1945,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Nessuna storia da stimare'**
   String get storyNoStories;
+
+  /// No description provided for @retrospectivesVoted.
+  ///
+  /// In it, this message translates to:
+  /// **'Votato'**
+  String get retrospectivesVoted;
 
   /// No description provided for @storyComplete.
   ///

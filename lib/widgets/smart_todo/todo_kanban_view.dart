@@ -28,16 +28,27 @@ class TodoKanbanView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Note: Browser back gesture on macOS trackpad is prevented via CSS
     // overscroll-behavior-x: contain in index.html
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...list.columns.map((col) => _buildColumn(context, col)),
-          _buildAddColumnButton(context),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(16),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight - 32), // Subtract padding
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ...list.columns.map((col) => _buildColumn(context, col)),
+                Column(
+                  children: [
+                    _buildAddColumnButton(context),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }
     );
   }
 
@@ -132,12 +143,10 @@ class TodoKanbanView extends StatelessWidget {
                 ),
               ),
               
-              // Task List (Scrollable within column) - Flexible to prevent overflow
-              Flexible(
+              // Task List (Scrollable within column) - Expanded to fill vertical space
+              Expanded(
                 child: Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.65, 
-                  ),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Builder(
                     builder: (context) {
                       // 1. Sort Tasks Client-Side
@@ -159,7 +168,7 @@ class TodoKanbanView extends StatelessWidget {
                       });
 
                       return ListView.builder(
-                        shrinkWrap: true,
+                        shrinkWrap: false,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         itemCount: sortedTasks.length,
                         itemBuilder: (context, index) {

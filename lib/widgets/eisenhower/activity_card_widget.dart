@@ -57,22 +57,11 @@ class ActivityCardWidget extends StatelessWidget {
   int get _totalExpectedVoters => totalVoters;
 
   /// Verifica se l'utente corrente ha già votato su questa attività
-  /// Usa email escapata per cercare nel map dei voti
-  bool get _hasCurrentUserVoted {
-    if (currentUserEmail == null) return false;
-    final escapedEmail = EisenhowerParticipantModel.escapeEmail(currentUserEmail!);
-    // Cerca sia con email normale che escapata
-    return activity.votes.containsKey(escapedEmail) ||
-           activity.votes.containsKey(currentUserEmail!);
-  }
+  bool get _hasCurrentUserVoted => _currentUserVote != null;
 
   /// Ottiene il voto dell'utente corrente (se esiste)
-  EisenhowerVote? get _currentUserVote {
-    if (currentUserEmail == null) return null;
-    final escapedEmail = EisenhowerParticipantModel.escapeEmail(currentUserEmail!);
-    // Cerca sia con email normale che escapata
-    return activity.votes[escapedEmail] ?? activity.votes[currentUserEmail!];
-  }
+  EisenhowerVote? get _currentUserVote =>
+      currentUserEmail != null ? activity.getVote(currentUserEmail!) : null;
 
   /// Verifica se tutti i votanti attesi hanno votato
   /// Include: tutti i voters + il facilitatore
@@ -164,9 +153,9 @@ class ActivityCardWidget extends StatelessWidget {
                     children: [
                       const Icon(Icons.check, size: 12, color: Colors.green),
                       const SizedBox(width: 2),
-                      const Text(
-                        'Votato',
-                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.green),
+                      Text(
+                        l10n.retrospectivesVoted,
+                        style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.green),
                       ),
                     ],
                   ),
@@ -409,7 +398,7 @@ class ActivityCardWidget extends StatelessWidget {
                       const Icon(Icons.check_circle, size: 14, color: Colors.green),
                       const SizedBox(width: 6),
                       Text(
-                        'Il tuo voto: U=${_currentUserVote!.urgency}, I=${_currentUserVote!.importance}',
+                        l10n.eisenhowerYourVote(_currentUserVote!.urgency.toString(), _currentUserVote!.importance.toString()),
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.green[800],
@@ -523,7 +512,7 @@ class ActivityCardWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '$preVoteCount pre-voti',
+                      l10n.eisenhowerPreVotes(preVoteCount),
                       style: TextStyle(fontSize: 10, color: Colors.green[700]),
                     ),
                   ),

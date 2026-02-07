@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/eisenhower_activity_model.dart';
 import '../../themes/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Dialog per inserire il voto indipendente su un'attivita'
 ///
@@ -66,7 +67,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Vota', style: TextStyle(fontSize: 18)),
+                Text(AppLocalizations.of(context)!.eisenhowerVoteSubmit, style: const TextStyle(fontSize: 18)),
                 Text(
                   widget.activity.title,
                   style: TextStyle(
@@ -109,7 +110,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Voto di ${widget.voterName}',
+                      AppLocalizations.of(context)!.eisenhowerVoterName(widget.voterName),
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
@@ -121,24 +122,24 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
 
             // Slider Urgenza
             _buildSliderSection(
-              label: 'URGENZA',
+              label: AppLocalizations.of(context)!.eisenhowerUrgency,
               value: _urgency,
               color: Colors.red,
               icon: Icons.warning_amber,
-              lowLabel: 'Non urgente',
-              highLabel: 'Molto urgente',
+              lowLabel: AppLocalizations.of(context)!.eisenhowerUrgencyLow,
+              highLabel: AppLocalizations.of(context)!.eisenhowerUrgencyHigh,
               onChanged: (v) => setState(() => _urgency = v),
             ),
             const SizedBox(height: 20),
 
             // Slider Importanza
             _buildSliderSection(
-              label: 'IMPORTANZA',
+              label: AppLocalizations.of(context)!.eisenhowerImportance,
               value: _importance,
               color: Colors.green,
               icon: Icons.star,
-              lowLabel: 'Non importante',
-              highLabel: 'Molto importante',
+              lowLabel: AppLocalizations.of(context)!.eisenhowerImportanceLow,
+              highLabel: AppLocalizations.of(context)!.eisenhowerImportanceHigh,
               onChanged: (v) => setState(() => _importance = v),
             ),
             const SizedBox(height: 24),
@@ -151,7 +152,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Annulla'),
+          child: Text(AppLocalizations.of(context)!.actionCancel),
         ),
         ElevatedButton.icon(
           onPressed: () {
@@ -162,7 +163,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
             Navigator.pop(context, vote);
           },
           icon: const Icon(Icons.check),
-          label: const Text('Conferma Voto'),
+          label: Text(AppLocalizations.of(context)!.actionConfirm),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
             foregroundColor: Colors.white,
@@ -281,7 +282,7 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Quadrante: ${quadrantInfo.name}',
+                  AppLocalizations.of(context)!.eisenhowerQuadrantLabel(quadrantInfo.name),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -307,32 +308,33 @@ class _IndependentVoteDialogState extends State<IndependentVoteDialog> {
   }
 
   _QuadrantInfo _getQuadrantInfo(String quadrant) {
+    final l10n = AppLocalizations.of(context)!;
     switch (quadrant) {
       case 'Q1':
         return _QuadrantInfo(
-          name: 'Q1 - FAI SUBITO',
-          action: 'Urgente + Importante',
+          name: l10n.eisenhowerQ1Name,
+          action: l10n.eisenhowerQ1Desc,
           color: Colors.red,
           icon: Icons.priority_high,
         );
       case 'Q2':
         return _QuadrantInfo(
-          name: 'Q2 - PIANIFICA',
-          action: 'Non Urgente + Importante',
+          name: l10n.eisenhowerQ2Name,
+          action: l10n.eisenhowerQ2Desc,
           color: Colors.green,
           icon: Icons.schedule,
         );
       case 'Q3':
         return _QuadrantInfo(
-          name: 'Q3 - DELEGA',
-          action: 'Urgente + Non Importante',
+          name: l10n.eisenhowerQ3Name,
+          action: l10n.eisenhowerQ3Desc,
           color: Colors.orange,
           icon: Icons.group,
         );
       default:
         return _QuadrantInfo(
-          name: 'Q4 - ELIMINA',
-          action: 'Non Urgente + Non Importante',
+          name: l10n.eisenhowerQ4Name,
+          action: l10n.eisenhowerQ4Desc,
           color: Colors.grey,
           icon: Icons.delete_outline,
         );

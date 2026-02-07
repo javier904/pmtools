@@ -282,6 +282,9 @@ class EisenhowerMatrixModel {
   /// Numero di votanti
   int get voterCount => voterEmails.length;
 
+  /// True se c'è un solo partecipante attivo e nessun invito in sospeso
+  bool get isSingleUserSession => voterCount == 1 && pendingEmails.isEmpty;
+
   /// Email dei facilitatori
   ///
   /// 🔧 BACKWARD COMPATIBILITY: Include il creator SOLO se non è nella lista partecipanti

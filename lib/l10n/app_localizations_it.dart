@@ -470,7 +470,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get eisenhowerVotesLabel => 'Voti:';
 
   @override
-  String get eisenhowerNoVotesYet => 'Nessun voto ancora raccolto';
+  String get eisenhowerNoVotesYet => 'Ancora nessun voto raccolto';
 
   @override
   String get eisenhowerEditMatrix => 'Modifica Matrice';
@@ -644,10 +644,10 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get eisenhowerVoteSubmit => 'VOTA';
+  String get eisenhowerVoteSubmit => 'Vota';
 
   @override
-  String get eisenhowerVotedSuccess => 'Hai votato';
+  String get eisenhowerVotedSuccess => 'Voto inviato con successo!';
 
   @override
   String get eisenhowerRevealVotes => 'RIVELA VOTI';
@@ -669,6 +669,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get eisenhowerImportanceShort => 'I:';
+
+  @override
+  String get eisenhowerVoting => 'Votazione';
 
   @override
   String get eisenhowerVotingInProgress => 'VOTAZIONE IN CORSO';
@@ -760,11 +763,91 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get eisenhowerVoting => 'Votazione';
-
-  @override
   String get eisenhowerAllActivitiesVoted =>
       'Tutte le attività sono state votate!';
+
+  @override
+  String get eisenhowerAlreadyVotedError =>
+      'Questa attività è già stata votata. Il facilitatore deve riaprire la votazione per modificarla.';
+
+  @override
+  String eisenhowerYourVote(Object urgency, Object importance) {
+    return 'Il tuo voto: U=$urgency, I=$importance';
+  }
+
+  @override
+  String eisenhowerVoterName(Object name) {
+    return 'Voto di $name';
+  }
+
+  @override
+  String get eisenhowerUrgencyLow => 'Non urgente';
+
+  @override
+  String get eisenhowerUrgencyHigh => 'Molto urgente';
+
+  @override
+  String get eisenhowerImportanceLow => 'Non importante';
+
+  @override
+  String get eisenhowerImportanceHigh => 'Molto importante';
+
+  @override
+  String eisenhowerQuadrantLabel(Object name) {
+    return 'Quadrante: $name';
+  }
+
+  @override
+  String get eisenhowerQ1Name => 'Q1 - FAI SUBITO';
+
+  @override
+  String get eisenhowerQ1Desc => 'Urgente + Importante';
+
+  @override
+  String get eisenhowerQ2Name => 'Q2 - PIANIFICA';
+
+  @override
+  String get eisenhowerQ2Desc => 'Non Urgente + Importante';
+
+  @override
+  String get eisenhowerQ3Name => 'Q3 - DELEGA';
+
+  @override
+  String get eisenhowerQ3Desc => 'Urgente + Non Importante';
+
+  @override
+  String get eisenhowerQ4Name => 'Q4 - ELIMINA';
+
+  @override
+  String get eisenhowerQ4Desc => 'Non Urgente + Non Importante';
+
+  @override
+  String eisenhowerPreVotes(Object count) {
+    return '$count pre-voti';
+  }
+
+  @override
+  String get eisenhowerVotesVisibleAfterReveal =>
+      'I voti saranno visibili quando il facilitatore farà \"Rivela voti\"';
+
+  @override
+  String eisenhowerNextActivityError(Object error) {
+    return 'Errore avvio prossima votazione: $error';
+  }
+
+  @override
+  String get eisenhowerReopenVotes => 'Riapri votazioni';
+
+  @override
+  String get eisenhowerReopenVotesTooltip =>
+      'Riavvia la votazione formale a partire dalle stime attuali';
+
+  @override
+  String get eisenhowerReopenVotesConfirm => 'Riaprire tutte le votazioni?';
+
+  @override
+  String get eisenhowerReopenVotesDesc =>
+      'Questa operazione riavvierà una sessione di voto formale per tutte le attività, mantenendo le stime attuali come punto di partenza. Vuoi procedere?';
 
   @override
   String get estimationTitle => 'Estimation Room';
@@ -916,6 +999,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get storyNoStories => 'Nessuna storia da stimare';
+
+  @override
+  String get retrospectivesVoted => 'Votato';
 
   @override
   String get storyComplete => 'Storia completata';

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'eisenhower_matrix_model.dart';
+import 'eisenhower_participant_model.dart';
 import 'raci_models.dart';
 
 /// Modello per un singolo voto di un partecipante
@@ -224,8 +225,13 @@ class EisenhowerActivityModel {
     return allParticipants.where((p) => !votes.containsKey(p)).toList();
   }
 
-  /// Ottiene il voto di un partecipante specifico
-  EisenhowerVote? getVote(String participantName) => votes[participantName];
+  /// Ottiene il voto di un partecipante specifico (cerca sia con email normale che escapata)
+  EisenhowerVote? getVote(String email) {
+    final normalizedEmail = email.toLowerCase();
+    if (votes.containsKey(normalizedEmail)) return votes[normalizedEmail];
+    final escaped = EisenhowerParticipantModel.escapeEmail(normalizedEmail);
+    return votes[escaped];
+  }
 
   /// Crea una copia con modifiche
   EisenhowerActivityModel copyWith({

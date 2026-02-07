@@ -307,6 +307,8 @@
   "eisenhowerImportance": "IMPORTANZA",
   "eisenhowerUrgencyShort": "U:",
   "eisenhowerImportanceShort": "I:",
+  "eisenhowerNoVotesYet": "Ancora nessun voto raccolto",
+  "eisenhowerVoting": "Votazione",
   "eisenhowerVotingInProgress": "VOTAZIONE IN CORSO",
   "eisenhowerWaitingForOthers": "In attesa che tutti votino. Il facilitatore rivelerà i voti.",
   "eisenhowerReady": "Pronto",
@@ -349,8 +351,58 @@
       }
     }
   },
-  "eisenhowerVoting": "Votazione",
   "eisenhowerAllActivitiesVoted": "Tutte le attività sono state votate!",
+  "eisenhowerAlreadyVotedError": "Questa attività è già stata votata. Il facilitatore deve riaprire la votazione per modificarla.",
+  "eisenhowerVoteSubmit": "Vota",
+  "eisenhowerVotedSuccess": "Voto inviato con successo!",
+  "eisenhowerYourVote": "Il tuo voto: U={urgency}, I={importance}",
+  "@eisenhowerYourVote": {
+    "placeholders": {
+      "urgency": {},
+      "importance": {}
+    }
+  },
+  "eisenhowerVoterName": "Voto di {name}",
+  "@eisenhowerVoterName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "eisenhowerUrgencyLow": "Non urgente",
+  "eisenhowerUrgencyHigh": "Molto urgente",
+  "eisenhowerImportanceLow": "Non importante",
+  "eisenhowerImportanceHigh": "Molto importante",
+  "eisenhowerQuadrantLabel": "Quadrante: {name}",
+  "@eisenhowerQuadrantLabel": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "eisenhowerQ1Name": "Q1 - FAI SUBITO",
+  "eisenhowerQ1Desc": "Urgente + Importante",
+  "eisenhowerQ2Name": "Q2 - PIANIFICA",
+  "eisenhowerQ2Desc": "Non Urgente + Importante",
+  "eisenhowerQ3Name": "Q3 - DELEGA",
+  "eisenhowerQ3Desc": "Urgente + Non Importante",
+  "eisenhowerQ4Name": "Q4 - ELIMINA",
+  "eisenhowerQ4Desc": "Non Urgente + Non Importante",
+  "eisenhowerPreVotes": "{count} pre-voti",
+  "@eisenhowerPreVotes": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "eisenhowerVotesVisibleAfterReveal": "I voti saranno visibili quando il facilitatore farà \"Rivela voti\"",
+  "eisenhowerNextActivityError": "Errore avvio prossima votazione: {error}",
+  "@eisenhowerNextActivityError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "eisenhowerReopenVotes": "Riapri votazioni",
+  "eisenhowerReopenVotesTooltip": "Riavvia la votazione formale a partire dalle stime attuali",
+  "eisenhowerReopenVotesConfirm": "Riaprire tutte le votazioni?",
+  "eisenhowerReopenVotesDesc": "Questa operazione riavvierà una sessione di voto formale per tutte le attività, mantenendo le stime attuali come punto di partenza. Vuoi procedere?",
   "estimationTitle": "Estimation Room",
   "estimationYourSessions": "Le tue sessioni",
   "estimationNoSessions": "Nessuna sessione creata",
@@ -400,6 +452,7 @@
   "storyDescription": "Descrizione storia",
   "storyAddNew": "Aggiungi storia",
   "storyNoStories": "Nessuna storia da stimare",
+  "retrospectivesVoted": "Votato",
   "storyComplete": "Storia completata",
   "storySkip": "Salta storia",
   "estimationModeFibonacci": "Fibonacci",

@@ -154,10 +154,9 @@ class TodoTaskCard extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 // 2. Title
-                Text(
+                SelectableText(
                   task.title,
                   maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -181,10 +180,9 @@ class TodoTaskCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     textStyle: const TextStyle(color: Colors.white, fontSize: 13), // Readable text
-                    child: Text(
+                    child: SelectableText(
                       task.description,
                       maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],

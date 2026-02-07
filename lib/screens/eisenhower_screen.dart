@@ -1720,6 +1720,51 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 ],
               ),
               const SizedBox(height: 8),
+              // Pannello azioni rapide (Riapri votazioni)
+              if (_isFacilitator && _activities.any((a) => a.isRevealed))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.info.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.info.withOpacity(0.2)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.info_outline, size: 16, color: AppColors.info),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                l10n.eisenhowerReopenVotesTooltip,
+                                style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _reopenAllVotes,
+                            icon: const Icon(Icons.refresh, size: 16),
+                            label: Text(l10n.eisenhowerReopenVotes),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.info,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 8),
               // Ordina: attività che richiedono il voto dell'utente prima, poi le altre
               ...(() {
                 final sortedActivities = List<EisenhowerActivityModel>.from(_activities);
@@ -1772,7 +1817,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                     totalVoters: _selectedMatrix?.voterCount ?? 0,
                     onStartIndependentVoting: _isFacilitator ? () => _startIndependentVoting(activity) : null,
                     onSubmitIndependentVote: _canVoteOnActivity(activity) ? () => _submitIndependentVote(activity) : null,
-                    onRevealVotes: _isFacilitator ? () => _revealVotes(activity) : null,
+                    onRevealVotes: (_isFacilitator && !_selectedMatrix!.isSingleUserSession) ? () => _revealVotes(activity) : null,
                     onResetVoting: _isFacilitator ? () => _resetVotingSession(activity) : null,
                   ),
                 );
@@ -2302,9 +2347,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       case EisenhowerQuadrant.q1: // Urgent & Important
         return TodoTaskPriority.high;
       case EisenhowerQuadrant.q2: // Not Urgent & Important
-        return TodoTaskPriority.high;
-      case EisenhowerQuadrant.q3: // Urgent & Not Important
         return TodoTaskPriority.medium;
+      case EisenhowerQuadrant.q3: // Urgent & Not Important
       case EisenhowerQuadrant.q4: // Not Urgent & Not Important
       case null: // Unvoted
         return TodoTaskPriority.low;
@@ -2564,6 +2608,55 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   /// 1. Avvia la votazione sulla prima attività della lista
   /// 2. Mostra un dialog per votare
   /// 3. Quando rivelata, passa automaticamente alla successiva
+  Future<void> _reopenAllVotes() async {
+    if (_selectedMatrix == null) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Filtra solo le attività che hanno già dei voti o sono già state rivelate
+    final activitiesToReopen = _activities.where((a) => a.isRevealed || a.hasVotes).toList();
+    if (activitiesToReopen.isEmpty) return;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.eisenhowerReopenVotesConfirm),
+        content: Text(l10n.eisenhowerReopenVotesDesc),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.actionCancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.info,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l10n.actionConfirm),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true || !mounted) return;
+
+    try {
+      // Per ogni attività, avvia una sessione di voto (che resetta isRevealed e preserva i voti)
+      for (final activity in activitiesToReopen) {
+        await _firestoreService.startVotingSession(_selectedMatrix!.id, activity.id);
+      }
+
+      await _loadActivities(_selectedMatrix!.id);
+
+      if (mounted) {
+        // Avvia il flusso sequenziale con le attività riaperte
+        await _startSequentialVoting(activitiesToReopen);
+      }
+    } catch (e) {
+      _showError('Errore durante la riapertura dei voti: $e');
+    }
+  }
+
   Future<void> _startSequentialVoting(List<EisenhowerActivityModel> activities) async {
     if (_selectedMatrix == null || activities.isEmpty) return;
     final l10n = AppLocalizations.of(context)!;
@@ -2630,7 +2723,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           // Ricarica le attività
           await _loadActivities(_selectedMatrix!.id);
 
-          // Mostra il riepilogo dei voti
+          // Se è una sessione a utente singolo, non mostriamo il dialog di reveal
+          if (_selectedMatrix!.isSingleUserSession) {
+            final l10n = AppLocalizations.of(context)!;
+            _showSuccess(l10n.eisenhowerVotedSuccess);
+            return;
+          }
+
+          // Mostra il riepilogo dei voti (solo sessioni multi-utente)
           final currentActivity = activities[currentIndex];
           final updatedActivity = await _firestoreService.getActivity(_selectedMatrix!.id, currentActivity.id);
 
@@ -2647,7 +2747,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                   await _loadActivities(_selectedMatrix!.id);
                   await _showSequentialVotingDialog(activities, currentIndex + 1);
                 } catch (e) {
-                  _showError('Errore avvio prossima votazione: $e');
+                  _showError(l10n.eisenhowerNextActivityError(e.toString()));
                 }
               } : null,
             );
@@ -2670,8 +2770,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   /// - Se l'utente ha già votato, solo il facilitatore può modificare
   bool _canVoteOnActivity(EisenhowerActivityModel activity) {
     if (!_canVote) return false;
-    // Non si può votare su attività già rivelate
-    if (activity.isRevealed) return false;
+    // Non si può votare su attività già rivelate (tranne per il facilitatore)
+    if (activity.isRevealed && !_isFacilitator) return false;
     // Se l'utente ha già votato e NON è facilitatore, non può modificare
     if (!_isFacilitator && _currentUserEmail != null) {
       final escapedEmail = EisenhowerParticipantModel.escapeEmail(_currentUserEmail!);
@@ -2689,9 +2789,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   Future<void> _submitIndependentVote(EisenhowerActivityModel activity) async {
     if (_selectedMatrix == null || _currentUserEmail == null) return;
 
-    // Blocca il voto su attività già rivelate
-    if (activity.isRevealed) {
-      _showError('Questa attività è già stata votata. Il facilitatore deve riaprire la votazione.');
+    final l10n = AppLocalizations.of(context)!;
+
+    // Blocca il voto su attività già rivelate (solo per non-facilitatori)
+    if (activity.isRevealed && !_isFacilitator) {
+      _showError(l10n.eisenhowerAlreadyVotedError);
       return;
     }
 
@@ -2724,7 +2826,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         );
 
         await _loadActivities(_selectedMatrix!.id);
-        _showSuccess('Voto registrato');
+        _showSuccess(l10n.eisenhowerVotedSuccess);
+
+        // Auto-reveal per sessione a utente singolo (SILENZIOSO)
+        if (_selectedMatrix!.isSingleUserSession && _isFacilitator) {
+          await _revealVotes(activity, showResultsDialog: false);
+        }
       } catch (e) {
         _showError('Errore salvataggio voto: $e');
       }
@@ -2732,7 +2839,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   }
 
   /// Rivela i voti di una sessione indipendente
-  Future<void> _revealVotes(EisenhowerActivityModel activity) async {
+  Future<void> _revealVotes(EisenhowerActivityModel activity, {bool showResultsDialog = true}) async {
     if (_selectedMatrix == null) return;
 
     try {
@@ -2740,6 +2847,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
       // Ricarica le attività per trovare la prossima da votare
       await _loadActivities(_selectedMatrix!.id);
+
+      // Se non vogliamo mostrare il dialog, abbiamo finito
+      if (!showResultsDialog) return;
 
       // Trova la prossima attività non rivelata (per il pulsante "Prossima Attività")
       final nextActivity = _activities.where((a) =>
@@ -2950,7 +3060,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                       const Icon(Icons.check_circle, color: Colors.green, size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        'Il tuo voto: U=${myVote.urgency}, I=${myVote.importance}',
+                        l10n.eisenhowerYourVote(myVote.urgency.toString(), myVote.importance.toString()),
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ],
@@ -2958,7 +3068,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'I voti saranno visibili quando il facilitatore farà "Rivela voti"',
+                  l10n.eisenhowerVotesVisibleAfterReveal,
                   style: TextStyle(fontSize: 12, color: Colors.grey[600], fontStyle: FontStyle.italic),
                 ),
               ]
@@ -3395,6 +3505,11 @@ class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
         voterEmail: widget.currentUserEmail!,
       );
       widget.onVoteSubmitted();
+
+      // Auto-reveal per sessione a utente singolo
+      if (widget.matrix.isSingleUserSession && widget.isFacilitator) {
+        await _revealVotes();
+      }
     }
   }
 
@@ -3574,7 +3689,7 @@ class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
           child: Text(l10n.actionClose),
         ),
         // Pulsante Rivela (solo facilitatore, solo se tutti hanno votato)
-        if (widget.isFacilitator)
+        if (widget.isFacilitator && !widget.matrix.isSingleUserSession)
           ElevatedButton.icon(
             onPressed: _areAllVotersReady && !_isRevealing ? _revealVotes : null,
             icon: _isRevealing

@@ -346,8 +346,60 @@
       }
     }
   },
+  "eisenhowerNoVotesYet": "No votes collected yet",
   "eisenhowerVoting": "Voting",
   "eisenhowerAllActivitiesVoted": "All activities have been voted!",
+  "eisenhowerAlreadyVotedError": "This activity has already been estimated. The facilitator must reopen the voting to modify it.",
+  "eisenhowerVoteSubmit": "Vote",
+  "eisenhowerVotedSuccess": "Vote submitted successfully!",
+  "eisenhowerYourVote": "Your vote: U={urgency}, I={importance}",
+  "@eisenhowerYourVote": {
+    "placeholders": {
+      "urgency": {},
+      "importance": {}
+    }
+  },
+  "eisenhowerVoterName": "Vote of {name}",
+  "@eisenhowerVoterName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "eisenhowerUrgencyLow": "Not urgent",
+  "eisenhowerUrgencyHigh": "Very urgent",
+  "eisenhowerImportanceLow": "Not important",
+  "eisenhowerImportanceHigh": "Very important",
+  "eisenhowerQuadrantLabel": "Quadrant: {name}",
+  "@eisenhowerQuadrantLabel": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "eisenhowerQ1Name": "Q1 - DO NOW",
+  "eisenhowerQ1Desc": "Urgent + Important",
+  "eisenhowerQ2Name": "Q2 - PLAN",
+  "eisenhowerQ2Desc": "Not Urgent + Important",
+  "eisenhowerQ3Name": "Q3 - DELEGATE",
+  "eisenhowerQ3Desc": "Urgent + Not Important",
+  "eisenhowerQ4Name": "Q4 - ELIMINATE",
+  "eisenhowerQ4Desc": "Not Urgent + Not Important",
+  "eisenhowerPreVotes": "{count} pre-votes",
+  "@eisenhowerPreVotes": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "eisenhowerVotesVisibleAfterReveal": "Votes will be visible when the facilitator clicks \"Reveal votes\"",
+  "eisenhowerNextActivityError": "Error starting next voting: {error}",
+  "@eisenhowerNextActivityError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "eisenhowerReopenVotes": "Reopen Votes",
+  "eisenhowerReopenVotesTooltip": "Restart formal voting starting from current estimates",
+  "eisenhowerReopenVotesConfirm": "Reopen all votes?",
+  "eisenhowerReopenVotesDesc": "This will restart a formal voting session for all activities, keeping existing estimates as starting points. Do you want to proceed?",
   "estimationTitle": "Estimation Room",
   "estimationYourSessions": "Your sessions",
   "estimationNoSessions": "No sessions created",

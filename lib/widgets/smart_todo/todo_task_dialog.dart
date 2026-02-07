@@ -90,17 +90,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0,
       backgroundColor: Colors.transparent,
-      child: Focus(
-        autofocus: true,
-        onKeyEvent: (node, event) {
-          return KeyEventResult.ignored;
-        },
-        child: CallbackShortcuts(
-          bindings: {
-            const SingleActivator(LogicalKeyboardKey.keyV, meta: true): _handlePasteShortcut,
-            const SingleActivator(LogicalKeyboardKey.keyV, control: true): _handlePasteShortcut,
-          },
-          child: Container(
+      child: Container(
             width: 700,
             height: MediaQuery.of(context).size.height * 0.85,
             decoration: BoxDecoration(
@@ -282,7 +272,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                      ]),
                                      const SizedBox(height: 4),
                                      if (c.text.isNotEmpty)
-                                       Text(c.text, style: const TextStyle(fontSize: 14)),
+                                       SelectableText(c.text, style: const TextStyle(fontSize: 14)),
                                      
                                      // Render Image if present
                                      if (c.imageUrl != null && c.imageUrl!.isNotEmpty) ...[
@@ -542,8 +532,6 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
               ],
             ),
           ),
-        ),
-      ),
     );
   }
 
