@@ -378,6 +378,8 @@ class RetroMethodologyGuide {
         return MethodologyFocus.calibration;
       case RetroTemplate.daki:
         return MethodologyFocus.decisional;
+      case RetroTemplate.quickForm:
+        return MethodologyFocus.actionOriented;
     }
   }
 
@@ -439,6 +441,8 @@ class RetroMethodologyGuide {
       case RetroTemplate.daki:
         // Drop first (free capacity), then Add (implement new), then Improve, then Keep
         return ['drop', 'add', 'improve', 'keep'];
+      case RetroTemplate.quickForm:
+        return ['went_well', 'improve'];
     }
   }
 
@@ -458,6 +462,8 @@ class RetroMethodologyGuide {
         return ['stop', 'start']; // Must stop something and start something
       case RetroTemplate.daki:
         return ['drop', 'add']; // Must drop and add something
+      case RetroTemplate.quickForm:
+        return ['went_well', 'improve'];
     }
   }
 
@@ -476,6 +482,8 @@ class RetroMethodologyGuide {
         return l10n.collectionRationaleStarfish;
       case RetroTemplate.daki:
         return l10n.collectionRationaleDAKI;
+      case RetroTemplate.quickForm:
+        return l10n.collectionRationaleSSC;
     }
   }
 

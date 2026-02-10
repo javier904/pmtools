@@ -423,6 +423,9 @@ class RetroColumn {
       // Starfish template extras
       case 'more': return l10n.retroColumnMore;
       case 'less': return l10n.retroColumnLess;
+      // Quick Form / Generic
+      case 'went_well': return l10n.retroWentWell;
+      case 'improve': return l10n.retroToImprove;
       default: return title;
     }
   }
@@ -970,6 +973,12 @@ ActionType? suggestActionType(RetroTemplate template, String columnId) {
         case 'start': return ActionType.begin;
       }
       break;
+    case RetroTemplate.quickForm:
+      switch (columnId) {
+        case 'went_well': return ActionType.celebrate;
+        case 'improve': return ActionType.enhance;
+      }
+      break;
   }
   return null;
 }
@@ -993,6 +1002,7 @@ enum RetroTemplate {
   starfish,
   madSadGlad,
   daki, // Drop, Add, Keep, Improve
+  quickForm,
 } 
 
 extension RetroTemplateExt on RetroTemplate {
@@ -1004,6 +1014,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return 'Starfish';
       case RetroTemplate.madSadGlad: return 'Mad Sad Glad';
       case RetroTemplate.daki: return 'DAKI (Drop Add Keep Improve)';
+      case RetroTemplate.quickForm: return 'Quick Form';
     }
   }
 
@@ -1015,6 +1026,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return l10n.retroTemplateStarfish;
       case RetroTemplate.madSadGlad: return l10n.retroTemplateMadSadGlad;
       case RetroTemplate.daki: return l10n.retroTemplateDAKI;
+      case RetroTemplate.quickForm: return l10n.retroQuickForm;
     }
   }
 
@@ -1026,6 +1038,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return 'Keep, Stop, Start, More, Less.';
       case RetroTemplate.madSadGlad: return 'Emotional: Mad, Sad, Glad.';
       case RetroTemplate.daki: return 'Pragmatic: Drop, Add, Keep, Improve.';
+      case RetroTemplate.quickForm: return 'Compact form for quick sprint wrap-up.';
     }
   }
 
@@ -1037,6 +1050,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return l10n.retroDescStarfish;
       case RetroTemplate.madSadGlad: return l10n.retroDescMadSadGlad;
       case RetroTemplate.daki: return l10n.retroDescDAKI;
+      case RetroTemplate.quickForm: return l10n.retroQuickModeDesc;
     }
   }
 
@@ -1055,6 +1069,8 @@ extension RetroTemplateExt on RetroTemplate {
         return 'Best for emotional check-ins, resolving conflicts, or after a stressful sprint.';
       case RetroTemplate.daki:
         return 'Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).';
+      case RetroTemplate.quickForm:
+        return 'Best for very fast, individual reflections when full team interaction is not possible.';
     }
   }
 
@@ -1066,6 +1082,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return l10n.retroUsageStarfish;
       case RetroTemplate.madSadGlad: return l10n.retroUsageMadSadGlad;
       case RetroTemplate.daki: return l10n.retroUsageDAKI;
+      case RetroTemplate.quickForm: return l10n.retroQuickModeDesc;
     }
   }
 
@@ -1077,6 +1094,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.starfish: return Icons.stars;
       case RetroTemplate.madSadGlad: return Icons.mood;
       case RetroTemplate.daki: return Icons.delete_sweep;
+      case RetroTemplate.quickForm: return Icons.flash_on;
     }
   }
 
@@ -1123,6 +1141,11 @@ extension RetroTemplateExt on RetroTemplate {
               RetroColumn(id: 'keep', title: 'Keep', description: 'What is working well and should continue?', colorHex: '#A5D6A7', iconCode: Icons.check_circle_outline.codePoint),
               RetroColumn(id: 'improve', title: 'Improve', description: 'What can we do better?', colorHex: '#FFCC80', iconCode: Icons.trending_up.codePoint),
           ];
+        case RetroTemplate.quickForm:
+            return [
+                RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#A5D6A7', iconCode: Icons.thumb_up_alt_outlined.codePoint),
+                RetroColumn(id: 'improve', title: 'To Improve', description: 'Cosa può essere migliorato?', colorHex: '#EF9A9A', iconCode: Icons.healing_outlined.codePoint),
+            ];
         default:
             return [
                 RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#A5D6A7', iconCode: Icons.thumb_up_alt_outlined.codePoint),

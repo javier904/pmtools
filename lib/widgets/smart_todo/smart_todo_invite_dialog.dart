@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import '../../models/unified_invite_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class SmartTodoInviteDialog extends StatefulWidget {
   final String listId;

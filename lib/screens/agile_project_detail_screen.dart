@@ -3010,7 +3010,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           onCreateNew: isKanban
               ? _createKanbanRetro
               : (latestSprint != null
-                  ? () => _showRetroCreationChoice(latestSprint!)
+                  ? () => _createInteractiveRetro(latestSprint!)
                   : () => _showNoSprintForRetroWarning()),
           onTapRetro: (retro) => _showRetroDetail(retro),
           onDeleteRetro: _confirmDeleteRetro,
@@ -3415,9 +3415,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         builder: (context, setState) => AlertDialog(
           title: Row(
             children: [
-              const Icon(Icons.psychology, color: Colors.purple),
+              const Icon(Icons.flash_on, color: Colors.blue),
               const SizedBox(width: 8),
-              Expanded(child: Text('${l10n.scrumEventsRetro} - ${sprint.name}')),
+              Expanded(child: Text('${l10n.retroQuickForm} - ${sprint.name}')),
             ],
           ),
           content: SizedBox(
@@ -3429,8 +3429,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 children: [
                   // What went well
                   _buildRetroInput(
-                    'Cosa è andato bene?',
-                    'Aggiungi un punto positivo...',
+                    l10n.retroWentWell,
+                    l10n.retroWentWellHint,
                     Icons.thumb_up,
                     Colors.green,
                     wentWell,
@@ -3441,8 +3441,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
                   // What to improve
                   _buildRetroInput(
-                    'Cosa migliorare?',
-                    'Aggiungi un punto da migliorare...',
+                    l10n.retroToImprove,
+                    l10n.retroToImproveHint,
                     Icons.thumb_down,
                     Colors.orange,
                     toImprove,
@@ -3454,7 +3454,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                   // Action items
                   _buildRetroInput(
                     'Action Items',
-                    'Aggiungi un action item...',
+                    l10n.retroActionItemHint,
                     Icons.assignment_turned_in,
                     Colors.blue,
                     actionItems,
@@ -3484,10 +3484,15 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       try {
         final now = DateTime.now();
         
-        // Costruisci le colonne default
-        final columns = RetroTemplateExt(RetroTemplate.startStopContinue).defaultColumns;
-        final col1Id = columns.isNotEmpty ? columns[0].id : 'col_1';
-        final col2Id = columns.length > 1 ? columns[1].id : 'col_2';
+        // Costruisci le colonne usando il template Quick Form
+        const template = RetroTemplate.quickForm;
+        final columns = template.defaultColumns;
+        
+        // In Quick Form:
+        // columns[0].id is 'went_well'
+        // columns[1].id is 'improve'
+        final col1Id = columns[0].id;
+        final col2Id = columns[1].id;
 
         // Costruisci gli items
         final wentWellItems = wentWell.map((content) => RetroItem(
@@ -3511,7 +3516,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         final updatedActionItemsList = actionItems.map((description) => ActionItem(
           id: '${now.millisecondsSinceEpoch}_${description.hashCode}',
           description: description,
-          ownerEmail: _currentUserEmail, // Needs owner now
+          ownerEmail: _currentUserEmail,
           createdAt: now,
         )).toList();
 
@@ -3527,10 +3532,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           status: RetroStatus.completed,
           currentPhase: RetroPhase.completed,
           isCompleted: true,
+          template: template,
           columns: columns,
           items: [...wentWellItems, ...toImproveItems],
           actionItems: updatedActionItemsList,
-          timer: RetroTimer(durationMinutes: 60),
+          timer: const RetroTimer(durationMinutes: 0, isRunning: false),
         );
 
         // Salva usando il service corretto (Root Collection)

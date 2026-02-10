@@ -588,7 +588,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     isExpanded: true, // Ensure proper layout for long text
                     selectedItemBuilder: (BuildContext context) {
                       return RetroTemplate.values
-                          .where((t) => t != RetroTemplate.sailboat) // Hide Sailboat
+                          .where((t) => t != RetroTemplate.sailboat && t != RetroTemplate.quickForm)
                           .map<Widget>((RetroTemplate t) {
                         return Text(
                           t.getLocalizedDisplayName(AppLocalizations.of(context)!),
@@ -598,7 +598,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                       }).toList();
                     },
                     items: RetroTemplate.values
-                        .where((t) => t != RetroTemplate.sailboat) // Hide Sailboat
+                        .where((t) => t != RetroTemplate.sailboat && t != RetroTemplate.quickForm)
                         .map((t) {
                       return DropdownMenuItem(
                         value: t,
@@ -831,55 +831,6 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         ),
       ),
     );
-  }
-
-  String _getTemplateName(RetroTemplate template, AppLocalizations l10n) {
-    switch (template) {
-      case RetroTemplate.startStopContinue: return l10n.retroTemplateStartStopContinue;
-      case RetroTemplate.sailboat: return l10n.retroTemplateSailboat;
-      case RetroTemplate.fourLs: return l10n.retroTemplate4Ls;
-      case RetroTemplate.starfish: return l10n.retroTemplateStarfish;
-      case RetroTemplate.madSadGlad: return l10n.retroTemplateMadSadGlad;
-      case RetroTemplate.daki: return l10n.retroTemplateDAKI;
-    }
-  }
-
-  String _getTemplateDesc(RetroTemplate template, AppLocalizations l10n) {
-    switch (template) {
-      case RetroTemplate.startStopContinue: return l10n.retroDescStartStopContinue;
-      case RetroTemplate.sailboat: return l10n.retroDescSailboat;
-      case RetroTemplate.fourLs: return l10n.retroDesc4Ls;
-      case RetroTemplate.starfish: return l10n.retroDescStarfish;
-      case RetroTemplate.madSadGlad: return l10n.retroDescMadSadGlad;
-      case RetroTemplate.daki: return l10n.retroDescDAKI;
-    }
-  }
-
-  String _getUsageSuggestion(RetroTemplate template, AppLocalizations l10n) {
-    switch (template) {
-      case RetroTemplate.startStopContinue: return l10n.retroUsageStartStopContinue;
-      case RetroTemplate.sailboat: return l10n.retroUsageSailboat;
-      case RetroTemplate.fourLs: return l10n.retroUsage4Ls;
-      case RetroTemplate.starfish: return l10n.retroUsageStarfish;
-      case RetroTemplate.madSadGlad: return l10n.retroUsageMadSadGlad;
-      case RetroTemplate.daki: return l10n.retroUsageDAKI;
-    }
-  }
-
-  String _getIcebreakerName(RetroIcebreaker ib, AppLocalizations l10n) {
-    switch (ib) {
-      case RetroIcebreaker.sentiment: return l10n.retroIcebreakerSentiment;
-      case RetroIcebreaker.oneWord: return l10n.retroIcebreakerOneWord;
-      case RetroIcebreaker.weatherReport: return l10n.retroIcebreakerWeather;
-    }
-  }
-
-  String _getIcebreakerDesc(RetroIcebreaker ib, AppLocalizations l10n) {
-    switch (ib) {
-      case RetroIcebreaker.sentiment: return l10n.retroIcebreakerSentimentDesc;
-      case RetroIcebreaker.oneWord: return l10n.retroIcebreakerOneWordDesc;
-      case RetroIcebreaker.weatherReport: return l10n.retroIcebreakerWeatherDesc;
-    }
   }
 
   String _getPhaseName(RetroPhase phase, AppLocalizations l10n) {

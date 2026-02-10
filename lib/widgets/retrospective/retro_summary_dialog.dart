@@ -75,7 +75,7 @@ class RetroSummaryDialog extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  retro.template.displayName,
+                  retro.template.getLocalizedDisplayName(l10n),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -208,7 +208,7 @@ class RetroSummaryDialog extends StatelessWidget {
                       Icon(column.icon, size: 18, color: column.color),
                       const SizedBox(width: 8),
                       Text(
-                        column.title,
+                        column.getLocalizedTitle(l10n),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: column.color,
