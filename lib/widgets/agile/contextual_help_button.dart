@@ -231,6 +231,13 @@ class ContextualHelp {
               l10n.contextualHelpKanbanTipScrum1,
               l10n.contextualHelpKanbanTipScrum2,
             ],
+      sections: isKanbanOrHybrid ? {
+        l10n.kanbanPolicyHelpTitle: l10n.kanbanPolicyHelpIntro,
+        l10n.kanbanPolicyRule1Title: l10n.kanbanPolicyRule1Desc,
+        l10n.kanbanPolicyRule2Title: l10n.kanbanPolicyRule2Desc,
+        l10n.kanbanPolicyRule3Title: l10n.kanbanPolicyRule3Desc,
+        l10n.kanbanPolicyRule4Title: l10n.kanbanPolicyRule4Desc,
+      } : null,
       icon: Icons.view_kanban,
       color: Colors.teal,
     );

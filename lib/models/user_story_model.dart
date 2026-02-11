@@ -32,6 +32,7 @@ class UserStoryModel {
   final String createdBy;
   final DateTime? startedAt;
   final DateTime? completedAt;
+  final DateTime? statusChangedAt; // Added for Kanban Policy time tracking
 
   // Estimation (pattern da Estimation Room)
   final Map<String, StoryEstimate> estimates; // email -> estimate
@@ -76,6 +77,7 @@ class UserStoryModel {
     this.startedAt,
     this.lastStartedAt,
     this.completedAt,
+    this.statusChangedAt,
     this.estimates = const {},
     this.isEstimated = false,
     this.finalEstimate,
@@ -133,6 +135,7 @@ class UserStoryModel {
       startedAt: (data['startedAt'] as Timestamp?)?.toDate(),
       lastStartedAt: (data['lastStartedAt'] as Timestamp?)?.toDate(),
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
+      statusChangedAt: (data['statusChangedAt'] as Timestamp?)?.toDate(),
       estimates: estimates,
       isEstimated: data['isEstimated'] ?? false,
       finalEstimate: data['finalEstimate'],
@@ -173,6 +176,7 @@ class UserStoryModel {
       if (startedAt != null) 'startedAt': Timestamp.fromDate(startedAt!),
       if (lastStartedAt != null) 'lastStartedAt': Timestamp.fromDate(lastStartedAt!),
       if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt!),
+      if (statusChangedAt != null) 'statusChangedAt': Timestamp.fromDate(statusChangedAt!),
       'estimates': estimates.map((k, v) => MapEntry(k, v.toMap())),
       'isEstimated': isEstimated,
       if (finalEstimate != null) 'finalEstimate': finalEstimate,
@@ -206,6 +210,7 @@ class UserStoryModel {
     DateTime? startedAt,
     DateTime? lastStartedAt,
     DateTime? completedAt,
+    DateTime? statusChangedAt,
     Map<String, StoryEstimate>? estimates,
     bool? isEstimated,
     String? finalEstimate,
@@ -236,6 +241,7 @@ class UserStoryModel {
       startedAt: startedAt ?? this.startedAt,
       lastStartedAt: lastStartedAt ?? this.lastStartedAt,
       completedAt: completedAt ?? this.completedAt,
+      statusChangedAt: statusChangedAt ?? this.statusChangedAt,
       estimates: estimates ?? this.estimates,
       isEstimated: isEstimated ?? this.isEstimated,
       finalEstimate: finalEstimate ?? this.finalEstimate,

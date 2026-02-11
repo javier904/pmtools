@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/subscription/subscription_limits_model.dart';
-import '../../models/user_profile/subscription_model.dart';
 
 /// Dialog che mostra quando l'utente raggiunge un limite del suo piano
 /// Offre CTA per upgrade al piano superiore
@@ -94,47 +94,6 @@ class LimitReachedDialog extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Upgrade benefits
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue.withOpacity(0.2)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.rocket_launch, color: Colors.blue[700], size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.subscriptionUpgradeToPremium,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildBenefitRow(l10n.subscriptionBenefitProjects),
-                  _buildBenefitRow(l10n.subscriptionBenefitLists),
-                  _buildBenefitRow(l10n.subscriptionBenefitTasks),
-                  _buildBenefitRow(l10n.subscriptionBenefitNoAds),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.subscriptionStartingFrom,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 24),
 
             // Buttons
@@ -156,10 +115,7 @@ class LimitReachedDialog extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                      onUpgrade?.call();
-                    },
+                    onPressed: () => _contactDeveloper(context, l10n),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[700],
                       foregroundColor: Colors.white,
@@ -224,22 +180,6 @@ class LimitReachedDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildBenefitRow(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 16),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
-
   String _getMessageForEntityType(AppLocalizations l10n) {
     switch (entityType) {
       case 'project':
@@ -260,6 +200,38 @@ class LimitReachedDialog extends StatelessWidget {
         return l10n.subscriptionLimitAgileProjects;
       default:
         return limitResult.reason ?? l10n.subscriptionLimitDefault;
+    }
+  }
+
+  Future<void> _contactDeveloper(BuildContext context, AppLocalizations l10n) async {
+    final email = l10n.subscriptionOfficialEmail;
+    final subject = Uri.encodeComponent('Keisen Limit Increase Request');
+    final body = Uri.encodeComponent('Hi,\n\nI would like to increase the limits for my Keisen account.\n\nCurrent usage: ${limitResult.currentCount}/${limitResult.limit}\nEntity: $entityType\n\nThank you.');
+    final Uri mailUri = Uri.parse('mailto:$email?subject=$subject&body=$body');
+
+    try {
+      if (await canLaunchUrl(mailUri)) {
+        await launchUrl(mailUri);
+      } else {
+        // Fallback: mostra dialog con email se non può lanciare url
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.subscriptionContactDeveloper),
+              content: SelectableText(email),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l10n.actionClose),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error launching email: $e');
     }
   }
 }

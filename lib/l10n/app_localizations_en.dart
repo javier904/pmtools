@@ -1300,6 +1300,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroSave => 'Save Retrospective';
 
   @override
+  String get agileEstimate => 'ESTIMATE';
+
+  @override
+  String get agileAssign => 'Assign';
+
+  @override
+  String get agileCardMenuTooltip => 'Options (Priority, Estimate, etc.)';
+
+  @override
+  String get kanbanPolicyHelpTitle => 'Column Policies (Rules)';
+
+  @override
+  String get kanbanPolicyHelpIntro =>
+      'Policies are explicit rules defining when a card can enter or leave a column. They ensure quality and flow. Activate them via the \'Settings\' icon in the column header.';
+
+  @override
+  String get kanbanPolicyRule1Title => '1. Requires Acceptance Criteria';
+
+  @override
+  String get kanbanPolicyRule1Desc =>
+      'Card must have at least one acceptance criterion defined. Useful to ensure requirements are clear before development.';
+
+  @override
+  String get kanbanPolicyRule2Title => '2. Estimation completed';
+
+  @override
+  String get kanbanPolicyRule2Desc =>
+      'Card must have an estimate > 0. Essential for Planning and Velocity tracking.';
+
+  @override
+  String get kanbanPolicyRule3Title => '3. Max 2 days in column';
+
+  @override
+  String get kanbanPolicyRule3Desc =>
+      'Flags cards stuck in the same status for over 48 hours. Helps identify bottlenecks or blocked tasks.';
+
+  @override
+  String get kanbanPolicyRule4Title => '4. All criteria met';
+
+  @override
+  String get kanbanPolicyRule4Desc =>
+      'Blocks moving to \'Done\' unless all acceptance criteria are checked. Enforces Definition of Done.';
+
+  @override
   String get retroOpenInteractiveBoard => 'Open Interactive Board';
 
   @override
@@ -5146,9 +5190,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileAddToSprint => 'Add to Sprint';
 
   @override
-  String get agileEstimate => 'ESTIMATE';
-
-  @override
   String get agileEstimated => 'Estimated';
 
   @override
@@ -5221,6 +5262,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backlogNoStoryFound => 'No story found';
 
   @override
+  String get sprintBacklog => 'Sprint Backlog';
+
+  @override
+  String get agileStatusRefinement => 'Refinement';
+
+  @override
+  String get agileStatusReady => 'Ready';
+
+  @override
+  String get agileStatusInProgress => 'In Progress';
+
+  @override
+  String get agileStatusInReview => 'In Review';
+
+  @override
+  String get agileStatusDone => 'Done';
+
+  @override
+  String get backlog => 'Backlog';
+
+  @override
+  String get kanbanPolicySortPriority => 'Sort by business priority';
+
+  @override
+  String get kanbanPolicyMax2Days => 'Max 2 days in this column';
+
+  @override
+  String get kanbanPolicyReqAcceptance =>
+      'Requires defined acceptance criteria';
+
+  @override
+  String get kanbanPolicyItemReady => 'Item ready to be worked';
+
+  @override
+  String get kanbanPolicyEstimationsDone =>
+      'Estimation completed (if required)';
+
+  @override
+  String get kanbanPolicyMax1PerPerson => 'Max 1 item per person';
+
+  @override
+  String get kanbanPolicyDailyUpdate => 'Daily update mandatory';
+
+  @override
+  String get kanbanPolicyMax24h => 'Max 24h in this column';
+
+  @override
+  String get kanbanPolicyReqCodeReview => 'Requires approved code review';
+
+  @override
+  String get kanbanPolicyAllAcceptanceMet => 'All acceptance criteria met';
+
+  @override
+  String get kanbanPolicyCheckTitle => 'Policy Check';
+
+  @override
+  String get kanbanPolicyCheckMessage =>
+      'This action violates the following policies:';
+
+  @override
+  String get kanbanPolicyCheckProceed => 'Proceed anyway';
+
+  @override
+  String get kanbanPolicyCheckCancel => 'Cancel and fix';
+
+  @override
+  String get kanbanPolicyActiveLabel => 'Active Check';
+
+  @override
+  String get kanbanPolicyViolationTitle => 'Policy Violation';
+
+  @override
+  String get kanbanPolicyViolationMessage => 'Moving ';
+
+  @override
+  String get kanbanPolicyViolationTo => ' to ';
+
+  @override
+  String get kanbanPolicyViolationViolations => ' violates:';
+
+  @override
+  String get kanbanPolicyMovingTip =>
+      'You can proceed if this is a valid exception.';
+
+  @override
+  String get kanbanMoveAnyway => 'Move Anyway';
+
+  @override
   String get backlogEmpty => 'Empty backlog';
 
   @override
@@ -5243,6 +5372,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kanbanNoWipLimit => 'No WIP limit';
+
+  @override
+  String get kanbanWipWhyTitle => 'Why use them?';
+
+  @override
+  String get kanbanWipReasonFocus => 'Reduce multitasking and increase focus';
+
+  @override
+  String get kanbanWipReasonBottlenecks => 'Highlight bottlenecks';
+
+  @override
+  String get kanbanWipReasonFlow => 'Improve workflow';
+
+  @override
+  String get kanbanWipReasonSpeed => 'Accelerate item completion';
+
+  @override
+  String get kanbanWipOverLimitTitle => 'What to do if a limit is exceeded?';
+
+  @override
+  String get kanbanWipOverLimitStep1 =>
+      '1. Complete or move existing items before starting new ones';
+
+  @override
+  String get kanbanWipOverLimitStep2 =>
+      '2. Help colleagues unblock items in review';
+
+  @override
+  String get kanbanWipOverLimitStep3 => '3. Analyze why the limit was exceeded';
+
+  @override
+  String get kanbanWipMovingTip =>
+      'Tip: complete or move other items before starting new ones to maintain an optimal workflow.';
 
   @override
   String kanbanItems(int count) {
@@ -5305,9 +5467,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get kanbanSuggestion =>
       'Suggestion: complete or move other items before starting new ones to maintain an optimal workflow.';
-
-  @override
-  String get kanbanMoveAnyway => 'Move Anyway';
 
   @override
   String get kanbanWipExplanationTitle => 'What are WIP Limits?';
@@ -6347,7 +6506,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionLimitProjects =>
-      'You have reached the maximum number of projects for your plan. Upgrade to Premium to create more projects.';
+      'You have reached the maximum number of projects (5). Contact the developer to increase your limit.';
 
   @override
   String get subscriptionLimitLists =>
@@ -6371,7 +6530,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionLimitAgileProjects =>
-      'You have reached the maximum number of agile projects. Upgrade to Premium to create more.';
+      'You have reached the maximum number of agile projects (5). Contact the developer to increase your limit.';
 
   @override
   String get subscriptionLimitDefault =>
@@ -6396,13 +6555,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionBenefitNoAds => 'No ads';
 
   @override
-  String get subscriptionStartingFrom => 'Starting from €4.99/month';
+  String get subscriptionStartingFrom => 'Contact us for more information';
 
   @override
   String get subscriptionLater => 'Later';
 
   @override
-  String get subscriptionViewPlans => 'View plans';
+  String get subscriptionViewPlans => 'Contact Developer';
+
+  @override
+  String get subscriptionContactDeveloper => 'Contact Developer';
+
+  @override
+  String get subscriptionOfficialEmail => 'leonardo.torella@gmail.com';
 
   @override
   String subscriptionCanCreateOne(String entity) {
@@ -11523,4 +11688,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workflowOptionalDesc => 'Optional step (can skip)';
+
+  @override
+  String get kanbanPoliciesActive => 'Active Policies (Automated)';
+
+  @override
+  String get kanbanPoliciesExplicit => 'Explicit Policies (Team Notes)';
 }

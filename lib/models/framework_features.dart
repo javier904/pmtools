@@ -1,3 +1,4 @@
+import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'agile_enums.dart';
 
@@ -157,32 +158,162 @@ class FrameworkFeatures {
     return tabs;
   }
 
-  /// Colonne Kanban predefinite per il framework
-  List<KanbanColumnConfig> get defaultKanbanColumns {
+  /// Colonne Kanban predefinite per il framework (Localizzate)
+  List<KanbanColumnConfig> getLocalizedDefaultKanbanColumns(AppLocalizations l10n) {
     switch (framework) {
       case AgileFramework.scrum:
-        // Scrum: focus su Sprint Backlog, no WIP limits
-        // NOTA: inSprint è lo status delle stories aggiunte allo sprint attivo
         return [
           KanbanColumnConfig(
             id: 'todo',
-            name: 'Sprint Backlog',
+            name: l10n.sprintBacklog,
             wipLimit: null,
             statuses: [StoryStatus.ready, StoryStatus.inSprint],
           ),
           KanbanColumnConfig(
             id: 'inProgress',
-            name: 'In Progress',
+            name: l10n.agileStatusInProgress,
             wipLimit: null,
             statuses: [StoryStatus.inProgress],
           ),
           KanbanColumnConfig(
             id: 'review',
-            name: 'In Review',
+            name: l10n.agileStatusInReview,
             wipLimit: null,
             statuses: [StoryStatus.inReview],
           ),
           KanbanColumnConfig(
+            id: 'done',
+            name: l10n.agileStatusDone,
+            wipLimit: null,
+            statuses: [StoryStatus.done],
+          ),
+        ];
+
+      case AgileFramework.kanban:
+        return [
+          KanbanColumnConfig(
+            id: 'backlog',
+            name: l10n.backlog,
+            wipLimit: null,
+            statuses: [StoryStatus.backlog],
+            policies: [l10n.kanbanPolicySortPriority],
+          ),
+          KanbanColumnConfig(
+            id: 'refinement',
+            name: l10n.agileStatusRefinement,
+            wipLimit: 5,
+            statuses: [StoryStatus.refinement],
+            policies: [
+              l10n.kanbanPolicyMax2Days,
+              l10n.kanbanPolicyReqAcceptance,
+            ],
+            activePolicies: {
+              'kanbanPolicyMax2Days': true,
+              'kanbanPolicyReqAcceptance': true,
+            },
+          ),
+          KanbanColumnConfig(
+            id: 'ready',
+            name: l10n.agileStatusReady,
+            wipLimit: 5,
+            statuses: [StoryStatus.ready],
+            policies: [
+              l10n.kanbanPolicyItemReady,
+              l10n.kanbanPolicyEstimationsDone,
+            ],
+            activePolicies: {
+              'kanbanPolicyItemReady': false,
+              'kanbanPolicyEstimationsDone': true,
+            },
+          ),
+          KanbanColumnConfig(
+            id: 'inProgress',
+            name: l10n.agileStatusInProgress,
+            wipLimit: 3,
+            statuses: [StoryStatus.inProgress],
+            policies: [
+              l10n.kanbanPolicyMax1PerPerson,
+              l10n.kanbanPolicyDailyUpdate,
+            ],
+            activePolicies: {
+              'kanbanPolicyMax1PerPerson': true,
+              'kanbanPolicyDailyUpdate': false,
+            },
+          ),
+          KanbanColumnConfig(
+            id: 'review',
+            name: l10n.agileStatusInReview,
+            wipLimit: 2,
+            statuses: [StoryStatus.inReview],
+            policies: [
+              l10n.kanbanPolicyMax24h,
+              l10n.kanbanPolicyReqCodeReview,
+            ],
+            activePolicies: {
+              'kanbanPolicyMax24h': true,
+              'kanbanPolicyReqCodeReview': false,
+            },
+          ),
+          KanbanColumnConfig(
+            id: 'done',
+            name: l10n.agileStatusDone,
+            wipLimit: null,
+            statuses: [StoryStatus.done],
+            policies: [l10n.kanbanPolicyAllAcceptanceMet],
+            activePolicies: {
+              'kanbanPolicyAllAcceptanceMet': true,
+            },
+          ),
+        ];
+
+      case AgileFramework.hybrid:
+        return [
+          KanbanColumnConfig(
+            id: 'todo',
+            name: l10n.sprintBacklog,
+            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+          ),
+          KanbanColumnConfig(
+            id: 'inProgress',
+            name: l10n.agileStatusInProgress,
+            wipLimit: 5,
+            statuses: [StoryStatus.inProgress],
+            policies: [l10n.kanbanPolicyMax1PerPerson],
+          ),
+          KanbanColumnConfig(
+            id: 'done',
+            name: l10n.agileStatusDone,
+            statuses: [StoryStatus.done],
+            policies: [l10n.kanbanPolicyAllAcceptanceMet],
+          ),
+        ];
+    }
+  }
+
+  /// Colonne Kanban predefinite per il framework (Legacy/Statico)
+  List<KanbanColumnConfig> get defaultKanbanColumns {
+    switch (framework) {
+      case AgileFramework.scrum:
+        return [
+          const KanbanColumnConfig(
+            id: 'todo',
+            name: 'Sprint Backlog',
+            wipLimit: null,
+            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+          ),
+          const KanbanColumnConfig(
+            id: 'inProgress',
+            name: 'In Progress',
+            wipLimit: null,
+            statuses: [StoryStatus.inProgress],
+          ),
+          const KanbanColumnConfig(
+            id: 'review',
+            name: 'In Review',
+            wipLimit: null,
+            statuses: [StoryStatus.inReview],
+          ),
+          const KanbanColumnConfig(
             id: 'done',
             name: 'Done',
             wipLimit: null,
@@ -191,27 +322,29 @@ class FrameworkFeatures {
         ];
 
       case AgileFramework.kanban:
-        // Kanban: WIP limits sono fondamentali, include Refinement
-        // Policy esplicite per ogni colonna (Kanban Practice #4)
         return [
-          KanbanColumnConfig(
+           const KanbanColumnConfig(
             id: 'backlog',
             name: 'Backlog',
-            wipLimit: null, // Backlog non ha WIP limit
+            wipLimit: null,
             statuses: [StoryStatus.backlog],
             policies: ['Ordina per priorità business'],
           ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'refinement',
             name: 'Refinement',
-            wipLimit: 5, // Limita item in analisi parallela
+            wipLimit: 5,
             statuses: [StoryStatus.refinement],
             policies: [
               'Max 2 giorni in questa colonna',
               'Richiede criteri di accettazione definiti',
             ],
+            activePolicies: {
+              'kanbanPolicyReqAcceptance': true,
+              'kanbanPolicyMax2Days': true,
+            },
           ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'ready',
             name: 'Ready',
             wipLimit: 5,
@@ -220,8 +353,11 @@ class FrameworkFeatures {
               'Item pronto per essere lavorato',
               'Stima completata (se richiesta)',
             ],
+            activePolicies: {
+              'kanbanPolicyEstimationsDone': true,
+            },
           ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'inProgress',
             name: 'In Progress',
             wipLimit: 3,
@@ -230,8 +366,11 @@ class FrameworkFeatures {
               'Max 1 item per persona',
               'Daily update obbligatorio',
             ],
+            activePolicies: {
+              'kanbanPolicyMax1PerPerson': true,
+            },
           ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'review',
             name: 'Review',
             wipLimit: 2,
@@ -240,63 +379,41 @@ class FrameworkFeatures {
               'Max 24h in questa colonna',
               'Richiede code review approvata',
             ],
+            activePolicies: {
+              'kanbanPolicyMax24h': true,
+            },
           ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'done',
             name: 'Done',
             wipLimit: null,
             statuses: [StoryStatus.done],
-            policies: [
-              'Tutti i criteri di accettazione soddisfatti',
-              'Test superati',
-            ],
+            policies: ['Tutti i criteri di accettazione soddisfatti'],
+            activePolicies: {
+              'kanbanPolicyAllAcceptanceMet': true,
+            },
           ),
         ];
 
       case AgileFramework.hybrid:
-        // Hybrid: Colonne più granulari con WIP limits, include Refinement
-        // NOTA: inSprint incluso in Ready per compatibilità con sprint opzionali
-        // Policy esplicite per ogni colonna (Kanban Practice #4)
         return [
-          KanbanColumnConfig(
-            id: 'backlog',
-            name: 'Backlog',
-            wipLimit: null,
-            statuses: [StoryStatus.backlog],
-          ),
-          KanbanColumnConfig(
-            id: 'refinement',
-            name: 'Refinement',
-            wipLimit: 5,
-            statuses: [StoryStatus.refinement],
-            policies: ['Richiede criteri di accettazione'],
-          ),
-          KanbanColumnConfig(
-            id: 'ready',
-            name: 'Ready',
-            wipLimit: 5,
+          const KanbanColumnConfig(
+            id: 'todo',
+            name: 'Sprint Backlog',
             statuses: [StoryStatus.ready, StoryStatus.inSprint],
-            policies: ['Item pronto per sviluppo'],
           ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'inProgress',
             name: 'In Progress',
-            wipLimit: 4,
+            wipLimit: 5,
             statuses: [StoryStatus.inProgress],
             policies: ['Max 1 item per persona'],
           ),
-          KanbanColumnConfig(
-            id: 'review',
-            name: 'Review',
-            wipLimit: 2,
-            statuses: [StoryStatus.inReview],
-            policies: ['Code review obbligatoria'],
-          ),
-          KanbanColumnConfig(
+          const KanbanColumnConfig(
             id: 'done',
             name: 'Done',
-            wipLimit: null,
             statuses: [StoryStatus.done],
+            policies: ['Tutti i criteri di accettazione soddisfatti'],
           ),
         ];
     }
@@ -396,15 +513,25 @@ class KanbanColumnConfig {
   /// Esempi: "Max 24h in questa colonna", "Richiede code review approvata"
   final List<String> policies;
 
+  /// Map of active policies (policyId -> isActive)
+  final Map<String, bool>? activePolicies;
+
   const KanbanColumnConfig({
     required this.id,
     required this.name,
-    this.wipLimit,
     required this.statuses,
+    this.wipLimit,
     this.color,
     this.order = 0,
     this.policies = const [],
+    this.activePolicies,
   });
+
+  /// Verifica se una specifica policy è attiva
+  bool isPolicyActive(String policyId) {
+    if (activePolicies == null) return false;
+    return activePolicies![policyId] ?? false;
+  }
 
   /// Verifica se il WIP limit è superato
   bool isWipExceeded(int currentCount) {
@@ -445,6 +572,7 @@ class KanbanColumnConfig {
     Color? color,
     int? order,
     List<String>? policies,
+    Map<String, bool>? activePolicies,
   }) {
     return KanbanColumnConfig(
       id: id ?? this.id,
@@ -454,6 +582,7 @@ class KanbanColumnConfig {
       color: color ?? this.color,
       order: order ?? this.order,
       policies: policies ?? this.policies,
+      activePolicies: activePolicies ?? this.activePolicies,
     );
   }
 
@@ -467,6 +596,7 @@ class KanbanColumnConfig {
       'color': color?.value,
       'order': order,
       'policies': policies,
+      'activePolicies': activePolicies,
     };
   }
 
@@ -486,6 +616,9 @@ class KanbanColumnConfig {
       color: data['color'] != null ? Color(data['color'] as int) : null,
       order: data['order'] as int? ?? 0,
       policies: List<String>.from(data['policies'] ?? []),
+      activePolicies: (data['activePolicies'] as Map<String, dynamic>?)?.map(
+        (key, value) => MapEntry(key, value as bool),
+      ),
     );
   }
 }

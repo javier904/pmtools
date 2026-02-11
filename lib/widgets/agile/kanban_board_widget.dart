@@ -10,6 +10,7 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'story_card_widget.dart';
 import 'story_workflow_dialog.dart';
+import 'package:agile_tools/services/agile/kanban_policy_service.dart';
 
 /// Kanban Board con drag & drop tra colonne e supporto WIP limits
 ///
@@ -25,6 +26,7 @@ class KanbanBoardWidget extends StatefulWidget {
   final void Function(UserStoryModel story)? onStoryTap;
   final void Function(String columnId, int? newLimit)? onWipLimitChange;
   final void Function(String columnId, List<String> policies)? onPoliciesChange;
+  final void Function(String columnId, Map<String, bool> activePolicies)? onActivePoliciesChange;
   final void Function(SwimlaneType)? onSwimlaneChange;
   final void Function(UserStoryModel story, String? email)? onAssigneeChange;
   final void Function(UserStoryModel story, int? points)? onStoryPointsChange;
@@ -46,6 +48,7 @@ class KanbanBoardWidget extends StatefulWidget {
     this.onStoryTap,
     this.onWipLimitChange,
     this.onPoliciesChange,
+    this.onActivePoliciesChange,
     this.onSwimlaneChange,
     this.onAssigneeChange,
     this.onStoryPointsChange,
@@ -96,7 +99,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return Column(
       children: [
@@ -136,7 +139,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildSwimlaneSelector() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: context.surfaceColor,
@@ -222,7 +225,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildSwimlaneHeader(double columnWidth) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         // Spazio per label swimlane
@@ -258,7 +261,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildSwimlaneRow(_SwimlaneData lane, double columnWidth) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
@@ -335,7 +338,43 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         return true;
       },
       onAcceptWithDetails: (details) {
-        widget.onStatusChange?.call(details.data.id, primaryStatus);
+        final l10n = AppLocalizations.of(context);
+        final story = details.data;
+        final targetStatus = primaryStatus;
+        final currentCount = stories.length;
+        final wouldExceedWip = column.wouldExceedWip(currentCount) && _features.hasWipLimits;
+
+        // 1. Validazione Policy
+        final policyService = KanbanPolicyService(l10n);
+        final violations = policyService.validateMove(
+          story,
+          column,
+          stories, // stories in the target column
+        );
+
+        if (violations.isNotEmpty) {
+          _showPolicyViolationDialog(
+            story,
+            column,
+            violations.map((v) => v.message).toList(),
+            () {
+              // Procedi comunque (Logica originale di spostamento)
+              if (wouldExceedWip) {
+                _showWipLimitWarningDialog(column, story, targetStatus, currentCount);
+              } else {
+                widget.onStatusChange?.call(story.id, targetStatus);
+              }
+            }
+          );
+          return;
+        }
+
+        // 2. Logica Originale (se no violations)
+        if (wouldExceedWip) {
+          _showWipLimitWarningDialog(column, story, targetStatus, currentCount);
+        } else {
+          widget.onStatusChange?.call(story.id, targetStatus);
+        }
       },
       builder: (context, candidateData, rejectedData) {
         final isHighlighted = candidateData.isNotEmpty;
@@ -371,7 +410,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   padding: const EdgeInsets.all(4),
                   itemCount: stories.length,
                   itemBuilder: (context, index) =>
-                      _buildKanbanCard(stories[index]),
+                      _buildKanbanCard(stories[index], column, stories),
                 ),
         );
       },
@@ -432,7 +471,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         if (unassigned.isNotEmpty) {
           lanes.add(_SwimlaneData(
             id: '_unassigned',
-            name: AppLocalizations.of(context)!.agileUnassigned,
+            name: AppLocalizations.of(context).agileUnassigned,
             icon: Icons.person_outline,
             color: Colors.grey,
             stories: unassigned,
@@ -481,7 +520,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         if (untagged.isNotEmpty) {
           lanes.add(_SwimlaneData(
             id: '_untagged',
-            name: AppLocalizations.of(context)!.agileNoTags,
+            name: AppLocalizations.of(context).agileNoTags,
             icon: Icons.label_off,
             color: Colors.grey,
             stories: untagged,
@@ -514,7 +553,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              AppLocalizations.of(context)!.kanbanWipExceededBanner,
+              AppLocalizations.of(context).kanbanWipExceededBanner,
               style: TextStyle(
                 color: Colors.red[700],
                 fontWeight: FontWeight.w500,
@@ -550,16 +589,42 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         return true;
       },
       onAcceptWithDetails: (details) {
-        // Enforce WIP limit: check if adding would exceed
+        final l10n = AppLocalizations.of(context);
+        final story = details.data;
+        final targetStatus = primaryStatus;
         final currentCount = stories.length;
-        final wouldExceed = column.wouldExceedWip(currentCount) && _features.hasWipLimits;
+        final wouldExceedWip = column.wouldExceedWip(currentCount) && _features.hasWipLimits;
 
-        if (wouldExceed) {
-          // Show confirmation dialog for WIP limit override
-          _showWipLimitWarningDialog(column, details.data, primaryStatus, currentCount);
+        // 1. Validazione Policy
+        final policyService = KanbanPolicyService(l10n);
+        final violations = policyService.validateMove(
+          story,
+          column,
+          stories, // stories in the target column
+        );
+
+        if (violations.isNotEmpty) {
+          _showPolicyViolationDialog(
+            story,
+            column,
+            violations.map((v) => v.message).toList(),
+            () {
+              // Procedi comunque (Logica originale di spostamento)
+              if (wouldExceedWip) {
+                _showWipLimitWarningDialog(column, story, targetStatus, currentCount);
+              } else {
+                widget.onStatusChange?.call(story.id, targetStatus);
+              }
+            }
+          );
+          return;
+        }
+
+        // 2. Logica Originale (se no violations)
+        if (wouldExceedWip) {
+          _showWipLimitWarningDialog(column, story, targetStatus, currentCount);
         } else {
-          // Cambia allo status primario della colonna
-          widget.onStatusChange?.call(details.data.id, primaryStatus);
+          widget.onStatusChange?.call(story.id, targetStatus);
         }
       },
       builder: (context, candidateData, rejectedData) {
@@ -602,7 +667,8 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                     : ListView.builder(
                         padding: const EdgeInsets.all(8),
                         itemCount: stories.length,
-                        itemBuilder: (context, index) => _buildKanbanCard(stories[index]),
+                        itemBuilder: (context, index) =>
+                      _buildKanbanCard(stories[index], column, stories),
                       ),
               ),
             ],
@@ -619,7 +685,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     bool isWipExceeded,
     bool isWipAtLimit,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final hasWipLimit = column.wipLimit != null && _features.hasWipLimits;
     final hasPolicies = column.hasPolicies && widget.showPolicies;
 
@@ -688,12 +754,40 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   /// Indicatore policy con tooltip che mostra le policy della colonna
+  /// Indicatore policy con tooltip che mostra le policy ATTIVE della colonna
   Widget _buildPolicyIndicator(KanbanColumnConfig column, StoryStatus primaryStatus) {
-    final l10n = AppLocalizations.of(context)!;
-    final policiesText = column.policies.map((p) => '• $p').join('\n');
+    // Conta le policy attive (valore true)
+    final activeCount = column.activePolicies?.values.where((v) => v).length ?? 0;
+    
+    // Se non ci sono policy attive, non mostrare nulla o mostra 0
+    // Meglio nascondere se 0 per pulizia? O mostrare grigio?
+    // Mostriamo sempre per permettere il click per aprire il dialog
+    
+    final l10n = AppLocalizations.of(context);
+    
+    // Costruisci il testo del tooltip basato sulle policy attive
+    final List<String> tooltipLines = [];
+    if (column.activePolicies != null) {
+      column.activePolicies!.forEach((key, isActive) {
+        if (isActive) {
+           // Cerchiamo l'etichetta localizzata corretta
+           String label = key;
+           if (key == 'kanbanPolicyReqAcceptance') label = l10n.kanbanPolicyReqAcceptance;
+           else if (key == 'kanbanPolicyEstimationsDone') label = l10n.kanbanPolicyEstimationsDone;
+           else if (key == 'kanbanPolicyMax1PerPerson') label = l10n.kanbanPolicyMax1PerPerson;
+           else if (key == 'kanbanPolicyAllAcceptanceMet') label = l10n.kanbanPolicyAllAcceptanceMet;
+           else if (key == 'kanbanPolicyMax2Days') label = l10n.kanbanPolicyMax2Days;
+           else if (key == 'kanbanPolicyMax24h') label = l10n.kanbanPolicyMax24h;
+           
+           tooltipLines.add('• $label');
+        }
+      });
+    }
+    
+    final tooltipText = tooltipLines.join('\n');
 
     return Tooltip(
-      message: '${l10n.kanbanPoliciesTitle(column.name)}\n$policiesText',
+      message: '${l10n.kanbanPoliciesTitle(column.name)}\n$tooltipText',
       preferBelow: false,
       child: InkWell(
         onTap: widget.onPoliciesChange != null && widget.canEdit
@@ -703,8 +797,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
         child: Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: primaryStatus.color.withValues(alpha: 0.2),
+            color: activeCount > 0 
+                ? primaryStatus.color.withValues(alpha: 0.2)
+                : Colors.transparent, // Meno invasivo se 0
             borderRadius: BorderRadius.circular(4),
+            border: activeCount == 0 ? Border.all(color: context.borderColor) : null,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -712,15 +809,15 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               Icon(
                 Icons.policy_outlined,
                 size: 14,
-                color: primaryStatus.color,
+                color: activeCount > 0 ? primaryStatus.color : context.textSecondaryColor,
               ),
               const SizedBox(width: 2),
               Text(
-                '${column.policies.length}',
+                '$activeCount',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: primaryStatus.color,
+                  color: activeCount > 0 ? primaryStatus.color : context.textSecondaryColor,
                 ),
               ),
             ],
@@ -732,9 +829,41 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
 
   /// Dialog per modificare le policy di una colonna
   Future<void> _showPoliciesDialog(KanbanColumnConfig column) async {
-    final l10n = AppLocalizations.of(context)!;
-    final policies = List<String>.from(column.policies);
-    final controller = TextEditingController();
+    final l10n = AppLocalizations.of(context);
+    // Legacy policies list is ignored/cleared in new version
+    final activePolicies = Map<String, bool>.from(column.activePolicies ?? {});
+
+    // Definizioni delle policy disponibili con descrizioni
+    final allPolicies = [
+      {'id': 'kanbanPolicyReqAcceptance', 'label': l10n.kanbanPolicyReqAcceptance},
+      {'id': 'kanbanPolicyEstimationsDone', 'label': l10n.kanbanPolicyEstimationsDone},
+      {'id': 'kanbanPolicyMax1PerPerson', 'label': l10n.kanbanPolicyMax1PerPerson},
+      {'id': 'kanbanPolicyAllAcceptanceMet', 'label': l10n.kanbanPolicyAllAcceptanceMet},
+      {'id': 'kanbanPolicyMax2Days', 'label': l10n.kanbanPolicyMax2Days},
+      {'id': 'kanbanPolicyMax24h', 'label': l10n.kanbanPolicyMax24h},
+    ];
+
+    // Mappa delle policy pertinenti per ogni tipo di colonna
+    // Usa l'ID della colonna per determinare quali policy mostrare
+    List<String> validPolicyIds;
+    final cid = column.id.toLowerCase();
+    
+    if (cid.contains('backlog') || cid.contains('todo')) {
+      validPolicyIds = ['kanbanPolicyReqAcceptance', 'kanbanPolicyEstimationsDone'];
+    } else if (cid.contains('ready') || cid.contains('refine')) {
+      validPolicyIds = ['kanbanPolicyReqAcceptance', 'kanbanPolicyEstimationsDone', 'kanbanPolicyMax2Days'];
+    } else if (cid.contains('progress') || cid.contains('doing')) {
+      validPolicyIds = ['kanbanPolicyMax1PerPerson', 'kanbanPolicyMax2Days'];
+    } else if (cid.contains('review') || cid.contains('verify') || cid.contains('testing')) {
+      validPolicyIds = ['kanbanPolicyMax24h'];
+    } else if (cid.contains('done') || cid.contains('completed')) {
+      validPolicyIds = ['kanbanPolicyAllAcceptanceMet'];
+    } else {
+      // Fallback per colonne custom: mostra quelle generiche di tempo/limite
+      validPolicyIds = ['kanbanPolicyMax1PerPerson', 'kanbanPolicyMax2Days', 'kanbanPolicyMax24h'];
+    }
+
+    final availablePolicies = allPolicies.where((p) => validPolicyIds.contains(p['id'])).toList();
 
     await showDialog<void>(
       context: context,
@@ -749,80 +878,51 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           ),
           content: SizedBox(
             width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.kanbanPoliciesDesc,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.textSecondaryColor,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.kanbanPoliciesDesc,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textSecondaryColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                // Lista policy esistenti
-                if (policies.isNotEmpty) ...[
-                  ...policies.asMap().entries.map((entry) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
-                          const SizedBox(width: 8),
-                          Expanded(child: Text(entry.value)),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                            onPressed: () {
-                              setDialogState(() {
-                                policies.removeAt(entry.key);
-                              });
-                            },
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
                   const SizedBox(height: 16),
-                ],
-                // Aggiungi nuova policy
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        decoration: InputDecoration(
-                          hintText: l10n.kanbanNewPolicyHint,
-                          isDense: true,
-                          border: const OutlineInputBorder(),
+                  
+                  if (availablePolicies.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                        child: Text(
+                          'Nessuna policy automatica disponibile per questa colonna.', // Fallback hardcoded if l10n missing for this specific string, or use existing generic
+                          style: TextStyle(color: context.textSecondaryColor, fontStyle: FontStyle.italic),
                         ),
-                        onSubmitted: (value) {
-                          if (value.trim().isNotEmpty) {
-                            setDialogState(() {
-                              policies.add(value.trim());
-                              controller.clear();
-                            });
-                          }
-                        },
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle, color: Colors.green),
-                      onPressed: () {
-                        if (controller.text.trim().isNotEmpty) {
+                    )
+                  else
+                    ...availablePolicies.map((p) {
+                      final id = p['id']!;
+                      final label = p['label']!;
+                      final isActive = activePolicies[id] ?? false;
+                      
+                      return CheckboxListTile(
+                        title: Text(label, style: const TextStyle(fontSize: 13)),
+                        value: isActive,
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (val) {
                           setDialogState(() {
-                            policies.add(controller.text.trim());
-                            controller.clear();
+                            activePolicies[id] = val ?? false;
                           });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                        },
+                      );
+                    }),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -832,7 +932,9 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             ),
             FilledButton(
               onPressed: () {
-                widget.onPoliciesChange?.call(column.id, policies);
+                // Rimuoviamo le policy testuali legacy passando una lista vuota
+                widget.onPoliciesChange?.call(column.id, []);
+                widget.onActivePoliciesChange?.call(column.id, activePolicies);
                 Navigator.pop(ctx);
               },
               child: Text(l10n.agileActionSave),
@@ -849,7 +951,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     bool isWipExceeded,
     bool isWipAtLimit,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final hasWipLimit = column.wipLimit != null && _features.hasWipLimits;
 
     Color bgColor;
@@ -907,7 +1009,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildColumnStats(List<UserStoryModel> stories, int totalPoints) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final features = FrameworkFeatures(widget.framework);
 
     return Padding(
@@ -938,7 +1040,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   Widget _buildEmptyColumn() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -957,8 +1059,21 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     );
   }
 
-  Widget _buildKanbanCard(UserStoryModel story) {
+  Widget _buildKanbanCard(UserStoryModel story, KanbanColumnConfig column, List<UserStoryModel> columnStories) {
+    final l10n = AppLocalizations.of(context);
     final sprint = widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
+    final policyService = KanbanPolicyService(l10n);
+    
+    // Check time-based passive policies
+    final timeViolation = policyService.checkTimePolicy(story, column);
+    
+    // Check logic-based active policies (reusing validateMove as it checks current state too)
+    final logicViolations = policyService.validateMove(story, column, columnStories);
+    
+    final policyWarnings = [
+      if (timeViolation != null) timeViolation.message,
+      ...logicViolations.map((v) => v.message),
+    ];
 
     return Draggable<UserStoryModel>(
       data: story,
@@ -974,6 +1089,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                sprintName: sprint?.name,
                isSprintCompleted: sprint?.status == SprintStatus.completed,
                teamMembers: widget.teamMembers,
+               policyWarnings: policyWarnings,
              ),
           ),
         ),
@@ -985,6 +1101,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           sprintName: sprint?.name,
           isSprintCompleted: sprint?.status == SprintStatus.completed,
           teamMembers: widget.teamMembers,
+          policyWarnings: policyWarnings,
         ),
       ),
       child: Padding(
@@ -994,6 +1111,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           sprintName: sprint?.name,
           isSprintCompleted: sprint?.status == SprintStatus.completed,
           teamMembers: widget.teamMembers,
+          policyWarnings: policyWarnings,
           onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
           onStatusChange: widget.onStatusChange != null 
               ? (status) => widget.onStatusChange!(story.id, status) 
@@ -1017,7 +1135,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   void _showWipConfigDialog(KanbanColumnConfig column) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController(
       text: column.wipLimit?.toString() ?? '',
     );
@@ -1037,7 +1155,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Imposta il numero massimo di item che possono essere in questa colonna contemporaneamente.',
+              l10n.kanbanWipLimitDesc,
               style: TextStyle(color: context.textMutedColor),
             ),
             const SizedBox(height: 16),
@@ -1053,7 +1171,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Suggerimento: inizia con ${(column.statuses.length * 2).clamp(2, 5)} e aggiusta in base al team.',
+              l10n.kanbanWipLimitSuggestion((column.statuses.length * 2).clamp(2, 5)),
               style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
             ),
           ],
@@ -1068,7 +1186,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               widget.onWipLimitChange?.call(column.id, null);
               Navigator.pop(context);
             },
-            child: Text(l10n.archiveDeleteSuccess), // Wait, do I have a "Remove" key?
+            child: Text(l10n.kanbanRemoveLimit),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1090,7 +1208,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     StoryStatus targetStatus,
     int currentCount,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -1114,17 +1232,17 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               text: TextSpan(
                 style: TextStyle(color: context.textPrimaryColor, fontSize: 14),
                 children: [
-                  const TextSpan(text: 'Spostando '),
+                  TextSpan(text: l10n.kanbanWipExceededMessage),
                   TextSpan(
                     text: '"${story.title}"',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const TextSpan(text: ' in '),
+                  TextSpan(text: l10n.kanbanWipExceededIn),
                   TextSpan(
                     text: column.name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const TextSpan(text: ' supererai il limite WIP.'),
+                  TextSpan(text: l10n.kanbanWipExceededWillExceed),
                 ],
               ),
             ),
@@ -1145,7 +1263,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Colonna: ${column.name}',
+                          l10n.kanbanColumnLabel(column.name),
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 4),
@@ -1172,7 +1290,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.',
+              l10n.kanbanWipMovingTip,
               style: TextStyle(
                 fontSize: 12,
                 color: context.textSecondaryColor,
@@ -1204,7 +1322,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
   }
 
   void _showWipExplanationDialog() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1226,26 +1344,25 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               ),
               const SizedBox(height: 8),
               Text(l10n.kanbanWipExplanationDesc),
-              SizedBox(height: 16),
               Text(
-                'Perché usarli?',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                l10n.kanbanWipWhyTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
-              Text('- Riducono il multitasking e aumentano il focus'),
-              Text('- Evidenziano i colli di bottiglia'),
-              Text('- Migliorano il flusso di lavoro'),
-              Text('- Accelerano il completamento degli item'),
-              SizedBox(height: 16),
+              const SizedBox(height: 8),
+              Text('- ${l10n.kanbanWipReasonFocus}'),
+              Text('- ${l10n.kanbanWipReasonBottlenecks}'),
+              Text('- ${l10n.kanbanWipReasonFlow}'),
+              Text('- ${l10n.kanbanWipReasonSpeed}'),
+              const SizedBox(height: 16),
               Text(
-                'Cosa fare se un limite è superato?',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                l10n.kanbanWipOverLimitTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
-                '1. Completa o sposta item esistenti prima di iniziarne di nuovi\n'
-                '2. Aiuta i colleghi a sbloccare item in review\n'
-                '3. Analizza perché il limite è stato superato',
+                '${l10n.kanbanWipOverLimitStep1}\n'
+                '${l10n.kanbanWipOverLimitStep2}\n'
+                '${l10n.kanbanWipOverLimitStep3}',
               ),
             ],
           ),
@@ -1254,6 +1371,110 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.kanbanUnderstand),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPolicyViolationDialog(
+    UserStoryModel story,
+    KanbanColumnConfig column,
+    List<String> violations,
+    VoidCallback onProceedAnyway,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.policy_outlined, color: Colors.red, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l10n.kanbanPolicyViolationTitle,
+                style: TextStyle(color: Colors.red[800]),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(color: context.textPrimaryColor, fontSize: 14),
+                children: [
+                  TextSpan(text: l10n.kanbanPolicyViolationMessage),
+                  TextSpan(
+                    text: '"${story.title}"',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: l10n.kanbanPolicyViolationTo),
+                  TextSpan(
+                    text: column.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: l10n.kanbanPolicyViolationViolations),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: violations.map((v) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.red, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          v,
+                          style: const TextStyle(fontSize: 13, color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                )).toList(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.kanbanPolicyMovingTip,
+              style: TextStyle(
+                fontSize: 12,
+                color: context.textSecondaryColor,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              onProceedAnyway();
+            },
+            child: Text(l10n.kanbanMoveAnyway),
           ),
         ],
       ),
@@ -1278,8 +1499,9 @@ class KanbanSummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveColumns = columns ?? FrameworkFeatures(framework).defaultKanbanColumns;
+    final l10n = AppLocalizations.of(context);
     final features = FrameworkFeatures(framework);
+    final effectiveColumns = columns ?? features.getLocalizedDefaultKanbanColumns(l10n);
 
     return Card(
       child: InkWell(

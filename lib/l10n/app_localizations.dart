@@ -2516,6 +2516,84 @@ abstract class AppLocalizations {
   /// **'Salva Retrospettiva'**
   String get retroSave;
 
+  /// No description provided for @agileEstimate.
+  ///
+  /// In it, this message translates to:
+  /// **'STIMA'**
+  String get agileEstimate;
+
+  /// No description provided for @agileAssign.
+  ///
+  /// In it, this message translates to:
+  /// **'Assegna'**
+  String get agileAssign;
+
+  /// No description provided for @agileCardMenuTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Opzioni (Priorità, Stima, ecc.)'**
+  String get agileCardMenuTooltip;
+
+  /// No description provided for @kanbanPolicyHelpTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Policies di Colonna (Regole)'**
+  String get kanbanPolicyHelpTitle;
+
+  /// No description provided for @kanbanPolicyHelpIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Le policies sono regole esplicite che definiscono quando una card può entrare o lasciare una colonna. Garantiscono la qualità e il flusso. Attivale dall\'icona \'Impostazioni\' nell\'intestazione della colonna.'**
+  String get kanbanPolicyHelpIntro;
+
+  /// No description provided for @kanbanPolicyRule1Title.
+  ///
+  /// In it, this message translates to:
+  /// **'1. Richiede Criteri di Accettazione'**
+  String get kanbanPolicyRule1Title;
+
+  /// No description provided for @kanbanPolicyRule1Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'La card deve avere almeno un criterio di accettazione definito per procedere. Utile per assicurarsi che i requisiti siano chiari prima dello sviluppo.'**
+  String get kanbanPolicyRule1Desc;
+
+  /// No description provided for @kanbanPolicyRule2Title.
+  ///
+  /// In it, this message translates to:
+  /// **'2. Stima completata'**
+  String get kanbanPolicyRule2Title;
+
+  /// No description provided for @kanbanPolicyRule2Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'La card deve avere una stima in Story Points (o altro metodo) > 0. Fondamentale per il Planning e la Velocity.'**
+  String get kanbanPolicyRule2Desc;
+
+  /// No description provided for @kanbanPolicyRule3Title.
+  ///
+  /// In it, this message translates to:
+  /// **'3. Max 2 giorni nella colonna'**
+  String get kanbanPolicyRule3Title;
+
+  /// No description provided for @kanbanPolicyRule3Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Segnala se una card rimane ferma nello stesso stato per più di 48 ore. Aiuta a identificare colli di bottiglia o task bloccati.'**
+  String get kanbanPolicyRule3Desc;
+
+  /// No description provided for @kanbanPolicyRule4Title.
+  ///
+  /// In it, this message translates to:
+  /// **'4. Tutti i criteri soddisfatti'**
+  String get kanbanPolicyRule4Title;
+
+  /// No description provided for @kanbanPolicyRule4Desc.
+  ///
+  /// In it, this message translates to:
+  /// **'Blocca il passaggio a \'Done\' se non tutti i criteri di accettazione sono spuntati. Garantisce la Definition of Done.'**
+  String get kanbanPolicyRule4Desc;
+
   /// No description provided for @retroOpenInteractiveBoard.
   ///
   /// In it, this message translates to:
@@ -9414,12 +9492,6 @@ abstract class AppLocalizations {
   /// **'Aggiungi a Sprint'**
   String get agileAddToSprint;
 
-  /// No description provided for @agileEstimate.
-  ///
-  /// In it, this message translates to:
-  /// **'STIMA'**
-  String get agileEstimate;
-
   /// No description provided for @agileEstimated.
   ///
   /// In it, this message translates to:
@@ -9552,6 +9624,174 @@ abstract class AppLocalizations {
   /// **'Nessuna story trovata'**
   String get backlogNoStoryFound;
 
+  /// No description provided for @sprintBacklog.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Backlog'**
+  String get sprintBacklog;
+
+  /// No description provided for @agileStatusRefinement.
+  ///
+  /// In it, this message translates to:
+  /// **'Refining'**
+  String get agileStatusRefinement;
+
+  /// No description provided for @agileStatusReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Pronto'**
+  String get agileStatusReady;
+
+  /// No description provided for @agileStatusInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso'**
+  String get agileStatusInProgress;
+
+  /// No description provided for @agileStatusInReview.
+  ///
+  /// In it, this message translates to:
+  /// **'In Revisione'**
+  String get agileStatusInReview;
+
+  /// No description provided for @agileStatusDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatto'**
+  String get agileStatusDone;
+
+  /// No description provided for @backlog.
+  ///
+  /// In it, this message translates to:
+  /// **'Backlog'**
+  String get backlog;
+
+  /// No description provided for @kanbanPolicySortPriority.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordina per priorità business'**
+  String get kanbanPolicySortPriority;
+
+  /// No description provided for @kanbanPolicyMax2Days.
+  ///
+  /// In it, this message translates to:
+  /// **'Max 2 giorni in questa colonna'**
+  String get kanbanPolicyMax2Days;
+
+  /// No description provided for @kanbanPolicyReqAcceptance.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiede criteri di accettazione definiti'**
+  String get kanbanPolicyReqAcceptance;
+
+  /// No description provided for @kanbanPolicyItemReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Item pronto per essere lavorato'**
+  String get kanbanPolicyItemReady;
+
+  /// No description provided for @kanbanPolicyEstimationsDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Stima completata (se richiesta)'**
+  String get kanbanPolicyEstimationsDone;
+
+  /// No description provided for @kanbanPolicyMax1PerPerson.
+  ///
+  /// In it, this message translates to:
+  /// **'Max 1 item per persona'**
+  String get kanbanPolicyMax1PerPerson;
+
+  /// No description provided for @kanbanPolicyDailyUpdate.
+  ///
+  /// In it, this message translates to:
+  /// **'Daily update obbligatorio'**
+  String get kanbanPolicyDailyUpdate;
+
+  /// No description provided for @kanbanPolicyMax24h.
+  ///
+  /// In it, this message translates to:
+  /// **'Max 24h in questa colonna'**
+  String get kanbanPolicyMax24h;
+
+  /// No description provided for @kanbanPolicyReqCodeReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiede code review approvata'**
+  String get kanbanPolicyReqCodeReview;
+
+  /// No description provided for @kanbanPolicyAllAcceptanceMet.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i criteri di accettazione soddisfatti'**
+  String get kanbanPolicyAllAcceptanceMet;
+
+  /// No description provided for @kanbanPolicyCheckTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Controllo Policy'**
+  String get kanbanPolicyCheckTitle;
+
+  /// No description provided for @kanbanPolicyCheckMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione viola le seguenti policy:'**
+  String get kanbanPolicyCheckMessage;
+
+  /// No description provided for @kanbanPolicyCheckProceed.
+  ///
+  /// In it, this message translates to:
+  /// **'Procedi comunque'**
+  String get kanbanPolicyCheckProceed;
+
+  /// No description provided for @kanbanPolicyCheckCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla e correggi'**
+  String get kanbanPolicyCheckCancel;
+
+  /// No description provided for @kanbanPolicyActiveLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Controllo Attivo'**
+  String get kanbanPolicyActiveLabel;
+
+  /// No description provided for @kanbanPolicyViolationTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Violazione Policy'**
+  String get kanbanPolicyViolationTitle;
+
+  /// No description provided for @kanbanPolicyViolationMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Spostando '**
+  String get kanbanPolicyViolationMessage;
+
+  /// No description provided for @kanbanPolicyViolationTo.
+  ///
+  /// In it, this message translates to:
+  /// **' in '**
+  String get kanbanPolicyViolationTo;
+
+  /// No description provided for @kanbanPolicyViolationViolations.
+  ///
+  /// In it, this message translates to:
+  /// **' stai violando:'**
+  String get kanbanPolicyViolationViolations;
+
+  /// No description provided for @kanbanPolicyMovingTip.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi procedere se ritieni che sia un\'eccezione valida.'**
+  String get kanbanPolicyMovingTip;
+
+  /// No description provided for @kanbanMoveAnyway.
+  ///
+  /// In it, this message translates to:
+  /// **'Sposta Comunque'**
+  String get kanbanMoveAnyway;
+
   /// No description provided for @backlogEmpty.
   ///
   /// In it, this message translates to:
@@ -9593,6 +9833,66 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Nessun limite WIP'**
   String get kanbanNoWipLimit;
+
+  /// No description provided for @kanbanWipWhyTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Perché usarli?'**
+  String get kanbanWipWhyTitle;
+
+  /// No description provided for @kanbanWipReasonFocus.
+  ///
+  /// In it, this message translates to:
+  /// **'Riducono il multitasking e aumentano il focus'**
+  String get kanbanWipReasonFocus;
+
+  /// No description provided for @kanbanWipReasonBottlenecks.
+  ///
+  /// In it, this message translates to:
+  /// **'Evidenziano i colli di bottiglia'**
+  String get kanbanWipReasonBottlenecks;
+
+  /// No description provided for @kanbanWipReasonFlow.
+  ///
+  /// In it, this message translates to:
+  /// **'Migliorano il flusso di lavoro'**
+  String get kanbanWipReasonFlow;
+
+  /// No description provided for @kanbanWipReasonSpeed.
+  ///
+  /// In it, this message translates to:
+  /// **'Accelerano il completamento degli item'**
+  String get kanbanWipReasonSpeed;
+
+  /// No description provided for @kanbanWipOverLimitTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa fare se un limite è superato?'**
+  String get kanbanWipOverLimitTitle;
+
+  /// No description provided for @kanbanWipOverLimitStep1.
+  ///
+  /// In it, this message translates to:
+  /// **'1. Completa o sposta item esistenti prima di iniziarne di nuovi'**
+  String get kanbanWipOverLimitStep1;
+
+  /// No description provided for @kanbanWipOverLimitStep2.
+  ///
+  /// In it, this message translates to:
+  /// **'2. Aiuta i colleghi a sbloccare item in review'**
+  String get kanbanWipOverLimitStep2;
+
+  /// No description provided for @kanbanWipOverLimitStep3.
+  ///
+  /// In it, this message translates to:
+  /// **'3. Analizza perché il limite è stato superato'**
+  String get kanbanWipOverLimitStep3;
+
+  /// No description provided for @kanbanWipMovingTip.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.'**
+  String get kanbanWipMovingTip;
 
   /// No description provided for @kanbanItems.
   ///
@@ -9689,12 +9989,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.'**
   String get kanbanSuggestion;
-
-  /// No description provided for @kanbanMoveAnyway.
-  ///
-  /// In it, this message translates to:
-  /// **'Sposta Comunque'**
-  String get kanbanMoveAnyway;
 
   /// No description provided for @kanbanWipExplanationTitle.
   ///
@@ -11565,7 +11859,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionLimitProjects.
   ///
   /// In it, this message translates to:
-  /// **'Hai raggiunto il limite massimo di progetti per il tuo piano. Passa a Premium per creare più progetti.'**
+  /// **'Hai raggiunto il limite massimo di progetti (5). Contatta lo sviluppatore per aumentare il tuo limite.'**
   String get subscriptionLimitProjects;
 
   /// No description provided for @subscriptionLimitLists.
@@ -11601,7 +11895,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionLimitAgileProjects.
   ///
   /// In it, this message translates to:
-  /// **'Hai raggiunto il limite massimo di progetti Agile. Passa a Premium per crearne di più.'**
+  /// **'Hai raggiunto il limite massimo di progetti Agile (5). Contatta lo sviluppatore per aumentare il tuo limite.'**
   String get subscriptionLimitAgileProjects;
 
   /// No description provided for @subscriptionLimitDefault.
@@ -11649,7 +11943,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionStartingFrom.
   ///
   /// In it, this message translates to:
-  /// **'A partire da €4.99/mese'**
+  /// **'Contattaci per maggiori informazioni'**
   String get subscriptionStartingFrom;
 
   /// No description provided for @subscriptionLater.
@@ -11661,8 +11955,20 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionViewPlans.
   ///
   /// In it, this message translates to:
-  /// **'Vedi piani'**
+  /// **'Contatta lo sviluppatore'**
   String get subscriptionViewPlans;
+
+  /// No description provided for @subscriptionContactDeveloper.
+  ///
+  /// In it, this message translates to:
+  /// **'Contatta lo sviluppatore'**
+  String get subscriptionContactDeveloper;
+
+  /// No description provided for @subscriptionOfficialEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'leonardo.torella@gmail.com'**
+  String get subscriptionOfficialEmail;
 
   /// No description provided for @subscriptionCanCreateOne.
   ///
@@ -20801,6 +21107,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Step opzionale (può saltare)'**
   String get workflowOptionalDesc;
+
+  /// No description provided for @kanbanPoliciesActive.
+  ///
+  /// In it, this message translates to:
+  /// **'Policy Attive (Controlli Automatici)'**
+  String get kanbanPoliciesActive;
+
+  /// No description provided for @kanbanPoliciesExplicit.
+  ///
+  /// In it, this message translates to:
+  /// **'Policy Esplicite (Note per il team)'**
+  String get kanbanPoliciesExplicit;
 }
 
 class _AppLocalizationsDelegate

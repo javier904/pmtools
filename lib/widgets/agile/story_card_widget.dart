@@ -46,8 +46,10 @@ class StoryCardWidget extends StatefulWidget {
   /// Nome dello sprint a cui appartiene la story (opzionale)
   final String? sprintName;
   /// Indica se lo sprint è completato
+  /// Indica se lo sprint è completato
   final bool isSprintCompleted;
   final bool compactMode;
+  final List<String> policyWarnings;
 
   const StoryCardWidget({
     super.key,
@@ -68,6 +70,7 @@ class StoryCardWidget extends StatefulWidget {
     this.sprintName,
     this.isSprintCompleted = false,
     this.compactMode = false,
+    this.policyWarnings = const [],
   });
 
   @override
@@ -198,6 +201,10 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
         ),
         // Status badge
         _buildStatusBadge(),
+        if (widget.policyWarnings.isNotEmpty) ... [
+          const SizedBox(width: 8),
+          _buildPolicyWarningBadge(context),
+        ],
       ],
     );
   }
@@ -256,6 +263,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                          story.status != StoryStatus.refinement && 
                          story.status != StoryStatus.ready) _buildSprintBadge(),
                      if (story.externalIntegration != null) _buildJiraBadge(),
+                     if (widget.policyWarnings.isNotEmpty) _buildPolicyWarningBadge(context),
                    ],
                  ),
                  const SizedBox(height: 6),
@@ -387,12 +395,12 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                          ),
                        ),
                    _buildIdBadge(context),
-                   _buildIdBadge(context),
                    if (widget.sprintName != null && 
                        story.status != StoryStatus.backlog && 
                        story.status != StoryStatus.refinement && 
                        story.status != StoryStatus.ready) _buildSprintBadge(),
                    if (story.externalIntegration != null) _buildJiraBadge(),
+                   if (widget.policyWarnings.isNotEmpty) _buildPolicyWarningBadge(context),
                  ],
                ),
              ),
@@ -591,6 +599,39 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
      );
   }
 
+  Widget _buildPolicyWarningBadge(BuildContext context) {
+    return Tooltip(
+      message: 'Policy Violate:\n${widget.policyWarnings.map((e) => "• $e").join('\n')}',
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
+      showDuration: const Duration(seconds: 5),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.red),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 14, color: Colors.red),
+            const SizedBox(width: 4),
+             const Text(
+              'POLICY', 
+              style: TextStyle(
+                fontSize: 9, 
+                fontWeight: FontWeight.bold, 
+                color: Colors.red,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildTitleRow(BuildContext context) {
       if (_isEditingTitle) {
         return Row(
@@ -658,6 +699,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
       return const SizedBox.shrink();
     }
     return PopupMenuButton<String>(
+      tooltip: AppLocalizations.of(context)!.agileCardMenuTooltip,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
       icon: const Icon(Icons.more_vert, size: 20),
@@ -706,7 +748,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
 
   Widget _buildPriorityBadge({bool compact = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: widget.story.priority.color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(4),
@@ -738,7 +780,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
       child: PopupMenuButton<StoryPriority>(
         initialValue: widget.story.priority,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: widget.story.priority.color.withOpacity(0.15),
             borderRadius: BorderRadius.circular(4),
@@ -805,8 +847,8 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
   }
 
   Widget _buildPointsDropdown(BuildContext context) {
-    // Fibonacci + usual values
-    final points = [1, 2, 3, 5, 8, 13, 21];
+    // Fibonacci + usual values + 0
+    final points = [0, 1, 2, 3, 5, 8, 13, 21];
     
     return PopupMenuButton<int>(
       initialValue: widget.story.storyPoints,
@@ -823,7 +865,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
             const Icon(Icons.stars, size: 12, color: Colors.green),
             const SizedBox(width: 4),
             Text(
-              widget.story.storyPoints != null ? '${widget.story.storyPoints} pts' : 'Stima',
+              '${widget.story.storyPoints ?? 0} pts',
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.green,
@@ -857,7 +899,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
     }
 
     return PopupMenuButton<String?>(
-      tooltip: 'Assegna',
+      tooltip: AppLocalizations.of(context)!.agileAssign,
       initialValue: widget.story.assigneeEmail,
       child: widget.story.assigneeEmail != null
           ? Tooltip(
@@ -915,12 +957,15 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           Icon(widget.story.status.icon, size: 12, color: widget.story.status.color),
           if (!compact) ...[
             const SizedBox(width: 4),
-            Text(
-              widget.story.status.displayName,
-              style: TextStyle(
-                fontSize: 11,
-                color: widget.story.status.color,
-                fontWeight: FontWeight.w500,
+            Flexible(
+              child: Text(
+                widget.story.status.displayName,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: widget.story.status.color,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

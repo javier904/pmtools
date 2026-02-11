@@ -1307,6 +1307,50 @@ class AppLocalizationsIt extends AppLocalizations {
   String get retroSave => 'Salva Retrospettiva';
 
   @override
+  String get agileEstimate => 'STIMA';
+
+  @override
+  String get agileAssign => 'Assegna';
+
+  @override
+  String get agileCardMenuTooltip => 'Opzioni (Priorità, Stima, ecc.)';
+
+  @override
+  String get kanbanPolicyHelpTitle => 'Policies di Colonna (Regole)';
+
+  @override
+  String get kanbanPolicyHelpIntro =>
+      'Le policies sono regole esplicite che definiscono quando una card può entrare o lasciare una colonna. Garantiscono la qualità e il flusso. Attivale dall\'icona \'Impostazioni\' nell\'intestazione della colonna.';
+
+  @override
+  String get kanbanPolicyRule1Title => '1. Richiede Criteri di Accettazione';
+
+  @override
+  String get kanbanPolicyRule1Desc =>
+      'La card deve avere almeno un criterio di accettazione definito per procedere. Utile per assicurarsi che i requisiti siano chiari prima dello sviluppo.';
+
+  @override
+  String get kanbanPolicyRule2Title => '2. Stima completata';
+
+  @override
+  String get kanbanPolicyRule2Desc =>
+      'La card deve avere una stima in Story Points (o altro metodo) > 0. Fondamentale per il Planning e la Velocity.';
+
+  @override
+  String get kanbanPolicyRule3Title => '3. Max 2 giorni nella colonna';
+
+  @override
+  String get kanbanPolicyRule3Desc =>
+      'Segnala se una card rimane ferma nello stesso stato per più di 48 ore. Aiuta a identificare colli di bottiglia o task bloccati.';
+
+  @override
+  String get kanbanPolicyRule4Title => '4. Tutti i criteri soddisfatti';
+
+  @override
+  String get kanbanPolicyRule4Desc =>
+      'Blocca il passaggio a \'Done\' se non tutti i criteri di accettazione sono spuntati. Garantisce la Definition of Done.';
+
+  @override
   String get retroOpenInteractiveBoard => 'Apri Board Interattiva';
 
   @override
@@ -5185,9 +5229,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agileAddToSprint => 'Aggiungi a Sprint';
 
   @override
-  String get agileEstimate => 'STIMA';
-
-  @override
   String get agileEstimated => 'Stimata';
 
   @override
@@ -5260,6 +5301,94 @@ class AppLocalizationsIt extends AppLocalizations {
   String get backlogNoStoryFound => 'Nessuna story trovata';
 
   @override
+  String get sprintBacklog => 'Sprint Backlog';
+
+  @override
+  String get agileStatusRefinement => 'Refining';
+
+  @override
+  String get agileStatusReady => 'Pronto';
+
+  @override
+  String get agileStatusInProgress => 'In Corso';
+
+  @override
+  String get agileStatusInReview => 'In Revisione';
+
+  @override
+  String get agileStatusDone => 'Fatto';
+
+  @override
+  String get backlog => 'Backlog';
+
+  @override
+  String get kanbanPolicySortPriority => 'Ordina per priorità business';
+
+  @override
+  String get kanbanPolicyMax2Days => 'Max 2 giorni in questa colonna';
+
+  @override
+  String get kanbanPolicyReqAcceptance =>
+      'Richiede criteri di accettazione definiti';
+
+  @override
+  String get kanbanPolicyItemReady => 'Item pronto per essere lavorato';
+
+  @override
+  String get kanbanPolicyEstimationsDone => 'Stima completata (se richiesta)';
+
+  @override
+  String get kanbanPolicyMax1PerPerson => 'Max 1 item per persona';
+
+  @override
+  String get kanbanPolicyDailyUpdate => 'Daily update obbligatorio';
+
+  @override
+  String get kanbanPolicyMax24h => 'Max 24h in questa colonna';
+
+  @override
+  String get kanbanPolicyReqCodeReview => 'Richiede code review approvata';
+
+  @override
+  String get kanbanPolicyAllAcceptanceMet =>
+      'Tutti i criteri di accettazione soddisfatti';
+
+  @override
+  String get kanbanPolicyCheckTitle => 'Controllo Policy';
+
+  @override
+  String get kanbanPolicyCheckMessage =>
+      'Questa azione viola le seguenti policy:';
+
+  @override
+  String get kanbanPolicyCheckProceed => 'Procedi comunque';
+
+  @override
+  String get kanbanPolicyCheckCancel => 'Annulla e correggi';
+
+  @override
+  String get kanbanPolicyActiveLabel => 'Controllo Attivo';
+
+  @override
+  String get kanbanPolicyViolationTitle => 'Violazione Policy';
+
+  @override
+  String get kanbanPolicyViolationMessage => 'Spostando ';
+
+  @override
+  String get kanbanPolicyViolationTo => ' in ';
+
+  @override
+  String get kanbanPolicyViolationViolations => ' stai violando:';
+
+  @override
+  String get kanbanPolicyMovingTip =>
+      'Puoi procedere se ritieni che sia un\'eccezione valida.';
+
+  @override
+  String get kanbanMoveAnyway => 'Sposta Comunque';
+
+  @override
   String get backlogEmpty => 'Backlog vuoto';
 
   @override
@@ -5282,6 +5411,41 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get kanbanNoWipLimit => 'Nessun limite WIP';
+
+  @override
+  String get kanbanWipWhyTitle => 'Perché usarli?';
+
+  @override
+  String get kanbanWipReasonFocus =>
+      'Riducono il multitasking e aumentano il focus';
+
+  @override
+  String get kanbanWipReasonBottlenecks => 'Evidenziano i colli di bottiglia';
+
+  @override
+  String get kanbanWipReasonFlow => 'Migliorano il flusso di lavoro';
+
+  @override
+  String get kanbanWipReasonSpeed => 'Accelerano il completamento degli item';
+
+  @override
+  String get kanbanWipOverLimitTitle => 'Cosa fare se un limite è superato?';
+
+  @override
+  String get kanbanWipOverLimitStep1 =>
+      '1. Completa o sposta item esistenti prima di iniziarne di nuovi';
+
+  @override
+  String get kanbanWipOverLimitStep2 =>
+      '2. Aiuta i colleghi a sbloccare item in review';
+
+  @override
+  String get kanbanWipOverLimitStep3 =>
+      '3. Analizza perché il limite è stato superato';
+
+  @override
+  String get kanbanWipMovingTip =>
+      'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.';
 
   @override
   String kanbanItems(int count) {
@@ -5344,9 +5508,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get kanbanSuggestion =>
       'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.';
-
-  @override
-  String get kanbanMoveAnyway => 'Sposta Comunque';
 
   @override
   String get kanbanWipExplanationTitle => 'Cosa sono i WIP Limits?';
@@ -6389,7 +6550,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get subscriptionLimitProjects =>
-      'Hai raggiunto il limite massimo di progetti per il tuo piano. Passa a Premium per creare più progetti.';
+      'Hai raggiunto il limite massimo di progetti (5). Contatta lo sviluppatore per aumentare il tuo limite.';
 
   @override
   String get subscriptionLimitLists =>
@@ -6413,7 +6574,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get subscriptionLimitAgileProjects =>
-      'Hai raggiunto il limite massimo di progetti Agile. Passa a Premium per crearne di più.';
+      'Hai raggiunto il limite massimo di progetti Agile (5). Contatta lo sviluppatore per aumentare il tuo limite.';
 
   @override
   String get subscriptionLimitDefault =>
@@ -6438,13 +6599,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get subscriptionBenefitNoAds => 'Nessuna pubblicità';
 
   @override
-  String get subscriptionStartingFrom => 'A partire da €4.99/mese';
+  String get subscriptionStartingFrom => 'Contattaci per maggiori informazioni';
 
   @override
   String get subscriptionLater => 'Più tardi';
 
   @override
-  String get subscriptionViewPlans => 'Vedi piani';
+  String get subscriptionViewPlans => 'Contatta lo sviluppatore';
+
+  @override
+  String get subscriptionContactDeveloper => 'Contatta lo sviluppatore';
+
+  @override
+  String get subscriptionOfficialEmail => 'leonardo.torella@gmail.com';
 
   @override
   String subscriptionCanCreateOne(String entity) {
@@ -11603,4 +11770,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get workflowOptionalDesc => 'Step opzionale (può saltare)';
+
+  @override
+  String get kanbanPoliciesActive => 'Policy Attive (Controlli Automatici)';
+
+  @override
+  String get kanbanPoliciesExplicit => 'Policy Esplicite (Note per il team)';
 }

@@ -2741,10 +2741,13 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       onStoryPointsChange: (story, points) => _updateStoryPoints(story, points),
       onTitleChange: (storyId, newTitle) => _updateStoryTitle(storyId, newTitle),
       onPriorityChange: (storyId, newPriority) => _updateStoryPriority(storyId, newPriority),
+      onActivePoliciesChange: project.canManageSprints(_currentUserEmail)
+          ? (colId, activePolicies) => _updateColumnConfig(colId, activePolicies: activePolicies)
+          : null,
     );
   }
 
-  Future<void> _updateColumnConfig(String columnId, {int? wipLimit, bool clearWip = false, List<String>? policies}) async {
+  Future<void> _updateColumnConfig(String columnId, {int? wipLimit, bool clearWip = false, List<String>? policies, Map<String, bool>? activePolicies}) async {
     try {
       final currentCols = List<KanbanColumnConfig>.from(widget.project.effectiveKanbanColumns);
       final index = currentCols.indexWhere((c) => c.id == columnId);
@@ -2754,6 +2757,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           wipLimit: wipLimit,
           clearWipLimit: clearWip,
           policies: policies,
+          activePolicies: activePolicies,
         );
         
         await _firestoreService.updateProjectKanbanColumns(widget.project.id, currentCols);
