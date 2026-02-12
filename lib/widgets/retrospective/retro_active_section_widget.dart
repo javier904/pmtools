@@ -11,7 +11,7 @@ import 'package:agile_tools/widgets/retrospective/retro_board_widget.dart';
 class RetroActiveSectionWidget extends StatelessWidget {
   final List<RetrospectiveModel> retrospectives;
   final String currentUserEmail;
-  final VoidCallback onCreateNew;
+  final VoidCallback? onCreateNew;
   final Function(RetrospectiveModel) onTapRetro;
   final Function(RetrospectiveModel)? onDeleteRetro;
 
@@ -19,7 +19,7 @@ class RetroActiveSectionWidget extends StatelessWidget {
     super.key,
     required this.retrospectives,
     required this.currentUserEmail,
-    required this.onCreateNew,
+    this.onCreateNew,
     required this.onTapRetro,
     this.onDeleteRetro,
   });
@@ -189,16 +189,18 @@ class RetroActiveSectionWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: onCreateNew,
-            icon: const Icon(Icons.add),
-            label: Text(l10n.retroCreateNew),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          const SizedBox(height: 24),
+          if (onCreateNew != null)
+            ElevatedButton.icon(
+              onPressed: onCreateNew,
+              icon: const Icon(Icons.add),
+              label: Text(l10n.retroCreateNew),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
             ),
-          ),
         ],
       ),
     );

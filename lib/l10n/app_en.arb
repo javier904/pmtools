@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "agileEstimate": "Estimate",
+  "agileEstimate": "ESTIMATE",
   "agileAssign": "Assign",
   "agileCardMenuTooltip": "Options (Priority, Estimate, etc.)",
   "kanbanPolicyHelpTitle": "Column Policies (Rules)",
@@ -31,6 +31,8 @@
   "actionAdd": "Add",
   "actionClose": "Close",
   "agileSprint": "Sprint",
+  "agileStatus": "Status",
+  "agilePermissionErrorBacklog": "Permission denied: Only PO/SM can move to Backlog",
   "actionRetry": "Retry",
   "exportAllData": "Export All Data (Full Report)",
   "actionConfirm": "Confirm",
@@ -308,8 +310,8 @@
       }
     }
   },
-  "eisenhowerVoteSubmit": "VOTE",
-  "eisenhowerVotedSuccess": "You have voted",
+  "eisenhowerVoteSubmit": "Vote",
+  "eisenhowerVotedSuccess": "Vote submitted successfully!",
   "eisenhowerRevealVotes": "REVEAL VOTES",
   "eisenhowerQuickVote": "Quick Vote",
   "eisenhowerTeamVote": "Team Vote",
@@ -359,12 +361,9 @@
       }
     }
   },
-  "eisenhowerNoVotesYet": "No votes collected yet",
   "eisenhowerVoting": "Voting",
   "eisenhowerAllActivitiesVoted": "All activities have been voted!",
   "eisenhowerAlreadyVotedError": "This activity has already been estimated. The facilitator must reopen the voting to modify it.",
-  "eisenhowerVoteSubmit": "Vote",
-  "eisenhowerVotedSuccess": "Vote submitted successfully!",
   "eisenhowerYourVote": "Your vote: U={urgency}, I={importance}",
   "@eisenhowerYourVote": {
     "placeholders": {
@@ -748,6 +747,19 @@
   "kanbanPrinciple2": "Limit WIP: Complete work before starting new",
   "kanbanPrinciple3": "Manage the flow: Optimize to maximize throughput",
   "kanbanPrinciple4": "Make policies explicit: Define clear rules",
+  "agileItems": "items",
+  "agileItemsShort": "items",
+  "agileWorkloadAvgItems": "Avg Items/Person",
+  "agileKanbanCapacityNote": "Capacity is calculated on a weekly basis (5 working days).",
+  "agilePriority": "Priority",
+  "agileEstimate": "Estimate",
+  "agileRoleSRM": "Service Request Manager",
+  "agileRoleSRMDesc": "Manage incoming requests and facilitate prioritization (replacing Product Owner)",
+  "agileRoleSDM": "Service Delivery Manager",
+  "agileRoleSDMDesc": "Manage flow of work and facilitate delivery (replacing Scrum Master)",
+  "agileRoleTeamMember": "Team Member",
+  "agileFrameworkLocked": "Cannot change framework for projects with existing activities",
+  "agileComingSoon": "Coming Soon",
   "kanbanPrinciple5": "Implement feedback loops: Continuously improve",
   "kanbanPrinciple6": "Improve collaboratively: Evolve through experimentation",
   "kanbanBoardTitle": "Kanban Board",
@@ -838,6 +850,7 @@
   "retroFilterAll": "All",
   "retroFilterActive": "Active",
   "retroFilterCompleted": "Completed",
+  "agileNoAssignee": "No assignee",
   "retroFilterDraft": "Draft",
   "retroDeleteTitle": "Delete Retrospective",
   "retroDeleteConfirm": "Are you sure?",
@@ -1054,7 +1067,7 @@
   "agileStatsPointsTooltip": "Sum of Story Points of completed stories.\n'Planned' includes all estimated stories in the backlog.",
   "agileItemsCompletedTooltip": "Number of Work Items with 'Done' status.\nMove items to the 'Done' column to complete them.",
   "agileInProgressTooltip": "Items currently in progress (WIP).\nKeep this number low to improve flow.",
-  "agileCycleTimeTooltip": "Average time taken for a story to move from 'In Progress' to 'Done'.\nStories moved directly to 'Done' are included with a 0-day duration.\nLower cycle time indicates higher team efficiency.",
+  "agileCycleTimeTooltip": "Average time spent in active states (e.g. In Progress, Review).\nExcludes waiting time in Backlog or Ready.\nItems completed quickly (< 1d) are calculated with precision.",
   "agileThroughputTooltip": "Average items completed per week (last 4 weeks).\nIndicates team productivity over time.",
   "agileHybridSprintTooltip": "Completed sprints vs total.",
   "agileHybridCompletedTooltip": "Items with 'Done' status vs total.\nMove items to 'Done' column to complete them.",
@@ -2071,7 +2084,6 @@
   "landingFooterGdpr": "GDPR",
   "agileGuide": "Guide",
   "agileAddToSprint": "Add to Sprint",
-  "agileEstimate": "ESTIMATE",
   "agileEstimated": "Estimated",
   "agilePoints": "pts",
   "agilePointsValue": "{points} pts",
@@ -2115,6 +2127,7 @@
   "backlogRemoveFilters": "Remove filters",
   "backlogNoStoryFound": "No story found",
   "sprintBacklog": "Sprint Backlog",
+  "scrumToDo": "To Do",
   "agileStatusRefinement": "Refinement",
   "agileStatusReady": "Ready",
   "agileStatusInProgress": "In Progress",
@@ -2141,7 +2154,7 @@
   "kanbanPolicyViolationTo": " to ",
   "kanbanPolicyViolationViolations": " violates:",
   "kanbanPolicyMovingTip": "You can proceed if this is a valid exception.",
-  "kanbanMoveAnyway": "Move anyway",
+  "kanbanMoveAnyway": "Move Anyway",
   "backlogEmpty": "Empty backlog",
   "backlogAddFirstStory": "Add the first User Story",
   "kanbanWipExceeded": "WIP Limit exceeded! Complete some items before starting new ones.",
@@ -2230,7 +2243,6 @@
     }
   },
   "kanbanSuggestion": "Suggestion: complete or move other items before starting new ones to maintain an optimal workflow.",
-  "kanbanMoveAnyway": "Move Anyway",
   "kanbanWipExplanationTitle": "What are WIP Limits?",
   "kanbanWipWhat": "What are WIP Limits?",
   "kanbanWipWhatDesc": "WIP (Work In Progress) Limits are limits on the number of items that can be in a column at the same time.",
@@ -2461,6 +2473,8 @@
   "smartTodoDescriptionHint": "Add a detailed description...",
   "smartTodoChecklist": "CHECKLIST",
   "smartTodoAddChecklistItem": "Add item",
+  "smartTodoEditItem": "Edit item",
+  "smartTodoItemTitle": "Item title",
   "smartTodoAttachments": "ATTACHMENTS",
   "smartTodoAddLink": "Add Link",
   "smartTodoComments": "COMMENTS",
@@ -4192,9 +4206,17 @@
   "retroViewSummary": "View Summary",
   "retroSummaryTitle": "Retrospective Summary",
   "retroSummaryCards": "Cards ({count})",
-  "@retroSummaryCards": { "placeholders": { "count": {} } },
+  "@retroSummaryCards": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "retroSummaryActions": "Action Items ({count})",
-  "@retroSummaryActions": { "placeholders": { "count": {} } },
+  "@retroSummaryActions": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "retroSummarySentiment": "Team Sentiment",
   "actionTrackerTitle": "Action Items Tracker",
   "actionTrackerEmpty": "No action items across retrospectives",
@@ -4228,7 +4250,11 @@
   "lessonFieldTags": "Tags",
   "lessonIsRecurring": "Recurring Pattern",
   "lessonOccurrenceCount": "Occurrences: {count}",
-  "@lessonOccurrenceCount": { "placeholders": { "count": {} } },
+  "@lessonOccurrenceCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "lessonIsResolved": "Resolved",
   "generateLessonsTitle": "Generate Lessons Learned",
   "generateLessonsDesc": "Review insights from this retrospective and save them as lessons learned.",
@@ -4248,7 +4274,11 @@
   "crossProjectSelectProject": "Select Project",
   "crossProjectNoProjects": "No other owned projects found",
   "crossProjectImportSuccess": "Successfully imported {count} items",
-  "@crossProjectImportSuccess": { "placeholders": { "count": {} } },
+  "@crossProjectImportSuccess": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "crossProjectAggregatedView": "Cross-Project Lessons",
   "tooltipTrackerStatusClick": "Click to change status",
   "tooltipTrackerFilterStatus": "Filter action items by current status",
@@ -4293,9 +4323,18 @@
   "guideCarryForwardTitle": "Carry Forward Process",
   "guideCarryForwardDesc": "When creating a new retrospective, review open and in-progress actions from previous ones. Carry forward items that are still relevant and re-prioritize them in the new context.",
   "retroFromSprint": "From: Sprint {name}",
-  "@retroFromSprint": { "placeholders": { "name": {} } },
+  "@retroFromSprint": {
+    "placeholders": {
+      "name": {}
+    }
+  },
   "actionItemsCompleted": "{completed}/{total} completed",
-  "@actionItemsCompleted": { "placeholders": { "completed": {}, "total": {} } },
+  "@actionItemsCompleted": {
+    "placeholders": {
+      "completed": {},
+      "total": {}
+    }
+  },
   "coachTipSSCWriting": "Focus on concrete, observable behaviors. Each item should be something the team can act on directly. Avoid vague statements.",
   "coachTipSSCVoting": "Vote based on impact and feasibility. High-voted items will become your sprint commitments.",
   "coachTipSSCDiscuss": "For each top-voted item, define WHO will do WHAT by WHEN. Turn insights into specific next actions.",
@@ -4995,7 +5034,6 @@
   },
   "agileItemsCompletedLabel": "Items Completed",
   "agileDaysRemainingSuffix": "days remaining",
-  "agileItems": "items",
   "agileItemsMore": "more items",
   "wipAgeTitle": "Work Item Age",
   "wipAgeEmpty": "No items in progress",
@@ -5022,7 +5060,6 @@
       }
     }
   },
-  "agileCycleTimeTooltip": "Average time spent in active states (e.g. In Progress, Review).\nExcludes waiting time in Backlog or Ready.\nItems completed quickly (< 1d) are calculated with precision.",
   "agileHealthTimeTooltip": "Elapsed days / Total days (based on Start/End dates).",
   "agileHealthWorkTooltip": "Completed vs Total Planned Story Points.",
   "agileHealthProgressTooltip": "Number of stories currently in progress.",
@@ -5032,7 +5069,6 @@
   "agileSprintScopeTooltip": "Tracks changes in sprint scope. 'Original' are the points planned when the sprint started, 'Current' are the points of stories currently in the sprint.",
   "agileEstimationAccuracyTooltip": "Formula: (Completed Points / Planned Points) x 100. Indicates the team's reliability in completing the work promised at the start of the sprint.",
   "agileCommitmentTrendTooltip": "Displays the team's reliability trend by comparing Planned vs Completed Points for each closed sprint.",
-  "agileNoTeamMembers": "No team members",
   "agilePerWeekSuffix": "/week",
   "average": "Average",
   "agileAvgVelocitySprint": "Velocity (Sprint)",
@@ -5351,21 +5387,15 @@
   "landingIntegrationDashboardTitle": "Unified Dashboard",
   "landingIntegrationDashboardDesc": "Favorites, deadlines, and pending invites from every tool in one place.",
   "jiraTransitionTitle": "Complete Transition: {transitionName}",
-
   "jiraTransitionInfo": "Jira requires additional information for this transition.",
   "jiraTransitionConfirm": "Confirm",
   "jiraTransitionCancel": "Cancel",
   "jiraFieldRequired": "Required field",
   "jiraSyncSuccess": "Jira: {transitionName} completed",
-
   "jiraSyncedTo": "Jira: Synced to {statusName}",
-
   "jiraSyncFromSuccess": "Synced from Jira: {issueKey}",
-
   "jiraSyncFailed": "Sync failed: {error}",
-
   "jiraSyncWarning": "Jira Sync Warning: {warning}",
-
   "actionSyncJira": "Sync with Jira",
   "validationRequired": "Required",
   "jiraInvalidDomain": "Invalid domain",
@@ -5379,7 +5409,6 @@
   "agileHelpStep3Title": "Work on Board",
   "agileHelpStep3Desc": "Use the Board tab to visualize progress. Drag cards to update their status.",
   "agileHelpStep4Title": "Sync & Close",
-  "agileHelpStep4Title": "Sync & Close",
   "agileHelpStep4Desc": "If Jira is connected, status updates sync automatically. Use 'Complete Sprint' to finish.",
   "actionNext": "Next",
   "actionBack": "Back",
@@ -5389,16 +5418,15 @@
   "guideJiraContent": "The app integrates with Jira to keep work synchronized.\n\nKey features:\n• **Import**: Stories created in Jira appear here.\n• **Link**: Clicking the story ID (e.g. PROJ-123) opens Jira directly.\n• **Sync**: Status updates bidirectionally (if configured).",
   "guideWorkflowTitle": "Workflow & Quality",
   "guideAcceptanceCriteriaContent": "To ensure quality, every story must have clear Acceptance Criteria.\n\n• **Quick Add**: You can add criteria directly from story details.\n• **Verify**: Check off criteria as they are met.\n• **Definition of Done**: A story is 'Done' only when all criteria are satisfied.",
-  "scrumWorkflowStatusContent": "In Scrum, a story's lifecycle follows these states:\n\n1. **Product Backlog**: Where ideas are born. The 'Refinement' label indicates the story is being analyzed/detailed (not a board column, just an indicator).\n2. **Ready**: The story is ready to be worked on (meets Definition of Ready).\n3. **In Sprint**: During Planning, 'Ready' stories move to the Sprint.\n4. **In Progress**: The story is actively being worked on.\n5. **In Review**: The story is in review/code review phase.\n6. **Done**: The story is completed and verified.",
+  "scrumWorkflowStatusContent": "In Scrum, a story's lifecycle follows these states:\n\n**Product Backlog** (visible only in the Backlog tab):\n1. **Backlog**: Where ideas are born. The story has not yet been analyzed.\n2. **Refinement**: The story is being analyzed/detailed. This is a collaborative effort for the whole team (working toward the Definition of Ready).\n3. **Ready**: The story meets the DoR and can be selected at Sprint Planning. Only the Product Owner can mark a story as Ready.\n\n**Sprint Board** (visible on the board during the Sprint):\n4. **To Do**: 'Ready' stories added to the Sprint.\n5. **In Progress**: Active work by the team.\n6. **In Review**: Review/Code Review phase.\n7. **Done**: Story completed and verified.",
   "kanbanWorkflowStatusContent": "In Kanban, flow is continuous:\n\n1. **Refinement**: Dedicated column for analyzing incoming requests.\n2. **Ready**: Queues for ready work (pull system).\n3. **Active Board**: Stories flow through work columns.\n4. **WIP Limits**: Each column has a limit to prevent bottlenecks.",
   "hybridWorkflowStatusContent": "Scrumban uses a hybrid approach:\n\n• You can use Sprints for planning, but manage daily flow like Kanban.\n• 'Ready' stories can be pulled when there is capacity, regardless of Sprint planning, if the team prefers.",
-
   "contextualHelpButton": "Help",
   "contextualHelpTips": "Tips",
   "contextualHelpBacklogTitle": "Product Backlog",
   "contextualHelpBacklogDesc": "The backlog is the prioritized list of all work to be done. Stories at the top are most important.",
   "contextualHelpBacklogTip1": "Keep the backlog ordered by priority",
-  "contextualHelpBacklogTip2": "Do regular refinement to detail stories",
+  "contextualHelpBacklogTip2": "Collaborate with the team during Refinement to detail stories",
   "contextualHelpBacklogTip3": "A story is 'Ready' when it meets the Definition of Ready",
   "contextualHelpSprintTitle": "Sprint",
   "contextualHelpSprintDesc": "A sprint is a fixed time period (1-4 weeks) during which the team works on selected stories.",
@@ -5448,7 +5476,6 @@
   "contextualHelpRetroTip1": "Assign a clear owner and deadline to every Action Item",
   "contextualHelpRetroTip2": "Celebrate 'Strengths' in the Lessons Learned tab to build on what works",
   "contextualHelpRetroTip3": "Use 'Quick Form' to digitize results from physical workshops or high-level status meetings",
-
   "jiraConnectedSuccess": "Connected as {name}",
   "@jiraConnectedSuccess": {
     "placeholders": {
@@ -5470,5 +5497,12 @@
   "workflowCycleDesc": "Bidirectional transition (cycle)",
   "workflowOptionalDesc": "Optional step (can skip)",
   "kanbanPoliciesActive": "Active Policies (Automated)",
-  "kanbanPoliciesExplicit": "Explicit Policies (Team Notes)"
+  "kanbanPoliciesExplicit": "Explicit Policies (Team Notes)",
+  "retrospectivesVoted": "Voted",
+  "agileTeam": "Team",
+  "agileRoleDevelopmentTeam": "Development Team",
+  "agileRoleDevelopmentTeamDesc": "Members who execute the work",
+  "agileAddToTeam": "Add to Team",
+  "agileAllMembersAssigned": "All available members are already assigned",
+  "agileClose": "Close"
 }

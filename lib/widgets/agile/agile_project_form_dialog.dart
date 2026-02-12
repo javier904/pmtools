@@ -15,6 +15,7 @@ class AgileProjectFormResult {
   final int workingHoursPerDay;
   final String? productOwnerEmail;
   final String? scrumMasterEmail;
+  final List<String> developmentTeamEmails;
 
   const AgileProjectFormResult({
     required this.name,
@@ -24,6 +25,7 @@ class AgileProjectFormResult {
     required this.workingHoursPerDay,
     this.productOwnerEmail,
     this.scrumMasterEmail,
+    this.developmentTeamEmails = const [],
   });
 
   Map<String, dynamic> toMap() => {
@@ -34,6 +36,7 @@ class AgileProjectFormResult {
     'workingHoursPerDay': workingHoursPerDay,
     'productOwnerEmail': productOwnerEmail,
     'scrumMasterEmail': scrumMasterEmail,
+    'developmentTeamEmails': developmentTeamEmails,
   };
 }
 
@@ -89,6 +92,7 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
   // Key Roles
   String? _productOwnerEmail;
   String? _scrumMasterEmail;
+  List<String> _developmentTeamEmails = [];
 
   bool get isEditing => widget.project != null;
 
@@ -104,8 +108,52 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
     _framework = widget.project?.framework ?? AgileFramework.scrum;
     _sprintDurationDays = widget.project?.sprintDurationDays ?? 14;
     _workingHoursPerDay = widget.project?.workingHoursPerDay ?? 8;
-    _productOwnerEmail = widget.project?.productOwnerEmail;
-    _scrumMasterEmail = widget.project?.scrumMasterEmail;
+    if (widget.project != null) {
+      _productOwnerEmail = _validateRoleEmail(widget.project!.productOwnerEmail);
+      _scrumMasterEmail = _validateRoleEmail(widget.project!.scrumMasterEmail);
+
+      // Fallback: If metadata is missing (legacy projects), try to find role holders in participants
+      if (_productOwnerEmail == null) {
+        try {
+          final po = widget.project!.participants.values.firstWhere((p) => 
+            p.teamRole == TeamRole.productOwner || p.teamRole == TeamRole.serviceRequestManager);
+          _productOwnerEmail = po.email;
+        } catch (_) {}
+      }
+      
+      if (_scrumMasterEmail == null) {
+        try {
+          final sm = widget.project!.participants.values.firstWhere((p) => 
+            p.teamRole == TeamRole.scrumMaster || p.teamRole == TeamRole.serviceDeliveryManager);
+          _scrumMasterEmail = sm.email;
+        } catch (_) {}
+      }
+
+      // Populate Development Team from participants who are NOT PO or SM
+      _developmentTeamEmails = widget.project!.participants.values
+          .where((p) => 
+              p.email != _productOwnerEmail && 
+              p.email != _scrumMasterEmail)
+          .map((p) => p.email)
+          .toList();
+
+    } else {
+      _productOwnerEmail = null;
+      _scrumMasterEmail = null;
+      _developmentTeamEmails = [];
+    }
+  }
+
+  String? _validateRoleEmail(String? email) {
+    if (email == null) return null;
+    final normalized = email.toLowerCase();
+    
+    // Check if we have a participant with this email (case-insensitive key check)
+    if (widget.project!.participants.containsKey(normalized)) {
+      // Return the ACTUAL email string from the participant model to ensure Dropdown match
+      return widget.project!.participants[normalized]?.email;
+    }
+    return null;
   }
 
   @override
@@ -117,7 +165,7 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
       title: Text(isEditing ? l10n.agileEditProjectTitle : l10n.agileCreateProjectTitle),
       content: SizedBox(
@@ -185,42 +233,71 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
                 _buildFrameworkSelector(),
                 const SizedBox(height: 24),
 
-                // Configurazione Sprint
-                Text(
-                  l10n.agileSprintConfig,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: context.textSecondaryColor,
+                // Configurazione Sprint (Solo Scrum)
+                if (_framework == AgileFramework.scrum) ...[
+                  Text(
+                    l10n.agileSprintConfig,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: context.textSecondaryColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildNumberField(
-                        label: l10n.agileSprintDuration,
-                        value: _sprintDurationDays,
-                        min: 7,
-                        max: 30,
-                        onChanged: (v) => setState(() => _sprintDurationDays = v),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildNumberField(
+                          label: l10n.agileSprintDuration,
+                          value: _sprintDurationDays,
+                          min: 7,
+                          max: 30,
+                          onChanged: (v) => setState(() => _sprintDurationDays = v),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildNumberField(
-                        label: l10n.agileHoursPerDay,
-                        value: _workingHoursPerDay,
-                        min: 4,
-                        max: 12,
-                        onChanged: (v) => setState(() => _workingHoursPerDay = v),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildNumberField(
+                          label: l10n.agileHoursPerDay,
+                          value: _workingHoursPerDay,
+                          min: 4,
+                          max: 12,
+                          onChanged: (v) => setState(() => _workingHoursPerDay = v),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                
+                // Key Roles & Team
+                Builder(
+                  builder: (context) {
+                    List<TeamMemberModel> participants;
+                    if (widget.project != null) {
+                      participants = widget.project!.participants.values.toList();
+                    } else if (widget.creatorEmail != null && widget.creatorName != null) {
+                      participants = [
+                        TeamMemberModel(
+                          email: widget.creatorEmail!,
+                          name: widget.creatorName!,
+                          participantRole: AgileParticipantRole.owner,
+                          teamRole: TeamRole.productOwner,
+                          joinedAt: DateTime.now(),
+                        ),
+                      ];
+                    } else {
+                      participants = [];
+                    }
 
-                // Key Roles Section
-                _buildKeyRolesSection(),
+                    return Column(
+                      children: [
+                        _buildKeyRolesSection(participants),
+                        const SizedBox(height: 24),
+                        _buildDevelopmentTeamCard(participants),
+                      ],
+                    );
+                  }
+                ),
               ],
             ),
           ),
@@ -241,16 +318,25 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
   }
 
   Widget _buildFrameworkSelector() {
+    // Check if project has activities (stories)
+    final hasActivities = (widget.project?.backlogCount ?? 0) > 0;
+    
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: AgileFramework.values.map((framework) {
           final isSelected = _framework == framework;
+          final isHybrid = framework == AgileFramework.hybrid;
+          final isDisabled = isHybrid || (hasActivities && !isSelected);
+          
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Tooltip(
-                message: framework.detailedDescription,
+                // Show specific message if disabled due to activities
+                message: (hasActivities && !isSelected) 
+                    ? AppLocalizations.of(context).agileFrameworkLocked
+                    : framework.detailedDescription,
                 textStyle: const TextStyle(
                   fontSize: 12,
                   color: Colors.white,
@@ -263,53 +349,86 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
                 ),
                 waitDuration: const Duration(milliseconds: 500),
                 child: InkWell(
-                  onTap: () => setState(() => _framework = framework),
+                  onTap: isDisabled ? null : () => setState(() => _framework = framework),
                   borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? _getFrameworkColor(framework).withOpacity(0.1)
-                          : context.surfaceVariantColor,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isSelected
-                            ? _getFrameworkColor(framework)
-                            : context.borderColor,
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          framework.icon,
+                  child: Stack(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
                           color: isSelected
-                              ? _getFrameworkColor(framework)
-                              : context.textSecondaryColor,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          framework.displayName,
-                          style: TextStyle(
-                            fontWeight:
-                                isSelected ? FontWeight.bold : FontWeight.normal,
+                              ? _getFrameworkColor(framework).withValues(alpha: 0.1)
+                              : (isDisabled ? context.surfaceVariantColor.withValues(alpha: 0.5) : context.surfaceVariantColor),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
                             color: isSelected
                                 ? _getFrameworkColor(framework)
-                                : context.textSecondaryColor,
+                                : context.borderColor.withValues(alpha: isDisabled ? 0.3 : 1.0),
+                            width: isSelected ? 2 : 1,
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          framework.description,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: context.textTertiaryColor,
+                        child: Opacity(
+                          opacity: isDisabled ? 0.5 : 1.0,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                framework.icon,
+                                color: isSelected
+                                    ? _getFrameworkColor(framework)
+                                    : context.textSecondaryColor,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                framework.displayName,
+                                style: TextStyle(
+                                  fontWeight:
+                                      isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: isSelected
+                                      ? _getFrameworkColor(framework)
+                                      : context.textSecondaryColor,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                framework.description,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: context.textTertiaryColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ],
-                    ),
+                      ),
+                      if (isHybrid)
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.orange,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context).agileComingSoon,
+                              style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (hasActivities && !isSelected)
+                         Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Icon(Icons.lock, size: 14, color: context.textMutedColor),
+                         ),
+                    ],
                   ),
                 ),
               ),
@@ -369,28 +488,19 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
     );
   }
 
-  Widget _buildKeyRolesSection() {
-    final l10n = AppLocalizations.of(context)!;
-    // Get participants for dropdown
-    List<TeamMemberModel> participants;
+  Widget _buildKeyRolesSection(List<TeamMemberModel> participants) {
+    final l10n = AppLocalizations.of(context);
 
-    if (widget.project != null) {
-      // Editing existing project - use actual participants
-      participants = widget.project!.participants.values.toList();
-    } else if (widget.creatorEmail != null && widget.creatorName != null) {
-      // Creating new project - allow creator to assign themselves
-      participants = [
-        TeamMemberModel(
-          email: widget.creatorEmail!,
-          name: widget.creatorName!,
-          participantRole: AgileParticipantRole.owner,
-          teamRole: TeamRole.productOwner,
-          joinedAt: DateTime.now(),
-        ),
-      ];
-    } else {
-      participants = [];
-    }
+    // Determine labels and descriptions based on framework
+    final isScrum = _framework == AgileFramework.scrum;
+    
+    final role1Label = isScrum ? l10n.agileRoleProductOwner : l10n.agileRoleSRM;
+    final role1Desc = isScrum ? l10n.agileRoleProductOwnerDesc : l10n.agileRoleSRMDesc;
+    final role1Color = isScrum ? const Color(0xFF7B1FA2) : Colors.teal; // Purple vs Teal
+    
+    final role2Label = isScrum ? l10n.agileRoleScrumMaster : l10n.agileRoleSDM;
+    final role2Desc = isScrum ? l10n.agileRoleScrumMasterDesc : l10n.agileRoleSDMDesc;
+    final role2Color = isScrum ? const Color(0xFF1976D2) : Colors.orange; // Blue vs Orange
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,24 +527,24 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
         ),
         const SizedBox(height: 12),
 
-        // Product Owner
+        // Role 1: PO (Scrum) or SRM (Kanban)
         _buildRoleSelector(
           icon: Icons.account_circle,
-          label: l10n.agileRoleProductOwner,
-          color: const Color(0xFF7B1FA2),
-          description: l10n.agileRoleProductOwnerDesc,
+          label: role1Label,
+          color: role1Color,
+          description: role1Desc,
           selectedEmail: _productOwnerEmail,
           participants: participants,
           onChanged: (email) => setState(() => _productOwnerEmail = email),
         ),
         const SizedBox(height: 12),
 
-        // Scrum Master
+        // Role 2: SM (Scrum) or SDM (Kanban)
         _buildRoleSelector(
-          icon: Icons.supervised_user_circle,
-          label: l10n.agileRoleScrumMaster,
-          color: const Color(0xFF1976D2),
-          description: l10n.agileRoleScrumMasterDesc,
+          icon: isScrum ? Icons.supervised_user_circle : Icons.timeline, 
+          label: role2Label,
+          color: role2Color,
+          description: role2Desc,
           selectedEmail: _scrumMasterEmail,
           participants: participants,
           onChanged: (email) => setState(() => _scrumMasterEmail = email),
@@ -452,13 +562,13 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
     required List<TeamMemberModel> participants,
     required ValueChanged<String?> onChanged,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -466,7 +576,7 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -529,7 +639,7 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
                     children: [
                       CircleAvatar(
                         radius: 12,
-                        backgroundColor: color.withOpacity(0.2),
+                        backgroundColor: color.withValues(alpha: 0.2),
                         child: Text(
                           p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
                           style: TextStyle(
@@ -591,6 +701,209 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
       case AgileFramework.hybrid:
         return Colors.purple;
     }
+  }
+
+  Widget _buildDevelopmentTeamCard(List<TeamMemberModel> participants) {
+    final l10n = AppLocalizations.of(context);
+    final teamMembers = _developmentTeamEmails
+        .map((email) => participants.where((p) => p.email == email).firstOrNull)
+        .whereType<TeamMemberModel>()
+        .toList();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.group, color: Colors.green, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.agileRoleDevelopmentTeam,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                    Text(
+                      l10n.agileRoleDevelopmentTeamDesc,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.textMutedColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () => _showAddTeamMemberDialog(participants),
+                icon: const Icon(Icons.person_add, color: Colors.green),
+                tooltip: l10n.agileAddToTeam,
+              ),
+            ],
+          ),
+          if (teamMembers.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: teamMembers.map((member) => Container(
+                decoration: BoxDecoration(
+                  color: context.surfaceColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      radius: 14,
+                      backgroundColor: Colors.green.shade100,
+                      child: Text(
+                        member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade800,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            member.name,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            member.email,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: context.textMutedColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 16),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                      splashRadius: 16,
+                      color: context.textMutedColor,
+                      onPressed: () {
+                        setState(() {
+                          _developmentTeamEmails.remove(member.email);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              )).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showAddTeamMemberDialog(List<TeamMemberModel> participants) {
+    final l10n = AppLocalizations.of(context);
+    // Filter out already selected members and PO/SM
+    final availableParticipants = participants.where((p) {
+      return !_developmentTeamEmails.contains(p.email) &&
+          p.email != _productOwnerEmail &&
+          p.email != _scrumMasterEmail;
+    }).toList();
+
+    if (availableParticipants.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.agileAllMembersAssigned),
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.agileAddToTeam),
+        content: SizedBox(
+          width: 300,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: availableParticipants.length,
+            itemBuilder: (context, index) {
+              final participant = availableParticipants[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF388E3C).withValues(alpha: 0.2),
+                  child: Text(
+                    participant.name.isNotEmpty
+                        ? participant.name[0].toUpperCase()
+                        : '?',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF388E3C),
+                    ),
+                  ),
+                ),
+                title: Text(participant.name),
+                subtitle: Text(
+                  participant.email,
+                  style: TextStyle(fontSize: 12, color: context.textMutedColor),
+                ),
+                onTap: () {
+                  setState(() {
+                    _developmentTeamEmails.add(participant.email);
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+             onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.agileClose),
+          ),
+        ],
+      ),
+    );
   }
 
   void _submit() {

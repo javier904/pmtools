@@ -50,6 +50,10 @@ class StoryCardWidget extends StatefulWidget {
   final bool isSprintCompleted;
   final bool compactMode;
   final List<String> policyWarnings;
+  final AgileFramework framework;
+  final bool canMoveToBacklog;
+  final bool isBoardContext;
+  final bool canMarkAsReady;
 
   const StoryCardWidget({
     super.key,
@@ -71,6 +75,10 @@ class StoryCardWidget extends StatefulWidget {
     this.isSprintCompleted = false,
     this.compactMode = false,
     this.policyWarnings = const [],
+    required this.framework,
+    this.canMoveToBacklog = true, // Default true for backward compatibility
+    this.isBoardContext = false,
+    this.canMarkAsReady = false,
   });
 
   @override
@@ -200,7 +208,10 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           ),
         ),
         // Status badge
-        _buildStatusBadge(),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 100),
+          child: _buildStatusBadge(),
+        ),
         if (widget.policyWarnings.isNotEmpty) ... [
           const SizedBox(width: 8),
           _buildPolicyWarningBadge(context),
@@ -617,13 +628,16 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           children: [
             const Icon(Icons.error_outline, size: 14, color: Colors.red),
             const SizedBox(width: 4),
-             const Text(
-              'POLICY', 
-              style: TextStyle(
-                fontSize: 9, 
-                fontWeight: FontWeight.bold, 
-                color: Colors.red,
-                letterSpacing: 0.5,
+            Flexible(
+              child: Text(
+                'POLICY', 
+                style: const TextStyle(
+                  fontSize: 9, 
+                  fontWeight: FontWeight.bold, 
+                  color: Colors.red,
+                  letterSpacing: 0.5,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -704,7 +718,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
       constraints: const BoxConstraints(),
       icon: const Icon(Icons.more_vert, size: 20),
       itemBuilder: (context) => [
-        if (widget.onAddToSprint != null)
+        if (widget.onAddToSprint != null && widget.framework != AgileFramework.kanban)
           const PopupMenuItem(
             value: 'sprint',
             child: Row(
@@ -775,17 +789,17 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
   }
 
   Widget _buildPriorityDropdown(BuildContext context, {bool compact = false}) {
-    return Tooltip(
-      message: widget.story.priority.displayName,
-      child: PopupMenuButton<StoryPriority>(
-        initialValue: widget.story.priority,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: widget.story.priority.color.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: widget.story.priority.color.withOpacity(0.3)),
-          ),
+    final l10n = AppLocalizations.of(context)!;
+    return PopupMenuButton<StoryPriority>(
+      tooltip: '${l10n.agilePriority}: ${widget.story.priority.displayName}',
+      initialValue: widget.story.priority,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: widget.story.priority.color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: widget.story.priority.color.withOpacity(0.3)),
+        ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -816,8 +830,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
             ],
           ),
         )).toList(),
-        onSelected: widget.onPriorityChange,
-      ),
+      onSelected: widget.onPriorityChange,
     );
   }
 
@@ -847,10 +860,12 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
   }
 
   Widget _buildPointsDropdown(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Fibonacci + usual values + 0
     final points = [0, 1, 2, 3, 5, 8, 13, 21];
     
     return PopupMenuButton<int>(
+      tooltip: '${l10n.agileEstimate}: ${widget.story.storyPoints ?? '-'}',
       initialValue: widget.story.storyPoints,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -919,13 +934,13 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
               child: Icon(Icons.person_add, size: 14, color: context.textSecondaryColor),
             ),
       itemBuilder: (context) => [
-        const PopupMenuItem<String?>(
+        PopupMenuItem<String?>(
           value: null,
           child: Row(
             children: [
-              Icon(Icons.person_off, size: 18, color: Colors.grey),
-              SizedBox(width: 8),
-              Text('Nessun assegnatario', style: TextStyle(fontStyle: FontStyle.italic)),
+              const Icon(Icons.person_off, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.agileNoAssignee, style: const TextStyle(fontStyle: FontStyle.italic)),
             ],
           ),
         ),
@@ -951,6 +966,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
         color: widget.story.status.color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(4),
       ),
+      constraints: const BoxConstraints(maxWidth: 140), // Force max width to prevent overflow
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -959,7 +975,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
             const SizedBox(width: 4),
             Flexible(
               child: Text(
-                widget.story.status.displayName,
+                widget.story.status.getDisplayName(widget.framework),
                 style: TextStyle(
                   fontSize: 11,
                   color: widget.story.status.color,
@@ -975,13 +991,25 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
   }
 
   Widget _buildStatusDropdown(BuildContext context, {bool compact = false}) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Filtra stati disponibili per Developer e contesto (board vs backlog)
+    final isDev = !widget.canMoveToBacklog;
+    var selectableStatuses = StoryStatus.getSelectableStatuses(
+      widget.framework,
+      isDeveloper: isDev,
+      isBoardContext: widget.isBoardContext,
+    );
+
     return PopupMenuButton<StoryStatus>(
+      tooltip: '${l10n.agileStatus}: ${widget.story.status.getDisplayName(widget.framework)}',
       initialValue: widget.story.status,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: widget.story.status.color.withOpacity(0.15),
           borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: widget.story.status.color.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -989,31 +1017,72 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
             Icon(widget.story.status.icon, size: 12, color: widget.story.status.color),
             if (!compact) ...[
               const SizedBox(width: 4),
-              Text(
-                widget.story.status.displayName,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: widget.story.status.color,
-                  fontWeight: FontWeight.w500,
+              Flexible(
+                child: Text(
+                  widget.story.status.getDisplayName(widget.framework),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: widget.story.status.color,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 4),
-              Icon(Icons.arrow_drop_down, size: 16, color: widget.story.status.color),
             ],
+             const SizedBox(width: 2),
+            Icon(Icons.arrow_drop_down, size: 14, color: widget.story.status.color),
           ],
         ),
       ),
-      itemBuilder: (context) => StoryStatus.values.map((status) => PopupMenuItem(
-        value: status,
-        child: Row(
-          children: [
-            Icon(status.icon, size: 18, color: status.color),
-            const SizedBox(width: 8),
-            Text(status.displayName),
-          ],
-        ),
-      )).toList(),
-      onSelected: widget.onStatusChange,
+      itemBuilder: (context) {
+        return StoryStatus.values.map((status) {
+           // Se lo stato è quello attuale, lo mostriamo sempre
+           if (status == widget.story.status) {
+              return PopupMenuItem(
+                value: status,
+                child: Row(
+                  children: [
+                    Icon(status.icon, size: 18, color: status.color),
+                    const SizedBox(width: 8),
+                    Text(status.getDisplayName(widget.framework)),
+                  ],
+                ),
+              );
+           }
+           
+           // Altrimenti verifichiamo se è selezionabile
+           if (!selectableStatuses.contains(status)) {
+             return null; 
+           }
+
+           return PopupMenuItem(
+            value: status,
+            child: Row(
+              children: [
+                Icon(status.icon, size: 18, color: status.color),
+                const SizedBox(width: 8),
+                Text(status.getDisplayName(widget.framework)),
+              ],
+            ),
+          );
+        }).whereType<PopupMenuItem<StoryStatus>>().toList();
+      },
+      onSelected: (newStatus) {
+          if (newStatus == widget.story.status) return;
+
+          // Check extra di sicurezza (anche se UI è filtrata)
+          if (newStatus == StoryStatus.backlog && !widget.canMoveToBacklog) {
+             ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(
+                 content: Text(l10n.agilePermissionErrorBacklog),
+                 backgroundColor: Colors.red,
+               ),
+             );
+             return;
+          }
+          
+          widget.onStatusChange?.call(newStatus);
+      },
     );
   }
 
@@ -1068,7 +1137,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
      }
      
      // Status based
-     return l10n.agileProgressTooltipStatus(widget.story.status.displayName);
+     return l10n.agileProgressTooltipStatus(widget.story.status.getDisplayName(widget.framework));
   }
 }
 

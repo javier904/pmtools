@@ -17,6 +17,11 @@ class StoryFormDialog extends StatefulWidget {
   final List<String> existingTags;
   final List<String> teamMembers; // emails
   final List<SprintModel> sprints;
+  final AgileFramework framework;
+  final bool canAddToSprint;
+  final bool canMoveToBacklog;
+  final bool canMarkAsReady;
+  final bool? isBoardContext;
 
   const StoryFormDialog({
     super.key,
@@ -25,6 +30,11 @@ class StoryFormDialog extends StatefulWidget {
     this.existingTags = const [],
     this.teamMembers = const [],
     this.sprints = const [],
+    required this.framework,
+    this.canAddToSprint = true,
+    this.canMoveToBacklog = true, // Default true
+    this.canMarkAsReady = false,
+    this.isBoardContext,
   });
 
   static Future<UserStoryModel?> show({
@@ -34,6 +44,11 @@ class StoryFormDialog extends StatefulWidget {
     List<String> existingTags = const [],
     List<String> teamMembers = const [],
     List<SprintModel> sprints = const [],
+    required AgileFramework framework,
+    bool canAddToSprint = true,
+    bool canMoveToBacklog = true,
+    bool canMarkAsReady = false,
+    bool? isBoardContext,
   }) {
     return showDialog<UserStoryModel>(
       context: context,
@@ -43,6 +58,11 @@ class StoryFormDialog extends StatefulWidget {
         existingTags: existingTags,
         teamMembers: teamMembers,
         sprints: sprints,
+        framework: framework,
+        canAddToSprint: canAddToSprint,
+        canMoveToBacklog: canMoveToBacklog,
+        canMarkAsReady: canMarkAsReady,
+        isBoardContext: isBoardContext,
       ),
     );
   }
@@ -642,12 +662,26 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: StoryStatus.values.map((status) => ChoiceChip(
-              label: Text(status.displayName),
+            children: (() {
+              // Determina il contesto: se la story è nello sprint (board) o nel backlog
+              // Se passato esplicitamente (dai tab), usalo. Altrimenti rileva dallo stato.
+              final isBoardCtx = widget.isBoardContext ?? (widget.story != null && 
+                (widget.story!.sprintId != null ||
+                 widget.story!.status == StoryStatus.inSprint ||
+                 widget.story!.status == StoryStatus.inProgress ||
+                 widget.story!.status == StoryStatus.inReview ||
+                 widget.story!.status == StoryStatus.done));
+              var statuses = StoryStatus.getSelectableStatuses(
+                widget.framework,
+                isDeveloper: !widget.canMoveToBacklog,
+                isBoardContext: isBoardCtx,
+              );
+              return statuses;
+            })().map((status) => ChoiceChip(
+              label: Text(status.getDisplayName(widget.framework)),
               selected: _status == status,
               onSelected: (_) {
                 setState(() => _status = status);
-                // Auto-clear logic or auto-assign sprint could go here, but let's keep it simple
               },
               avatar: Icon(Icons.circle, size: 12, color: status.color),
               selectedColor: status.color.withOpacity(0.2),
@@ -778,7 +812,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           ],
 
           // Sprint
-          if (widget.sprints.any((s) => s.status != SprintStatus.completed)) ...[
+          if (widget.canAddToSprint && widget.sprints.any((s) => s.status != SprintStatus.completed)) ...[
              Text(l10n.agileSprint, style: const TextStyle(fontWeight: FontWeight.w500)),
              const SizedBox(height: 8),
              DropdownButtonFormField<String?>(

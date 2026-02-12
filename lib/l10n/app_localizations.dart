@@ -212,6 +212,18 @@ abstract class AppLocalizations {
   /// **'Sprint'**
   String get agileSprint;
 
+  /// No description provided for @agileStatus.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato'**
+  String get agileStatus;
+
+  /// No description provided for @agilePermissionErrorBacklog.
+  ///
+  /// In it, this message translates to:
+  /// **'Permesso negato: Solo PO/SM possono spostare nel Backlog'**
+  String get agilePermissionErrorBacklog;
+
   /// No description provided for @actionHide.
   ///
   /// In it, this message translates to:
@@ -2831,13 +2843,13 @@ abstract class AppLocalizations {
   /// No description provided for @agileRoleSRMDesc.
   ///
   /// In it, this message translates to:
-  /// **'Gestisce le richieste in ingresso'**
+  /// **'Gestisce le richieste in entrata e facilita la prioritarizzazione (sostituisce il Product Owner)'**
   String get agileRoleSRMDesc;
 
   /// No description provided for @agileRoleSDMDesc.
   ///
   /// In it, this message translates to:
-  /// **'Ottimizza il flusso di lavoro'**
+  /// **'Gestisce il flusso di lavoro e facilita il delivery (sostituisce lo Scrum Master)'**
   String get agileRoleSDMDesc;
 
   /// No description provided for @agileRoleTeamDesc.
@@ -3145,6 +3157,66 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Visualizza il flusso di lavoro: Rendi visibile tutto il lavoro'**
   String get kanbanPrinciple1;
+
+  /// No description provided for @agileItems.
+  ///
+  /// In it, this message translates to:
+  /// **'items'**
+  String get agileItems;
+
+  /// No description provided for @agileItemsShort.
+  ///
+  /// In it, this message translates to:
+  /// **'elementi'**
+  String get agileItemsShort;
+
+  /// No description provided for @agileWorkloadAvgItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Media Elementi/Persona'**
+  String get agileWorkloadAvgItems;
+
+  /// No description provided for @agileKanbanCapacityNote.
+  ///
+  /// In it, this message translates to:
+  /// **'La capacità è calcolata su base settimanale (5 giorni lavorativi).'**
+  String get agileKanbanCapacityNote;
+
+  /// No description provided for @agilePriority.
+  ///
+  /// In it, this message translates to:
+  /// **'Priorità'**
+  String get agilePriority;
+
+  /// No description provided for @agileRoleSRM.
+  ///
+  /// In it, this message translates to:
+  /// **'Service Request Manager'**
+  String get agileRoleSRM;
+
+  /// No description provided for @agileRoleSDM.
+  ///
+  /// In it, this message translates to:
+  /// **'Service Delivery Manager'**
+  String get agileRoleSDM;
+
+  /// No description provided for @agileRoleTeamMember.
+  ///
+  /// In it, this message translates to:
+  /// **'Membro del Team'**
+  String get agileRoleTeamMember;
+
+  /// No description provided for @agileFrameworkLocked.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile cambiare framework per progetti con attività esistenti'**
+  String get agileFrameworkLocked;
+
+  /// No description provided for @agileComingSoon.
+  ///
+  /// In it, this message translates to:
+  /// **'Prossimamente'**
+  String get agileComingSoon;
 
   /// No description provided for @kanbanPrinciple2.
   ///
@@ -3686,6 +3758,12 @@ abstract class AppLocalizations {
   /// **'Nessun risultato per la ricerca'**
   String get retroNoResults;
 
+  /// No description provided for @agileNoAssignee.
+  ///
+  /// In it, this message translates to:
+  /// **'Non assegnato'**
+  String get agileNoAssignee;
+
   /// No description provided for @retroFilterAll.
   ///
   /// In it, this message translates to:
@@ -3893,7 +3971,7 @@ abstract class AppLocalizations {
   /// No description provided for @scrumWorkflowStatusContent.
   ///
   /// In it, this message translates to:
-  /// **'In Scrum, il ciclo di vita di una storia segue questi stati:\n\n1. **Product Backlog**: Dove nascono le idee. L\'etichetta \'Refinement\' indica che la storia è in fase di analisi/dettaglio (non è una colonna della board, ma un indicatore).\n2. **Ready**: La storia è pronta per essere lavorata (rispetta la Definition of Ready).\n3. **In Sprint**: Durante il Planning, le storie \'Ready\' vengono spostate nello Sprint.\n4. **In Progress**: La storia è in lavorazione attiva.\n5. **In Review**: La storia è in fase di revisione/code review.\n6. **Done**: La storia è completata e verificata.'**
+  /// **'In Scrum, il ciclo di vita di una storia segue questi stati:\n\n**Product Backlog** (visibile solo nel tab Backlog):\n1. **Backlog**: Dove nascono le idee. La storia non è ancora stata analizzata.\n2. **Refinement**: La storia è in fase di analisi/dettaglio. È un\'attività collaborativa di tutto il team (lavoro verso la Definition of Ready).\n3. **Ready**: La storia rispetta la DoR e può essere selezionata allo Sprint Planning. Solo il Product Owner può marcare una storia come Ready.\n\n**Sprint Board** (visibile sulla board durante lo Sprint):\n4. **Da Fare**: Storie \'Ready\' aggiunte allo Sprint.\n5. **In Corso**: Lavoro attivo del team.\n6. **In Revisione**: Revisione/Code Review.\n7. **Fatto**: Storia completata e verificata.'**
   String get scrumWorkflowStatusContent;
 
   /// No description provided for @kanbanWorkflowStatusContent.
@@ -3941,7 +4019,7 @@ abstract class AppLocalizations {
   /// No description provided for @contextualHelpBacklogTip2.
   ///
   /// In it, this message translates to:
-  /// **'Fai refinement regolare per dettagliare le storie'**
+  /// **'Collabora col team nel Refinement per dettagliare le storie'**
   String get contextualHelpBacklogTip2;
 
   /// No description provided for @contextualHelpBacklogTip3.
@@ -5215,12 +5293,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Assegnatario'**
   String get agileAssignee;
-
-  /// No description provided for @agileNoAssignee.
-  ///
-  /// In it, this message translates to:
-  /// **'Non assegnato'**
-  String get agileNoAssignee;
 
   /// No description provided for @agileCreatedBy.
   ///
@@ -7776,6 +7848,18 @@ abstract class AppLocalizations {
   /// **'Aggiungi voce'**
   String get smartTodoAddChecklistItem;
 
+  /// No description provided for @smartTodoEditItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica voce'**
+  String get smartTodoEditItem;
+
+  /// No description provided for @smartTodoItemTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo voce'**
+  String get smartTodoItemTitle;
+
   /// No description provided for @smartTodoAttachments.
   ///
   /// In it, this message translates to:
@@ -9629,6 +9713,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Sprint Backlog'**
   String get sprintBacklog;
+
+  /// No description provided for @scrumToDo.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Fare'**
+  String get scrumToDo;
 
   /// No description provided for @agileStatusRefinement.
   ///
@@ -17337,7 +17427,7 @@ abstract class AppLocalizations {
   /// No description provided for @agileAllMembersAssigned.
   ///
   /// In it, this message translates to:
-  /// **'Tutti i partecipanti sono già assegnati a un ruolo.'**
+  /// **'Tutti i membri disponibili sono già assegnati'**
   String get agileAllMembersAssigned;
 
   /// No description provided for @agileClose.
@@ -19596,12 +19686,6 @@ abstract class AppLocalizations {
   /// **'giorni rimanenti'**
   String get agileDaysRemainingSuffix;
 
-  /// No description provided for @agileItems.
-  ///
-  /// In it, this message translates to:
-  /// **'items'**
-  String get agileItems;
-
   /// No description provided for @agileItemsMore.
   ///
   /// In it, this message translates to:
@@ -21119,6 +21203,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Policy Esplicite (Note per il team)'**
   String get kanbanPoliciesExplicit;
+
+  /// No description provided for @agileTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'Team'**
+  String get agileTeam;
+
+  /// No description provided for @agileRoleDevelopmentTeam.
+  ///
+  /// In it, this message translates to:
+  /// **'Development Team'**
+  String get agileRoleDevelopmentTeam;
+
+  /// No description provided for @agileRoleDevelopmentTeamDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Membri che eseguono il lavoro'**
+  String get agileRoleDevelopmentTeamDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -32,12 +32,15 @@ class KanbanBoardWidget extends StatefulWidget {
   final void Function(UserStoryModel story, int? points)? onStoryPointsChange;
   final void Function(String storyId, String newTitle)? onTitleChange;
   final void Function(String storyId, StoryPriority newPriority)? onPriorityChange;
+  final void Function(String storyId)? onStoryDelete; // NEW
   final SwimlaneType swimlaneType;
   final bool canEdit;
   final bool showWipConfig;
   final bool showPolicies;
   final List<String> teamMembers;
   final List<SprintModel> sprints;
+  final bool canMoveToBacklog;
+  final bool canMarkAsReady;
 
   const KanbanBoardWidget({
     super.key,
@@ -54,12 +57,15 @@ class KanbanBoardWidget extends StatefulWidget {
     this.onStoryPointsChange,
     this.onTitleChange,
     this.onPriorityChange,
+    this.onStoryDelete,
     this.swimlaneType = SwimlaneType.none,
     this.canEdit = true,
     this.showWipConfig = false,
     this.showPolicies = true,
     this.teamMembers = const [],
     this.sprints = const [],
+    this.canMoveToBacklog = true, // Default true for backward compatibility
+    this.canMarkAsReady = false,
   });
 
   @override
@@ -1076,6 +1082,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     ];
 
     return Draggable<UserStoryModel>(
+      key: ValueKey('drag_${story.id}'),
       data: story,
       feedback: Material(
         elevation: 8,
@@ -1085,11 +1092,16 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           child: Opacity(
             opacity: 0.9,
             child: StoryCardWidget(
+               key: ValueKey('feedback_${story.id}'),
                story: story,
                sprintName: sprint?.name,
                isSprintCompleted: sprint?.status == SprintStatus.completed,
                teamMembers: widget.teamMembers,
                policyWarnings: policyWarnings,
+               onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null, // NEW
+               framework: widget.framework,
+               isBoardContext: true,
+               canMarkAsReady: widget.canMarkAsReady,
              ),
           ),
         ),
@@ -1097,22 +1109,32 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
       childWhenDragging: Opacity(
         opacity: 0.5,
         child: StoryCardWidget(
+          key: ValueKey('dragging_${story.id}'),
           story: story,
           sprintName: sprint?.name,
           isSprintCompleted: sprint?.status == SprintStatus.completed,
           teamMembers: widget.teamMembers,
           policyWarnings: policyWarnings,
+          onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null, // NEW
+          framework: widget.framework,
+          isBoardContext: true,
+          canMarkAsReady: widget.canMarkAsReady,
         ),
       ),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: StoryCardWidget(
+          key: ValueKey(story.id),
           story: story,
           sprintName: sprint?.name,
           isSprintCompleted: sprint?.status == SprintStatus.completed,
           teamMembers: widget.teamMembers,
-          policyWarnings: policyWarnings,
+          policyWarnings: _getPolicyWarnings(story, column.id),
           onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
+          framework: widget.framework,
+          canMoveToBacklog: widget.canMoveToBacklog,
+          isBoardContext: true,
+          canMarkAsReady: widget.canMarkAsReady,
           onStatusChange: widget.onStatusChange != null 
               ? (status) => widget.onStatusChange!(story.id, status) 
               : null,
@@ -1128,10 +1150,33 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           onAssigneeChange: widget.onAssigneeChange != null
               ? (email) => widget.onAssigneeChange!(story, email)
               : null,
+          onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null, // NEW
           compactMode: true,
         ),
       ),
     );
+  }
+
+  List<String> _getPolicyWarnings(UserStoryModel story, String columnId) {
+    if (!widget.showPolicies) return [];
+    
+    // Find column config
+    final column = widget.columns.firstWhere(
+      (c) => c.id == columnId, 
+      orElse: () => widget.columns.first
+    );
+    
+    final l10n = AppLocalizations.of(context);
+    final service = KanbanPolicyService(l10n);
+    final warnings = <String>[];
+
+    // Check time policies
+    final timeViolation = service.checkTimePolicy(story, column);
+    if (timeViolation != null) {
+      warnings.add(timeViolation.message);
+    }
+    
+    return warnings;
   }
 
   void _showWipConfigDialog(KanbanColumnConfig column) {

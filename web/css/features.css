@@ -185,6 +185,122 @@ a:hover { text-decoration: underline; }
 .feature-pink .hero-badge { background: rgba(253, 121, 168, 0.15); color: var(--pink-light); }
 .feature-pink .hero { background: linear-gradient(180deg, rgba(253, 121, 168, 0.06) 0%, transparent 100%); }
 
+/* ===== HOW IT WORKS ===== */
+.how-it-works {
+  padding: 64px 24px;
+}
+
+.how-it-works h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step-card {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.feature-blue .step-number { background: rgba(9, 132, 227, 0.15); color: var(--blue-light); }
+.feature-green .step-number { background: rgba(0, 184, 148, 0.15); color: var(--green-light); }
+.feature-orange .step-number { background: rgba(253, 170, 90, 0.15); color: var(--orange); }
+.feature-purple .step-number { background: rgba(108, 92, 231, 0.15); color: var(--primary-light); }
+.feature-pink .step-number { background: rgba(253, 121, 168, 0.15); color: var(--pink-light); }
+
+.step-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step-card p {
+  font-size: 14px;
+  color: var(--text-secondary-dark);
+  line-height: 1.6;
+}
+
+/* ===== TEMPLATES DETAIL ===== */
+.templates-detail {
+  padding: 64px 24px;
+  border-top: 1px solid var(--border-dark);
+}
+
+.templates-detail h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.template-card {
+  background: var(--bg-surface-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.template-card .template-emoji {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.template-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.template-card p {
+  font-size: 14px;
+  color: var(--text-secondary-dark);
+  line-height: 1.6;
+}
+
+.template-card .template-best-for {
+  margin-top: 12px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-muted-dark);
+}
+
+/* ===== FEATURES TIP ===== */
+.features-tip {
+  max-width: 700px;
+  margin: 24px auto 0;
+  font-size: 14px;
+  color: var(--text-secondary-dark);
+  text-align: center;
+  line-height: 1.6;
+}
+
 /* ===== HIGHLIGHTS ===== */
 .highlights {
   padding: 64px 24px;
@@ -232,7 +348,15 @@ a:hover { text-decoration: underline; }
   padding: 48px 24px 64px;
 }
 
-.key-features h2 {
+.key-features h2,
+.features-detail h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.highlights h2 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 24px;
@@ -328,6 +452,66 @@ a:hover { text-decoration: underline; }
 .tool-card.tc-orange:hover { border-color: var(--orange); box-shadow: 0 8px 24px rgba(253, 170, 90, 0.15); }
 .tool-card.tc-purple:hover { border-color: var(--primary); box-shadow: 0 8px 24px rgba(108, 92, 231, 0.15); }
 .tool-card.tc-pink:hover { border-color: var(--pink); box-shadow: 0 8px 24px rgba(253, 121, 168, 0.15); }
+
+/* ===== FAQ SECTION ===== */
+.faq-section {
+  padding: 64px 24px;
+  border-top: 1px solid var(--border-dark);
+}
+
+.faq-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.faq-list {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.faq-question {
+  display: block;
+  padding: 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-dark);
+  list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-question::before {
+  content: "+";
+  display: inline-block;
+  width: 24px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+details[open] .faq-question::before {
+  content: "\2212";
+}
+
+.faq-answer {
+  padding: 0 0 16px 24px;
+  font-size: 15px;
+  color: var(--text-secondary-dark);
+  line-height: 1.7;
+}
+
+.faq-answer strong {
+  color: var(--text-dark);
+}
 
 /* ===== CTA SECTION ===== */
 .cta-section {
@@ -578,6 +762,13 @@ a:hover { text-decoration: underline; }
   }
   .feature-link-card p { color: var(--text-secondary-light); }
 
+  .faq-section { border-top-color: var(--border-light); }
+  .faq-item { border-bottom-color: var(--border-light); }
+  .faq-question { color: var(--text-light); }
+  .faq-question::before { color: var(--primary); }
+  .faq-answer { color: var(--text-secondary-light); }
+  .faq-answer strong { color: var(--text-light); }
+
   .integrations-section { border-top-color: var(--border-light); }
   .integrations-section > .container > p { color: var(--text-secondary-light); }
   .step-chip {
@@ -592,6 +783,20 @@ a:hover { text-decoration: underline; }
   .feature-orange .hero-badge { color: #e17055; }
   .feature-purple .hero-badge { color: var(--primary); }
   .feature-pink .hero-badge { color: var(--pink); }
+
+  .step-card p { color: var(--text-secondary-light); }
+  .feature-blue .step-number { color: var(--blue); }
+  .feature-green .step-number { color: var(--green); }
+  .feature-orange .step-number { color: #e17055; }
+  .feature-purple .step-number { color: var(--primary); }
+  .feature-pink .step-number { color: var(--pink); }
+
+  .templates-detail { border-top-color: var(--border-light); }
+  .template-card { background: var(--bg-surface-light); border-color: var(--border-light); }
+  .template-card p { color: var(--text-secondary-light); }
+  .template-card .template-best-for { color: var(--text-muted-light); }
+
+  .features-tip { color: var(--text-secondary-light); }
 }
 
 /* ===== RESPONSIVE ===== */
@@ -606,6 +811,16 @@ a:hover { text-decoration: underline; }
 
   .key-features { padding: 32px 16px 48px; }
   .key-features h2 { font-size: 24px; }
+
+  .faq-section { padding: 40px 16px; }
+  .faq-section h2 { font-size: 24px; }
+  .faq-question { font-size: 15px; }
+  .faq-answer { font-size: 14px; }
+
+  .how-it-works { padding: 40px 16px; }
+  .steps-grid { grid-template-columns: 1fr; gap: 16px; }
+  .templates-detail { padding: 40px 16px; }
+  .templates-grid { grid-template-columns: 1fr; }
 
   .other-tools { padding: 40px 16px; }
   .tools-grid { grid-template-columns: 1fr 1fr; }

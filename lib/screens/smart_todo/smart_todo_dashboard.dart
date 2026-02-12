@@ -227,7 +227,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), // Reverted to 16
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: compactCrossAxisCount,
-                        childAspectRatio: 2.5, // Match Eisenhower exact ratio
+                        childAspectRatio: 2.5, // Reverted to original compact ratio
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                       ),
@@ -531,44 +531,37 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                   final completedTasks = statsData?.completed ?? 0;
                   final pendingTasks = totalTasks - completedTasks;
 
-                  return Row(
+                  return Wrap(
+                    spacing: 12,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       if (pendingTasks > 0)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: _buildCompactListStat(
-                            Icons.radio_button_unchecked,
-                            '$pendingTasks',
-                            l10n?.smartTodoPendingTasks ?? 'Tasks to complete',
-                            iconColor: AppColors.warning,
-                          ),
+                        _buildCompactListStat(
+                          Icons.radio_button_unchecked,
+                          '$pendingTasks',
+                          l10n?.smartTodoPendingTasks ?? 'Tasks to complete',
+                          iconColor: AppColors.warning,
                         ),
                       if (completedTasks > 0)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: _buildCompactListStat(
-                            Icons.check_circle_outline,
-                            '$completedTasks',
-                            l10n?.smartTodoCompletedTasks ?? 'Completed tasks',
-                            iconColor: AppColors.success,
-                          ),
+                        _buildCompactListStat(
+                          Icons.check_circle_outline,
+                          '$completedTasks',
+                          l10n?.smartTodoCompletedTasks ?? 'Completed tasks',
+                          iconColor: AppColors.success,
                         ),
                       _buildCompactListStat(
                         Icons.calendar_today,
                         _formatDate(list.createdAt),
                         l10n?.smartTodoCreatedDate ?? 'Created date',
                       ),
-                      const SizedBox(width: 10),
                       _buildParticipantListStat(list, l10n),
+                      if (list.availableTags.isNotEmpty)
+                        _buildTagsListStat(list, l10n),
                     ],
                   );
                 },
               ),
-              // Tags on a new line (Bottom Left)
-              if (list.availableTags.isNotEmpty) ...[
-                const SizedBox(height: 2), // Reduced spacing (was 4)
-                _buildTagsListStat(list, l10n),
-              ],
             ],
           ),
         ),

@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 class StoryDetailDialog extends StatefulWidget {
   final UserStoryModel story;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete; // NEW
   final void Function(StoryStatus)? onStatusChange;
   final void Function(int index, bool completed)? onCriterionToggle;
   final void Function(int index)? onCriterionDelete; // Callback opzionale per cancellazione
@@ -24,42 +25,53 @@ class StoryDetailDialog extends StatefulWidget {
 
   final List<SprintModel> sprints;
   final Future<void> Function()? onJiraSync;
+  final AgileFramework framework;
+  final bool canMoveToBacklog;
+  final bool? isBoardContext;
 
   const StoryDetailDialog({
     super.key,
     required this.story,
     this.onEdit,
+    this.onDelete,
     this.onStatusChange,
     this.onCriterionToggle,
-    this.onCriterionDelete, // NEW
-    this.onCriterionAdd, // NEW
+    this.onCriterionDelete,
+    this.onCriterionAdd,
     this.onAssigneeChange,
     this.onProgressChange,
     this.teamMembers = const [],
     this.sprints = const [],
     this.onJiraSync,
+    required this.framework,
+    this.canMoveToBacklog = true, // Default true for backward compatibility
+    this.isBoardContext,
   });
 
   static Future<void> show({
     required BuildContext context,
     required UserStoryModel story,
     VoidCallback? onEdit,
+    VoidCallback? onDelete,
     void Function(StoryStatus)? onStatusChange,
     void Function(int index, bool completed)? onCriterionToggle,
-    void Function(int index)? onCriterionDelete, // NEW
-    void Function(String criterion)? onCriterionAdd, // NEW
+    void Function(int index)? onCriterionDelete,
+    void Function(String criterion)? onCriterionAdd,
     void Function(String? email)? onAssigneeChange,
     void Function(int? progress)? onProgressChange,
     List<String> teamMembers = const [],
-
     List<SprintModel> sprints = const [],
     Future<void> Function()? onJiraSync,
+    required AgileFramework framework,
+    bool canMoveToBacklog = true,
+    bool? isBoardContext,
   }) {
     return showDialog(
       context: context,
       builder: (context) => StoryDetailDialog(
         story: story,
         onEdit: onEdit,
+        onDelete: onDelete,
         onStatusChange: onStatusChange,
         onCriterionToggle: onCriterionToggle,
         onCriterionDelete: onCriterionDelete, // NEW
@@ -69,9 +81,13 @@ class StoryDetailDialog extends StatefulWidget {
         teamMembers: teamMembers,
         sprints: sprints,
         onJiraSync: onJiraSync,
+        framework: framework,
+        canMoveToBacklog: canMoveToBacklog,
+        isBoardContext: isBoardContext,
       ),
     );
   }
+
 
   @override
   State<StoryDetailDialog> createState() => _StoryDetailDialogState();
@@ -231,6 +247,15 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
               },
               tooltip: l10n.actionEdit,
             ),
+          if (widget.onDelete != null)
+             IconButton(
+               icon: const Icon(Icons.delete, color: Colors.red),
+               onPressed: () {
+                 Navigator.pop(context);
+                 widget.onDelete?.call();
+               },
+               tooltip: l10n.actionDelete,
+             ),
         ],
       ),
       content: SizedBox(
@@ -277,7 +302,7 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
                                         Icon(story.status.icon, size: 16, color: story.status.color),
                                         const SizedBox(width: 8),
                                         Text(
-                                          story.status.displayName,
+                                          story.status.getDisplayName(widget.framework),
                                           style: TextStyle(
                                             color: story.status.color,
                                             fontWeight: FontWeight.w500,
@@ -288,21 +313,76 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
                                       ],
                                     ),
                                   ),
-                                  itemBuilder: (context) => StoryStatus.values.map((status) =>
-                                    PopupMenuItem(
-                                      value: status,
-                                      child: Row(
-                                        children: [
-                                          Icon(status.icon, color: status.color),
-                                          const SizedBox(width: 8),
-                                          Text(status.displayName),
-                                        ],
-                                      ),
-                                    ),
-                                  ).toList(),
-                                  onSelected: (status) {
-                                    widget.onStatusChange?.call(status);
-                                    Navigator.pop(context);
+                                  itemBuilder: (context) {
+                                     // Filtra stati disponibili
+                                     final isDev = !widget.canMoveToBacklog;
+                                     // Se passato esplicitamente (dai tab), usalo. Altrimenti rileva dallo stato.
+                                     final isBoardCtx = widget.isBoardContext ?? (
+                                                        widget.story.sprintId != null || 
+                                                        widget.story.status == StoryStatus.inSprint ||
+                                                        widget.story.status == StoryStatus.inProgress ||
+                                                        widget.story.status == StoryStatus.inReview ||
+                                                        widget.story.status == StoryStatus.done);
+                                     
+                                     final selectableStatuses = StoryStatus.getSelectableStatuses(
+                                       widget.framework, 
+                                       isDeveloper: isDev,
+                                       isBoardContext: isBoardCtx,
+                                     );
+
+                                     return StoryStatus.values.map((status) {
+                                       if (status == story.status) {
+                                          return PopupMenuItem(
+                                            value: status,
+                                            child: Row(
+                                              children: [
+                                                Icon(status.icon, size: 18, color: status.color),
+                                                const SizedBox(width: 8),
+                                                Text(status.getDisplayName(widget.framework)),
+                                              ],
+                                            ),
+                                          );
+                                       }
+                                       if (!selectableStatuses.contains(status)) return null;
+
+                                       return PopupMenuItem(
+                                         value: status,
+                                         child: Row(
+                                           children: [
+                                             Icon(status.icon, size: 18, color: status.color),
+                                             const SizedBox(width: 8),
+                                             Text(status.getDisplayName(widget.framework)),
+                                           ],
+                                         ),
+                                       );
+                                     }).whereType<PopupMenuItem<StoryStatus>>().toList();
+                                  },
+                                  onSelected: (newStatus) {
+                                     if (newStatus == story.status) return;
+                                     
+                                     // Check extra
+                                     if (newStatus == StoryStatus.backlog && !widget.canMoveToBacklog) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.agilePermissionErrorBacklog),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                        return;
+                                     }
+
+                                     widget.onStatusChange?.call(newStatus);
+                                     Navigator.pop(context); // Close dialog? Or just update state? 
+                                     // Usually dialog stays open, but parent rebuilds it. 
+                                     // However, onStatusChange might update the model which might not reflect immediately in dialog unless we manage state locally.
+                                     // For now, let's assume parent update handles it or we close.
+                                     // Actually, standard behavior for detail dialogs is often to keep open unless it's a save action.
+                                     // But since we are passing `story` which is final, we depend on parent rebuild.
+                                     // Let's close for safety/simplicity as status change is major.
+                                     // OR: we let the parent rebuild the dialog. The dialog is stateful but `story` is from widget.
+                                     // If parent rebuilds, `didUpdateWidget` would be needed or just rebuild.
+                                     // Let's keep it open but force close if needed. Actually, `onStatusChange` usually triggers a refresh.
+                                     Navigator.pop(context); 
                                   },
                                 )
                               else
@@ -317,7 +397,7 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
                                       Icon(story.status.icon, size: 16, color: story.status.color),
                                       const SizedBox(width: 8),
                                       Text(
-                                        story.status.displayName,
+                                        story.status.getDisplayName(widget.framework),
                                         style: TextStyle(
                                           color: story.status.color,
                                           fontWeight: FontWeight.w500,

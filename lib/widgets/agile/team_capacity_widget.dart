@@ -30,6 +30,7 @@ class TeamCapacityWidget extends StatefulWidget {
   final List<UserStoryModel> stories;
   final SprintModel? currentSprint;
   final Map<String, int> assignedHours;
+  final AgileFramework framework;
 
   const TeamCapacityWidget({
     super.key,
@@ -38,6 +39,7 @@ class TeamCapacityWidget extends StatefulWidget {
     required this.stories,
     this.currentSprint,
     this.assignedHours = const {},
+    required this.framework,
   });
 
   @override
@@ -45,7 +47,16 @@ class TeamCapacityWidget extends StatefulWidget {
 }
 
 class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
-  CapacityViewMode _viewMode = CapacityViewMode.scrumStandard;
+  late CapacityViewMode _viewMode;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to Hours for Kanban, Scrum Standard for others
+    _viewMode = widget.framework == AgileFramework.kanban
+        ? CapacityViewMode.hours
+        : CapacityViewMode.scrumStandard;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +85,8 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
 
   Widget _buildHeader() {
     final l10n = AppLocalizations.of(context)!;
+    final isKanban = widget.framework == AgileFramework.kanban;
+
     return Row(
       children: [
         Icon(
@@ -92,32 +105,35 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
-        // Toggle button
-        Container(
-          decoration: BoxDecoration(
-            color: context.surfaceVariantColor,
-            borderRadius: BorderRadius.circular(20),
+        // Toggle button - Only show if NOT Kanban, or if you want to allow toggle
+        // Design decision: For Kanban we hide the toggle if we want to enforce Hours view
+        // But the user asked for context-aware views. Let's hide Scrum view for Kanban strictly.
+        if (!isKanban)
+          Container(
+            decoration: BoxDecoration(
+              color: context.surfaceVariantColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildToggleButton(
+                  icon: Icons.speed,
+                  label: 'SP',
+                  tooltip: l10n.agileTeamCapacityScrum,
+                  isSelected: _viewMode == CapacityViewMode.scrumStandard,
+                  onTap: () => setState(() => _viewMode = CapacityViewMode.scrumStandard),
+                ),
+                _buildToggleButton(
+                  icon: Icons.schedule,
+                  label: l10n.agileHours,
+                  tooltip: l10n.agileTeamCapacityHours,
+                  isSelected: _viewMode == CapacityViewMode.hours,
+                  onTap: () => setState(() => _viewMode = CapacityViewMode.hours),
+                ),
+              ],
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildToggleButton(
-                icon: Icons.speed,
-                label: 'SP',
-                tooltip: l10n.agileTeamCapacityScrum,
-                isSelected: _viewMode == CapacityViewMode.scrumStandard,
-                onTap: () => setState(() => _viewMode = CapacityViewMode.scrumStandard),
-              ),
-              _buildToggleButton(
-                icon: Icons.schedule,
-                label: l10n.agileHours,
-                tooltip: l10n.agileTeamCapacityHours,
-                isSelected: _viewMode == CapacityViewMode.hours,
-                onTap: () => setState(() => _viewMode = CapacityViewMode.hours),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -544,6 +560,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
 
   Widget _buildHoursView() {
     final l10n = AppLocalizations.of(context)!;
+    final isKanban = widget.framework == AgileFramework.kanban;
     if (widget.teamMembers.isEmpty) {
       return _buildEmptyState();
     }
@@ -657,7 +674,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  l10n.agileHoursNote,
+                  isKanban 
+                      ? l10n.agileKanbanCapacityNote 
+                      : l10n.agileHoursNote,
                   style: TextStyle(
                     fontSize: 12,
                     color: context.isDarkMode ? Colors.orange.shade300 : Colors.orange.shade700,
@@ -753,7 +772,11 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
   }
 
   int _getMemberCapacity(TeamMemberModel member) {
-    if (widget.currentSprint == null) return member.capacityHoursPerDay * 10;
+    if (widget.currentSprint == null) {
+      // Default to 5 days (1 week) for Kanban or when no sprint is active
+      // Previously it was 10 days, but for Kanban weekly cadence is better.
+      return member.capacityHoursPerDay * 5;
+    }
     return widget.currentSprint!.teamCapacity[member.email] ??
            (member.capacityHoursPerDay * widget.currentSprint!.durationDays);
   }

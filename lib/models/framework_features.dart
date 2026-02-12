@@ -165,9 +165,9 @@ class FrameworkFeatures {
         return [
           KanbanColumnConfig(
             id: 'todo',
-            name: l10n.sprintBacklog,
+            name: l10n.scrumToDo,
             wipLimit: null,
-            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+            statuses: [StoryStatus.inSprint],
           ),
           KanbanColumnConfig(
             id: 'inProgress',
@@ -270,8 +270,8 @@ class FrameworkFeatures {
         return [
           KanbanColumnConfig(
             id: 'todo',
-            name: l10n.sprintBacklog,
-            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+            name: l10n.scrumToDo,
+            statuses: [StoryStatus.inSprint],
           ),
           KanbanColumnConfig(
             id: 'inProgress',
@@ -297,9 +297,9 @@ class FrameworkFeatures {
         return [
           const KanbanColumnConfig(
             id: 'todo',
-            name: 'Sprint Backlog',
+            name: 'To Do',
             wipLimit: null,
-            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+            statuses: [StoryStatus.inSprint],
           ),
           const KanbanColumnConfig(
             id: 'inProgress',
@@ -399,8 +399,8 @@ class FrameworkFeatures {
         return [
           const KanbanColumnConfig(
             id: 'todo',
-            name: 'Sprint Backlog',
-            statuses: [StoryStatus.ready, StoryStatus.inSprint],
+            name: 'To Do',
+            statuses: [StoryStatus.inSprint],
           ),
           const KanbanColumnConfig(
             id: 'inProgress',

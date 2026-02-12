@@ -15,23 +15,27 @@ import '../../themes/app_colors.dart';
 class TeamMemberFormDialog extends StatefulWidget {
   final TeamMemberModel member;
   final bool canChangeProjectRole;
+  final AgileFramework framework;
 
   const TeamMemberFormDialog({
     super.key,
     required this.member,
     this.canChangeProjectRole = true,
+    this.framework = AgileFramework.scrum,
   });
 
   static Future<TeamMemberModel?> show({
     required BuildContext context,
     required TeamMemberModel member,
     bool canChangeProjectRole = true,
+    required AgileFramework framework,
   }) {
     return showDialog<TeamMemberModel>(
       context: context,
       builder: (context) => TeamMemberFormDialog(
         member: member,
         canChangeProjectRole: canChangeProjectRole,
+        framework: framework,
       ),
     );
   }
@@ -186,8 +190,17 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: TeamRole.values.map((role) => ChoiceChip(
-                    label: Text(role.displayName),
+                  children: TeamRole.values
+                      .where((role) {
+                        // Filtra i ruoli specifici per framework
+                        if (widget.framework == AgileFramework.kanban) {
+                          return role != TeamRole.productOwner && role != TeamRole.scrumMaster;
+                        } else {
+                          return role != TeamRole.serviceRequestManager && role != TeamRole.serviceDeliveryManager;
+                        }
+                      })
+                      .map((role) => ChoiceChip(
+                    label: Text(role.getDisplayName(widget.framework)),
                     selected: _teamRole == role,
                     onSelected: (_) => setState(() => _teamRole = role),
                     avatar: Icon(role.icon, size: 16),
@@ -349,18 +362,28 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
         return ['Manual Testing', 'Automation', 'Test Planning', 'Bug Tracking'];
       case TeamRole.stakeholder:
         return ['Business Analysis', 'Requirements', 'Domain Expert'];
+      case TeamRole.serviceRequestManager:
+        return ['Product Management', 'Stakeholder Management', 'Backlog Grooming', 'User Research', 'Kanban Strategy'];
+      case TeamRole.serviceDeliveryManager:
+        return ['Facilitation', 'Coaching', 'Agile', 'Scrum', 'Kanban', 'Flow Optimization'];
     }
+    return [];
   }
 }
 
 /// Dialog per aggiungere un nuovo membro (senza invito)
 class AddTeamMemberDialog extends StatefulWidget {
-  const AddTeamMemberDialog({super.key});
+  final AgileFramework framework;
 
-  static Future<TeamMemberModel?> show(BuildContext context) {
+  const AddTeamMemberDialog({
+    super.key,
+    this.framework = AgileFramework.scrum,
+  });
+
+  static Future<TeamMemberModel?> show(BuildContext context, AgileFramework framework) {
     return showDialog<TeamMemberModel>(
       context: context,
-      builder: (context) => const AddTeamMemberDialog(),
+      builder: (context) => AddTeamMemberDialog(framework: framework),
     );
   }
 
@@ -477,8 +500,17 @@ class _AddTeamMemberDialogState extends State<AddTeamMemberDialog> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: TeamRole.values.map((role) => ChoiceChip(
-                    label: Text(role.displayName),
+                  children: TeamRole.values
+                      .where((role) {
+                        // Filtra i ruoli specifici per framework
+                        if (widget.framework == AgileFramework.kanban) {
+                          return role != TeamRole.productOwner && role != TeamRole.scrumMaster;
+                        } else {
+                          return role != TeamRole.serviceRequestManager && role != TeamRole.serviceDeliveryManager;
+                        }
+                      })
+                      .map((role) => ChoiceChip(
+                    label: Text(role.getDisplayName(widget.framework)),
                     selected: _teamRole == role,
                     onSelected: (_) => setState(() => _teamRole = role),
                   )).toList(),

@@ -5,7 +5,7 @@ import 'package:agile_tools/themes/app_colors.dart';
 import 'package:agile_tools/themes/app_theme.dart';
 import 'package:agile_tools/services/auth_service.dart';
 import 'package:agile_tools/services/user_profile_service.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 
 class CookieConsentBanner extends StatefulWidget {
   final bool? initialConsent;
@@ -144,14 +144,14 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
     if (!_checkComplete || !_isVisible) return const SizedBox.shrink();
 
     final l10n = AppLocalizations.of(context)!;
-    final isDark = context.isDarkMode;
+    final isWide = MediaQuery.of(context).size.width > 600;
 
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
       child: Material(
-        elevation: 20,
+        elevation: 8,
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
@@ -159,121 +159,169 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
             border: Border(
               top: BorderSide(color: context.borderColor),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: EdgeInsets.symmetric(
+            horizontal: isWide ? 24 : 16,
+            vertical: isWide ? 12 : 10,
+          ),
           child: SafeArea(
             top: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.cookie_outlined,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.legalCookieTitle,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: context.textPrimaryColor,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n.legalCookieMessage,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: context.textSecondaryColor,
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 12,
-                            children: [
-                              _LinkButton(
-                                label: l10n.legalCookiePolicy,
-                                onTap: () => _openPolicy('/cookies'),
-                              ),
-                              _LinkButton(
-                                label: l10n.legalPrivacyPolicy,
-                                onTap: () => _openPolicy('/privacy'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    if (MediaQuery.of(context).size.width > 600)
-                      _buildButtons(l10n),
-                  ],
-                ),
-                if (MediaQuery.of(context).size.width <= 600) ...[
-                  const SizedBox(height: 20),
-                  SizedBox(width: double.infinity, child: _buildButtons(l10n)),
-                ],
-              ],
-            ),
+            child: isWide ? _buildDesktopLayout(l10n) : _buildMobileLayout(l10n),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildButtons(AppLocalizations l10n) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      alignment: WrapAlignment.end,
+  /// Desktop: single row - text + links + buttons
+  Widget _buildDesktopLayout(AppLocalizations l10n) {
+    return Row(
+      children: [
+        Icon(Icons.cookie_outlined, color: AppColors.primary, size: 18),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: l10n.legalCookieMessage,
+                  style: TextStyle(fontSize: 13, color: context.textSecondaryColor),
+                ),
+                const TextSpan(text: ' '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: _LinkButton(label: l10n.legalCookiePolicy, onTap: () => _openPolicy('/cookies')),
+                ),
+                const TextSpan(text: '  '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: _LinkButton(label: l10n.legalPrivacyPolicy, onTap: () => _openPolicy('/privacy')),
+                ),
+              ],
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 16),
+        _buildCompactButtons(l10n),
+      ],
+    );
+  }
+
+  /// Mobile: compact two-row strip
+  Widget _buildMobileLayout(AppLocalizations l10n) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.cookie_outlined, color: AppColors.primary, size: 16),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: l10n.legalCookieMessage,
+                      style: TextStyle(fontSize: 12, color: context.textSecondaryColor, height: 1.4),
+                    ),
+                    const TextSpan(text: ' '),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: _LinkButton(label: l10n.legalCookiePolicy, onTap: () => _openPolicy('/cookies'), fontSize: 11),
+                    ),
+                    const TextSpan(text: '  '),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: _LinkButton(label: l10n.legalPrivacyPolicy, onTap: () => _openPolicy('/privacy'), fontSize: 11),
+                    ),
+                  ],
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: _acceptNecessary,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  side: BorderSide(color: context.borderColor),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  minimumSize: const Size(0, 32),
+                ),
+                child: Text(
+                  l10n.legalCookieRefuse,
+                  style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _acceptAll,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  elevation: 0,
+                  minimumSize: const Size(0, 32),
+                ),
+                child: Text(
+                  l10n.legalCookieAccept,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactButtons(AppLocalizations l10n) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         OutlinedButton(
           onPressed: _acceptNecessary,
           style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             side: BorderSide(color: context.borderColor),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            minimumSize: const Size(0, 34),
           ),
           child: Text(
             l10n.legalCookieRefuse,
-            style: TextStyle(color: context.textSecondaryColor),
+            style: TextStyle(fontSize: 13, color: context.textSecondaryColor),
           ),
         ),
+        const SizedBox(width: 8),
         ElevatedButton(
           onPressed: _acceptAll,
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             elevation: 0,
+            minimumSize: const Size(0, 34),
           ),
           child: Text(
             l10n.legalCookieAccept,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -284,8 +332,9 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
 class _LinkButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
+  final double fontSize;
 
-  const _LinkButton({required this.label, required this.onTap});
+  const _LinkButton({required this.label, required this.onTap, this.fontSize = 13});
 
   @override
   Widget build(BuildContext context) {
@@ -293,9 +342,9 @@ class _LinkButton extends StatelessWidget {
       onTap: onTap,
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.primary,
-          fontSize: 13,
+          fontSize: fontSize,
           fontWeight: FontWeight.w600,
           decoration: TextDecoration.underline,
         ),

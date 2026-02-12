@@ -35,6 +35,9 @@ class BacklogListWidget extends StatefulWidget {
   final void Function(UserStoryModel story)? onStoryEstimate;
   final void Function(UserStoryModel story)? onAddToSprint;
   final VoidCallback? onAddStory;
+  final AgileFramework framework;
+  final bool canMoveToBacklog;
+  final bool canMarkAsReady;
 
   const BacklogListWidget({
     super.key,
@@ -55,8 +58,11 @@ class BacklogListWidget extends StatefulWidget {
     this.onStoryEstimate,
     this.onAddToSprint,
     this.onAddStory,
+    required this.framework,
     this.shrinkWrap = false,
     this.physics,
+    this.canMoveToBacklog = true, // Default true for backward compatibility
+    this.canMarkAsReady = false,
   });
 
   final bool shrinkWrap;
@@ -323,7 +329,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
               const SizedBox(width: 4),
               ...StoryStatus.values.map((status) {
                 final chip = FilterChip(
-                  label: Text(status.displayName),
+                  label: Text(status.getDisplayName(widget.framework)),
                   selected: _statusFilter == status,
                   onSelected: (_) => setState(() => _statusFilter = status),
                   selectedColor: status.color.withOpacity(0.2),
@@ -508,7 +514,10 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
       physics: widget.physics,
       padding: const EdgeInsets.all(16),
       itemCount: stories.length,
-      itemBuilder: (context, index) => _buildStoryItem(stories[index]),
+      itemBuilder: (context, index) {
+        final story = stories[index];
+        return _buildStoryItem(story, key: ValueKey(story.id));
+      },
     );
   }
 
@@ -522,6 +531,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
       key: key,
       padding: const EdgeInsets.only(bottom: 8),
       child: StoryCardWidget(
+        key: key,
         story: story,
         sprintName: sprintName,
         isSprintCompleted: isSprintCompleted,
@@ -533,6 +543,10 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         onDelete: widget.canEdit && widget.onStoryDelete != null
             ? () => widget.onStoryDelete!(story.id)
             : null,
+        framework: widget.framework,
+        canMoveToBacklog: widget.canMoveToBacklog,
+        isBoardContext: false,
+        canMarkAsReady: widget.canMarkAsReady,
         onStatusChange: widget.canEdit && widget.onStatusChange != null
             ? (status) => widget.onStatusChange!(story.id, status)
             : null,

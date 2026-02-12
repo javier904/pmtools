@@ -18,6 +18,8 @@ class AgileBoardWidget extends StatelessWidget {
   final List<UserStoryModel> stories;
   final List<String> teamMembers; // Email list
   final bool canEdit;
+  final bool canMoveToBacklog;
+  final bool canMarkAsReady;
   
   // Callbacks
   final void Function(String storyId, StoryStatus newStatus)? onStatusChange;
@@ -29,6 +31,7 @@ class AgileBoardWidget extends StatelessWidget {
   final void Function(UserStoryModel story, int? points)? onStoryPointsChange;
   final void Function(String storyId, String newTitle)? onTitleChange;
   final void Function(String storyId, StoryPriority newPriority)? onPriorityChange;
+  final void Function(String storyId)? onStoryDelete; // NEW
 
   const AgileBoardWidget({
     super.key,
@@ -46,6 +49,9 @@ class AgileBoardWidget extends StatelessWidget {
     this.onStoryPointsChange,
     this.onTitleChange,
     this.onPriorityChange,
+    this.onStoryDelete, // NEW
+    this.canMoveToBacklog = true, // Default true for backward compatibility
+    this.canMarkAsReady = false,
   });
 
   @override
@@ -91,6 +97,7 @@ class AgileBoardWidget extends StatelessWidget {
       onStoryPointsChange: onStoryPointsChange,
       onTitleChange: onTitleChange,
       onPriorityChange: onPriorityChange,
+      onStoryDelete: onStoryDelete, // NEW
       // Swimlane configurable logic could be added here
       swimlaneType: SwimlaneType.none, // Default for now
       canEdit: canEdit,
@@ -98,6 +105,8 @@ class AgileBoardWidget extends StatelessWidget {
       showPolicies: true,
       teamMembers: teamMembers,
       sprints: sprints,
+      canMoveToBacklog: canMoveToBacklog,
+      canMarkAsReady: canMarkAsReady,
     );
   }
 

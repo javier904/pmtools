@@ -185,7 +185,20 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                onChanged: (v) => setState(() => _subtasks[i] = _subtasks[i].copyWith(isCompleted: v)),
                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                              ),
-                             title: Text(s.title, style: TextStyle(decoration: s.isCompleted ? TextDecoration.lineThrough : null)),
+                             title: InkWell(
+                               onTap: () => _editSubtask(i),
+                               borderRadius: BorderRadius.circular(4),
+                               child: Padding(
+                                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                 child: Text(
+                                   s.title, 
+                                   style: TextStyle(
+                                     decoration: s.isCompleted ? TextDecoration.lineThrough : null,
+                                     color: dialogTextColor,
+                                   ),
+                                 ),
+                               ),
+                             ),
                              trailing: IconButton(icon: const Icon(Icons.close, size: 16), onPressed: () => setState(() => _subtasks.removeAt(i))),
                            );
                          }),
@@ -1000,6 +1013,45 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
           ],
         ),
       );
+  }
+
+  void _editSubtask(int index) {
+    final s = _subtasks[index];
+    final controller = TextEditingController(text: s.title);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).smartTodoEditItem),
+        content: TextField(
+          controller: controller, 
+          autofocus: true,
+          decoration: InputDecoration(
+          hintText: AppLocalizations.of(context).smartTodoItemTitle,
+          ),
+          onSubmitted: (_) {
+            if (controller.text.isNotEmpty) {
+              setState(() => _subtasks[index] = _subtasks[index].copyWith(title: controller.text.trim()));
+              Navigator.pop(context);
+            }
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), 
+            child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                setState(() => _subtasks[index] = _subtasks[index].copyWith(title: controller.text.trim()));
+                Navigator.pop(context);
+              }
+            },
+            child: Text(AppLocalizations.of(context)?.smartTodoSave ?? 'Save'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _save() {

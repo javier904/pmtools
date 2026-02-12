@@ -19,6 +19,7 @@ class TeamListWidget extends StatelessWidget {
   final void Function(TeamMemberModel)? onEdit;
   final void Function(String email)? onRemove;
   final VoidCallback? onInvite;
+  final AgileFramework framework;
 
   const TeamListWidget({
     super.key,
@@ -28,6 +29,7 @@ class TeamListWidget extends StatelessWidget {
     this.onEdit,
     this.onRemove,
     this.onInvite,
+    required this.framework,
   });
 
   @override
@@ -217,7 +219,7 @@ class TeamListWidget extends StatelessWidget {
               Row(
                 children: [
                    _buildBadge(
-                      member.teamRole.displayName,
+                      member.teamRole.getDisplayName(framework),
                       member.teamRole.color,
                       member.teamRole.icon,
                     ),

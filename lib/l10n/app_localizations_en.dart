@@ -63,6 +63,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileSprint => 'Sprint';
 
   @override
+  String get agileStatus => 'Status';
+
+  @override
+  String get agilePermissionErrorBacklog =>
+      'Permission denied: Only PO/SM can move to Backlog';
+
+  @override
   String get actionHide => 'Hide Cards';
 
   @override
@@ -998,7 +1005,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storyNoStories => 'No stories to estimate';
 
   @override
-  String get retrospectivesVoted => 'Votato';
+  String get retrospectivesVoted => 'Voted';
 
   @override
   String get storyComplete => 'Story completed';
@@ -1300,7 +1307,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroSave => 'Save Retrospective';
 
   @override
-  String get agileEstimate => 'ESTIMATE';
+  String get agileEstimate => 'Estimate';
 
   @override
   String get agileAssign => 'Assign';
@@ -1477,10 +1484,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileRoleStakeholdersDesc => 'Provide feedback and requirements';
 
   @override
-  String get agileRoleSRMDesc => 'Manages incoming requests';
+  String get agileRoleSRMDesc =>
+      'Manage incoming requests and facilitate prioritization (replacing Product Owner)';
 
   @override
-  String get agileRoleSDMDesc => 'Optimizes workflow';
+  String get agileRoleSDMDesc =>
+      'Manage flow of work and facilitate delivery (replacing Scrum Master)';
 
   @override
   String get agileRoleTeamDesc => 'Executes work respecting WIP limits';
@@ -1661,6 +1670,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get kanbanPrinciple1 =>
       'Visualize the workflow: Make all work visible';
+
+  @override
+  String get agileItems => 'items';
+
+  @override
+  String get agileItemsShort => 'items';
+
+  @override
+  String get agileWorkloadAvgItems => 'Avg Items/Person';
+
+  @override
+  String get agileKanbanCapacityNote =>
+      'Capacity is calculated on a weekly basis (5 working days).';
+
+  @override
+  String get agilePriority => 'Priority';
+
+  @override
+  String get agileRoleSRM => 'Service Request Manager';
+
+  @override
+  String get agileRoleSDM => 'Service Delivery Manager';
+
+  @override
+  String get agileRoleTeamMember => 'Team Member';
+
+  @override
+  String get agileFrameworkLocked =>
+      'Cannot change framework for projects with existing activities';
+
+  @override
+  String get agileComingSoon => 'Coming Soon';
 
   @override
   String get kanbanPrinciple2 => 'Limit WIP: Complete work before starting new';
@@ -1970,6 +2011,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retroNoResults => 'No results found';
 
   @override
+  String get agileNoAssignee => 'Unassigned';
+
+  @override
   String get retroFilterAll => 'All';
 
   @override
@@ -2086,7 +2130,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scrumWorkflowStatusContent =>
-      'In Scrum, a story\'s lifecycle follows these states:\n\n1. **Product Backlog**: Where ideas are born. The \'Refinement\' label indicates the story is being analyzed/detailed (not a board column, just an indicator).\n2. **Ready**: The story is ready to be worked on (meets Definition of Ready).\n3. **In Sprint**: During Planning, \'Ready\' stories move to the Sprint.\n4. **In Progress**: The story is actively being worked on.\n5. **In Review**: The story is in review/code review phase.\n6. **Done**: The story is completed and verified.';
+      'In Scrum, a story\'s lifecycle follows these states:\n\n**Product Backlog** (visible only in the Backlog tab):\n1. **Backlog**: Where ideas are born. The story has not yet been analyzed.\n2. **Refinement**: The story is being analyzed/detailed. This is a collaborative effort for the whole team (working toward the Definition of Ready).\n3. **Ready**: The story meets the DoR and can be selected at Sprint Planning. Only the Product Owner can mark a story as Ready.\n\n**Sprint Board** (visible on the board during the Sprint):\n4. **To Do**: \'Ready\' stories added to the Sprint.\n5. **In Progress**: Active work by the team.\n6. **In Review**: Review/Code Review phase.\n7. **Done**: Story completed and verified.';
 
   @override
   String get kanbanWorkflowStatusContent =>
@@ -2115,7 +2159,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contextualHelpBacklogTip2 =>
-      'Do regular refinement to detail stories';
+      'Collaborate with the team during Refinement to detail stories';
 
   @override
   String get contextualHelpBacklogTip3 =>
@@ -2847,9 +2891,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileAssignee => 'Assignee';
-
-  @override
-  String get agileNoAssignee => 'Unassigned';
 
   @override
   String get agileCreatedBy => 'Created by';
@@ -4250,6 +4291,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartTodoAddChecklistItem => 'Add item';
 
   @override
+  String get smartTodoEditItem => 'Edit item';
+
+  @override
+  String get smartTodoItemTitle => 'Item title';
+
+  @override
   String get smartTodoAttachments => 'ATTACHMENTS';
 
   @override
@@ -5263,6 +5310,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sprintBacklog => 'Sprint Backlog';
+
+  @override
+  String get scrumToDo => 'To Do';
 
   @override
   String get agileStatusRefinement => 'Refinement';
@@ -9615,7 +9665,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileAllMembersAssigned =>
-      'All participants are already assigned to a role.';
+      'All available members are already assigned';
 
   @override
   String get agileClose => 'Close';
@@ -10850,9 +10900,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileDaysRemainingSuffix => 'days remaining';
 
   @override
-  String get agileItems => 'items';
-
-  @override
   String get agileItemsMore => 'more items';
 
   @override
@@ -11694,4 +11741,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kanbanPoliciesExplicit => 'Explicit Policies (Team Notes)';
+
+  @override
+  String get agileTeam => 'Team';
+
+  @override
+  String get agileRoleDevelopmentTeam => 'Development Team';
+
+  @override
+  String get agileRoleDevelopmentTeamDesc => 'Members who execute the work';
 }

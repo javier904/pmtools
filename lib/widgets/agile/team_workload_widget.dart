@@ -11,12 +11,14 @@ class TeamWorkloadWidget extends StatelessWidget {
   final List<TeamMemberModel> teamMembers;
   final List<UserStoryModel> stories;
   final SprintModel? currentSprint;
+  final AgileFramework framework;
 
   const TeamWorkloadWidget({
     super.key,
     required this.teamMembers,
     required this.stories,
     this.currentSprint,
+    required this.framework,
   });
 
   List<UserStoryModel> get _filteredStories {
@@ -45,6 +47,11 @@ class TeamWorkloadWidget extends StatelessWidget {
 
     final List<_MemberWorkload> memberWorkloads = [];
     int totalAssigned = 0;
+    
+    // Check if we should use Story Points or Count
+    // Use SP if Scrum OR if there are actually points assigned
+    final totalPoints = filtered.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0));
+    final useStoryPoints = framework == AgileFramework.scrum || totalPoints > 0;
 
     for (final member in teamMembers) {
       final memberStories = grouped[member.email] ?? [];
@@ -76,20 +83,23 @@ class TeamWorkloadWidget extends StatelessWidget {
     final unassigned = grouped[null] ?? [];
 
     // CHANGED: Use ALL filtered members for average, not just active ones
-    // This fixes the issue where 1 person with 3 stories and 1 with 0 was considered "Balanced"
-    final double avgSP = memberWorkloads.isEmpty
+    final double avgLoad = memberWorkloads.isEmpty
         ? 0.0
-        : memberWorkloads.fold<int>(0, (sum, m) => sum + m.totalSP) /
+        : memberWorkloads.fold<int>(0, (sum, m) => sum + (useStoryPoints ? m.totalSP : m.assignedStories)) /
             memberWorkloads.length;
 
     // A team is unbalanced if there is more than 1 member AND
     // anyone is outside the tolerant range (0.5x - 1.5x average)
     final isUnbalanced = memberWorkloads.length > 1 &&
         memberWorkloads.any(
-            (m) => m.totalSP > avgSP * 1.5 || m.totalSP < avgSP * 0.5);
+            (m) {
+              final load = useStoryPoints ? m.totalSP : m.assignedStories;
+              return load > avgLoad * 1.5 || load < avgLoad * 0.5;
+            });
 
     for (final m in memberWorkloads) {
-      m.isOverloaded = avgSP > 0 && m.totalSP > avgSP * 1.5;
+      final load = useStoryPoints ? m.totalSP : m.assignedStories;
+      m.isOverloaded = avgLoad > 0 && load > avgLoad * 1.5;
     }
 
     return _WorkloadData(
@@ -97,8 +107,9 @@ class TeamWorkloadWidget extends StatelessWidget {
       memberWorkloads: memberWorkloads,
       unassigned: unassigned,
       totalAssigned: totalAssigned,
-      avgSP: avgSP,
+      avgLoad: avgLoad,
       isUnbalanced: isUnbalanced,
+      useStoryPoints: useStoryPoints,
     );
   }
 
@@ -225,13 +236,14 @@ class TeamWorkloadWidget extends StatelessWidget {
     final icon = isBalanced ? Icons.check_circle_outline : Icons.warning_amber;
 
     // Calculate ranges for tooltip explanation
-    final minBalanced = (data.avgSP * 0.5).toStringAsFixed(1);
-    final maxBalanced = (data.avgSP * 1.5).toStringAsFixed(1);
-    final avgFormatted = data.avgSP.toStringAsFixed(1);
+    final minBalanced = (data.avgLoad * 0.5).toStringAsFixed(1);
+    final maxBalanced = (data.avgLoad * 1.5).toStringAsFixed(1);
+    final avgFormatted = data.avgLoad.toStringAsFixed(1);
+    final unit = data.useStoryPoints ? 'SP' : (l10n?.agileItems ?? 'stories');
 
     final tooltipMessage = l10n?.agileWorkloadBalanceTooltip(
             avgFormatted, minBalanced, maxBalanced) ??
-        'Avg: $avgFormatted SP\nRange: $minBalanced - $maxBalanced SP';
+        'Avg: $avgFormatted $unit\nRange: $minBalanced - $maxBalanced $unit';
 
     return Tooltip(
       message: tooltipMessage,
@@ -275,6 +287,10 @@ class TeamWorkloadWidget extends StatelessWidget {
     final assignedPct = data.filtered.isEmpty
         ? 0
         : ((data.totalAssigned / data.filtered.length) * 100).round();
+    
+    final unitLabel = data.useStoryPoints 
+        ? (l10n?.agileWorkloadAvgSp ?? 'Avg SP/Person')
+        : (l10n?.agileWorkloadAvgItems ?? 'Avg Items/Person');
 
     return Row(
       children: [
@@ -300,8 +316,8 @@ class TeamWorkloadWidget extends StatelessWidget {
           child: _buildSummaryItem(
             theme,
             colorScheme,
-            l10n?.agileWorkloadAvgSp ?? 'Avg SP/Person',
-            data.avgSP.toStringAsFixed(1),
+            unitLabel,
+            data.avgLoad.toStringAsFixed(1),
           ),
         ),
       ],
@@ -351,7 +367,11 @@ class TeamWorkloadWidget extends StatelessWidget {
     _WorkloadData data,
   ) {
     final sorted = List<_MemberWorkload>.from(data.memberWorkloads)
-      ..sort((a, b) => b.totalSP.compareTo(a.totalSP));
+      ..sort((a, b) {
+        final valA = data.useStoryPoints ? a.totalSP : a.assignedStories;
+        final valB = data.useStoryPoints ? b.totalSP : b.assignedStories;
+        return valB.compareTo(valA);
+      });
 
     return Column(
       children: sorted
@@ -372,6 +392,9 @@ class TeamWorkloadWidget extends StatelessWidget {
     final initial = mw.member.name.isNotEmpty
         ? mw.member.name[0].toUpperCase()
         : '?';
+        
+    final loadValue = data.useStoryPoints ? mw.totalSP : mw.assignedStories;
+    final loadUnit = data.useStoryPoints ? 'SP' : (l10n?.agileItemsShort ?? 'items');
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -388,7 +411,7 @@ class TeamWorkloadWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top row: avatar, name, role, SP badge
+            // Top row: avatar, name, role, SP/Count badge
             Row(
               children: [
                 CircleAvatar(
@@ -423,7 +446,7 @@ class TeamWorkloadWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    '${mw.totalSP} SP',
+                    '$loadValue $loadUnit',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -624,16 +647,18 @@ class _WorkloadData {
   final List<_MemberWorkload> memberWorkloads;
   final List<UserStoryModel> unassigned;
   final int totalAssigned;
-  final double avgSP;
+  final double avgLoad; // Renamed from avgSP
   final bool isUnbalanced;
+  final bool useStoryPoints; // New field
 
   const _WorkloadData({
     required this.filtered,
     required this.memberWorkloads,
     required this.unassigned,
     required this.totalAssigned,
-    required this.avgSP,
+    required this.avgLoad,
     required this.isUnbalanced,
+    required this.useStoryPoints,
   });
 }
 

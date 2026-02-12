@@ -63,6 +63,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileSprint => 'Sprint';
 
   @override
+  String get agileStatus => 'Stato';
+
+  @override
+  String get agilePermissionErrorBacklog =>
+      'Permesso negato: Solo PO/SM possono spostare nel Backlog';
+
+  @override
   String get actionHide => 'Masquer les Cartes';
 
   @override
@@ -1679,6 +1686,38 @@ class AppLocalizationsFr extends AppLocalizations {
       'Visualisez le flux de travail : Rendez tout le travail visible';
 
   @override
+  String get agileItems => 'items';
+
+  @override
+  String get agileItemsShort => 'elementi';
+
+  @override
+  String get agileWorkloadAvgItems => 'Media Elementi/Persona';
+
+  @override
+  String get agileKanbanCapacityNote =>
+      'La capacità è calcolata su base settimanale (5 giorni lavorativi).';
+
+  @override
+  String get agilePriority => 'Priorità';
+
+  @override
+  String get agileRoleSRM => 'Service Request Manager';
+
+  @override
+  String get agileRoleSDM => 'Service Delivery Manager';
+
+  @override
+  String get agileRoleTeamMember => 'Membro del Team';
+
+  @override
+  String get agileFrameworkLocked =>
+      'Impossibile cambiare framework per progetti con attività esistenti';
+
+  @override
+  String get agileComingSoon => 'Prossimamente';
+
+  @override
   String get kanbanPrinciple2 =>
       'Limitez le WIP : Terminez le travail avant d\'en commencer un nouveau';
 
@@ -2006,6 +2045,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroNoResults => 'Aucun résultat pour la recherche';
 
   @override
+  String get agileNoAssignee => 'Non assigné';
+
+  @override
   String get retroFilterAll => 'Toutes';
 
   @override
@@ -2151,7 +2193,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get contextualHelpBacklogTip2 =>
-      'Fai refinement regolare per dettagliare le storie';
+      'Collabora col team nel Refinement per dettagliare le storie';
 
   @override
   String get contextualHelpBacklogTip3 =>
@@ -2892,9 +2934,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agileAssignee => 'Assigné à';
-
-  @override
-  String get agileNoAssignee => 'Non assigné';
 
   @override
   String get agileCreatedBy => 'Créé par';
@@ -4310,6 +4349,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get smartTodoAddChecklistItem => 'Ajouter un élément';
 
   @override
+  String get smartTodoEditItem => 'Modifica voce';
+
+  @override
+  String get smartTodoItemTitle => 'Titolo voce';
+
+  @override
   String get smartTodoAttachments => 'PIÈCES JOINTES';
 
   @override
@@ -5333,6 +5378,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sprintBacklog => 'Sprint Backlog';
+
+  @override
+  String get scrumToDo => 'Da Fare';
 
   @override
   String get agileStatusRefinement => 'Refining';
@@ -10988,9 +11036,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileDaysRemainingSuffix => 'jours restants';
 
   @override
-  String get agileItems => 'items';
-
-  @override
   String get agileItemsMore => 'altri items';
 
   @override
@@ -11841,4 +11886,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get kanbanPoliciesExplicit => 'Policy Esplicite (Note per il team)';
+
+  @override
+  String get agileTeam => 'Team';
+
+  @override
+  String get agileRoleDevelopmentTeam => 'Development Team';
+
+  @override
+  String get agileRoleDevelopmentTeamDesc => 'Membri che eseguono il lavoro';
 }

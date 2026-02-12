@@ -67,11 +67,13 @@ import '../widgets/agile/sprint_review_history_widget.dart';
 class AgileProjectDetailScreen extends StatefulWidget {
   final AgileProjectModel project;
   final VoidCallback onBack;
+  final int initialIndex;
 
   const AgileProjectDetailScreen({
     super.key,
     required this.project,
     required this.onBack,
+    this.initialIndex = 0,
   });
 
   @override
@@ -184,11 +186,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             onPressed: _showExportDialog,
           ),
           // Audit log
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: l10n.actionAuditLog,
-            onPressed: () => AuditLogViewer.show(context, widget.project.id),
-          ),
+          if (widget.project.canViewAuditLog(_currentUserEmail))
+            IconButton(
+              icon: const Icon(Icons.history),
+              tooltip: l10n.actionAuditLog,
+              onPressed: () => AuditLogViewer.show(context, widget.project.id),
+            ),
           // Settings
           // SCRUM PERMISSIONS: Menu mostra solo opzioni per cui l'utente ha permesso
           PopupMenuButton<String>(
@@ -375,12 +378,15 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                     stories: _stories,
                     sprints: _sprints,
                     projectId: project.id,
-                    onStoryTap: (story) => _showStoryDetail(story),
+                    onStoryTap: (story) => _showStoryDetail(story, isBoardContext: false),
                     onReorder: project.canPrioritizeBacklog(_currentUserEmail)
                         ? (newOrder) => _reorderStories(newOrder)
                         : null,
                     onStoryEstimate: project.canEstimate(_currentUserEmail)
                         ? _showEstimateStoryDialog
+                        : null,
+                    onStoryDelete: project.canDeleteStory(_currentUserEmail)
+                        ? _deleteStory
                         : null,
                     onStatusChange: (id, status) {
                       final story = _stories.firstWhere((s) => s.id == id);
@@ -402,11 +408,16 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                           }
                         : null,
                     teamMembers: _teamMembers.map((m) => m.email).toList(),
-                    onAddToSprint: _addToSprint,
-                    onAddStory: project.canCreateStory(_currentUserEmail)
+                    onAddToSprint: widget.project.canAddToSprint(_currentUserEmail) 
+                        ? (story) => _addToSprint(story) 
+                        : null,
+                    onAddStory: widget.project.canCreateStory(_currentUserEmail)
                         ? _showCreateStoryDialog
                         : null,
                     canEdit: project.canEditStory(_currentUserEmail),
+                    framework: project.framework,
+                    canMoveToBacklog: widget.project.canMoveToBacklog(_currentUserEmail),
+                    canMarkAsReady: widget.project.canMarkAsReady(_currentUserEmail),
                 ),
         ],
       ),
@@ -438,6 +449,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       projectId: widget.project.id,
       teamMembers: _teamMembers.map((m) => m.email).toList(),
       sprints: _sprints,
+      framework: widget.project.framework,
+      canAddToSprint: widget.project.canAddToSprint(_currentUserEmail),
+      canMoveToBacklog: widget.project.canMoveToBacklog(_currentUserEmail),
+      canMarkAsReady: widget.project.canMarkAsReady(_currentUserEmail),
     );
 
     if (result != null && mounted) {
@@ -492,7 +507,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
-  Future<void> _showStoryDetail(UserStoryModel story) async {
+   Future<void> _showStoryDetail(UserStoryModel story, {bool? isBoardContext}) async {
     // SCRUM PERMISSIONS:
     // - onEdit: Solo PO può modificare le stories
     // - onStatusChange: Dev Team può spostare le proprie stories (gestito nel widget)
@@ -500,29 +515,40 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       context: context,
       story: story,
       onEdit: widget.project.canEditStory(_currentUserEmail)
-          ? () => _showEditStoryDialog(story)
+          ? () => _showEditStoryDialog(story, isBoardContext: isBoardContext)
+          : null,
+      onDelete: widget.project.canDeleteStory(_currentUserEmail)
+          ? () => _deleteStory(story.id)
           : null,
       onStatusChange: (status) => _updateStoryStatus(story, status),
       onCriterionToggle: (index, completed) => _toggleAcceptanceCriterion(story, index, completed),
       onCriterionAdd: (text) => _addStoryAcceptanceCriterion(story, text),
       onCriterionDelete: (index) => _deleteStoryAcceptanceCriterion(story, index),
       onAssigneeChange: (email) => _updateStoryAssignee(story, email),
-      onProgressChange: (progress) => _updateStoryProgress(story, progress), // NEW
+      onProgressChange: (progress) => _updateStoryProgress(story, progress),
       teamMembers: _teamMembers.map((m) => m.email).toList(),
       sprints: _sprints,
       onJiraSync: (story.externalIntegration?.provider == 'jira') 
           ? () => _syncStoryFromJira(story)
           : null,
+      framework: widget.project.framework,
+      canMoveToBacklog: widget.project.canMoveToBacklog(_currentUserEmail),
+      isBoardContext: isBoardContext,
     );
   }
 
-  Future<void> _showEditStoryDialog(UserStoryModel story) async {
+  Future<void> _showEditStoryDialog(UserStoryModel story, {bool? isBoardContext}) async {
     final result = await StoryFormDialog.show(
       context: context,
       projectId: widget.project.id,
       story: story,
       teamMembers: _teamMembers.map((m) => m.email).toList(),
       sprints: _sprints,
+      framework: widget.project.framework,
+      canAddToSprint: widget.project.canAddToSprint(_currentUserEmail),
+      canMoveToBacklog: widget.project.canMoveToBacklog(_currentUserEmail),
+      canMarkAsReady: widget.project.canMarkAsReady(_currentUserEmail),
+      isBoardContext: isBoardContext,
     );
 
     if (result != null && mounted) {
@@ -615,7 +641,68 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
+  Future<void> _deleteStory(String storyId) async {
+    // 1. Check permissions
+    if (!widget.project.canDeleteStory(_currentUserEmail)) {
+      _showError('Permesso negato: Solo PO/SM possono eliminare storie');
+      return;
+    }
+
+    // 2. Confirm
+    final l10n = AppLocalizations.of(context)!;
+    UserStoryModel story;
+    try {
+      story = _stories.firstWhere((s) => s.id == storyId);
+    } catch (_) {
+      return; // Story not found
+    }
+    
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteStoryTitle),
+        content: Text(l10n.deleteStoryConfirm(story.title)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.actionCancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(l10n.actionDelete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _firestoreService.deleteStory(widget.project.id, storyId);
+        _showSuccess(l10n.storyDeleted);
+        
+        // Audit log
+        await _auditService.logDelete(
+          projectId: widget.project.id,
+          entityType: AuditEntityType.story,
+          entityId: storyId,
+          entityName: story.title,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserName,
+        );
+      } catch (e) {
+        _showError('${l10n.errorDeletingSession}: $e');
+      }
+    }
+  }
+
   Future<void> _updateStoryStatus(UserStoryModel story, StoryStatus status) async {
+    // Check permissions for moving to Backlog
+    if (status == StoryStatus.backlog && !widget.project.canMoveToBacklog(_currentUserEmail)) {
+      _showError('Permesso negato: Solo PO/SM possono spostare nel Backlog');
+      return;
+    }
+
     try {
       // Logic for auto-assigning to active sprint if moving to In Progress/etc from Backlog
       // and not yet in a sprint.
@@ -647,7 +734,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
          }
       }
 
-      // 3. Update story status using specialized service method (Stopwatch logic)
+
+
+  // 3. Update story status using specialized service method (Stopwatch logic)
     await _firestoreService.updateStoryStatus(
       widget.project.id, 
       story.id, 
@@ -942,13 +1031,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Future<void> _updateStoryAssignee(UserStoryModel story, String? email) async {
     try {
-      final updated = story.copyWith(assigneeEmail: email ?? '');
-      // If email is null, we need to clear the field in Firestore
-      if (email == null) {
-        await _firestoreService.updateStoryFields(widget.project.id, story.id, {
-          'assigneeEmail': null,
-        });
-      }
+      // Always update the field, whether it's null (unassigned) or a value
+      await _firestoreService.updateStoryFields(widget.project.id, story.id, {
+        'assigneeEmail': email,
+      });
       
       await _auditService.logAssign(
         projectId: widget.project.id,
@@ -1383,7 +1469,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 padding: const EdgeInsets.all(16),
                 child: SprintReviewHistoryWidget(
                   sprints: _sprints,
-                  onEdit: (sprint) => _showSprintReviewDialog(sprint),
+                  onEdit: widget.project.canStartSprintReview(_currentUserEmail)
+                      ? (sprint) => _showSprintReviewDialog(sprint)
+                      : null,
                 ),
               ),
             ),
@@ -1491,42 +1579,45 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             const SizedBox(height: 8),
             Row(
               children: [
-                if (!sprint.hasSprintReview)
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showSprintReviewDialog(sprint),
-                      icon: const Icon(Icons.rate_review, size: 18),
-                      label: Text(l10n.agileRecordReview),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.orange,
-                        side: const BorderSide(color: Colors.orange),
+                if (widget.project.canStartSprintReview(_currentUserEmail))
+                  if (!sprint.hasSprintReview)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showSprintReviewDialog(sprint),
+                        icon: const Icon(Icons.rate_review, size: 18),
+                        label: Text(l10n.agileRecordReview),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.orange,
+                          side: const BorderSide(color: Colors.orange),
+                        ),
+                      ),
+                    )
+                  else
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showSprintReviewDialog(sprint),
+                        icon: const Icon(Icons.check_circle, size: 18, color: Colors.green),
+                        label: Text(l10n.agileSprintReviewCompleted),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.green,
+                          side: const BorderSide(color: Colors.green),
+                        ),
                       ),
                     ),
-                  )
-                else
+                if (widget.project.canManageSprints(_currentUserEmail)) ...[
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showSprintReviewDialog(sprint),
-                      icon: const Icon(Icons.check_circle, size: 18, color: Colors.green),
-                      label: Text(l10n.agileSprintReviewCompleted),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.green,
-                        side: const BorderSide(color: Colors.green),
+                    child: ElevatedButton.icon(
+                      onPressed: () => _completeSprintConfirm(sprint),
+                      icon: const Icon(Icons.flag_circle),
+                      label: Text(l10n.agileCompleteSprintAction),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
                       ),
                     ),
                   ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _completeSprintConfirm(sprint),
-                    icon: const Icon(Icons.flag_circle),
-                    label: Text(l10n.agileCompleteSprintAction),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
+                ],
               ],
             ),
           ],
@@ -2730,20 +2821,25 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         final story = _stories.firstWhere((s) => s.id == storyId);
         _updateStoryStatus(story, newStatus);
       },
-      onStoryTap: (story) => _showStoryDetail(story),
-      onWipLimitChange: project.canManageSprints(_currentUserEmail)
+      onStoryTap: (story) => _showStoryDetail(story, isBoardContext: true),
+      onWipLimitChange: project.canConfigureBoard(_currentUserEmail)
           ? (colId, limit) => _updateColumnConfig(colId, wipLimit: limit, clearWip: limit == null)
           : null,
-      onPoliciesChange: project.canManageSprints(_currentUserEmail)
+      onPoliciesChange: project.canConfigureBoard(_currentUserEmail)
           ? (colId, policies) => _updateColumnConfig(colId, policies: policies)
           : null,
       onAssigneeChange: (story, email) => _updateStoryAssignee(story, email),
       onStoryPointsChange: (story, points) => _updateStoryPoints(story, points),
       onTitleChange: (storyId, newTitle) => _updateStoryTitle(storyId, newTitle),
       onPriorityChange: (storyId, newPriority) => _updateStoryPriority(storyId, newPriority),
-      onActivePoliciesChange: project.canManageSprints(_currentUserEmail)
+      onActivePoliciesChange: project.canConfigureBoard(_currentUserEmail)
           ? (colId, activePolicies) => _updateColumnConfig(colId, activePolicies: activePolicies)
           : null,
+      onStoryDelete: widget.project.canDeleteStory(_currentUserEmail)
+          ? (storyId) => _deleteStory(storyId)
+          : null,
+      canMoveToBacklog: widget.project.canMoveToBacklog(_currentUserEmail),
+      canMarkAsReady: widget.project.canMarkAsReady(_currentUserEmail),
     );
   }
 
@@ -2789,6 +2885,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             participants: project.participants,
             currentUserEmail: _currentUserEmail,
             isOwnerOrAdmin: project.canManage(_currentUserEmail),
+            framework: project.framework,
             onEdit: project.canChangeRoles(_currentUserEmail)
                 ? (member) => _showMemberDetail(member)
                 : null,
@@ -2804,6 +2901,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             stories: _stories,
             currentSprint: _sprints.where((s) => s.status == SprintStatus.active).firstOrNull,
             assignedHours: assignedHours,
+            framework: widget.project.framework,
           ),
           const SizedBox(height: 24),
 
@@ -2812,6 +2910,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             teamMembers: _teamMembers,
             stories: _stories,
             currentSprint: _sprints.where((s) => s.status == SprintStatus.active).firstOrNull,
+            framework: widget.project.framework,
           ),
           const SizedBox(height: 24),
 
@@ -2888,6 +2987,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     final updated = await TeamMemberFormDialog.show(
       context: context,
       member: member,
+      framework: widget.project.framework,
     );
     if (updated != null && mounted) {
       try {
@@ -2914,41 +3014,46 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   Widget _buildMetricsTab() {
     final assignedHours = _calculateAssignedHours();
     final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+    final isKanban = widget.project.framework == AgileFramework.kanban;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sprint Health Summary Card
-          SprintHealthCardWidget(
-            currentSprint: activeSprint,
-            stories: _stories,
-            sprints: _sprints,
-          ),
-          const SizedBox(height: 16),
+          // Scrum specific widgets
+          if (!isKanban) ...[
+            // Sprint Health Summary Card
+            SprintHealthCardWidget(
+              currentSprint: activeSprint,
+              stories: _stories,
+              sprints: _sprints,
+            ),
+            const SizedBox(height: 16),
 
-          // Sprint Burndown (live from stories)
-          SprintBurndownLiveWidget(
-            currentSprint: activeSprint,
-            stories: _stories,
-          ),
-          const SizedBox(height: 16),
+            // Sprint Burndown (live from stories)
+            SprintBurndownLiveWidget(
+              currentSprint: activeSprint,
+              stories: _stories,
+            ),
+            const SizedBox(height: 16),
 
-          // Sprint Scope Changes
-          SprintScopeWidget(
-            currentSprint: activeSprint,
-            stories: _stories,
-          ),
-          const SizedBox(height: 16),
+            // Sprint Scope Changes
+            SprintScopeWidget(
+              currentSprint: activeSprint,
+              stories: _stories,
+            ),
+            const SizedBox(height: 16),
 
-          // Commitment Reliability Trend
-          CommitmentTrendWidget(
-            sprints: _sprints,
-          ),
-          const SizedBox(height: 16),
+            // Commitment Reliability Trend
+            CommitmentTrendWidget(
+              sprints: _sprints,
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Flow Metrics Row (Efficiency & WIP + Blocked Items)
+          // Always visible for both frameworks
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -2960,17 +3065,18 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               ),
               const SizedBox(width: 16),
               // Blocked Items
+              // For Kanban we pass null sprint to see ALL blocked items (system wide)
               Expanded(
                 child: BlockedItemsWidget(
                   stories: _stories,
-                  currentSprint: activeSprint,
+                  currentSprint: isKanban ? null : activeSprint,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
 
-          // Existing Metrics Dashboard
+          // Existing Metrics Dashboard (Generic/Adaptive)
           MetricsDashboardWidget(
             sprints: _sprints,
             stories: _stories,
@@ -3011,13 +3117,17 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           projectId: widget.project.id,
           retrospectives: retrospectives,
           currentUserEmail: _currentUserEmail,
-          onCreateNew: isKanban
-              ? _createKanbanRetro
-              : (latestSprint != null
-                  ? () => _createInteractiveRetro(latestSprint!)
-                  : () => _showNoSprintForRetroWarning()),
+          onCreateNew: widget.project.canManageRetrospectives(_currentUserEmail) 
+              ? (isKanban
+                  ? _createKanbanRetro
+                  : (latestSprint != null
+                      ? () => _createInteractiveRetro(latestSprint!)
+                      : () => _showNoSprintForRetroWarning()))
+              : null,
           onTapRetro: (retro) => _showRetroDetail(retro),
-          onDeleteRetro: _confirmDeleteRetro,
+          onDeleteRetro: widget.project.canManageRetrospectives(_currentUserEmail) 
+              ? _confirmDeleteRetro 
+              : null,
           sprints: _sprints,
         );
       },
@@ -3816,11 +3926,14 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           label: const Text('Nuova Story'),
         );
       case 1: // Sprint
-        return FloatingActionButton.extended(
-          onPressed: _showCreateSprintDialog,
-          icon: const Icon(Icons.add),
-          label: const Text('Nuovo Sprint'),
-        );
+        if (widget.project.canManageSprints(_currentUserEmail)) {
+          return FloatingActionButton.extended(
+            onPressed: _showCreateSprintDialog,
+            icon: const Icon(Icons.add),
+            label: const Text('Nuovo Sprint'),
+          );
+        }
+        return null;
       case 3: // Team
         return FloatingActionButton.extended(
           onPressed: _showInviteDialog,

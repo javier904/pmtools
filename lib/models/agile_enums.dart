@@ -57,6 +57,7 @@ enum AgileFramework {
 • Limiti WIP (Work In Progress) per colonna
 • Focus su Lead Time e Cycle Time
 • Pull system: nuovi task solo quando c'è capacità
+• Team empowerment: chiunque può segnalare bug o task tecnici
 • Ideale per: supporto, manutenzione, flussi operativi continui''';
       case AgileFramework.hybrid:
         return '''HYBRID (Scrumban)
@@ -172,6 +173,13 @@ enum StoryStatus {
     }
   }
 
+  String getDisplayName(AgileFramework framework) {
+    if (this == StoryStatus.inSprint && (framework == AgileFramework.scrum || framework == AgileFramework.hybrid)) {
+      return 'To Do';
+    }
+    return displayName;
+  }
+
   Color get color {
     switch (this) {
       case StoryStatus.backlog:
@@ -225,6 +233,61 @@ enum StoryStatus {
 
   /// Verifica se la story è in lavorazione
   bool get isInProgress => this == StoryStatus.inProgress || this == StoryStatus.inReview;
+
+  /// Restituisce la lista degli status selezionabili in base al framework e al ruolo
+  static List<StoryStatus> getSelectableStatuses(
+    AgileFramework framework, {
+    bool isDeveloper = false,
+    bool isBoardContext = false,
+  }) {
+    List<StoryStatus> statuses = List.from(StoryStatus.values);
+
+    if (framework == AgileFramework.kanban) {
+      // Nel Kanban puro, "In Sprint" non ha senso
+      statuses.remove(StoryStatus.inSprint);
+    }
+
+    // Scrum/Hybrid: filtra in base al contesto (board vs backlog)
+    if (framework == AgileFramework.scrum || framework == AgileFramework.hybrid) {
+      if (isBoardContext) {
+        // Board: solo stati attivi di lavoro dello Sprint
+        statuses.remove(StoryStatus.backlog);
+        statuses.remove(StoryStatus.refinement);
+        statuses.remove(StoryStatus.ready);
+      } else {
+        // Backlog: solo stati pre-sprint + "To Do" (inSprint) per i PO
+        // Non rimuoviamo inSprint qui, lo rimuoviamo sotto solo per i DEV
+        statuses.remove(StoryStatus.inProgress);
+        statuses.remove(StoryStatus.inReview);
+        statuses.remove(StoryStatus.done);
+      }
+    }
+
+    if (isDeveloper) {
+      // I Developer NON dovrebbero poter riportare una storia indietro nel Backlog
+      statuses.remove(StoryStatus.backlog);
+
+      // In Kanban, i DEV possono gestire il "Ready" (flusso continuo autonomo)
+      // In Scrum/Hybrid, solo il PO può marcare come Ready (gatekeeping)
+      if (framework != AgileFramework.kanban) {
+        statuses.remove(StoryStatus.ready);
+      }
+
+      // In SCRUM/Hybrid, il DEV può fare refinement nel backlog
+      if (isBoardContext) {
+        // Sulla board, Scrum/Hybrid rimuove già refinement/ready sopra
+      } else {
+        // Nel backlog, NON rimuoviamo refinement se è un DEV, permettendogli di spostarla lì
+      }
+
+      // In SCRUM, il DEV deve poter selezionare "To Do" (inSprint) se è sulla board
+      if (!isBoardContext) {
+        statuses.remove(StoryStatus.inSprint);
+      }
+    }
+
+    return statuses;
+  }
 }
 
 /// Status degli sprint
@@ -285,9 +348,28 @@ enum TeamRole {
   developer,
   designer,
   qa,
-  stakeholder;
+  stakeholder,
+  /// Kanban: Gestisce il backlog e le priorità (equivaente a PO)
+  serviceRequestManager,
+  /// Kanban: Gestisce il flusso e la delivery (equivalente a SM)
+  serviceDeliveryManager;
 
-  String get displayName {
+  String getDisplayName(AgileFramework framework) {
+    if (framework == AgileFramework.kanban) {
+      switch (this) {
+        case TeamRole.productOwner:
+        case TeamRole.serviceRequestManager:
+          return 'Service Request Manager';
+        case TeamRole.scrumMaster:
+        case TeamRole.serviceDeliveryManager:
+          return 'Service Delivery Manager';
+        case TeamRole.developer:
+          return 'Team Member';
+        default:
+          break;
+      }
+    }
+
     switch (this) {
       case TeamRole.productOwner:
         return 'Product Owner';
@@ -301,10 +383,31 @@ enum TeamRole {
         return 'QA';
       case TeamRole.stakeholder:
         return 'Stakeholder';
+      case TeamRole.serviceRequestManager:
+        return 'Service Request Manager';
+      case TeamRole.serviceDeliveryManager:
+        return 'Service Delivery Manager';
     }
   }
 
-  String get shortName {
+  String get displayName => getDisplayName(AgileFramework.scrum);
+
+  String getShortName(AgileFramework framework) {
+    if (framework == AgileFramework.kanban) {
+      switch (this) {
+        case TeamRole.productOwner:
+        case TeamRole.serviceRequestManager:
+          return 'SRM';
+        case TeamRole.scrumMaster:
+        case TeamRole.serviceDeliveryManager:
+          return 'SDM';
+        case TeamRole.developer:
+          return 'TM';
+        default:
+          break;
+      }
+    }
+
     switch (this) {
       case TeamRole.productOwner:
         return 'PO';
@@ -318,14 +421,22 @@ enum TeamRole {
         return 'QA';
       case TeamRole.stakeholder:
         return 'STK';
+      case TeamRole.serviceRequestManager:
+        return 'SRM';
+      case TeamRole.serviceDeliveryManager:
+        return 'SDM';
     }
   }
+
+  String get shortName => getShortName(AgileFramework.scrum);
 
   Color get color {
     switch (this) {
       case TeamRole.productOwner:
+      case TeamRole.serviceRequestManager:
         return const Color(0xFF7B1FA2); // Purple
       case TeamRole.scrumMaster:
+      case TeamRole.serviceDeliveryManager:
         return const Color(0xFF1976D2); // Blue
       case TeamRole.developer:
         return const Color(0xFF388E3C); // Green
@@ -341,8 +452,10 @@ enum TeamRole {
   IconData get icon {
     switch (this) {
       case TeamRole.productOwner:
+      case TeamRole.serviceRequestManager:
         return Icons.account_circle;
       case TeamRole.scrumMaster:
+      case TeamRole.serviceDeliveryManager:
         return Icons.supervised_user_circle;
       case TeamRole.developer:
         return Icons.code;
@@ -374,6 +487,9 @@ enum TeamRole {
 
   /// Può riordinare/prioritizzare backlog - Solo PO
   bool get canPrioritizeBacklog => this == TeamRole.productOwner;
+
+  /// Solo il PO può marcare una story come Ready (Definition of Ready soddisfatta)
+  bool get canMarkAsReady => this == TeamRole.productOwner;
 
   // =========================================================================
   // SPRINT MANAGEMENT - Solo Scrum Master
@@ -448,6 +564,13 @@ enum TeamRole {
 
   /// È parte dello Scrum Team (PO + SM + Dev Team)
   bool get isScrumTeam => this != TeamRole.stakeholder;
+
+  /// Permessi basati sul framework (Mapping per Kanban)
+  bool canManageBacklogFramework(AgileFramework framework) =>
+      this == TeamRole.productOwner || this == TeamRole.serviceRequestManager;
+
+  bool canManageSprintsFramework(AgileFramework framework) =>
+      this == TeamRole.scrumMaster || this == TeamRole.productOwner || this == TeamRole.serviceRequestManager || this == TeamRole.serviceDeliveryManager;
 }
 
 /// Ruoli partecipante (semplificato per permessi)

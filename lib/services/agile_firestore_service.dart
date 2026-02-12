@@ -59,7 +59,11 @@ class AgileFirestoreService {
       email: createdBy.toLowerCase(),
       name: createdByName,
       participantRole: AgileParticipantRole.owner,
-      teamRole: TeamRole.productOwner,
+      teamRole: (productOwnerEmail == createdBy)
+          ? (framework == AgileFramework.kanban ? TeamRole.serviceRequestManager : TeamRole.productOwner)
+          : (scrumMasterEmail == createdBy)
+              ? (framework == AgileFramework.kanban ? TeamRole.serviceDeliveryManager : TeamRole.scrumMaster)
+              : TeamRole.developer,
       joinedAt: now,
       isOnline: true,
       lastActivity: now,

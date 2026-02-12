@@ -579,6 +579,10 @@ class UnifiedInviteModel {
         return 'QA';
       case TeamRole.stakeholder:
         return 'Stakeholder';
+      case TeamRole.serviceRequestManager:
+        return 'Service Request Manager';
+      case TeamRole.serviceDeliveryManager:
+        return 'Service Delivery Manager';
     }
   }
 

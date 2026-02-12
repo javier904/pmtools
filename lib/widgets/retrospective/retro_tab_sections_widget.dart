@@ -16,7 +16,8 @@ class RetroTabSectionsWidget extends StatefulWidget {
   final String projectId;
   final List<RetrospectiveModel> retrospectives;
   final String currentUserEmail;
-  final VoidCallback onCreateNew;
+
+  final VoidCallback? onCreateNew;
   final Function(RetrospectiveModel) onTapRetro;
   final Function(RetrospectiveModel)? onDeleteRetro;
   final List<SprintModel> sprints;

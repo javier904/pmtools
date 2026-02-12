@@ -304,26 +304,62 @@ class AgileProjectModel {
   // BACKLOG MANAGEMENT (Solo Product Owner)
   // ---------------------------------------------------------------------------
 
-  /// Può creare user stories - Richiede accesso + ruolo PO
+  /// Può creare user stories
+  /// - Scrum: Solo PO
+  /// - Kanban: PO/SRM, SM/SDM e anche il Team (bugs, tech tasks)
   bool canCreateStory(String email) {
     if (isOwner(email)) return true;
     final p = participants[email];
     if (p == null) return false;
+    
+    // In Kanban, anche il team può creare card (es. bug, tech task)
+    if (framework == AgileFramework.kanban) {
+       return p.participantRole.canEdit; // Basta permesso di edit base
+    }
+
+    // In Scrum, rigorosamente il PO
     return p.participantRole.canEdit && p.teamRole.canCreateStory;
   }
 
+  /// Può configurare la board (WIP limits, Policies, Colonne)
+  /// - Solo ruoli di gestione (PO/SM/SRM/SDM)
+  bool canConfigureBoard(String email) {
+    if (isOwner(email)) return true;
+    final p = participants[email];
+    if (p == null) return false;
+    
+    // Developer NO, Stakeholder NO
+    // Solo PO(SRM) o SM(SDM)
+    return p.participantRole.canManage || 
+           (p.participantRole.canEdit && (p.teamRole == TeamRole.productOwner || p.teamRole == TeamRole.scrumMaster || p.teamRole == TeamRole.serviceRequestManager || p.teamRole == TeamRole.serviceDeliveryManager));
+  }
+
   /// Può modificare user stories - Richiede accesso + ruolo PO
+  /// In Kanban estendiamo a chi ha creato? Per ora manteniamo standard.
   bool canEditStory(String email) {
     final p = participants[email];
     if (p == null) return false;
+
+    // In Kanban, il team può modificare le card (aggiornare stato, dettagli)
+    if (framework == AgileFramework.kanban) {
+       return p.participantRole.canEdit;
+    }
+
     return p.participantRole.canEdit && p.teamRole.canEditStory;
   }
 
-  /// Può eliminare user stories - Richiede accesso + ruolo PO
+  /// Può eliminare user stories - Richiede accesso + ruolo PO/SM
   bool canDeleteStory(String email) {
+    if (isOwner(email)) return true;
     final p = participants[email];
     if (p == null) return false;
-    return p.participantRole.canEdit && p.teamRole.canDeleteStory;
+    
+    // Developer NON può eliminare. Solo PO, SM, SRM, SDM
+    return p.participantRole.canManage ||
+           p.teamRole == TeamRole.productOwner ||
+           p.teamRole == TeamRole.scrumMaster ||
+           p.teamRole == TeamRole.serviceRequestManager ||
+           p.teamRole == TeamRole.serviceDeliveryManager;
   }
 
   /// Può riordinare/prioritizzare backlog - Richiede accesso + ruolo PO
@@ -337,7 +373,7 @@ class AgileProjectModel {
   // SPRINT MANAGEMENT (Solo Scrum Master)
   // ---------------------------------------------------------------------------
 
-  /// Può gestire sprint (creare, avviare, completare) - Richiede accesso + ruolo SM
+  /// Può gestire sprint (creare, avviare, completare) - Limitato a SM, Owner
   bool canManageSprints(String email) {
     if (email.isEmpty) return false;
     final normalized = email.trim().toLowerCase();
@@ -348,10 +384,18 @@ class AgileProjectModel {
     final p = participants[normalized];
     if (p == null) return false;
     
-    // Admin o ruoli dello Scrum Team con permessi di edit possono gestire lo sprint
+    // Solo Scrum Master o chi ha permessi di gestione espliciti
     return p.participantRole.canManage || 
-           (p.participantRole.canEdit && p.teamRole.isScrumTeam);
+           p.teamRole == TeamRole.scrumMaster ||
+           p.teamRole == TeamRole.serviceDeliveryManager;
   }
+
+  /// Può avviare/modificare la Sprint Review - Limitato a SM, Owner
+  bool canStartSprintReview(String email) {
+      return canManageSprints(email);
+  }
+
+
 
   // ---------------------------------------------------------------------------
   // ESTIMATION (Solo Development Team)
@@ -454,6 +498,75 @@ class AgileProjectModel {
     final p = participants[email];
     if (p == null) return false;
     return p.participantRole.canEdit && p.teamRole.canParticipateRetro;
+  }
+
+  // ---------------------------------------------------------------------------
+  // NEW SPECIFIC PERMISSIONS (Restrictive)
+  // ---------------------------------------------------------------------------
+
+  /// Può aggiungere storie allo sprint?
+  /// Limitato a PO, SM, SRM, SDM, Owner.
+  /// DEV/Team Member NON possono farlo.
+  bool canAddToSprint(String email) {
+    if (isOwner(email)) return true;
+    final p = participants[email];
+    if (p == null) return false;
+    
+    // Solo ruoli di gestione
+    return p.participantRole.canManage || 
+           p.teamRole == TeamRole.productOwner || 
+           p.teamRole == TeamRole.scrumMaster || 
+           p.teamRole == TeamRole.serviceRequestManager || 
+           p.teamRole == TeamRole.serviceDeliveryManager;
+  }
+
+  /// Può spostare storie nel backlog?
+  /// Limitato a PO, SM, SRM, SDM, Owner.
+  /// DEV/Team Member NON possono farlo.
+  bool canMoveToBacklog(String email) {
+      return canAddToSprint(email); // Stessi permessi di add to sprint
+  }
+
+  /// Può marcare una story come Ready (Definition of Ready soddisfatta)?
+  /// In Scrum: Solo il PO (o Owner) può farlo.
+  /// In Kanban: Tutta la squadra (tranne Stakeholder) può farlo per favorire il flusso.
+  bool canMarkAsReady(String email) {
+    if (isOwner(email)) return true;
+    final p = participants[email];
+    if (p == null) return false;
+    
+    // In Kanban, tutti i membri operativi possono marcare come Ready
+    if (framework == AgileFramework.kanban) {
+      return p.teamRole != TeamRole.stakeholder;
+    }
+    
+    // In Scrum, seguiamo la regola del gatekeeping del PO
+    return p.teamRole.canMarkAsReady;
+  }
+
+
+
+  /// Può gestire retrospettive (creare, eliminare)?
+  /// Limitato a SM, SDM, Owner (e forse PO/SRM se necessario).
+  /// DEV NON possono.
+  bool canManageRetrospectives(String email) {
+    if (isOwner(email)) return true;
+    final p = participants[email];
+    if (p == null) return false;
+
+    // SM e SDM sono i facilitatori naturali. PO/SRM possono se necessario.
+    return p.participantRole.canManage || 
+           p.teamRole == TeamRole.scrumMaster || 
+           p.teamRole == TeamRole.serviceDeliveryManager ||
+           p.teamRole == TeamRole.productOwner || 
+           p.teamRole == TeamRole.serviceRequestManager;
+  }
+
+  /// Può vedere l'Audit Log?
+  /// Limitato a PO, SM, SRM, SDM, Admin, Owner.
+  /// DEV NON possono.
+  bool canViewAuditLog(String email) {
+     return canAddToSprint(email); // Stessi permessi di gestione
   }
 
   // ---------------------------------------------------------------------------

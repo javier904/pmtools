@@ -1016,7 +1016,7 @@ class ThroughputWidget extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             SizedBox(
-              height: 120,
+              height: 140,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: weeklyData.entries.map((entry) {

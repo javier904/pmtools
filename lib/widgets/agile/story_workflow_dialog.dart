@@ -209,8 +209,27 @@ class StoryWorkflowDialog extends StatelessWidget {
     for (int i = 0; i < workflow.length; i++) {
       final node = workflow[i];
       
+      // Check for sprint group (consecutive nodes marked as isInSprint)
+      if (node.isInSprint) {
+        final sprintNodes = <_WorkflowNode>[];
+        int j = i;
+        while (j < workflow.length && workflow[j].isInSprint) {
+          sprintNodes.add(workflow[j]);
+          j++;
+        }
+        
+        if (sprintNodes.length > 1) {
+          widgets.add(_buildSprintGroup(context, sprintNodes, l10n, isSmallScreen));
+          i = j - 1; // Update i to the last node in the sprint group
+        } else {
+          // Single sprint node (shouldn't happen with our current workflows but good to handle)
+          widgets.add(_buildStatusRow(context, node, l10n, isSmallScreen));
+        }
+      } 
       // Check if this node starts a cycle pair (inProgress + inReview)
-      if (node.isCycleStart && i + 1 < workflow.length) {
+      // Note: This is now handled within _buildSprintGroup if they are in sprint, 
+      // but we keep it here for any cycles outside of sprint if needed.
+      else if (node.isCycleStart && i + 1 < workflow.length) {
         final nextNode = workflow[i + 1];
         // Build a grouped cycle block
         widgets.add(_buildCycleGroup(context, node, nextNode, l10n, isSmallScreen));
@@ -225,6 +244,87 @@ class StoryWorkflowDialog extends StatelessWidget {
     }
     
     return widgets;
+  }
+
+  /// Build a grouped sprint area showing active development states
+  Widget _buildSprintGroup(
+    BuildContext context,
+    List<_WorkflowNode> nodes,
+    AppLocalizations? l10n,
+    bool isSmallScreen,
+  ) {
+    final sprintNodes = <Widget>[];
+    for (int i = 0; i < nodes.length; i++) {
+      final node = nodes[i];
+      
+      // Handle cycle within sprint (In Progress -> In Review)
+      if (node.isCycleStart && i + 1 < nodes.length) {
+        sprintNodes.add(_buildCycleGroup(context, node, nodes[i+1], l10n, isSmallScreen));
+        i++;
+      } else {
+        sprintNodes.add(_buildStatusRow(context, node, l10n, isSmallScreen));
+      }
+      
+      if (i < nodes.length - 1) {
+        sprintNodes.add(_buildVerticalConnector(context));
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15), // Increased alpha
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8), // Even more prominent
+          width: 3.0, // Even thicker
+          style: BorderStyle.solid,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Sprint Label
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  framework == AgileFramework.kanban ? Icons.play_arrow : Icons.directions_run,
+                  size: 18, 
+                  color: Theme.of(context).colorScheme.primary
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  (framework == AgileFramework.kanban 
+                    ? (l10n?.filterActive ?? 'Active') 
+                    : (l10n?.agileSprint ?? 'Sprint')).toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.5,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          ...sprintNodes,
+        ],
+      ),
+    );
   }
 
   /// Build a grouped cycle showing two states with bidirectional arrow
@@ -296,14 +396,15 @@ class StoryWorkflowDialog extends StatelessWidget {
           _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
           _WorkflowNode(status: StoryStatus.refinement),
           _WorkflowNode(status: StoryStatus.ready),
-          _WorkflowNode(status: StoryStatus.inSprint),
-          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true),
-          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true),
+          _WorkflowNode(status: StoryStatus.inSprint, isInSprint: true),
+          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true, isInSprint: true),
+          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true, isInSprint: true),
           _WorkflowNode(status: StoryStatus.done, canTransitionFromAny: true, isEndState: true),
         ];
 
       case AgileFramework.kanban:
         // Kanban: No inSprint, continuous flow with WIP focus
+        // We remove isInSprint: true to avoid the grouping container
         return [
           _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
           _WorkflowNode(status: StoryStatus.refinement),
@@ -319,9 +420,9 @@ class StoryWorkflowDialog extends StatelessWidget {
           _WorkflowNode(status: StoryStatus.backlog, canTransitionFromAny: true),
           _WorkflowNode(status: StoryStatus.refinement),
           _WorkflowNode(status: StoryStatus.ready, hasAlternatePath: true, alternateNote: 'Sprint/Pull'),
-          _WorkflowNode(status: StoryStatus.inSprint, isOptional: true),
-          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true),
-          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true),
+          _WorkflowNode(status: StoryStatus.inSprint, isOptional: true, isInSprint: true),
+          _WorkflowNode(status: StoryStatus.inProgress, isCycleStart: true, isInSprint: true),
+          _WorkflowNode(status: StoryStatus.inReview, isCycleEnd: true, isInSprint: true),
           _WorkflowNode(status: StoryStatus.done, canTransitionFromAny: true, isEndState: true),
         ];
     }
@@ -486,7 +587,7 @@ class StoryWorkflowDialog extends StatelessWidget {
           const SizedBox(width: 6),
           Flexible(
             child: Text(
-              status.displayName.toUpperCase(),
+              status.getDisplayName(framework).toUpperCase(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: isSmallScreen ? 9 : 10,
@@ -568,6 +669,19 @@ class StoryWorkflowDialog extends StatelessWidget {
                 l10n?.workflowCycleDesc ?? 'Cycle',
                 isSmallScreen,
               ),
+                if (framework != AgileFramework.kanban)
+                  _buildLegendItem(
+                    context,
+                    Icon(
+                      framework == AgileFramework.kanban ? Icons.play_arrow : Icons.directions_run,
+                      size: 12, 
+                      color: Theme.of(context).colorScheme.primary
+                    ),
+                    framework == AgileFramework.kanban 
+                      ? (l10n?.filterActive ?? 'Active') 
+                      : (l10n?.agileSprint ?? 'Sprint'),
+                    isSmallScreen,
+                  ),
               // Optional state (Hybrid only)
               if (framework == AgileFramework.hybrid)
                 _buildLegendItem(
@@ -607,6 +721,7 @@ class _WorkflowNode {
   final bool isOptional;
   final bool hasAlternatePath;
   final String? alternateNote;
+  final bool isInSprint;
 
   const _WorkflowNode({
     required this.status,
@@ -617,5 +732,6 @@ class _WorkflowNode {
     this.isOptional = false,
     this.hasAlternatePath = false,
     this.alternateNote,
+    this.isInSprint = false,
   });
 }

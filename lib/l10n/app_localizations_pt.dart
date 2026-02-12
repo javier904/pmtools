@@ -63,6 +63,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get agileSprint => 'Sprint';
 
   @override
+  String get agileStatus => 'Stato';
+
+  @override
+  String get agilePermissionErrorBacklog =>
+      'Permesso negato: Solo PO/SM possono spostare nel Backlog';
+
+  @override
   String get actionHide => 'Ocultar Cartas';
 
   @override
@@ -1654,6 +1661,38 @@ class AppLocalizationsPt extends AppLocalizations {
   String get kanbanPrinciple1 => 'Comece com o que você faz agora';
 
   @override
+  String get agileItems => 'itens';
+
+  @override
+  String get agileItemsShort => 'elementi';
+
+  @override
+  String get agileWorkloadAvgItems => 'Media Elementi/Persona';
+
+  @override
+  String get agileKanbanCapacityNote =>
+      'La capacità è calcolata su base settimanale (5 giorni lavorativi).';
+
+  @override
+  String get agilePriority => 'Priorità';
+
+  @override
+  String get agileRoleSRM => 'Service Request Manager';
+
+  @override
+  String get agileRoleSDM => 'Service Delivery Manager';
+
+  @override
+  String get agileRoleTeamMember => 'Membro del Team';
+
+  @override
+  String get agileFrameworkLocked =>
+      'Impossibile cambiare framework per progetti con attività esistenti';
+
+  @override
+  String get agileComingSoon => 'Prossimamente';
+
+  @override
   String get kanbanPrinciple2 =>
       'Concorde em buscar melhorias incrementais e evolutivas';
 
@@ -1950,6 +1989,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get retroNoResults => 'Nenhum resultado';
 
   @override
+  String get agileNoAssignee => 'Não atribuído';
+
+  @override
   String get retroFilterAll => 'Todas';
 
   @override
@@ -2066,7 +2108,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get scrumWorkflowStatusContent =>
-      'In Scrum, il ciclo di vita di una storia segue questi stati:\n\n1. **Product Backlog**: Dove nascono le idee. L\'etichetta \'Refinement\' indica che la storia è in fase di analisi/dettaglio (non è una colonna della board, ma un indicatore).\n2. **Ready**: La storia è pronta per essere lavorata (rispetta la Definition of Ready).\n3. **In Sprint**: Durante il Planning, le storie \'Ready\' vengono spostate nello Sprint.\n4. **In Progress**: La storia è in lavorazione attiva.\n5. **In Review**: La storia è in fase di revisione/code review.\n6. **Done**: La storia è completata e verificata.';
+      'In Scrum, il ciclo di vita di una storia segue questi stati:\n\n**Product Backlog** (visibile solo nel tab Backlog):\n1. **Backlog**: Dove nascono le idee. La storia non è ancora stata analizzata.\n2. **Refinement**: La storia è in fase di analisi/dettaglio. È un\'attività collaborativa di tutto il team (lavoro verso la Definition of Ready).\n3. **Ready**: La storia rispetta la DoR e può essere selezionata allo Sprint Planning. Solo il Product Owner può marcare una storia come Ready.\n\n**Sprint Board** (visibile sulla board durante lo Sprint):\n4. **Da Fare**: Storie \'Ready\' aggiunte allo Sprint.\n5. **In Corso**: Lavoro attivo del team.\n6. **In Revisione**: Revisione/Code Review.\n7. **Fatto**: Storia completata e verificata.';
 
   @override
   String get kanbanWorkflowStatusContent =>
@@ -2095,7 +2137,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get contextualHelpBacklogTip2 =>
-      'Fai refinement regolare per dettagliare le storie';
+      'Collabora col team nel Refinement per dettagliare le storie';
 
   @override
   String get contextualHelpBacklogTip3 =>
@@ -2828,9 +2870,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get agileAssignee => 'Responsável';
-
-  @override
-  String get agileNoAssignee => 'Não atribuído';
 
   @override
   String get agileCreatedBy => 'Criado por';
@@ -4222,6 +4261,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get smartTodoAddChecklistItem => 'Adicionar item ao checklist';
 
   @override
+  String get smartTodoEditItem => 'Modifica voce';
+
+  @override
+  String get smartTodoItemTitle => 'Titolo voce';
+
+  @override
   String get smartTodoAttachments => 'Anexos';
 
   @override
@@ -5224,6 +5269,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sprintBacklog => 'Sprint Backlog';
+
+  @override
+  String get scrumToDo => 'Da Fare';
 
   @override
   String get agileStatusRefinement => 'Refining';
@@ -10858,9 +10906,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get agileDaysRemainingSuffix => 'dias restantes';
 
   @override
-  String get agileItems => 'itens';
-
-  @override
   String get agileItemsMore => 'altri items';
 
   @override
@@ -11704,4 +11749,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get kanbanPoliciesExplicit => 'Policy Esplicite (Note per il team)';
+
+  @override
+  String get agileTeam => 'Team';
+
+  @override
+  String get agileRoleDevelopmentTeam => 'Development Team';
+
+  @override
+  String get agileRoleDevelopmentTeamDesc => 'Membri che eseguono il lavoro';
 }
