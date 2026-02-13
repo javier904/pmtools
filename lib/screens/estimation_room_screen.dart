@@ -303,33 +303,32 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        leading: _selectedSession != null
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  if (_isDeepLink && Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  } else {
-                    _stopPresenceHeartbeat();
-                    _storiesSubscription?.cancel();
-                    setState(() => _selectedSession = null);
-                    // Aggiorna l'URL del browser al dashboard
-                    SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room'));
-                  }
-                },
-                tooltip: l10n.estimationBackToSessions,
-              )
-            : IconButton(
-                icon: const Icon(Icons.arrow_back),
-                tooltip: l10n.goToHome,
-                onPressed: () {
-                   if (Navigator.of(context).canPop()) {
-                     Navigator.of(context).pop();
-                   } else {
-                     Navigator.of(context).pushReplacementNamed('/home');
-                   }
-                },
-              ),
+        leading: IconButton(
+          key: const ValueKey('appbar_back_button'),
+          icon: const Icon(Icons.arrow_back),
+          tooltip: _selectedSession != null 
+              ? l10n.estimationBackToSessions 
+              : l10n.goToHome,
+          onPressed: () {
+            if (_selectedSession != null) {
+              if (_isDeepLink && Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                _stopPresenceHeartbeat();
+                _storiesSubscription?.cancel();
+                setState(() => _selectedSession = null);
+                // Aggiorna l'URL del browser al dashboard
+                SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room'));
+              }
+            } else {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.of(context).pushReplacementNamed('/home');
+              }
+            }
+          },
+        ),
         title: Row(
           children: [
             Icon(_selectedSession != null ? Icons.analytics : Icons.casino_rounded),
