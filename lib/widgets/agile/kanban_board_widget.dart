@@ -1070,10 +1070,8 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     final sprint = widget.sprints.where((s) => s.id == story.sprintId).firstOrNull;
     final policyService = KanbanPolicyService(l10n);
     
-    // Check time-based passive policies
+    // Unified policy calculation for all states
     final timeViolation = policyService.checkTimePolicy(story, column);
-    
-    // Check logic-based active policies (reusing validateMove as it checks current state too)
     final logicViolations = policyService.validateMove(story, column, columnStories);
     
     final policyWarnings = [
@@ -1091,18 +1089,19 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           width: 280,
           child: Opacity(
             opacity: 0.9,
-            child: StoryCardWidget(
-               key: ValueKey('feedback_${story.id}'),
-               story: story,
-               sprintName: sprint?.name,
-               isSprintCompleted: sprint?.status == SprintStatus.completed,
-               teamMembers: widget.teamMembers,
-               policyWarnings: policyWarnings,
-               onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null, // NEW
-               framework: widget.framework,
-               isBoardContext: true,
-               canMarkAsReady: widget.canMarkAsReady,
-             ),
+               child: StoryCardWidget(
+                  key: ValueKey('feedback_${story.id}'),
+                  story: story,
+                  sprintName: sprint?.name,
+                  isSprintCompleted: sprint?.status == SprintStatus.completed,
+                  teamMembers: widget.teamMembers,
+                  policyWarnings: policyWarnings,
+                  onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null,
+                  framework: widget.framework,
+                  isBoardContext: true,
+                  canMarkAsReady: widget.canMarkAsReady,
+                  compactMode: true,
+                ),
           ),
         ),
       ),
@@ -1115,10 +1114,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           isSprintCompleted: sprint?.status == SprintStatus.completed,
           teamMembers: widget.teamMembers,
           policyWarnings: policyWarnings,
-          onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null, // NEW
+          onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null,
           framework: widget.framework,
           isBoardContext: true,
           canMarkAsReady: widget.canMarkAsReady,
+          compactMode: true,
         ),
       ),
       child: Padding(
@@ -1129,7 +1129,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           sprintName: sprint?.name,
           isSprintCompleted: sprint?.status == SprintStatus.completed,
           teamMembers: widget.teamMembers,
-          policyWarnings: _getPolicyWarnings(story, column.id),
+          policyWarnings: policyWarnings,
           onTap: widget.onStoryTap != null ? () => widget.onStoryTap!(story) : null,
           framework: widget.framework,
           canMoveToBacklog: widget.canMoveToBacklog,
@@ -1150,34 +1150,13 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           onAssigneeChange: widget.onAssigneeChange != null
               ? (email) => widget.onAssigneeChange!(story, email)
               : null,
-          onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null, // NEW
+          onDelete: widget.onStoryDelete != null ? () => widget.onStoryDelete!(story.id) : null,
           compactMode: true,
         ),
       ),
     );
   }
 
-  List<String> _getPolicyWarnings(UserStoryModel story, String columnId) {
-    if (!widget.showPolicies) return [];
-    
-    // Find column config
-    final column = widget.columns.firstWhere(
-      (c) => c.id == columnId, 
-      orElse: () => widget.columns.first
-    );
-    
-    final l10n = AppLocalizations.of(context);
-    final service = KanbanPolicyService(l10n);
-    final warnings = <String>[];
-
-    // Check time policies
-    final timeViolation = service.checkTimePolicy(story, column);
-    if (timeViolation != null) {
-      warnings.add(timeViolation.message);
-    }
-    
-    return warnings;
-  }
 
   void _showWipConfigDialog(KanbanColumnConfig column) {
     final l10n = AppLocalizations.of(context);

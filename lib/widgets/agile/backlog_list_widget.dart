@@ -495,6 +495,7 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         physics: widget.physics,
         padding: const EdgeInsets.all(16),
         itemCount: stories.length,
+        buildDefaultDragHandles: false, // Disable default right-side handles
         onReorder: (oldIndex, newIndex) {
           if (newIndex > oldIndex) newIndex--;
           final newOrder = List<String>.from(stories.map((s) => s.id));

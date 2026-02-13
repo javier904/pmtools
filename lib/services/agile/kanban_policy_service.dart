@@ -88,16 +88,24 @@ class KanbanPolicyService {
         break;
         
       case 'kanbanPolicyAllAcceptanceMet':
-        if (story.acceptanceCriteria.isNotEmpty) {
-          final completed = story.completedAcceptanceCriteria;
-          final total = story.acceptanceCriteria.length;
-          if (completed < total) {
-            return KanbanPolicyViolation(
-              policyId: policyId,
-              message: l10n.kanbanPolicyAllAcceptanceMet,
-              isBlocking: false, 
-            );
-          }
+        // Policy: "All acceptance criteria met"
+        // If there are no criteria, it's a violation because you can't meet "all" of nothing in a completion context
+        if (story.acceptanceCriteria.isEmpty) {
+          return KanbanPolicyViolation(
+            policyId: policyId,
+            message: l10n.kanbanPolicyAllAcceptanceMet,
+            isBlocking: false,
+          );
+        }
+        
+        final completed = story.completedAcceptanceCriteria;
+        final total = story.acceptanceCriteria.length;
+        if (completed < total) {
+          return KanbanPolicyViolation(
+            policyId: policyId,
+            message: l10n.kanbanPolicyAllAcceptanceMet,
+            isBlocking: false, 
+          );
         }
         break;
         

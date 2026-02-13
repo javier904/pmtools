@@ -183,14 +183,17 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              Row(
+              // Metadata (ID, Points, Integration)
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
                     widget.story.storyId,
                     style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                   ),
                   if (widget.story.externalIntegration != null) ...[
-                    const SizedBox(width: 8),
                     Icon(Icons.link, size: 12, color: Colors.blue[700]),
                     const SizedBox(width: 2),
                     Text(
@@ -198,24 +201,30 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
                       style: TextStyle(fontSize: 11, color: Colors.blue[700], fontWeight: FontWeight.bold),
                     ),
                   ],
-                  if (widget.story.storyPoints != null) ...[
-                    const SizedBox(width: 8),
+                  if (widget.story.storyPoints != null)
                     _buildPointsBadge(),
-                  ],
                 ],
               ),
             ],
           ),
         ),
-        // Status badge
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 100),
-          child: _buildStatusBadge(),
+        // Status & Policy area
+        Flexible(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 90),
+                child: _buildStatusBadge(),
+              ),
+              if (widget.policyWarnings.isNotEmpty) ... [
+                const SizedBox(width: 4),
+                _buildPolicyWarningBadge(context),
+              ],
+            ],
+          ),
         ),
-        if (widget.policyWarnings.isNotEmpty) ... [
-          const SizedBox(width: 8),
-          _buildPolicyWarningBadge(context),
-        ],
       ],
     );
   }
@@ -231,18 +240,16 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
     final story = widget.story;
     
     // Right Side Items (Priority, Points, Menu)
-    final headerRightItems = <Widget>[
+    // Right Side Badges only (Priority, Points)
+    final headerBadges = <Widget>[
       if (widget.onPriorityChange != null)
         _buildPriorityDropdown(context)
       else
         _buildPriorityBadge(),
-      const SizedBox(width: 8),
       if (widget.onStoryPointsChange != null)
         _buildPointsDropdown(context)
       else if (story.storyPoints != null)
         _buildPointsBadge(),
-       const SizedBox(width: 8),
-       _buildMenuButton(),
     ];
 
     return IntrinsicHeight(
@@ -360,20 +367,36 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           
           const SizedBox(width: 12),
           
-          // Right Sidebar
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          // Right Sidebar area: Badges + Actions Column (Intrinsic width to push to end)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Top Actions
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: headerRightItems,
-              ),
-              // Bottom Assignee
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: _buildAssigneeAvatar(context),
+              // 1. Badges Area
+              if (headerBadges.isNotEmpty)
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 160),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      alignment: WrapAlignment.end,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: headerBadges,
+                    ),
+                  ),
+                ),
+              
+              const SizedBox(width: 8),
+
+              // 2. Actions Column (Menu + Avatar) - Dedicated vertical stack
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center, // Perfect vertical alignment
+                children: [
+                  _buildMenuButton(),
+                  _buildAssigneeAvatar(context),
+                ],
               ),
             ],
           ),
@@ -464,29 +487,34 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
         
         const SizedBox(height: 8),
 
+        // Context Footer (Flexible)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                 Flexible(
-                   child: widget.onStatusChange != null
-                    ? _buildStatusDropdown(context, compact: true)
-                    : _buildStatusBadge(compact: true),
-                 ),
-                 const SizedBox(width: 8),
-                 if (story.acceptanceCriteria.isNotEmpty) ...[
-                    Icon(Icons.checklist, size: 14, color: context.textSecondaryColor),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
-                      style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
-                    ),
-                 ],
-              ],
+            Expanded( // Use Expanded to ensure left part is constrained
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                   Flexible(
+                     child: widget.onStatusChange != null
+                      ? _buildStatusDropdown(context, compact: true)
+                      : _buildStatusBadge(compact: true),
+                   ),
+                   const SizedBox(width: 8),
+                   if (story.acceptanceCriteria.isNotEmpty) ...[
+                      Icon(Icons.checklist, size: 14, color: context.textSecondaryColor),
+                      const SizedBox(width: 2),
+                      Text(
+                        '${story.completedAcceptanceCriteria}/${story.acceptanceCriteria.length}',
+                        style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                   ],
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             _buildAssigneeAvatar(context),
           ],
         ),
@@ -596,12 +624,15 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
            children: [
              const Icon(Icons.link, size: 10, color: Colors.blue),
              const SizedBox(width: 4),
-             Text(
-               widget.story.externalIntegration!.externalId,
-               style: const TextStyle(
-                 fontSize: 9,
-                 color: Colors.blue,
-                 fontWeight: FontWeight.bold,
+             Flexible(
+               child: Text(
+                 widget.story.externalIntegration!.externalId,
+                 style: const TextStyle(
+                   fontSize: 9,
+                   color: Colors.blue,
+                   fontWeight: FontWeight.bold,
+                 ),
+                 overflow: TextOverflow.ellipsis,
                ),
              ),
            ],
@@ -774,12 +805,15 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           Icon(widget.story.priority.icon, size: 12, color: widget.story.priority.color),
           if (!compact) ...[
             const SizedBox(width: 4),
-            Text(
-              widget.story.priority.displayName,
-              style: TextStyle(
-                fontSize: 10,
-                color: widget.story.priority.color,
-                fontWeight: FontWeight.w600,
+            Flexible(
+              child: Text(
+                widget.story.priority.displayName,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: widget.story.priority.color,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -806,12 +840,15 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
               Icon(widget.story.priority.icon, size: 12, color: widget.story.priority.color),
               if (!compact) ...[
                 const SizedBox(width: 4),
-                Text(
-                  widget.story.priority.displayName,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: widget.story.priority.color,
-                    fontWeight: FontWeight.w600,
+                Flexible(
+                  child: Text(
+                    widget.story.priority.displayName,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: widget.story.priority.color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 2),
@@ -846,12 +883,15 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
         children: [
           const Icon(Icons.stars, size: 12, color: Colors.green),
           const SizedBox(width: 4),
-          Text(
-            '${widget.story.storyPoints}',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              '${widget.story.storyPoints}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -879,12 +919,15 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           children: [
             const Icon(Icons.stars, size: 12, color: Colors.green),
             const SizedBox(width: 4),
-            Text(
-              '${widget.story.storyPoints ?? 0} pts',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
+            Flexible(
+              child: Text(
+                '${widget.story.storyPoints ?? 0} pts',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
              const SizedBox(width: 4),
