@@ -303,12 +303,16 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          key: const ValueKey('appbar_back_button'),
-          icon: const Icon(Icons.arrow_back),
-          tooltip: _selectedSession != null 
-              ? l10n.estimationBackToSessions 
-              : l10n.goToHome,
+        leading: Center(
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: IconButton(
+              key: const ValueKey('appbar_back_button_v2'),
+              icon: const Icon(Icons.arrow_back),
+              tooltip: _selectedSession != null 
+                  ? l10n.estimationBackToSessions 
+                  : l10n.goToHome,
           onPressed: () {
             if (_selectedSession != null) {
               if (_isDeepLink && Navigator.of(context).canPop()) {
@@ -326,8 +330,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
               } else {
                 Navigator.of(context).pushReplacementNamed('/home');
               }
-            }
-          },
+                }
+              },
+            ),
+          ),
         ),
         title: Row(
           children: [
