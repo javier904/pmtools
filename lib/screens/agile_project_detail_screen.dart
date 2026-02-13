@@ -3816,7 +3816,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     // FAB diverso in base alla tab
     switch (_tabController.index) {
       case 0: // Backlog
-        if (project.canCreateStory(_currentUserEmail)) {
+        if (project.canCreateStory(_currentUserEmail) && project.framework == AgileFramework.scrum) {
           return FloatingActionButton.extended(
             onPressed: () => _showCreateStoryDialog(project),
             icon: const Icon(Icons.add),
@@ -3825,7 +3825,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         }
         return null;
       case 1: // Sprint
-        if (project.canManageSprints(_currentUserEmail)) {
+        if (project.canManageSprints(_currentUserEmail) && project.framework == AgileFramework.scrum) {
           return FloatingActionButton.extended(
             onPressed: () => _showCreateSprintDialog(project),
             icon: const Icon(Icons.add),
