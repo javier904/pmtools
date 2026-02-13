@@ -291,6 +291,7 @@ class AgileFirestoreService {
       sprintId: sprintId,
       storyPoints: storyPoints,
       status: status,
+      statusChangedAt: DateTime.now(), // Set initial status change time
       isEstimated: storyPoints != null,
     );
 
@@ -410,6 +411,7 @@ Future<void> updateStoryStatus(
   
   final updates = <String, dynamic>{
     'status': newStatus.name,
+    'statusChangedAt': FieldValue.serverTimestamp(), // Track when status changes
     'updatedAt': FieldValue.serverTimestamp(),
   };
 
