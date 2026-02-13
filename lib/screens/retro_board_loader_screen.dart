@@ -1,33 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:agile_tools/services/auth_service.dart';
 import 'package:agile_tools/screens/retrospective_board_screen.dart';
 
-class RetroBoardLoaderScreen extends StatelessWidget {
+class RetroBoardLoaderScreen extends StatefulWidget {
   const RetroBoardLoaderScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<RetroBoardLoaderScreen> createState() => _RetroBoardLoaderScreenState();
+}
+
+class _RetroBoardLoaderScreenState extends State<RetroBoardLoaderScreen> {
+  String? _retroId;
+  String? _email;
+  String? _name;
+  bool _urlSynced = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
     final authService = AuthService();
     final user = authService.currentUser;
-    final email = user?.email ?? '';
-    final name = user?.displayName ?? 'User';
+    _email = user?.email ?? '';
+    _name = user?.displayName ?? 'User';
 
-    if (email.isEmpty) {
+    if (_email!.isNotEmpty && !_urlSynced) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is Map<String, dynamic>) {
+        _retroId = args['id'] as String? ?? args['retroId'] as String?;
+        if (_retroId != null && _retroId!.isNotEmpty) {
+          // Aggiorna l'URL del browser con il retroId
+          SystemNavigator.routeInformationUpdated(
+            uri: Uri.parse('/retrospective-board/$_retroId'),
+          );
+          _urlSynced = true;
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_email == null || _email!.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Error')),
         body: const Center(child: Text('Authentication required')),
       );
     }
 
-    final args = ModalRoute.of(context)?.settings.arguments;
-    String? retroId;
-
-    // Support both 'id' and 'retroId' keys for flexibility
-    if (args is Map<String, dynamic>) {
-      retroId = args['id'] as String? ?? args['retroId'] as String?;
-    }
-
-    if (retroId == null || retroId.isEmpty) {
+    if (_retroId == null || _retroId!.isEmpty) {
+      final args = ModalRoute.of(context)?.settings.arguments;
       return Scaffold(
         appBar: AppBar(
           title: const Text('Error'),
@@ -44,7 +67,8 @@ class RetroBoardLoaderScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const Text('Retrospective ID missing'),
               const SizedBox(height: 8),
-              Text('Args received: $args', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text('Args received: $args', 
+                style: const TextStyle(fontSize: 12, color: Colors.grey)),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pushReplacementNamed('/retrospective-list'),
@@ -57,9 +81,9 @@ class RetroBoardLoaderScreen extends StatelessWidget {
     }
 
     return RetroBoardScreen(
-      retroId: retroId,
-      currentUserEmail: email,
-      currentUserName: name,
+      retroId: _retroId!,
+      currentUserEmail: _email!,
+      currentUserName: _name!,
     );
   }
 }

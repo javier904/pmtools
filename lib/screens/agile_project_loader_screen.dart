@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:agile_tools/models/agile_project_model.dart';
 import 'package:agile_tools/services/agile_firestore_service.dart';
 import 'package:agile_tools/screens/agile_project_detail_screen.dart';
@@ -37,6 +38,9 @@ class _AgileProjectLoaderScreenState extends State<AgileProjectLoaderScreen> {
     try {
       final project = await AgileFirestoreService().getProject(projectId);
       if (mounted) {
+        // Aggiorna l'URL del browser con il projectId
+        SystemNavigator.routeInformationUpdated(uri: Uri.parse('/agile-project/$projectId'));
+
         setState(() {
           _project = project;
           _isLoading = false;

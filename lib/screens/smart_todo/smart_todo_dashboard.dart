@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../services/smart_todo_service.dart';
@@ -60,7 +61,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         );
         
         if (targetList != null && mounted) {
-          Navigator.pushReplacement(
+        // Aggiorna l'URL del browser con il listId
+        SystemNavigator.routeInformationUpdated(uri: Uri.parse('/smart-todo/$listId'));
+
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => SmartTodoDetailScreen(list: targetList),

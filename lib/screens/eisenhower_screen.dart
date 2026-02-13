@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rxdart/rxdart.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:url_launcher/url_launcher.dart';
@@ -203,6 +205,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         setState(() {
           _selectedMatrix = matrix;
         });
+        // Aggiorna l'URL del browser con il matrixId
+        SystemNavigator.routeInformationUpdated(uri: Uri.parse('/eisenhower/${matrix.id}'));
         await _loadActivities(id);
       } else {
         // Fallback se non trovato
