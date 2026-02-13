@@ -107,22 +107,15 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
-            tooltip: _viewMode == 'lists'
-                ? (l10n?.smartTodoViewGlobalTasks ?? 'View Global Tasks')
-                : (l10n?.smartTodoViewLists ?? 'View Lists'),
-            onPressed: () => setState(() {
-              if (_viewMode == 'lists') {
-                _viewMode = 'global';
-                // _filterMode = 'all_my'; // Default to "My Tasks" when entering global view
-              } else {
-                _viewMode = 'lists';
-                _filterMode = null; // Clear filter when going back to lists
-              }
-            }),
-          ),
+          // Filter chips
+          _buildFilterChip(l10n?.smartTodoFilterToday ?? 'Today', Icons.today, 'today', currentFilter),
           const SizedBox(width: 8),
+          _buildFilterChip(l10n?.smartTodoFilterMyTasks ?? 'My Tasks', Icons.person_outline, 'all_my', currentFilter),
+          const SizedBox(width: 8),
+          _buildFilterChip(l10n?.smartTodoFilterOwner ?? 'Owner', Icons.folder_shared_outlined, 'owner', currentFilter),
+          const SizedBox(width: 16),
+          Container(width: 1, height: 24, color: Colors.grey[600]), // Divider
+          const SizedBox(width: 16),
           // Archived toggle
           FilterChip(
             label: Text(
@@ -140,6 +133,23 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             ),
             selectedColor: const Color(0xFF00B0FF).withOpacity(0.2),
             showCheckmark: false,
+          ),
+          const SizedBox(width: 16),
+          // View toggle (lists/global)
+          IconButton(
+            icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
+            tooltip: _viewMode == 'lists'
+                ? (l10n?.smartTodoViewGlobalTasks ?? 'View Global Tasks')
+                : (l10n?.smartTodoViewLists ?? 'View Lists'),
+            onPressed: () => setState(() {
+              if (_viewMode == 'lists') {
+                _viewMode = 'global';
+                _filterMode = 'all_my'; // Default to "My Tasks" when entering global view
+              } else {
+                _viewMode = 'lists';
+                _filterMode = null; // Clear filter when going back to lists
+              }
+            }),
           ),
           // Home button
           const SizedBox(width: 8),
