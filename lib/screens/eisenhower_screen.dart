@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:url_launcher/url_launcher.dart';
@@ -82,6 +83,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   bool _isLoading = true;
   bool _isExporting = false;
   bool _isInit = false;
+  bool _isCreating = false;
 
   bool _isDeepLink = false;
 
@@ -315,6 +317,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       _selectedMatrix = null;
       _activities = [];
     });
+    // Aggiorna l'URL del browser al dashboard
+    SystemNavigator.routeInformationUpdated(uri: Uri.parse('/eisenhower'));
     print('👋 Left matrix - presence stopped, subscriptions cancelled');
   }
 
@@ -1885,36 +1889,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   // ══════════════════════════════════════════════════════════════════════════
 
   Future<void> _showCreateMatrixDialog() async {
+    // Prevent duplicate dialogs from rapid tapping
+    if (_isCreating) return;
+    _isCreating = true;
+
     final l10n = AppLocalizations.of(context)!;
-
-    // Verifica limite matrici prima di mostrare il dialog
-    final limitCheck = await _limitsService.canCreateProject(
-      _currentUserEmail ?? '',
-      entityType: 'eisenhower',
-    );
-    if (!limitCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: limitCheck,
-          entityType: 'eisenhower',
-        );
-      }
-      return;
-    }
-
-    // Double-check server-side
-    final serverCheck = await _limitsService.validateServerSide('eisenhower');
-    if (!serverCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: serverCheck,
-          entityType: 'eisenhower',
-        );
-      }
-      return;
-    }
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -1922,6 +1901,42 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     );
 
     if (result != null) {
+      // Validate limits before creating
+      final results = await Future.wait([
+        _limitsService.canCreateProject(
+          _currentUserEmail ?? '',
+          entityType: 'eisenhower',
+        ),
+        _limitsService.validateServerSide('eisenhower'),
+      ]);
+
+      final limitCheck = results[0];
+      final serverCheck = results[1];
+
+      if (!limitCheck.allowed) {
+        if (mounted) {
+          LimitReachedDialog.show(
+            context: context,
+            limitResult: limitCheck,
+            entityType: 'eisenhower',
+          );
+        }
+        _isCreating = false;
+        return;
+      }
+
+      if (!serverCheck.allowed) {
+        if (mounted) {
+          LimitReachedDialog.show(
+            context: context,
+            limitResult: serverCheck,
+            entityType: 'eisenhower',
+          );
+        }
+        _isCreating = false;
+        return;
+      }
+
       try {
         // Il creatore viene automaticamente aggiunto come facilitatore
         await _firestoreService.createMatrix(
@@ -1935,7 +1950,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         _showError('${l10n.errorCreatingMatrix}: $e');
       }
     }
+
+    _isCreating = false;
   }
+
 
   void _showMatrixMenuAtPosition(BuildContext context, EisenhowerMatrixModel matrix, Offset globalPosition) async {
     final l10n = AppLocalizations.of(context)!;
@@ -3142,6 +3160,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       _selectedMatrix = matrix;
       _isLoading = true;
     });
+    // Aggiorna l'URL del browser con il matrixId
+    SystemNavigator.routeInformationUpdated(uri: Uri.parse('/eisenhower/${matrix.id}'));
     await _loadActivities(matrix.id);
     setState(() => _isLoading = false);
   }

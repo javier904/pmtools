@@ -264,21 +264,21 @@ class _FavoriteItemTile extends StatelessWidget {
 
     switch (item.type) {
       case 'todo_list':
-        Navigator.pushNamed(context, '/smart-todo', arguments: {'id': item.resourceId});
+        Navigator.pushNamed(context, '/smart-todo/${item.resourceId}');
         break;
       case 'eisenhower_matrix':
-        Navigator.pushNamed(context, '/eisenhower', arguments: {'id': item.resourceId});
+        Navigator.pushNamed(context, '/eisenhower/${item.resourceId}');
         break;
       case 'agile_project':
-        Navigator.pushNamed(context, '/agile-project', arguments: {'id': item.resourceId});
+        Navigator.pushNamed(context, '/agile-project/${item.resourceId}');
         break;
       case 'retro':
       case 'retrospective':
-        Navigator.pushNamed(context, '/retrospective-board', arguments: {'id': item.resourceId});
+        Navigator.pushNamed(context, '/retrospective-board/${item.resourceId}');
         break;
       case 'poker':
       case 'planning_poker':
-        Navigator.pushNamed(context, '/estimation-room', arguments: {'id': item.resourceId});
+        Navigator.pushNamed(context, '/estimation-room/${item.resourceId}');
         break;
     }
   }

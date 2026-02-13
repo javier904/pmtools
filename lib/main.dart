@@ -18,6 +18,7 @@ import 'screens/agile_project_loader_screen.dart';
 import 'screens/retrospective/retro_global_dashboard.dart';
 import 'screens/retro_board_loader_screen.dart';
 import 'screens/smart_todo/smart_todo_dashboard.dart';
+import 'screens/smart_todo/smart_todo_detail_loader.dart';
 import 'screens/profile_screen.dart';
 import 'themes/app_theme.dart';
 import 'controllers/locale_controller.dart';
@@ -203,13 +204,13 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 '/verify-email': (context) => const VerifyEmailScreen(),
                 '/home': (context) => const _AuthGuard(child: HomeScreen()),
                 '/profile': (context) => const _AuthGuard(child: ProfileScreen()),
-                // '/eisenhower' gestito in onGenerateRoute per supportare arguments
-                // '/estimation-room' gestito in onGenerateRoute per supportare arguments
-                '/agile-process': (context) => const _AuthGuard(child: AgileProcessScreen()),
-                '/agile-project': (context) => const _AuthGuard(child: AgileProjectLoaderScreen()),
+                // '/eisenhower' gestito in onGenerateRoute per supportare URL path con matrixId
+                // '/estimation-room' gestito in onGenerateRoute per supportare URL path con sessionId
+                // '/agile-process' e '/agile-process/{projectId}' gestiti in onGenerateRoute
+                // '/agile-project' gestito in onGenerateRoute per supportare URL path con projectId
                 '/retrospective-list': (context) => const _AuthGuard(child: RetroGlobalDashboard()),
-                '/retrospective-board': (context) => const _AuthGuard(child: RetroBoardLoaderScreen()),
-                '/smart-todo': (context) => const _AuthGuard(child: SmartTodoDashboard()),
+                // '/retrospective-board' gestito in onGenerateRoute per supportare URL path con retroId
+                // '/smart-todo' e '/smart-todo/{listId}' gestiti in onGenerateRoute
                 '/privacy': (context) => const PrivacyPolicyScreen(),
                 '/terms': (context) => const TermsOfServiceScreen(),
                 '/cookies': (context) => const CookiePolicyScreen(),
@@ -219,30 +220,146 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 // Gestione route con arguments
                 final args = settings.arguments as Map<String, dynamic>?;
 
-                // Route /eisenhower (con o senza matrixId)
+                // Route /eisenhower o /eisenhower/{matrixId}
                 if (settings.name == '/eisenhower') {
+                  // Senza matrixId specifico (dashboard)
                   final matrixId = args?['matrixId'] as String?;
                   return MaterialPageRoute(
                     builder: (context) => _AuthGuard(
-                      child: EisenhowerScreen(
-                        initialMatrixId: matrixId,
-                      ),
+                      child: EisenhowerScreen(initialMatrixId: matrixId),
                     ),
                     settings: settings,
                   );
                 }
+                if (settings.name != null && settings.name!.startsWith('/eisenhower/')) {
+                  final pathSegments = settings.name!.split('/');
+                  final matrixId = pathSegments.length >= 3 ? pathSegments[2] : null;
+                  if (matrixId != null && matrixId.isNotEmpty) {
+                    return MaterialPageRoute(
+                      builder: (context) => _AuthGuard(
+                        child: EisenhowerScreen(initialMatrixId: matrixId),
+                      ),
+                      settings: settings,
+                    );
+                  }
+                }
 
-                // Route /estimation-room (con o senza sessionId)
+                // Route /estimation-room o /estimation-room/{sessionId}
                 if (settings.name == '/estimation-room') {
                   final sessionId = args?['sessionId'] as String?;
                   return MaterialPageRoute(
                     builder: (context) => _AuthGuard(
-                      child: EstimationRoomScreen(
-                        initialSessionId: sessionId,
-                      ),
+                      child: EstimationRoomScreen(initialSessionId: sessionId),
                     ),
                     settings: settings,
                   );
+                }
+                if (settings.name != null && settings.name!.startsWith('/estimation-room/')) {
+                  final pathSegments = settings.name!.split('/');
+                  final sessionId = pathSegments.length >= 3 ? pathSegments[2] : null;
+                  if (sessionId != null && sessionId.isNotEmpty) {
+                    return MaterialPageRoute(
+                      builder: (context) => _AuthGuard(
+                        child: EstimationRoomScreen(initialSessionId: sessionId),
+                      ),
+                      settings: settings,
+                    );
+                  }
+                }
+
+                // Route /agile-project o /agile-project/{projectId}
+                if (settings.name == '/agile-project') {
+                  return MaterialPageRoute(
+                    builder: (context) => const _AuthGuard(
+                      child: AgileProjectLoaderScreen(),
+                    ),
+                    settings: settings,
+                  );
+                }
+                if (settings.name != null && settings.name!.startsWith('/agile-project/')) {
+                  final pathSegments = settings.name!.split('/');
+                  final projectId = pathSegments.length >= 3 ? pathSegments[2] : null;
+                  if (projectId != null && projectId.isNotEmpty) {
+                    return MaterialPageRoute(
+                      builder: (context) => _AuthGuard(
+                        child: AgileProjectLoaderScreen(),
+                      ),
+                      settings: RouteSettings(
+                        name: settings.name,
+                        arguments: {'id': projectId},
+                      ),
+                    );
+                  }
+                }
+
+                // Route /agile-process o /agile-process/{projectId}
+                if (settings.name == '/agile-process') {
+                  return MaterialPageRoute(
+                    builder: (context) => const _AuthGuard(
+                      child: AgileProcessScreen(),
+                    ),
+                    settings: settings,
+                  );
+                }
+                if (settings.name != null && settings.name!.startsWith('/agile-process/')) {
+                  final pathSegments = settings.name!.split('/');
+                  final projectId = pathSegments.length >= 3 ? pathSegments[2] : null;
+                  if (projectId != null && projectId.isNotEmpty) {
+                    return MaterialPageRoute(
+                      builder: (context) => _AuthGuard(
+                        child: AgileProcessScreen(initialProjectId: projectId),
+                      ),
+                      settings: settings,
+                    );
+                  }
+                }
+
+                // Route /retrospective-board o /retrospective-board/{retroId}
+                if (settings.name == '/retrospective-board') {
+                  return MaterialPageRoute(
+                    builder: (context) => const _AuthGuard(
+                      child: RetroBoardLoaderScreen(),
+                    ),
+                    settings: settings,
+                  );
+                }
+                if (settings.name != null && settings.name!.startsWith('/retrospective-board/')) {
+                  final pathSegments = settings.name!.split('/');
+                  final retroId = pathSegments.length >= 3 ? pathSegments[2] : null;
+                  if (retroId != null && retroId.isNotEmpty) {
+                    return MaterialPageRoute(
+                      builder: (context) => _AuthGuard(
+                        child: RetroBoardLoaderScreen(),
+                      ),
+                      settings: RouteSettings(
+                        name: settings.name,
+                        arguments: {'retroId': retroId},
+                      ),
+                    );
+                  }
+                }
+
+                // Route /smart-todo (dashboard) o /smart-todo/{listId} (dettaglio)
+                if (settings.name == '/smart-todo') {
+                  return MaterialPageRoute(
+                    builder: (context) => const _AuthGuard(
+                      child: SmartTodoDashboard(),
+                    ),
+                    settings: settings,
+                  );
+                }
+                if (settings.name != null && settings.name!.startsWith('/smart-todo/')) {
+                  final pathSegments = settings.name!.split('/');
+                  // URL: /smart-todo/{listId} → segments: ['', 'smart-todo', '{listId}']
+                  final listId = pathSegments.length >= 3 ? pathSegments[2] : null;
+                  if (listId != null && listId.isNotEmpty) {
+                    return MaterialPageRoute(
+                      builder: (context) => _AuthGuard(
+                        child: SmartTodoDetailLoader(listId: listId),
+                      ),
+                      settings: settings,
+                    );
+                  }
                 }
 
                 // Deep link per inviti: /invite/{type}/{sourceId}
@@ -315,10 +432,13 @@ class _AuthGuard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use currentUser as initialData to prevent flash redirect on refresh
+    final currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
+      initialData: currentUser,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting && currentUser == null) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
@@ -343,11 +463,14 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use currentUser as initialData to prevent flash redirect on refresh
+    final currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder<User?>(
       stream: AuthService().authStateChanges,
+      initialData: currentUser,
       builder: (context, snapshot) {
-        // Loading
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        // Loading — only show spinner if no cached user exists
+        if (snapshot.connectionState == ConnectionState.waiting && currentUser == null) {
           final l10n = AppLocalizations.of(context);
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,

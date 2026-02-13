@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/agile_project_model.dart';
 import '../models/agile_enums.dart';
 import '../models/team_member_model.dart';
@@ -23,7 +24,9 @@ import '../widgets/subscription/limit_reached_dialog.dart';
 /// - Creazione/modifica/eliminazione progetti
 /// - Navigazione al dettaglio progetto
 class AgileProcessScreen extends StatefulWidget {
-  const AgileProcessScreen({super.key});
+  final String? initialProjectId;
+
+  const AgileProcessScreen({super.key, this.initialProjectId});
 
   @override
   State<AgileProcessScreen> createState() => _AgileProcessScreenState();
@@ -45,6 +48,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   Timer? _debounce;
   String _statusFilter = 'all'; // 'all', 'active', 'completed'
   bool _showArchived = false;
+  bool _isCreating = false;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _authService.currentUser?.displayName ?? 'Utente';
@@ -80,7 +84,24 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           _showGuide('Seleziona un progetto per accedere alle sue Retrospettive 🚀');
         });
       }
+
+      // Auto-navigate to project if initialProjectId is provided
+      if (widget.initialProjectId != null) {
+        _loadInitialProject(widget.initialProjectId!);
+      }
+
       _hasCheckedArgs = true;
+    }
+  }
+
+  Future<void> _loadInitialProject(String projectId) async {
+    try {
+      final project = await _firestoreService.getProject(projectId);
+      if (project != null && mounted) {
+        _openProjectDetail(project);
+      }
+    } catch (e) {
+      // Fallback: resta sulla lista progetti
     }
   }
 
@@ -884,10 +905,14 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     return AgileProjectDetailScreen(
       project: _selectedProject!,
       initialIndex: _initialDetailIndex,
-      onBack: () => setState(() {
-        _selectedProject = null;
-        _initialDetailIndex = 0; // Reset index on back
-      }),
+      onBack: () {
+        setState(() {
+          _selectedProject = null;
+          _initialDetailIndex = 0; // Reset index on back
+        });
+        // Aggiorna l'URL del browser al dashboard
+        SystemNavigator.routeInformationUpdated(uri: Uri.parse('/agile-process'));
+      },
     );
   }
 
@@ -914,37 +939,14 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
       _selectedProject = project;
       _initialDetailIndex = initialIndex;
     });
+    // Aggiorna l'URL del browser con il projectId
+    SystemNavigator.routeInformationUpdated(uri: Uri.parse('/agile-process/${project.id}'));
   }
 
   Future<void> _showCreateProjectDialog() async {
-    // Verifica limite progetti prima di mostrare il dialog
-    final limitCheck = await _limitsService.canCreateProject(
-      _currentUserEmail,
-      entityType: 'agile_project',
-    );
-    if (!limitCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: limitCheck,
-          entityType: 'agile_project',
-        );
-      }
-      return;
-    }
-
-    // Double-check server-side
-    final serverCheck = await _limitsService.validateServerSide('agile_project');
-    if (!serverCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: serverCheck,
-          entityType: 'agile_project',
-        );
-      }
-      return;
-    }
+    // Prevent duplicate dialogs from rapid tapping
+    if (_isCreating) return;
+    _isCreating = true;
 
     final result = await AgileProjectFormDialog.show(
       context,
@@ -953,6 +955,42 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     );
 
     if (result != null && mounted) {
+      // Validate limits before creating
+      final results = await Future.wait([
+        _limitsService.canCreateProject(
+          _currentUserEmail,
+          entityType: 'agile_project',
+        ),
+        _limitsService.validateServerSide('agile_project'),
+      ]);
+
+      final limitCheck = results[0];
+      final serverCheck = results[1];
+
+      if (!limitCheck.allowed) {
+        if (mounted) {
+          LimitReachedDialog.show(
+            context: context,
+            limitResult: limitCheck,
+            entityType: 'agile_project',
+          );
+        }
+        _isCreating = false;
+        return;
+      }
+
+      if (!serverCheck.allowed) {
+        if (mounted) {
+          LimitReachedDialog.show(
+            context: context,
+            limitResult: serverCheck,
+            entityType: 'agile_project',
+          );
+        }
+        _isCreating = false;
+        return;
+      }
+
       try {
         final project = await _firestoreService.createProject(
           name: result.name,
@@ -982,6 +1020,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         _showError('Errore creazione progetto: $e');
       }
     }
+
+    _isCreating = false;
   }
 
   void _showProjectMenuAtPosition(BuildContext context, AgileProjectModel project, Offset globalPosition, bool isOwner) async {

@@ -72,6 +72,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   PlanningPokerStoryModel? _currentStory;
   String? _myVote;
   bool _isLoading = true;
+  bool _isCreating = false;
 
   // Stream subscription per aggiornamenti real-time delle storie
   StreamSubscription<List<PlanningPokerStoryModel>>? _storiesSubscription;
@@ -252,6 +253,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         setState(() {
           _selectedSession = session;
         });
+        // Aggiorna l'URL del browser con il sessionId
+        SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room/${session.id}'));
         await _loadStories(session.id);
         _startPresenceTracking(); // Avvia tracking presenza
       }
@@ -310,6 +313,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                     _stopPresenceHeartbeat();
                     _storiesSubscription?.cancel();
                     setState(() => _selectedSession = null);
+                    // Aggiorna l'URL del browser al dashboard
+                    SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room'));
                   }
                 },
                 tooltip: l10n.estimationBackToSessions,
@@ -450,6 +455,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
             _currentStory = null;
             _myVote = null;
           });
+          // Aggiorna l'URL del browser al dashboard
+          SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room'));
         },
       ),
       const SizedBox(width: 8),
@@ -1797,36 +1804,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   // ══════════════════════════════════════════════════════════════════════════
 
   Future<void> _showCreateSessionDialog() async {
-    // Verifica limite sessioni prima di mostrare il dialog di creazione
-    final limitCheck = await _limitsService.canCreateProject(
-      _currentUserEmail,
-      entityType: 'estimation',
-    );
-
-    if (!limitCheck.allowed) {
-      // Mostra dialog limite raggiunto
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: limitCheck,
-          entityType: 'estimation',
-        );
-      }
-      return;
-    }
-
-    // Double-check server-side
-    final serverCheck = await _limitsService.validateServerSide('estimation');
-    if (!serverCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: serverCheck,
-          entityType: 'estimation',
-        );
-      }
-      return;
-    }
+    // Prevent duplicate dialogs from rapid tapping
+    if (_isCreating) return;
+    _isCreating = true;
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -1834,6 +1814,42 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     );
 
     if (result != null) {
+      // Validate limits before creating
+      final results = await Future.wait([
+        _limitsService.canCreateProject(
+          _currentUserEmail,
+          entityType: 'estimation',
+        ),
+        _limitsService.validateServerSide('estimation'),
+      ]);
+
+      final limitCheck = results[0];
+      final serverCheck = results[1];
+
+      if (!limitCheck.allowed) {
+        if (mounted) {
+          LimitReachedDialog.show(
+            context: context,
+            limitResult: limitCheck,
+            entityType: 'estimation',
+          );
+        }
+        _isCreating = false;
+        return;
+      }
+
+      if (!serverCheck.allowed) {
+        if (mounted) {
+          LimitReachedDialog.show(
+            context: context,
+            limitResult: serverCheck,
+            entityType: 'estimation',
+          );
+        }
+        _isCreating = false;
+        return;
+      }
+
       try {
         await _firestoreService.createSession(
           name: result['name'],
@@ -1858,7 +1874,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         _showError('${l10n.errorCreatingSession}: $e');
       }
     }
+
+    _isCreating = false;
   }
+
 
   void _showSessionMenuAtPosition(BuildContext context, PlanningPokerSessionModel session, Offset globalPosition) async {
     final l10n = AppLocalizations.of(context)!;
@@ -2453,6 +2472,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
       _selectedSession = session;
       _isLoading = true;
     });
+    // Aggiorna l'URL del browser con il sessionId
+    SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room/${session.id}'));
     await _loadStories(session.id);
 
     // Set up stream subscription for real-time updates

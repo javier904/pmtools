@@ -28,6 +28,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   final TextEditingController _searchController = TextEditingController();
   RetroStatus? _selectedFilter; // null = All
   bool _showArchived = false;
+  bool _isCreating = false;
 
   // State
   RetroTemplate selectedTemplate = RetroTemplate.startStopContinue; // Added
@@ -306,15 +307,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   }
 
   void _navigateToBoard(RetrospectiveModel retro) {
-    Navigator.push(
+    Navigator.pushNamed(
       context,
-      MaterialPageRoute(
-        builder: (context) => RetroBoardScreen(
-          retroId: retro.id,
-          currentUserEmail: _currentUserEmail,
-          currentUserName: _currentUserName,
-        ),
-      ),
+      '/retrospective-board/${retro.id}',
     );
   }
 
@@ -400,34 +395,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   }
 
   Future<void> _showCreateStandaloneDialog() async {
-    // Verifica limite retrospettive prima di mostrare il dialog
-    final limitCheck = await _limitsService.canCreateProject(
-      _currentUserEmail,
-      entityType: 'retrospective',
-    );
-    if (!limitCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: limitCheck,
-          entityType: 'retrospective',
-        );
-      }
-      return;
-    }
-
-    // Double-check server-side
-    final serverCheck = await _limitsService.validateServerSide('retrospective');
-    if (!serverCheck.allowed) {
-      if (mounted) {
-        LimitReachedDialog.show(
-          context: context,
-          limitResult: serverCheck,
-          entityType: 'retrospective',
-        );
-      }
-      return;
-    }
+    // Prevent duplicate dialogs from rapid tapping
+    if (_isCreating) return;
+    _isCreating = true;
 
     final titleController = TextEditingController();
     RetroTemplate selectedTemplate = RetroTemplate.startStopContinue;
@@ -459,7 +429,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
        loadingProjects = false;
     });
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) => Theme(
         data: Theme.of(context).copyWith(
@@ -795,7 +765,43 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     final retroTitle = title.isEmpty && selectedSprint != null 
                         ? selectedSprint!.name 
                         : title;
-  
+
+                    // Validate limits before creating
+                    final results = await Future.wait([
+                      _limitsService.canCreateProject(
+                        _currentUserEmail,
+                        entityType: 'retrospective',
+                      ),
+                      _limitsService.validateServerSide('retrospective'),
+                    ]);
+
+                    final limitCheck = results[0];
+                    final serverCheck = results[1];
+
+                    if (!limitCheck.allowed) {
+                      if (context.mounted) Navigator.pop(context);
+                      if (this.mounted) {
+                        LimitReachedDialog.show(
+                          context: this.context,
+                          limitResult: limitCheck,
+                          entityType: 'retrospective',
+                        );
+                      }
+                      return;
+                    }
+
+                    if (!serverCheck.allowed) {
+                      if (context.mounted) Navigator.pop(context);
+                      if (this.mounted) {
+                        LimitReachedDialog.show(
+                          context: this.context,
+                          limitResult: serverCheck,
+                          entityType: 'retrospective',
+                        );
+                      }
+                      return;
+                    }
+
                     // Crea modello
                     final newRetro = RetrospectiveModel(
                       id: '', // Sarà generato dal service
@@ -832,6 +838,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         ),
       ),
     );
+
+    _isCreating = false;
   }
 
   String _getPhaseName(RetroPhase phase, AppLocalizations l10n) {
