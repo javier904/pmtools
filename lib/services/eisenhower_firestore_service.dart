@@ -166,6 +166,41 @@ class EisenhowerFirestoreService {
     });
   }
 
+  /// Get all matrices for a specific user as a one-shot Future (for search).
+  /// Uses direct Firestore get() queries instead of streams to avoid race conditions.
+  Future<List<EisenhowerMatrixModel>> getMatricesByUser(String userEmail) async {
+    final normalizedEmail = userEmail.toLowerCase();
+
+    try {
+      final allMatrices = <String, EisenhowerMatrixModel>{};
+
+      // Query 1: Matrici create dall'utente
+      final ownedSnapshot = await _matricesRef
+          .where('createdBy', isEqualTo: normalizedEmail)
+          .get();
+      for (final doc in ownedSnapshot.docs) {
+        final matrix = EisenhowerMatrixModel.fromFirestore(doc);
+        allMatrices[matrix.id] = matrix;
+      }
+
+      // Query 2: Matrici dove l'utente è partecipante
+      final participantSnapshot = await _matricesRef
+          .where('participantEmails', arrayContains: normalizedEmail)
+          .get();
+      for (final doc in participantSnapshot.docs) {
+        final matrix = EisenhowerMatrixModel.fromFirestore(doc);
+        allMatrices[matrix.id] = matrix;
+      }
+
+      final result = allMatrices.values.toList();
+      result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return result;
+    } catch (e) {
+      print('❌ Error getMatricesByUser: $e');
+      return [];
+    }
+  }
+
   /// Stream real-time delle matrici di un utente specifico
   ///
   /// Include matrici create dall'utente E matrici dove l'utente è partecipante.

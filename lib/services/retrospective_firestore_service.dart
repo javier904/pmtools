@@ -126,6 +126,43 @@ class RetrospectiveFirestoreService {
     });
   }
 
+  /// Get all retrospectives for a user as a one-shot Future (for search).
+  /// Uses direct Firestore get() queries instead of streams to avoid race conditions.
+  Future<List<RetrospectiveModel>> getUserRetrosOnce(String userEmail) async {
+    if (userEmail.isEmpty) return [];
+
+    final lowerEmail = userEmail.toLowerCase();
+    final retrosMap = <String, RetrospectiveModel>{};
+
+    try {
+      // Query 1: Retros where user is participant
+      final participantSnapshot = await _retrosCollection
+          .where('participantEmails', arrayContains: lowerEmail)
+          .get();
+      for (final doc in participantSnapshot.docs) {
+        final retro = RetrospectiveModel.fromFirestore(doc);
+        retrosMap[retro.id] = retro;
+      }
+
+      // Query 2: Retros created by user (legacy support)
+      final createdBySnapshot = await _retrosCollection
+          .where('createdBy', isEqualTo: lowerEmail)
+          .get();
+      for (final doc in createdBySnapshot.docs) {
+        if (!retrosMap.containsKey(doc.id)) {
+          retrosMap[doc.id] = RetrospectiveModel.fromFirestore(doc);
+        }
+      }
+
+      final result = retrosMap.values.toList();
+      result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return result;
+    } catch (e) {
+      print('Error getUserRetrosOnce: $e');
+      return [];
+    }
+  }
+
   /// Stream di tutte le retrospettive visibili a un utente (Progetto + Standalone)
   /// Unisce i risultati di 'participantEmails' e 'createdBy' per supportare dati legacy.
   Stream<List<RetrospectiveModel>> streamUserRetrospectives(String userEmail) {

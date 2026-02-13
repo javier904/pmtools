@@ -22,38 +22,23 @@ class GlobalSearchService {
     if (query.trim().isEmpty) return [];
 
     final lowercaseQuery = query.toLowerCase();
-    List<SearchResultItem> results = [];
 
-    // Parallel execution for performance
-    // debugPrint('GlobalSearch: Starting search for "$query" (includeArchived: $includeArchived)');
-    await Future.wait([
-      _searchProjects(lowercaseQuery, userEmail, includeArchived).then((r) {
-         // debugPrint('GlobalSearch: Found ${r.length} Projects');
-         results.addAll(r);
-      }),
-      _searchTodos(lowercaseQuery, userEmail, includeArchived).then((r) {
-         // debugPrint('GlobalSearch: Found ${r.length} Todos');
-         results.addAll(r);
-      }),
-      _searchRetros(lowercaseQuery, userEmail, includeArchived).then((r) {
-         // debugPrint('GlobalSearch: Found ${r.length} Retros');
-         results.addAll(r);
-      }),
-      _searchEstimationSessions(lowercaseQuery, userEmail, includeArchived).then((r) {
-         // debugPrint('GlobalSearch: Found ${r.length} Estimations');
-         results.addAll(r);
-      }),
-      _searchEisenhowerMatrices(lowercaseQuery, userEmail, includeArchived).then((r) {
-         // debugPrint('GlobalSearch: Found ${r.length} Matrices');
-         results.addAll(r);
-      }),
+    // Collect results safely as return values from Future.wait
+    final results = await Future.wait([
+      _searchProjects(lowercaseQuery, userEmail, includeArchived),
+      _searchTodos(lowercaseQuery, userEmail, includeArchived),
+      _searchRetros(lowercaseQuery, userEmail, includeArchived),
+      _searchEstimationSessions(lowercaseQuery, userEmail, includeArchived),
+      _searchEisenhowerMatrices(lowercaseQuery, userEmail, includeArchived),
     ]);
 
-    // Sort by relevance (basic implementation: exact matches first) or recency
-    // For now, let's sort by default title
-    results.sort((a, b) => a.title.compareTo(b.title));
+    // Flatten all results
+    final allResults = results.expand((r) => r).toList();
 
-    return results;
+    // Sort by title
+    allResults.sort((a, b) => a.title.compareTo(b.title));
+
+    return allResults;
   }
 
   Future<List<SearchResultItem>> _searchProjects(String query, String userEmail, bool includeArchived) async {
@@ -108,11 +93,13 @@ class GlobalSearchService {
 
   Future<List<SearchResultItem>> _searchRetros(String query, String userEmail, bool includeArchived) async {
     try {
-      final retros = await _retroService.streamUserRetrospectives(userEmail).first;
+      // Use direct get() queries instead of stream.first to avoid race condition
+      final retros = await _retroService.getUserRetrosOnce(userEmail);
 
       return retros.where((r) {
         if (!includeArchived && r.isArchived == true) return false;
-        return r.sprintName.toLowerCase().contains(query);
+        return r.sprintName.toLowerCase().contains(query) ||
+               r.title.toLowerCase().contains(query);
       }).map((r) => SearchResultItem(
         id: r.id,
         title: r.sprintName,
@@ -156,7 +143,8 @@ class GlobalSearchService {
 
   Future<List<SearchResultItem>> _searchEisenhowerMatrices(String query, String userEmail, bool includeArchived) async {
     try {
-      final matrices = await _eisenhowerService.streamMatricesByUser(userEmail).first;
+      // Use direct get() queries instead of stream.first to avoid race condition
+      final matrices = await _eisenhowerService.getMatricesByUser(userEmail);
 
       return matrices.where((m) {
         if (!includeArchived && m.isArchived == true) return false;
@@ -178,3 +166,4 @@ class GlobalSearchService {
     }
   }
 }
+
