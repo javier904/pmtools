@@ -30,7 +30,7 @@ class RetrospectiveExportService {
   /// Genera testo formattato per Clipboard (Markdown/Confluence style)
   String generateClipboardText(RetrospectiveModel retro) {
     final buffer = StringBuffer();
-    buffer.writeln('# Retrospective Report: ${retro.sprintName}');
+    buffer.writeln('# Retrospective Report: ${retro.title.isNotEmpty ? retro.title : retro.sprintName}');
     buffer.writeln('Date: ${retro.createdAt.day}/${retro.createdAt.month}/${retro.createdAt.year}');
     buffer.writeln('Participants: ${retro.activeParticipants.length}');
     buffer.writeln('');

@@ -51,7 +51,8 @@ class RetrospectiveCsvExportService {
       ]);
     }
 
-    await _downloadCsv(rows, 'Retro_ActionItems_${retro.sprintName.replaceAll(' ', '_')}');
+    final name = retro.title.isNotEmpty ? retro.title : retro.sprintName;
+    await _downloadCsv(rows, 'Retro_ActionItems_${name.replaceAll(' ', '_')}');
   }
 
   /// Exports Board Items to CSV
@@ -71,7 +72,8 @@ class RetrospectiveCsvExportService {
       }
     }
 
-    await _downloadCsv(rows, 'Retro_Board_${retro.sprintName.replaceAll(' ', '_')}');
+    final name = retro.title.isNotEmpty ? retro.title : retro.sprintName;
+    await _downloadCsv(rows, 'Retro_Board_${name.replaceAll(' ', '_')}');
   }
 
   /// Exports ALL Data to a single CSV
@@ -80,7 +82,7 @@ class RetrospectiveCsvExportService {
 
     // 1. SUMMARY SECTION
     allRows.add(['=== RETROSPECTIVE SUMMARY ===']);
-    allRows.add(['Sprint', retro.sprintName]);
+    allRows.add(['Name', retro.title.isNotEmpty ? retro.title : retro.sprintName]);
     allRows.add(['Date', DateTime.now().toString().split(' ')[0]]);
     allRows.add(['Participants', retro.participantEmails.length]);
     allRows.add(['Average Sentiment', retro.averageSentiment?.toStringAsFixed(1) ?? 'N/A']);
@@ -141,7 +143,8 @@ class RetrospectiveCsvExportService {
       ]);
     }
 
-    await _downloadCsv(allRows, 'Retro_Full_${retro.sprintName.replaceAll(' ', '_')}');
+    final name = retro.title.isNotEmpty ? retro.title : retro.sprintName;
+    await _downloadCsv(allRows, 'Retro_Full_${name.replaceAll(' ', '_')}');
   }
 
   Future<void> _downloadCsv(List<List<dynamic>> rows, String filename) async {

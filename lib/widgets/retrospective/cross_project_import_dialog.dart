@@ -12,11 +12,13 @@ import 'package:agile_tools/services/lessons_learned_service.dart';
 class CrossProjectImportDialog extends StatefulWidget {
   final String currentProjectId;
   final String currentUserEmail;
+  final String currentUserName;
 
   const CrossProjectImportDialog({
     super.key,
     required this.currentProjectId,
     required this.currentUserEmail,
+    required this.currentUserName,
   });
 
   @override
@@ -118,6 +120,7 @@ class _CrossProjectImportDialogState extends State<CrossProjectImportDialog> {
           widget.currentProjectId,
           lesson,
           widget.currentUserEmail,
+          importerName: widget.currentUserName,
         );
       }
 

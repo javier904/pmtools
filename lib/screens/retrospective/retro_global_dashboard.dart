@@ -163,7 +163,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 if (_searchController.text.isNotEmpty) {
                   final query = _searchController.text.toLowerCase();
                   retros = retros.where((r) => 
-                    r.sprintName.toLowerCase().contains(query)).toList();
+                    r.title.toLowerCase().contains(query) || r.sprintName.toLowerCase().contains(query)).toList();
                 }
 
                 if (_selectedFilter != null) {
@@ -337,7 +337,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
         child: AlertDialog(
           title: Text(AppLocalizations.of(context)!.retroDeleteTitle),
           content: Text(
-              AppLocalizations.of(context)!.retroDeleteConfirm(retro.sprintName)),
+              AppLocalizations.of(context)!.retroDeleteConfirm(retro.title.isNotEmpty ? retro.title : retro.sprintName)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -799,6 +799,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     // Crea modello
                     final newRetro = RetrospectiveModel(
                       id: '', // Sarà generato dal service
+                      title: retroTitle,
                       sprintName: retroTitle,
                       template: selectedTemplate,
                       createdAt: DateTime.now(),
@@ -883,7 +884,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     const SizedBox(height: 8),
                     Text(l10n.retroSessionTitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                     const SizedBox(height: 4),
-                    Text(retro.sprintName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(retro.title.isNotEmpty ? retro.title : retro.sprintName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     Text(l10n.retroTemplateLabel, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                     const SizedBox(height: 4),

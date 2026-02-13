@@ -75,14 +75,14 @@ class RetroSummaryDialog extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  retro.template.getLocalizedDisplayName(l10n),
+                  retro.title.isNotEmpty ? retro.title : retro.template.getLocalizedDisplayName(l10n),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (retro.sprintName.isNotEmpty)
+                if (retro.title.isNotEmpty && retro.title != retro.template.getLocalizedDisplayName(l10n))
                   Text(
-                    retro.sprintName,
+                    retro.template.getLocalizedDisplayName(l10n),
                     style: TextStyle(color: Colors.grey[600]),
                   ),
               ],

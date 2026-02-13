@@ -188,7 +188,7 @@ class RetroListWidget extends StatelessWidget {
                 children: [
                   // Icona template con status dot
                   Tooltip(
-                    message: '${retro.sprintName.isNotEmpty ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) : l10n.retroSprintOnlyLabel(retro.sprintNumber)} - $statusLabel',
+                    message: '${retro.title.isNotEmpty ? retro.title : retro.sprintName} - $statusLabel',
                     child: Container(
                       width: 26,
                       height: 26,
@@ -222,13 +222,9 @@ class RetroListWidget extends StatelessWidget {
                   // Titolo con tooltip
                   Expanded(
                     child: Tooltip(
-                      message: retro.sprintName.isNotEmpty 
-                          ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) 
-                          : l10n.retroSprintOnlyLabel(retro.sprintNumber),
+                      message: retro.title.isNotEmpty ? retro.title : retro.sprintName,
                       child: Text(
-                        retro.sprintName.isNotEmpty 
-                            ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) 
-                            : l10n.retroSprintOnlyLabel(retro.sprintNumber),
+                        retro.title.isNotEmpty ? retro.title : retro.sprintName,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -258,9 +254,7 @@ class RetroListWidget extends StatelessWidget {
                   FavoriteStar(
                     resourceId: retro.id,
                     type: 'retrospective',
-                    title: retro.sprintName.isNotEmpty 
-                        ? l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName) 
-                        : l10n.retroSprintOnlyLabel(retro.sprintNumber),
+                    title: retro.title.isNotEmpty ? retro.title : retro.sprintName,
                     colorHex: '#E91E63',
                     size: 16,
                   ),

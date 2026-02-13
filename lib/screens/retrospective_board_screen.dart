@@ -271,7 +271,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
             appBar: AppBar(
             title: Row(
               children: [
-                Text(retro.sprintName.isNotEmpty ? retro.sprintName : (l10n?.favTypeRetro ?? 'Retrospective')),
+                Text(retro.title.isNotEmpty ? retro.title : (l10n?.favTypeRetro ?? 'Retrospective')),
                 const SizedBox(width: 32),
                 Expanded(
                   child: SingleChildScrollView(
@@ -819,7 +819,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
     RetroParticipantInviteDialog.show(
       context: context,
       boardId: retro.id,
-      boardTitle: retro.sprintName.isNotEmpty ? retro.sprintName : 'Retrospective',
+      boardTitle: retro.title.isNotEmpty ? retro.title : 'Retrospective',
       pendingInvites: pendingInvites,
     );
   }
@@ -1148,7 +1148,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
 
   Future<void> _exportData(RetrospectiveModel retro) async {
     final buffer = StringBuffer();
-    buffer.writeln('Retrospective Export - ${retro.sprintName}');
+    buffer.writeln('Retrospective Export - ${retro.title.isNotEmpty ? retro.title : retro.sprintName}');
     buffer.writeln('Date: ${DateTime.now().toIso8601String()}');
     buffer.writeln('Participants: ${retro.participantEmails.length}');
     buffer.writeln('Sentiment: ${retro.averageSentiment ?? "N/A"}');

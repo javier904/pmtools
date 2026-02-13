@@ -6,12 +6,14 @@ import 'package:agile_tools/services/lessons_learned_service.dart';
 class LessonLearnedDialog extends StatefulWidget {
   final String projectId;
   final String currentUserEmail;
+  final String currentUserName;
   final LessonLearnedModel? existingLesson;
 
   const LessonLearnedDialog({
     super.key,
     required this.projectId,
     required this.currentUserEmail,
+    required this.currentUserName,
     this.existingLesson,
   });
 
@@ -105,7 +107,7 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
           resolvedAt: _isResolved && !widget.existingLesson!.isResolved ? now : null,
           updatedAt: now,
         );
-        await _service.updateLesson(widget.projectId, updated);
+        await _service.updateLesson(widget.projectId, updated, userName: widget.currentUserName);
       } else {
         final lesson = LessonLearnedModel(
           id: '',
@@ -124,7 +126,7 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
           createdAt: now,
           updatedAt: now,
         );
-        await _service.createLesson(widget.projectId, lesson);
+        await _service.createLesson(widget.projectId, lesson, userName: widget.currentUserName);
       }
 
       if (mounted) {

@@ -261,7 +261,7 @@ class _CarryForwardDialogState extends State<CarryForwardDialog> {
                                     const SizedBox(width: 4),
                                     Flexible(
                                       child: Text(
-                                        '${retro.template.displayName} - ${retro.sprintName}',
+                                        '${retro.template.displayName} - ${retro.title.isNotEmpty ? retro.title : retro.sprintName}',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Theme.of(context)

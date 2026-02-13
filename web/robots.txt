@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
-Sitemap: https://keisenapp.com/sitemap.xml
+Allow: /it/
+Allow: /fr/
+Allow: /es/
 
+# Flutter engine assets (no SEO value)
+Disallow: /main.dart.js
+Disallow: /flutter.js
+Disallow: /flutter_bootstrap.js
+Disallow: /flutter_service_worker.js
+Disallow: /canvaskit/
+Disallow: /assets/
+
+Sitemap: https://keisenapp.com/sitemap.xml

@@ -138,8 +138,8 @@ class RetroTrendChartWidget extends StatelessWidget {
       if (sentiment != null && sentiment > 0) {
         spots.add(FlSpot(i.toDouble(), sentiment));
       }
-      labels[i] = retro.sprintName.isNotEmpty
-          ? retro.sprintName
+      labels[i] = retro.title.isNotEmpty
+          ? retro.title
           : 'Retro ${i + 1}';
     }
 
@@ -313,8 +313,8 @@ class RetroTrendChartWidget extends StatelessWidget {
           retro.actionItems.where((a) => a.isCompleted).length;
       final rate = total > 0 ? (completedCount / total) * 100.0 : 0.0;
       spots.add(FlSpot(i.toDouble(), rate));
-      labels[i] = retro.sprintName.isNotEmpty
-          ? retro.sprintName
+      labels[i] = retro.title.isNotEmpty
+          ? retro.title
           : 'Retro ${i + 1}';
     }
 

@@ -11,6 +11,7 @@ import 'package:agile_tools/widgets/retrospective/retro_board_widget.dart';
 class RetroActiveSectionWidget extends StatelessWidget {
   final List<RetrospectiveModel> retrospectives;
   final String currentUserEmail;
+  final String currentUserName;
   final VoidCallback? onCreateNew;
   final Function(RetrospectiveModel) onTapRetro;
   final Function(RetrospectiveModel)? onDeleteRetro;
@@ -19,7 +20,8 @@ class RetroActiveSectionWidget extends StatelessWidget {
     super.key,
     required this.retrospectives,
     required this.currentUserEmail,
-    this.onCreateNew,
+    required this.currentUserName,
+    required this.onCreateNew,
     required this.onTapRetro,
     this.onDeleteRetro,
   });
@@ -50,7 +52,7 @@ class RetroActiveSectionWidget extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.2),
+                        color: Colors.amber.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: Colors.amber.shade700),
                       ),
@@ -71,15 +73,15 @@ class RetroActiveSectionWidget extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: RetroBoardWidget(
-              retro: activeRetro,
-              currentUserEmail: currentUserEmail,
-              currentUserName: currentUserEmail.split('@').first,
-              isIncognito: false,
+          if (activeRetro.currentPhase != RetroPhase.setup && activeRetro.currentPhase != RetroPhase.icebreaker)
+            Expanded(
+              child: RetroBoardWidget(
+                retro: activeRetro,
+                currentUserEmail: currentUserEmail,
+                currentUserName: currentUserName,
+                isIncognito: false,
+              ),
             ),
-          ),
         ],
       );
     } else {
@@ -110,13 +112,13 @@ class RetroActiveSectionWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        retro.template.displayName,
+                        retro.title.isNotEmpty ? retro.title : retro.template.displayName,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      if (retro.sprintName.isNotEmpty)
+                      if (retro.sprintName.isNotEmpty && retro.sprintName != retro.title)
                         Text(
                           'Sprint: ${retro.sprintName}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(

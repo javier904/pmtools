@@ -7,6 +7,7 @@ import 'package:agile_tools/widgets/retrospective/cross_project_import_dialog.da
 class LessonsLearnedSectionWidget extends StatefulWidget {
   final String projectId;
   final String currentUserEmail;
+  final String currentUserName;
   final Function(LessonLearnedModel)? onTapLesson;
   final VoidCallback? onAddLesson;
 
@@ -14,6 +15,7 @@ class LessonsLearnedSectionWidget extends StatefulWidget {
     super.key,
     required this.projectId,
     required this.currentUserEmail,
+    required this.currentUserName,
     this.onTapLesson,
     this.onAddLesson,
   });
@@ -94,6 +96,7 @@ class _LessonsLearnedSectionWidgetState
       builder: (context) => CrossProjectImportDialog(
         currentProjectId: widget.projectId,
         currentUserEmail: widget.currentUserEmail,
+        currentUserName: widget.currentUserName,
       ),
     );
   }
@@ -120,7 +123,12 @@ class _LessonsLearnedSectionWidgetState
       ),
     );
     if (confirmed == true && mounted) {
-      await _service.deleteLesson(widget.projectId, lesson.id);
+      await _service.deleteLesson(
+        widget.projectId,
+        lesson.id,
+        userId: widget.currentUserEmail,
+        userName: widget.currentUserName,
+      );
     }
   }
 

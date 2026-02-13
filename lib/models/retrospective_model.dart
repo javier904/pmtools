@@ -11,6 +11,7 @@ import '../l10n/app_localizations.dart';
 class RetrospectiveModel {
   final String id;
   final String? sprintId; 
+  final String title;
   final String? projectId;
   final String sprintName;
   final int sprintNumber;
@@ -76,6 +77,7 @@ class RetrospectiveModel {
   const RetrospectiveModel({
     required this.id,
     this.sprintId,
+    this.title = '',
     this.projectId,
     this.sprintName = '',
     this.sprintNumber = 0,
@@ -179,6 +181,7 @@ class RetrospectiveModel {
     return RetrospectiveModel(
       id: id,
       sprintId: data['sprintId'],
+      title: data['title'] ?? data['sprintName'] ?? 'Retrospective',
       projectId: data['projectId'],
       sprintName: data['sprintName'] ?? '',
       sprintNumber: data['sprintNumber'] ?? 0,
@@ -231,6 +234,7 @@ class RetrospectiveModel {
   Map<String, dynamic> toFirestore() {
     return {
       'sprintId': sprintId,
+      'title': title,
       'projectId': projectId,
       'sprintName': sprintName,
       'sprintNumber': sprintNumber,
@@ -267,6 +271,10 @@ class RetrospectiveModel {
 
   RetrospectiveModel copyWith({
     String? id,
+    String? sprintId,
+    String? title,
+    String? projectId,
+    String? sprintName,
     List<RetroColumn>? columns,
     List<RetroItem>? items,
     RetroTimer? timer,
@@ -291,9 +299,10 @@ class RetrospectiveModel {
   }) {
     return RetrospectiveModel(
       id: id ?? this.id,
-      sprintId: sprintId,
-      projectId: projectId,
-      sprintName: sprintName,
+      sprintId: sprintId ?? this.sprintId,
+      title: title ?? this.title,
+      projectId: projectId ?? this.projectId,
+      sprintName: sprintName ?? this.sprintName,
       sprintNumber: sprintNumber,
       columns: columns ?? this.columns,
       items: items ?? this.items,

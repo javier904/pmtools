@@ -1015,7 +1015,8 @@ enum AuditEntityType {
   story,
   sprint,
   team,
-  retrospective;
+  retrospective,
+  lessonLearned;
 
   String get displayName {
     switch (this) {
@@ -1029,6 +1030,8 @@ enum AuditEntityType {
         return 'Team';
       case AuditEntityType.retrospective:
         return 'Retrospettiva';
+      case AuditEntityType.lessonLearned:
+        return 'Lesson Learned';
     }
   }
 }

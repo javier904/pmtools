@@ -98,6 +98,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   List<SprintModel> _sprints = [];
   List<TeamMemberModel> _teamMembers = [];
   final List<RetrospectiveModel> _retrospectives = [];
+  bool _isCreatingRetro = false;
+
 
   // Cached streams to avoid Firestore SDK assertion errors on rebuild
   late Stream<AgileProjectModel?> _projectStream;
@@ -145,137 +147,160 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onBack,
-        ),
-        title: Row(
-          children: [
-            Icon(widget.project.framework.icon, size: 24),
-            const SizedBox(width: 8),
-            Text(widget.project.name),
-          ],
-        ),
-        actions: [
-          // Help contestuale per tab corrente
-          AnimatedBuilder(
-            animation: _tabController,
-            builder: (context, child) {
-              final currentTab = _features.visibleTabs[_tabController.index];
-              return ContextualHelpButton(
-                currentTab: currentTab,
-                framework: widget.project.framework,
-              );
-            },
-          ),
-          // Guida metodologia completa
-          IconButton(
-            icon: const Icon(Icons.menu_book),
-            tooltip: l10n.actionGuide(widget.project.framework.displayName),
-            onPressed: () => MethodologyGuideDialog.show(
-              context,
-              framework: widget.project.framework,
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: widget.onBack,
             ),
-          ),
-          // Export to Sheets
-          IconButton(
-            icon: const Icon(Icons.download),
-            tooltip: l10n.actionExportCsv,
-            onPressed: _showExportDialog,
-          ),
-          // Audit log
-          if (widget.project.canViewAuditLog(_currentUserEmail))
-            IconButton(
-              icon: const Icon(Icons.history),
-              tooltip: l10n.actionAuditLog,
-              onPressed: () => AuditLogViewer.show(context, widget.project.id),
+            title: Row(
+              children: [
+                Icon(widget.project.framework.icon, size: 24),
+                const SizedBox(width: 8),
+                Text(widget.project.name),
+              ],
             ),
-          // Settings
-          // SCRUM PERMISSIONS: Menu mostra solo opzioni per cui l'utente ha permesso
-          PopupMenuButton<String>(
-            itemBuilder: (context) => [
-              // Solo PO/SM possono invitare membri
-              if (widget.project.canInviteMembers(_currentUserEmail))
-                PopupMenuItem(
-                  value: 'invite',
-                  child: ListTile(
-                    leading: const Icon(Icons.person_add),
-                    title: Text(l10n.actionInviteMember),
-                  ),
-                ),
-              PopupMenuItem(
-                value: 'settings',
-                child: ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: Text(l10n.actionSettings),
+            actions: [
+              // Help contestuale per tab corrente
+              AnimatedBuilder(
+                animation: _tabController,
+                builder: (context, child) {
+                  final currentTab = _features.visibleTabs[_tabController.index];
+                  return ContextualHelpButton(
+                    currentTab: currentTab,
+                    framework: widget.project.framework,
+                  );
+                },
+              ),
+              // Guida metodologia completa
+              IconButton(
+                icon: const Icon(Icons.menu_book),
+                tooltip: l10n.actionGuide(widget.project.framework.displayName),
+                onPressed: () => MethodologyGuideDialog.show(
+                  context,
+                  framework: widget.project.framework,
                 ),
               ),
+              // Export to Sheets
+              IconButton(
+                icon: const Icon(Icons.download),
+                tooltip: l10n.actionExportCsv,
+                onPressed: _showExportDialog,
+              ),
+              // Audit log
+              if (widget.project.canViewAuditLog(_currentUserEmail))
+                IconButton(
+                  icon: const Icon(Icons.history),
+                  tooltip: l10n.actionAuditLog,
+                  onPressed: () => AuditLogViewer.show(context, widget.project.id),
+                ),
+              // Settings
+              // SCRUM PERMISSIONS: Menu mostra solo opzioni per cui l'utente ha permesso
+              PopupMenuButton<String>(
+                itemBuilder: (context) => [
+                  // Solo PO/SM possono invitare membri
+                  if (widget.project.canInviteMembers(_currentUserEmail))
+                    PopupMenuItem(
+                      value: 'invite',
+                      child: ListTile(
+                        leading: const Icon(Icons.person_add),
+                        title: Text(l10n.actionInviteMember),
+                      ),
+                    ),
+                  PopupMenuItem(
+                    value: 'settings',
+                    child: ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: Text(l10n.actionSettings),
+                    ),
+                  ),
+                ],
+                onSelected: (value) {
+                  if (value == 'invite') {
+                    _showInviteDialog();
+                  } else if (value == 'settings') {
+                    _showProjectSettingsDialog();
+                  }
+                },
+              ),
+              const SizedBox(width: 8),
+              // Home button - sempre ultimo a destra
+              IconButton(
+                icon: const Icon(Icons.home_rounded),
+                tooltip: l10n.navHome,
+                color: const Color(0xFF8B5CF6), // Viola come icona app
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+              ),
             ],
-            onSelected: (value) {
-              if (value == 'invite') {
-                _showInviteDialog();
-              } else if (value == 'settings') {
-                _showProjectSettingsDialog();
-              }
-            },
+            bottom: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              tabs: _features.visibleTabs.map((tab) => Tab(
+                icon: Icon(tab.icon),
+                text: tab.displayName,
+              )).toList(),
+            ),
           ),
-          const SizedBox(width: 8),
-          // Home button - sempre ultimo a destra
-          IconButton(
-            icon: const Icon(Icons.home_rounded),
-            tooltip: l10n.navHome,
-            color: const Color(0xFF8B5CF6), // Viola come icona app
-            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          tabs: _features.visibleTabs.map((tab) => Tab(
-            icon: Icon(tab.icon),
-            text: tab.displayName,
-          )).toList(),
-        ),
-      ),
-      body: StreamBuilder<AgileProjectModel?>(
-        stream: _projectStream,
-        builder: (context, projectSnapshot) {
-          final project = projectSnapshot.data ?? widget.project;
+          body: StreamBuilder<AgileProjectModel?>(
+            stream: _projectStream,
+            builder: (context, projectSnapshot) {
+              final project = projectSnapshot.data ?? widget.project;
 
-          return StreamBuilder<List<UserStoryModel>>(
-            stream: _storiesStream,
-            builder: (context, storiesSnapshot) {
-              return StreamBuilder<List<SprintModel>>(
-                stream: _sprintsStream,
-                builder: (context, sprintsSnapshot) {
-                  // Show loading only if we are waiting for initial data
-                  if ((storiesSnapshot.connectionState == ConnectionState.waiting && !storiesSnapshot.hasData) ||
-                      (sprintsSnapshot.connectionState == ConnectionState.waiting && !sprintsSnapshot.hasData)) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              return StreamBuilder<List<UserStoryModel>>(
+                stream: _storiesStream,
+                builder: (context, storiesSnapshot) {
+                  return StreamBuilder<List<SprintModel>>(
+                    stream: _sprintsStream,
+                    builder: (context, sprintsSnapshot) {
+                      // Show loading only if we are waiting for initial data
+                      if ((storiesSnapshot.connectionState == ConnectionState.waiting && !storiesSnapshot.hasData) ||
+                          (sprintsSnapshot.connectionState == ConnectionState.waiting && !sprintsSnapshot.hasData)) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                  if (storiesSnapshot.hasData) {
-                    _stories = storiesSnapshot.data!;
-                  }
-                  if (sprintsSnapshot.hasData) {
-                    _sprints = sprintsSnapshot.data!;
-                  }
+                      if (storiesSnapshot.hasData) {
+                        _stories = storiesSnapshot.data!;
+                      }
+                      if (sprintsSnapshot.hasData) {
+                        _sprints = sprintsSnapshot.data!;
+                      }
 
-                  // Team members sono nei participants del progetto
-                  _teamMembers = project.participants.values.toList();
+                      // Team members sono nei participants del progetto
+                      _teamMembers = project.participants.values.toList();
 
-                  return TabBarView(
-                    controller: _tabController,
-                    children: _features.visibleTabs.map((tab) => _buildTabContent(tab, project)).toList(),
+                      return TabBarView(
+                        controller: _tabController,
+                        children: _features.visibleTabs.map((tab) => _buildTabContent(tab, project)).toList(),
+                      );
+                    },
                   );
                 },
               );
             },
-          );
-        },
-      ),
+          ),
+        ),
+        if (_isCreatingRetro)
+          Container(
+            color: Colors.black.withValues(alpha: 0.5),
+            child: const Center(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text('Preparazione retrospettiva...', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -3117,14 +3142,30 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           projectId: widget.project.id,
           retrospectives: retrospectives,
           currentUserEmail: _currentUserEmail,
+          currentUserName: _currentUserName,
           onCreateNew: widget.project.canManageRetrospectives(_currentUserEmail) 
               ? (isKanban
-                  ? _createKanbanRetro
+                  ? () => _createInteractiveRetro(null, sequenceNumber: retrospectives.length + 1)
                   : (latestSprint != null
                       ? () => _createInteractiveRetro(latestSprint!)
                       : () => _showNoSprintForRetroWarning()))
               : null,
-          onTapRetro: (retro) => _showRetroDetail(retro),
+          onTapRetro: (retro) {
+            if (retro.isCompleted) {
+              _showRetroDetail(retro);
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RetroBoardScreen(
+                    retroId: retro.id,
+                    currentUserEmail: _currentUserEmail,
+                    currentUserName: _currentUserName,
+                  ),
+                ),
+              );
+            }
+          },
           onDeleteRetro: widget.project.canManageRetrospectives(_currentUserEmail) 
               ? _confirmDeleteRetro 
               : null,
@@ -3159,7 +3200,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.retroDeleteConfirm(retro.sprintName)),
+            Text(l10n.retroDeleteConfirm(retro.title.isNotEmpty ? retro.title : retro.sprintName)),
             if (actionCount > 0) ...[
               const SizedBox(height: 16),
               Container(
@@ -3201,7 +3242,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               final messenger = ScaffoldMessenger.of(context);
               Navigator.pop(context);
               try {
-                await _retroService.deleteRetrospective(retro.id);
+                await _retroService.deleteRetrospective(
+                  retro.id,
+                  userId: _currentUserEmail,
+                  userName: _currentUserName,
+                );
                 messenger.showSnackBar(SnackBar(content: Text(l10n.retroDeletedSuccess)));
               } catch (e) {
                 messenger.showSnackBar(SnackBar(content: Text('${l10n.stateError}: $e')));
@@ -3262,16 +3307,62 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
-  Future<void> _createInteractiveRetro(SprintModel sprint) async {
+  Future<String?> _showRetroNameDialog(String defaultName) async {
     final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: defaultName);
+
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Nome Retrospettiva'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'Titolo',
+            hintText: 'Es. Retrospective Sprint 5',
+          ),
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.actionCancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('Crea'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _createInteractiveRetro(SprintModel? sprint, {int? sequenceNumber}) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // 1. Determine Default Name
+    String defaultName;
+    if (sprint != null) {
+      defaultName = 'Retrospective - ${sprint.name}';
+    } else {
+      defaultName = 'Operations Review #${sequenceNumber ?? 1}'; // Kanban
+    }
+
+    // 2. Ask User for Name
+    final customTitle = await _showRetroNameDialog(defaultName);
+    if (customTitle == null || customTitle.isEmpty) return; // Cancelled
+
     try {
+      setState(() => _isCreatingRetro = true);
       final now = DateTime.now();
       final retro = RetrospectiveModel(
         id: '',
         projectId: widget.project.id,
-        sprintId: sprint.id,
-        sprintName: sprint.name,
-        sprintNumber: _sprints.indexOf(sprint) + 1,
+        sprintId: sprint?.id,
+        title: customTitle,
+        sprintName: sprint != null ? sprint.name : customTitle, // Fallback/Legacy
+        sprintNumber: sprint != null ? _sprints.indexOf(sprint) + 1 : (sequenceNumber ?? 0),
         createdAt: now,
         createdBy: _currentUserEmail,
         status: RetroStatus.active,
@@ -3282,15 +3373,16 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         timer: RetroTimer(durationMinutes: 60),
       );
 
-      final created = await _retroService.createRetrospective(retro);
+      final createdId = await _retroService.createRetrospective(retro);
       
       if (mounted) {
         _showSuccess(l10n.stateSuccess);
-        Navigator.push(
+        // Navigate
+          Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => RetroBoardScreen(
-            retroId: created,
+              retroId: createdId,
               currentUserEmail: _currentUserEmail,
               currentUserName: _currentUserName,
             ),
@@ -3299,6 +3391,10 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       }
     } catch (e) {
       _showError(l10n.errorSaving);
+    } finally {
+      if (mounted) {
+        setState(() => _isCreatingRetro = false);
+      }
     }
   }
 
@@ -3317,7 +3413,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 children: [
                   Text(l10n.scrumEventsRetro),
                   Text(
-                    '${l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName)} - ${_formatDate(retro.createdAt)}',
+                    '${retro.title.isNotEmpty ? retro.title : l10n.retroSprintLabel(retro.sprintNumber, retro.sprintName)} - ${_formatDate(retro.createdAt)}',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.normal),
                   ),
                 ],
@@ -3663,182 +3759,13 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     }
   }
 
-  /// Crea una Operations Review per Kanban (senza sprint)
-  /// In Kanban, le retrospettive sono chiamate "Operations Review" o "Service Delivery Review"
-  /// e fanno parte della practice "Feedback Loops" (David Anderson)
-  Future<void> _createKanbanRetro() async {
-    final l10n = AppLocalizations.of(context)!;
-    final wentWell = <String>[];
-    final toImprove = <String>[];
-    final actionItems = <String>[];
 
-    // Calcola il numero della review basandosi sulle retro esistenti
-    final existingRetros = await _retroService.streamProjectRetrospectives(widget.project.id, _currentUserEmail).first;
-    final reviewNumber = existingRetros.length + 1;
 
-    if (!mounted) return;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Row(
-            children: [
-              const Icon(Icons.psychology, color: Colors.green),
-              const SizedBox(width: 8),
-              Expanded(child: Text('Operations Review #$reviewNumber')),
-            ],
-          ),
-          content: SizedBox(
-            width: 600,
-            height: 500,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Descrizione Kanban-specific
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.info_outline, color: Colors.green, size: 20),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Le Operations Review fanno parte delle Feedback Loops di Kanban. '
-                            'Analizza il flusso di lavoro e identifica miglioramenti.',
-                            style: TextStyle(fontSize: 12, color: Colors.green),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
 
-                  // What went well
-                  _buildRetroInput(
-                    'Cosa ha funzionato bene?',
-                    'Aggiungi un punto positivo...',
-                    Icons.thumb_up,
-                    Colors.green,
-                    wentWell,
-                    (value) => setState(() => wentWell.add(value)),
-                    (index) => setState(() => wentWell.removeAt(index)),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // What to improve
-                  _buildRetroInput(
-                    'Cosa migliorare nel flusso?',
-                    'Aggiungi un punto da migliorare...',
-                    Icons.trending_up,
-                    Colors.orange,
-                    toImprove,
-                    (value) => setState(() => toImprove.add(value)),
-                    (index) => setState(() => toImprove.removeAt(index)),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Action items
-                  _buildRetroInput(
-                    'Action Items',
-                    'Aggiungi un action item...',
-                    Icons.assignment_turned_in,
-                    Colors.blue,
-                    actionItems,
-                    (value) => setState(() => actionItems.add(value)),
-                    (index) => setState(() => actionItems.removeAt(index)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annulla'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.pop(context, true),
-              icon: const Icon(Icons.save),
-              label: const Text('Salva Operations Review'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      try {
-        final now = DateTime.now();
-
-        // Costruisci le colonne default
-        final columns = RetroTemplateExt(RetroTemplate.startStopContinue).defaultColumns;
-        final col1Id = columns.isNotEmpty ? columns[0].id : 'col_1';
-        final col2Id = columns.length > 1 ? columns[1].id : 'col_2';
-
-        // Costruisci gli items
-        final wentWellItems = wentWell.map((content) => RetroItem(
-          id: '${now.millisecondsSinceEpoch}_${content.hashCode}',
-          columnId: col1Id,
-          content: content,
-          authorEmail: _currentUserEmail,
-          authorName: _currentUserName,
-          createdAt: now,
-        )).toList();
-
-        final toImproveItems = toImprove.map((content) => RetroItem(
-          id: '${now.millisecondsSinceEpoch}_${content.hashCode}',
-          columnId: col2Id,
-          content: content,
-          authorEmail: _currentUserEmail,
-          authorName: _currentUserName,
-          createdAt: now,
-        )).toList();
-
-        final updatedActionItemsList = actionItems.map((description) => ActionItem(
-          id: '${now.millisecondsSinceEpoch}_${description.hashCode}',
-          description: description,
-          ownerEmail: _currentUserEmail,
-          createdAt: now,
-        )).toList();
-
-        // Crea il modello senza sprint (Kanban)
-        final retro = RetrospectiveModel(
-          id: '',
-          projectId: widget.project.id,
-          sprintId: null, // Kanban: no sprint
-          sprintName: 'Operations Review #$reviewNumber',
-          sprintNumber: reviewNumber,
-          createdAt: now,
-          createdBy: _currentUserEmail,
-          status: RetroStatus.completed,
-          currentPhase: RetroPhase.completed,
-          isCompleted: true,
-          columns: columns,
-          items: [...wentWellItems, ...toImproveItems],
-          actionItems: updatedActionItemsList,
-          timer: RetroTimer(durationMinutes: 60),
-        );
-
-        await _retroService.createRetrospective(retro);
-
-        _showSuccess('Operations Review creata!');
-      } catch (e) {
-        _showError('Errore creazione Operations Review: $e');
-      }
-    }
-  }
-
+  // ══════════════════════════════════════════════════════════════════════════
+  // FAB
+  // ══════════════════════════════════════════════════════════════════════════
   Widget _buildRetroInput(
     String title,
     String hint,
@@ -3912,9 +3839,6 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     );
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // FAB
-  // ══════════════════════════════════════════════════════════════════════════
 
   Widget? _buildFAB() {
     // FAB diverso in base alla tab

@@ -79,7 +79,16 @@
       { "source": "/fr/agile-process", "destination": "/fr/agile-process.html" },
       { "source": "/fr/retrospective-list", "destination": "/fr/retrospective.html" },
 
-      { "source": "**", "destination": "/index.html" }
+      { "source": "/login", "destination": "/index.html" },
+      { "source": "/verify-email", "destination": "/index.html" },
+      { "source": "/home", "destination": "/index.html" },
+      { "source": "/profile", "destination": "/index.html" },
+      { "source": "/agile-project", "destination": "/index.html" },
+      { "source": "/retrospective-board", "destination": "/index.html" },
+      { "source": "/cookies", "destination": "/index.html" },
+      { "source": "/gdpr", "destination": "/index.html" },
+      { "source": "/subscription", "destination": "/index.html" },
+      { "source": "/invite/**", "destination": "/index.html" }
     ]
   },
   "flutter": {

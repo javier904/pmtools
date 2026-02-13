@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/retrospective_model.dart';
 import '../models/audit_log_model.dart';
-import '../models/audit_log_model.dart';
 import '../models/agile_enums.dart';
 import '../models/user_story_model.dart';
 import 'favorite_service.dart';
+import 'agile_audit_service.dart';
 
 class RetrospectiveFirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -17,15 +17,18 @@ class RetrospectiveFirestoreService {
   /// Unescape dei punti nell'email (per leggere chiavi Firestore)
   static String unescapeEmailKey(String key) => key.replaceAll('_DOT_', '.');
 
+
   CollectionReference<Map<String, dynamic>> get _retrosCollection =>
       _db.collection('retrospectives');
 
-  CollectionReference<Map<String, dynamic>> get _auditCollection =>
-      _db.collection('audit_logs');
+  final AgileAuditService _auditService = AgileAuditService();
   
   // Reuse existing collection or generic path. Assuming standard Agile project structure.
   CollectionReference<Map<String, dynamic>> _getStoriesCollection(String projectId) =>
       _db.collection('agile_projects').doc(projectId).collection('stories');
+
+  CollectionReference<Map<String, dynamic>> _getAuditLogsCollection(String projectId) =>
+      _db.collection('agile_projects').doc(projectId).collection('audit_logs');
 
   /// Crea una nuova retrospettiva
   Future<String> createRetrospective(RetrospectiveModel retro) async {
@@ -55,9 +58,9 @@ class RetrospectiveFirestoreService {
     await _logAudit(
       AuditLogModel.create(
         projectId: retro.projectId ?? '',
-        entityType: AuditEntityType.sprint,
+        entityType: AuditEntityType.retrospective,
         entityId: docRef.id,
-        entityName: 'Retro: ${retro.sprintName}',
+        entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
         performedBy: retro.createdBy,
         performedByName: 'System/User',
         description: 'Creata retrospettiva con template ${retro.template.name}',
@@ -74,11 +77,28 @@ class RetrospectiveFirestoreService {
   }
 
   /// Elimina definitivamente una retrospettiva
-  Future<void> deleteRetrospective(String retroId) async {
+  Future<void> deleteRetrospective(String retroId, {String? userId, String? userName}) async {
+    final retro = await getRetrospective(retroId);
+    if (retro == null) return;
+
     await _retrosCollection.doc(retroId).delete();
 
     // ⭐️ Rimuovi dai preferiti
     FavoriteService().removeFavorite(retroId);
+
+    if (userId != null && userName != null) {
+      await _logAudit(
+        AuditLogModel.delete(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: userId,
+          performedByName: userName,
+          description: 'Eliminata retrospettiva definitivamente',
+        ),
+      );
+    }
   }
 
   /// Stream di una singola retrospettiva (Real-time sync)
@@ -167,13 +187,31 @@ class RetrospectiveFirestoreService {
   }
 
   /// Aggiorna le impostazioni della retrospettiva (Max voti, Timer)
-  Future<void> updateSettings(String retroId, {int? maxVotes, Map<String, int>? phaseDurations}) async {
+  Future<void> updateSettings(String retroId, {int? maxVotes, Map<String, int>? phaseDurations, String? userId, String? userName}) async {
     final updates = <String, dynamic>{};
     if (maxVotes != null) updates['maxVotesPerUser'] = maxVotes;
     if (phaseDurations != null) updates['phaseDurations'] = phaseDurations;
     
     if (updates.isNotEmpty) {
       await _retrosCollection.doc(retroId).update(updates);
+
+      if (userId != null && userName != null) {
+        final retro = await getRetrospective(retroId);
+        if (retro != null) {
+          await _logAudit(
+            AuditLogModel.update(
+              projectId: retro.projectId ?? '',
+              entityType: AuditEntityType.retrospective,
+              entityId: retroId,
+              entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+              performedBy: userId,
+              performedByName: userName,
+              description: 'Aggiornate impostazioni retrospettiva',
+              changedFields: updates.keys.toList(),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -225,9 +263,9 @@ class RetrospectiveFirestoreService {
     await _logAudit(
       AuditLogModel.update(
         projectId: retro.projectId ?? '',
-        entityType: AuditEntityType.sprint,
+        entityType: AuditEntityType.retrospective,
         entityId: retroId,
-        entityName: 'Retro: ${retro.sprintName}',
+        entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
         performedBy: userId,
         performedByName: userName,
         newValue: {'currentPhase': newPhase.name, 'status': updates['status']},
@@ -311,6 +349,22 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
     await docRef.update({
       'items': FieldValue.arrayUnion([item.toMap()]),
     });
+
+    final retro = await getRetrospective(retroId);
+    if (retro != null) {
+      await _logAudit(
+        AuditLogModel.create(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: item.authorEmail,
+          performedByName: item.authorName,
+          description: 'Aggiunta carta alla retrospettiva',
+          newValue: item.toMap(),
+        ),
+      );
+    }
   }
 
   /// Aggiorna un item esistente (es. content edit)
@@ -319,24 +373,55 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
       if (!doc.exists) return;
       
       final retro = RetrospectiveModel.fromFirestore(doc);
+      final previousItem = retro.items.firstWhere((i) => i.id == item.id);
       final updatedItems = retro.items.map((i) => i.id == item.id ? item : i).toList();
 
       await _retrosCollection.doc(retroId).update({
           'items': updatedItems.map((e) => e.toMap()).toList(),
       });
+
+      await _logAudit(
+        AuditLogModel.update(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: item.authorEmail,
+          performedByName: item.authorName,
+          description: 'Modificata carta nella retrospettiva',
+          previousValue: previousItem.toMap(),
+          newValue: item.toMap(),
+        ),
+      );
   }
 
   /// Cancella un item
-  Future<void> deleteRetroItem(String retroId, String itemId) async {
+  Future<void> deleteRetroItem(String retroId, String itemId, {String? userId, String? userName}) async {
       final doc = await _retrosCollection.doc(retroId).get();
       if (!doc.exists) return;
       
       final retro = RetrospectiveModel.fromFirestore(doc);
+      final itemToDelete = retro.items.firstWhere((i) => i.id == itemId);
       final updatedItems = retro.items.where((i) => i.id != itemId).toList();
 
       await _retrosCollection.doc(retroId).update({
           'items': updatedItems.map((e) => e.toMap()).toList(),
       });
+
+      if (userId != null && userName != null) {
+        await _logAudit(
+          AuditLogModel.delete(
+            projectId: retro.projectId ?? '',
+            entityType: AuditEntityType.retrospective,
+            entityId: retroId,
+            entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+            performedBy: userId,
+            performedByName: userName,
+            description: 'Rimossa carta dalla retrospettiva',
+            previousValue: itemToDelete.toMap(),
+          ),
+        );
+      }
   }
 
   /// Vota un item
@@ -368,6 +453,16 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
       transaction.update(docRef, {
         'items': newItems.map((i) => i.toMap()).toList(),
       });
+
+      transaction.set(_getAuditLogsCollection(retro.projectId ?? '').doc(), AuditLogModel.update(
+        projectId: retro.projectId ?? '',
+        entityType: AuditEntityType.retrospective,
+        entityId: retroId,
+        entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+        performedBy: userEmail,
+        performedByName: 'User',
+        description: newItem.hasVoted(userEmail) ? 'Aggiunto voto a carta' : 'Rimosso voto da carta',
+      ).toFirestore());
     });
   }
 
@@ -393,6 +488,16 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
         'sentimentVotes': newVotes,
         'averageSentiment': newAverage,
       });
+
+      transaction.set(_getAuditLogsCollection(retro.projectId ?? '').doc(), AuditLogModel.update(
+        projectId: retro.projectId ?? '',
+        entityType: AuditEntityType.retrospective,
+        entityId: retroId,
+        entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+        performedBy: userEmail,
+        performedByName: 'User',
+        description: 'Votato sentiment icebreaker ($score)',
+      ).toFirestore());
     });
   }
 
@@ -402,6 +507,21 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
     await docRef.update({
       'oneWordVotes.$userEmail': word,
     });
+
+    final retro = await getRetrospective(retroId);
+    if (retro != null) {
+      await _logAudit(
+        AuditLogModel.update(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: userEmail,
+          performedByName: 'User',
+          description: 'Inviata parola icebreaker: $word',
+        ),
+      );
+    }
   }
 
   /// Invia un meteo (Icebreaker Weather)
@@ -410,6 +530,21 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
     await docRef.update({
       'weatherVotes.$userEmail': weather,
     });
+
+    final retro = await getRetrospective(retroId);
+    if (retro != null) {
+      await _logAudit(
+        AuditLogModel.update(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: userEmail,
+          performedByName: 'User',
+          description: 'Inviato meteo icebreaker: $weather',
+        ),
+      );
+    }
   }
 
   /// Aggiunge un Action Item
@@ -418,10 +553,26 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
     await docRef.update({
       'actionItems': FieldValue.arrayUnion([item.toMap()]),
     });
+
+    final retro = await getRetrospective(retroId);
+    if (retro != null) {
+      await _logAudit(
+        AuditLogModel.create(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: item.ownerEmail,
+          performedByName: 'User',
+          description: 'Aggiunto Action Item',
+          newValue: item.toMap(),
+        ),
+      );
+    }
   }
 
   /// Aggiorna un Action Item esistente
-  Future<void> updateActionItem(String retroId, ActionItem item) async {
+  Future<void> updateActionItem(String retroId, ActionItem item, {String? userId, String? userName}) async {
     final docRef = _retrosCollection.doc(retroId);
     
     // Essendo in un array, dobbiamo leggere, trovare e sostituire
@@ -434,17 +585,32 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
       
       if (index == -1) return; // Item not found
 
+      final previousItem = retro.actionItems[index];
       final newItems = List<ActionItem>.from(retro.actionItems);
       newItems[index] = item;
 
       transaction.update(docRef, {
         'actionItems': newItems.map((i) => i.toMap()).toList(),
       });
+
+      if (userId != null && userName != null) {
+        transaction.set(_getAuditLogsCollection(retro.projectId ?? '').doc(), AuditLogModel.update(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: userId,
+          performedByName: userName,
+          description: 'Modificato Action Item',
+          previousValue: previousItem.toMap(),
+          newValue: item.toMap(),
+        ).toFirestore());
+      }
     });
   }
 
   /// Elimina un Action Item
-  Future<void> deleteActionItem(String retroId, String itemId) async {
+  Future<void> deleteActionItem(String retroId, String itemId, {String? userId, String? userName}) async {
     final docRef = _retrosCollection.doc(retroId);
     
     return _db.runTransaction((transaction) async {
@@ -452,16 +618,30 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
       if (!snapshot.exists) return;
 
       final retro = RetrospectiveModel.fromFirestore(snapshot);
+      final itemToDelete = retro.actionItems.firstWhere((i) => i.id == itemId);
       final newItems = retro.actionItems.where((i) => i.id != itemId).toList();
 
       transaction.update(docRef, {
         'actionItems': newItems.map((i) => i.toMap()).toList(),
       });
+
+      if (userId != null && userName != null) {
+        transaction.set(_getAuditLogsCollection(retro.projectId ?? '').doc(), AuditLogModel.delete(
+          projectId: retro.projectId ?? '',
+          entityType: AuditEntityType.retrospective,
+          entityId: retroId,
+          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+          performedBy: userId,
+          performedByName: userName,
+          description: 'Rimosso Action Item',
+          previousValue: itemToDelete.toMap(),
+        ).toFirestore());
+      }
     });
   }
 
   /// Aggiorna lo status di un Action Item
-  Future<void> updateActionItemStatus(String retroId, String actionItemId, ActionItemStatus newStatus) async {
+  Future<void> updateActionItemStatus(String retroId, String actionItemId, ActionItemStatus newStatus, {String? userId, String? userName}) async {
     final docRef = _retrosCollection.doc(retroId);
 
     return _db.runTransaction((transaction) async {
@@ -486,6 +666,18 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
       transaction.update(docRef, {
         'actionItems': newItems.map((i) => i.toMap()).toList(),
       });
+
+      transaction.set(_getAuditLogsCollection(retro.projectId ?? '').doc(), AuditLogModel.update(
+        projectId: retro.projectId ?? '',
+        entityType: AuditEntityType.retrospective,
+        entityId: retroId,
+        entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+        performedBy: userId ?? item.ownerEmail, 
+        performedByName: userName ?? 'User',
+        description: 'Cambiato stato Action Item in ${newStatus.name}',
+        previousValue: {'status': item.status.name},
+        newValue: {'status': newStatus.name},
+      ).toFirestore());
     });
   }
 
@@ -541,7 +733,7 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
       });
       
       // Log Audit
-      transaction.set(_auditCollection.doc(), AuditLogModel.create(
+      transaction.set(_getAuditLogsCollection(projectId).doc(), AuditLogModel.create(
         projectId: projectId,
         entityType: AuditEntityType.story,
         entityId: newStory.id,
@@ -607,7 +799,9 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
 
   /// Helper per log
   Future<void> _logAudit(AuditLogModel log) async {
-    await _auditCollection.add(log.toFirestore());
+    if (log.projectId.isNotEmpty) {
+      await _auditService.log(log);
+    }
   }
 
   // =========================================================================
@@ -620,13 +814,32 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   ///
   /// Le retrospettive archiviate sono escluse dai conteggi subscription
   /// e non appaiono nelle liste di default
-  Future<bool> archiveRetrospective(String retroId) async {
+  Future<bool> archiveRetrospective(String retroId, {String? userId, String? userName}) async {
     try {
+      final retro = await getRetrospective(retroId);
+      if (retro == null) return false;
+
       await _retrosCollection.doc(retroId).update({
         'isArchived': true,
         'archivedAt': Timestamp.fromDate(DateTime.now()),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
+
+      if (userId != null && userName != null) {
+        await _logAudit(
+          AuditLogModel.update(
+            projectId: retro.projectId ?? '',
+            entityType: AuditEntityType.retrospective,
+            entityId: retroId,
+            entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+            performedBy: userId,
+            performedByName: userName,
+            description: 'Archiviata retrospettiva',
+            changedFields: ['isArchived'],
+          ),
+        );
+      }
+
       print('🗄️ Retrospettiva archiviata: $retroId');
       return true;
     } catch (e) {
@@ -636,19 +849,36 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   }
 
   /// Ripristina una retrospettiva archiviata
-  ///
-  /// [retroId] - ID della retrospettiva da ripristinare
-  Future<bool> restoreRetrospective(String retroId) async {
+  Future<bool> restoreRetrospective(String retroId, {String? userId, String? userName}) async {
     try {
+      final retro = await getRetrospective(retroId);
+      if (retro == null) return false;
+
       await _retrosCollection.doc(retroId).update({
         'isArchived': false,
         'archivedAt': null,
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
+
+      if (userId != null && userName != null) {
+        await _logAudit(
+          AuditLogModel.update(
+            projectId: retro.projectId ?? '',
+            entityType: AuditEntityType.retrospective,
+            entityId: retroId,
+            entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+            performedBy: userId,
+            performedByName: userName,
+            description: 'Ripristinata retrospettiva',
+            changedFields: ['isArchived'],
+          ),
+        );
+      }
+
       print('📦 Retrospettiva ripristinata: $retroId');
       return true;
     } catch (e) {
-      print('❌ Errore restoreRetrospective: $e');
+      print('❌ Errore restoreProject: $e');
       return false;
     }
   }

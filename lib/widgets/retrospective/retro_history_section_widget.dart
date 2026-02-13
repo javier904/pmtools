@@ -7,6 +7,7 @@ import 'package:agile_tools/widgets/retrospective/retro_trend_chart_widget.dart'
 class RetroHistorySectionWidget extends StatelessWidget {
   final List<RetrospectiveModel> retrospectives;
   final String currentUserEmail;
+  final String currentUserName;
   final Function(RetrospectiveModel) onTapRetro;
   final Function(RetrospectiveModel)? onDeleteRetro;
 
@@ -14,6 +15,7 @@ class RetroHistorySectionWidget extends StatelessWidget {
     super.key,
     required this.retrospectives,
     required this.currentUserEmail,
+    required this.currentUserName,
     required this.onTapRetro,
     this.onDeleteRetro,
   });
@@ -48,7 +50,7 @@ class RetroHistorySectionWidget extends StatelessWidget {
     // Group by sprintName
     final Map<String, List<RetrospectiveModel>> grouped = {};
     for (final retro in completedRetros) {
-      final key = retro.sprintName.isNotEmpty ? retro.sprintName : l10n.retroStandalone;
+      final key = retro.title.isNotEmpty ? retro.title : l10n.retroStandalone;
       grouped.putIfAbsent(key, () => []).add(retro);
     }
 

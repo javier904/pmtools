@@ -16,6 +16,7 @@ class RetroTabSectionsWidget extends StatefulWidget {
   final String projectId;
   final List<RetrospectiveModel> retrospectives;
   final String currentUserEmail;
+  final String currentUserName;
 
   final VoidCallback? onCreateNew;
   final Function(RetrospectiveModel) onTapRetro;
@@ -27,6 +28,7 @@ class RetroTabSectionsWidget extends StatefulWidget {
     required this.projectId,
     required this.retrospectives,
     required this.currentUserEmail,
+    required this.currentUserName,
     required this.onCreateNew,
     required this.onTapRetro,
     this.onDeleteRetro,
@@ -90,6 +92,7 @@ class _RetroTabSectionsWidgetState extends State<RetroTabSectionsWidget>
               RetroActiveSectionWidget(
                 retrospectives: widget.retrospectives,
                 currentUserEmail: widget.currentUserEmail,
+                currentUserName: widget.currentUserName,
                 onCreateNew: widget.onCreateNew,
                 onTapRetro: widget.onTapRetro,
                 onDeleteRetro: widget.onDeleteRetro,
@@ -98,6 +101,7 @@ class _RetroTabSectionsWidgetState extends State<RetroTabSectionsWidget>
               RetroHistorySectionWidget(
                 retrospectives: widget.retrospectives,
                 currentUserEmail: widget.currentUserEmail,
+                currentUserName: widget.currentUserName,
                 onTapRetro: (retro) => _showRetroSummary(retro),
                 onDeleteRetro: widget.onDeleteRetro,
               ),
@@ -105,12 +109,14 @@ class _RetroTabSectionsWidgetState extends State<RetroTabSectionsWidget>
               ActionItemsTrackerWidget(
                 retrospectives: widget.retrospectives,
                 currentUserEmail: widget.currentUserEmail,
+                currentUserName: widget.currentUserName,
                 onStatusChanged: _onActionItemStatusChanged,
               ),
               // Lessons Learned Tab
               LessonsLearnedSectionWidget(
                 projectId: widget.projectId,
                 currentUserEmail: widget.currentUserEmail,
+                currentUserName: widget.currentUserName,
                 onTapLesson: (lesson) => _showLessonDialog(lesson: lesson),
                 onAddLesson: () => _showLessonDialog(),
               ),
@@ -124,7 +130,13 @@ class _RetroTabSectionsWidgetState extends State<RetroTabSectionsWidget>
   Future<void> _onActionItemStatusChanged(
     String retroId, String actionItemId, ActionItemStatus newStatus,
   ) async {
-    await _retroService.updateActionItemStatus(retroId, actionItemId, newStatus);
+    await _retroService.updateActionItemStatus(
+      retroId, 
+      actionItemId, 
+      newStatus,
+      userId: widget.currentUserEmail,
+      userName: widget.currentUserName,
+    );
   }
 
   void _showLessonDialog({LessonLearnedModel? lesson}) {
@@ -133,6 +145,7 @@ class _RetroTabSectionsWidgetState extends State<RetroTabSectionsWidget>
       builder: (context) => LessonLearnedDialog(
         projectId: widget.projectId,
         currentUserEmail: widget.currentUserEmail,
+        currentUserName: widget.currentUserName,
         existingLesson: lesson,
       ),
     );

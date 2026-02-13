@@ -14,6 +14,7 @@ class _ActionItemWithRetro {
 class ActionItemsTrackerWidget extends StatefulWidget {
   final List<RetrospectiveModel> retrospectives;
   final String currentUserEmail;
+  final String currentUserName;
   final Function(String retroId, String actionItemId, ActionItemStatus newStatus)?
       onStatusChanged;
 
@@ -21,6 +22,7 @@ class ActionItemsTrackerWidget extends StatefulWidget {
     super.key,
     required this.retrospectives,
     required this.currentUserEmail,
+    required this.currentUserName,
     this.onStatusChanged,
   });
 
@@ -449,8 +451,10 @@ class _ActionItemsTrackerWidgetState extends State<ActionItemsTrackerWidget> {
                         Icon(retro.template.icon, size: 14, color: Colors.grey.shade600),
                         const SizedBox(width: 4),
                         Text(
-                          retro.sprintName.isNotEmpty
-                              ? '${retro.template.displayName} - ${retro.sprintName}'
+                          retro.title.isNotEmpty
+                              ? '${retro.template.displayName} - ${retro.title}'
+                              : retro.sprintName.isNotEmpty
+                                  ? '${retro.template.displayName} - ${retro.sprintName}'
                               : retro.template.displayName,
                           style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                         ),
