@@ -112,6 +112,8 @@ Questa pagina deve:
 - Colonne: Backlog, Ready, In Progress, In Review, Done
 - Card per ogni user story (ID, title, assignee, points)
 - Drag-drop tra colonne (update status)
+- WIP Limit configurabile per colonna con alert visivi
+- Configurazione Policy per colonna (Max ore, Max item per persona, ecc.) con soft enforcement
 - Click card → dettagli + subtask checklist + comments
 - Real-time estimate of completion (AI-powered): "Basato su velocity, sprint finisce il [date]"
 - **Per ogni story: track hours spent** (input field: actual hours today)

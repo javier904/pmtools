@@ -2466,8 +2466,32 @@
   "kanbanPolicyItemReady": "Item pronto per essere lavorato",
   "kanbanPolicyEstimationsDone": "Stima completata (se richiesta)",
   "kanbanPolicyMax1PerPerson": "Max 1 item per persona",
+  "kanbanPolicyMax1PerPersonParam": "Max {count} item per persona",
+  "@kanbanPolicyMax1PerPersonParam": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "kanbanPolicyDailyUpdate": "Daily update obbligatorio",
   "kanbanPolicyMax24h": "Max 24h in questa colonna",
+  "kanbanPolicyMaxHoursParam": "Max {count} ore in questa colonna",
+  "@kanbanPolicyMaxHoursParam": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kanbanPolicyMaxDaysParam": "Max {count} giorni in questa colonna",
+  "@kanbanPolicyMaxDaysParam": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "kanbanPolicyReqCodeReview": "Richiede code review approvata",
   "kanbanPolicyAllAcceptanceMet": "Tutti i criteri di accettazione soddisfatti",
   "kanbanPolicyCheckTitle": "Controllo Policy",
@@ -2479,6 +2503,12 @@
   "kanbanPolicyViolationMessage": "Spostando ",
   "kanbanPolicyViolationTo": " in ",
   "kanbanPolicyViolationViolations": " stai violando:",
+  "kanbanPolicySettingMaxHours": "Max ore",
+  "kanbanPolicySettingMaxDays": "Max giorni",
+  "kanbanPolicySettingMaxItems": "Max item",
+  "kanbanPolicyUnitHours": "Ore",
+  "kanbanPolicyUnitDays": "Giorni",
+  "kanbanPolicyHelpConfigurable": "Ogni colonna può ora avere limiti temporali e di WIP individuale personalizzati.",
   "kanbanPolicyMovingTip": "Puoi procedere se ritieni che sia un'eccezione valida.",
   "kanbanMoveAnyway": "Sposta comunque",
   "backlogEmpty": "Backlog vuoto",

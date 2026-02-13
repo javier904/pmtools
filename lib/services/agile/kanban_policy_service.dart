@@ -75,12 +75,15 @@ class KanbanPolicyService {
 
       case 'kanbanPolicyMax1PerPerson':
         if (story.assigneeEmail != null) {
+          // Get custom limit from settings (default to 1)
+          final limit = targetColumn.getPolicySetting('maxItemsPerPerson', 1);
+          
           // Conta quanti item ha già l'assignee in questa colonna
           final assigneeStories = columnStories.where((s) => s.assigneeEmail == story.assigneeEmail && s.id != story.id).length;
-          if (assigneeStories >= 1) {
+          if (assigneeStories >= limit) {
              return KanbanPolicyViolation(
               policyId: policyId,
-              message: l10n.kanbanPolicyMax1PerPerson,
+              message: l10n.kanbanPolicyMax1PerPersonParam(limit),
               isBlocking: false, // Può essere soft
             );
           }
@@ -122,27 +125,38 @@ class KanbanPolicyService {
   ) {
     if (story.statusChangedAt == null) return null;
     
-    final daysInStatus = DateTime.now().difference(story.statusChangedAt!).inHours / 24.0;
+    final hoursInStatus = DateTime.now().difference(story.statusChangedAt!).inHours.toDouble();
     
-    if (column.isPolicyActive('kanbanPolicyMax2Days')) {
-      if (daysInStatus > 2.0) {
-        return KanbanPolicyViolation(
-          policyId: 'kanbanPolicyMax2Days',
-          message: l10n.kanbanPolicyMax2Days,
-          isBlocking: false,
-        );
+    // Helper to generic temporal check
+    KanbanPolicyViolation? check(String policyId, int defaultHours) {
+      if (column.isPolicyActive(policyId)) {
+        final maxHours = column.getPolicySetting('maxHours', defaultHours);
+        final unit = column.getPolicySetting('maxHoursUnit', 'hours');
+        
+        if (hoursInStatus > maxHours) {
+          final String message;
+          if (unit == 'days') {
+            final days = (maxHours / 24).round();
+            message = l10n.kanbanPolicyMaxDaysParam(days);
+          } else {
+            message = l10n.kanbanPolicyMaxHoursParam(maxHours);
+          }
+          
+          return KanbanPolicyViolation(
+            policyId: policyId,
+            message: message,
+            isBlocking: false,
+          );
+        }
       }
+      return null;
     }
-    
-    if (column.isPolicyActive('kanbanPolicyMax24h')) {
-      if (daysInStatus > 1.0) {
-        return KanbanPolicyViolation(
-          policyId: 'kanbanPolicyMax24h',
-          message: l10n.kanbanPolicyMax24h,
-          isBlocking: false,
-        );
-      }
-    }
+
+    final v2Days = check('kanbanPolicyMax2Days', 48);
+    if (v2Days != null) return v2Days;
+
+    final v24h = check('kanbanPolicyMax24h', 24);
+    if (v24h != null) return v24h;
     
     return null;
   }

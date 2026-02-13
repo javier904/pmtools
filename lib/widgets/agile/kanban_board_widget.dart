@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../models/user_story_model.dart';
 import '../../models/agile_enums.dart';
 import '../../models/sprint_model.dart';
@@ -26,7 +27,7 @@ class KanbanBoardWidget extends StatefulWidget {
   final void Function(UserStoryModel story)? onStoryTap;
   final void Function(String columnId, int? newLimit)? onWipLimitChange;
   final void Function(String columnId, List<String> policies)? onPoliciesChange;
-  final void Function(String columnId, Map<String, bool> activePolicies)? onActivePoliciesChange;
+  final void Function(String columnId, Map<String, bool> activePolicies, Map<String, dynamic> policySettings)? onActivePoliciesChange;
   final void Function(SwimlaneType)? onSwimlaneChange;
   final void Function(UserStoryModel story, String? email)? onAssigneeChange;
   final void Function(UserStoryModel story, int? points)? onStoryPointsChange;
@@ -838,6 +839,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     final l10n = AppLocalizations.of(context);
     // Legacy policies list is ignored/cleared in new version
     final activePolicies = Map<String, bool>.from(column.activePolicies ?? {});
+    final policySettings = Map<String, dynamic>.from(column.policySettings);
 
     // Definizioni delle policy disponibili con descrizioni
     final allPolicies = [
@@ -911,20 +913,147 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   else
                     ...availablePolicies.map((p) {
                       final id = p['id']!;
-                      final label = p['label']!;
+                      String label = p['label']!;
+                      
+                      // Dynamic label calculation based on thresholds
+                      if (id == 'kanbanPolicyMax1PerPerson') {
+                        final rawCount = policySettings['maxItemsPerPerson'] ?? 1;
+                        final count = (rawCount is int ? rawCount : int.tryParse(rawCount.toString()) ?? 1).clamp(1, 99);
+                        label = l10n.kanbanPolicyMax1PerPersonParam(count);
+                      } else if (id == 'kanbanPolicyMax2Days' || id == 'kanbanPolicyMax24h') {
+                        final defaultVal = id == 'kanbanPolicyMax24h' ? 24 : 48;
+                        final countInHours = (policySettings['maxHours'] ?? defaultVal).clamp(1, 99 * 24);
+                        final unit = policySettings['maxHoursUnit'] ?? 'hours';
+                        
+                        if (unit == 'days') {
+                          final days = (countInHours / 24).round().clamp(1, 99);
+                          label = l10n.kanbanPolicyMaxDaysParam(days);
+                        } else {
+                          label = l10n.kanbanPolicyMaxHoursParam(countInHours);
+                        }
+                      }
+
                       final isActive = activePolicies[id] ?? false;
                       
-                      return CheckboxListTile(
-                        title: Text(label, style: const TextStyle(fontSize: 13)),
-                        value: isActive,
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (val) {
-                          setDialogState(() {
-                            activePolicies[id] = val ?? false;
-                          });
-                        },
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CheckboxListTile(
+                            title: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                            value: isActive,
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            controlAffinity: ListTileControlAffinity.leading,
+                            onChanged: (val) {
+                              setDialogState(() {
+                                activePolicies[id] = val ?? false;
+                              });
+                            },
+                          ),
+                          if (isActive && (id == 'kanbanPolicyMax2Days' || id == 'kanbanPolicyMax24h' || id == 'kanbanPolicyMax1PerPerson'))
+                            Padding(
+                              padding: const EdgeInsets.only(left: 48, bottom: 8),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    id == 'kanbanPolicyMax1PerPerson' 
+                                        ? l10n.kanbanPolicySettingMaxItems 
+                                        : (policySettings['maxHoursUnit'] == 'days' ? l10n.kanbanPolicySettingMaxDays : l10n.kanbanPolicySettingMaxHours),
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 60,
+                                    height: 30,
+                                    child: TextField(
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(2),
+                                      ],
+                                      style: const TextStyle(fontSize: 12),
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      controller: TextEditingController(
+                                        text: (id == 'kanbanPolicyMax1PerPerson' 
+                                            ? (policySettings['maxItemsPerPerson'] ?? 1).clamp(1, 99)
+                                            : (policySettings['maxHoursUnit'] == 'days' 
+                                                ? ((policySettings['maxHours'] ?? (id == 'kanbanPolicyMax2Days' ? 48 : 24)) / 24).round().clamp(1, 99)
+                                                : (policySettings['maxHours'] ?? (id == 'kanbanPolicyMax2Days' ? 48 : 24)).clamp(1, 99))).toString()
+                                      )..selection = TextSelection.fromPosition(TextPosition(offset: (id == 'kanbanPolicyMax1PerPerson' 
+                                            ? (policySettings['maxItemsPerPerson'] ?? 1).clamp(1, 99)
+                                            : (policySettings['maxHoursUnit'] == 'days' 
+                                                ? ((policySettings['maxHours'] ?? (id == 'kanbanPolicyMax2Days' ? 48 : 24)) / 24).round().clamp(1, 99)
+                                                : (policySettings['maxHours'] ?? (id == 'kanbanPolicyMax2Days' ? 48 : 24)).clamp(1, 99))).toString().length)),
+                                      onChanged: (val) {
+                                        if (val.isEmpty || val == '0' || val == '00') {
+                                           // We don't return, we force state update to 1 if user tries to enter 0
+                                           setDialogState(() {
+                                              if (id == 'kanbanPolicyMax1PerPerson') {
+                                                policySettings['maxItemsPerPerson'] = 1;
+                                              } else {
+                                                policySettings['maxHours'] = (policySettings['maxHoursUnit'] == 'days') ? 24 : 1;
+                                              }
+                                           });
+                                           return;
+                                        }
+                                        
+                                        final num = int.tryParse(val);
+                                        if (num != null && num > 0) {
+                                          setDialogState(() {
+                                            if (id == 'kanbanPolicyMax1PerPerson') {
+                                              policySettings['maxItemsPerPerson'] = num;
+                                            } else {
+                                              if (policySettings['maxHoursUnit'] == 'days') {
+                                                policySettings['maxHours'] = num * 24;
+                                              } else {
+                                                policySettings['maxHours'] = num;
+                                              }
+                                            }
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  if (id != 'kanbanPolicyMax1PerPerson') ...[
+                                    const SizedBox(width: 8),
+                                    SegmentedButton<String>(
+                                      segments: [
+                                        ButtonSegment(
+                                          value: 'hours', 
+                                          label: Text(l10n.kanbanPolicyUnitHours, style: const TextStyle(fontSize: 10)),
+                                        ),
+                                        ButtonSegment(
+                                          value: 'days', 
+                                          label: Text(l10n.kanbanPolicyUnitDays, style: const TextStyle(fontSize: 10)),
+                                        ),
+                                      ],
+                                      selected: {(policySettings['maxHoursUnit'] ?? 'hours')},
+                                      onSelectionChanged: (newSelection) {
+                                        final newUnit = newSelection.first;
+                                        setDialogState(() {
+                                          policySettings['maxHoursUnit'] = newUnit;
+                                          // Se passiamo a 'days' e siamo sotto le 12 ore, forziamo a 24 (1 giorno) per evitare rounding a 0
+                                          if (newUnit == 'days' && (policySettings['maxHours'] ?? 0) < 12) {
+                                            policySettings['maxHours'] = 24;
+                                          }
+                                        });
+                                      },
+                                      style: SegmentedButton.styleFrom(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                                        side: BorderSide(color: Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+                                        selectedBackgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                                        selectedForegroundColor: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                        ],
                       );
                     }),
                 ],
@@ -940,7 +1069,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               onPressed: () {
                 // Rimuoviamo le policy testuali legacy passando una lista vuota
                 widget.onPoliciesChange?.call(column.id, []);
-                widget.onActivePoliciesChange?.call(column.id, activePolicies);
+                widget.onActivePoliciesChange?.call(column.id, activePolicies, policySettings);
                 Navigator.pop(ctx);
               },
               child: Text(l10n.agileActionSave),

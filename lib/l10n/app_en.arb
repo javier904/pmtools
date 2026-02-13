@@ -2140,8 +2140,32 @@
   "kanbanPolicyItemReady": "Item ready to be worked",
   "kanbanPolicyEstimationsDone": "Estimation completed (if required)",
   "kanbanPolicyMax1PerPerson": "Max 1 item per person",
+  "kanbanPolicyMax1PerPersonParam": "Max {count} items per person",
+  "@kanbanPolicyMax1PerPersonParam": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "kanbanPolicyDailyUpdate": "Daily update mandatory",
   "kanbanPolicyMax24h": "Max 24h in this column",
+  "kanbanPolicyMaxHoursParam": "Max {count} hours in this column",
+  "@kanbanPolicyMaxHoursParam": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kanbanPolicyMaxDaysParam": "Max {count} days in this column",
+  "@kanbanPolicyMaxDaysParam": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "kanbanPolicyReqCodeReview": "Requires approved code review",
   "kanbanPolicyAllAcceptanceMet": "All acceptance criteria met",
   "kanbanPolicyCheckTitle": "Policy Check",
@@ -2152,8 +2176,14 @@
   "kanbanPolicyViolationTitle": "Policy Violation",
   "kanbanPolicyViolationMessage": "Moving ",
   "kanbanPolicyViolationTo": " to ",
-  "kanbanPolicyViolationViolations": " violates:",
-  "kanbanPolicyMovingTip": "You can proceed if this is a valid exception.",
+  "kanbanPolicyViolationViolations": " you are violating:",
+  "kanbanPolicySettingMaxHours": "Max hours",
+  "kanbanPolicySettingMaxDays": "Max days",
+  "kanbanPolicySettingMaxItems": "Max items",
+  "kanbanPolicyUnitHours": "Hours",
+  "kanbanPolicyUnitDays": "Days",
+  "kanbanPolicyHelpConfigurable": "Each column can now have custom time limits and individual WIP limits.",
+  "kanbanPolicyMovingTip": "You can proceed if you believe it is a valid exception.",
   "kanbanMoveAnyway": "Move Anyway",
   "backlogEmpty": "Empty backlog",
   "backlogAddFirstStory": "Add the first User Story",

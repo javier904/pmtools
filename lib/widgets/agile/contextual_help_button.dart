@@ -237,6 +237,7 @@ class ContextualHelp {
         l10n.kanbanPolicyRule2Title: l10n.kanbanPolicyRule2Desc,
         l10n.kanbanPolicyRule3Title: l10n.kanbanPolicyRule3Desc,
         l10n.kanbanPolicyRule4Title: l10n.kanbanPolicyRule4Desc,
+        l10n.kanbanPolicyHelpConfigurable: l10n.kanbanPolicyHelpConfigurable,
       } : null,
       icon: Icons.view_kanban,
       color: Colors.teal,

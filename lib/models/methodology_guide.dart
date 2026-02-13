@@ -204,7 +204,7 @@ MethodologyGuide _buildKanbanGuide(AppLocalizations l10n) {
       ),
       MethodologySection(
         title: l10n.kanbanWIPTitle,
-        content: l10n.kanbanWIPContent,
+        content: '${l10n.kanbanWIPContent}\n\n${l10n.kanbanPolicyHelpConfigurable}',
         icon: Icons.speed,
       ),
       MethodologySection(
@@ -231,7 +231,7 @@ MethodologyGuide _buildKanbanGuide(AppLocalizations l10n) {
       ),
       MethodologySection(
         title: l10n.kanbanGuidePoliciesTitle,
-        content: l10n.kanbanPoliciesContent,
+        content: '${l10n.kanbanPoliciesContent}\n\n${l10n.kanbanPolicyHelpConfigurable}',
         icon: Icons.policy,
       ),
       MethodologySection(

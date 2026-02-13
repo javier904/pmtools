@@ -5353,10 +5353,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kanbanPolicyMax1PerPerson => 'Max 1 item per person';
 
   @override
+  String kanbanPolicyMax1PerPersonParam(int count) {
+    return 'Max $count items per person';
+  }
+
+  @override
   String get kanbanPolicyDailyUpdate => 'Daily update mandatory';
 
   @override
   String get kanbanPolicyMax24h => 'Max 24h in this column';
+
+  @override
+  String kanbanPolicyMaxHoursParam(int count) {
+    return 'Max $count hours in this column';
+  }
+
+  @override
+  String kanbanPolicyMaxDaysParam(int count) {
+    return 'Max $count days in this column';
+  }
 
   @override
   String get kanbanPolicyReqCodeReview => 'Requires approved code review';
@@ -5390,11 +5405,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kanbanPolicyViolationTo => ' to ';
 
   @override
-  String get kanbanPolicyViolationViolations => ' violates:';
+  String get kanbanPolicyViolationViolations => ' you are violating:';
+
+  @override
+  String get kanbanPolicySettingMaxHours => 'Max hours';
+
+  @override
+  String get kanbanPolicySettingMaxDays => 'Max days';
+
+  @override
+  String get kanbanPolicySettingMaxItems => 'Max items';
+
+  @override
+  String get kanbanPolicyUnitHours => 'Hours';
+
+  @override
+  String get kanbanPolicyUnitDays => 'Days';
+
+  @override
+  String get kanbanPolicyHelpConfigurable =>
+      'Each column can now have custom time limits and individual WIP limits.';
 
   @override
   String get kanbanPolicyMovingTip =>
-      'You can proceed if this is a valid exception.';
+      'You can proceed if you believe it is a valid exception.';
 
   @override
   String get kanbanMoveAnyway => 'Move Anyway';

@@ -2862,7 +2862,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       onTitleChange: (storyId, newTitle) => _updateStoryTitle(project, storyId, newTitle),
       onPriorityChange: (storyId, newPriority) => _updateStoryPriority(project, storyId, newPriority),
       onActivePoliciesChange: project.canConfigureBoard(_currentUserEmail)
-          ? (colId, activePolicies) => _updateColumnConfig(project, colId, activePolicies: activePolicies)
+          ? (colId, activePolicies, policySettings) => _updateColumnConfig(project, colId, activePolicies: activePolicies, policySettings: policySettings)
           : null,
       onStoryDelete: project.canDeleteStory(_currentUserEmail)
           ? (storyId) => _deleteStory(project, storyId)
@@ -2872,19 +2872,28 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     );
   }
 
-  Future<void> _updateColumnConfig(AgileProjectModel project, String columnId, {int? wipLimit, bool clearWip = false, List<String>? policies, Map<String, bool>? activePolicies}) async {
+  Future<void> _updateColumnConfig(
+    AgileProjectModel project,
+    String columnId, {
+    int? wipLimit,
+    bool clearWip = false,
+    List<String>? policies,
+    Map<String, bool>? activePolicies,
+    Map<String, dynamic>? policySettings,
+  }) async {
     try {
       final currentCols = List<KanbanColumnConfig>.from(project.effectiveKanbanColumns);
       final index = currentCols.indexWhere((c) => c.id == columnId);
-      
+
       if (index != -1) {
         currentCols[index] = currentCols[index].copyWith(
           wipLimit: wipLimit,
           clearWipLimit: clearWip,
           policies: policies,
           activePolicies: activePolicies,
+          policySettings: policySettings,
         );
-        
+
         await _firestoreService.updateProjectKanbanColumns(project.id, currentCols);
         _showSuccess('Configurazione board aggiornata');
       }

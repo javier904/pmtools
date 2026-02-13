@@ -5420,10 +5420,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get kanbanPolicyMax1PerPerson => 'Max 1 item per persona';
 
   @override
+  String kanbanPolicyMax1PerPersonParam(int count) {
+    return 'Max $count item per persona';
+  }
+
+  @override
   String get kanbanPolicyDailyUpdate => 'Daily update obbligatorio';
 
   @override
   String get kanbanPolicyMax24h => 'Max 24h in questa colonna';
+
+  @override
+  String kanbanPolicyMaxHoursParam(int count) {
+    return 'Max $count ore in questa colonna';
+  }
+
+  @override
+  String kanbanPolicyMaxDaysParam(int count) {
+    return 'Max $count giorni in questa colonna';
+  }
 
   @override
   String get kanbanPolicyReqCodeReview => 'Richiede code review approvata';
@@ -5459,6 +5474,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get kanbanPolicyViolationViolations => ' stai violando:';
+
+  @override
+  String get kanbanPolicySettingMaxHours => 'Max ore';
+
+  @override
+  String get kanbanPolicySettingMaxDays => 'Max giorni';
+
+  @override
+  String get kanbanPolicySettingMaxItems => 'Max item';
+
+  @override
+  String get kanbanPolicyUnitHours => 'Ore';
+
+  @override
+  String get kanbanPolicyUnitDays => 'Giorni';
+
+  @override
+  String get kanbanPolicyHelpConfigurable =>
+      'Ogni colonna può ora avere limiti temporali e di WIP individuale personalizzati.';
 
   @override
   String get kanbanPolicyMovingTip =>

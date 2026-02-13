@@ -9792,6 +9792,12 @@ abstract class AppLocalizations {
   /// **'Max 1 item per persona'**
   String get kanbanPolicyMax1PerPerson;
 
+  /// No description provided for @kanbanPolicyMax1PerPersonParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Max {count} item per persona'**
+  String kanbanPolicyMax1PerPersonParam(int count);
+
   /// No description provided for @kanbanPolicyDailyUpdate.
   ///
   /// In it, this message translates to:
@@ -9803,6 +9809,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Max 24h in questa colonna'**
   String get kanbanPolicyMax24h;
+
+  /// No description provided for @kanbanPolicyMaxHoursParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Max {count} ore in questa colonna'**
+  String kanbanPolicyMaxHoursParam(int count);
+
+  /// No description provided for @kanbanPolicyMaxDaysParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Max {count} giorni in questa colonna'**
+  String kanbanPolicyMaxDaysParam(int count);
 
   /// No description provided for @kanbanPolicyReqCodeReview.
   ///
@@ -9869,6 +9887,42 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **' stai violando:'**
   String get kanbanPolicyViolationViolations;
+
+  /// No description provided for @kanbanPolicySettingMaxHours.
+  ///
+  /// In it, this message translates to:
+  /// **'Max ore'**
+  String get kanbanPolicySettingMaxHours;
+
+  /// No description provided for @kanbanPolicySettingMaxDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Max giorni'**
+  String get kanbanPolicySettingMaxDays;
+
+  /// No description provided for @kanbanPolicySettingMaxItems.
+  ///
+  /// In it, this message translates to:
+  /// **'Max item'**
+  String get kanbanPolicySettingMaxItems;
+
+  /// No description provided for @kanbanPolicyUnitHours.
+  ///
+  /// In it, this message translates to:
+  /// **'Ore'**
+  String get kanbanPolicyUnitHours;
+
+  /// No description provided for @kanbanPolicyUnitDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Giorni'**
+  String get kanbanPolicyUnitDays;
+
+  /// No description provided for @kanbanPolicyHelpConfigurable.
+  ///
+  /// In it, this message translates to:
+  /// **'Ogni colonna può ora avere limiti temporali e di WIP individuale personalizzati.'**
+  String get kanbanPolicyHelpConfigurable;
 
   /// No description provided for @kanbanPolicyMovingTip.
   ///

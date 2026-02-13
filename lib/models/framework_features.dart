@@ -516,6 +516,9 @@ class KanbanColumnConfig {
   /// Map of active policies (policyId -> isActive)
   final Map<String, bool>? activePolicies;
 
+  /// Custom settings for policies (e.g., 'maxHours', 'maxItemsPerPerson')
+  final Map<String, dynamic> policySettings;
+
   const KanbanColumnConfig({
     required this.id,
     required this.name,
@@ -525,12 +528,18 @@ class KanbanColumnConfig {
     this.order = 0,
     this.policies = const [],
     this.activePolicies,
+    this.policySettings = const {},
   });
 
   /// Verifica se una specifica policy è attiva
   bool isPolicyActive(String policyId) {
     if (activePolicies == null) return false;
     return activePolicies![policyId] ?? false;
+  }
+
+  /// Ottiene un valore dalle policy settings o un default
+  dynamic getPolicySetting(String key, dynamic defaultValue) {
+    return policySettings[key] ?? defaultValue;
   }
 
   /// Verifica se il WIP limit è superato
@@ -573,6 +582,7 @@ class KanbanColumnConfig {
     int? order,
     List<String>? policies,
     Map<String, bool>? activePolicies,
+    Map<String, dynamic>? policySettings,
   }) {
     return KanbanColumnConfig(
       id: id ?? this.id,
@@ -583,6 +593,7 @@ class KanbanColumnConfig {
       order: order ?? this.order,
       policies: policies ?? this.policies,
       activePolicies: activePolicies ?? this.activePolicies,
+      policySettings: policySettings ?? this.policySettings,
     );
   }
 
@@ -597,6 +608,7 @@ class KanbanColumnConfig {
       'order': order,
       'policies': policies,
       'activePolicies': activePolicies,
+      'policySettings': policySettings,
     };
   }
 
@@ -619,6 +631,7 @@ class KanbanColumnConfig {
       activePolicies: (data['activePolicies'] as Map<String, dynamic>?)?.map(
         (key, value) => MapEntry(key, value as bool),
       ),
+      policySettings: Map<String, dynamic>.from(data['policySettings'] ?? {}),
     );
   }
 }

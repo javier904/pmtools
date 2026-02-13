@@ -26,7 +26,7 @@ class AgileBoardWidget extends StatelessWidget {
   final void Function(UserStoryModel story)? onStoryTap;
   final void Function(String columnId, int? newLimit)? onWipLimitChange;
   final void Function(String columnId, List<String> policies)? onPoliciesChange;
-  final void Function(String columnId, Map<String, bool> activePolicies)? onActivePoliciesChange;
+  final void Function(String columnId, Map<String, bool> activePolicies, Map<String, dynamic> policySettings)? onActivePoliciesChange;
   final void Function(UserStoryModel story, String? email)? onAssigneeChange;
   final void Function(UserStoryModel story, int? points)? onStoryPointsChange;
   final void Function(String storyId, String newTitle)? onTitleChange;
