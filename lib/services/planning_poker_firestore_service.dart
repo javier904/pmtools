@@ -6,6 +6,7 @@ import '../models/estimation_mode.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import 'subscription/subscription_limits_service.dart';
 import 'favorite_service.dart';
+import 'user_profile_service.dart';
 
 /// Service per la gestione Firestore del Planning Poker
 ///
@@ -79,7 +80,7 @@ class PlanningPokerFirestoreService {
         'autoReveal': autoReveal,
         'participants': {
           _escapeEmailKey(createdBy.toLowerCase()): {
-            'name': createdBy.split('@').first,
+            'name': await UserProfileService().getNameByEmail(createdBy),
             'role': 'facilitator',
             'joinedAt': Timestamp.fromDate(now),
             'isOnline': true,

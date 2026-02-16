@@ -6,6 +6,7 @@ import '../models/subscription/subscription_limits_model.dart';
 import '../utils/validators.dart';
 import 'auth_service.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'user_profile_service.dart';
 
 /// Servizio unificato per la gestione di TUTTI gli inviti
 ///
@@ -96,7 +97,7 @@ class InviteService {
     try {
       final now = DateTime.now();
       final token = UnifiedInviteModel.generateToken();
-      final inviterName = _authService.currentUser?.displayName ?? inviterEmail.split('@').first;
+      final inviterName = _authService.currentUser?.displayName ?? await UserProfileService().getNameByEmail(inviterEmail);
 
       final invite = UnifiedInviteModel(
         id: '',
@@ -332,7 +333,7 @@ class InviteService {
     try {
       final batch = _firestore.batch();
       final now = DateTime.now();
-      final name = accepterName ?? userEmail.split('@').first;
+      final name = accepterName ?? await UserProfileService().getNameByEmail(userEmail);
 
       // 1. Aggiorna lo status dell'invito
       batch.update(_invitesRef.doc(invite.id), {

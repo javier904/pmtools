@@ -6,6 +6,7 @@ import '../models/subscription/subscription_limits_model.dart';
 import '../utils/validators.dart';
 import 'auth_service.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'user_profile_service.dart';
 
 /// Servizio per la gestione degli inviti alle Retrospective
 ///
@@ -93,7 +94,7 @@ class RetroInviteService {
         role: role,
         status: RetroInviteStatus.pending,
         invitedBy: inviterEmail,
-        invitedByName: inviterEmail.split('@').first,
+        invitedByName: await UserProfileService().getNameByEmail(inviterEmail),
         invitedAt: now,
         expiresAt: now.add(Duration(days: expirationDays)),
         token: token,

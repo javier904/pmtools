@@ -487,8 +487,8 @@ Future<void> updateStoryStatus(
       if (!sprintDoc.exists) return;
       final sprint = SprintModel.fromFirestore(sprintDoc);
 
-      // Solo per sprint attivi
-      if (sprint.status != SprintStatus.active) return;
+      // Solo per sprint attivi o in fase di chiusura
+      if (!sprint.status.isActiveOrReview) return;
 
       // Calcola i punti rimanenti
       final storiesSnapshot = await _storiesRef(projectId)
@@ -589,8 +589,8 @@ Future<void> updateStoryStatus(
       name: name,
       goal: goal,
       number: sprintNumber,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: DateTime(startDate.year, startDate.month, startDate.day),
+      endDate: DateTime(endDate.year, endDate.month, endDate.day),
       storyIds: storyIds,
       plannedPoints: plannedPoints,
       teamCapacity: teamCapacity,
@@ -641,20 +641,20 @@ Future<void> updateStoryStatus(
             query.docs.map((doc) => SprintModel.fromFirestore(doc)).toList());
   }
 
-  /// Ottiene lo sprint attivo
+  /// Ottiene lo sprint attivo (include sprint in fase di chiusura/review)
   Future<SprintModel?> getActiveSprint(String projectId) async {
     final query = await _sprintsRef(projectId)
-        .where('status', isEqualTo: SprintStatus.active.name)
+        .where('status', whereIn: [SprintStatus.active.name, SprintStatus.review.name])
         .limit(1)
         .get();
     if (query.docs.isEmpty) return null;
     return SprintModel.fromFirestore(query.docs.first);
   }
 
-  /// Stream dello sprint attivo
+  /// Stream dello sprint attivo (include sprint in fase di chiusura/review)
   Stream<SprintModel?> streamActiveSprint(String projectId) {
     return _sprintsRef(projectId)
-        .where('status', isEqualTo: SprintStatus.active.name)
+        .where('status', whereIn: [SprintStatus.active.name, SprintStatus.review.name])
         .limit(1)
         .snapshots()
         .map((query) {
@@ -696,6 +696,18 @@ Future<void> updateStoryStatus(
     } catch (e) {
       print('⚠️ Errore calcolo planned points: $e');
     }
+  }
+
+  /// Avvia la fase di chiusura di uno sprint (active → review)
+  Future<void> startSprintClosing(String projectId, String sprintId) async {
+    await _sprintsRef(projectId).doc(sprintId).update({
+      'status': SprintStatus.review.name,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    // NON toccare activeSprintId - sprint ancora logicamente attivo
+    await _projectsRef.doc(projectId).update({
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   /// Completa uno sprint

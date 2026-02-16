@@ -600,18 +600,25 @@ class VelocityTrendWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final completedSprints = sprints
+    var completedSprints = sprints
         .where((s) => s.status == SprintStatus.completed && s.velocity != null)
         .toList()
       ..sort((a, b) => a.number.compareTo(b.number));
 
+    // Calculate average velocity based on ALL completed sprints (before limiting)
+    final totalCompletedSprints = completedSprints.length;
+    final avgVelocity = completedSprints.isEmpty 
+        ? 0.0 
+        : completedSprints.fold<double>(0, (sum, s) => sum + s.completedPoints.toDouble()) / totalCompletedSprints;
+
+    // Limit to last 10 sprints for Visualization
+    if (completedSprints.length > 10) {
+      completedSprints = completedSprints.sublist(completedSprints.length - 10);
+    }
+
     if (completedSprints.isEmpty) {
       return _buildEmptyState(l10n);
     }
-
-    // Use completedPoints for standard velocity trend
-    final avgVelocity = completedSprints.fold<double>(0, (sum, s) => sum + s.completedPoints.toDouble()) /
-        completedSprints.length;
 
     return Card(
       child: Padding(
@@ -628,19 +635,39 @@ class VelocityTrendWidget extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Media: ${avgVelocity.toStringAsFixed(1)} pts',
-                    style: const TextStyle(
-                      color: Colors.purple,
-                      fontWeight: FontWeight.bold,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Tooltip(
+                      message: l10n.velocityTooltipAverage(totalCompletedSprints),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'Media: ${avgVelocity.toStringAsFixed(1)} pts',
+                          style: const TextStyle(
+                            color: Colors.purple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    if (sprints.where((s) => s.status == SprintStatus.completed).length > 10)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          'Ultimi 10 sprint',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -658,9 +685,10 @@ class VelocityTrendWidget extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
+                        interval: 1, // Fix: force integer interval to avoid duplicates
                         getTitlesWidget: (value, meta) {
                           final index = value.toInt();
-                          if (index < completedSprints.length) {
+                          if (index >= 0 && index < completedSprints.length) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
@@ -1897,7 +1925,7 @@ class MetricsQuickViewWidget extends StatelessWidget {
       // Scrum: Velocity, Completion, Sprint days remaining
       final avgVelocity = _calculateAverageVelocity();
       final completionRate = _calculateCompletionRate();
-      final activeSprint = sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+      final activeSprint = sprints.where((s) => s.status.isActiveOrReview).firstOrNull;
 
       return [
         _buildMetricColumn('Velocity', avgVelocity.toStringAsFixed(1), l10n.agilePoints, Colors.purple),

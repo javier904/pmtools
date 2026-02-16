@@ -7,6 +7,7 @@ import '../../models/user_profile/subscription_model.dart';
 import '../../services/smart_todo_audit_service.dart';
 import '../../services/smart_todo_service.dart';
 import '../../services/subscription/subscription_limits_service.dart';
+import '../../services/user_profile_service.dart';
 import '../../l10n/app_localizations.dart';
 
 enum AuditViewMode { timeline, columns }
@@ -41,6 +42,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   int _selectedDays = 1; // Default 1 day (24h)
   int _maxAllowedDays = 7; // Free plan default
   bool _isPremium = false;
+  final Map<String, String> _resolvedNames = {};
 
   // Search controller
   final TextEditingController _searchController = TextEditingController();
@@ -53,6 +55,18 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   void initState() {
     super.initState();
     _initializeWithSubscription();
+    _resolveParticipantNames();
+  }
+
+  Future<void> _resolveParticipantNames() async {
+    for (final email in widget.list.participants.keys) {
+      final name = await UserProfileService().getNameByEmail(email);
+      if (mounted) {
+        setState(() {
+          _resolvedNames[email] = name;
+        });
+      }
+    }
   }
 
   @override
@@ -421,7 +435,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                       items: [
                         DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
                         ...participants.map((p) {
-                          final displayName = p.value.displayName ?? p.key.split('@').first;
+                          final displayName = _resolvedNames[p.key] ?? p.value.displayName ?? p.key.split('@').first;
                           return DropdownMenuItem(
                             value: displayName,
                             child: Text(displayName, overflow: TextOverflow.ellipsis),
@@ -681,7 +695,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
               children: participants.map((entry) {
                 final email = entry.key;
                 final participant = entry.value;
-                final displayName = participant.displayName ?? email.split('@').first;
+                final displayName = _resolvedNames[email] ?? participant.displayName ?? email.split('@').first;
                 final userLogs = logsByUser[displayName] ?? [];
 
                 return _buildUserColumn(

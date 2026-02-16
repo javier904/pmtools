@@ -144,6 +144,11 @@ MethodologyGuide _buildScrumGuide(AppLocalizations l10n) {
         content: l10n.guideJiraContent,
         icon: Icons.integration_instructions,
       ),
+      MethodologySection(
+        title: l10n.scrumSprintClosingTitle,
+        content: l10n.scrumSprintClosingContent,
+        icon: Icons.rate_review,
+      ),
     ],
     bestPractices: [
       l10n.scrumBP1,
@@ -154,6 +159,7 @@ MethodologyGuide _buildScrumGuide(AppLocalizations l10n) {
       l10n.scrumBP6,
       l10n.scrumBP7,
       l10n.scrumBP8,
+      l10n.scrumBP9,
     ],
     antiPatterns: [
       l10n.scrumAP1,
@@ -164,6 +170,7 @@ MethodologyGuide _buildScrumGuide(AppLocalizations l10n) {
       l10n.scrumAP6,
       l10n.scrumAP7,
       l10n.scrumAP8,
+      l10n.scrumAP9,
     ],
     faqs: [
       FAQ(question: l10n.scrumFAQ1Q, answer: l10n.scrumFAQ1A),

@@ -9,6 +9,7 @@ import '../models/subscription/subscription_limits_model.dart';
 import 'subscription/subscription_limits_service.dart';
 import 'smart_todo_audit_service.dart';
 import 'favorite_service.dart';
+import 'user_profile_service.dart';
 
 class SmartTodoService {
   final FirebaseFirestore _firestore;
@@ -20,6 +21,11 @@ class SmartTodoService {
 
   SmartTodoService({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
+
+  Future<String> _resolveName(String email, String? providedName) async {
+    if (providedName != null && providedName.isNotEmpty) return providedName;
+    return UserProfileService().getNameByEmail(email);
+  }
 
   // ══════════════════════════════════════════════════════════════════════════════
   // LIST OPERATIONS
@@ -87,7 +93,7 @@ class SmartTodoService {
       entityName: list.title,
       action: TodoAuditAction.create,
       performedBy: userEmail.toLowerCase(),
-      performedByName: performedByName ?? userEmail.split('@').first,
+      performedByName: await _resolveName(userEmail, performedByName),
       description: 'Lista "${list.title}" creata',
     );
 
@@ -110,7 +116,7 @@ class SmartTodoService {
           entityName: list.title,
           action: TodoAuditAction.update,
           performedBy: performedBy,
-          performedByName: performedByName ?? performedBy.split('@').first,
+          performedByName: await _resolveName(performedBy, performedByName),
           changes: changes,
           description: 'Modificato: ${changes.map((c) => c.fieldDisplayName).join(', ')}',
         );
@@ -133,7 +139,7 @@ class SmartTodoService {
         entityName: listTitle,
         action: TodoAuditAction.delete,
         performedBy: performedBy,
-        performedByName: performedByName ?? performedBy.split('@').first,
+        performedByName: await _resolveName(performedBy, performedByName),
         description: 'Lista "${listTitle ?? listId}" eliminata',
       );
     }
@@ -160,7 +166,7 @@ class SmartTodoService {
         entityName: email,
         action: TodoAuditAction.invite,
         performedBy: performedBy,
-        performedByName: performedByName ?? performedBy.split('@').first,
+        performedByName: await _resolveName(performedBy, performedByName),
         description: 'Invitato $email',
       );
     }
@@ -205,7 +211,7 @@ class SmartTodoService {
       entityName: participant.displayName ?? participant.email,
       action: TodoAuditAction.join,
       performedBy: participant.email,
-      performedByName: participant.displayName ?? participant.email.split('@').first,
+      performedByName: await _resolveName(participant.email, participant.displayName),
       description: '${participant.displayName ?? participant.email} entrato come ${participant.role.name}',
     );
   }
@@ -291,7 +297,7 @@ class SmartTodoService {
         entityName: task.title,
         action: TodoAuditAction.create,
         performedBy: performedBy,
-        performedByName: performedByName ?? performedBy.split('@').first,
+        performedByName: await _resolveName(performedBy, performedByName),
         description: 'Task "${task.title}" creato',
       );
     }
@@ -322,7 +328,7 @@ class SmartTodoService {
         entityName: '${tasks.length} task',
         action: TodoAuditAction.batchCreate,
         performedBy: performedBy,
-        performedByName: performedByName ?? performedBy.split('@').first,
+        performedByName: await _resolveName(performedBy, performedByName),
         description: 'Importati ${tasks.length} task: ${tasks.take(5).map((t) => t.title).join(', ')}${tasks.length > 5 ? '...' : ''}',
         metadata: {'count': tasks.length, 'titles': tasks.map((t) => t.title).toList()},
       );
@@ -363,7 +369,7 @@ class SmartTodoService {
           entityName: task.title,
           action: action,
           performedBy: performedBy,
-          performedByName: performedByName ?? performedBy.split('@').first,
+          performedByName: await _resolveName(performedBy, performedByName),
           changes: changes,
           description: desc,
         );
@@ -401,7 +407,7 @@ class SmartTodoService {
         entityName: taskTitle,
         action: TodoAuditAction.delete,
         performedBy: performedBy,
-        performedByName: performedByName ?? performedBy.split('@').first,
+        performedByName: await _resolveName(performedBy, performedByName),
         description: 'Task "${taskTitle ?? taskId}" eliminato',
       );
     }
@@ -565,7 +571,7 @@ class SmartTodoService {
           entityName: listTitle,
           action: TodoAuditAction.archive,
           performedBy: performedBy,
-          performedByName: performedByName ?? performedBy.split('@').first,
+          performedByName: await _resolveName(performedBy, performedByName),
           description: 'Lista "${listTitle ?? listId}" archiviata',
         );
       }
@@ -597,7 +603,7 @@ class SmartTodoService {
           entityName: listTitle,
           action: TodoAuditAction.restore,
           performedBy: performedBy,
-          performedByName: performedByName ?? performedBy.split('@').first,
+          performedByName: await _resolveName(performedBy, performedByName),
           description: 'Lista "${listTitle ?? listId}" ripristinata',
         );
       }
@@ -670,7 +676,7 @@ class SmartTodoService {
           entityName: taskTitle,
           action: TodoAuditAction.archive,
           performedBy: performedBy,
-          performedByName: performedByName ?? performedBy.split('@').first,
+          performedByName: await _resolveName(performedBy, performedByName),
           description: 'Task "${taskTitle ?? taskId}" archiviato',
         );
       }
@@ -708,7 +714,7 @@ class SmartTodoService {
           entityName: taskTitle,
           action: TodoAuditAction.restore,
           performedBy: performedBy,
-          performedByName: performedByName ?? performedBy.split('@').first,
+          performedByName: await _resolveName(performedBy, performedByName),
           description: 'Task "${taskTitle ?? taskId}" ripristinato',
         );
       }

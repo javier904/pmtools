@@ -3038,6 +3038,12 @@ abstract class AppLocalizations {
   /// **'Il team deve essere cross-funzionale e auto-organizzato'**
   String get scrumBP8;
 
+  /// No description provided for @scrumBP9.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa la fase di chiusura guidata per completare Sprint Review prima di finalizzare'**
+  String get scrumBP9;
+
   /// No description provided for @scrumAP1.
   ///
   /// In it, this message translates to:
@@ -3085,6 +3091,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Scrum Master che \"assegna\" compiti al team'**
   String get scrumAP8;
+
+  /// No description provided for @scrumAP9.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudere lo sprint senza Sprint Review e senza scegliere la disposizione delle stories incomplete'**
+  String get scrumAP9;
+
+  /// No description provided for @scrumSprintClosingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiusura Sprint Guidata'**
+  String get scrumSprintClosingTitle;
+
+  /// No description provided for @scrumSprintClosingContent.
+  ///
+  /// In it, this message translates to:
+  /// **'Il flusso di chiusura sprint segue lo Scrum Guide 2020 con due fasi:\n\n1. Chiusura Sprint: lo sprint passa in fase di review. La board resta visibile ma non si possono aggiungere nuove stories.\n\n2. Finalizzazione: dopo la Sprint Review, scegli la disposizione delle stories incomplete (Backlog, Ready, Carry Forward) e finalizza lo sprint. Le metriche vengono calcolate e viene suggerito di creare la retrospettiva.'**
+  String get scrumSprintClosingContent;
 
   /// No description provided for @scrumFAQ1Q.
   ///
@@ -3385,6 +3409,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Blocca il nuovo lavoro se il WIP è al limite'**
   String get kanbanBP6;
+
+  /// No description provided for @velocityTooltipAverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Basato su tutti i {count} sprint completati'**
+  String velocityTooltipAverage(int count);
 
   /// No description provided for @kanbanBP7.
   ///
@@ -4057,6 +4087,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Fai daily standup per allineare il team'**
   String get contextualHelpSprintTip3;
+
+  /// No description provided for @contextualHelpSprintTip4.
+  ///
+  /// In it, this message translates to:
+  /// **'Alla fine dello sprint, usa \'Chiudi Sprint\' per la fase di chiusura guidata con Sprint Review e disposizione stories'**
+  String get contextualHelpSprintTip4;
 
   /// No description provided for @contextualHelpKanbanTitle.
   ///
@@ -5377,6 +5413,144 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Completa Sprint'**
   String get agileCompleteSprint;
+
+  /// No description provided for @agileStartClosing.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi Sprint'**
+  String get agileStartClosing;
+
+  /// No description provided for @agileFinalizeSprint.
+  ///
+  /// In it, this message translates to:
+  /// **'Finalizza Sprint'**
+  String get agileFinalizeSprint;
+
+  /// No description provided for @agileSprintClosingPhase.
+  ///
+  /// In it, this message translates to:
+  /// **'In Chiusura'**
+  String get agileSprintClosingPhase;
+
+  /// No description provided for @agileSprintClosingDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Lo sprint è in fase di chiusura. Completa la Sprint Review e finalizza lo sprint.'**
+  String get agileSprintClosingDesc;
+
+  /// No description provided for @agileSprintClosingBanner.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint in fase di chiusura - completa review e finalizza'**
+  String get agileSprintClosingBanner;
+
+  /// No description provided for @agileSprintClosingStarted.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint in fase di chiusura'**
+  String get agileSprintClosingStarted;
+
+  /// No description provided for @agileSprintClosingBoardVisible.
+  ///
+  /// In it, this message translates to:
+  /// **'La board continua a mostrare le stories dello sprint'**
+  String get agileSprintClosingBoardVisible;
+
+  /// No description provided for @agileSprintClosingNoNewStories.
+  ///
+  /// In it, this message translates to:
+  /// **'Non è possibile aggiungere nuove stories allo sprint'**
+  String get agileSprintClosingNoNewStories;
+
+  /// No description provided for @agileSprintClosingReviewFirst.
+  ///
+  /// In it, this message translates to:
+  /// **'Conduci la Sprint Review prima di finalizzare'**
+  String get agileSprintClosingReviewFirst;
+
+  /// No description provided for @agileSprintOverdue.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaduto da {days} giorni'**
+  String agileSprintOverdue(int days);
+
+  /// No description provided for @agileSprintDaysWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'{days} giorni rimanenti'**
+  String agileSprintDaysWarning(int days);
+
+  /// No description provided for @agileStoryDisposition.
+  ///
+  /// In it, this message translates to:
+  /// **'Disposizione Stories'**
+  String get agileStoryDisposition;
+
+  /// No description provided for @agileStoryDispositionDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli cosa fare con le stories incomplete'**
+  String get agileStoryDispositionDesc;
+
+  /// No description provided for @agileDispositionBacklog.
+  ///
+  /// In it, this message translates to:
+  /// **'Backlog'**
+  String get agileDispositionBacklog;
+
+  /// No description provided for @agileDispositionReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Ready'**
+  String get agileDispositionReady;
+
+  /// No description provided for @agileDispositionCarryForward.
+  ///
+  /// In it, this message translates to:
+  /// **'Carry Forward'**
+  String get agileDispositionCarryForward;
+
+  /// No description provided for @agileDispositionBacklogDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Torna nel backlog per ri-prioritizzazione'**
+  String get agileDispositionBacklogDesc;
+
+  /// No description provided for @agileDispositionReadyDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Pronta per il prossimo sprint planning'**
+  String get agileDispositionReadyDesc;
+
+  /// No description provided for @agileDispositionCarryForwardDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Priorità alta per il prossimo sprint'**
+  String get agileDispositionCarryForwardDesc;
+
+  /// No description provided for @agileRetroSuggestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi creare la retrospettiva per questo sprint?'**
+  String get agileRetroSuggestion;
+
+  /// No description provided for @agileCreateRetro.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Retrospettiva'**
+  String get agileCreateRetro;
+
+  /// No description provided for @agileSprintReviewSection.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint Review'**
+  String get agileSprintReviewSection;
+
+  /// No description provided for @agileSprintSummarySection.
+  ///
+  /// In it, this message translates to:
+  /// **'Riepilogo Sprint'**
+  String get agileSprintSummarySection;
 
   /// No description provided for @agileDeleteSprint.
   ///

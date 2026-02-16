@@ -730,6 +730,7 @@
   "scrumBP6": "Celebra i successi nella Sprint Review",
   "scrumBP7": "La Retrospettiva deve produrre azioni concrete di miglioramento",
   "scrumBP8": "Il team deve essere cross-funzionale e auto-organizzato",
+  "scrumBP9": "Usa la fase di chiusura guidata per completare Sprint Review prima di finalizzare",
   "scrumAP1": "Sprint senza Sprint Goal chiaro",
   "scrumAP2": "Daily Scrum trasformato in report meeting",
   "scrumAP3": "Saltare la Retrospettiva quando si è \"troppo occupati\"",
@@ -738,6 +739,9 @@
   "scrumAP6": "Story Points convertiti in ore (perde il senso)",
   "scrumAP7": "Team troppo grande (ideale 5-9 persone)",
   "scrumAP8": "Scrum Master che \"assegna\" compiti al team",
+  "scrumAP9": "Chiudere lo sprint senza Sprint Review e senza scegliere la disposizione delle stories incomplete",
+  "scrumSprintClosingTitle": "Chiusura Sprint Guidata",
+  "scrumSprintClosingContent": "Il flusso di chiusura sprint segue lo Scrum Guide 2020 con due fasi:\n\n1. Chiusura Sprint: lo sprint passa in fase di review. La board resta visibile ma non si possono aggiungere nuove stories.\n\n2. Finalizzazione: dopo la Sprint Review, scegli la disposizione delle stories incomplete (Backlog, Ready, Carry Forward) e finalizza lo sprint. Le metriche vengono calcolate e viene suggerito di creare la retrospettiva.",
   "scrumFAQ1Q": "Quanto deve durare uno Sprint?",
   "scrumFAQ1A": "La durata tipica è 2 settimane, ma può variare da 1 a 4 settimane. Sprint più brevi permettono feedback più frequenti e correzioni di rotta rapide. Sprint più lunghi danno più tempo per completare items complessi. L'importante è mantenere la durata costante.",
   "scrumFAQ2Q": "Come gestire lavoro non completato a fine Sprint?",
@@ -792,6 +796,14 @@
   "kanbanBP4": "Usa le metriche per decisioni, non per giudicare le persone",
   "kanbanBP5": "Migliora un passo alla volta",
   "kanbanBP6": "Blocca il nuovo lavoro se il WIP è al limite",
+  "velocityTooltipAverage": "Basato su tutti i {count} sprint completati",
+  "@velocityTooltipAverage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "kanbanBP7": "Analizza i blocchi e rimuovili rapidamente",
   "kanbanBP8": "Usa swimlanes per priorità o tipologie di lavoro",
   "kanbanAP1": "WIP limits troppo alti (o assenti)",
@@ -936,6 +948,7 @@
   "contextualHelpSprintTip1": "Non cambiare scope durante lo sprint",
   "contextualHelpSprintTip2": "Monitora il burndown per verificare il progresso",
   "contextualHelpSprintTip3": "Fai daily standup per allineare il team",
+  "contextualHelpSprintTip4": "Alla fine dello sprint, usa 'Chiudi Sprint' per la fase di chiusura guidata con Sprint Review e disposizione stories",
   "contextualHelpKanbanTitle": "Kanban Board",
   "contextualHelpKanbanDescFlow": "La board Kanban visualizza il flusso di lavoro. Gli item si muovono da sinistra a destra attraverso le colonne.",
   "contextualHelpKanbanDescScrum": "In Scrum, la board mostra lo stato delle storie dello sprint corrente.",
@@ -1210,6 +1223,39 @@
   "agileSprintStatusCompleted": "Completato",
   "agileStartSprint": "Avvia Sprint",
   "agileCompleteSprint": "Completa Sprint",
+  "agileStartClosing": "Chiudi Sprint",
+  "agileFinalizeSprint": "Finalizza Sprint",
+  "agileSprintClosingPhase": "In Chiusura",
+  "agileSprintClosingDesc": "Lo sprint è in fase di chiusura. Completa la Sprint Review e finalizza lo sprint.",
+  "agileSprintClosingBanner": "Sprint in fase di chiusura - completa review e finalizza",
+  "agileSprintClosingStarted": "Sprint in fase di chiusura",
+  "agileSprintClosingBoardVisible": "La board continua a mostrare le stories dello sprint",
+  "agileSprintClosingNoNewStories": "Non è possibile aggiungere nuove stories allo sprint",
+  "agileSprintClosingReviewFirst": "Conduci la Sprint Review prima di finalizzare",
+  "agileSprintOverdue": "Scaduto da {days} giorni",
+  "@agileSprintOverdue": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "agileSprintDaysWarning": "{days} giorni rimanenti",
+  "@agileSprintDaysWarning": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "agileStoryDisposition": "Disposizione Stories",
+  "agileStoryDispositionDesc": "Scegli cosa fare con le stories incomplete",
+  "agileDispositionBacklog": "Backlog",
+  "agileDispositionReady": "Ready",
+  "agileDispositionCarryForward": "Carry Forward",
+  "agileDispositionBacklogDesc": "Torna nel backlog per ri-prioritizzazione",
+  "agileDispositionReadyDesc": "Pronta per il prossimo sprint planning",
+  "agileDispositionCarryForwardDesc": "Priorità alta per il prossimo sprint",
+  "agileRetroSuggestion": "Vuoi creare la retrospettiva per questo sprint?",
+  "agileCreateRetro": "Crea Retrospettiva",
+  "agileSprintReviewSection": "Sprint Review",
+  "agileSprintSummarySection": "Riepilogo Sprint",
   "agileDeleteSprint": "Elimina",
   "agileSprintName": "Nome Sprint",
   "agileSprintGoal": "Sprint Goal",

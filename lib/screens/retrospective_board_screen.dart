@@ -24,6 +24,8 @@ import 'package:flutter/material.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html if (dart.library.io) 'dart:io';
 
+import 'package:agile_tools/widgets/user_display_name_widget.dart';
+
 class RetroBoardScreen extends StatefulWidget {
   final String retroId;
   final String currentUserEmail;
@@ -173,13 +175,22 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
           ),
           ...retro.participantEmails.map((email) {
              final isOnline = ParticipantPresenceIndicator.isParticipantOnline(email, retro.participantPresence);
-             // Try to get display name from participants list if available in model? 
-             // RetroModel doesn't have full Participant objects usually, just emails. 
-             // We'll show email/name split.
-             final name = email.split('@').first;
-             return TextSpan(
-               text: '$name ${isOnline ? "●" : "○"}\n',
-               style: TextStyle(color: isOnline ? Colors.greenAccent : Colors.white70),
+             return WidgetSpan(
+               alignment: PlaceholderAlignment.middle,
+               child: Padding(
+                 padding: const EdgeInsets.only(bottom: 4),
+                 child: Row(
+                   mainAxisSize: MainAxisSize.min,
+                   children: [
+                     UserDisplayName(
+                       email: email,
+                       style: TextStyle(color: isOnline ? Colors.greenAccent : Colors.white70, fontSize: 13),
+                     ),
+                     const SizedBox(width: 4),
+                     Text(isOnline ? "●" : "○", style: TextStyle(color: isOnline ? Colors.greenAccent : Colors.white70)),
+                   ],
+                 ),
+               ),
              );
           }),
         ],

@@ -357,6 +357,36 @@ class AuditLogModel {
     );
   }
 
+  /// Crea log per avvio fase di chiusura sprint (active → review)
+  factory AuditLogModel.startSprintClosing({
+    required String projectId,
+    required String sprintId,
+    required String sprintName,
+    required String performedBy,
+    required String performedByName,
+    required int totalStories,
+    required int completedStories,
+  }) {
+    return AuditLogModel(
+      id: '',
+      projectId: projectId,
+      entityType: AuditEntityType.sprint,
+      entityId: sprintId,
+      entityName: sprintName,
+      action: AuditAction.update,
+      performedBy: performedBy,
+      performedByName: performedByName,
+      timestamp: DateTime.now(),
+      previousValue: {'status': 'active'},
+      newValue: {
+        'status': 'review',
+        'totalStories': totalStories,
+        'completedStories': completedStories,
+      },
+      description: 'Avviata fase di chiusura sprint ($completedStories/$totalStories stories completate)',
+    );
+  }
+
   /// Crea log per chiusura sprint
   factory AuditLogModel.closeSprint({
     required String projectId,

@@ -7,6 +7,9 @@ import '../models/planning_poker_invite_model.dart';
 import '../models/agile_invite_model.dart';
 import '../models/smart_todo/todo_invite_model.dart' show TodoInviteModel;
 import '../models/retro_invite_model.dart';
+import '../models/subscription/subscription_limits_model.dart';
+import 'subscription/subscription_limits_service.dart';
+import 'user_profile_service.dart';
 import 'auth_service.dart';
 import 'invite_service.dart';
 
@@ -838,7 +841,7 @@ class InviteAggregatorService {
   /// altrimenti usa le collection legacy
   Future<bool> acceptInvite(UnifiedInviteModel invite) async {
     final userEmail = _authService.currentUserEmail;
-    final userName = _authService.currentUser?.displayName ?? userEmail?.split('@').first ?? 'User';
+    final userName = await UserProfileService().getNameByEmail(userEmail!);
 
     if (userEmail == null) return false;
 
@@ -1000,7 +1003,7 @@ class InviteAggregatorService {
 
   Future<bool> _acceptEisenhowerInvite(UnifiedInviteModel invite) async {
     final userEmail = _authService.currentUserEmail;
-    final userName = _authService.currentUser?.displayName ?? userEmail?.split('@').first ?? 'User';
+    final userName = await UserProfileService().getNameByEmail(userEmail!);
 
     if (userEmail == null) return false;
 

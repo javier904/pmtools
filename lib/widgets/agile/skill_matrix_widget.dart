@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/team_member_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../../services/user_profile_service.dart';
+import '../user_display_name_widget.dart';
 
 import 'package:agile_tools/l10n/app_localizations.dart';
 
@@ -90,22 +92,34 @@ class SkillMatrixWidget extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          CircleAvatar(
-                            radius: 14,
-                            backgroundColor: member.role.color.withOpacity(0.2),
-                            child: Text(
-                              (member.name ?? member.email)[0].toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: member.role.color,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            member.name ?? member.email.split('@').first,
-                            style: const TextStyle(fontSize: 13),
-                          ),
+                           FutureBuilder<String>(
+                             future: UserProfileService().getNameByEmail(member.email),
+                             initialData: member.name ?? member.email.split('@').first,
+                             builder: (context, snapshot) {
+                               final name = snapshot.data ?? (member.name ?? member.email.split('@').first);
+                               return Row(
+                                 mainAxisSize: MainAxisSize.min,
+                                 children: [
+                                   CircleAvatar(
+                                     radius: 14,
+                                     backgroundColor: member.role.color.withOpacity(0.2),
+                                     child: Text(
+                                       name.isNotEmpty ? name[0].toUpperCase() : '?',
+                                       style: TextStyle(
+                                         fontSize: 11,
+                                         color: member.role.color,
+                                       ),
+                                     ),
+                                   ),
+                                   const SizedBox(width: 8),
+                                   Text(
+                                     name,
+                                     style: const TextStyle(fontSize: 13),
+                                   ),
+                                 ],
+                               );
+                             },
+                           ),
                         ],
                       ),
                     ),

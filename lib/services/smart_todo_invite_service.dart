@@ -10,6 +10,7 @@ import '../models/subscription/subscription_limits_model.dart';
 import '../utils/validators.dart';
 import 'subscription/subscription_limits_service.dart';
 import 'smart_todo_audit_service.dart';
+import 'user_profile_service.dart';
 
 class SmartTodoInviteService {
   final FirebaseFirestore _firestore;
@@ -130,7 +131,7 @@ class SmartTodoInviteService {
         entityName: inviteEmail,
         action: TodoAuditAction.revoke,
         performedBy: performedBy,
-        performedByName: performedByName ?? performedBy.split('@').first,
+        performedByName: performedByName ?? await UserProfileService().getNameByEmail(performedBy),
         description: 'Invito revocato per ${inviteEmail ?? inviteId}',
       );
     }
@@ -224,7 +225,7 @@ class SmartTodoInviteService {
       entityName: userDisplayName ?? userEmail,
       action: TodoAuditAction.join,
       performedBy: userEmail,
-      performedByName: userDisplayName ?? userEmail.split('@').first,
+      performedByName: userDisplayName ?? await UserProfileService().getNameByEmail(userEmail),
       description: '${userDisplayName ?? userEmail} ha accettato l\'invito',
     );
   }

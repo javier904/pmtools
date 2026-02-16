@@ -832,12 +832,14 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                            value: s.id,
                            child: Row(
                              children: [
-                               Icon(s.status == SprintStatus.active ? Icons.directions_run : Icons.date_range, 
-                                 size: 16, 
-                                 color: s.status == SprintStatus.active ? Colors.green : Colors.grey),
+                               Icon(s.status.isActiveOrReview ? Icons.directions_run : Icons.date_range,
+                                 size: 16,
+                                 color: s.status == SprintStatus.active ? Colors.green
+                                      : s.status == SprintStatus.review ? Colors.orange
+                                      : Colors.grey),
                                const SizedBox(width: 8),
                                Text(s.name, style: TextStyle(
-                                 fontWeight: s.status == SprintStatus.active ? FontWeight.bold : FontWeight.normal
+                                 fontWeight: s.status.isActiveOrReview ? FontWeight.bold : FontWeight.normal
                                )),
                              ],
                            ),

@@ -115,13 +115,13 @@ class CommitmentTrendWidget extends StatelessWidget {
             const SizedBox(height: 16),
             // Chart
             SizedBox(
-              height: 170,
+              height: 180,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: completed.map((sprint) {
-                    return _buildSprintColumn(sprint, maxSP, theme);
+                    return _buildSprintColumn(sprint, maxSP, l10n, theme);
                   }).toList(),
                 ),
               ),
@@ -193,9 +193,10 @@ class CommitmentTrendWidget extends StatelessWidget {
   Widget _buildSprintColumn(
     SprintModel sprint,
     int maxSP,
+    AppLocalizations l10n,
     ThemeData theme,
   ) {
-    const double maxBarHeight = 110;
+    const double maxBarHeight = 100;
     final ratio = sprint.plannedPoints > 0
         ? (sprint.completedPoints / sprint.plannedPoints).clamp(0.0, 2.0)
         : 0.0;
@@ -230,32 +231,58 @@ class CommitmentTrendWidget extends StatelessWidget {
               ),
             ),
             // Bars side by side
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Planned bar
-                Container(
-                  width: 18,
-                  height: plannedH.clamp(2.0, maxBarHeight),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(0.7),
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(3)),
+            Tooltip(
+              message: '${l10n.agileCommitmentTrendPlanned}: ${sprint.plannedPoints}\n${l10n.agileCommitmentTrendCompleted}: ${sprint.completedPoints}',
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.all(8),
+              triggerMode: TooltipTriggerMode.tap, // Tap on mobile, hover on desktop
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Planned bar
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (plannedH > 20) // Show label only if bar is tall enough
+                        Text(
+                          '${sprint.plannedPoints}',
+                          style: TextStyle(fontSize: 8, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        ),
+                      Container(
+                        width: 18,
+                        height: plannedH.clamp(2.0, maxBarHeight),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondary.withOpacity(0.7),
+                          borderRadius:
+                              const BorderRadius.vertical(top: Radius.circular(3)),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 4),
-                // Completed bar
-                Container(
-                  width: 18,
-                  height: completedH.clamp(2.0, maxBarHeight),
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.85),
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(3)),
+                  const SizedBox(width: 4),
+                  // Completed bar
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                       if (completedH > 20)
+                        Text(
+                          '${sprint.completedPoints}',
+                          style: TextStyle(fontSize: 8, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        ),
+                      Container(
+                        width: 18,
+                        height: completedH.clamp(2.0, maxBarHeight),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withOpacity(0.85),
+                          borderRadius:
+                              const BorderRadius.vertical(top: Radius.circular(3)),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 6),
             // Sprint name

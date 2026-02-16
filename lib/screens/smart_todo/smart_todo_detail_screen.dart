@@ -377,7 +377,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       task.copyWith(assignedTo: newAssignees),
       previousTask: task,
       performedBy: _currentUserEmail,
-      performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+      performedByName: null,
     );
   }
 
@@ -712,7 +712,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
             task.copyWith(statusId: newStatusId, position: positionContext),
             previousTask: task,
             performedBy: _currentUserEmail,
-            performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+            performedByName: null,
           );
        }
        return;
@@ -788,7 +788,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           task.copyWith(statusId: newStatusId, position: newTaskPos),
           previousTask: task,
           performedBy: _currentUserEmail,
-          performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+          performedByName: null,
        );
 
     } else {
@@ -823,7 +823,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           task.copyWith(statusId: newStatusId, position: newPos),
           previousTask: task,
           performedBy: _currentUserEmail,
-          performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+          performedByName: null,
        );
     }
   }
@@ -861,7 +861,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           currentList.copyWith(columns: newColumns),
           previousList: currentList,
           performedBy: _currentUserEmail,
-          performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+          performedByName: null,
         );
       }
     }
@@ -948,7 +948,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   currentList.copyWith(columns: newColumns),
                   previousList: currentList,
                   performedBy: _currentUserEmail,
-                  performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                  performedByName: null,
                 );
               }
             },
@@ -1153,7 +1153,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                               currentList.copyWith(columns: newColumns),
                               previousList: currentList,
                               performedBy: _currentUserEmail,
-                              performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                              performedByName: null,
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -1235,7 +1235,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   currentList.copyWith(title: controller.text),
                   previousList: currentList,
                   performedBy: _currentUserEmail,
-                  performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                  performedByName: null,
                 );
                 Navigator.pop(context);
               }
@@ -1263,7 +1263,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 currentList.id,
                 listTitle: currentList.title,
                 performedBy: _currentUserEmail,
-                performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                performedByName: null,
               );
               if (mounted) Navigator.pop(context); // Go back to dashboard
             },
@@ -1734,7 +1734,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 task.id,
                 taskTitle: task.title,
                 performedBy: _currentUserEmail,
-                performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                performedByName: null,
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
@@ -1834,7 +1834,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                   list.copyWith(availableTags: newTags),
                                   previousList: list,
                                   performedBy: _currentUserEmail,
-                                  performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                                  performedByName: null,
                                 );
                                 Navigator.pop(context);
                                 _showTagsDialog(list.copyWith(availableTags: newTags));
@@ -1933,7 +1933,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     list.copyWith(availableTags: newTags),
                     previousList: list,
                     performedBy: _currentUserEmail,
-                    performedByName: _authService.currentUserName ?? _currentUserEmail.split('@').first,
+                    performedByName: null,
                   );
 
                   if (context.mounted) {

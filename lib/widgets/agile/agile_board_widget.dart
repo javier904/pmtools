@@ -110,9 +110,9 @@ class AgileBoardWidget extends StatelessWidget {
     );
   }
 
-  /// Recupera lo sprint attivo (se esiste)
+  /// Recupera lo sprint attivo o in fase di chiusura (se esiste)
   SprintModel? get _activeSprint {
-    return sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+    return sprints.where((s) => s.status.isActiveOrReview).firstOrNull;
   }
 
   List<UserStoryModel> _getVisibleStories() {

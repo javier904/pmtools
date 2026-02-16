@@ -389,6 +389,13 @@ class SprintBurndownLiveWidget extends StatelessWidget {
           '$daysLeft ${l10n.agileDaysRemainingSuffix}',
           theme.colorScheme.primary,
         ),
+        _buildStatItem(
+          context,
+          theme,
+          'End Date',
+          DateFormat('dd MMM').format(currentSprint!.endDate),
+          theme.colorScheme.onSurface,
+        ),
       ],
     );
   }

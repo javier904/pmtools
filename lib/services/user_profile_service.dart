@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_profile/user_profile_model.dart' as profile_model;
@@ -32,6 +33,9 @@ class UserProfileService {
   profile_model.UserProfileModel? _cachedProfile;
   SubscriptionModel? _cachedSubscription;
   UserSettingsModel? _cachedSettings;
+
+  /// Cache statica per la risoluzione dei nomi da email (condivisa tra istanze)
+  static final Map<String, String> _resolvedNamesCache = {};
 
   /// Ottiene l'ID dell'utente corrente
   String? get currentUserId => _auth.currentUser?.uid;
@@ -140,6 +144,51 @@ class UserProfileService {
     fields['updatedAt'] = Timestamp.fromDate(DateTime.now());
     await _firestore.collection(_usersCollection).doc(userId).update(fields);
     _cachedProfile = null; // Invalida cache
+  }
+
+  /// Risolve il nome di un utente partendo dall'email.
+  /// Priorità: 
+  /// 1. Cache locale (velocità massima)
+  /// 2. Firestore (nome reale)
+  /// 3. Firebase Auth (display name se disponibile)
+  /// 4. Fallback (split dell'email)
+  Future<String> getNameByEmail(String email) async {
+    if (email.isEmpty) return 'User';
+    
+    // 1. Controlla cache
+    if (_resolvedNamesCache.containsKey(email)) {
+      return _resolvedNamesCache[email]!;
+    }
+
+    try {
+      // 2. Cerca in Firestore per email
+      final query = await _firestore
+          .collection(_usersCollection)
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        final profile = profile_model.UserProfileModel.fromFirestore(query.docs.first);
+        final name = profile.fullName;
+        _resolvedNamesCache[email] = name;
+        return name;
+      }
+
+      // 3. Fallback a display name dell'utente corrente se coincide l'email
+      if (_auth.currentUser?.email == email && _auth.currentUser?.displayName != null) {
+        final name = _auth.currentUser!.displayName!;
+        _resolvedNamesCache[email] = name;
+        return name;
+      }
+    } catch (e) {
+      debugPrint('Error resolving name for $email: $e');
+    }
+
+    // 4. Fallback finale: split dell'email
+    final fallback = email.split('@').first;
+    // Non mettiamo in cache il fallback per forzare un eventuale retry futuro se Firestore era giù
+    return fallback;
   }
 
   /// Richiede cancellazione account

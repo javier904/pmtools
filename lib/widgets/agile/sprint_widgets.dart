@@ -81,7 +81,7 @@ class SprintListWidget extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final hasActiveSprint = sprints.any((s) => s.status == SprintStatus.active);
+                final hasActiveSprint = sprints.any((s) => s.status.isActiveOrReview);
                 // Calcola quante card per riga in base alla larghezza
                 final cardWidth = constraints.maxWidth > 900
                     ? (constraints.maxWidth - 24) / 3 // 3 card
@@ -129,7 +129,10 @@ class SprintListWidget extends StatelessWidget {
   Widget _buildSprintCard(BuildContext context, SprintModel sprint, {bool hasActiveSprint = false}) {
     final l10n = AppLocalizations.of(context)!;
     final isActive = sprint.status == SprintStatus.active;
+    final isReview = sprint.status == SprintStatus.review;
+    final isActiveOrReview = isActive || isReview;
     final isCompleted = sprint.status == SprintStatus.completed;
+    final isOverdue = sprint.isOverdue;
 
     // Calculate dynamic stats if stories are provided
     int plannedPoints = sprint.plannedPoints;
@@ -148,7 +151,7 @@ class SprintListWidget extends StatelessWidget {
           .where((s) => s.status == StoryStatus.done)
           .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
       
-      // Use dynamic totals for active/planning sprints, but respect stored completedPoints for completed sprints if stories were moved
+      // Use dynamic totals for active/review/planning sprints, but respect stored completedPoints for completed sprints if stories were moved
       if (!isCompleted) {
         completedPoints = actualCompletedPoints;
       }
@@ -158,13 +161,33 @@ class SprintListWidget extends StatelessWidget {
       }
     }
 
+    // Border color: red if overdue, orange if review or ≤3 days, green if active, default otherwise
+    final Color borderColor;
+    final double borderWidth;
+    if (isActiveOrReview && isOverdue) {
+      borderColor = Colors.red;
+      borderWidth = 2;
+    } else if (isReview) {
+      borderColor = Colors.orange;
+      borderWidth = 2;
+    } else if (isActive && sprint.daysRemaining <= 3) {
+      borderColor = Colors.orange;
+      borderWidth = 2;
+    } else if (isActive) {
+      borderColor = Colors.green;
+      borderWidth = 2;
+    } else {
+      borderColor = context.borderColor;
+      borderWidth = 1;
+    }
+
     return Card(
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         side: BorderSide(
-          color: isActive ? Colors.green : context.borderColor,
-          width: isActive ? 2 : 1,
+          color: borderColor,
+          width: borderWidth,
         ),
       ),
       child: InkWell(
@@ -217,7 +240,9 @@ class SprintListWidget extends StatelessWidget {
                         if (sprint.status == SprintStatus.planning && onSprintStart != null)
                           PopupMenuItem(value: 'start', child: Text(l10n.agileStartSprint)),
                         if (sprint.status == SprintStatus.active && onSprintComplete != null)
-                          PopupMenuItem(value: 'complete', child: Text(l10n.agileCompleteSprint)),
+                          PopupMenuItem(value: 'close', child: Text(l10n.agileStartClosing)),
+                        if (sprint.status == SprintStatus.review && onSprintComplete != null)
+                          PopupMenuItem(value: 'finalize', child: Text(l10n.agileFinalizeSprint)),
                         if (onSprintEdit != null)
                           PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
                         if (sprint.status == SprintStatus.planning && onSprintDelete != null)
@@ -231,7 +256,8 @@ class SprintListWidget extends StatelessWidget {
                           case 'start':
                             onSprintStart?.call(sprint.id);
                             break;
-                          case 'complete':
+                          case 'close':
+                          case 'finalize':
                             onSprintComplete?.call(sprint.id);
                             break;
                           case 'edit':
@@ -325,8 +351,8 @@ class SprintListWidget extends StatelessWidget {
                 ],
               ),
 
-              // Progress bar for active sprint
-              if (isActive) ...[
+              // Progress bar for active/review sprint
+              if (isActiveOrReview) ...[
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -336,7 +362,9 @@ class SprintListWidget extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: progress,
                           backgroundColor: context.surfaceVariantColor,
-                          valueColor: const AlwaysStoppedAnimation(Colors.green),
+                          valueColor: AlwaysStoppedAnimation(
+                            isOverdue ? Colors.red : (isReview ? Colors.orange : Colors.green),
+                          ),
                           minHeight: 4,
                         ),
                       ),
@@ -344,15 +372,35 @@ class SprintListWidget extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       '${(progress * 100).toInt()}%',
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: isOverdue ? Colors.red : (isReview ? Colors.orange : Colors.green),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  l10n.agileDaysRemaining(sprint.daysRemaining.toString()),
-                  style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
-                ),
+                if (isOverdue)
+                  Text(
+                    l10n.agileSprintOverdue(sprint.overdueDays),
+                    style: const TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold),
+                  )
+                else if (isReview)
+                  Text(
+                    l10n.agileSprintClosingPhase,
+                    style: const TextStyle(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold),
+                  )
+                else if (sprint.daysRemaining <= 3)
+                  Text(
+                    l10n.agileSprintDaysWarning(sprint.daysRemaining),
+                    style: const TextStyle(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold),
+                  )
+                else
+                  Text(
+                    l10n.agileDaysRemaining(sprint.daysRemaining.toString()),
+                    style: TextStyle(fontSize: 10, color: context.textSecondaryColor),
+                  ),
               ],
 
               // Action Button row
@@ -512,9 +560,20 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
     super.initState();
     _nameController = TextEditingController(text: widget.sprint?.name ?? '');
     _goalController = TextEditingController(text: widget.sprint?.goal ?? '');
-    _startDate = widget.sprint?.startDate ?? DateTime.now();
-    _endDate = widget.sprint?.endDate ??
-        DateTime.now().add(Duration(days: widget.suggestedDuration));
+    
+    // Normalize dates to midnight to avoid time-of-day issues
+    final start = widget.sprint?.startDate ?? DateTime.now();
+    _startDate = DateTime(start.year, start.month, start.day);
+    
+    if (widget.sprint?.endDate != null) {
+      final end = widget.sprint!.endDate;
+      _endDate = DateTime(end.year, end.month, end.day);
+    } else {
+      // Default duration: 14 days (Start + 13 days)
+      // Example: Start Mon 1st, End Sun 14th. (14-1 = 1) -> 1st + 13 = 14th.
+      // Duration is inclusive: 14th - 1st = 13 days diff. 13 + 1 = 14 days duration.
+      _endDate = _startDate.add(Duration(days: widget.suggestedDuration - 1));
+    }
   }
 
   @override
@@ -557,14 +616,17 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
     );
 
     if (date != null) {
+      // DatePicker returns midnight, so no need to normalize further
       setState(() {
         if (isStart) {
+          final duration = _endDate.difference(_startDate).inDays;
           _startDate = date;
-          if (_endDate.isBefore(_startDate)) {
-            _endDate = _startDate.add(Duration(days: widget.suggestedDuration));
-          }
+          _endDate = _startDate.add(Duration(days: duration));
         } else {
           _endDate = date;
+          if (_endDate.isBefore(_startDate)) {
+            _startDate = _endDate; 
+          }
         }
       });
     }

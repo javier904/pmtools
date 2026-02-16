@@ -4,6 +4,7 @@ import '../../models/agile_enums.dart';
 import '../../services/agile_audit_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../user_display_name_widget.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 
 /// Widget per visualizzare i log di audit del progetto
@@ -281,8 +282,8 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
             children: [
               Icon(Icons.person_outline, size: 14, color: context.textSecondaryColor),
               const SizedBox(width: 4),
-              Text(
-                log.performedBy,
+              UserDisplayName(
+                email: log.performedBy,
                 style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
               ),
               const SizedBox(width: 12),
@@ -515,10 +516,19 @@ class RecentActivityWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 subtitle: Builder(
-                  builder: (context) => Text(
-                    '${log.performedBy.split('@').first} - ${_formatTime(log.timestamp)}',
-                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-                  ),
+                  builder: (context) => Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        UserDisplayName(
+                          email: log.performedBy,
+                          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                        ),
+                        Text(
+                          ' - ${_formatTime(log.timestamp)}',
+                          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                        ),
+                      ],
+                    ),
                 ),
               )),
           ],

@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'story_card_widget.dart';
 import 'story_workflow_dialog.dart';
 import 'package:agile_tools/services/agile/kanban_policy_service.dart';
+import '../user_display_name_widget.dart'; // Added this import
 
 /// Kanban Board con drag & drop tra colonne e supporto WIP limits
 ///
@@ -292,15 +293,25 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        lane.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: lane.color,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                       widget.swimlaneType == SwimlaneType.assignee
+                         ? UserDisplayName(
+                             email: lane.id,
+                             fallback: lane.name,
+                             style: TextStyle(
+                               fontWeight: FontWeight.bold,
+                               color: lane.color,
+                               fontSize: 12,
+                             ),
+                           )
+                         : Text(
+                             lane.name,
+                             style: TextStyle(
+                               fontWeight: FontWeight.bold,
+                               color: lane.color,
+                               fontSize: 12,
+                             ),
+                             overflow: TextOverflow.ellipsis,
+                           ),
                       Text(
                         l10n.agileItemsCount(lane.stories.length),
                         style: TextStyle(

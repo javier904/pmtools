@@ -8,6 +8,7 @@ import '../utils/validators.dart';
 import 'auth_service.dart';
 import 'eisenhower_firestore_service.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'user_profile_service.dart';
 
 /// Servizio per la gestione degli inviti alla Matrice di Eisenhower
 ///
@@ -96,7 +97,7 @@ class EisenhowerInviteService {
         role: role,
         status: EisenhowerInviteStatus.pending,
         invitedBy: inviterEmail,
-        invitedByName: inviterEmail.split('@').first,
+        invitedByName: await UserProfileService().getNameByEmail(inviterEmail),
         invitedAt: now,
         expiresAt: now.add(Duration(days: expirationDays)),
         token: token,
@@ -291,7 +292,7 @@ class EisenhowerInviteService {
       // 2. Aggiungi l'utente come partecipante alla matrice e rimuovi da pending
       final participant = EisenhowerParticipantModel(
         email: userEmail,
-        name: accepterName ?? userEmail.split('@').first,
+        name: accepterName ?? await UserProfileService().getNameByEmail(userEmail),
         role: invite.role,
         joinedAt: DateTime.now(),
         isOnline: true,

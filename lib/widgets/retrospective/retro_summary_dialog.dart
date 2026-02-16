@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:agile_tools/l10n/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:agile_tools/models/retrospective_model.dart';
+import '../user_display_name_widget.dart';
 
 /// Read-only dialog showing a summary of a completed retrospective.
 class RetroSummaryDialog extends StatelessWidget {
@@ -106,9 +107,17 @@ class RetroSummaryDialog extends StatelessWidget {
           Icons.calendar_today,
           '${l10n.retroSummaryCompleted}: ${_formatDate(retro.createdAt)}',
         ),
-        _metadataChip(
-          Icons.person,
-          '${l10n.retroSummaryFacilitator}: ${retro.createdBy.split('@').first}',
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.person, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 4),
+            Text('${l10n.retroSummaryFacilitator}: ', style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+            UserDisplayName(
+              email: retro.createdBy,
+              style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+            ),
+          ],
         ),
         if (retro.sprintName.isNotEmpty)
           _metadataChip(
@@ -376,8 +385,8 @@ class RetroSummaryDialog extends StatelessWidget {
                       children: [
                         Icon(Icons.person, size: 14, color: Colors.grey[600]),
                         const SizedBox(width: 4),
-                        Text(
-                          item.assigneeEmail!.split('@').first,
+                        UserDisplayName(
+                          email: item.assigneeEmail!,
                           style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                         ),
                       ],

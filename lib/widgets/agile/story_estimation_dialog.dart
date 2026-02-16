@@ -4,6 +4,7 @@ import '../../models/agile_enums.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/user_profile_service.dart';
 
 /// Dialog per stimare una User Story
 ///
@@ -74,7 +75,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     String? finalValue;
 
     if (_selectedMethod == EstimationType.threePoint) {
@@ -100,7 +101,7 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
 
     final estimate = StoryEstimate(
       voterEmail: widget.currentUserEmail,
-      voterName: widget.currentUserEmail.split('@').first,
+      voterName: await UserProfileService().getNameByEmail(widget.currentUserEmail),
       value: finalValue!,
       votedAt: DateTime.now(),
       type: _selectedMethod,

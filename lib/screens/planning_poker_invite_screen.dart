@@ -140,7 +140,7 @@ class _PlanningPokerInviteScreenState extends State<PlanningPokerInviteScreen> {
       final success = await _inviteService.acceptInvite(
         _invite!,
         accepterName: _authService.currentUser?.displayName ??
-            _authService.currentUser!.email!.split('@').first,
+            await UserProfileService().getNameByEmail(_authService.currentUser!.email!),
       );
 
       if (!success) {

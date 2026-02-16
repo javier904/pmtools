@@ -724,6 +724,7 @@
   "scrumBP6": "Celebrate successes in the Sprint Review",
   "scrumBP7": "The Retrospective must produce concrete improvement actions",
   "scrumBP8": "The team must be cross-functional and self-organized",
+  "scrumBP9": "Use the guided closing phase to complete Sprint Review before finalizing",
   "scrumAP1": "Sprint without a clear Sprint Goal",
   "scrumAP2": "Daily Scrum turned into a report meeting",
   "scrumAP3": "Skipping the Retrospective when \"too busy\"",
@@ -732,6 +733,9 @@
   "scrumAP6": "Story Points converted to hours (loses meaning)",
   "scrumAP7": "Team too large (ideal 5-9 people)",
   "scrumAP8": "Scrum Master who \"assigns\" tasks to the team",
+  "scrumAP9": "Closing sprint without Sprint Review and without choosing disposition for incomplete stories",
+  "scrumSprintClosingTitle": "Guided Sprint Closing",
+  "scrumSprintClosingContent": "The sprint closing flow follows the Scrum Guide 2020 with two phases:\n\n1. Close Sprint: the sprint enters review phase. The board remains visible but no new stories can be added.\n\n2. Finalize: after the Sprint Review, choose the disposition of incomplete stories (Backlog, Ready, Carry Forward) and finalize the sprint. Metrics are calculated and a retrospective suggestion is provided.",
   "scrumFAQ1Q": "How long should a Sprint last?",
   "scrumFAQ1A": "Typical duration is 2 weeks, but can vary from 1 to 4 weeks. Shorter Sprints allow more frequent feedback and quick course corrections. Longer Sprints give more time to complete complex items. The important thing is to keep the duration constant.",
   "scrumFAQ2Q": "How to handle uncompleted work at the end of Sprint?",
@@ -785,6 +789,14 @@
   "kanbanBP4": "Use metrics for decisions, not to judge people",
   "kanbanBP5": "Improve one step at a time",
   "kanbanBP6": "Block new work if WIP is at limit",
+  "velocityTooltipAverage": "Based on all {count} completed sprints",
+  "@velocityTooltipAverage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "kanbanBP7": "Analyze blockers and remove them quickly",
   "kanbanBP8": "Use swimlanes for priorities or work types",
   "kanbanAP1": "WIP limits too high (or absent)",
@@ -1141,6 +1153,39 @@
   "agileSprintStatusCompleted": "Completed",
   "agileStartSprint": "Start Sprint",
   "agileCompleteSprint": "Complete Sprint",
+  "agileStartClosing": "Close Sprint",
+  "agileFinalizeSprint": "Finalize Sprint",
+  "agileSprintClosingPhase": "Closing Phase",
+  "agileSprintClosingDesc": "The sprint is in closing phase. Complete the Sprint Review and finalize the sprint.",
+  "agileSprintClosingBanner": "Sprint in closing phase - complete review and finalize",
+  "agileSprintClosingStarted": "Sprint closing phase started",
+  "agileSprintClosingBoardVisible": "Board continues to show sprint stories",
+  "agileSprintClosingNoNewStories": "New stories cannot be added to the sprint",
+  "agileSprintClosingReviewFirst": "Conduct Sprint Review before finalizing",
+  "agileSprintOverdue": "Overdue by {days} days",
+  "@agileSprintOverdue": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "agileSprintDaysWarning": "{days} days remaining",
+  "@agileSprintDaysWarning": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "agileStoryDisposition": "Story Disposition",
+  "agileStoryDispositionDesc": "Choose what to do with incomplete stories",
+  "agileDispositionBacklog": "Backlog",
+  "agileDispositionReady": "Ready",
+  "agileDispositionCarryForward": "Carry Forward",
+  "agileDispositionBacklogDesc": "Return to backlog for re-prioritization",
+  "agileDispositionReadyDesc": "Ready for next sprint planning",
+  "agileDispositionCarryForwardDesc": "High priority for next sprint",
+  "agileRetroSuggestion": "Would you like to create a retrospective for this sprint?",
+  "agileCreateRetro": "Create Retrospective",
+  "agileSprintReviewSection": "Sprint Review",
+  "agileSprintSummarySection": "Sprint Summary",
   "agileDeleteSprint": "Delete",
   "agileSprintName": "Sprint Name",
   "agileSprintGoal": "Sprint Goal",
@@ -5463,6 +5508,7 @@
   "contextualHelpSprintTip1": "Don't change scope during the sprint",
   "contextualHelpSprintTip2": "Monitor the burndown to verify progress",
   "contextualHelpSprintTip3": "Do daily standups to align the team",
+  "contextualHelpSprintTip4": "At the end of the sprint, use 'Close Sprint' for a guided closing phase with Sprint Review and story disposition",
   "contextualHelpKanbanTitle": "Kanban Board",
   "contextualHelpKanbanDescFlow": "The Kanban board visualizes the workflow. Items move from left to right through columns.",
   "contextualHelpKanbanDescScrum": "In Scrum, the board shows the status of stories in the current sprint.",

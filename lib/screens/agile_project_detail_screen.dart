@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/user_profile_service.dart';
 import 'package:flutter/services.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../themes/app_theme.dart';
@@ -121,6 +122,15 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
     // Ripara silenziosamente dati storici mancanti
     _firestoreService.repairProjectSprints(widget.project.id);
+    
+    // Listen to tab changes to update FAB
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
   }
 
   @override
@@ -177,7 +187,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                           children: [
                             Icon(project.framework.icon, size: 24),
                             const SizedBox(width: 8),
-                            Text(project.name),
+                            Expanded(child: _buildAppBarTitle(project, l10n)),
                           ],
                         ),
                         actions: [
@@ -327,7 +337,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Widget _buildBacklogTab(AgileProjectModel project) {
     final isSetupComplete = _isProjectSetupComplete(project);
-    final hasActiveSprint = _sprints.any((s) => s.status == SprintStatus.active);
+    final hasActiveSprint = _sprints.any((s) => s.status.isActiveOrReview);
     final hasWipLimits = project.kanbanColumns.any((c) => c.wipLimit != null);
 
     return SingleChildScrollView(
@@ -1437,12 +1447,19 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Future<void> _completeSprint(AgileProjectModel project, String sprintId) async {
     final sprint = _sprints.firstWhere((s) => s.id == sprintId);
-    await _completeSprintConfirm(project, sprint);
+    if (sprint.status == SprintStatus.active) {
+      await _startSprintClosing(project, sprint);
+    } else if (sprint.status == SprintStatus.review) {
+      await _finalizeSprintConfirm(project, sprint);
+    } else {
+      // Fallback for backward compatibility
+      await _completeSprintConfirm(project, sprint);
+    }
   }
 
 
   Widget _buildSprintTab(AgileProjectModel project) {
-    final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+    final activeSprint = _sprints.where((s) => s.status.isActiveOrReview).firstOrNull;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -1566,11 +1583,13 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.green,
+                    color: sprint.isReview ? Colors.orange : Colors.green,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    l10n.agileSprintStatusActive.toUpperCase(),
+                    sprint.isReview
+                        ? l10n.agileSprintClosingPhase.toUpperCase()
+                        : l10n.agileSprintStatusActive.toUpperCase(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -1580,6 +1599,29 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 ),
               ],
             ),
+            // Banner: Sprint in closing phase
+            if (sprint.isReview)
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline, color: Colors.orange, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.agileSprintClosingBanner,
+                        style: const TextStyle(fontSize: 13, color: Colors.orange),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             if (sprint.goal.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
@@ -1640,13 +1682,27 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                         ),
                       ),
                     ),
-                if (project.canManageSprints(_currentUserEmail)) ...[
+                if (project.canManageSprints(_currentUserEmail) && sprint.status == SprintStatus.active) ...[
                   const SizedBox(width: 8),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => _completeSprintConfirm(project, sprint),
-                      icon: const Icon(Icons.flag_circle),
-                      label: Text(l10n.agileCompleteSprintAction),
+                      onPressed: () => _startSprintClosing(project, sprint),
+                      icon: const Icon(Icons.rate_review),
+                      label: Text(l10n.agileStartClosing),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+                if (project.canManageSprints(_currentUserEmail) && sprint.status == SprintStatus.review) ...[
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _finalizeSprintConfirm(project, sprint),
+                      icon: const Icon(Icons.check),
+                      label: Text(l10n.agileFinalizeSprint),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
@@ -1873,15 +1929,24 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.actionClose),
           ),
-          // SCRUM PERMISSIONS: Solo SM può completare sprint
+          // SCRUM PERMISSIONS: Solo SM può chiudere/finalizzare sprint
           if (sprint.status == SprintStatus.active && project.canManageSprints(_currentUserEmail))
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.pop(context);
-                _completeSprintConfirm(project, sprint);
+                _startSprintClosing(project, sprint);
+              },
+              icon: const Icon(Icons.rate_review),
+              label: Text(l10n.agileStartClosing),
+            ),
+          if (sprint.status == SprintStatus.review && project.canManageSprints(_currentUserEmail))
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                _finalizeSprintConfirm(project, sprint);
               },
               icon: const Icon(Icons.check),
-              label: Text(l10n.agileCompleteSprint),
+              label: Text(l10n.agileFinalizeSprint),
             ),
         ],
       ),
@@ -2079,7 +2144,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         // Riporta stories incomplete nel backlog
         for (final story in sprintStories.where((s) => s.status != StoryStatus.done)) {
           final updated = story.copyWith(
-            sprintId: null,
+            clearSprintId: true,
             status: StoryStatus.backlog,
           );
           await _firestoreService.updateStory(project.id, updated);
@@ -2105,6 +2170,453 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         _showError(l10n.errorGeneric(e.toString()));
       }
     }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SPRINT CLOSING FLOW - 2-Phase Scrum-Compliant
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Phase 1: Transition sprint from active → review
+  Future<void> _startSprintClosing(AgileProjectModel project, SprintModel sprint) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.rate_review, color: Colors.orange),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l10n.agileStartClosing)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.agileSprintClosingDesc),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.withOpacity(0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: Colors.orange, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.agileSprintClosingPhase,
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text('• ${l10n.agileSprintClosingBoardVisible}',
+                      style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                  Text('• ${l10n.agileSprintClosingNoNewStories}',
+                      style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                  Text('• ${l10n.agileSprintClosingReviewFirst}',
+                      style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.actionCancel),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            icon: const Icon(Icons.rate_review),
+            label: Text(l10n.agileStartClosing),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        await _firestoreService.startSprintClosing(project.id, sprint.id);
+
+        // Audit log
+        final sprintStories = _stories.where((s) => s.sprintId == sprint.id).toList();
+        final completedCount = sprintStories.where((s) => s.status == StoryStatus.done).length;
+        await _auditService.logSprintClosingStarted(
+          projectId: project.id,
+          sprintId: sprint.id,
+          sprintName: sprint.name,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserName,
+          totalStories: sprintStories.length,
+          completedStories: completedCount,
+        );
+
+        _showSuccess(l10n.agileSprintClosingStarted);
+      } catch (e) {
+        _showError(l10n.errorGeneric(e.toString()));
+      }
+    }
+  }
+
+  /// Phase 2: Finalize sprint (review → completed) with story disposition
+  Future<void> _finalizeSprintConfirm(AgileProjectModel project, SprintModel sprint) async {
+    final l10n = AppLocalizations.of(context)!;
+    final sprintStories = _stories.where((s) => s.sprintId == sprint.id).toList();
+    final completedStories = sprintStories.where((s) => s.status == StoryStatus.done).toList();
+    final incompleteStories = sprintStories.where((s) => s.status != StoryStatus.done).toList();
+    final actualCompletedPoints = completedStories.fold<int>(0, (sum, s) => sum + (s.storyPoints ?? 0) as int);
+    final totalStories = sprintStories.length;
+    final completedCount = completedStories.length;
+    final hasSprintReview = sprint.hasSprintReview;
+
+    // Story disposition map: storyId → disposition ('backlog', 'ready', 'carry_forward')
+    final dispositions = <String, String>{};
+    for (final story in incompleteStories) {
+      dispositions[story.id] = 'backlog'; // Default
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.blue),
+              const SizedBox(width: 8),
+              Expanded(child: Text(l10n.agileFinalizeSprint)),
+            ],
+          ),
+          content: SizedBox(
+            width: 480,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Section 1: Sprint Review Status
+                  Text(l10n.agileSprintReviewSection,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 8),
+                  if (hasSprintReview)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              '${l10n.agileSprintReviewCompleted} - ${_formatDate(sprint.sprintReview!.date)}',
+                              style: const TextStyle(color: Colors.green),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.warning_amber, color: Colors.orange, size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  l10n.agileMissingReview,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                              _showSprintReviewDialog(project, sprint);
+                            },
+                            icon: const Icon(Icons.rate_review, size: 16),
+                            label: Text(l10n.agileRecordReview),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.orange,
+                              side: const BorderSide(color: Colors.orange),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Section 2: Story Disposition
+                  if (incompleteStories.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    Text(l10n.agileStoryDisposition,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    const SizedBox(height: 4),
+                    Text(l10n.agileStoryDispositionDesc,
+                        style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+                    const SizedBox(height: 12),
+                    ...incompleteStories.map((story) => Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  story.title,
+                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (story.storyPoints != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text('${story.storyPoints} pts',
+                                      style: const TextStyle(fontSize: 11, color: Colors.blue)),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              _buildDispositionChip(
+                                label: l10n.agileDispositionBacklog,
+                                selected: dispositions[story.id] == 'backlog',
+                                color: Colors.grey,
+                                onTap: () => setDialogState(() => dispositions[story.id] = 'backlog'),
+                              ),
+                              const SizedBox(width: 6),
+                              _buildDispositionChip(
+                                label: l10n.agileDispositionReady,
+                                selected: dispositions[story.id] == 'ready',
+                                color: Colors.blue,
+                                onTap: () => setDialogState(() => dispositions[story.id] = 'ready'),
+                              ),
+                              const SizedBox(width: 6),
+                              _buildDispositionChip(
+                                label: l10n.agileDispositionCarryForward,
+                                selected: dispositions[story.id] == 'carry_forward',
+                                color: Colors.purple,
+                                onTap: () => setDialogState(() => dispositions[story.id] = 'carry_forward'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
+                  ],
+
+                  // Section 3: Summary
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  Text(l10n.agileSprintSummarySection,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('• ${l10n.agileStoriesCompleted}: $completedCount / $totalStories'),
+                        Text('• ${l10n.agilePointsCompletedLabel}: $actualCompletedPoints ${l10n.agileStatsPoints}',
+                            style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                        Text('• Velocity: ${actualCompletedPoints.toStringAsFixed(0)} ${l10n.agileStatsPoints}'),
+                        if (incompleteStories.isNotEmpty)
+                          Text('• ${l10n.agileStoriesIncomplete}: ${incompleteStories.length}',
+                              style: const TextStyle(color: Colors.orange)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.actionCancel),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context, true),
+              icon: const Icon(Icons.check),
+              label: Text(l10n.agileFinalizeSprint),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        // Calculate velocity
+        final velocity = actualCompletedPoints.toDouble();
+
+        // Backfill plannedPoints if missing
+        int? backfillPlannedPoints;
+        if (sprint.plannedPoints == 0) {
+          backfillPlannedPoints = sprintStories.fold<int>(
+              0, (sum, s) => sum + (s.storyPoints ?? 0) as int);
+        }
+
+        // Complete sprint (INVARIANT - metrics calculated here)
+        await _firestoreService.completeSprint(
+          project.id,
+          sprint.id,
+          completedPoints: actualCompletedPoints,
+          velocity: velocity,
+          plannedPoints: backfillPlannedPoints,
+        );
+
+        // Apply story dispositions
+        for (final story in incompleteStories) {
+          final disposition = dispositions[story.id] ?? 'backlog';
+          StoryStatus newStatus;
+          List<String> newTags = List<String>.from(story.tags);
+
+          switch (disposition) {
+            case 'ready':
+              newStatus = StoryStatus.ready;
+              break;
+            case 'carry_forward':
+              newStatus = StoryStatus.ready;
+              if (!newTags.contains('carried-over')) {
+                newTags.add('carried-over');
+              }
+              break;
+            case 'backlog':
+            default:
+              newStatus = StoryStatus.backlog;
+              break;
+          }
+
+          final updated = story.copyWith(
+            clearSprintId: true,
+            status: newStatus,
+            tags: newTags,
+          );
+          await _firestoreService.updateStory(project.id, updated);
+        }
+
+        _showSuccess(l10n.agileSprintCompleteSuccess(velocity.toStringAsFixed(1)));
+
+        // Audit log
+        await _auditService.logSprintClose(
+          projectId: project.id,
+          sprintId: sprint.id,
+          sprintName: sprint.name,
+          performedBy: _currentUserEmail,
+          performedByName: _currentUserName,
+          completedStories: completedCount,
+          totalStories: totalStories,
+          completedPoints: actualCompletedPoints,
+          plannedPoints: sprint.plannedPoints,
+          velocity: velocity,
+        );
+
+        // Retro suggestion
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.agileRetroSuggestion),
+              duration: const Duration(seconds: 6),
+              action: SnackBarAction(
+                label: l10n.agileCreateRetro,
+                onPressed: () {
+                  // Navigate to retro tab
+                  if (mounted) {
+                    final retroTabIndex = _features.visibleTabs.indexOf(AgileTab.retro);
+                    if (retroTabIndex >= 0) {
+                      _tabController.animateTo(retroTabIndex);
+                    }
+                  }
+                },
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        _showError(l10n.errorGeneric(e.toString()));
+      }
+    }
+  }
+
+  Widget _buildDispositionChip({
+    required String label,
+    required bool selected,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: selected ? color.withOpacity(0.2) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected ? color : Colors.grey.withOpacity(0.3),
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            color: selected ? color : Colors.grey[600],
+          ),
+        ),
+      ),
+    );
   }
 
   String _formatDate(DateTime date) {
@@ -2699,7 +3211,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         final sprintReview = SprintReview(
           date: DateTime.now(),
           conductedBy: _currentUserEmail,
-          conductedByName: currentUser?.name ?? _currentUserEmail.split('@').first,
+          conductedByName: currentUser?.name ?? await UserProfileService().getNameByEmail(_currentUserEmail),
           attendees: attendees.where((a) => a.isPresent).map((a) => a.email).toList(),
           attendeesWithRoles: attendees.where((a) => a.isPresent).toList(),
           demoNotes: demoNotesController.text,
@@ -2742,7 +3254,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                      outcome.outcome == ReviewOutcomeType.rejected) {
             // If rejected/refinement, move back to backlog
             if (story.sprintId != null || story.status != StoryStatus.backlog) {
-              final updatedStory = story.copyWith(sprintId: null, status: StoryStatus.backlog);
+              final updatedStory = story.copyWith(clearSprintId: true, status: StoryStatus.backlog);
               await _firestoreService.updateStory(project.id, updatedStory);
               movedToBacklogCount++;
             }
@@ -2937,7 +3449,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             teamMembers: _teamMembers,
             sprints: _sprints,
             stories: _stories,
-            currentSprint: _sprints.where((s) => s.status == SprintStatus.active).firstOrNull,
+            currentSprint: _sprints.where((s) => s.status.isActiveOrReview).firstOrNull,
             assignedHours: assignedHours,
             framework: widget.project.framework,
           ),
@@ -2947,7 +3459,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           TeamWorkloadWidget(
             teamMembers: _teamMembers,
             stories: _stories,
-            currentSprint: _sprints.where((s) => s.status == SprintStatus.active).firstOrNull,
+            currentSprint: _sprints.where((s) => s.status.isActiveOrReview).firstOrNull,
             framework: widget.project.framework,
           ),
           const SizedBox(height: 24),
@@ -2980,8 +3492,8 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   Map<String, int> _calculateAssignedHours() {
     final hours = <String, int>{};
 
-    // Trova lo sprint attivo
-    final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull;
+    // Trova lo sprint attivo (include review)
+    final activeSprint = _sprints.where((s) => s.status.isActiveOrReview).firstOrNull;
 
     // Filtra le stories
     final relevantStories = _stories.where((story) {
@@ -3044,7 +3556,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Widget _buildMetricsTab(AgileProjectModel project) {
     final assignedHours = _calculateAssignedHours();
-    final activeSprint = _sprints.where((s) => s.status == SprintStatus.active).firstOrNull ?? 
+    final activeSprint = _sprints.where((s) => s.status.isActiveOrReview).firstOrNull ??
                         (_sprints.isNotEmpty ? _sprints.last : null);
     final isKanban = project.framework == AgileFramework.kanban;
 
@@ -3053,12 +3565,22 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (!isKanban && activeSprint != null) ...[
-            // Commitment Reliability Trend (Scrum specific)
-            CommitmentTrendWidget(
+          if (!isKanban) ...[
+             // Sprint Health Card (Status + ProgressPie + Goals)
+             SprintHealthCardWidget(
+              currentSprint: activeSprint,
+              stories: _stories,
               sprints: _sprints,
             ),
             const SizedBox(height: 16),
+
+            // Commitment Reliability Trend (Scrum specific)
+            if (activeSprint != null) 
+              CommitmentTrendWidget(
+                sprints: _sprints,
+              ),
+            if (activeSprint != null) 
+              const SizedBox(height: 16),
           ],
 
           Row(
@@ -3825,7 +4347,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     // FAB diverso in base alla tab
     switch (_tabController.index) {
       case 0: // Backlog
-        if (project.canCreateStory(_currentUserEmail) && project.framework == AgileFramework.scrum) {
+        // SCRUM: Backlog has its own "New Story" button, so FAB is redundant
+        if (project.framework == AgileFramework.scrum) {
+          return null;
+        }
+        // KANBAN/HYBRID: Keep FAB for quick access
+        if (project.canCreateStory(_currentUserEmail)) {
           return FloatingActionButton.extended(
             onPressed: () => _showCreateStoryDialog(project),
             icon: const Icon(Icons.add),
@@ -3834,12 +4361,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         }
         return null;
       case 1: // Sprint
-        if (project.canManageSprints(_currentUserEmail) && project.framework == AgileFramework.scrum) {
-          return FloatingActionButton.extended(
-            onPressed: () => _showCreateSprintDialog(project),
-            icon: const Icon(Icons.add),
-            label: const Text('Nuovo Sprint'),
-          );
+        // SCRUM: User requested to remove "New Sprint" FAB, use header/menu actions instead
+        if (project.framework == AgileFramework.scrum) {
+          return null;
         }
         return null;
       case 3: // Team
@@ -3851,6 +4375,80 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       default:
         return null;
     }
+  }
+
+  Widget _buildAppBarTitle(AgileProjectModel project, AppLocalizations l10n) {
+    if (project.framework != AgileFramework.scrum) {
+      return Text(project.name, overflow: TextOverflow.ellipsis);
+    }
+
+    // Find active sprint for status indicator
+    final activeSprint = _sprints.where((s) => s.status.isActiveOrReview).firstOrNull;
+
+    if (activeSprint == null) {
+      return Text(project.name, overflow: TextOverflow.ellipsis);
+    }
+
+    // Status Indicator Logic
+    Color statusColor;
+    String statusText;
+    
+    final now = DateTime.now();
+    final endDate = activeSprint.endDate;
+    // Normalized to midnight for consistent comparison
+    final today = DateTime(now.year, now.month, now.day);
+    final end = DateTime(endDate.year, endDate.month, endDate.day);
+    final daysRemaining = end.difference(today).inDays;
+
+    if (activeSprint.status == SprintStatus.review) {
+      // Review
+      statusColor = Colors.orange;
+      statusText = 'Review';
+      if (today.isAfter(end)) {
+         statusColor = Colors.red; // Overdue review
+      }
+    } else if (today.isAfter(end)) {
+      // Active but Overdue
+      statusColor = Colors.red;
+      statusText = 'Overdue';
+    } else if (daysRemaining <= 3) {
+      // Active ending soon
+      statusColor = Colors.orange;
+      statusText = '${daysRemaining}d left';
+    } else {
+      // Active healthy
+      statusColor = Colors.green;
+      statusText = 'Active';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(project.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: statusColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '${activeSprint.name} • $statusText',
+              style: TextStyle(
+                fontSize: 11,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   // ══════════════════════════════════════════════════════════════════════════

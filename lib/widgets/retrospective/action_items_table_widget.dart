@@ -5,6 +5,7 @@ import 'package:agile_tools/themes/app_theme.dart';
 import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import '../user_display_name_widget.dart';
 
 class ActionItemsTableWidget extends StatefulWidget {
   final List<ActionItem> actionItems;
@@ -164,11 +165,16 @@ class _ActionItemsTableWidgetState extends State<ActionItemsTableWidget> {
                           const Icon(Icons.person, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
                           Expanded(
-                            child: Text(
-                              item.assigneeEmail?.split('@').first ?? l10n.retroUnassigned,
-                              style: const TextStyle(fontSize: 12),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            child: item.assigneeEmail != null 
+                                ? UserDisplayName(
+                                    email: item.assigneeEmail!,
+                                    style: const TextStyle(fontSize: 12),
+                                  )
+                                : Text(
+                                    l10n.retroUnassigned,
+                                    style: const TextStyle(fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                           ),
                         ],
                        ),

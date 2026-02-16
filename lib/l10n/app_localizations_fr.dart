@@ -63,11 +63,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileSprint => 'Sprint';
 
   @override
-  String get agileStatus => 'Stato';
+  String get agileStatus => 'État';
 
   @override
   String get agilePermissionErrorBacklog =>
-      'Permesso negato: Solo PO/SM possono spostare nel Backlog';
+      'Permission refusée : Seuls les PO/SM peuvent déplacer vers le Backlog';
 
   @override
   String get actionHide => 'Masquer les Cartes';
@@ -776,86 +776,86 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get eisenhowerAlreadyVotedError =>
-      'Questa attività è già stata votata. Il facilitatore deve riaprire la votazione per modificarla.';
+      'Cette activité a déjà été votée. Le facilitateur doit rouvrir le vote pour la modifier.';
 
   @override
   String eisenhowerYourVote(Object urgency, Object importance) {
-    return 'Il tuo voto: U=$urgency, I=$importance';
+    return 'Votre vote : U=$urgency, I=$importance';
   }
 
   @override
   String eisenhowerVoterName(Object name) {
-    return 'Voto di $name';
+    return 'Vote de $name';
   }
 
   @override
-  String get eisenhowerUrgencyLow => 'Non urgente';
+  String get eisenhowerUrgencyLow => 'Non urgent';
 
   @override
-  String get eisenhowerUrgencyHigh => 'Molto urgente';
+  String get eisenhowerUrgencyHigh => 'Très urgent';
 
   @override
-  String get eisenhowerImportanceLow => 'Non importante';
+  String get eisenhowerImportanceLow => 'Pas important';
 
   @override
-  String get eisenhowerImportanceHigh => 'Molto importante';
+  String get eisenhowerImportanceHigh => 'Très important';
 
   @override
   String eisenhowerQuadrantLabel(Object name) {
-    return 'Quadrante: $name';
+    return 'Quadrant : $name';
   }
 
   @override
-  String get eisenhowerQ1Name => 'Q1 - FAI SUBITO';
+  String get eisenhowerQ1Name => 'Q1 - FAIRE TOUT DE SUITE';
 
   @override
-  String get eisenhowerQ1Desc => 'Urgente + Importante';
+  String get eisenhowerQ1Desc => 'Urgent + Important';
 
   @override
-  String get eisenhowerQ2Name => 'Q2 - PIANIFICA';
+  String get eisenhowerQ2Name => 'Q2 - PLANIFIER';
 
   @override
-  String get eisenhowerQ2Desc => 'Non Urgente + Importante';
+  String get eisenhowerQ2Desc => 'Important, Pas Urgent';
 
   @override
-  String get eisenhowerQ3Name => 'Q3 - DELEGA';
+  String get eisenhowerQ3Name => 'Q3 - DÉLÉGUER';
 
   @override
-  String get eisenhowerQ3Desc => 'Urgente + Non Importante';
+  String get eisenhowerQ3Desc => 'Urgent + Pas Important';
 
   @override
-  String get eisenhowerQ4Name => 'Q4 - ELIMINA';
+  String get eisenhowerQ4Name => 'Q4 - ÉLIMINER';
 
   @override
-  String get eisenhowerQ4Desc => 'Non Urgente + Non Importante';
+  String get eisenhowerQ4Desc => 'Pas Urgent + Pas Important';
 
   @override
   String eisenhowerPreVotes(Object count) {
-    return '$count pre-voti';
+    return '$count pré-votes';
   }
 
   @override
   String get eisenhowerVotesVisibleAfterReveal =>
-      'I voti saranno visibili quando il facilitatore farà \"Rivela voti\"';
+      'Les votes seront visibles quand le facilitateur fera \"Rivela voti\"';
 
   @override
   String eisenhowerNextActivityError(Object error) {
-    return 'Errore avvio prossima votazione: $error';
+    return 'Erreur lors du lancement du vote suivant : $error';
   }
 
   @override
-  String get eisenhowerReopenVotes => 'Riapri votazioni';
+  String get eisenhowerReopenVotes => 'Rouvrir les votes';
 
   @override
   String get eisenhowerReopenVotesTooltip =>
-      'Riavvia la votazione formale a partire dalle stime attuali';
+      'Redémarre le vote formel à partir des estimations actuelles';
 
   @override
-  String get eisenhowerReopenVotesConfirm => 'Riaprire tutte le votazioni?';
+  String get eisenhowerReopenVotesConfirm => 'Rouvrir tous les votes ?';
 
   @override
   String get eisenhowerReopenVotesDesc =>
-      'Questa operazione riavvierà una sessione di voto formale per tutte le attività, mantenendo le stime attuali come punto di partenza. Vuoi procedere?';
+      'Cette opération redémarrera une session de vote formelle pour toutes les activités, en conservant les estimations actuelles comme point de départ. Voulez-vous continuer ?';
 
   @override
   String get estimationTitle => 'Salle d\'Estimation';
@@ -1010,7 +1010,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get storyNoStories => 'Aucune story à estimer';
 
   @override
-  String get retrospectivesVoted => 'Votato';
+  String get retrospectivesVoted => 'Voté';
 
   @override
   String get storyComplete => 'Story terminée';
@@ -1320,45 +1320,46 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileEstimate => 'ESTIMER';
 
   @override
-  String get agileAssign => 'Assegna';
+  String get agileAssign => 'Assigner';
 
   @override
-  String get agileCardMenuTooltip => 'Opzioni (Priorità, Stima, ecc.)';
+  String get agileCardMenuTooltip => 'Options (Priorité, Estimation, etc.)';
 
   @override
-  String get kanbanPolicyHelpTitle => 'Policies di Colonna (Regole)';
+  String get kanbanPolicyHelpTitle => 'Politiques de Colonne (Règles)';
 
   @override
   String get kanbanPolicyHelpIntro =>
-      'Le policies sono regole esplicite che definiscono quando una card può entrare o lasciare una colonna. Garantiscono la qualità e il flusso. Attivale dall\'icona \'Impostazioni\' nell\'intestazione della colonna.';
+      'Les politiques sont des règles explicites qui définissent quand une carte peut entrer ou sortir d\'une colonne. Elles garantissent la qualité et le flux. Activez-les depuis l\'icône \'Paramètres\' dans l\'en-tête de la colonne.';
 
   @override
-  String get kanbanPolicyRule1Title => '1. Richiede Criteri di Accettazione';
+  String get kanbanPolicyRule1Title =>
+      '1. Requiert des Critères d\'Acceptation';
 
   @override
   String get kanbanPolicyRule1Desc =>
-      'La card deve avere almeno un criterio di accettazione definito per procedere. Utile per assicurarsi che i requisiti siano chiari prima dello sviluppo.';
+      'La carte doit avoir au moins un critère d\'acceptation défini pour continuer. Utile pour s\'assurer que les exigences sont claires avant le développement.';
 
   @override
-  String get kanbanPolicyRule2Title => '2. Stima completata';
+  String get kanbanPolicyRule2Title => '2. Estimation terminée';
 
   @override
   String get kanbanPolicyRule2Desc =>
-      'La card deve avere una stima in Story Points (o altro metodo) > 0. Fondamentale per il Planning e la Velocity.';
+      'La carte doit avoir une estimation en Story Points (ou autre méthode) > 0. Fondamental pour le Planning et la Velocity.';
 
   @override
-  String get kanbanPolicyRule3Title => '3. Max 2 giorni nella colonna';
+  String get kanbanPolicyRule3Title => '3. Max 2 jours dans la colonne';
 
   @override
   String get kanbanPolicyRule3Desc =>
-      'Segnala se una card rimane ferma nello stesso stato per più di 48 ore. Aiuta a identificare colli di bottiglia o task bloccati.';
+      'Signale si une carte reste immobile dans le même état pendant plus de 48 heures. Aide à identifier les goulots d\'étranglement ou les tâches bloquées.';
 
   @override
-  String get kanbanPolicyRule4Title => '4. Tutti i criteri soddisfatti';
+  String get kanbanPolicyRule4Title => '4. Tous les critères satisfaits';
 
   @override
   String get kanbanPolicyRule4Desc =>
-      'Blocca il passaggio a \'Done\' se non tutti i criteri di accettazione sono spuntati. Garantisce la Definition of Done.';
+      'Bloque le passage à \'Done\' si tous les critères d\'acceptation ne sont pas cochés. Garantit la Definition of Done.';
 
   @override
   String get retroOpenInteractiveBoard => 'Ouvrir le Board Interactif';
@@ -1409,27 +1410,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retroSearchHint => 'Rechercher une rétrospective...';
 
   @override
-  String get agileProgressManual => 'Manuale';
+  String get agileProgressManual => 'Manuel';
 
   @override
-  String get agileProgress => 'Avanzamento';
+  String get agileProgress => 'Progression';
 
   @override
-  String get agileProgressAuto => 'Automatico';
+  String get agileProgressAuto => 'Automatique';
 
   @override
   String agileProgressTooltipManual(int percent) {
-    return 'Impostato manualmente al $percent%';
+    return 'Défini manuellement à $percent%';
   }
 
   @override
   String agileProgressTooltipCriteria(int completed, int total) {
-    return 'Completati $completed/$total criteri';
+    return 'Terminés $completed/$total critères';
   }
 
   @override
   String agileProgressTooltipStatus(String status) {
-    return 'Stimato in base allo stato: $status';
+    return 'Estimé en fonction de l\'état : $status';
   }
 
   @override
@@ -1617,6 +1618,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'équipe doit être pluridisciplinaire et auto-organisée';
 
   @override
+  String get scrumBP9 =>
+      'Utilisez la phase de clôture guidée pour compléter la Sprint Review avant de finaliser';
+
+  @override
   String get scrumAP1 => 'Sprint sans Sprint Goal clair';
 
   @override
@@ -1639,6 +1644,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scrumAP8 => 'Scrum Master qui \"assigne\" des tâches à l\'équipe';
+
+  @override
+  String get scrumAP9 =>
+      'Fermer le sprint sans Sprint Review et sans choisir la disposition des stories incomplètes';
+
+  @override
+  String get scrumSprintClosingTitle => 'Clôture de Sprint Guidée';
+
+  @override
+  String get scrumSprintClosingContent =>
+      'Le flux de clôture de sprint suit le Scrum Guide 2020 en deux phases :\n\n1. Fermer le Sprint : le sprint passe en phase de review. Le board reste visible mais aucune nouvelle story ne peut être ajoutée.\n\n2. Finaliser : après la Sprint Review, choisissez la disposition des stories incomplètes (Backlog, Ready, Carry Forward) et finalisez le sprint. Les métriques sont calculées et une suggestion de rétrospective est proposée.';
 
   @override
   String get scrumFAQ1Q => 'Quelle doit être la durée d\'un Sprint ?';
@@ -1689,17 +1705,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileItems => 'items';
 
   @override
-  String get agileItemsShort => 'elementi';
+  String get agileItemsShort => 'éléments';
 
   @override
-  String get agileWorkloadAvgItems => 'Media Elementi/Persona';
+  String get agileWorkloadAvgItems => 'Moyenne Éléments/Personne';
 
   @override
   String get agileKanbanCapacityNote =>
-      'La capacità è calcolata su base settimanale (5 giorni lavorativi).';
+      'La capacité est calculée sur une base hebdomadaire (5 jours ouvrés).';
 
   @override
-  String get agilePriority => 'Priorità';
+  String get agilePriority => 'Priorité';
 
   @override
   String get agileRoleSRM => 'Service Request Manager';
@@ -1708,14 +1724,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileRoleSDM => 'Service Delivery Manager';
 
   @override
-  String get agileRoleTeamMember => 'Membro del Team';
+  String get agileRoleTeamMember => 'Membre de l\'Équipe';
 
   @override
   String get agileFrameworkLocked =>
-      'Impossibile cambiare framework per progetti con attività esistenti';
+      'Impossible de changer de framework pour les projets avec des activités existantes';
 
   @override
-  String get agileComingSoon => 'Prossimamente';
+  String get agileComingSoon => 'Prochainement';
 
   @override
   String get kanbanPrinciple2 =>
@@ -1820,6 +1836,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get kanbanBP6 =>
       'Bloquez le nouveau travail si le WIP est à la limite';
+
+  @override
+  String velocityTooltipAverage(int count) {
+    return 'Basato su tutti i $count sprint completati';
+  }
 
   @override
   String get kanbanBP7 => 'Analysez les blocages et supprimez-les rapidement';
@@ -2175,210 +2196,216 @@ class AppLocalizationsFr extends AppLocalizations {
       'Scrumban utilise une approche hybride:\n\n• Vous pouvez utiliser des Sprints pour la planification, mais gérer le flux quotidien comme Kanban.\n• Les histoires \'Ready\' peuvent être tirées (pull) lorsqu\'il y a de la capacité, indépendamment de la planification du Sprint, si l\'équipe le préfère.';
 
   @override
-  String get contextualHelpButton => 'Aiuto';
+  String get contextualHelpButton => 'Aide';
 
   @override
-  String get contextualHelpTips => 'Suggerimenti';
+  String get contextualHelpTips => 'Conseils';
 
   @override
   String get contextualHelpBacklogTitle => 'Product Backlog';
 
   @override
   String get contextualHelpBacklogDesc =>
-      'Il backlog è la lista prioritizzata di tutto il lavoro da fare. Le storie in alto sono le più importanti.';
+      'Le backlog est la liste priorisée de tout le travail à faire. Les histoires en haut sont les plus importantes.';
 
   @override
   String get contextualHelpBacklogTip1 =>
-      'Mantieni il backlog ordinato per priorità';
+      'Gardez le backlog ordonné par priorité';
 
   @override
   String get contextualHelpBacklogTip2 =>
-      'Collabora col team nel Refinement per dettagliare le storie';
+      'Collaborez avec l\'équipe lors du Refinement pour détailler les histoires';
 
   @override
   String get contextualHelpBacklogTip3 =>
-      'Una storia è \'Ready\' quando soddisfa la Definition of Ready';
+      'Une histoire est \'Ready\' lorsqu\'elle satisfait à la Definition of Ready';
 
   @override
   String get contextualHelpSprintTitle => 'Sprint';
 
   @override
   String get contextualHelpSprintDesc =>
-      'Lo sprint è un periodo di tempo fisso (1-4 settimane) durante il quale il team lavora sulle storie selezionate.';
+      'Le sprint est une période de temps fixe (1-4 semaines) pendant laquelle l\'équipe travaille sur les histoires sélectionnées.';
 
   @override
-  String get contextualHelpSprintTip1 => 'Non cambiare scope durante lo sprint';
+  String get contextualHelpSprintTip1 =>
+      'Ne changez pas le périmètre pendant le sprint';
 
   @override
   String get contextualHelpSprintTip2 =>
-      'Monitora il burndown per verificare il progresso';
+      'Surveillez le burndown pour vérifier la progression';
 
   @override
   String get contextualHelpSprintTip3 =>
-      'Fai daily standup per allineare il team';
+      'Faites des daily standups pour aligner l\'équipe';
 
   @override
-  String get contextualHelpKanbanTitle => 'Kanban Board';
+  String get contextualHelpSprintTip4 =>
+      'À la fin du sprint, utilisez \'Fermer Sprint\' pour la phase de clôture guidée avec la Sprint Review et la disposition des histoires';
+
+  @override
+  String get contextualHelpKanbanTitle => 'Tableau Kanban';
 
   @override
   String get contextualHelpKanbanDescFlow =>
-      'La board Kanban visualizza il flusso di lavoro. Gli item si muovono da sinistra a destra attraverso le colonne.';
+      'Le tableau Kanban visualise le flux de travail. Les éléments se déplacent de gauche à droite à travers les colonnes.';
 
   @override
   String get contextualHelpKanbanDescScrum =>
-      'In Scrum, la board mostra lo stato delle storie dello sprint corrente.';
+      'Dans Scrum, le tableau montre l\'état des histoires du sprint actuel.';
 
   @override
   String get contextualHelpKanbanTip1 =>
-      'Rispetta i WIP limits per evitare colli di bottiglia';
+      'Respectez les limites WIP pour éviter les goulots d\'étranglement';
 
   @override
   String get contextualHelpKanbanTip2 =>
-      'Tira (pull) nuovo lavoro solo quando c\'è capacità';
+      'Tirez (pull) du nouveau travail seulement lorsqu\'il y a de la capacité';
 
   @override
   String get contextualHelpKanbanTip3 =>
-      'Monitora l\'età degli item per identificare blocchi';
+      'Surveillez l\'âge des éléments pour identifier les blocages';
 
   @override
   String get contextualHelpKanbanTipScrum1 =>
-      'Muovi le card da sinistra a destra mentre lavori';
+      'Déplacez les cartes de gauche à droite pendant que vous travaillez';
 
   @override
   String get contextualHelpKanbanTipScrum2 =>
-      'Completa una storia prima di iniziarne un\'altra';
+      'Terminez une histoire avant d\'en commencer une autre';
 
   @override
-  String get contextualHelpTeamTitle => 'Team';
+  String get contextualHelpTeamTitle => 'Équipe';
 
   @override
   String get contextualHelpTeamDesc =>
-      'Qui puoi gestire i membri del team, i loro ruoli e le competenze.';
+      'Ici vous pouvez gérer les membres de l\'équipe, leurs rôles et leurs compétences.';
 
   @override
-  String get contextualHelpTeamTip1 => 'Assegna ruoli chiari a ogni membro';
+  String get contextualHelpTeamTip1 =>
+      'Assignez des rôles clairs à chaque membre';
 
   @override
   String get contextualHelpTeamTip2 =>
-      'Bilancia il carico di lavoro tra i membri';
+      'Équilibrez la charge de travail entre les membres';
 
   @override
-  String get contextualHelpMetricsTitle => 'Metriche';
+  String get contextualHelpMetricsTitle => 'Métriques';
 
   @override
   String get contextualHelpMetricsDescScrum =>
-      'Monitora velocity, burndown e accuratezza delle stime per migliorare la prevedibilità.';
+      'Surveillez la velocity, le burndown et la précision des estimations pour améliorer la prévisibilité.';
 
   @override
   String get contextualHelpMetricsDescKanban =>
-      'Monitora Lead Time, Cycle Time e Throughput per ottimizzare il flusso.';
+      'Surveillez le Lead Time, le Cycle Time et le Throughput pour optimiser le flux.';
 
   @override
   String get contextualHelpMetricsDescHybrid =>
-      'Combina metriche Scrum e Kanban per un quadro completo.';
+      'Combine les métriques Scrum et Kanban pour une vision complète.';
 
   @override
   String get contextualHelpMetricsTipScrum1 =>
-      'Usa la velocity media per pianificare gli sprint futuri';
+      'Utilisez la velocity moyenne pour planifier les sprints futurs';
 
   @override
   String get contextualHelpMetricsTipScrum2 =>
-      'Analizza le stime per migliorare la precisione';
+      'Analysez les estimations pour améliorer la précision';
 
   @override
   String get contextualHelpMetricsTipKanban1 =>
-      'Riduci il Lead Time per consegnare valore più velocemente';
+      'Réduisez le Lead Time pour livrer de la valeur plus rapidement';
 
   @override
   String get contextualHelpMetricsTipKanban2 =>
-      'Monitora il Throughput settimanale per la prevedibilità';
+      'Surveillez le Throughput hebdomadaire pour la prévisibilité';
 
   @override
   String get contextualHelpMetricsTipKanban3 =>
-      'Usa l\'età degli item per identificare blocchi';
+      'Utilisez l\'âge des éléments pour identifier les blocages';
 
   @override
   String get contextualHelpMetricsTipHybrid1 =>
-      'Bilancia velocity e flow metrics';
+      'Équilibre velocity et flow metrics';
 
   @override
   String get contextualHelpMetricsTipHybrid2 =>
-      'Adatta le metriche al tuo modo di lavorare';
+      'Adaptez les métriques à votre façon de travailler';
 
   @override
-  String get contextualHelpRetroTitle => 'Retrospettiva';
+  String get contextualHelpRetroTitle => 'Rétrospective';
 
   @override
   String get contextualHelpRetroDescScrum =>
-      'La retrospettiva è un motore di miglioramento continuo progettato per trasformare i feedback del team in una crescita misurabile attraverso 4 aree distinte.';
+      'La rétrospective est un moteur d\'amélioration continue conçu pour transformer les feedbacks de l\'équipe en une croissance mesurable à travers 4 domaines distincts.';
 
   @override
   String get contextualHelpRetroDescKanban =>
-      'In Kanban, la Retrospettiva (Operations Review) si concentra sull\'analisi del flusso di consegna, identificando i colli di bottiglia e ottimizzando i lead time.';
+      'Dans Kanban, la Rétrospective (Operations Review) se concentre sur l\'analyse du flux de livraison, l\'identification des goulots d\'étranglement et l\'optimisation des lead times.';
 
   @override
-  String get contextualHelpRetroTabActiveTitle => 'Tab Active: Sessione Core';
+  String get contextualHelpRetroTabActiveTitle => 'Onglet Actif : Session Core';
 
   @override
   String get contextualHelpRetroTabActive =>
-      'Gestisci i brainstorm correnti. Durante la fase \'Writing\', le card sono nascoste per evitare l\'ancoraggio (anchoring bias). Usa la funzione \'Carry Forward\' all\'inizio di una sessione per selezionare i miglioramenti non risolti dai cicli precedenti e mantenere lo slancio.';
+      'Gérez les brainstormings actuels. Pendant la phase \'Writing\', les cartes sont cachées pour éviter le biais d\'ancrage (anchoring bias). Utilisez la fonction \'Carry Forward\' au début d\'une session pour sélectionner les améliorations non résolues des cycles précédents et maintenir la dynamique.';
 
   @override
   String get contextualHelpRetroTabHistoryTitle =>
-      'Tab History: Trend & Insight';
+      'Onglet Historique : Tendances & Insights';
 
   @override
   String get contextualHelpRetroTabHistory =>
-      'Revisiona le sessioni completate tramite un grafico dei trend. Analizza il \'Sentiment del Team\' (felicità) rispetto al \'Tasso di Completamento\' (efficacia). Se il sentiment è alto ma il completamento basso, focalizzati sul rendere le azioni più raggiungibili.';
+      'Consultez les sessions terminées via un graphique de tendances. Analysez le \'Sentiment de l\'Équipe\' (bonheur) par rapport au \'Taux de Complétion\' (efficacité). Si le sentiment est élevé mais la complétion faible, concentrez-vous sur des actions plus réalisables.';
 
   @override
   String get contextualHelpRetroTabActionItemsTitle => 'Action Items Tracker';
 
   @override
   String get contextualHelpRetroTabActionItems =>
-      'Dashboard di esecuzione strategica. Ogni azione dovrebbe seguire i criteri SMART (Specifico, Misurabile, Raggiungibile, Rilevante, Temporizzato). Usa i filtri per verificare gli item scaduti durante i check-in di metà sprint.';
+      'Tableau de bord d\'exécution stratégique. Chaque action doit suivre les critères SMART (Spécifique, Mesurable, Atteignable, Pertinent, Temporel). Utilisez les filtres pour vérifier les éléments en retard lors des points de mi-sprint.';
 
   @override
   String get contextualHelpRetroTabLessonsLearnedTitle =>
-      'Lessons Learned register';
+      'Registre des Lessons Learned';
 
   @override
   String get contextualHelpRetroTabLessonsLearned =>
-      'Repository in stile PMBOK per la conoscenza istituzionale. Mentre gli Action Item sono tattici (risolvi ora), le Lessons Learned sono strategiche (non ripetere mai più l\'errore). Usa l\'import per sfruttare i successi da altri progetti.';
+      'Référentiel de style PMBOK pour la connaissance institutionnelle. Alors que les Action Items sont tactiques (résoudre maintenant), les Lessons Learned sont stratégiques (ne plus jamais répéter l\'erreur). Utilisez l\'importation pour exploiter les succès d\'autres projets.';
 
   @override
-  String get contextualHelpRetroIntegrationTitle => 'Il Ciclo di Miglioramento';
+  String get contextualHelpRetroIntegrationTitle => 'Le Cycle d\'Amélioration';
 
   @override
   String get contextualHelpRetroIntegration =>
-      'Le card del board vengono distillate in Action Item. Questi item sono tracciati nella dashboard e il loro tasso di completamento alimenta i trend della History, mentre i pattern ricorrenti vengono formalizzati come Lessons Learned.';
+      'Les cartes du tableau sont distillées en Action Items. Ces éléments sont suivis dans le tableau de bord et leur taux de complétion alimente les tendances de l\'Historique, tandis que les schémas récurrents sont formalisés en Lessons Learned.';
 
   @override
   String get contextualHelpRetroModeQuickTitle =>
-      'Quick Form vs Board Interattiva';
+      'Formulaire Rapide vs Tableau Interactif';
 
   @override
   String get contextualHelpRetroModeQuick =>
-      'La Quick Form permette a un singolo utente di registrare highlight e Action Item direttamente. Usala se il brainstorming è avvenuto offline o se devi registrare rapidamente un riassunto. Effetto: Popola direttamente History e Action Item senza collaborazione in tempo reale.';
+      'Le Formulaire Rapide permet à un seul utilisateur d\'enregistrer directement les points forts et les Action Items. Utilisez-le si le brainstorming a eu lieu hors ligne ou si vous devez enregistrer rapidement un résumé. Effet : Alimente directement l\'Historique et les Action Items sans collaboration en temps réel.';
 
   @override
-  String get contextualHelpRetroModeInteractiveTitle => 'Sessione Interattiva';
+  String get contextualHelpRetroModeInteractiveTitle => 'Session Interactive';
 
   @override
   String get contextualHelpRetroModeInteractive =>
-      'Guida il team attraverso Icebreaker, Brainstorming (Scrittura), Raggruppamento e Votazione. Effetto: Garantisce che la voce di tutti sia ascoltata, riduce i bias tramite card nascoste durante la scrittura e crea consenso sui miglioramenti prioritari.';
+      'Guidez l\'équipe à travers l\'Icebreaker, le Brainstorming (Écriture), le Regroupement et le Vote. Effet : Garantit que la voix de chacun est entendue, réduit les biais via des cartes cachées pendant l\'écriture et crée un consensus sur les améliorations prioritaires.';
 
   @override
   String get contextualHelpRetroTip1 =>
-      'Assegna un proprietario chiaro e una scadenza a ogni Action Item';
+      'Assignez un responsable clair et une échéance à chaque Action Item';
 
   @override
   String get contextualHelpRetroTip2 =>
-      'Celebra i \'Punti di Forza\' nel tab Lessons Learned per costruire su ciò che funziona';
+      'Célébrez les \'Points Forts\' dans l\'onglet Lessons Learned pour construire sur ce qui fonctionne';
 
   @override
   String get contextualHelpRetroTip3 =>
-      'Usa la \'Quick Form\' per digitalizzare i risultati di workshop fisici o riunioni di stato ad alto livello';
+      'Utilisez le \'Formulaire Rapide\' pour numériser les résultats d\'ateliers physiques ou de réunions d\'état de haut niveau';
 
   @override
   String get retroStatusCompleted => 'Terminée';
@@ -2976,6 +3003,89 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agileCompleteSprint => 'Complete Sprint';
+
+  @override
+  String get agileStartClosing => 'Clôturer le Sprint';
+
+  @override
+  String get agileFinalizeSprint => 'Finaliser le Sprint';
+
+  @override
+  String get agileSprintClosingPhase => 'En Clôture';
+
+  @override
+  String get agileSprintClosingDesc =>
+      'Le sprint est en phase de clôture. Complétez la Sprint Review et finalisez le sprint.';
+
+  @override
+  String get agileSprintClosingBanner =>
+      'Sprint en phase de clôture - complétez la review et finalisez';
+
+  @override
+  String get agileSprintClosingStarted => 'Phase de clôture du sprint démarrée';
+
+  @override
+  String get agileSprintClosingBoardVisible =>
+      'Le board continue d\'afficher les stories du sprint';
+
+  @override
+  String get agileSprintClosingNoNewStories =>
+      'Impossible d\'ajouter de nouvelles stories au sprint';
+
+  @override
+  String get agileSprintClosingReviewFirst =>
+      'Effectuez la Sprint Review avant de finaliser';
+
+  @override
+  String agileSprintOverdue(int days) {
+    return 'En retard de $days jours';
+  }
+
+  @override
+  String agileSprintDaysWarning(int days) {
+    return '$days jours restants';
+  }
+
+  @override
+  String get agileStoryDisposition => 'Disposition des Stories';
+
+  @override
+  String get agileStoryDispositionDesc =>
+      'Choisissez quoi faire des stories incomplètes';
+
+  @override
+  String get agileDispositionBacklog => 'Backlog';
+
+  @override
+  String get agileDispositionReady => 'Ready';
+
+  @override
+  String get agileDispositionCarryForward => 'Carry Forward';
+
+  @override
+  String get agileDispositionBacklogDesc =>
+      'Retour au backlog pour re-priorisation';
+
+  @override
+  String get agileDispositionReadyDesc =>
+      'Prête pour le prochain sprint planning';
+
+  @override
+  String get agileDispositionCarryForwardDesc =>
+      'Haute priorité pour le prochain sprint';
+
+  @override
+  String get agileRetroSuggestion =>
+      'Voulez-vous créer une rétrospective pour ce sprint ?';
+
+  @override
+  String get agileCreateRetro => 'Créer Rétrospective';
+
+  @override
+  String get agileSprintReviewSection => 'Sprint Review';
+
+  @override
+  String get agileSprintSummarySection => 'Résumé du Sprint';
 
   @override
   String get agileDeleteSprint => 'Delete';
@@ -4349,10 +4459,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get smartTodoAddChecklistItem => 'Ajouter un élément';
 
   @override
-  String get smartTodoEditItem => 'Modifica voce';
+  String get smartTodoEditItem => 'Modifier l\'élément';
 
   @override
-  String get smartTodoItemTitle => 'Titolo voce';
+  String get smartTodoItemTitle => 'Titre de l\'élément';
 
   @override
   String get smartTodoAttachments => 'PIÈCES JOINTES';
@@ -5380,123 +5490,124 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sprintBacklog => 'Sprint Backlog';
 
   @override
-  String get scrumToDo => 'Da Fare';
+  String get scrumToDo => 'À Faire';
 
   @override
   String get agileStatusRefinement => 'Refining';
 
   @override
-  String get agileStatusReady => 'Pronto';
+  String get agileStatusReady => 'Prêt';
 
   @override
-  String get agileStatusInProgress => 'In Corso';
+  String get agileStatusInProgress => 'En Cours';
 
   @override
-  String get agileStatusInReview => 'In Revisione';
+  String get agileStatusInReview => 'En Révision';
 
   @override
-  String get agileStatusDone => 'Fatto';
+  String get agileStatusDone => 'Fait';
 
   @override
   String get backlog => 'Backlog';
 
   @override
-  String get kanbanPolicySortPriority => 'Ordina per priorità business';
+  String get kanbanPolicySortPriority => 'Trier par priorité métier';
 
   @override
-  String get kanbanPolicyMax2Days => 'Max 2 giorni in questa colonna';
+  String get kanbanPolicyMax2Days => 'Max 2 jours dans cette colonne';
 
   @override
   String get kanbanPolicyReqAcceptance =>
-      'Richiede criteri di accettazione definiti';
+      'Requiert des critères d\'acceptation définis';
 
   @override
-  String get kanbanPolicyItemReady => 'Item pronto per essere lavorato';
+  String get kanbanPolicyItemReady => 'Élément prêt à être travaillé';
 
   @override
-  String get kanbanPolicyEstimationsDone => 'Stima completata (se richiesta)';
+  String get kanbanPolicyEstimationsDone => 'Estimation terminée (si requise)';
 
   @override
-  String get kanbanPolicyMax1PerPerson => 'Max 1 item per persona';
+  String get kanbanPolicyMax1PerPerson => 'Max 1 élément par personne';
 
   @override
   String kanbanPolicyMax1PerPersonParam(int count) {
-    return 'Max $count item per persona';
+    return 'Max $count élément par personne';
   }
 
   @override
-  String get kanbanPolicyDailyUpdate => 'Daily update obbligatorio';
+  String get kanbanPolicyDailyUpdate => 'Mise à jour quotidienne obligatoire';
 
   @override
-  String get kanbanPolicyMax24h => 'Max 24h in questa colonna';
+  String get kanbanPolicyMax24h => 'Max 24h dans cette colonne';
 
   @override
   String kanbanPolicyMaxHoursParam(int count) {
-    return 'Max $count ore in questa colonna';
+    return 'Max $count heures dans cette colonne';
   }
 
   @override
   String kanbanPolicyMaxDaysParam(int count) {
-    return 'Max $count giorni in questa colonna';
+    return 'Max $count jours dans cette colonne';
   }
 
   @override
-  String get kanbanPolicyReqCodeReview => 'Richiede code review approvata';
+  String get kanbanPolicyReqCodeReview =>
+      'Requiert une revue de code approuvée';
 
   @override
   String get kanbanPolicyAllAcceptanceMet =>
-      'Tutti i criteri di accettazione soddisfatti';
+      'Tous les critères d\'acceptation satisfaits';
 
   @override
-  String get kanbanPolicyCheckTitle => 'Controllo Policy';
+  String get kanbanPolicyCheckTitle => 'Contrôle de Politique';
 
   @override
   String get kanbanPolicyCheckMessage =>
-      'Questa azione viola le seguenti policy:';
+      'Cette action viole les politiques suivantes :';
 
   @override
-  String get kanbanPolicyCheckProceed => 'Procedi comunque';
+  String get kanbanPolicyCheckProceed => 'Continuer quand même';
 
   @override
-  String get kanbanPolicyCheckCancel => 'Annulla e correggi';
+  String get kanbanPolicyCheckCancel => 'Annuler et corriger';
 
   @override
-  String get kanbanPolicyActiveLabel => 'Controllo Attivo';
+  String get kanbanPolicyActiveLabel => 'Contrôle Actif';
 
   @override
-  String get kanbanPolicyViolationTitle => 'Violazione Policy';
+  String get kanbanPolicyViolationTitle => 'Violation de Politique';
 
   @override
-  String get kanbanPolicyViolationMessage => 'Spostando ';
+  String get kanbanPolicyViolationMessage => 'En déplaçant ';
 
   @override
-  String get kanbanPolicyViolationTo => ' in ';
+  String get kanbanPolicyViolationTo => ' dans ';
 
   @override
-  String get kanbanPolicyViolationViolations => ' stai violando:';
+  String get kanbanPolicyViolationViolations => ' vous violez :';
 
   @override
-  String get kanbanPolicySettingMaxHours => 'Max ore';
+  String get kanbanPolicySettingMaxHours => 'Max heures';
 
   @override
-  String get kanbanPolicySettingMaxDays => 'Max giorni';
+  String get kanbanPolicySettingMaxDays => 'Max jours';
 
   @override
-  String get kanbanPolicySettingMaxItems => 'Max item';
+  String get kanbanPolicySettingMaxItems => 'Max éléments';
 
   @override
-  String get kanbanPolicyUnitHours => 'Ore';
+  String get kanbanPolicyUnitHours => 'Heures';
 
   @override
-  String get kanbanPolicyUnitDays => 'Giorni';
+  String get kanbanPolicyUnitDays => 'Jours';
 
   @override
   String get kanbanPolicyHelpConfigurable =>
-      'Ogni colonna può ora avere limiti temporali e di WIP individuale personalizzati.';
+      'Chaque colonne peut désormais avoir des limites temporelles et de WIP individuel personnalisées.';
 
   @override
   String get kanbanPolicyMovingTip =>
-      'Puoi procedere se ritieni che sia un\'eccezione valida.';
+      'Vous pouvez continuer si vous estimez qu\'il s\'agit d\'une exception valide.';
 
   @override
   String get kanbanMoveAnyway => 'Déplacer quand même';
@@ -5526,39 +5637,41 @@ class AppLocalizationsFr extends AppLocalizations {
   String get kanbanNoWipLimit => 'Pas de limite WIP';
 
   @override
-  String get kanbanWipWhyTitle => 'Perché usarli?';
+  String get kanbanWipWhyTitle => 'Pourquoi les utiliser ?';
 
   @override
   String get kanbanWipReasonFocus =>
-      'Riducono il multitasking e aumentano il focus';
+      'Réduisent le multitâche et augmentent la concentration';
 
   @override
-  String get kanbanWipReasonBottlenecks => 'Evidenziano i colli di bottiglia';
+  String get kanbanWipReasonBottlenecks =>
+      'Mettent en évidence les goulots d\'étranglement';
 
   @override
-  String get kanbanWipReasonFlow => 'Migliorano il flusso di lavoro';
+  String get kanbanWipReasonFlow => 'Améliorent le flux de travail';
 
   @override
-  String get kanbanWipReasonSpeed => 'Accelerano il completamento degli item';
+  String get kanbanWipReasonSpeed => 'Accélèrent la complétion des éléments';
 
   @override
-  String get kanbanWipOverLimitTitle => 'Cosa fare se un limite è superato?';
+  String get kanbanWipOverLimitTitle =>
+      'Que faire si une limite est dépassée ?';
 
   @override
   String get kanbanWipOverLimitStep1 =>
-      '1. Completa o sposta item esistenti prima di iniziarne di nuovi';
+      '1. Terminez ou déplacez les éléments existants avant d\'en commencer de nouveaux';
 
   @override
   String get kanbanWipOverLimitStep2 =>
-      '2. Aiuta i colleghi a sbloccare item in review';
+      '2. Aidez les collègues à débloquer les éléments en révision';
 
   @override
   String get kanbanWipOverLimitStep3 =>
-      '3. Analizza perché il limite è stato superato';
+      '3. Analysez pourquoi la limite a été dépassée';
 
   @override
   String get kanbanWipMovingTip =>
-      'Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.';
+      'Conseil : terminez ou déplacez d\'autres éléments avant d\'en commencer de nouveaux pour maintenir un flux de travail optimal.';
 
   @override
   String kanbanItems(int count) {
@@ -6524,7 +6637,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String jiraConnectedSuccess(String name) {
-    return 'Connesso come $name';
+    return 'Connecté en tant que $name';
   }
 
   @override
@@ -6734,7 +6847,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscriptionViewPlans => 'Voir les plans';
 
   @override
-  String get subscriptionContactDeveloper => 'Contatta lo sviluppatore';
+  String get subscriptionContactDeveloper => 'Contacter le développeur';
 
   @override
   String get subscriptionOfficialEmail => 'leonardo.torella@gmail.com';
@@ -8344,17 +8457,17 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Questo eliminerà anche $count action item collegati.',
-      one: 'Questo eliminerà anche 1 action item collegato.',
+      other: 'Cela supprimera également $count éléments d\'action liés.',
+      one: 'Cela supprimera également 1 élément d\'action lié.',
     );
     return '$_temp0';
   }
 
   @override
-  String get actionIrreversible => 'Questa azione non può essere annullata.';
+  String get actionIrreversible => 'Cette action ne peut pas être annulée.';
 
   @override
-  String get lessonsLearnedSearchPlaceholder => 'Cerca lezioni...';
+  String get lessonsLearnedSearchPlaceholder => 'Chercher des leçons...';
 
   @override
   String errorPrefix(String error) {
@@ -10988,24 +11101,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String agileWorkloadBalanceTooltip(String avg, String min, String max) {
-    return 'Media Team: $avg SP\nRange bilanciato: $min - $max SP\nLo status è basato sulla deviazione dalla media.';
+    return 'Moyenne de l\'Équipe : $avg SP\nPlage équilibrée : $min - $max SP\nLe statut est basé sur l\'écart par rapport à la moyenne.';
   }
 
   @override
   String get agileHealthTimeTooltip =>
-      'Giorni trascorsi / Totale giorni (basato su date Inizio/Fine).';
+      'Jours écoulés / Total de jours (basé sur les dates Début/Fin).';
 
   @override
   String get agileHealthWorkTooltip =>
-      'Story Points completati su totalmente pianificati.';
+      'Story Points terminés sur le total planifié.';
 
   @override
   String get agileHealthProgressTooltip =>
-      'Numero di storie attualmente in lavorazione.';
+      'Nombre d\'histoires actuellement en cours.';
 
   @override
   String get agileHealthDoneTooltip =>
-      'Storie completate su totale storie nello sprint.';
+      'Histoires terminées sur le total des histoires dans le sprint.';
 
   @override
   String get agileHealthCommitmentTooltip =>
@@ -11070,22 +11183,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileDaysRemainingSuffix => 'jours restants';
 
   @override
-  String get agileItemsMore => 'altri items';
+  String get agileItemsMore => 'autres éléments';
 
   @override
-  String get wipAgeTitle => 'Età Work Items';
+  String get wipAgeTitle => 'Âge des Work Items';
 
   @override
-  String get wipAgeEmpty => 'Nessun item in lavorazione';
+  String get wipAgeEmpty => 'Aucun élément en cours';
 
   @override
   String wipAgeDays(int count) {
-    return '$count giorni';
+    return '$count jours';
   }
 
   @override
   String get wipAgeWarning =>
-      'Alcuni item sono in lavorazione da troppo tempo. Potrebbero esserci blocchi.';
+      'Certains éléments sont en cours depuis trop longtemps. Il pourrait y avoir des blocages.';
 
   @override
   String get agilePerWeekSuffix => '/sem';
@@ -11138,7 +11251,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agileBlockedItemsTooltip =>
-      'Storie che hanno delle dipendenze non soddisfatte (altre storie non ancora completate).';
+      'Histoires qui ont des dépendances non satisfaites (d\'autres histoires pas encore terminées).';
 
   @override
   String agileItemsCount(int count) {
@@ -11346,17 +11459,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileNoDecisions => 'Aucune décision ajoutée';
 
   @override
-  String get agileTooltipApproved => 'Approvata';
+  String get agileTooltipApproved => 'Approuvée';
 
   @override
-  String get agileTooltipRefinement => 'Da raffinare';
+  String get agileTooltipRefinement => 'À affiner';
 
   @override
-  String get agileTooltipRejected => 'Rifiutata';
+  String get agileTooltipRejected => 'Refusée';
 
   @override
   String get agileReviewGuidance =>
-      'Seleziona l\'esito. \'Da raffinare\' e \'Rifiutata\' riportano la storia nel Backlog.';
+      'Sélectionnez l\'issue. \'À affiner\' et \'Refusée\' renvoient l\'histoire au Backlog.';
 
   @override
   String get agileEvaluateStories => 'Évaluer les Stories';
@@ -11517,7 +11630,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileSprintHealthSpRemaining => 'SP restants';
 
   @override
-  String get agileSprintHealthStoriesInProgress => 'In Corso';
+  String get agileSprintHealthStoriesInProgress => 'En Cours';
 
   @override
   String get agileSprintHealthStoriesDone => 'Stories Terminées';
@@ -11877,56 +11990,59 @@ class AppLocalizationsFr extends AppLocalizations {
       'Démarrez le Sprint pour voir les stories actives';
 
   @override
-  String get workflowTitle => 'Flusso di Lavoro';
+  String get workflowTitle => 'Flux de Travail';
 
   @override
-  String get workflowShowButton => 'Mostra Flusso';
+  String get workflowShowButton => 'Afficher le Flux';
 
   @override
-  String get workflowDiagramTitle => 'Diagramma Flusso Stati';
+  String get workflowDiagramTitle => 'Diagramme de Flux d\'États';
 
   @override
-  String get workflowLegend => 'Legenda';
+  String get workflowLegend => 'Légende';
 
   @override
   String get workflowScrumDesc =>
-      'In Scrum, le storie fluiscono attraverso Sprint Planning, Sviluppo, Review e Done. Il flusso è iterativo con sprint a tempo definito.';
+      'Dans Scrum, les histoires passent par le Sprint Planning, le Développement, la Review et Done. Le flux est itératif avec des sprints à durée définie.';
 
   @override
   String get workflowKanbanDesc =>
-      'In Kanban, il lavoro fluisce continuamente. Le storie vengono tirate (pull) nel sistema in base ai limiti WIP e alla capacità.';
+      'Dans Kanban, le travail coule continuellement. Les histoires sont tirées (pull) dans le système en fonction des limites WIP et de la capacité.';
 
   @override
   String get workflowHybridDesc =>
-      'Hybrid combina sprint Scrum con flusso Kanban. Le storie possono essere tirate continuamente o pianificate negli sprint.';
+      'Híbrido combine sprints Scrum avec flux Kanban. Les histoires peuvent être tirées continuellement ou planifiées dans les sprints.';
 
   @override
-  String get workflowFromAny => 'Da Qualunque';
+  String get workflowFromAny => 'Depuis N\'importe Quel';
 
   @override
-  String get workflowFromAnyDesc => 'Può transitare da qualunque stato';
+  String get workflowFromAnyDesc =>
+      'Peut transiter depuis n\'importe quel état';
 
   @override
   String get workflowCycleLabel => 'Rework';
 
   @override
-  String get workflowCycleDesc => 'Transizione bidirezionale (ciclo)';
+  String get workflowCycleDesc => 'Transition bidirectionnelle (cycle)';
 
   @override
-  String get workflowOptionalDesc => 'Step opzionale (può saltare)';
+  String get workflowOptionalDesc => 'Étape optionnelle (peut être sautée)';
 
   @override
-  String get kanbanPoliciesActive => 'Policy Attive (Controlli Automatici)';
+  String get kanbanPoliciesActive =>
+      'Politiques Actives (Contrôles Automatiques)';
 
   @override
-  String get kanbanPoliciesExplicit => 'Policy Esplicite (Note per il team)';
+  String get kanbanPoliciesExplicit =>
+      'Politiques Explicites (Notes pour l\'équipe)';
 
   @override
-  String get agileTeam => 'Team';
+  String get agileTeam => 'Équipe';
 
   @override
   String get agileRoleDevelopmentTeam => 'Development Team';
 
   @override
-  String get agileRoleDevelopmentTeamDesc => 'Membri che eseguono il lavoro';
+  String get agileRoleDevelopmentTeamDesc => 'Membres qui exécutent le travail';
 }

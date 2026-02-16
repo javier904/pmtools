@@ -233,6 +233,28 @@ class AgileAuditService {
     return log(auditLog);
   }
 
+  /// Registra l'avvio della fase di chiusura sprint (active → review)
+  Future<AuditLogModel> logSprintClosingStarted({
+    required String projectId,
+    required String sprintId,
+    required String sprintName,
+    required String performedBy,
+    required String performedByName,
+    required int totalStories,
+    required int completedStories,
+  }) async {
+    final auditLog = AuditLogModel.startSprintClosing(
+      projectId: projectId,
+      sprintId: sprintId,
+      sprintName: sprintName,
+      performedBy: performedBy,
+      performedByName: performedByName,
+      totalStories: totalStories,
+      completedStories: completedStories,
+    );
+    return log(auditLog);
+  }
+
   /// Registra la chiusura di uno sprint
   Future<AuditLogModel> logSprintClose({
     required String projectId,

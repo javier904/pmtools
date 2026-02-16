@@ -7,6 +7,7 @@ import '../models/raci_models.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import 'auth_service.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'user_profile_service.dart';
 import 'favorite_service.dart';
 
 /// Servizio Firestore per la Matrice di Eisenhower
@@ -293,7 +294,7 @@ class EisenhowerFirestoreService {
       // Il creatore diventa automaticamente facilitatore
       final creatorParticipant = EisenhowerParticipantModel(
         email: userEmail,
-        name: creatorName ?? userEmail.split('@').first,
+        name: creatorName ?? await UserProfileService().getNameByEmail(userEmail),
         role: EisenhowerParticipantRole.facilitator,
         joinedAt: now,
         isOnline: true,

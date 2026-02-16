@@ -8,6 +8,7 @@ import '../models/planning_poker_session_model.dart';
 import '../models/subscription/subscription_limits_model.dart';
 import '../utils/validators.dart';
 import 'subscription/subscription_limits_service.dart';
+import 'user_profile_service.dart';
 
 /// Servizio per la gestione degli inviti alle sessioni di Planning Poker
 ///
@@ -311,7 +312,7 @@ class PlanningPokerInviteService {
       // Aggiungi l'utente come partecipante
       final participant = PlanningPokerParticipantModel(
         email: invite.email,
-        name: accepterName ?? invite.email.split('@').first,
+        name: accepterName ?? await UserProfileService().getNameByEmail(invite.email),
         role: invite.role,
         joinedAt: DateTime.now(),
       );

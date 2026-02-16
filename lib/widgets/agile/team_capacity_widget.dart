@@ -214,8 +214,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               icon: Icons.speed,
               label: l10n.agileAverageVelocity,
               value: '${avgVelocity.toStringAsFixed(1)} SP',
-              subtitle: l10n.agileVelocityUnits, // Wait, I should add this too
+              subtitle: l10n.agileVelocityUnits,
               color: Colors.indigo,
+              tooltip: l10n.velocityTooltipAverage(completedSprints.length),
             )),
             const SizedBox(width: 12),
             Expanded(child: _buildMetricCard(
@@ -293,8 +294,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
     required String value,
     required String subtitle,
     required Color color,
+    String? tooltip,
   }) {
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
@@ -330,6 +332,14 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
         ],
       ),
     );
+
+    if (tooltip != null) {
+      return Tooltip(
+        message: tooltip,
+        child: card,
+      );
+    }
+    return card;
   }
 
   Widget _buildSuggestedCapacity(double avgVelocity, double stdDev) {
@@ -414,9 +424,9 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
     final sortedSprints = List<SprintModel>.from(completedSprints)
       ..sort((a, b) => a.endDate.compareTo(b.endDate));
 
-    // Prendi ultimi 6 sprint
-    final recentSprints = sortedSprints.length > 6
-        ? sortedSprints.sublist(sortedSprints.length - 6)
+    // Prendi ultimi 10 sprint
+    final recentSprints = sortedSprints.length > 10
+        ? sortedSprints.sublist(sortedSprints.length - 10)
         : sortedSprints;
 
     return LineChart(
@@ -431,6 +441,7 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
+              interval: 1, // Fix: force integer interval
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index >= 0 && index < recentSprints.length) {

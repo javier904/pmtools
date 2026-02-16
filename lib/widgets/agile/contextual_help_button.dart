@@ -208,6 +208,7 @@ class ContextualHelp {
         l10n.contextualHelpSprintTip1,
         l10n.contextualHelpSprintTip2,
         l10n.contextualHelpSprintTip3,
+        l10n.contextualHelpSprintTip4,
       ],
       icon: Icons.timer,
       color: Colors.indigo,

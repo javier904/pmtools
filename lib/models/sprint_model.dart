@@ -276,6 +276,12 @@ class SprintModel {
   /// Verifica se lo sprint è attivo
   bool get isActive => status == SprintStatus.active;
 
+  /// Verifica se lo sprint è in fase di chiusura (review)
+  bool get isReview => status == SprintStatus.review;
+
+  /// Verifica se lo sprint è logicamente attivo (include fase di chiusura)
+  bool get isActiveOrReview => status.isActiveOrReview;
+
   /// Verifica se lo sprint è in planning
   bool get isPlanning => status == SprintStatus.planning;
 
@@ -288,11 +294,20 @@ class SprintModel {
   /// Verifica se la Sprint Review è stata effettuata
   bool get hasSprintReview => sprintReview != null;
 
-  /// Verifica se lo sprint può essere chiuso (Sprint Review è consigliata ma non obbligatoria)
-  bool get canClose => isActive;
+  /// Verifica se lo sprint può essere chiuso o finalizzato
+  bool get canClose => isActive || isReview;
 
   /// Verifica se manca la Sprint Review prima della chiusura
-  bool get missingSprintReviewWarning => isActive && !hasSprintReview;
+  bool get missingSprintReviewWarning => isActiveOrReview && !hasSprintReview;
+
+  /// Verifica se lo sprint ha superato la data di fine
+  bool get isOverdue => isActiveOrReview && _toMidnight(DateTime.now()).isAfter(_toMidnight(endDate));
+
+  /// Giorni oltre la scadenza (0 se non scaduto)
+  int get overdueDays {
+    if (!isOverdue) return 0;
+    return _toMidnight(DateTime.now()).difference(_toMidnight(endDate)).inDays;
+  }
 
   // =========================================================================
   // Helper per stories

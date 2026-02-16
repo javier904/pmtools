@@ -338,7 +338,11 @@ enum SprintStatus {
 
   bool get canModifyStories => this == SprintStatus.planning;
   bool get isActive => this == SprintStatus.active;
+  bool get isReview => this == SprintStatus.review;
   bool get isCompleted => this == SprintStatus.completed;
+
+  /// Sprint logicamente attivo (include fase di chiusura/review)
+  bool get isActiveOrReview => this == SprintStatus.active || this == SprintStatus.review;
 }
 
 /// Ruoli nel team

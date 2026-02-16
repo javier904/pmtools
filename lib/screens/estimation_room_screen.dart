@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../services/user_profile_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // ignore: avoid_web_libraries_in_flutter
@@ -65,6 +66,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   final AgileFirestoreService _agileService = AgileFirestoreService();
   final AuthService _authService = AuthService();
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
+  final UserProfileService _userProfileService = UserProfileService();
 
   // Stato
   PlanningPokerSessionModel? _selectedSession;
@@ -83,6 +85,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   static const _offlineThreshold = Duration(seconds: 45);
 
   bool _isDeepLink = false;
+  String? _resolvedUserName;
 
   // TabController per sidebar (Partecipanti/Inviti)
   late TabController _sidePanelTabController;
@@ -96,14 +99,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   Timer? _debounce;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
-  String get _currentUserName => _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
+  String get _currentUserName => _resolvedUserName ?? _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
 
   @override
   void initState() {
     super.initState();
+    _resolveCurrentUserName();
     WidgetsBinding.instance.addObserver(this);
     _sidePanelTabController = TabController(length: 2, vsync: this);
     _setupWebBeforeUnload();
+  }
+
+  Future<void> _resolveCurrentUserName() async {
+    final name = await _userProfileService.getNameByEmail(_currentUserEmail);
+    if (mounted) {
+      setState(() {
+        _resolvedUserName = name;
+      });
+    }
   }
 
   @override
@@ -2628,24 +2641,29 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                   final email = entry.key;
                   final vote = entry.value;
                   final participant = _selectedSession?.participants[email];
-                  final name = participant?.name ?? email.split('@').first;
+                  final fallbackName = participant?.name ?? email.split('@').first;
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.blue.withOpacity(0.1),
-                          child: Text(
-                            name.isNotEmpty ? name[0].toUpperCase() : '?',
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(name)),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  return FutureBuilder<String>(
+                    future: _userProfileService.getNameByEmail(email),
+                    initialData: fallbackName,
+                    builder: (context, snapshot) {
+                      final name = snapshot.data ?? fallbackName;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 14,
+                              backgroundColor: Colors.blue.withOpacity(0.1),
+                              child: Text(
+                                name.isNotEmpty ? name[0].toUpperCase() : '?',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(name)),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getVoteColor(vote.value).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -2661,6 +2679,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                         ),
                       ],
                     ),
+                      );
+                    },
                   );
                 }),
               ],
@@ -3153,6 +3173,7 @@ class _ParticipantsManagementDialog extends StatefulWidget {
 }
 
 class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDialog> with SingleTickerProviderStateMixin {
+  final UserProfileService _userProfileService = UserProfileService();
   late TabController _tabController;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -4199,10 +4220,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
     setState(() => _isAdding = true);
 
     try {
+      final resolvedName = name.isEmpty ? await _userProfileService.getNameByEmail(email) : name;
+      
       await widget.firestoreService.addParticipant(
         sessionId: widget.sessionId,
         email: email,
-        name: name.isEmpty ? email.split('@').first : name,
+        name: resolvedName,
         role: _selectedRole,
       );
 

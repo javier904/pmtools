@@ -9,6 +9,7 @@ import '../utils/validators.dart';
 import 'auth_service.dart';
 import 'agile_firestore_service.dart';
 import 'agile_audit_service.dart';
+import 'user_profile_service.dart';
 
 /// Servizio per la gestione degli inviti ai Progetti Agile
 ///
@@ -97,7 +98,7 @@ class AgileInviteService {
         teamRole: teamRole,
         status: AgileInviteStatus.pending,
         invitedBy: inviterEmail,
-        invitedByName: inviterEmail.split('@').first,
+        invitedByName: await UserProfileService().getNameByEmail(inviterEmail),
         invitedAt: now,
         expiresAt: now.add(Duration(days: expirationDays)),
         token: token,
@@ -112,7 +113,7 @@ class AgileInviteService {
         inviteeEmail: email,
         role: '${participantRole.displayName} / ${teamRole.displayName}',
         performedBy: inviterEmail,
-        performedByName: inviterEmail.split('@').first,
+        performedByName: await UserProfileService().getNameByEmail(inviterEmail),
       );
 
       // Aggiungi ai pending participants del progetto
@@ -287,7 +288,7 @@ class AgileInviteService {
       // Aggiungi l'utente come partecipante al progetto
       final participant = TeamMemberModel(
         email: userEmail,
-        name: accepterName ?? userEmail.split('@').first,
+        name: accepterName ?? await UserProfileService().getNameByEmail(userEmail),
         participantRole: invite.participantRole,
         teamRole: invite.teamRole,
         joinedAt: DateTime.now(),
@@ -300,7 +301,7 @@ class AgileInviteService {
       await _auditService.logJoin(
         projectId: invite.projectId,
         userEmail: userEmail,
-        userName: accepterName ?? userEmail.split('@').first,
+        userName: accepterName ?? await UserProfileService().getNameByEmail(userEmail),
         role: '${invite.participantRole.displayName} / ${invite.teamRole.displayName}',
       );
 

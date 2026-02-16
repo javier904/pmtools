@@ -10,7 +10,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
 import '../models/eisenhower_participant_model.dart';
-import '../models/agile_enums.dart';
+import '../services/user_profile_service.dart';
+import '../widgets/user_display_name_widget.dart';
 import '../services/eisenhower_firestore_service.dart';
 import '../services/invite_service.dart';
 import '../services/eisenhower_csv_export_service.dart';
@@ -1947,7 +1948,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           title: result['title'],
           description: result['description'] ?? '',
           createdBy: _currentUserEmail,
-          creatorName: _currentUserEmail?.split('@').first,
+          creatorName: null,
         );
         _showSuccess(l10n.eisenhowerMatrixCreated);
       } catch (e) {
@@ -2418,7 +2419,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           name: result.newProjectConfig!.name,
           description: result.newProjectConfig!.description,
           createdBy: userEmail,
-          createdByName: userEmail.split('@').first,
+          createdByName: await UserProfileService().getNameByEmail(userEmail),
           framework: result.newProjectConfig!.framework,
           sprintDurationDays: result.newProjectConfig!.sprintDurationDays,
           workingHoursPerDay: result.newProjectConfig!.workingHoursPerDay,
@@ -2822,11 +2823,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     // Ottieni il voto esistente se c'e'
     final existingVote = activity.getVote(_currentUserEmail!);
 
+    final voterName = await UserProfileService().getNameByEmail(_currentUserEmail!);
+    
     final vote = await IndependentVoteDialog.show(
       context: context,
       activity: activity,
       voterEmail: _currentUserEmail!,
-      voterName: _currentUserEmail!.split('@').first,
+      voterName: voterName,
       existingVote: existingVote,
     );
 
@@ -3056,12 +3059,21 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                   // Unescape l'email e cerca il partecipante
                   final unescapedEmail = EisenhowerParticipantModel.unescapeEmail(e.key).toLowerCase();
                   final participant = _selectedMatrix?.participants[unescapedEmail];
-                  final voterName = participant?.name ?? unescapedEmail.split('@').first;
+                  
                   return Padding(
                     padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      '- $voterName: U=${e.value.urgency}, I=${e.value.importance}',
-                      style: const TextStyle(fontSize: 13),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('- ', style: TextStyle(fontSize: 13)),
+                        UserDisplayName(
+                          email: unescapedEmail,
+                          fallback: participant?.name,
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        Text(': U=${e.value.urgency}, I=${e.value.importance}',
+                             style: const TextStyle(fontSize: 13)),
+                      ],
                     ),
                   );
                 }),
@@ -3512,7 +3524,7 @@ class _SequentialVotingDialogState extends State<_SequentialVotingDialog> {
       context: context,
       activity: _currentActivity!,
       voterEmail: widget.currentUserEmail!,
-      voterName: widget.currentUserEmail!.split('@').first,
+      voterName: await UserProfileService().getNameByEmail(widget.currentUserEmail!),
       existingVote: _currentUserVote,
     );
 

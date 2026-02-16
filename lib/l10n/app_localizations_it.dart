@@ -1611,6 +1611,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Il team deve essere cross-funzionale e auto-organizzato';
 
   @override
+  String get scrumBP9 =>
+      'Usa la fase di chiusura guidata per completare Sprint Review prima di finalizzare';
+
+  @override
   String get scrumAP1 => 'Sprint senza Sprint Goal chiaro';
 
   @override
@@ -1635,6 +1639,17 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get scrumAP8 => 'Scrum Master che \"assegna\" compiti al team';
+
+  @override
+  String get scrumAP9 =>
+      'Chiudere lo sprint senza Sprint Review e senza scegliere la disposizione delle stories incomplete';
+
+  @override
+  String get scrumSprintClosingTitle => 'Chiusura Sprint Guidata';
+
+  @override
+  String get scrumSprintClosingContent =>
+      'Il flusso di chiusura sprint segue lo Scrum Guide 2020 con due fasi:\n\n1. Chiusura Sprint: lo sprint passa in fase di review. La board resta visibile ma non si possono aggiungere nuove stories.\n\n2. Finalizzazione: dopo la Sprint Review, scegli la disposizione delle stories incomplete (Backlog, Ready, Carry Forward) e finalizza lo sprint. Le metriche vengono calcolate e viene suggerito di creare la retrospettiva.';
 
   @override
   String get scrumFAQ1Q => 'Quanto deve durare uno Sprint?';
@@ -1814,6 +1829,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get kanbanBP6 => 'Blocca il nuovo lavoro se il WIP è al limite';
+
+  @override
+  String velocityTooltipAverage(int count) {
+    return 'Basato su tutti i $count sprint completati';
+  }
 
   @override
   String get kanbanBP7 => 'Analizza i blocchi e rimuovili rapidamente';
@@ -2202,6 +2222,10 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get contextualHelpSprintTip3 =>
       'Fai daily standup per allineare il team';
+
+  @override
+  String get contextualHelpSprintTip4 =>
+      'Alla fine dello sprint, usa \'Chiudi Sprint\' per la fase di chiusura guidata con Sprint Review e disposizione stories';
 
   @override
   String get contextualHelpKanbanTitle => 'Kanban Board';
@@ -2959,6 +2983,89 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get agileCompleteSprint => 'Completa Sprint';
+
+  @override
+  String get agileStartClosing => 'Chiudi Sprint';
+
+  @override
+  String get agileFinalizeSprint => 'Finalizza Sprint';
+
+  @override
+  String get agileSprintClosingPhase => 'In Chiusura';
+
+  @override
+  String get agileSprintClosingDesc =>
+      'Lo sprint è in fase di chiusura. Completa la Sprint Review e finalizza lo sprint.';
+
+  @override
+  String get agileSprintClosingBanner =>
+      'Sprint in fase di chiusura - completa review e finalizza';
+
+  @override
+  String get agileSprintClosingStarted => 'Sprint in fase di chiusura';
+
+  @override
+  String get agileSprintClosingBoardVisible =>
+      'La board continua a mostrare le stories dello sprint';
+
+  @override
+  String get agileSprintClosingNoNewStories =>
+      'Non è possibile aggiungere nuove stories allo sprint';
+
+  @override
+  String get agileSprintClosingReviewFirst =>
+      'Conduci la Sprint Review prima di finalizzare';
+
+  @override
+  String agileSprintOverdue(int days) {
+    return 'Scaduto da $days giorni';
+  }
+
+  @override
+  String agileSprintDaysWarning(int days) {
+    return '$days giorni rimanenti';
+  }
+
+  @override
+  String get agileStoryDisposition => 'Disposizione Stories';
+
+  @override
+  String get agileStoryDispositionDesc =>
+      'Scegli cosa fare con le stories incomplete';
+
+  @override
+  String get agileDispositionBacklog => 'Backlog';
+
+  @override
+  String get agileDispositionReady => 'Ready';
+
+  @override
+  String get agileDispositionCarryForward => 'Carry Forward';
+
+  @override
+  String get agileDispositionBacklogDesc =>
+      'Torna nel backlog per ri-prioritizzazione';
+
+  @override
+  String get agileDispositionReadyDesc =>
+      'Pronta per il prossimo sprint planning';
+
+  @override
+  String get agileDispositionCarryForwardDesc =>
+      'Priorità alta per il prossimo sprint';
+
+  @override
+  String get agileRetroSuggestion =>
+      'Vuoi creare la retrospettiva per questo sprint?';
+
+  @override
+  String get agileCreateRetro => 'Crea Retrospettiva';
+
+  @override
+  String get agileSprintReviewSection => 'Sprint Review';
+
+  @override
+  String get agileSprintSummarySection => 'Riepilogo Sprint';
 
   @override
   String get agileDeleteSprint => 'Elimina';
