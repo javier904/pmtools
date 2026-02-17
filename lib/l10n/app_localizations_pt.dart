@@ -497,7 +497,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get eisenhowerMatrixCreated => 'Matriz criada com sucesso';
 
   @override
-  String get eisenhowerMatrixUpdated => 'Matriz atualizada';
+  String get eisenhowerMatrixUpdated => 'Matrice aggiornata';
 
   @override
   String get eisenhowerMatrixDeleted => 'Matriz excluída';
@@ -2999,7 +2999,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get agileDispositionReady => 'Ready';
 
   @override
-  String get agileDispositionCarryForward => 'Carry Forward';
+  String get agileDispositionRefinement => 'Carry Forward';
 
   @override
   String get agileDispositionBacklogDesc =>
@@ -3010,7 +3010,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Pronta para o próximo sprint planning';
 
   @override
-  String get agileDispositionCarryForwardDesc =>
+  String get agileDispositionRefinementDesc =>
       'Alta prioridade para o próximo sprint';
 
   @override
@@ -3025,6 +3025,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get agileSprintSummarySection => 'Resumo do Sprint';
+
+  @override
+  String get agileReviewRecapTitle => 'Riepilogo Sprint Review';
+
+  @override
+  String get agileReviewApproved => 'Approvate';
+
+  @override
+  String get agileReviewRefinement => 'Da Rifinire';
+
+  @override
+  String get agileReviewRejected => 'Rifiutate';
 
   @override
   String get agileDeleteSprint => 'Excluir';

@@ -3113,7 +3113,7 @@ abstract class AppLocalizations {
   /// No description provided for @scrumSprintClosingContent.
   ///
   /// In it, this message translates to:
-  /// **'Il flusso di chiusura sprint segue lo Scrum Guide 2020 con due fasi:\n\n1. Chiusura Sprint: lo sprint passa in fase di review. La board resta visibile ma non si possono aggiungere nuove stories.\n\n2. Finalizzazione: dopo la Sprint Review, scegli la disposizione delle stories incomplete (Backlog, Ready, Carry Forward) e finalizza lo sprint. Le metriche vengono calcolate e viene suggerito di creare la retrospettiva.'**
+  /// **'Il flusso di chiusura sprint segue un processo a 2 fasi conforme alla Scrum Guide 2020:\n\n1. **Sprint Review**: Fase qualitativa. Gli stakeholder ispezionano l\'Incremento. Ogni storia viene valutata come \'Approvata\' (segnata come Done) o \'Da Rifinire\' (riportata nel Backlog per rilavorazione futura). Nota: le storie spostate nel Backlog durante la fase di review (es. in \'To Do\') non sono incluse nella review — saranno disponibili per il prossimo Sprint Planning.\n\n2. **Finalizzazione Sprint**: Fase amministrativa. Il team decide la sorte del lavoro incompleto: Ritorno al Backlog (per ri-pianificazione futura), Spostamento in Ready (se subito azionabile), o Spostamento in Refinement (se serve analisi).'**
   String get scrumSprintClosingContent;
 
   /// No description provided for @scrumFAQ1Q.
@@ -5510,11 +5510,11 @@ abstract class AppLocalizations {
   /// **'Ready'**
   String get agileDispositionReady;
 
-  /// No description provided for @agileDispositionCarryForward.
+  /// No description provided for @agileDispositionRefinement.
   ///
   /// In it, this message translates to:
-  /// **'Carry Forward'**
-  String get agileDispositionCarryForward;
+  /// **'In Refinement'**
+  String get agileDispositionRefinement;
 
   /// No description provided for @agileDispositionBacklogDesc.
   ///
@@ -5528,11 +5528,11 @@ abstract class AppLocalizations {
   /// **'Pronta per il prossimo sprint planning'**
   String get agileDispositionReadyDesc;
 
-  /// No description provided for @agileDispositionCarryForwardDesc.
+  /// No description provided for @agileDispositionRefinementDesc.
   ///
   /// In it, this message translates to:
-  /// **'Priorità alta per il prossimo sprint'**
-  String get agileDispositionCarryForwardDesc;
+  /// **'Da analizzare meglio prima del prossimo sprint'**
+  String get agileDispositionRefinementDesc;
 
   /// No description provided for @agileRetroSuggestion.
   ///
@@ -5557,6 +5557,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Riepilogo Sprint'**
   String get agileSprintSummarySection;
+
+  /// No description provided for @agileReviewRecapTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Riepilogo Sprint Review'**
+  String get agileReviewRecapTitle;
+
+  /// No description provided for @agileReviewApproved.
+  ///
+  /// In it, this message translates to:
+  /// **'Approvate'**
+  String get agileReviewApproved;
+
+  /// No description provided for @agileReviewRefinement.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Rifinire'**
+  String get agileReviewRefinement;
+
+  /// No description provided for @agileReviewRejected.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifiutate'**
+  String get agileReviewRejected;
 
   /// No description provided for @agileDeleteSprint.
   ///
@@ -9765,13 +9789,13 @@ abstract class AppLocalizations {
   /// No description provided for @agilePoints.
   ///
   /// In it, this message translates to:
-  /// **'pts'**
+  /// **'pt'**
   String get agilePoints;
 
   /// No description provided for @agilePointsValue.
   ///
   /// In it, this message translates to:
-  /// **'{points} pts'**
+  /// **'{points} pt'**
   String agilePointsValue(int points);
 
   /// No description provided for @agileGuide.

@@ -3049,7 +3049,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get agileDispositionReady => 'Ready';
 
   @override
-  String get agileDispositionCarryForward => 'Carry Forward';
+  String get agileDispositionRefinement => 'Carry Forward';
 
   @override
   String get agileDispositionBacklogDesc =>
@@ -3060,7 +3060,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Lista para el próximo sprint planning';
 
   @override
-  String get agileDispositionCarryForwardDesc =>
+  String get agileDispositionRefinementDesc =>
       'Alta prioridad para el próximo sprint';
 
   @override
@@ -3075,6 +3075,18 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get agileSprintSummarySection => 'Resumen del Sprint';
+
+  @override
+  String get agileReviewRecapTitle => 'Riepilogo Sprint Review';
+
+  @override
+  String get agileReviewApproved => 'Approvate';
+
+  @override
+  String get agileReviewRefinement => 'Da Rifinire';
+
+  @override
+  String get agileReviewRejected => 'Rifiutate';
 
   @override
   String get agileDeleteSprint => 'Delete';

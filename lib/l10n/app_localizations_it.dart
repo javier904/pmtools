@@ -1653,7 +1653,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get scrumSprintClosingContent =>
-      'Il flusso di chiusura sprint segue lo Scrum Guide 2020 con due fasi:\n\n1. Chiusura Sprint: lo sprint passa in fase di review. La board resta visibile ma non si possono aggiungere nuove stories.\n\n2. Finalizzazione: dopo la Sprint Review, scegli la disposizione delle stories incomplete (Backlog, Ready, Carry Forward) e finalizza lo sprint. Le metriche vengono calcolate e viene suggerito di creare la retrospettiva.';
+      'Il flusso di chiusura sprint segue un processo a 2 fasi conforme alla Scrum Guide 2020:\n\n1. **Sprint Review**: Fase qualitativa. Gli stakeholder ispezionano l\'Incremento. Ogni storia viene valutata come \'Approvata\' (segnata come Done) o \'Da Rifinire\' (riportata nel Backlog per rilavorazione futura). Nota: le storie spostate nel Backlog durante la fase di review (es. in \'To Do\') non sono incluse nella review — saranno disponibili per il prossimo Sprint Planning.\n\n2. **Finalizzazione Sprint**: Fase amministrativa. Il team decide la sorte del lavoro incompleto: Ritorno al Backlog (per ri-pianificazione futura), Spostamento in Ready (se subito azionabile), o Spostamento in Refinement (se serve analisi).';
 
   @override
   String get scrumFAQ1Q => 'Quanto deve durare uno Sprint?';
@@ -3044,7 +3044,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agileDispositionReady => 'Ready';
 
   @override
-  String get agileDispositionCarryForward => 'Carry Forward';
+  String get agileDispositionRefinement => 'In Refinement';
 
   @override
   String get agileDispositionBacklogDesc =>
@@ -3055,8 +3055,8 @@ class AppLocalizationsIt extends AppLocalizations {
       'Pronta per il prossimo sprint planning';
 
   @override
-  String get agileDispositionCarryForwardDesc =>
-      'Priorità alta per il prossimo sprint';
+  String get agileDispositionRefinementDesc =>
+      'Da analizzare meglio prima del prossimo sprint';
 
   @override
   String get agileRetroSuggestion =>
@@ -3070,6 +3070,18 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get agileSprintSummarySection => 'Riepilogo Sprint';
+
+  @override
+  String get agileReviewRecapTitle => 'Riepilogo Sprint Review';
+
+  @override
+  String get agileReviewApproved => 'Approvate';
+
+  @override
+  String get agileReviewRefinement => 'Da Rifinire';
+
+  @override
+  String get agileReviewRejected => 'Rifiutate';
 
   @override
   String get agileDeleteSprint => 'Elimina';
@@ -5390,11 +5402,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agileEstimated => 'Stimata';
 
   @override
-  String get agilePoints => 'pts';
+  String get agilePoints => 'pt';
 
   @override
   String agilePointsValue(int points) {
-    return '$points pts';
+    return '$points pt';
   }
 
   @override

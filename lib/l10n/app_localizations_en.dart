@@ -1644,7 +1644,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scrumSprintClosingContent =>
-      'The sprint closing flow follows the Scrum Guide 2020 with two phases:\n\n1. Close Sprint: the sprint enters review phase. The board remains visible but no new stories can be added.\n\n2. Finalize: after the Sprint Review, choose the disposition of incomplete stories (Backlog, Ready, Carry Forward) and finalize the sprint. Metrics are calculated and a retrospective suggestion is provided.';
+      'The sprint closing flow follows a 2-step process compliant with Scrum Guide 2020:\n\n1. **Conduct Sprint Review**: Qualitative phase. Stakeholders inspect the Increment. Each story is evaluated as \'Approved\' (marked Done) or \'Needs Refinement\' (returned to Backlog for future re-work). Note: stories moved in the Backlog during the review phase (e.g. to \'To Do\') are not included in the review — they will be available for the next Sprint Planning.\n\n2. **Finalize Sprint**: Administrative phase. The team decides the fate of incomplete work: Return to Backlog (for future re-planning), Move to Ready (if immediately actionable), or Move to Refinement (if analysis is needed).';
 
   @override
   String get scrumFAQ1Q => 'How long should a Sprint last?';
@@ -3018,7 +3018,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileDispositionReady => 'Ready';
 
   @override
-  String get agileDispositionCarryForward => 'Carry Forward';
+  String get agileDispositionRefinement => 'To Refinement';
 
   @override
   String get agileDispositionBacklogDesc =>
@@ -3028,8 +3028,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agileDispositionReadyDesc => 'Ready for next sprint planning';
 
   @override
-  String get agileDispositionCarryForwardDesc =>
-      'High priority for next sprint';
+  String get agileDispositionRefinementDesc =>
+      'Needs more analysis/details before next sprint';
 
   @override
   String get agileRetroSuggestion =>
@@ -3043,6 +3043,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileSprintSummarySection => 'Sprint Summary';
+
+  @override
+  String get agileReviewRecapTitle => 'Sprint Review Recap';
+
+  @override
+  String get agileReviewApproved => 'Approved';
+
+  @override
+  String get agileReviewRefinement => 'Needs Refinement';
+
+  @override
+  String get agileReviewRejected => 'Rejected';
 
   @override
   String get agileDeleteSprint => 'Delete';

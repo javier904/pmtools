@@ -158,6 +158,17 @@ class UserStoryModel {
     );
   }
 
+  /// Creates an empty/dummy story for safe fallbacks
+  factory UserStoryModel.empty() {
+    return UserStoryModel(
+      id: '',
+      projectId: '',
+      title: '',
+      createdAt: DateTime.now(),
+      createdBy: '',
+    );
+  }
+
   static int? _resolveStoryPoints(dynamic pointsValue, dynamic estimateValue) {
     final points = _parseStoryPoints(pointsValue);
     final estimate = _parseStoryPoints(estimateValue);

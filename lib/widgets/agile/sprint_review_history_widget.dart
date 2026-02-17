@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/sprint_model.dart';
+import '../../models/agile_enums.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Widget per visualizzare la cronologia delle Sprint Review
@@ -336,7 +337,8 @@ class SprintReviewHistoryWidget extends StatelessWidget {
                   ],
 
                   // Actions (if editable)
-                  if (onEdit != null) ...[
+                  // Only allow editing if the sprint is NOT completed (i.e. still in Review)
+                  if (onEdit != null && sprint.status != SprintStatus.completed) ...[
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
