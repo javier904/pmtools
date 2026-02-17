@@ -919,15 +919,14 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           children: [
             const Icon(Icons.stars, size: 12, color: Colors.green),
             const SizedBox(width: 4),
-              child: Text(
-                l10n.agilePointsValue(widget.story.storyPoints ?? 0),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
+            Text(
+              l10n.agilePointsValue(widget.story.storyPoints ?? 0),
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
              const SizedBox(width: 4),
             Icon(Icons.arrow_drop_down, size: 14, color: Colors.green[700]),
