@@ -99,8 +99,11 @@ class SprintHealthCardWidget extends StatelessWidget {
         .length;
   }
 
-  /// Calculates total planned points dynamically from stories
+  /// Calculates total planned points
+  /// Prioritizes the frozen [sprint.plannedPoints] if > 0 (original commitment).
+  /// Fallback: sums current stories points (for sprints not started or empty planned).
   int _calculatePlannedPoints(SprintModel sprint) {
+    if (sprint.plannedPoints > 0) return sprint.plannedPoints;
     return _sprintStories(sprint)
         .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
   }
@@ -490,7 +493,7 @@ class SprintHealthCardWidget extends StatelessWidget {
         ),
         _buildMetricItem(
           label: l10n.agileSprintHealthStoriesDone,
-          value: '$doneCount/${sprintStories.length}',
+          value: '$doneCount/${sprint.sprintReview != null ? (sprint.sprintReview!.storiesCompleted + sprint.sprintReview!.storiesNotCompleted) : sprintStories.length}',
           theme: theme,
           tooltip: l10n.agileHealthDoneTooltip, // Nuova chiave
         ),
