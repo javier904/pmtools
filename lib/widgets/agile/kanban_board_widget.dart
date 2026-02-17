@@ -786,16 +786,31 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
     // Costruisci il testo del tooltip basato sulle policy attive
     final List<String> tooltipLines = [];
     if (column.activePolicies != null) {
+      final policySettings = column.policySettings;
       column.activePolicies!.forEach((key, isActive) {
         if (isActive) {
-           // Cerchiamo l'etichetta localizzata corretta
            String label = key;
-           if (key == 'kanbanPolicyReqAcceptance') label = l10n.kanbanPolicyReqAcceptance;
-           else if (key == 'kanbanPolicyEstimationsDone') label = l10n.kanbanPolicyEstimationsDone;
-           else if (key == 'kanbanPolicyMax1PerPerson') label = l10n.kanbanPolicyMax1PerPerson;
-           else if (key == 'kanbanPolicyAllAcceptanceMet') label = l10n.kanbanPolicyAllAcceptanceMet;
-           else if (key == 'kanbanPolicyMax2Days') label = l10n.kanbanPolicyMax2Days;
-           else if (key == 'kanbanPolicyMax24h') label = l10n.kanbanPolicyMax24h;
+           
+           if (key == 'kanbanPolicyMax1PerPerson') {
+             final rawCount = policySettings['maxItemsPerPerson'] ?? 1;
+             final count = (rawCount is int ? rawCount : int.tryParse(rawCount.toString()) ?? 1).clamp(1, 99);
+             label = l10n.kanbanPolicyMax1PerPersonParam(count);
+           } else if (key == 'kanbanPolicyMax2Days' || key == 'kanbanPolicyMax24h') {
+             final defaultVal = key == 'kanbanPolicyMax24h' ? 24 : 48;
+             final countInHours = (policySettings['maxHours'] ?? defaultVal).clamp(1, 99 * 24);
+             final unit = policySettings['maxHoursUnit'] ?? 'hours';
+             
+             if (unit == 'days') {
+               final days = (countInHours / 24).round().clamp(1, 99);
+               label = l10n.kanbanPolicyMaxDaysParam(days);
+             } else {
+               label = l10n.kanbanPolicyMaxHoursParam(countInHours);
+             }
+           } else {
+             if (key == 'kanbanPolicyReqAcceptance') label = l10n.kanbanPolicyReqAcceptance;
+             else if (key == 'kanbanPolicyEstimationsDone') label = l10n.kanbanPolicyEstimationsDone;
+             else if (key == 'kanbanPolicyAllAcceptanceMet') label = l10n.kanbanPolicyAllAcceptanceMet;
+           }
            
            tooltipLines.add('• $label');
         }
