@@ -141,6 +141,8 @@
   "quadrantNotUrgent": "NO URGENTE",
   "quadrantImportant": "IMPORTANTE",
   "quadrantNotImportant": "NO IMPORTANTE",
+  "agilePoints": "pt",
+  "agilePointsValue": "{points} pt",
   "quadrantQ1Title": "HACER AHORA",
   "quadrantQ2Title": "PROGRAMAR",
   "quadrantQ3Title": "DELEGAR",
@@ -1259,6 +1261,7 @@
   "scrumBP7": "La Retrospectiva debe producir acciones concretas de mejora",
   "scrumBP8": "El equipo debe ser multifuncional y autoorganizado",
   "scrumBP9": "Usa la fase de cierre guiado para completar la Sprint Review antes de finalizar",
+  "scrumBP10": "No crees varios sprints en planificación al mismo tiempo: completa o elimina el existente antes de crear uno nuevo",
   "scrumAP1": "Sprint sin Sprint Goal claro",
   "scrumAP2": "Daily Scrum convertido en reunión de reportes",
   "scrumAP3": "Saltarse la Retrospectiva cuando se está \"muy ocupado\"",
@@ -1558,6 +1561,20 @@
   },
   "sprintStartButton": "Iniciar",
   "sprintCompleteActiveFirst": "Completa el sprint activo antes de iniciar otro",
+  "sprintPlanningAlreadyExists": "Ya existe un sprint en planificación. Elimínalo o inícialo antes de crear uno nuevo.",
+  "sprintDeletePlanningTitle": "Eliminar Sprint en Planificación",
+  "sprintDeletePlanningConfirm": "¿Deseas eliminar el sprint \"{sprintName}\"? Las stories asociadas volverán al backlog.",
+  "@sprintDeletePlanningConfirm": {
+    "placeholders": {
+      "sprintName": { "type": "String" }
+    }
+  },
+  "sprintDeletedSuccess": "Sprint \"{sprintName}\" eliminado. Las stories se han movido al backlog.",
+  "@sprintDeletedSuccess": {
+    "placeholders": {
+      "sprintName": { "type": "String" }
+    }
+  },
   "sprintEditTitle": "Editar Sprint",
   "sprintNewTitle": "Nuevo Sprint",
   "sprintNameLabel": "Nombre del Sprint",
@@ -3657,6 +3674,7 @@
   "agileNextStepWipDesc": "Limita el trabajo en curso para mejorar el flujo.",
   "agileNextStepWorkTitle": "Empezar a trabajar",
   "agileNextStepWorkDesc": "Mueve un item a \"En Progreso\" para empezar.",
+  "agileNextStepAddToSprintDesc": "Mueve un item a \"To Do\" para añadir historias al sprint.",
   "agileNextStepGoToKanban": "Ir a Kanban",
   "agileActionNewStory": "Nueva Historia",
   "agileBacklogTitle": "Backlog de Producto",

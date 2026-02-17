@@ -1615,6 +1615,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Usa la fase di chiusura guidata per completare Sprint Review prima di finalizzare';
 
   @override
+  String get scrumBP10 =>
+      'Non creare più sprint in pianificazione contemporaneamente: completa o elimina quello esistente prima di crearne uno nuovo';
+
+  @override
   String get scrumAP1 => 'Sprint senza Sprint Goal chiaro';
 
   @override
@@ -5794,6 +5798,23 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get sprintCompleteActiveFirst =>
       'Completa lo sprint attivo prima di avviarne un altro';
+
+  @override
+  String get sprintPlanningAlreadyExists =>
+      'Esiste già uno sprint in pianificazione. Eliminalo o avvialo prima di crearne uno nuovo.';
+
+  @override
+  String get sprintDeletePlanningTitle => 'Elimina Sprint in Pianificazione';
+
+  @override
+  String sprintDeletePlanningConfirm(String sprintName) {
+    return 'Vuoi eliminare lo sprint \"$sprintName\"? Le stories associate torneranno nel backlog.';
+  }
+
+  @override
+  String sprintDeletedSuccess(String sprintName) {
+    return 'Sprint \"$sprintName\" eliminato. Le stories sono state spostate nel backlog.';
+  }
 
   @override
   String get sprintEditTitle => 'Modifica Sprint';
@@ -10063,6 +10084,10 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get agileNextStepWorkDesc =>
       'Sposta un item \"In Progress\" per iniziare.';
+
+  @override
+  String get agileNextStepAddToSprintDesc =>
+      'Sposta un elemento in \"To Do\" per aggiungere storie allo sprint.';
 
   @override
   String get agileNextStepGoToKanban => 'Vai al Kanban';

@@ -331,7 +331,7 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '(${sprint.plannedPoints} pts)',
+                                  '(${sprint.plannedPoints} ${l10n.agilePoints})',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey[600],
@@ -477,7 +477,7 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '($storyPoints pts)',
+                                  '($storyPoints ${l10n.agilePoints})',
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: Colors.purple[300],

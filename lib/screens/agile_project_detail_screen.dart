@@ -388,16 +388,17 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                     ),
                   ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: FrameworkTipsWidget(
-                    framework: widget.project.framework,
-                    storiesCount: _stories.length,
-                    completedStoriesCount: _stories.where((s) => s.status == StoryStatus.done).length,
-                    hasActiveSprint: hasActiveSprint,
-                    hasWipLimits: hasWipLimits,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: FrameworkTipsWidget(
+                      framework: widget.project.framework,
+                      storiesCount: _stories.length,
+                      completedStoriesCount: _stories.where((s) => s.status == StoryStatus.done).length,
+                      hasActiveSprint: hasActiveSprint,
+                      hasAnySprint: _sprints.isNotEmpty,
+                      hasWipLimits: hasWipLimits,
+                    ),
                   ),
-                ),
 
                 // Backlog list
                 // SCRUM PERMISSIONS:
@@ -1391,15 +1392,30 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
   Future<void> _startSprint(AgileProjectModel project, String sprintId) async {
     final sprint = _sprints.firstWhere((s) => s.id == sprintId);
-    final stories = _stories.where((s) => s.status == StoryStatus.ready || s.status == StoryStatus.backlog).toList();
+    // Include ready/backlog stories + stories in "To Do" (inSprint) for this sprint or unassigned
+    final stories = _stories.where((s) =>
+        s.status == StoryStatus.ready ||
+        s.status == StoryStatus.backlog ||
+        (s.status == StoryStatus.inSprint && (s.sprintId == sprintId || s.sprintId == null))
+    ).toList();
     
+    // Recalculate capacity for current team (fixes issue with old sprints having stale capacity)
+    final now = DateTime.now();
+    final startDate = DateTime(now.year, now.month, now.day);
+    final endDate = startDate.add(Duration(days: project.sprintDurationDays - 1));
+    
+    final currentTotalCapacity = _teamMembers
+        .where((m) => m.role.isDevelopmentTeam)
+        .fold<int>(0, (sum, m) => sum + m.getAvailableHours(startDate, endDate));
+
     // Mostra il wizard di pianificazione
     final selectedStoryIds = await SprintPlanningWizard.show(
       context: context,
       sprint: sprint,
       backlogStories: stories,
+      storiesStream: _storiesStream,
       averageVelocity: _calculateAverageVelocity(),
-      totalCapacityHours: sprint.totalCapacityHours,
+      totalCapacityHours: currentTotalCapacity > 0 ? currentTotalCapacity : sprint.totalCapacityHours,
     );
 
     if (selectedStoryIds != null && mounted) {
@@ -1411,7 +1427,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           status: SprintStatus.active,
           storyIds: selectedStoryIds,
           startDate: now,
-          endDate: now.add(Duration(days: sprint.durationDays)),
+          endDate: now.add(Duration(days: sprint.durationDays - 1)),
         );
         
         // Aggiorna lo sprint
@@ -1506,6 +1522,9 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 : null,
             onSprintComplete: project.canManageSprints(_currentUserEmail)
                 ? (id) => _completeSprint(project, id)
+                : null,
+            onSprintDelete: project.canManageSprints(_currentUserEmail)
+                ? (id) => _deletePlanningSprint(project, id)
                 : null,
             canEdit: project.canManageSprints(_currentUserEmail),
           ),
@@ -1685,15 +1704,25 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 if (project.canManageSprints(_currentUserEmail) && sprint.status == SprintStatus.active) ...[
                   const SizedBox(width: 8),
                   Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _startSprintClosing(project, sprint),
-                      icon: const Icon(Icons.rate_review),
-                      label: Text(l10n.agileStartClosing),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
+                    child: sprint.hasSprintReview
+                        ? ElevatedButton.icon(
+                            onPressed: () => _finalizeSprintConfirm(project, sprint),
+                            icon: const Icon(Icons.check),
+                            label: Text(l10n.agileFinalizeSprint),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
+                          )
+                        : ElevatedButton.icon(
+                            onPressed: () => _startSprintClosing(project, sprint),
+                            icon: const Icon(Icons.rate_review),
+                            label: Text(l10n.agileStartClosing),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
                   ),
                 ],
                 if (project.canManageSprints(_currentUserEmail) && sprint.status == SprintStatus.review) ...[
@@ -1756,10 +1785,27 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
   }
 
   Future<void> _showCreateSprintDialog(AgileProjectModel project) async {
+    // Block creation if a planning sprint already exists
+    final hasPlanningSprintAlready = _sprints.any((s) => s.status == SprintStatus.planning);
+    if (hasPlanningSprintAlready) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.sprintPlanningAlreadyExists),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     final avgVelocity = _calculateAverageVelocity();
+    final now = DateTime.now();
+    final startDate = DateTime(now.year, now.month, now.day);
+    final endDate = startDate.add(Duration(days: project.sprintDurationDays - 1));
+
     final teamCapacity = <String, int>{
-      for (final member in _teamMembers)
-        member.email: member.capacityHoursPerDay * project.sprintDurationDays
+      for (final member in _teamMembers.where((m) => m.role.isDevelopmentTeam))
+        member.email: member.getAvailableHours(startDate, endDate)
     };
 
     final result = await SprintFormDialog.show(
@@ -1787,6 +1833,64 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       } catch (e) {
         _showError('Errore creazione sprint: $e');
       }
+    }
+  }
+
+  Future<void> _deletePlanningSprint(AgileProjectModel project, String sprintId) async {
+    final l10n = AppLocalizations.of(context)!;
+    final sprint = _sprints.firstWhere((s) => s.id == sprintId);
+
+    // Confirm deletion
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.sprintDeletePlanningTitle),
+        content: Text(l10n.sprintDeletePlanningConfirm(sprint.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.actionCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(l10n.actionDelete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      // Move all associated stories back to backlog
+      // Include: stories linked by sprintId, stories in sprint's storyIds list,
+      // and stories manually set to inSprint without a specific sprintId
+      final associatedStories = _stories.where((s) =>
+        s.sprintId == sprintId ||
+        sprint.storyIds.contains(s.id) ||
+        (s.status == StoryStatus.inSprint && (s.sprintId == null || s.sprintId!.isEmpty))
+      ).toList();
+
+      for (final story in associatedStories) {
+        await _firestoreService.updateStoryFields(
+          project.id,
+          story.id,
+          {
+            'status': StoryStatus.backlog.name,
+            'sprintId': null,
+          },
+        );
+      }
+
+      // Delete the sprint
+      await _firestoreService.deleteSprint(project.id, sprintId);
+
+      if (mounted) {
+        _showSuccess(l10n.sprintDeletedSuccess(sprint.name));
+      }
+    } catch (e) {
+      _showError('Error deleting sprint: $e');
     }
   }
 
@@ -1914,7 +2018,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              '${story.storyPoints} pts',
+                              l10n.agilePointsValue(story.storyPoints ?? 0),
                               style: TextStyle(fontSize: 12, color: Colors.blue[700]),
                             ),
                           )
@@ -2411,7 +2515,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                                     color: Colors.blue.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: Text('${story.storyPoints} pts',
+                                  child: Text(l10n.agilePointsValue(story.storyPoints ?? 0),
                                       style: const TextStyle(fontSize: 11, color: Colors.blue)),
                                 ),
                             ],
@@ -4382,16 +4486,26 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       return Text(project.name, overflow: TextOverflow.ellipsis);
     }
 
-    // Find active sprint for status indicator
+    // Find active or planning sprint for status indicator
     final activeSprint = _sprints.where((s) => s.status.isActiveOrReview).firstOrNull;
+    final planningSprint = activeSprint == null ? _sprints.where((s) => s.status == SprintStatus.planning).firstOrNull : null;
 
-    if (activeSprint == null) {
+    if (activeSprint == null && planningSprint == null) {
       return Text(project.name, overflow: TextOverflow.ellipsis);
     }
 
     // Status Indicator Logic
     Color statusColor;
     String statusText;
+
+    if (activeSprint == null && planningSprint != null) {
+      // Planning phase
+      statusColor = Colors.blue;
+      statusText = 'Planning';
+      return _buildHeaderWithStatus(project.name, planningSprint.name, statusText, statusColor);
+    }
+
+    if (activeSprint == null) return Text(project.name, overflow: TextOverflow.ellipsis);
     
     final now = DateTime.now();
     final endDate = activeSprint.endDate;
@@ -4421,10 +4535,14 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
       statusText = 'Active';
     }
 
+    return _buildHeaderWithStatus(project.name, activeSprint.name, statusText, statusColor);
+  }
+
+  Widget _buildHeaderWithStatus(String projectName, String sprintName, String statusText, Color statusColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(project.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+        Text(projectName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -4438,7 +4556,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             ),
             const SizedBox(width: 4),
             Text(
-              '${activeSprint.name} • $statusText',
+              '$sprintName • $statusText',
               style: TextStyle(
                 fontSize: 11,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),

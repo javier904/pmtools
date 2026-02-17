@@ -2437,6 +2437,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       }
 
       // Create stories for each selected activity
+      // Get max order once to avoid race condition in batch creation
+      int currentOrder = await agileService.getMaxStoryOrder(projectId);
       int createdCount = 0;
       for (final activity in result.selectedActivities) {
         // Map quadrant to priority using the function from the dialog
@@ -2445,6 +2447,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         // Map importance to business value (1-10 scale)
         final businessValue = activity.aggregatedImportance.round().clamp(1, 10);
 
+        currentOrder++;
         await agileService.createStory(
           projectId: projectId,
           title: activity.title,
@@ -2452,6 +2455,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           createdBy: userEmail,
           priority: priority,
           businessValue: businessValue,
+          order: currentOrder,
         );
         createdCount++;
       }

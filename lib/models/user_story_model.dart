@@ -16,6 +16,9 @@ class UserStoryModel {
   // Prioritization
   final int businessValue; // 1-10
   final int? storyPoints; // Fibonacci: 1,2,3,5,8,13,21
+
+  /// Returns the effective story points, resolving finalEstimate fallback
+  int get effectiveStoryPoints => storyPoints ?? _parseStoryPoints(finalEstimate) ?? 0;
   final StoryPriority priority; // must, should, could, wont
   final StoryStatus status;
   final ClassOfService classOfService; // Kanban: expedite, fixedDate, standard, intangible
@@ -112,7 +115,7 @@ class UserStoryModel {
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       businessValue: data['businessValue'] ?? 5,
-      storyPoints: data['storyPoints'],
+      storyPoints: _resolveStoryPoints(data['storyPoints'], data['finalEstimate']),
       priority: StoryPriority.values.firstWhere(
         (p) => p.name == data['priority'],
         orElse: () => StoryPriority.should,
@@ -153,6 +156,30 @@ class UserStoryModel {
           : null,
       cumulativeActiveMinutes: data['cumulativeActiveMinutes'] ?? 0,
     );
+  }
+
+  static int? _resolveStoryPoints(dynamic pointsValue, dynamic estimateValue) {
+    final points = _parseStoryPoints(pointsValue);
+    final estimate = _parseStoryPoints(estimateValue);
+
+    // If points is null or 0, and we have a valid estimate > 0, use the estimate
+    if ((points == null || points == 0) && estimate != null && estimate > 0) {
+      return estimate;
+    }
+    // Otherwise return points (even if 0) or null
+    return points;
+  }
+
+  static int? _parseStoryPoints(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toInt();
+    if (value is String) {
+      if (value.trim().isEmpty) return null;
+      // Remove text suffix like " pts" or " sp"
+      final cleanValue = value.replaceAll(RegExp(r'[^\d.,]'), '').replaceAll(',', '.');
+      return int.tryParse(cleanValue) ?? double.tryParse(cleanValue)?.toInt();
+    }
+    return null;
   }
 
   /// Converte per Firestore

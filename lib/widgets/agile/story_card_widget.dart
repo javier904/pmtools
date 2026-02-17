@@ -919,9 +919,8 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           children: [
             const Icon(Icons.stars, size: 12, color: Colors.green),
             const SizedBox(width: 4),
-            Flexible(
               child: Text(
-                '${widget.story.storyPoints ?? 0} pts',
+                l10n.agilePointsValue(widget.story.storyPoints ?? 0),
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.green,
@@ -937,7 +936,7 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
       ),
       itemBuilder: (context) => points.map((p) => PopupMenuItem(
         value: p,
-        child: Text('$p pts'),
+        child: Text(l10n.agilePointsValue(p)),
       )).toList(),
       onSelected: (val) => widget.onStoryPointsChange?.call(val),
     );

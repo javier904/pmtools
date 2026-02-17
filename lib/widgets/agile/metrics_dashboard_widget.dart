@@ -647,7 +647,7 @@ class VelocityTrendWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'Media: ${avgVelocity.toStringAsFixed(1)} pts',
+                          'Media: ${avgVelocity.toStringAsFixed(1)} ${l10n.agilePoints}',
                           style: const TextStyle(
                             color: Colors.purple,
                             fontWeight: FontWeight.bold,

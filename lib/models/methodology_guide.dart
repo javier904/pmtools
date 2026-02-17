@@ -160,6 +160,7 @@ MethodologyGuide _buildScrumGuide(AppLocalizations l10n) {
       l10n.scrumBP7,
       l10n.scrumBP8,
       l10n.scrumBP9,
+      l10n.scrumBP10,
     ],
     antiPatterns: [
       l10n.scrumAP1,

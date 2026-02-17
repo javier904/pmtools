@@ -1167,9 +1167,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
           if (features.hasStoryPoints) ...[
             const Icon(Icons.stars, size: 12, color: Colors.green),
             const SizedBox(width: 4),
-            Text(
-              '$totalPoints pts',
-              style: const TextStyle(fontSize: 11, color: Colors.green),
+              l10n.agilePointsValue(totalPoints),
             ),
           ] else ...[
             // Per Kanban mostra conteggio

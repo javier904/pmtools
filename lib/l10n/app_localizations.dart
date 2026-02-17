@@ -3044,6 +3044,12 @@ abstract class AppLocalizations {
   /// **'Usa la fase di chiusura guidata per completare Sprint Review prima di finalizzare'**
   String get scrumBP9;
 
+  /// No description provided for @scrumBP10.
+  ///
+  /// In it, this message translates to:
+  /// **'Non creare più sprint in pianificazione contemporaneamente: completa o elimina quello esistente prima di crearne uno nuovo'**
+  String get scrumBP10;
+
   /// No description provided for @scrumAP1.
   ///
   /// In it, this message translates to:
@@ -10469,6 +10475,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Completa lo sprint attivo prima di avviarne un altro'**
   String get sprintCompleteActiveFirst;
+
+  /// No description provided for @sprintPlanningAlreadyExists.
+  ///
+  /// In it, this message translates to:
+  /// **'Esiste già uno sprint in pianificazione. Eliminalo o avvialo prima di crearne uno nuovo.'**
+  String get sprintPlanningAlreadyExists;
+
+  /// No description provided for @sprintDeletePlanningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Sprint in Pianificazione'**
+  String get sprintDeletePlanningTitle;
+
+  /// No description provided for @sprintDeletePlanningConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare lo sprint \"{sprintName}\"? Le stories associate torneranno nel backlog.'**
+  String sprintDeletePlanningConfirm(String sprintName);
+
+  /// No description provided for @sprintDeletedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Sprint \"{sprintName}\" eliminato. Le stories sono state spostate nel backlog.'**
+  String sprintDeletedSuccess(String sprintName);
 
   /// No description provided for @sprintEditTitle.
   ///
@@ -17987,6 +18017,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Sposta un item \"In Progress\" per iniziare.'**
   String get agileNextStepWorkDesc;
+
+  /// No description provided for @agileNextStepAddToSprintDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Sposta un elemento in \"To Do\" per aggiungere storie allo sprint.'**
+  String get agileNextStepAddToSprintDesc;
 
   /// No description provided for @agileNextStepGoToKanban.
   ///

@@ -2213,17 +2213,21 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         );
 
         // Create stories directly in the backlog (no sprint assignment for new project)
+        // Get max order once to avoid race condition in batch creation
+        int currentOrder = await _agileService.getMaxStoryOrder(targetProject.id);
         for (final story in result.selectedStories) {
           int? storyPoints;
           if (story.finalEstimate != null) {
             storyPoints = _convertEstimateToStoryPoints(story.finalEstimate!);
           }
 
+          currentOrder++;
           final userStory = await _agileService.createStory(
             projectId: targetProject.id,
             title: story.title,
             description: story.description,
             createdBy: _currentUserEmail,
+            order: currentOrder,
           );
 
           // Update story with story points
@@ -2250,17 +2254,21 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         targetProject = result.existingProject!;
         targetSprint = result.sprint;
 
+        // Get max order once to avoid race condition in batch creation
+        int currentOrder = await _agileService.getMaxStoryOrder(targetProject.id);
         for (final story in result.selectedStories) {
           int? storyPoints;
           if (story.finalEstimate != null) {
             storyPoints = _convertEstimateToStoryPoints(story.finalEstimate!);
           }
 
+          currentOrder++;
           final userStory = await _agileService.createStory(
             projectId: targetProject.id,
             title: story.title,
             description: story.description,
             createdBy: _currentUserEmail,
+            order: currentOrder,
           );
 
           // Determine status and sprintId

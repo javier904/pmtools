@@ -150,7 +150,7 @@ class BurndownChartWidget extends StatelessWidget {
                         return touchedSpots.map((spot) {
                           final isIdeal = spot.barIndex == 0;
                           return LineTooltipItem(
-                            '${isIdeal ? l10n.agileIdeal : l10n.agileActual}: ${spot.y.toInt()} pts',
+                            '${isIdeal ? l10n.agileIdeal : l10n.agileActual}: ${spot.y.toInt()} ${l10n.agilePoints}',
                             TextStyle(
                               color: isIdeal ? Colors.blue : Colors.green,
                               fontWeight: FontWeight.bold,
@@ -172,19 +172,19 @@ class BurndownChartWidget extends StatelessWidget {
                 _buildStatBox(
                   l10n.agilePlanned,
                   '${sprint.plannedPoints}',
-                  'pts',
+                  l10n.agilePoints,
                   Colors.blue,
                 ),
                 _buildStatBox(
                   l10n.agileStatsCompleted,
                   '${sprint.completedPoints}',
-                  'pts',
+                  l10n.agilePoints,
                   Colors.green,
                 ),
                 _buildStatBox(
                   l10n.agileRemaining,
                   '${sprint.plannedPoints - sprint.completedPoints}',
-                  'pts',
+                  l10n.agilePoints,
                   Colors.orange,
                 ),
                 _buildStatBox(
@@ -341,7 +341,7 @@ class VelocityChartWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    'Media: ${avgVelocity.toStringAsFixed(1)} pts',
+                    'Media: ${avgVelocity.toStringAsFixed(1)} ${l10n.agilePoints}',
                     style: const TextStyle(
                       color: Colors.purple,
                       fontWeight: FontWeight.bold,

@@ -146,6 +146,8 @@
   "quadrantQ3Title": "DÉLÉGUER",
   "quadrantQ4Title": "ÉLIMINER",
   "quadrantQ1Subtitle": "Urgent et Important",
+  "agilePoints": "pt",
+  "agilePointsValue": "{points} pt",
   "quadrantQ2Subtitle": "Important, Non Urgent",
   "quadrantQ3Subtitle": "Urgent, Non Important",
   "quadrantQ4Subtitle": "Non Urgent, Non Important",
@@ -1259,6 +1261,7 @@
   "scrumBP7": "La Rétrospective doit produire des actions concrètes d'amélioration",
   "scrumBP8": "L'équipe doit être pluridisciplinaire et auto-organisée",
   "scrumBP9": "Utilisez la phase de clôture guidée pour compléter la Sprint Review avant de finaliser",
+  "scrumBP10": "Ne créez pas plusieurs sprints en planification simultanément : complétez ou supprimez celui existant avant d'en créer un nouveau",
   "scrumAP1": "Sprint sans Sprint Goal clair",
   "scrumAP2": "Daily Scrum transformé en réunion de reporting",
   "scrumAP3": "Sauter la Rétrospective quand on est \"trop occupé\"",
@@ -1558,6 +1561,20 @@
   },
   "sprintStartButton": "Démarrer",
   "sprintCompleteActiveFirst": "Terminez le sprint actif avant d'en démarrer un autre",
+  "sprintPlanningAlreadyExists": "Un sprint est déjà en planification. Supprimez-le ou démarrez-le avant d'en créer un nouveau.",
+  "sprintDeletePlanningTitle": "Supprimer le Sprint en Planification",
+  "sprintDeletePlanningConfirm": "Voulez-vous supprimer le sprint \"{sprintName}\" ? Les stories associées seront remises dans le backlog.",
+  "@sprintDeletePlanningConfirm": {
+    "placeholders": {
+      "sprintName": { "type": "String" }
+    }
+  },
+  "sprintDeletedSuccess": "Sprint \"{sprintName}\" supprimé. Les stories ont été remises dans le backlog.",
+  "@sprintDeletedSuccess": {
+    "placeholders": {
+      "sprintName": { "type": "String" }
+    }
+  },
   "sprintEditTitle": "Modifier le Sprint",
   "sprintNewTitle": "Nouveau Sprint",
   "sprintNameLabel": "Nom du Sprint",
@@ -3756,6 +3773,7 @@
   "agileNextStepWipDesc": "Limitez le travail en cours pour améliorer le flux.",
   "agileNextStepWorkTitle": "Commencer à travailler",
   "agileNextStepWorkDesc": "Déplacez un item vers \"En Cours\" pour commencer.",
+  "agileNextStepAddToSprintDesc": "Déplacez un item vers \"To Do\" pour ajouter des histoires au sprint.",
   "agileNextStepGoToKanban": "Aller au Kanban",
   "agileActionNewStory": "Nouvelle Histoire",
   "agileBacklogTitle": "Backlog Produit",

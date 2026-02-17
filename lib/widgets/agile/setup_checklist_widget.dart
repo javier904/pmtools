@@ -433,6 +433,7 @@ class FrameworkTipsWidget extends StatelessWidget {
   final int storiesCount;
   final int completedStoriesCount;
   final bool hasActiveSprint;
+  final bool hasAnySprint;
   final bool hasWipLimits;
 
   const FrameworkTipsWidget({
@@ -441,6 +442,7 @@ class FrameworkTipsWidget extends StatelessWidget {
     required this.storiesCount,
     required this.completedStoriesCount,
     required this.hasActiveSprint,
+    required this.hasAnySprint,
     required this.hasWipLimits,
   });
 
@@ -464,7 +466,7 @@ class FrameworkTipsWidget extends StatelessWidget {
 
     switch (framework) {
       case AgileFramework.scrum:
-        if (!hasActiveSprint && storiesCount >= 3) {
+        if (!hasAnySprint && storiesCount >= 3) {
           tips.add(ContextualTipBanner(
             tipId: 'scrum_start_sprint',
             title: l10n.agileTipStartSprintTitle,
@@ -601,10 +603,21 @@ class NextStepWidget extends StatelessWidget {
     // 4. No work in progress
     final hasWip = stories.any((s) => s.status == StoryStatus.inProgress);
     if (!hasWip && stories.isNotEmpty) {
+      // Logic for Scrum/Kanban differentiation
+      String description = l10n.agileNextStepWorkDesc;
+      
+      // If Scrum and no stories in proper sprint columns (To Do/In Sprint), suggest adding to sprint
+      if (features.showSprintTab) {
+        final hasStoriesInSprint = stories.any((s) => s.status == StoryStatus.inSprint);
+        if (!hasStoriesInSprint) {
+           description = l10n.agileNextStepAddToSprintDesc;
+        }
+      }
+
       return _NextStep(
         icon: Icons.play_arrow,
         title: l10n.agileNextStepWorkTitle,
-        description: l10n.agileNextStepWorkDesc,
+        description: description,
         actionLabel: l10n.agileNextStepGoToKanban,
       );
     }

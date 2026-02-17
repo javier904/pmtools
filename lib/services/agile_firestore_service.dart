@@ -265,16 +265,23 @@ class AgileFirestoreService {
     String? sprintId,
     int? storyPoints,
     StoryStatus status = StoryStatus.backlog,
+    int? order,
   }) async {
     final docRef = _storiesRef(projectId).doc();
 
-    // Ottieni l'ordine massimo attuale
-    final maxOrderQuery = await _storiesRef(projectId)
-        .orderBy('order', descending: true)
-        .limit(1)
-        .get();
-    final maxOrder =
-        maxOrderQuery.docs.isNotEmpty ? maxOrderQuery.docs.first['order'] as int : 0;
+    // Use provided order or calculate from current max
+    final int assignedOrder;
+    if (order != null) {
+      assignedOrder = order;
+    } else {
+      final maxOrderQuery = await _storiesRef(projectId)
+          .orderBy('order', descending: true)
+          .limit(1)
+          .get();
+      final maxOrder =
+          maxOrderQuery.docs.isNotEmpty ? maxOrderQuery.docs.first['order'] as int : 0;
+      assignedOrder = maxOrder + 1;
+    }
 
     final story = UserStoryModel(
       id: docRef.id,
@@ -285,7 +292,7 @@ class AgileFirestoreService {
       businessValue: businessValue,
       tags: tags,
       acceptanceCriteria: acceptanceCriteria,
-      order: maxOrder + 1,
+      order: assignedOrder,
       createdAt: DateTime.now(),
       createdBy: createdBy,
       sprintId: sprintId,
@@ -304,6 +311,16 @@ class AgileFirestoreService {
     });
 
     return story;
+  }
+
+  /// Returns the current max order value for stories in a project.
+  /// Useful for batch creation to avoid race conditions.
+  Future<int> getMaxStoryOrder(String projectId) async {
+    final maxOrderQuery = await _storiesRef(projectId)
+        .orderBy('order', descending: true)
+        .limit(1)
+        .get();
+    return maxOrderQuery.docs.isNotEmpty ? maxOrderQuery.docs.first['order'] as int : 0;
   }
 
   /// Ottiene una story per ID

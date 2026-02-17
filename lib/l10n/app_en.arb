@@ -725,6 +725,7 @@
   "scrumBP7": "The Retrospective must produce concrete improvement actions",
   "scrumBP8": "The team must be cross-functional and self-organized",
   "scrumBP9": "Use the guided closing phase to complete Sprint Review before finalizing",
+  "scrumBP10": "Do not create multiple sprints in planning at the same time: complete or delete the existing one before creating a new one",
   "scrumAP1": "Sprint without a clear Sprint Goal",
   "scrumAP2": "Daily Scrum turned into a report meeting",
   "scrumAP3": "Skipping the Retrospective when \"too busy\"",
@@ -2380,6 +2381,20 @@
   },
   "sprintStartButton": "Start",
   "sprintCompleteActiveFirst": "Complete the active sprint before starting another",
+  "sprintPlanningAlreadyExists": "A sprint is already in planning. Delete it or start it before creating a new one.",
+  "sprintDeletePlanningTitle": "Delete Planning Sprint",
+  "sprintDeletePlanningConfirm": "Do you want to delete sprint \"{sprintName}\"? Associated stories will be moved back to the backlog.",
+  "@sprintDeletePlanningConfirm": {
+    "placeholders": {
+      "sprintName": { "type": "String" }
+    }
+  },
+  "sprintDeletedSuccess": "Sprint \"{sprintName}\" deleted. Stories have been moved back to the backlog.",
+  "@sprintDeletedSuccess": {
+    "placeholders": {
+      "sprintName": { "type": "String" }
+    }
+  },
   "sprintEditTitle": "Edit Sprint",
   "sprintNewTitle": "New Sprint",
   "sprintNameLabel": "Sprint Name",
@@ -4691,6 +4706,7 @@
   "agileNextStepWipDesc": "Limit work in progress to improve flow.",
   "agileNextStepWorkTitle": "Start Working",
   "agileNextStepWorkDesc": "Move an item to \"In Progress\" to start.",
+  "agileNextStepAddToSprintDesc": "Move an item to \"To Do\" to add stories to the sprint.",
   "agileNextStepGoToKanban": "Go to Kanban",
   "agileActionNewStory": "New Story",
   "agileBacklogTitle": "Product Backlog",

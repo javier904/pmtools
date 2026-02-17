@@ -292,8 +292,8 @@ class SprintBurndownLiveWidget extends StatelessWidget {
               return touchedSpots.map((spot) {
                 final isIdeal = spot.barIndex == 0;
                 final label = isIdeal
-                    ? '${l10n.agileIdeal}: ${spot.y.toStringAsFixed(1)} pts'
-                    : '${l10n.agileActual}: ${spot.y.toStringAsFixed(1)} pts';
+                    ? '${l10n.agileIdeal}: ${spot.y.toStringAsFixed(1)} ${l10n.agilePoints}'
+                    : '${l10n.agileActual}: ${spot.y.toStringAsFixed(1)} ${l10n.agilePoints}';
                 return LineTooltipItem(
                   label,
                   TextStyle(
@@ -365,21 +365,21 @@ class SprintBurndownLiveWidget extends StatelessWidget {
           context,
           theme,
           l10n.agilePlanned,
-          '$totalPoints pts',
+          l10n.agilePointsValue(totalPoints),
           AppColors.secondary,
         ),
         _buildStatItem(
           context,
           theme,
           l10n.agileStatsCompleted,
-          '$completedPoints pts',
+          l10n.agilePointsValue(completedPoints),
           AppColors.success,
         ),
         _buildStatItem(
           context,
           theme,
           l10n.agileRemaining,
-          '$remainingPoints pts',
+          l10n.agilePointsValue(remainingPoints),
           AppColors.warning,
         ),
         _buildStatItem(

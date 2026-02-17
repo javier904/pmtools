@@ -11,7 +11,7 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 // =============================================================================
 
 /// Widget per visualizzare la lista degli sprint
-class SprintListWidget extends StatelessWidget {
+class SprintListWidget extends StatefulWidget {
   final List<SprintModel> sprints;
   final SprintModel? activeSprint;
   final List<UserStoryModel>? stories;
@@ -38,8 +38,31 @@ class SprintListWidget extends StatelessWidget {
   });
 
   @override
+  State<SprintListWidget> createState() => _SprintListWidgetState();
+}
+
+class _SprintListWidgetState extends State<SprintListWidget> {
+  static const int _defaultVisibleCount = 3;
+  bool _showAll = false;
+
+  List<SprintModel> get sprints => widget.sprints;
+  List<UserStoryModel>? get stories => widget.stories;
+  bool get canEdit => widget.canEdit;
+  VoidCallback? get onAddSprint => widget.onAddSprint;
+  void Function(SprintModel)? get onSprintTap => widget.onSprintTap;
+  void Function(SprintModel)? get onSprintEdit => widget.onSprintEdit;
+  void Function(String)? get onSprintDelete => widget.onSprintDelete;
+  void Function(String)? get onSprintStart => widget.onSprintStart;
+  void Function(String)? get onSprintComplete => widget.onSprintComplete;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final hasMore = sprints.length > _defaultVisibleCount;
+    final visibleSprints = _showAll || !hasMore
+        ? sprints
+        : sprints.take(_defaultVisibleCount).toList();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -95,7 +118,7 @@ class SprintListWidget extends StatelessWidget {
                 return Wrap(
                   spacing: 12,
                   runSpacing: 12,
-                  children: sprints.map((sprint) => SizedBox(
+                  children: visibleSprints.map((sprint) => SizedBox(
                     width: cardWidth,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: minCardHeight),
@@ -104,6 +127,24 @@ class SprintListWidget extends StatelessWidget {
                   )).toList(),
                 );
               },
+            ),
+          ),
+
+        // Show all / Show less toggle
+        if (hasMore)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: TextButton.icon(
+              onPressed: () => setState(() => _showAll = !_showAll),
+              icon: Icon(
+                _showAll ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                size: 20,
+              ),
+              label: Text(
+                _showAll
+                    ? '${l10n.actionClose}'
+                    : '${l10n.actionViewAll} (${sprints.length - _defaultVisibleCount} +)',
+              ),
             ),
           ),
       ],
@@ -146,10 +187,10 @@ class SprintListWidget extends StatelessWidget {
           s.status != StoryStatus.refinement &&
           s.status != StoryStatus.ready
       ).toList();
-      plannedPoints = sprintStories.fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+      plannedPoints = sprintStories.fold(0, (sum, s) => sum + s.effectiveStoryPoints);
       final actualCompletedPoints = sprintStories
           .where((s) => s.status == StoryStatus.done)
-          .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+          .fold(0, (sum, s) => sum + s.effectiveStoryPoints);
       
       // Use dynamic totals for active/review/planning sprints, but respect stored completedPoints for completed sprints if stories were moved
       if (!isCompleted) {
@@ -239,8 +280,6 @@ class SprintListWidget extends StatelessWidget {
                       itemBuilder: (context) => [
                         if (sprint.status == SprintStatus.planning && onSprintStart != null)
                           PopupMenuItem(value: 'start', child: Text(l10n.agileStartSprint)),
-                        if (sprint.status == SprintStatus.active && onSprintComplete != null)
-                          PopupMenuItem(value: 'close', child: Text(l10n.agileStartClosing)),
                         if (sprint.status == SprintStatus.review && onSprintComplete != null)
                           PopupMenuItem(value: 'finalize', child: Text(l10n.agileFinalizeSprint)),
                         if (onSprintEdit != null)
@@ -256,7 +295,6 @@ class SprintListWidget extends StatelessWidget {
                           case 'start':
                             onSprintStart?.call(sprint.id);
                             break;
-                          case 'close':
                           case 'finalize':
                             onSprintComplete?.call(sprint.id);
                             break;
@@ -751,7 +789,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
                             const Icon(Icons.speed, size: 16, color: Colors.blue),
                             const SizedBox(width: 8),
                             Text(
-                              '${l10n.agileAverageVelocity}: ${widget.averageVelocity!.toStringAsFixed(1)} pts/sprint',
+                              '${l10n.agileAverageVelocity}: ${widget.averageVelocity!.toStringAsFixed(1)} ${l10n.agilePoints}/sprint',
                               style: const TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -808,6 +846,7 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
 class SprintPlanningWizard extends StatefulWidget {
   final SprintModel sprint;
   final List<UserStoryModel> backlogStories;
+  final Stream<List<UserStoryModel>>? storiesStream;
   final double? averageVelocity;
   final int totalCapacityHours;
 
@@ -815,6 +854,7 @@ class SprintPlanningWizard extends StatefulWidget {
     super.key,
     required this.sprint,
     required this.backlogStories,
+    this.storiesStream,
     this.averageVelocity,
     required this.totalCapacityHours,
   });
@@ -823,6 +863,7 @@ class SprintPlanningWizard extends StatefulWidget {
     required BuildContext context,
     required SprintModel sprint,
     required List<UserStoryModel> backlogStories,
+    Stream<List<UserStoryModel>>? storiesStream,
     double? averageVelocity,
     required int totalCapacityHours,
   }) {
@@ -831,6 +872,7 @@ class SprintPlanningWizard extends StatefulWidget {
       builder: (context) => SprintPlanningWizard(
         sprint: sprint,
         backlogStories: backlogStories,
+        storiesStream: storiesStream,
         averageVelocity: averageVelocity,
         totalCapacityHours: totalCapacityHours,
       ),
@@ -846,9 +888,9 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
   late List<UserStoryModel> _availableStories;
 
   int get _selectedPoints {
-    return widget.backlogStories
+    return _availableStories
         .where((s) => _selectedStoryIds.contains(s.id))
-        .fold(0, (sum, s) => sum + (s.storyPoints ?? 0));
+        .fold(0, (sum, s) => sum + s.effectiveStoryPoints);
   }
 
   int get _suggestedPoints {
@@ -858,14 +900,32 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
   @override
   void initState() {
     super.initState();
-    _selectedStoryIds = List.from(widget.sprint.storyIds);
-    _availableStories = widget.backlogStories
-        .where((s) => s.status == StoryStatus.ready || s.status == StoryStatus.backlog)
-        .toList();
+    _availableStories = List.from(widget.backlogStories);
+    // Pre-select stories already in "To Do" (inSprint) - either assigned to this sprint or unassigned
+    final alreadyInSprint = _availableStories
+        .where((s) => s.status == StoryStatus.inSprint && (s.sprintId == widget.sprint.id || s.sprintId == null))
+        .map((s) => s.id)
+        .toSet();
+    _selectedStoryIds = {...alreadyInSprint, ...widget.sprint.storyIds}.toList();
+  }
+
+  @override
+  void didUpdateWidget(SprintPlanningWizard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.backlogStories != widget.backlogStories) {
+      setState(() {
+        _availableStories = List.from(widget.backlogStories);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Revert to using static data to ensure consistency with Backlog
+    return _buildContent(context);
+  }
+
+  Widget _buildContent(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Row(
@@ -1010,45 +1070,35 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                if (story.storyPoints != null)
-                                  Text(
-                                    '${story.storyPoints} pts',
+                                Text(
+                                  l10n.agilePointsValue(story.effectiveStoryPoints),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: story.effectiveStoryPoints > 0 ? Colors.green : context.textSecondaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            secondary: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: story.effectiveStoryPoints > 0
+                                      ? Colors.green.withOpacity(0.1)
+                                      : context.surfaceVariantColor,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${story.effectiveStoryPoints}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.green,
                                     ),
-                                  )
-                                else
-                                  Text(
-                                    'Non stimata',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: context.textSecondaryColor,
-                                      fontStyle: FontStyle.italic,
-                                    ),
                                   ),
-                              ],
+                                ),
+                              ),
                             ),
-                            secondary: story.storyPoints != null
-                                ? Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '${story.storyPoints}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                          ),
                         );
                       },
                     ),

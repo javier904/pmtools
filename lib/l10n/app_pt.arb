@@ -229,7 +229,15 @@
     }
   },
   "eisenhowerMatrixCreated": "Matriz criada com sucesso",
-  "eisenhowerMatrixUpdated": "Matriz atualizada",
+  "agilePoints": "pt",
+  "agilePointsValue": "{points} pt",
+  "@agilePointsValue": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
   "eisenhowerMatrixDeleted": "Matriz excluída",
   "eisenhowerActivityAdded": "Atividade adicionada",
   "eisenhowerActivityDeleted": "Atividade excluída",
@@ -1863,6 +1871,7 @@
   "agileNextStepWipDesc": "Limite o trabalho em andamento para melhorar o fluxo.",
   "agileNextStepWorkTitle": "Comece a Trabalhar",
   "agileNextStepWorkDesc": "Mova um item para \"In Progress\" para comecar.",
+  "agileNextStepAddToSprintDesc": "Mova um item para \"To Do\" para adicionar histórias ao sprint.",
   "agileNextStepGoToKanban": "Ir para o Kanban",
   "agileActionNewStory": "Nova Story",
   "agileBacklogTitle": "Product Backlog",

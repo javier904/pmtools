@@ -561,7 +561,7 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
                                     children: [
                                       Text('${l10n.agileFinalEstimate}: '),
                                       Text(
-                                        story.finalEstimate ?? '${story.storyPoints} pts',
+                                        story.finalEstimate ?? l10n.agilePointsValue(story.storyPoints ?? 0),
                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ],
