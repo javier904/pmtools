@@ -61,6 +61,24 @@ class _LandingScreenState extends State<LandingScreen> {
     }
   }
 
+  Future<void> _launchFeaturePage(String slug) async {
+    final l10n = AppLocalizations.of(context);
+    final locale = l10n?.localeName ?? 'en';
+    final path = locale == 'en' ? '$slug' : '$locale/$slug';
+    
+    // Construct full URL using current base
+    // Use Uri.base.resolve for reliable absolute URL construction
+    final uri = Uri.base.resolve(path);
+    
+    try {
+      // Direct launch is more reliable on web for same-origin links
+      // canLaunchUrl sometimes returns false for valid same-origin URLs
+      await launchUrl(uri, webOnlyWindowName: '_self');
+    } catch (e) {
+      debugPrint('Error launching feature page: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -392,6 +410,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             color: Colors.blue,
                             isDark: isDark,
                             features: [l10n.featureSmartImport, l10n.featureCollaboration, l10n.featureFilters],
+                            onTap: () => _launchFeaturePage('smart-todo'),
                           )),
                           const SizedBox(width: 20),
                           Expanded(child: _buildFeatureCard(
@@ -401,6 +420,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             color: AppColors.success,
                             isDark: isDark,
                             features: [l10n.feature4Quadrants, l10n.featureDragDrop, l10n.featureCollaborative],
+                            onTap: () => _launchFeaturePage('eisenhower'),
                           )),
                           const SizedBox(width: 20),
                           Expanded(child: _buildFeatureCard(
@@ -410,6 +430,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             color: Colors.amber,
                             isDark: isDark,
                             features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
+                            onTap: () => _launchFeaturePage('estimation-room'),
                           )),
                         ],
                       ),
@@ -427,6 +448,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             color: AppColors.primary,
                             isDark: isDark,
                             features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
+                            onTap: () => _launchFeaturePage('agile-process'),
                           )),
                           const SizedBox(width: 20),
                           Expanded(child: _buildFeatureCard(
@@ -436,6 +458,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             color: AppColors.pink,
                             isDark: isDark,
                             features: [l10n.featureWentWell, l10n.featureToImprove, l10n.featureActions],
+                            onTap: () => _launchFeaturePage('retrospective-list'),
                           )),
                         ],
                       ),
@@ -453,6 +476,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: Colors.blue,
                       isDark: isDark,
                       features: [l10n.featureSmartImport, l10n.featureCollaboration, l10n.featureFilters],
+                      onTap: () => _launchFeaturePage('smart-todo'),
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
@@ -462,6 +486,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: AppColors.success,
                       isDark: isDark,
                       features: [l10n.feature4Quadrants, l10n.featureDragDrop, l10n.featureCollaborative],
+                      onTap: () => _launchFeaturePage('eisenhower'),
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
@@ -471,6 +496,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: Colors.amber,
                       isDark: isDark,
                       features: [l10n.featurePlanningPoker, l10n.featureTshirtSize, l10n.featureRealtime],
+                      onTap: () => _launchFeaturePage('estimation-room'),
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
@@ -480,14 +506,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: AppColors.primary,
                       isDark: isDark,
                       features: [l10n.featureScrum, l10n.featureKanban, l10n.featureHybrid],
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Coming Soon: Agile Process Manager'),
-                            duration: Duration(seconds: 2),
-                          ),
-                         );
-                      },
+                      onTap: () => _launchFeaturePage('agile-process'),
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(
@@ -497,6 +516,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: AppColors.pink,
                       isDark: isDark,
                       features: [l10n.featureWentWell, l10n.featureToImprove, l10n.featureActions],
+                      onTap: () => _launchFeaturePage('retrospective-list'),
                     ),
                   ],
                 );
@@ -634,6 +654,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: Colors.blue,
                       isDark: isDark,
                       isCompact: isCompact,
+                      onTap: () => _launchFeaturePage('smart-todo'),
                     ),
                   ),
                   Spacer(flex: spacerFlex), 
@@ -645,6 +666,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: AppColors.success,
                       isDark: isDark,
                       isCompact: isCompact,
+                      onTap: () => _launchFeaturePage('eisenhower'),
                     ),
                   ),
                 ],
@@ -667,6 +689,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: Colors.amber,
                       isDark: isDark,
                       isCompact: isCompact,
+                      onTap: () => _launchFeaturePage('estimation-room'),
                     ),
                   ),
                   Spacer(flex: spacerFlex),
@@ -678,6 +701,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       color: AppColors.pink,
                       isDark: isDark,
                       isCompact: isCompact,
+                      onTap: () => _launchFeaturePage('retrospective-list'),
                     ),
                   ),
                 ],
@@ -695,14 +719,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   isDark: isDark,
                   isCompact: isCompact,
                   centerAlign: true,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Coming Soon: Agile Process Manager'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  onTap: () => _launchFeaturePage('agile-process'),
                 ),
               ),
             ],
@@ -3283,11 +3300,13 @@ class _HoverScaleCardState extends State<_HoverScaleCard> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
+    return MouseRegion(
+      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.translucent, // Allow touches to pass through empty space but catch hits
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutQuart,

@@ -5,11 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
+import 'app_localizations_id.dart';
 import 'app_localizations_it.dart';
 import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 
 // ignore_for_file: type=lint
 
@@ -97,11 +100,14 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
     Locale('en'),
     Locale('es'),
     Locale('fr'),
+    Locale('id'),
     Locale('it'),
     Locale('pt'),
+    Locale('ru'),
   ];
 
   /// No description provided for @smartTodoListOrigin.
@@ -5545,6 +5551,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Crea Retrospettiva'**
   String get agileCreateRetro;
+
+  /// No description provided for @agileNotNow.
+  ///
+  /// In it, this message translates to:
+  /// **'Non ora'**
+  String get agileNotNow;
 
   /// No description provided for @agileSprintReviewSection.
   ///
@@ -13181,6 +13193,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Español'**
   String get langSpanish;
+
+  /// No description provided for @langPortuguese.
+  ///
+  /// In it, this message translates to:
+  /// **'Portoghese'**
+  String get langPortuguese;
+
+  /// No description provided for @langRussian.
+  ///
+  /// In it, this message translates to:
+  /// **'Russo'**
+  String get langRussian;
+
+  /// No description provided for @langGerman.
+  ///
+  /// In it, this message translates to:
+  /// **'Tedesco'**
+  String get langGerman;
+
+  /// No description provided for @langIndonesian.
+  ///
+  /// In it, this message translates to:
+  /// **'Indonesiano'**
+  String get langIndonesian;
 
   /// No description provided for @jsonExportLabel.
   ///
@@ -21521,8 +21557,16 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'fr', 'it', 'pt'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'id',
+    'it',
+    'pt',
+    'ru',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -21531,16 +21575,22 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
     case 'fr':
       return AppLocalizationsFr();
+    case 'id':
+      return AppLocalizationsId();
     case 'it':
       return AppLocalizationsIt();
     case 'pt':
       return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
   }
 
   throw FlutterError(

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Estimasi & Planning Poker Gratis - Estimasi Agile | 7 Metode | Keisen</title>
+    <meta name="description"
+        content="Estimasi user story dengan 7 metode: Fibonacci, Ukuran T-Shirt, PERT tiga titik, Dot Voting, Bucket System, Five Fingers, dan Desimal. Voting kolaboratif real-time dengan statistik, deteksi konsensus, dan analisis cerdas. Gratis untuk semua tim.">
+    <meta name="keywords"
+        content="planning poker, ruang estimasi, estimasi fibonacci, ukuran t-shirt, estimasi PERT, tiga titik, dot voting, bucket system, five fingers, estimasi agile, story point, estimasi scrum, voting tim, planning poker online gratis">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Keisen">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="canonical" href="https://keisenapp.com/id/estimation-room">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="preconnect" href="https://cloud.umami.is" crossorigin>
+    <link rel="stylesheet" href="../css/features.css">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ruang Estimasi & Planning Poker Gratis - Estimasi Agile | Keisen">
+    <meta property="og:description"
+        content="Estimasi user story dengan 7 metode: Fibonacci, Ukuran T-Shirt, PERT, Dot Voting, dan lainnya. Voting kolaboratif real-time dengan statistik dan deteksi konsensus. Gratis untuk semua tim.">
+    <meta property="og:url" content="https://keisenapp.com/id/estimation-room">
+    <meta property="og:image" content="https://keisenapp.com/icons/og-image.png">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="Keisen">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ruang Estimasi & Planning Poker Gratis - Estimasi Agile | Keisen">
+    <meta name="twitter:description"
+        content="7 metode estimasi dengan voting kolaboratif real-time, statistik, dan deteksi konsensus. Gratis untuk semua tim.">
+    <meta name="twitter:image" content="https://keisenapp.com/icons/og-image.png">
+
+    <!-- hreflang -->
+    <link rel="alternate" hreflang="en" href="https://keisenapp.com/estimation-room">
+    <link rel="alternate" hreflang="it" href="https://keisenapp.com/it/estimation-room">
+    <link rel="alternate" hreflang="es" href="https://keisenapp.com/es/estimation-room">
+    <link rel="alternate" hreflang="fr" href="https://keisenapp.com/fr/estimation-room">
+    <link rel="alternate" hreflang="pt" href="https://keisenapp.com/pt/estimation-room">
+    <link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/estimation-room">
+    <link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room">
+    <link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room">
+    <link rel="alternate" hreflang="x-default" href="https://keisenapp.com/estimation-room">
+
+    <!-- JSON-LD: SoftwareApplication -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Keisen Ruang Estimasi & Planning Poker",
+    "url": "https://keisenapp.com/id/estimation-room",
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": "Alat Estimasi Agile",
+    "operatingSystem": "Web",
+    "inLanguage": "id",
+    "softwareVersion": "1.0.0",
+    "datePublished": "2024-01-15",
+    "description": "Estimasi user story dengan 7 metode: Fibonacci, Ukuran T-Shirt, PERT tiga titik, Dot Voting, Bucket System, Five Fingers, dan Desimal. Voting kolaboratif real-time dengan statistik, deteksi konsensus, dan analisis cerdas. Gratis untuk semua tim.",
+    "screenshot": "https://keisenapp.com/screenshots/estimation-room.png",
+    "featureList": [
+      "Estimasi dengan urutan Fibonacci (0, 1, 2, 3, 5, 8, 13, 20, 40, 100)",
+      "Ukuran T-Shirt (XS, S, M, L, XL, XXL)",
+      "Estimasi PERT tiga titik dengan analisis varians",
+      "Dot Voting untuk prioritas senyap",
+      "Bucket System untuk estimasi berbasis afinitas",
+      "Voting cepat Five Fingers (1-5)",
+      "Input desimal bebas untuk estimasi presisi",
+      "Voting kolaboratif real-time dengan pengungkapan otomatis",
+      "Analisis statistik: rata-rata, median, modus, deviasi standar",
+      "Deteksi konsensus otomatis",
+      "Dukungan multi-peran: Fasilitator, Voter, Observer",
+      "Pelacakan kehadiran peserta secara real-time",
+      "Ekspor ke Smart Todo dan backlog Sprint Agile",
+      "Akses cepat dengan Google Sign-In"
+    ],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "94",
+      "bestRating": "5"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Keisen",
+      "url": "https://keisenapp.com"
+    }
+  }
+  </script>
+
+    <!-- JSON-LD: FAQPage -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Metode estimasi apa saja yang tersedia di Ruang Estimasi Keisen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ruang Estimasi Keisen menawarkan 7 metode estimasi: Fibonacci (urutan story point klasik 0-100 dengan kartu ? dan jeda kopi), Ukuran T-Shirt (XS hingga XXL untuk estimasi relatif cepat), PERT Tiga Titik (Optimis + 4x Realistis + Pesimis / 6 dengan analisis varians), Dot Voting (alokasi poin senyap untuk prioritas), Bucket System (pengelompokan berdasarkan afinitas kompleksitas), Five Fingers (voting cepat 1-5 untuk konsensus kilat), dan Desimal (input bebas untuk estimasi presisi seperti 1.5 atau 2.75)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah Ruang Estimasi ini gratis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya, Ruang Estimasi Keisen sepenuhnya gratis. Anda dapat membuat sesi estimasi, mengundang tim Anda, memberikan suara secara real-time, dan melihat statistik untuk ketujuh metode estimasi tersebut."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara kerja voting real-time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Semua anggota tim memberikan suara secara bersamaan dengan kartu tersembunyi untuk mencegah bias anchoring. Setelah semua orang selesai memilih, fasilitator akan mengungkap semua kartu sekaligus (atau Anda dapat mengaktifkan pengungkapan otomatis). Sistem kemudian menghitung statistik termasuk rata-rata, median, modus, dan deteksi konsensus. Pelacakan kehadiran menunjukkan siapa yang online dan siapa yang sudah memilih."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu estimasi Tiga Titik (PERT)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PERT Tiga Titik adalah teknik estimasi statistik di mana setiap pemberi suara memberikan tiga nilai: Optimis (kasus terbaik), Realistis (nilai yang diharapkan), dan Pesimis (kasus terburuk). Formula PERT (O + 4M + P) / 6 menghasilkan estimasi berbobot yang memperhitungkan ketidakpastian. Keisen juga menghitung deviasi standar dan varians untuk mengukur risiko estimasi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Dapatkah saya menggunakan Ruang Estimasi dengan tim remote?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya, Keisen dirancang baik untuk tim remote maupun tim yang berada di satu lokasi. Alat ini berfungsi di browser apa pun tanpa perlu instalasi perangkat lunak. Anggota tim dapat bergabung melalui undangan, memberi suara secara real-time, dan melihat hasil secara instan. Pelacakan kehadiran menunjukkan siapa yang online, menjadikannya sempurna bagi tim Agile yang terdistribusi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Statistik apa saja yang tersedia setelah voting?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Setelah kartu diungkap, Keisen menunjukkan statistik lengkap: rata-rata aritmatika, median, modus (suara paling sering), grafik distribusi suara, rentang min/max, dan deteksi konsensus otomatis. Untuk estimasi PERT, juga ditampilkan nilai PERT agregat, rata-rata deviasi standar, dan total varians dari semua pemberi suara."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara mulai menggunakan Keisen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Memulai sangatlah cepat dan mudah: masuk dengan akun Google Anda dan Anda bisa langsung bekerja. Buat sesi estimasi, pilih salah satu dari 7 metode, tambahkan user story Anda, dan undang tim. Seluruh penyiapan memakan waktu kurang dari satu menit."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan Keisen dengan PlanITPoker, Scrumpoker-online, atau PointingPoker?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keisen menawarkan 7 metode estimasi (sebagian besar alat hanya mendukung Fibonacci), estimasi PERT tiga titik terintegrasi dengan analisis varians, Dot Voting dan Bucket System untuk prioritas tingkat lanjut, pelacakan kehadiran real-time, dukungan multi-peran (Fasilitator, Voter, Observer), dan ekspor langsung ke Smart Todo serta backlog Sprint Agile — semuanya sepenuhnya gratis."
+        }
+      }
+    ]
+  }
+  </script>
+
+    <!-- JSON-LD: BreadcrumbList -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Keisen",
+        "item": "https://keisenapp.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Ruang Estimasi",
+        "item": "https://keisenapp.com/id/estimation-room"
+      }
+    ]
+  }
+  </script>
+
+    <!-- Umami Analytics -->
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="d8eb3e84-4871-4c5e-9944-dbec3d03508a"></script>
+</head>
+
+<body class="feature-orange">
+    <header class="page-header">
+        <a href="https://keisenapp.com/id/" class="logo-link">
+            <img src="../icons/Icon-192.png" alt="Keisen" width="32" height="32">
+            <span>Keisen</span>
+        </a>
+        <nav class="lang-switcher">
+            <a href="/estimation-room">EN</a>
+            <a href="/it/estimation-room">IT</a>
+            <a href="/es/estimation-room">ES</a>
+            <a href="/fr/estimation-room">FR</a>
+            <a href="/pt/estimation-room">PT</a>
+            <a href="/ru/estimation-room">RU</a>
+            <a href="/de/estimation-room">DE</a>
+            <a href="/id/estimation-room" class="active">ID</a>
+        </nav>
+        <a href="https://keisenapp.com/" class="btn-header">Buka Aplikasi</a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-badge">🃏 Ruang Estimasi</div>
+                <h1>Ruang Estimasi & Planning Poker Gratis untuk Tim Agile</h1>
+                <p class="hero-subtitle">Estimasi user story dengan 7 metode — Fibonacci, Ukuran T-Shirt, PERT, Dot
+                    Voting, Bucket System, Five Fingers, dan Desimal. Voting kolaboratif real-time dengan statistik,
+                    deteksi konsensus, dan analisis cerdas. Gratis untuk tim remote maupun tatap muka — masuk dengan
+                    Google dan mulai dalam hitungan detik.</p>
+                <a href="https://keisenapp.com/" class="btn-cta">Coba Gratis →</a>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <div class="container">
+                <h2>Cara Kerjanya</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Buat Sesi</h3>
+                        <p>Pilih dari 7 metode estimasi — Fibonacci, Ukuran T-Shirt, PERT, Dot Voting, Bucket System,
+                            Five Fingers, atau Desimal — tambahkan user story dan undang tim.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Vote Secara Real-Time</h3>
+                        <p>Anggota tim memberikan suara secara bersamaan dengan kartu tersembunyi. Setelah semua orang
+                            memilih, fasilitator mengungkap kartu dan sistem menghitung statistik serta konsensus.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Tentukan Estimasi Akhir</h3>
+                        <p>Analisis rata-rata, median, dan distribusi. Tetapkan estimasi akhir dan ekspor hasilnya ke <a
+                                href="/id/smart-todo">Smart Todo</a> atau backlog <a href="/id/agile-process">Sprint
+                                Agile</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="highlights">
+            <div class="container">
+                <h2>Mengapa Tim Memilih Keisen untuk Estimasi Agile</h2>
+                <div class="highlights-grid">
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">🎴</div>
+                        <h3>7 Metode Estimasi</h3>
+                        <p>Fibonacci, Ukuran T-Shirt, PERT, Dot Voting, Bucket System, Five Fingers, dan Desimal — semua
+                            metode yang dibutuhkan tim Anda.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">⚡</div>
+                        <h3>Voting Real-Time</h3>
+                        <p>Voting bersamaan dengan kartu tersembunyi, pengungkapan otomatis, pelacakan kehadiran, dan
+                            pemantauan detak jantung peserta.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">📊</div>
+                        <h3>Statistik Cerdas</h3>
+                        <p>Rata-rata, median, modus, deviasi standar, distribusi suara, dan deteksi konsensus otomatis
+                            untuk keputusan yang tepat.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">🎭</div>
+                        <h3>Dukungan Multi-Peran</h3>
+                        <p>Peran Fasilitator, Voter, dan Observer dengan izin mendetail untuk sesi estimasi yang
+                            terstruktur.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="templates-detail">
+            <div class="container">
+                <h2>7 Metode Estimasi untuk Setiap Kebutuhan Tim</h2>
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-emoji">🃏</div>
+                        <h3>Fibonacci</h3>
+                        <p>Urutan estimasi Agile klasik: 0, 1, 2, 3, 5, 8, 13, 20, 40, 100 dengan kartu ? (tidak yakin)
+                            dan jeda kopi. Standar untuk estimasi story point yang digunakan oleh sebagian besar tim
+                            Scrum di dunia.</p>
+                        <p class="template-best-for">Ideal untuk: Estimasi story point, Perencanaan Sprint, Backlog
+                            Refinement</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-emoji">👕</div>
+                        <h3>Ukuran T-Shirt</h3>
+                        <p>Estimasi relatif cepat dengan XS, S, M, L, XL, dan XXL. Menghilangkan tekanan pemberian angka
+                            pasti dan fokus pada kompleksitas relatif. Sempurna untuk estimasi awal backlog dan
+                            stakeholder non-teknis.</p>
+                        <p class="template-best-for">Ideal untuk: Estimasi cepat, estimasi tingkat tinggi, tim lintas
+                            fungsional</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-emoji">📐</div>
+                        <h3>Tiga Titik (PERT)</h3>
+                        <p>Estimasi statistik dengan nilai Optimis, Realistis, dan Pesimis. Formula PERT (O + 4M + P) /
+                            6 menghasilkan estimasi berbobot. Termasuk perhitungan deviasi standar dan varians untuk
+                            kuantifikasi risiko.</p>
+                        <p class="template-best-for">Ideal untuk: Item dengan ketidakpastian tinggi, analisis risiko,
+                            prakiraan proyek</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-emoji">🔵</div>
+                        <h3>Dot Voting</h3>
+                        <p>Penentuan prioritas senyap di mana setiap peserta mengalokasikan sejumlah poin tetap (1-10,
+                            default 5) di antara pilihan. Mengungkap prioritas tim tanpa bias diskusi. Ideal untuk
+                            prioritas fitur dan perencanaan roadmap.</p>
+                        <p class="template-best-for">Ideal untuk: Penentuan prioritas, pemilihan fitur, keputusan
+                            demokratis</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-emoji">🪣</div>
+                        <h3>Bucket System</h3>
+                        <p>Estimasi afinitas yang mengelompokkan item ke dalam ember kompleksitas: XS, S, M, L, dan XL.
+                            Tim mengurutkan story berdasarkan kompleksitas relatif daripada estimasi presisi. Sempurna
+                            untuk estimasi cepat backlog yang besar.</p>
+                        <p class="template-best-for">Ideal untuk: Estimasi backlog besar, pengurutan cepat, scoping awal
+                        </p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-emoji">🖐️</div>
+                        <h3>Five Fingers</h3>
+                        <p>Voting cepat dari 1 hingga 5 untuk konsensus tim yang kilat. Berdasarkan teknik fist-to-five
+                            yang digunakan dalam seremoni Agile. Sederhana dan cepat — sempurna untuk pemeriksaan
+                            tingkat kepercayaan, survei cepat, dan putaran estimasi ringan.</p>
+                        <p class="template-best-for">Ideal untuk: Voting kepercayaan, survei cepat, standup harian,
+                            konsensus kilat</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-emoji">🔢</div>
+                        <h3>Desimal (Input Bebas)</h3>
+                        <p>Input desimal bebas untuk estimasi presisi seperti 1.5, 2.75, atau 3.25 jam. Tidak ada kartu
+                            yang ditentukan sebelumnya — setiap pemberi suara memasukkan nilai mereka sendiri. Ideal
+                            untuk estimasi berbasis waktu dan pelacakan upaya dalam jam atau hari.</p>
+                        <p class="template-best-for">Ideal untuk: Estimasi berbasis waktu, upaya dalam jam/hari, nilai
+                            presisi</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-detail">
+            <div class="container">
+                <h2>Toolkit Estimasi Agile Lengkap</h2>
+                <ul class="features-list">
+                    <li>7 metode estimasi yang mencakup setiap metodologi Agile — dari story point Fibonacci hingga
+                        analisis risiko PERT</li>
+                    <li>Voting kolaboratif real-time dengan kartu tersembunyi untuk mencegah bias anchoring</li>
+                    <li>Pengungkapan kartu otomatis saat semua peserta telah memilih (atau pengungkapan manual oleh
+                        fasilitator)</li>
+                    <li>Pelacakan kehadiran real-time dengan pemantauan detak jantung — lihat siapa yang online dan
+                        siapa yang sudah memilih</li>
+                    <li>Analisis statistik setelah setiap putaran: rata-rata, median, modus, deviasi standar, dan
+                        distribusi suara</li>
+                    <li>Deteksi konsensus otomatis dengan rincian visual saat semua pemberi suara sepakat</li>
+                    <li>Sistem multi-peran: Fasilitator (mengelola sesi), Voter (melakukan estimasi), Observer (hanya
+                        baca untuk stakeholder)</li>
+                    <li>Manajemen siklus hidup sesi: Draf → Aktif → Selesai dengan riwayat story yang lengkap</li>
+                    <li>Estimasi PERT tiga titik dengan analisis varians agregat dari semua pemberi suara</li>
+                    <li>Ekspor story yang telah diestimasi ke daftar <a href="/id/smart-todo">Smart Todo</a> atau
+                        backlog <a href="/id/agile-process">Sprint Agile</a></li>
+                    <li>Undang anggota tim melalui email dengan penetapan peran (Fasilitator, Voter, Observer)</li>
+                    <li>Masuk dengan Google dan buat sesi estimasi pertama Anda dalam hitungan detik — berfungsi di
+                        browser apa pun</li>
+                </ul>
+                <p class="features-tip">Pasangkan sesi estimasi Anda dengan <a href="/id/agile-process">Proses Agile</a>
+                    untuk Perencanaan Sprint yang lengkap dan <a href="/id/retrospective-list">Papan Retrospektif</a>
+                    untuk merefleksikan akurasi estimasi dari waktu ke waktu.</p>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <div class="container">
+                <h2>Pertanyaan Umum</h2>
+                <div class="faq-list">
+                    <details class="faq-item" open>
+                        <summary class="faq-question">Metode estimasi apa saja yang tersedia di Keisen?</summary>
+                        <div class="faq-answer">Ruang Estimasi Keisen menawarkan 7 metode estimasi:
+                            <strong>Fibonacci</strong> (urutan story point klasik 0-100 dengan kartu ? dan jeda kopi),
+                            <strong>Ukuran T-Shirt</strong> (XS hingga XXL untuk estimasi relatif cepat), <strong>PERT
+                                Tiga Titik</strong> (Optimis + 4x Realistis + Pesimis / 6 dengan analisis varians),
+                            <strong>Dot Voting</strong> (alokasi poin senyap untuk prioritas), <strong>Bucket
+                                System</strong> (pengelompokan berdasarkan afinitas kompleksitas), <strong>Five
+                                Fingers</strong> (voting cepat 1-5 untuk konsensus kilat), dan <strong>Desimal</strong>
+                            (input bebas untuk estimasi presisi seperti 1.5 atau 2.75).</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Apakah Ruang Estimasi ini gratis?</summary>
+                        <div class="faq-answer">Ya, Ruang Estimasi Keisen sepenuhnya gratis. Anda dapat membuat sesi
+                            estimasi, mengundang tim Anda, memberikan suara secara real-time, dan melihat statistik
+                            untuk ketujuh metode estimasi tersebut.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana cara kerja voting real-time?</summary>
+                        <div class="faq-answer">Semua anggota tim memberikan suara secara bersamaan dengan kartu
+                            tersembunyi untuk mencegah bias anchoring. Setelah semua orang selesai memilih, fasilitator
+                            mengungkap semua kartu sekaligus (atau pengungkapan otomatis aktif). Sistem kemudian
+                            menghitung statistik termasuk rata-rata, median, modus, dan deteksi konsensus. Pelacakan
+                            kehadiran menunjukkan siapa yang online dan siapa yang sudah memilih.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu estimasi Tiga Titik (PERT)?</summary>
+                        <div class="faq-answer">PERT Tiga Titik adalah teknik estimasi statistik di mana setiap pemberi
+                            suara memberikan tiga nilai: <strong>Optimis</strong> (kasus terbaik),
+                            <strong>Realistis</strong> (nilai yang diharapkan), dan <strong>Pesimis</strong> (kasus
+                            terburuk). Formula PERT <strong>(O + 4M + P) / 6</strong> menghasilkan estimasi berbobot
+                            yang memperhitungkan ketidakpastian. Keisen juga menghitung deviasi standar dan varians
+                            untuk mengukur risiko estimasi.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Dapatkah saya menggunakan Ruang Estimasi dengan tim remote?
+                        </summary>
+                        <div class="faq-answer">Ya, Keisen dirancang baik untuk tim remote maupun tim yang berada di
+                            satu lokasi. Alat ini berfungsi di browser apa pun tanpa perlu instalasi perangkat lunak.
+                            Anggota tim dapat bergabung melalui undangan, memberi suara secara real-time, dan melihat
+                            hasil secara instan. Pelacakan kehadiran menunjukkan siapa yang online, menjadikannya
+                            sempurna bagi tim Agile yang terdistribusi.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Statistik apa saja yang tersedia setelah voting?</summary>
+                        <div class="faq-answer">Setelah kartu diungkap, Keisen menunjukkan statistik lengkap: rata-rata
+                            aritmatika, median, modus (suara paling sering), grafik distribusi suara, rentang min/max,
+                            dan deteksi konsensus otomatis. Untuk estimasi PERT, juga ditampilkan nilai PERT agregat,
+                            rata-rata deviasi standar, dan total varians dari semua pemberi suara.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana cara mulai menggunakan Keisen?</summary>
+                        <div class="faq-answer">Memulai sangatlah cepat dan mudah: masuk dengan akun Google Anda dan
+                            Anda bisa langsung bekerja. Buat sesi estimasi, pilih salah satu dari 7 metode, tambahkan
+                            user story Anda, dan undang tim. Seluruh penyiapan memakan waktu kurang dari satu menit.
+                        </div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa perbedaan Keisen dengan PlanITPoker, Scrumpoker-online, atau
+                            PointingPoker?</summary>
+                        <div class="faq-answer">Keisen menawarkan <strong>7 metode estimasi</strong> (sebagian besar
+                            alat hanya mendukung Fibonacci), estimasi <strong>PERT tiga titik</strong> terintegrasi
+                            dengan analisis varians, <strong>Dot Voting</strong> dan <strong>Bucket System</strong>
+                            untuk prioritas tingkat lanjut, pelacakan kehadiran real-time, dukungan multi-peran
+                            (Fasilitator, Voter, Observer), dan ekspor langsung ke Smart Todo serta backlog Sprint Agile
+                            — semuanya sepenuhnya gratis.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <section class="other-tools">
+            <div class="container">
+                <h2>Temukan Alat Keisen Lainnya</h2>
+                <div class="tools-grid">
+                    <a href="/id/smart-todo" class="tool-card tc-blue">
+                        <div class="tool-emoji">📋</div>
+                        <h3>Smart Todo</h3>
+                        <p>Papan Kanban kolaboratif dengan manajemen tugas cerdas</p>
+                    </a>
+                    <a href="/id/eisenhower" class="tool-card tc-green">
+                        <div class="tool-emoji">🎯</div>
+                        <h3>Matriks Eisenhower</h3>
+                        <p>Penentuan prioritas 4 kuadran untuk urgensi dan kepentingan</p>
+                    </a>
+                    <a href="/id/agile-process" class="tool-card tc-purple">
+                        <div class="tool-emoji">🔄</div>
+                        <h3>Proses Agile</h3>
+                        <p>Manajemen Sprint lengkap dengan Scrum, Kanban, dan Hibrida</p>
+                    </a>
+                    <a href="/id/retrospective-list" class="tool-card tc-pink">
+                        <div class="tool-emoji">💬</div>
+                        <h3>Retrospektif</h3>
+                        <p>5 template retrospektif dengan fase terpandu</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-card">
+                    <h2>Siap untuk mengestimasi bersama?</h2>
+                    <p>Mulai estimasi user story dengan tim Anda menggunakan 7 metode yang terbukti.</p>
+                    <a href="https://keisenapp.com/" class="btn-cta">Mulai Gratis →</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="page-footer">
+        <div class="container">
+            <div class="footer-features">
+                <a href="/id/smart-todo">Smart Todo</a>
+                <a href="/id/eisenhower">Matriks Eisenhower</a>
+                <a href="/id/estimation-room">Ruang Estimasi</a>
+                <a href="/id/agile-process">Proses Agile</a>
+                <a href="/id/retrospective-list">Retrospektif</a>
+            </div>
+            <div class="footer-legal">
+                <a href="/privacy">Privasi</a> · <a href="/terms">Syarat & Ketentuan</a> · <a
+                    href="/changelog">Changelog</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Keisen. Hak Cipta Dilindungi.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

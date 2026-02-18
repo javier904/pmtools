@@ -536,6 +536,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 case 'en': return l10n.langEnglish;
                 case 'fr': return l10n.langFrench;
                 case 'es': return l10n.langSpanish;
+                case 'pt': return l10n.langPortuguese;
+                case 'ru': return l10n.langRussian;
+                case 'de': return l10n.langGerman;
+                case 'id': return l10n.langIndonesian;
                 default: return code;
               }
             }
@@ -553,6 +557,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   DropdownMenuItem(value: 'en', child: Text(l10n.langEnglish)),
                   DropdownMenuItem(value: 'fr', child: Text(l10n.langFrench)),
                   DropdownMenuItem(value: 'es', child: Text(l10n.langSpanish)),
+                  DropdownMenuItem(value: 'pt', child: Text(l10n.langPortuguese)),
+                  DropdownMenuItem(value: 'ru', child: Text(l10n.langRussian)),
+                  DropdownMenuItem(value: 'de', child: Text(l10n.langGerman)),
+                  DropdownMenuItem(value: 'id', child: Text(l10n.langIndonesian)),
                 ],
                 onChanged: (value) {
                   if (value != null) {

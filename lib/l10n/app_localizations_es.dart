@@ -1836,7 +1836,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String velocityTooltipAverage(int count) {
-    return 'Basato su tutti i $count sprint completati';
+    return 'Basado en los $count sprints completados';
   }
 
   @override
@@ -3071,22 +3071,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get agileCreateRetro => 'Crear Retrospectiva';
 
   @override
+  String get agileNotNow => 'Ahora no';
+
+  @override
   String get agileSprintReviewSection => 'Sprint Review';
 
   @override
   String get agileSprintSummarySection => 'Resumen del Sprint';
 
   @override
-  String get agileReviewRecapTitle => 'Riepilogo Sprint Review';
+  String get agileReviewRecapTitle => 'Resumen de la revisión del Sprint';
 
   @override
-  String get agileReviewApproved => 'Approvate';
+  String get agileReviewApproved => 'Aprobado';
 
   @override
-  String get agileReviewRefinement => 'Da Rifinire';
+  String get agileReviewRefinement => 'Necesita refinamiento';
 
   @override
-  String get agileReviewRejected => 'Rifiutate';
+  String get agileReviewRejected => 'Rechazado';
 
   @override
   String get agileDeleteSprint => 'Delete';
@@ -7314,13 +7317,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get langItalian => 'Italiano';
 
   @override
-  String get langEnglish => 'English';
+  String get langEnglish => 'Inglés';
 
   @override
-  String get langFrench => 'Français';
+  String get langFrench => 'Francés';
 
   @override
   String get langSpanish => 'Español';
+
+  @override
+  String get langPortuguese => 'Portugués';
+
+  @override
+  String get langRussian => 'Ruso';
+
+  @override
+  String get langGerman => 'Alemán';
+
+  @override
+  String get langIndonesian => 'Indonesio';
 
   @override
   String get jsonExportLabel => 'Descargar copia JSON de tus datos';

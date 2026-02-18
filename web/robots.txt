@@ -3,6 +3,10 @@ Allow: /
 Allow: /it/
 Allow: /fr/
 Allow: /es/
+Allow: /pt/
+Allow: /ru/
+Allow: /de/
+Allow: /id/
 
 # Flutter engine assets (no SEO value)
 Disallow: /main.dart.js

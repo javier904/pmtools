@@ -3066,6 +3066,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get agileCreateRetro => 'Crea Retrospettiva';
 
   @override
+  String get agileNotNow => 'Non ora';
+
+  @override
   String get agileSprintReviewSection => 'Sprint Review';
 
   @override
@@ -7305,6 +7308,18 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get langSpanish => 'Español';
+
+  @override
+  String get langPortuguese => 'Portoghese';
+
+  @override
+  String get langRussian => 'Russo';
+
+  @override
+  String get langGerman => 'Tedesco';
+
+  @override
+  String get langIndonesian => 'Indonesiano';
 
   @override
   String get jsonExportLabel => 'Scarica una copia JSON dei tuoi dati';

@@ -52,7 +52,7 @@ void main() async {
     } else {
       final systemLocale = PlatformDispatcher.instance.locale.languageCode;
       // Verifica se la lingua di sistema è supportata, altrimenti 'en'
-      if (['it', 'en', 'fr', 'es'].contains(systemLocale)) {
+      if (['it', 'en', 'fr', 'es', 'pt', 'ru', 'de', 'id'].contains(systemLocale)) {
         initialLocale = systemLocale;
       } else {
         initialLocale = 'en';

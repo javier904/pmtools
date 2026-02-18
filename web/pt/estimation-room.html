@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estimation Room e Planning Poker Gratis - Estimativa Agil | 7 Metodos | Keisen</title>
+  <meta name="description"
+    content="Estime user stories com 7 metodos: Fibonacci, T-Shirt, PERT tres pontos, Dot Voting, Bucket System, Five Fingers e Decimal. Votacao colaborativa em tempo real com estatisticas, deteccao de consenso e analise inteligente. Gratis para todas as equipes.">
+  <meta name="keywords"
+    content="planning poker, sala de estimativa, estimativa fibonacci, t-shirt sizing, estimativa PERT, tres pontos, dot voting, bucket system, five fingers, estimativa agil, story points, estimativa scrum, votacao equipe, planning poker online gratis">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Keisen">
+  <meta name="theme-color" content="#1a1a2e">
+  <link rel="canonical" href="https://keisenapp.com/pt/estimation-room">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://cloud.umami.is" crossorigin>
+  <link rel="stylesheet" href="../css/features.css">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Estimation Room e Planning Poker Gratis - Estimativa Agil | Keisen">
+  <meta property="og:description"
+    content="Estime user stories com 7 metodos: Fibonacci, T-Shirt, PERT, Dot Voting e mais. Votacao colaborativa em tempo real com estatisticas e deteccao de consenso. Gratis para todas as equipes.">
+  <meta property="og:url" content="https://keisenapp.com/pt/estimation-room">
+  <meta property="og:image" content="https://keisenapp.com/icons/og-image.png">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Keisen">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Estimation Room e Planning Poker Gratis - Estimativa Agil | Keisen">
+  <meta name="twitter:description"
+    content="7 metodos de estimativa com votacao colaborativa em tempo real, estatisticas e deteccao de consenso. Gratis para todas as equipes.">
+  <meta name="twitter:image" content="https://keisenapp.com/icons/og-image.png">
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en" href="https://keisenapp.com/estimation-room">
+  <link rel="alternate" hreflang="it" href="https://keisenapp.com/it/estimation-room">
+  <link rel="alternate" hreflang="es" href="https://keisenapp.com/es/estimation-room">
+  <link rel="alternate" hreflang="fr" href="https://keisenapp.com/fr/estimation-room">
+  <link rel="alternate" hreflang="pt" href="https://keisenapp.com/pt/estimation-room">
+  <link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/estimation-room">
+  <link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room">
+  <link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room">
+  <link rel="alternate" hreflang="x-default" href="https://keisenapp.com/estimation-room">
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Keisen Estimation Room e Planning Poker",
+    "url": "https://keisenapp.com/pt/estimation-room",
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": "Agile Estimation Tool",
+    "operatingSystem": "Web",
+    "inLanguage": "pt",
+    "softwareVersion": "1.0.0",
+    "datePublished": "2024-01-15",
+    "description": "Estime user stories com 7 metodos: Fibonacci, T-Shirt, PERT tres pontos, Dot Voting, Bucket System, Five Fingers e Decimal. Votacao colaborativa em tempo real com estatisticas, deteccao de consenso e analise inteligente. Gratis para todas as equipes.",
+    "screenshot": "https://keisenapp.com/screenshots/estimation-room.png",
+    "featureList": [
+      "Estimativa com sequencia Fibonacci (0, 1, 2, 3, 5, 8, 13, 20, 40, 100)",
+      "T-Shirt sizing (XS, S, M, L, XL, XXL)",
+      "Estimativa PERT tres pontos com analise de variancia",
+      "Dot Voting para priorizacao silenciosa",
+      "Bucket System para estimativa por afinidade",
+      "Five Fingers votacao rapida (1-5)",
+      "Entrada decimal livre para estimativas precisas",
+      "Votacao colaborativa em tempo real com revelacao automatica",
+      "Analise estatistica: media, mediana, moda, desvio padrao",
+      "Deteccao automatica de consenso",
+      "Suporte multi-funcao: Facilitador, Votante, Observador",
+      "Rastreamento de presenca de participantes em tempo real",
+      "Exportacao para Smart Todo e backlog Sprint Agile",
+      "Acesso rapido com Google Sign-In"
+    ],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "94",
+      "bestRating": "5"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Keisen",
+      "url": "https://keisenapp.com"
+    }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Quais metodos de estimativa estao disponiveis no Keisen Estimation Room?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O Keisen Estimation Room oferece 7 metodos de estimativa: Fibonacci (sequencia classica de story points 0-100 com cartas ? e pausa cafe), T-Shirt Sizes (de XS a XXL para dimensionamento relativo rapido), Three-Point PERT (Otimista + 4x Realista + Pessimista / 6 com analise de variancia), Dot Voting (atribuicao silenciosa de pontos para priorizacao), Bucket System (agrupamento por afinidade de complexidade), Five Fingers (votacao rapida 1-5 para consenso rapido) e Decimal (entrada livre para estimativas precisas como 1.5 ou 2.75)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "A Estimation Room e gratuita?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim, o Keisen Estimation Room e completamente gratuito. Voce pode criar sessoes de estimativa, convidar sua equipe, votar em tempo real e consultar estatisticas para os 7 metodos de estimativa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como funciona a votacao em tempo real?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Todos os membros da equipe votam simultaneamente com cartas ocultas para prevenir o vies de ancoragem. Quando todos votaram, o facilitador revela todas as cartas de uma vez (ou pode-se ativar a revelacao automatica). O sistema calcula entao as estatisticas incluindo media, mediana, moda e deteccao de consenso. O rastreamento de presenca mostra quem esta online e quem ja votou."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O que e a estimativa Three-Point (PERT)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Three-Point PERT e uma tecnica de estimativa estatistica onde cada votante fornece tres valores: Otimista (melhor caso), Realista (valor esperado) e Pessimista (pior caso). A formula PERT (O + 4M + P) / 6 produz uma estimativa ponderada que leva em conta a incerteza. O Keisen tambem calcula o desvio padrao e a variancia para quantificar o risco da estimativa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Posso usar a Estimation Room com uma equipe remota?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim, o Keisen foi projetado tanto para equipes remotas quanto presenciais. Funciona em qualquer navegador sem software para instalar. Os membros da equipe podem entrar por link de convite, votar em tempo real e ver os resultados instantaneamente. O rastreamento de presenca mostra quem esta online, perfeito para equipes ageis distribuidas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quais estatisticas estao disponiveis apos a votacao?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Apos revelar os votos, o Keisen mostra estatisticas completas: media aritmetica, mediana, moda (voto mais frequente), grafico de distribuicao de votos, intervalo min/max e deteccao automatica de consenso. Para a estimativa PERT, tambem mostra valores PERT agregados, desvio padrao medio e variancia total de todos os votantes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como comeco a usar o Keisen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Comecar e rapido e simples: faca login com sua conta Google e pronto. Crie uma sessao de estimativa, escolha um dos 7 metodos, adicione suas user stories e convide sua equipe. Toda a configuracao leva menos de um minuto."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "No que o Keisen se diferencia do PlanITPoker, Scrumpoker-online ou PointingPoker?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O Keisen oferece 7 metodos de estimativa (a maioria das ferramentas so suporta Fibonacci), estimativa PERT de tres pontos integrada com analise de variancia, Dot Voting e Bucket System para priorizacao avancada, rastreamento de presenca em tempo real, suporte multi-funcao (Facilitador, Votante, Observador) e exportacao direta para Smart Todo e backlog Sprint Agile — tudo completamente gratis."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Keisen",
+        "item": "https://keisenapp.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Estimation Room",
+        "item": "https://keisenapp.com/pt/estimation-room"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Umami Analytics -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d8eb3e84-4871-4c5e-9944-dbec3d03508a"></script>
+</head>
+
+<body class="feature-orange">
+  <header class="page-header">
+    <a href="https://keisenapp.com/" class="logo-link">
+      <img src="../icons/Icon-192.png" alt="Keisen" width="32" height="32">
+      <span>Keisen</span>
+    </a>
+    <nav class="lang-switcher">
+      <a href="/estimation-room">EN</a>
+      <a href="/it/estimation-room">IT</a>
+      <a href="/es/estimation-room">ES</a>
+      <a href="/fr/estimation-room">FR</a>
+      <a href="/pt/estimation-room" class="active">PT</a>
+      <a href="/ru/estimation-room">RU</a>
+      <a href="/de/estimation-room">DE</a>
+      <a href="/id/estimation-room">ID</a>
+    </nav>
+    <a href="https://keisenapp.com/" class="btn-header">Abrir App</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">🃏 Estimation Room</div>
+        <h1>Estimation Room e Planning Poker Gratis para Equipes Ageis</h1>
+        <p class="hero-subtitle">Estime user stories com 7 metodos — Fibonacci, T-Shirt, PERT, Dot Voting, Bucket
+          System, Five Fingers e Decimal. Votacao colaborativa em tempo real com estatisticas, deteccao de consenso e
+          analise inteligente. Gratis para equipes remotas e presenciais — faca login com Google e comece em segundos.
+        </p>
+        <a href="https://keisenapp.com/" class="btn-cta">Experimente Gratis →</a>
+      </div>
+    </section>
+
+    <section class="how-it-works">
+      <div class="container">
+        <h2>Como Funciona</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Crie uma Sessao</h3>
+            <p>Escolha entre 7 metodos de estimativa — Fibonacci, T-Shirt, PERT, Dot Voting, Bucket System, Five Fingers
+              ou Decimal — adicione suas user stories e convide a equipe.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Vote em Tempo Real</h3>
+            <p>Os membros da equipe votam simultaneamente com cartas ocultas. Quando todos votaram, o facilitador revela
+              as cartas e o sistema calcula estatisticas e consenso.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Defina a Estimativa Final</h3>
+            <p>Analise a media, mediana e distribuicao. Estabeleca a estimativa final e exporte os resultados para o <a
+                href="/pt/smart-todo">Smart Todo</a> ou para o backlog do <a href="/pt/agile-process">Sprint Agile</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlights">
+      <div class="container">
+        <h2>Por Que as Equipes Escolhem o Keisen para Estimativa Agil</h2>
+        <div class="highlights-grid">
+          <div class="highlight-card">
+            <div class="highlight-emoji">🎴</div>
+            <h3>7 Metodos de Estimativa</h3>
+            <p>Fibonacci, T-Shirt, PERT, Dot Voting, Bucket System, Five Fingers e Decimal — todos os metodos que sua
+              equipe precisa.</p>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-emoji">⚡</div>
+            <h3>Votacao em Tempo Real</h3>
+            <p>Votacao simultanea com cartas ocultas, revelacao automatica, rastreamento de presenca e monitoramento
+              heartbeat de participantes.</p>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-emoji">📊</div>
+            <h3>Estatisticas Inteligentes</h3>
+            <p>Media, mediana, moda, desvio padrao, distribuicao de votos e deteccao automatica de consenso para
+              decisoes informadas.</p>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-emoji">🎭</div>
+            <h3>Suporte Multi-Funcao</h3>
+            <p>Funcoes de Facilitador, Votante e Observador com permissoes granulares para sessoes de estimativa
+              estruturadas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="templates-detail">
+      <div class="container">
+        <h2>7 Metodos de Estimativa para Cada Necessidade</h2>
+        <div class="templates-grid">
+          <div class="template-card">
+            <div class="template-emoji">🃏</div>
+            <h3>Fibonacci</h3>
+            <p>A sequencia classica de estimativa agil: 0, 1, 2, 3, 5, 8, 13, 20, 40, 100 com cartas ? (inseguro) e
+              pausa cafe. O padrao ouro para estimativa de story points usado pela maioria das equipes Scrum no mundo.
+            </p>
+            <p class="template-best-for">Ideal para: Estimativa de story points, Sprint Planning, Backlog Refinement</p>
+          </div>
+          <div class="template-card">
+            <div class="template-emoji">👕</div>
+            <h3>T-Shirt Sizes</h3>
+            <p>Dimensionamento relativo rapido com XS, S, M, L, XL e XXL. Elimina a pressao de atribuir numeros exatos e
+              foca na complexidade relativa. Perfeito para estimativas iniciais do backlog e stakeholders nao tecnicos.
+            </p>
+            <p class="template-best-for">Ideal para: Dimensionamento rapido, estimativas de alto nivel, equipes
+              multifuncionais</p>
+          </div>
+          <div class="template-card">
+            <div class="template-emoji">📐</div>
+            <h3>Three-Point (PERT)</h3>
+            <p>Estimativa estatistica com valores Otimista, Realista e Pessimista. A formula PERT (O + 4M + P) / 6
+              produz uma estimativa ponderada. Inclui calculo de desvio padrao e variancia para quantificacao do risco.
+            </p>
+            <p class="template-best-for">Ideal para: Itens de alta incerteza, avaliacao de riscos, previsoes de projeto
+            </p>
+          </div>
+          <div class="template-card">
+            <div class="template-emoji">🔵</div>
+            <h3>Dot Voting</h3>
+            <p>Priorizacao silenciosa onde cada participante atribui um numero fixo de pontos (1-10, padrao 5) entre as
+              opcoes. Revela as prioridades da equipe sem vies de discussao. Ideal para priorizacao de features e
+              planejamento de roadmap.</p>
+            <p class="template-best-for">Ideal para: Priorizacao, selecao de features, tomada de decisao democratica</p>
+          </div>
+          <div class="template-card">
+            <div class="template-emoji">🪣</div>
+            <h3>Bucket System</h3>
+            <p>Estimativa por afinidade que agrupa itens em buckets de complexidade: XS, S, M, L e XL. As equipes
+              classificam as stories por complexidade relativa em vez de estimativas precisas. Perfeito para estimativa
+              rapida de backlogs grandes.</p>
+            <p class="template-best-for">Ideal para: Estimativa de backlogs grandes, classificacao rapida, escopo
+              inicial</p>
+          </div>
+          <div class="template-card">
+            <div class="template-emoji">🖐️</div>
+            <h3>Five Fingers</h3>
+            <p>Votacao rapida de 1 a 5 para consenso rapido da equipe. Baseado na tecnica fist-to-five usada em
+              cerimonias ageis. Simples e rapido — perfeito para verificacoes de confianca, enquetes rapidas e rodadas
+              de estimativa leves.</p>
+            <p class="template-best-for">Ideal para: Votos de confianca, enquetes rapidas, daily standups, consenso
+              rapido</p>
+          </div>
+          <div class="template-card">
+            <div class="template-emoji">🔢</div>
+            <h3>Decimal (Entrada Livre)</h3>
+            <p>Entrada decimal livre para estimativas precisas como 1.5, 2.75 ou 3.25 horas. Sem cartas predefinidas —
+              cada votante insere seu proprio valor. Ideal para estimativas baseadas em tempo e rastreamento de esforco
+              em horas ou dias.</p>
+            <p class="template-best-for">Ideal para: Estimativas baseadas em tempo, esforco em horas/dias, valores
+              precisos</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features-detail">
+      <div class="container">
+        <h2>Kit Completo de Ferramentas para Estimativa Agil</h2>
+        <ul class="features-list">
+          <li>7 metodos de estimativa que cobrem cada metodologia agil — de story points Fibonacci a analise de risco
+            PERT</li>
+          <li>Votacao colaborativa em tempo real com cartas ocultas para prevenir o vies de ancoragem</li>
+          <li>Revelacao automatica de cartas quando todos os participantes votaram (ou revelacao manual do facilitador)
+          </li>
+          <li>Rastreamento de presenca em tempo real com monitoramento heartbeat — veja quem esta online e quem ja votou
+          </li>
+          <li>Analise estatistica apos cada rodada: media, mediana, moda, desvio padrao e distribuicao de votos</li>
+          <li>Deteccao automatica de consenso com celebracao visual quando todos os votantes concordam</li>
+          <li>Sistema multi-funcao: Facilitador (gerencia a sessao), Votante (estima), Observador (somente leitura para
+            stakeholders)</li>
+          <li>Gestao do ciclo de vida da sessao: Rascunho → Ativa → Concluida com historico completo de stories</li>
+          <li>Estimativa PERT de tres pontos com analise de variancia agregada de todos os votantes</li>
+          <li>Exporte stories estimadas para listas <a href="/pt/smart-todo">Smart Todo</a> ou para o backlog do <a
+              href="/pt/agile-process">Sprint Agile</a></li>
+          <li>Convide membros da equipe por email com atribuicao de funcao (Facilitador, Votante, Observador)</li>
+          <li>Faca login com Google e comece sua primeira sessao de estimativa em segundos — funciona em qualquer
+            navegador</li>
+        </ul>
+        <p class="features-tip">Combine suas sessoes de estimativa com o <a href="/pt/agile-process">Agile Process</a>
+          para um Sprint Planning completo e o <a href="/pt/retrospective-list">Retrospective Board</a> para refletir
+          sobre a precisao das suas estimativas ao longo do tempo.</p>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <div class="container">
+        <h2>Perguntas Frequentes</h2>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary class="faq-question">Quais metodos de estimativa estao disponiveis no Keisen?</summary>
+            <p class="faq-answer">O Keisen Estimation Room oferece 7 metodos de estimativa: <strong>Fibonacci</strong>
+              (sequencia classica de story points 0-100 com cartas ? e pausa cafe), <strong>T-Shirt Sizes</strong> (de
+              XS a XXL para dimensionamento relativo rapido), <strong>Three-Point PERT</strong> (Otimista + 4x Realista
+              + Pessimista / 6 com analise de variancia), <strong>Dot Voting</strong> (atribuicao silenciosa de pontos
+              para priorizacao), <strong>Bucket System</strong> (agrupamento por afinidade de complexidade),
+              <strong>Five Fingers</strong> (votacao rapida 1-5 para consenso rapido) e <strong>Decimal</strong>
+              (entrada livre para estimativas precisas como 1.5 ou 2.75).</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">A Estimation Room e gratuita?</summary>
+            <p class="faq-answer">Sim, o Keisen Estimation Room e completamente gratuito. Voce pode criar sessoes de
+              estimativa, convidar sua equipe, votar em tempo real e consultar estatisticas para os 7 metodos de
+              estimativa.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">Como funciona a votacao em tempo real?</summary>
+            <p class="faq-answer">Todos os membros da equipe votam simultaneamente com cartas ocultas para prevenir o
+              vies de ancoragem. Quando todos votaram, o facilitador revela todas as cartas de uma vez (ou pode-se
+              ativar a revelacao automatica). O sistema calcula entao as estatisticas incluindo media, mediana, moda e
+              deteccao de consenso. O rastreamento de presenca mostra quem esta online e quem ja votou.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">O que e a estimativa Three-Point (PERT)?</summary>
+            <p class="faq-answer">Three-Point PERT e uma tecnica de estimativa estatistica onde cada votante fornece
+              tres valores: <strong>Otimista</strong> (melhor caso), <strong>Realista</strong> (valor esperado) e
+              <strong>Pessimista</strong> (pior caso). A formula PERT <strong>(O + 4M + P) / 6</strong> produz uma
+              estimativa ponderada que leva em conta a incerteza. O Keisen tambem calcula o desvio padrao e a variancia
+              para quantificar o risco da estimativa.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">Posso usar a Estimation Room com uma equipe remota?</summary>
+            <p class="faq-answer">Sim, o Keisen foi projetado tanto para equipes remotas quanto presenciais. Funciona em
+              qualquer navegador sem software para instalar. Os membros da equipe podem entrar por link de convite,
+              votar em tempo real e ver os resultados instantaneamente. O rastreamento de presenca mostra quem esta
+              online, perfeito para equipes ageis distribuidas.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">Quais estatisticas estao disponiveis apos a votacao?</summary>
+            <p class="faq-answer">Apos revelar os votos, o Keisen mostra estatisticas completas: media aritmetica,
+              mediana, moda (voto mais frequente), grafico de distribuicao de votos, intervalo min/max e deteccao
+              automatica de consenso. Para a estimativa PERT, tambem mostra valores PERT agregados, desvio padrao medio
+              e variancia total de todos os votantes.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">Como comeco a usar o Keisen?</summary>
+            <p class="faq-answer">Comecar e rapido e simples: faca login com sua conta Google e pronto. Crie uma sessao
+              de estimativa, escolha um dos 7 metodos, adicione suas user stories e convide sua equipe. Toda a
+              configuracao leva menos de um minuto.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-question">No que o Keisen se diferencia do PlanITPoker, Scrumpoker-online ou
+              PointingPoker?</summary>
+            <p class="faq-answer">O Keisen oferece <strong>7 metodos de estimativa</strong> (a maioria das ferramentas
+              so suporta Fibonacci), estimativa <strong>PERT de tres pontos</strong> integrada com analise de variancia,
+              <strong>Dot Voting</strong> e <strong>Bucket System</strong> para priorizacao avancada, rastreamento de
+              presenca em tempo real, suporte multi-funcao (Facilitador, Votante, Observador) e exportacao direta para
+              Smart Todo e backlog Sprint Agile — tudo completamente gratis.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="other-tools">
+      <div class="container">
+        <h2>Descubra as Outras Ferramentas Keisen</h2>
+        <div class="tools-grid">
+          <a href="/pt/smart-todo" class="tool-card tc-blue">
+            <div class="tool-emoji">📋</div>
+            <h3>Smart Todo</h3>
+            <p>Quadro Kanban colaborativo com gestao inteligente de tarefas</p>
+          </a>
+          <a href="/pt/eisenhower" class="tool-card tc-green">
+            <div class="tool-emoji">🎯</div>
+            <h3>Matriz Eisenhower</h3>
+            <p>Priorizacao em 4 quadrantes por urgencia e importancia</p>
+          </a>
+          <a href="/pt/agile-process" class="tool-card tc-purple">
+            <div class="tool-emoji">🔄</div>
+            <h3>Agile Process</h3>
+            <p>Gestao completa de Sprint com Scrum, Kanban e Hybrid</p>
+          </a>
+          <a href="/pt/retrospective-list" class="tool-card tc-pink">
+            <div class="tool-emoji">💬</div>
+            <h3>Retrospectiva</h3>
+            <p>5 templates de retrospectiva com fases guiadas</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Pronto para estimar juntos?</h2>
+          <p>Comece a estimar user stories com sua equipe usando 7 metodos comprovados.</p>
+          <a href="https://keisenapp.com/" class="btn-cta">Comece Gratis →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="container">
+      <div class="footer-features">
+        <a href="/pt/smart-todo">Smart Todo</a>
+        <a href="/pt/eisenhower">Matriz Eisenhower</a>
+        <a href="/pt/estimation-room">Estimation Room</a>
+        <a href="/pt/agile-process">Agile Process</a>
+        <a href="/pt/retrospective-list">Retrospectiva</a>
+      </div>
+      <div class="footer-legal">
+        <a href="/privacy">Privacidade</a> · <a href="/terms">Termos</a> · <a href="/changelog">Changelog</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Keisen. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+</body>
+
+</html>

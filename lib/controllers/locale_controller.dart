@@ -17,12 +17,20 @@ class LocaleController extends ChangeNotifier {
   bool get isEnglish => _locale.languageCode == 'en';
   bool get isFrench => _locale.languageCode == 'fr';
   bool get isSpanish => _locale.languageCode == 'es';
+  bool get isPortuguese => _locale.languageCode == 'pt';
+  bool get isRussian => _locale.languageCode == 'ru';
+  bool get isGerman => _locale.languageCode == 'de';
+  bool get isIndonesian => _locale.languageCode == 'id';
 
   static const supportedLocales = [
     Locale('it'),
     Locale('en'),
     Locale('fr'),
     Locale('es'),
+    Locale('pt'),
+    Locale('ru'),
+    Locale('de'),
+    Locale('id'),
   ];
 
   String getDisplayName(Locale locale) {
@@ -35,6 +43,14 @@ class LocaleController extends ChangeNotifier {
         return 'Français';
       case 'es':
         return 'Español';
+      case 'pt':
+        return 'Português';
+      case 'ru':
+        return 'Русский';
+      case 'de':
+        return 'Deutsch';
+      case 'id':
+        return 'Bahasa Indonesia';
       default:
         return locale.languageCode;
     }
@@ -50,6 +66,14 @@ class LocaleController extends ChangeNotifier {
         return '\u{1F1EB}\u{1F1F7}'; // Flag FR
       case 'es':
         return '\u{1F1EA}\u{1F1F8}'; // Flag ES
+      case 'pt':
+        return '\u{1F1F5}\u{1F1F9}'; // Flag PT (oppure 1F1E7 1F1F7 per BR)
+      case 'ru':
+        return '\u{1F1F7}\u{1F1FA}'; // Flag RU
+      case 'de':
+        return '\u{1F1E9}\u{1F1EA}'; // Flag DE
+      case 'id':
+        return '\u{1F1EE}\u{1F1E9}'; // Flag ID
       default:
         return '\u{1F310}'; // Globe
     }

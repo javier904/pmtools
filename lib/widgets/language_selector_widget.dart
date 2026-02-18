@@ -138,7 +138,7 @@ class LanguageToggleButton extends StatelessWidget {
     final localeController = LocaleControllerProvider.of(context);
 
     return IconButton(
-      tooltip: 'IT / EN',
+      tooltip: 'IT / EN / FR / ES / PT / RU / DE / ID',
       icon: Text(
         localeController.getFlagEmoji(localeController.locale),
         style: const TextStyle(fontSize: 20),

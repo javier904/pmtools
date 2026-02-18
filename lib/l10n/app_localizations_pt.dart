@@ -497,7 +497,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get eisenhowerMatrixCreated => 'Matriz criada com sucesso';
 
   @override
-  String get eisenhowerMatrixUpdated => 'Matrice aggiornata';
+  String get eisenhowerMatrixUpdated => 'Matriz atualizada';
 
   @override
   String get eisenhowerMatrixDeleted => 'Matriz excluída';
@@ -1600,7 +1600,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get scrumBP10 =>
-      'Non creare più sprint in pianificazione contemporaneamente: completa o elimina quello esistente prima di crearne uno nuovo';
+      'Não crie múltiplas sprints no planejamento ao mesmo tempo: conclua ou exclua a existente antes de criar uma nova';
 
   @override
   String get scrumAP1 => 'Sprints muito longos (> 4 semanas)';
@@ -1808,7 +1808,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String velocityTooltipAverage(int count) {
-    return 'Basato su tutti i $count sprint completati';
+    return 'Baseado em todas as $count sprints concluídas';
   }
 
   @override
@@ -3021,22 +3021,25 @@ class AppLocalizationsPt extends AppLocalizations {
   String get agileCreateRetro => 'Criar Retrospectiva';
 
   @override
+  String get agileNotNow => 'Agora não';
+
+  @override
   String get agileSprintReviewSection => 'Sprint Review';
 
   @override
   String get agileSprintSummarySection => 'Resumo do Sprint';
 
   @override
-  String get agileReviewRecapTitle => 'Riepilogo Sprint Review';
+  String get agileReviewRecapTitle => 'Resumo da Revisão da Sprint';
 
   @override
-  String get agileReviewApproved => 'Approvate';
+  String get agileReviewApproved => 'Aprovado';
 
   @override
-  String get agileReviewRefinement => 'Da Rifinire';
+  String get agileReviewRefinement => 'Necessita Refinamento';
 
   @override
-  String get agileReviewRejected => 'Rifiutate';
+  String get agileReviewRejected => 'Rejeitado';
 
   @override
   String get agileDeleteSprint => 'Excluir';
@@ -5734,19 +5737,19 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sprintPlanningAlreadyExists =>
-      'Esiste già uno sprint in pianificazione. Eliminalo o avvialo prima di crearne uno nuovo.';
+      'Já existe uma sprint em planejamento. Exclua-a ou inicie-a antes de criar uma nova.';
 
   @override
-  String get sprintDeletePlanningTitle => 'Elimina Sprint in Pianificazione';
+  String get sprintDeletePlanningTitle => 'Excluir Sprint em Planejamento';
 
   @override
   String sprintDeletePlanningConfirm(String sprintName) {
-    return 'Vuoi eliminare lo sprint \"$sprintName\"? Le stories associate torneranno nel backlog.';
+    return 'Deseja excluir a sprint \"$sprintName\"? As histórias associadas serão movidas de volta para o backlog.';
   }
 
   @override
   String sprintDeletedSuccess(String sprintName) {
-    return 'Sprint \"$sprintName\" eliminato. Le stories sono state spostate nel backlog.';
+    return 'Sprint \"$sprintName\" excluída. As histórias foram movidas de volta para o backlog.';
   }
 
   @override
@@ -7225,13 +7228,25 @@ class AppLocalizationsPt extends AppLocalizations {
   String get langItalian => 'Italiano';
 
   @override
-  String get langEnglish => 'English';
+  String get langEnglish => 'Inglês';
 
   @override
-  String get langFrench => 'Français';
+  String get langFrench => 'Francês';
 
   @override
-  String get langSpanish => 'Español';
+  String get langSpanish => 'Espanhol';
+
+  @override
+  String get langPortuguese => 'Português';
+
+  @override
+  String get langRussian => 'Russo';
+
+  @override
+  String get langGerman => 'Alemão';
+
+  @override
+  String get langIndonesian => 'Indonésio';
 
   @override
   String get jsonExportLabel => 'Baixe uma cópia JSON dos seus dados';

@@ -1255,6 +1255,7 @@
   "agileDispositionRefinementDesc": "Da analizzare meglio prima del prossimo sprint",
   "agileRetroSuggestion": "Vuoi creare la retrospettiva per questo sprint?",
   "agileCreateRetro": "Crea Retrospettiva",
+  "agileNotNow": "Non ora",
   "agileSprintReviewSection": "Sprint Review",
   "agileSprintSummarySection": "Riepilogo Sprint",
   "agileReviewRecapTitle": "Riepilogo Sprint Review",
@@ -3365,6 +3366,10 @@
   "langEnglish": "English",
   "langFrench": "Français",
   "langSpanish": "Español",
+  "langPortuguese": "Portoghese",
+  "langRussian": "Russo",
+  "langGerman": "Tedesco",
+  "langIndonesian": "Indonesiano",
   "jsonExportLabel": "Scarica una copia JSON dei tuoi dati",
   "errorExporting": "Errore durante l'export: {error}",
   "@errorExporting": {

@@ -2729,8 +2729,6 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
            }
         }
 
-        _showSuccess(l10n.agileSprintCompleteSuccess(velocity.toStringAsFixed(1)));
-
         // Audit log
         await _auditService.logSprintClose(
           projectId: project.id,
@@ -2745,26 +2743,33 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
           velocity: velocity,
         );
 
-        // Retro suggestion
+        // Success dialog + Retro suggestion
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+          final goToRetro = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
+              title: Text(l10n.agileSprintCompleteSuccess(velocity.toStringAsFixed(1))),
               content: Text(l10n.agileRetroSuggestion),
-              duration: const Duration(seconds: 6),
-              action: SnackBarAction(
-                label: l10n.agileCreateRetro,
-                onPressed: () {
-                  // Navigate to retro tab
-                  if (mounted) {
-                    final retroTabIndex = _features.visibleTabs.indexOf(AgileTab.retro);
-                    if (retroTabIndex >= 0) {
-                      _tabController.animateTo(retroTabIndex);
-                    }
-                  }
-                },
-              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: Text(l10n.agileNotNow),
+                ),
+                FilledButton.icon(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  icon: const Icon(Icons.rate_review),
+                  label: Text(l10n.agileCreateRetro),
+                ),
+              ],
             ),
           );
+          if (goToRetro == true && mounted) {
+            final retroTabIndex = _features.visibleTabs.indexOf(AgileTab.retro);
+            if (retroTabIndex >= 0) {
+              _tabController.animateTo(retroTabIndex);
+            }
+          }
         }
       } catch (e) {
         _showError(l10n.errorGeneric(e.toString()));
