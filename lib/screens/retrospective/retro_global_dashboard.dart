@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../widgets/retrospective/retro_list_widget.dart';
 import '../../models/retrospective_model.dart';
 import '../../services/retrospective_firestore_service.dart';
+import '../../services/user_profile_service.dart';
 
 import '../retrospective_board_screen.dart';
 import '../../widgets/retrospective/retro_methodology_dialog.dart';
@@ -29,6 +30,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   RetroStatus? _selectedFilter; // null = All
   bool _showArchived = false;
   bool _isCreating = false;
+  Map<String, String>? _resolvedNames = {};
+  final UserProfileService _userProfileService = UserProfileService();
 
   // State
   RetroTemplate selectedTemplate = RetroTemplate.startStopContinue; // Added
@@ -65,6 +68,27 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Resolve display names for all participants in the retrospective list
+  Future<void> _resolveParticipantNames(List<RetrospectiveModel> retros) async {
+    final Set<String> emailsToResolve = {};
+    for (final retro in retros) {
+      emailsToResolve.add(retro.createdBy);
+      emailsToResolve.addAll(retro.participantEmails);
+    }
+
+    for (final email in emailsToResolve) {
+      final normalizedEmail = email.toLowerCase().trim();
+      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+        final name = await _userProfileService.getNameByEmail(email);
+        if (mounted) {
+          setState(() {
+            (_resolvedNames ??= {})[normalizedEmail] = name;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -159,6 +183,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 }
 
                 var retros = snapshot.data ?? [];
+                if (retros.isNotEmpty) {
+                  _resolveParticipantNames(retros);
+                }
 
                 // Filter logic
                 if (_searchController.text.isNotEmpty) {
@@ -204,6 +231,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                     onTap: _navigateToBoard,
                     onCreateNew: _showCreateStandaloneDialog,
                     currentUserEmail: _currentUserEmail, // Pass current user
+                    resolvedNames: _resolvedNames, // Pass resolved names
                     onEdit: _showEditSettingsDialog, // Added edit handler
                     onDelete: _confirmDeleteRetro, // Pass delete handler
                     onArchive: _archiveRetro,

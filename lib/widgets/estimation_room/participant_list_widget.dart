@@ -4,6 +4,7 @@ import '../../models/planning_poker_participant_model.dart';
 import '../../models/planning_poker_story_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget che mostra la lista dei partecipanti con il loro stato
 class ParticipantListWidget extends StatelessWidget {
@@ -185,8 +186,9 @@ class ParticipantListWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      participant.name,
+                    UserDisplayName(
+                      email: participant.email,
+                      fallback: participant.name,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: isCurrentUser ? FontWeight.w600 : FontWeight.normal,

@@ -367,9 +367,15 @@ class PlanningPokerFirestoreService {
 
       final now = DateTime.now();
       final escapedEmail = _escapeEmailKey(email.toLowerCase());
+      
+      // Resolve display name if not provided or if we want to ensure freshness
+      final resolvedName = (name.isEmpty || name == email.split('@').first) 
+          ? await UserProfileService().getNameByEmail(email) 
+          : name;
+
       await _sessionsCollection.doc(sessionId).update({
         'participants.$escapedEmail': {
-          'name': name,
+          'name': resolvedName,
           'role': role.name,
           'joinedAt': Timestamp.fromDate(now),
           'isOnline': false,
@@ -475,10 +481,15 @@ class PlanningPokerFirestoreService {
       final now = DateTime.now();
       final escapedEmail = _escapeEmailKey(email.toLowerCase());
 
+      // Resolve display name
+      final resolvedName = (name.isEmpty || name == email.split('@').first) 
+          ? await UserProfileService().getNameByEmail(email) 
+          : name;
+
       await _sessionsCollection.doc(sessionId).update({
         'pendingEmails': FieldValue.arrayRemove([email.toLowerCase()]),
         'participants.$escapedEmail': {
-          'name': name,
+          'name': resolvedName,
           'role': role.name,
           'joinedAt': Timestamp.fromDate(now),
           'isOnline': true,

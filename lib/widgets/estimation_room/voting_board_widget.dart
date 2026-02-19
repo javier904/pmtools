@@ -5,6 +5,7 @@ import '../../models/planning_poker_session_model.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import 'poker_card_widget.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget che mostra il tabellone con i voti dei partecipanti
 class VotingBoardWidget extends StatelessWidget {
@@ -181,14 +182,14 @@ class VotingBoardWidget extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           // Nome
-          Text(
-            name,
+          UserDisplayName(
+            email: email,
+            fallback: name,
             style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 11,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            overflow: true,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 6),

@@ -100,6 +100,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
   // Filtro archivio
   bool _showArchived = false;
+  Map<String, String>? _resolvedNames = {};
+  final UserProfileService _userProfileService = UserProfileService();
 
   // TabController per il side panel (Partecipanti/Inviti)
   late TabController _sidePanelTabController;
@@ -229,6 +231,26 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     _cancelSubscriptions();
     _stopPresenceHeartbeat();
     super.dispose();
+  }
+
+  /// Resolve display names for all participants in the matrix list
+  Future<void> _resolveParticipantNames(List<EisenhowerMatrixModel> matrices) async {
+    final Set<String> emailsToResolve = {};
+    for (final matrix in matrices) {
+      emailsToResolve.addAll(matrix.participants.keys.map((key) => EisenhowerParticipantModel.unescapeEmail(key)));
+    }
+
+    for (final email in emailsToResolve) {
+      final normalizedEmail = email.toLowerCase().trim();
+      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+        final name = await _userProfileService.getNameByEmail(email);
+        if (mounted) {
+          setState(() {
+            (_resolvedNames ??= {})[normalizedEmail] = name;
+          });
+        }
+      }
+    }
   }
 
   /// Cancella tutte le subscription attive
@@ -596,6 +618,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         }
 
         final matrices = snapshot.data ?? [];
+        if (matrices.isNotEmpty) {
+          _resolveParticipantNames(matrices);
+        }
 
         // Applica i filtri
         final filteredMatrices = matrices.where((m) {
@@ -967,7 +992,10 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         EisenhowerParticipantRole.voter => '🗳️ Voter',
         EisenhowerParticipantRole.observer => '👁️ Observer',
       };
-      return '${p.name} - $roleLabel';
+      
+      final normalizedEmail = p.email.toLowerCase().trim();
+      final displayName = _resolvedNames?[normalizedEmail] ?? p.name;
+      return '$displayName - $roleLabel';
     }).toList();
 
     final tooltipText = participantLines.isNotEmpty

@@ -15,6 +15,7 @@ class RetroListWidget extends StatelessWidget {
   final Function(RetrospectiveModel)? onRestore;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final Map<String, String>? resolvedNames;
 
   const RetroListWidget({
     Key? key,
@@ -28,6 +29,7 @@ class RetroListWidget extends StatelessWidget {
     this.onRestore,
     this.shrinkWrap = false,
     this.physics,
+    this.resolvedNames,
   }) : super(key: key);
 
   @override
@@ -359,12 +361,16 @@ class RetroListWidget extends StatelessWidget {
     final participantLines = <String>[];
 
     // Owner (createdBy)
-    participantLines.add('${retro.createdBy} - 👑 ${l10n.retroOwner}');
+    final normalizedOwnerEmail = retro.createdBy.toLowerCase().trim();
+    final ownerName = resolvedNames?[normalizedOwnerEmail] ?? retro.createdBy;
+    participantLines.add('$ownerName - 👑 ${l10n.retroOwner}');
 
     // Partecipanti (non-owner)
     for (final email in retro.participantEmails) {
       if (email == retro.createdBy) continue;
-      participantLines.add('$email - 👥 ${l10n.retroGuest}');
+      final normalizedEmail = email.toLowerCase().trim();
+      final displayName = resolvedNames?[normalizedEmail] ?? email;
+      participantLines.add('$displayName - 👥 ${l10n.retroGuest}');
     }
 
     final tooltipText = '${l10n.participants}:\n${participantLines.join('\n')}';

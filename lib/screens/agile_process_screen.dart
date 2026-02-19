@@ -7,6 +7,7 @@ import '../models/team_member_model.dart';
 import '../services/agile_firestore_service.dart';
 import '../services/agile_audit_service.dart';
 import '../services/auth_service.dart';
+import '../services/user_profile_service.dart';
 import '../themes/app_theme.dart';
 import '../widgets/agile/methodology_guide_dialog.dart';
 import '../themes/app_colors.dart';
@@ -49,6 +50,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   String _statusFilter = 'all'; // 'all', 'active', 'completed'
   bool _showArchived = false;
   bool _isCreating = false;
+  Map<String, String>? _resolvedNames = {};
+  final UserProfileService _userProfileService = UserProfileService();
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _authService.currentUser?.displayName ?? 'Utente';
@@ -128,6 +131,27 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Resolve display names for all participants in the project list
+  Future<void> _resolveParticipantNames(List<AgileProjectModel> projects) async {
+    final Set<String> emailsToResolve = {};
+    for (final project in projects) {
+      emailsToResolve.add(project.createdBy);
+      emailsToResolve.addAll(project.participants.keys);
+    }
+
+    for (final email in emailsToResolve) {
+      final normalizedEmail = email.toLowerCase().trim();
+      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+        final name = await _userProfileService.getNameByEmail(email);
+        if (mounted) {
+          setState(() {
+            (_resolvedNames ??= {})[normalizedEmail] = name;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -239,6 +263,9 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         }
 
         final projects = snapshot.data ?? [];
+        if (projects.isNotEmpty) {
+          _resolveParticipantNames(projects);
+        }
 
         // Filtra per ricerca
         final filteredProjects = _searchQuery.isEmpty
@@ -578,20 +605,25 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     final participantLines = <String>[];
 
     // Owner
-    participantLines.add('${project.createdBy} - 👑 Owner');
+    final normalizedOwnerEmail = project.createdBy.toLowerCase().trim();
+    final ownerName = _resolvedNames?[normalizedOwnerEmail] ?? project.createdBy;
+    participantLines.add('$ownerName - 👑 Owner');
 
     // Partecipanti con ruoli
     for (final entry in project.participants.entries) {
       if (entry.key == project.createdBy) continue;
       final member = entry.value;
-      final name = member.name.isNotEmpty ? member.name : member.email;
+      final email = member.email;
+      final normalizedEmail = email.toLowerCase().trim();
+      final resolvedName = _resolvedNames?[normalizedEmail] ?? (member.name.isNotEmpty ? member.name : email);
+      
       final roleLabel = switch (member.teamRole.name) {
         'productOwner' => '⭐ Product Owner',
         'scrumMaster' => '🛡️ Scrum Master',
         'developer' => '💻 Developer',
         _ => '👥 Member',
       };
-      participantLines.add('$name - $roleLabel');
+      participantLines.add('$resolvedName - $roleLabel');
     }
 
     final tooltipText = 'Team:\n${participantLines.join('\n')}';
