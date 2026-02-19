@@ -42,7 +42,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
   int _selectedDays = 1; // Default 1 day (24h)
   int _maxAllowedDays = 7; // Free plan default
   bool _isPremium = false;
-  final Map<String, String> _resolvedNames = {};
+  Map<String, String>? _resolvedNames = {};
 
   // Search controller
   final TextEditingController _searchController = TextEditingController();
@@ -60,10 +60,11 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
 
   Future<void> _resolveParticipantNames() async {
     for (final email in widget.list.participants.keys) {
+      final normalizedEmail = email.toLowerCase().trim();
       final name = await UserProfileService().getNameByEmail(email);
       if (mounted) {
         setState(() {
-          _resolvedNames[email] = name;
+          (_resolvedNames ??= {})[normalizedEmail] = name;
         });
       }
     }
@@ -424,6 +425,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                     width: 140,
                     height: 40,
                     child: DropdownButtonFormField<String?>(
+                      isExpanded: true,
                       value: _filter.performedBy,
                       decoration: InputDecoration(
                         labelText: l10n?.smartTodoAuditFilterUser ?? 'User',
@@ -435,7 +437,8 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                       items: [
                         DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
                         ...participants.map((p) {
-                          final displayName = _resolvedNames[p.key] ?? p.value.displayName ?? p.key.split('@').first;
+                          final normalizedEmail = p.key.toLowerCase().trim();
+                          final displayName = _resolvedNames?[normalizedEmail] ?? p.value.displayName ?? p.key;
                           return DropdownMenuItem(
                             value: displayName,
                             child: Text(displayName, overflow: TextOverflow.ellipsis),
@@ -458,6 +461,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                     width: 140,
                     height: 40,
                     child: DropdownButtonFormField<TodoAuditEntityType?>(
+                      isExpanded: true,
                       value: _filter.entityType,
                       decoration: InputDecoration(
                         labelText: l10n?.smartTodoAuditFilterType ?? 'Type',
@@ -489,6 +493,7 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                     width: 140,
                     height: 40,
                     child: DropdownButtonFormField<TodoAuditAction?>(
+                      isExpanded: true,
                       value: _filter.action,
                       decoration: InputDecoration(
                         labelText: l10n?.smartTodoAuditFilterAction ?? 'Action',
@@ -695,7 +700,8 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
               children: participants.map((entry) {
                 final email = entry.key;
                 final participant = entry.value;
-                final displayName = _resolvedNames[email] ?? participant.displayName ?? email.split('@').first;
+                final normalizedEmail = email.toLowerCase().trim();
+                final displayName = _resolvedNames?[normalizedEmail] ?? participant.displayName ?? email;
                 final userLogs = logsByUser[displayName] ?? [];
 
                 return _buildUserColumn(

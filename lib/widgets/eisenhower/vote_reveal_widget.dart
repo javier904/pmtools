@@ -209,7 +209,7 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
     // Unescape l'email (da _DOT_ a .) per cercare nel participants map
     final unescapedEmail = EisenhowerParticipantModel.unescapeEmail(voterEmail).toLowerCase();
     final participant = widget.participants[unescapedEmail];
-    final voterName = participant?.name ?? unescapedEmail.split('@').first;
+    final voterName = participant?.name ?? unescapedEmail;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

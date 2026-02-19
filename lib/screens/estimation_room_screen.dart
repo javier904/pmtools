@@ -97,6 +97,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   EstimationMode? _modeFilter;
   bool _showArchived = false;
   Timer? _debounce;
+  Map<String, String>? _resolvedNames = {};
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _resolvedUserName ?? _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
@@ -112,10 +113,28 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
   Future<void> _resolveCurrentUserName() async {
     final name = await _userProfileService.getNameByEmail(_currentUserEmail);
-    if (mounted) {
-      setState(() {
         _resolvedUserName = name;
-      });
+        final normalizedEmail = _currentUserEmail.toLowerCase().trim();
+        (_resolvedNames ??= {})[normalizedEmail] = name;
+  }
+
+  /// Resolve display names for all participants in the session list
+  Future<void> _resolveParticipantNames(List<PlanningPokerSessionModel> sessions) async {
+    final Set<String> emailsToResolve = {};
+    for (final session in sessions) {
+      emailsToResolve.addAll(session.participants.keys);
+    }
+
+    for (final email in emailsToResolve) {
+      final normalizedEmail = email.toLowerCase().trim();
+      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+        final name = await _userProfileService.getNameByEmail(email);
+        if (mounted) {
+          setState(() {
+            (_resolvedNames ??= {})[normalizedEmail] = name;
+          });
+        }
+      }
     }
   }
 
@@ -636,6 +655,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         }
 
         final sessions = snapshot.data ?? [];
+        if (sessions.isNotEmpty) {
+          _resolveParticipantNames(sessions);
+        }
 
         // Applica i filtri manually
         final filteredSessions = sessions.where((s) {
@@ -1054,7 +1076,19 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         ParticipantRole.voter => '🗳️ Voter',
         ParticipantRole.observer => '👁️ Observer',
       };
-      return '${p.name} - $roleLabel';
+      
+      // Defensive name resolution with multiple fallbacks
+      final normalizedEmail = p.email.toLowerCase().trim();
+      final resolvedName = _resolvedNames?[normalizedEmail];
+      // Use resolved name, then participant stored name, then auth displayName for current user
+      String displayName = resolvedName ?? p.name;
+      // If still looks like an email prefix, try auth displayName for current user
+      if (displayName == normalizedEmail.split('@').first &&
+          normalizedEmail == _currentUserEmail.toLowerCase()) {
+        displayName = _currentUserName;
+      }
+
+      return '$displayName - $roleLabel';
     }).toList();
 
     final tooltipText = participantLines.isNotEmpty
@@ -1793,7 +1827,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
       final email = entry.key;
       final vote = entry.value;
       final participant = _selectedSession?.participants[email];
-      final name = participant?.name ?? email.split('@').first;
+      final name = _resolvedNames?[email.toLowerCase().trim()] ?? participant?.name ?? email;
       lines.add('  - $name: ${vote.value}');
     }
 
@@ -2649,7 +2683,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                   final email = entry.key;
                   final vote = entry.value;
                   final participant = _selectedSession?.participants[email];
-                  final fallbackName = participant?.name ?? email.split('@').first;
+                  final fallbackName = _resolvedNames?[email.toLowerCase().trim()] ?? participant?.name ?? email;
 
                   return FutureBuilder<String>(
                     future: _userProfileService.getNameByEmail(email),

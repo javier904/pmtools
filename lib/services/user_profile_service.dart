@@ -155,38 +155,55 @@ class UserProfileService {
   Future<String> getNameByEmail(String email) async {
     if (email.isEmpty) return 'User';
     
+    // Normalizza email per consistenza
+    final normalizedEmail = email.toLowerCase().trim();
+    
     // 1. Controlla cache
-    if (_resolvedNamesCache.containsKey(email)) {
-      return _resolvedNamesCache[email]!;
+    if (_resolvedNamesCache.containsKey(normalizedEmail)) {
+      return _resolvedNamesCache[normalizedEmail]!;
     }
 
     try {
       // 2. Cerca in Firestore per email
       final query = await _firestore
           .collection(_usersCollection)
-          .where('email', isEqualTo: email)
+          .where('email', isEqualTo: normalizedEmail)
           .limit(1)
           .get();
 
       if (query.docs.isNotEmpty) {
         final profile = profile_model.UserProfileModel.fromFirestore(query.docs.first);
         final name = profile.fullName;
-        _resolvedNamesCache[email] = name;
-        return name;
+        // Verify fullName is not just the email prefix
+        if (name != normalizedEmail.split('@').first) {
+          _resolvedNamesCache[normalizedEmail] = name;
+          return name;
+        }
       }
 
       // 3. Fallback a display name dell'utente corrente se coincide l'email
-      if (_auth.currentUser?.email == email && _auth.currentUser?.displayName != null) {
-        final name = _auth.currentUser!.displayName!;
-        _resolvedNamesCache[email] = name;
-        return name;
+      if (_auth.currentUser?.email?.toLowerCase() == normalizedEmail) {
+        final authDisplayName = _auth.currentUser?.displayName;
+        if (authDisplayName != null && authDisplayName.isNotEmpty) {
+          _resolvedNamesCache[normalizedEmail] = authDisplayName;
+          return authDisplayName;
+        }
       }
     } catch (e) {
-      debugPrint('Error resolving name for $email: $e');
+      debugPrint('Error resolving name for $normalizedEmail: $e');
     }
 
-    // 4. Fallback finale: split dell'email
-    final fallback = email.split('@').first;
+    // 4. Fallback: display name from Auth for current user (anche se Firestore ha fallito)
+    if (_auth.currentUser?.email?.toLowerCase() == normalizedEmail) {
+      final authDisplayName = _auth.currentUser?.displayName;
+      if (authDisplayName != null && authDisplayName.isNotEmpty) {
+        _resolvedNamesCache[normalizedEmail] = authDisplayName;
+        return authDisplayName;
+      }
+    }
+
+    // 5. Fallback finale: split dell'email
+    final fallback = normalizedEmail.split('@').first;
     // Non mettiamo in cache il fallback per forzare un eventuale retry futuro se Firestore era giù
     return fallback;
   }

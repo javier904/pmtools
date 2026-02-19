@@ -475,7 +475,7 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               .toList();
           return _SwimlaneData(
             id: email,
-            name: email.split('@').first,
+            name: email,
             icon: Icons.person,
             color: Colors.blue,
             stories: stories,
