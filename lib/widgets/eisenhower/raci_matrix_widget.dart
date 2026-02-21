@@ -138,6 +138,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
 
   Widget _buildToolbar() {
     final l10n = AppLocalizations.of(context)!;
+    final isCompact = MediaQuery.of(context).size.width < 600;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: context.surfaceVariantColor,
@@ -145,35 +146,50 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
         children: [
           Icon(Icons.table_chart, size: 20, color: context.textSecondaryColor),
           const SizedBox(width: 8),
-          Text(
-            l10n.raciTitle,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: context.textPrimaryColor),
+          Flexible(
+            child: Text(
+              l10n.raciTitle,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: context.textPrimaryColor),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const Spacer(),
           if (widget.onAddActivity != null)
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: ElevatedButton.icon(
-                onPressed: widget.onAddActivity,
-                icon: const Icon(Icons.add, size: 18),
-                label: Text(l10n.raciAddActivity),
+              child: isCompact
+                ? IconButton(
+                    onPressed: widget.onAddActivity,
+                    icon: const Icon(Icons.add, color: Colors.green),
+                    tooltip: l10n.raciAddActivity,
+                  )
+                : ElevatedButton.icon(
+                    onPressed: widget.onAddActivity,
+                    icon: const Icon(Icons.add, size: 18),
+                    label: Text(l10n.raciAddActivity),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                    ),
+                  ),
+            ),
+          isCompact
+            ? IconButton(
+                onPressed: _showAddColumnDialog,
+                icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+                tooltip: l10n.raciAddColumn,
+              )
+            : ElevatedButton.icon(
+                onPressed: _showAddColumnDialog,
+                icon: const Icon(Icons.add_circle_outline, size: 18),
+                label: Text(l10n.raciAddColumn),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // Visual upgrade requested by user
-                  foregroundColor: Colors.white,
-                  elevation: 0,
+                  backgroundColor: context.surfaceColor,
+                  side: const BorderSide(color: Colors.green),
+                  foregroundColor: Colors.green,
                 ),
               ),
-            ),
-          ElevatedButton.icon(
-            onPressed: _showAddColumnDialog,
-            icon: const Icon(Icons.add_circle_outline, size: 18),
-            label: Text(l10n.raciAddColumn),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.surfaceColor,
-              side: const BorderSide(color: Colors.green), // Visual upgrade requested by user
-              foregroundColor: Colors.green, 
-            ),
-          ),
         ],
       ),
     );
@@ -488,7 +504,9 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
     return Container(
       padding: const EdgeInsets.all(12),
       color: context.surfaceColor,
-      child: Row(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: RaciRole.values.map((role) {
           return Padding(
@@ -510,6 +528,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
             ),
           );
         }).toList(),
+      ),
       ),
     );
   }

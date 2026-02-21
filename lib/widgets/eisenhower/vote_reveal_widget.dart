@@ -430,7 +430,7 @@ class VoteRevealDialog extends StatelessWidget {
         ],
       ),
       content: SizedBox(
-        width: 340,
+        width: MediaQuery.of(context).size.width > 400 ? 340 : MediaQuery.of(context).size.width * 0.85,
         child: VoteRevealWidget(
           activity: activity,
           participants: participants,

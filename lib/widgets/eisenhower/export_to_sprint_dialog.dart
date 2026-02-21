@@ -164,8 +164,8 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
-        width: 550,
-        constraints: const BoxConstraints(maxHeight: 750),
+        width: MediaQuery.of(context).size.width > 600 ? 550 : MediaQuery.of(context).size.width * 0.9,
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height > 800 ? 750 : MediaQuery.of(context).size.height * 0.85),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -362,14 +362,17 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
                   // Selection summary
                   Row(
                     children: [
-                      Text(
-                        '${_selectedActivityIds.length} ${l10n?.selectedActivities ?? 'attività selezionate'}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.grey[300] : Colors.grey[700],
+                      Flexible(
+                        child: Text(
+                          '${_selectedActivityIds.length} ${l10n?.selectedActivities ?? 'attività selezionate'}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            color: isDark ? Colors.grey[300] : Colors.grey[700],
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const Spacer(),
                       TextButton(
                         onPressed: () {
                           setState(() {
@@ -379,13 +382,15 @@ class _ExportEisenhowerToSprintDialogState extends State<ExportEisenhowerToSprin
                             }
                           });
                         },
-                        child: Text(l10n?.selectAll ?? 'Seleziona tutti', style: const TextStyle(color: Color(0xFFFFFFFF))),
+                        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8)),
+                        child: Text(l10n?.selectAll ?? 'Seleziona tutti', style: const TextStyle(fontSize: 12)),
                       ),
                       TextButton(
                         onPressed: () {
                           setState(() => _selectedActivityIds.clear());
                         },
-                        child: Text(l10n?.deselectAll ?? 'Deseleziona tutti', style: const TextStyle(color: Color(0xFFFFFFFF))),
+                        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8)),
+                        child: Text(l10n?.deselectAll ?? 'Deseleziona tutti', style: const TextStyle(fontSize: 12)),
                       ),
                     ],
                   ),

@@ -174,6 +174,16 @@ class AppTheme {
         side: const BorderSide(color: AppColors.darkBorder),
       ),
 
+      // Toggle Buttons
+      toggleButtonsTheme: ToggleButtonsThemeData(
+        color: AppColors.darkTextSecondary,
+        selectedColor: Colors.white,
+        fillColor: AppColors.primary.withValues(alpha: 0.2),
+        borderColor: AppColors.darkBorder,
+        selectedBorderColor: AppColors.primary,
+        borderRadius: BorderRadius.circular(8),
+      ),
+
       // Divider
       dividerTheme: const DividerThemeData(
         color: AppColors.darkBorder,
@@ -380,6 +390,16 @@ class AppTheme {
         labelStyle: const TextStyle(color: AppColors.lightTextPrimary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         side: const BorderSide(color: AppColors.lightBorder),
+      ),
+
+      // Toggle Buttons
+      toggleButtonsTheme: ToggleButtonsThemeData(
+        color: AppColors.lightTextSecondary,
+        selectedColor: AppColors.primaryDark,
+        fillColor: AppColors.primary.withValues(alpha: 0.1),
+        borderColor: AppColors.lightBorder,
+        selectedBorderColor: AppColors.primary,
+        borderRadius: BorderRadius.circular(8),
       ),
 
       // Divider

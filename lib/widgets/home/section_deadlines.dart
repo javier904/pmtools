@@ -57,10 +57,21 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
                     color: context.textPrimaryColor,
                   ),
                 ),
-                const Spacer(),
-                _buildFilterChips(l10n),
                 const SizedBox(width: 8),
-                _buildConfigButton(context, l10n),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildFilterChips(l10n),
+                        const SizedBox(width: 8),
+                        _buildConfigButton(context, l10n),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

@@ -7,7 +7,8 @@ class TodoTaskRow extends StatelessWidget {
   final TodoTaskModel task;
   final TodoColumn? column; // To display status color/name
   final VoidCallback? onTap;
-  final TodoListModel? list; // Added
+  final TodoListModel? list;
+  final int? index; // Added for correct ReorderableDragStartListener
   
   const TodoTaskRow({
     super.key,
@@ -15,6 +16,7 @@ class TodoTaskRow extends StatelessWidget {
     this.column,
     this.onTap,
     this.list,
+    this.index,
   });
 
   @override
@@ -38,16 +40,16 @@ class TodoTaskRow extends StatelessWidget {
           children: [
             // Drag Handle (Added for reorder)
             // Only show if list is not null (implies we are in a list view context)
-             if (list != null) ...[
+             if (list != null && index != null && index! >= 0) ...[
                ReorderableDragStartListener(
-                 index: -1, // Will be overridden by ListView builder context if valid, but we use wrapping usually
-                 // Actually ReorderableListView needs this to be the direct child or we use a key.
-                 // Better pattern: ReorderableDragStartListener in the item builder of the list.
-                 // But wait, we are inside the Row widget. We need to pass the index or just be the listener.
-                 // ReorderableListView by default makes the whole tile draggable unless we use buildDefaultDragHandles: false.
-                 // We want specific handle.
+                 index: index!,
                  child: Icon(Icons.drag_indicator, color: isDark ? Colors.grey[700] : Colors.grey[300]),
                ),
+               const SizedBox(width: 8),
+             ] else if (list != null) ...[
+               // Show handle visually but disabled if index missing (or handle handled externally)
+               // Actually if index is missing we should probably not show it or just show icon without listener
+               Icon(Icons.drag_indicator, color: (isDark ? Colors.grey[700] : Colors.grey[300])!.withOpacity(0.3)),
                const SizedBox(width: 8),
              ],
 

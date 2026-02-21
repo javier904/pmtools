@@ -1,1 +1,25 @@
-{}
+{
+  "de": [
+    "smartTodoViewCalendar"
+  ],
+
+  "es": [
+    "smartTodoViewCalendar"
+  ],
+
+  "fr": [
+    "smartTodoViewCalendar"
+  ],
+
+  "id": [
+    "smartTodoViewCalendar"
+  ],
+
+  "pt": [
+    "smartTodoViewCalendar"
+  ],
+
+  "ru": [
+    "smartTodoViewCalendar"
+  ]
+}

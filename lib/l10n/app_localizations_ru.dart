@@ -7352,6 +7352,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get smartTodoViewResource => 'По ресурсам';
 
   @override
+  String get smartTodoViewCalendar => 'Calendario';
+
+  @override
   String get smartTodoInviteTooltip => 'Пригласить';
 
   @override

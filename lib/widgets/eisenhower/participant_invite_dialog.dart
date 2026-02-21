@@ -204,7 +204,7 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
         ],
       ),
       content: SizedBox(
-        width: 450,
+        width: MediaQuery.of(context).size.width > 500 ? 450 : MediaQuery.of(context).size.width * 0.9,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

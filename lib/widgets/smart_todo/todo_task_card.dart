@@ -5,6 +5,10 @@ import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/config/feature_flags.dart';
+import '../../services/google_calendar_service.dart';
+import '../../services/smart_todo_service.dart';
+import '../../themes/app_theme.dart';
 
 class TodoTaskCard extends StatelessWidget {
   final TodoTaskModel task;
@@ -43,16 +47,16 @@ class TodoTaskCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D3748) : Colors.white, // Dark surface or white
+        color: context.surfaceColor, // Dark surface or white
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04), 
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04), 
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
         ],
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: context.borderColor),
       ),
       child: Material(
         color: Colors.transparent,
@@ -80,14 +84,14 @@ class TodoTaskCard extends StatelessWidget {
                           ...task.tags.map((tag) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Color(tag.colorValue).withOpacity(isDark ? 0.25 : 0.15),
+                              color: Color(tag.colorValue).withValues(alpha: isDark ? 0.25 : 0.15),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               tag.name,
                               style: TextStyle(
                                 fontSize: 10,
-                                color: isDark ? Color(tag.colorValue).withOpacity(0.9) : Color(tag.colorValue),
+                                color: isDark ? Color(tag.colorValue).withValues(alpha: 0.9) : Color(tag.colorValue),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -98,7 +102,7 @@ class TodoTaskCard extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                               decoration: BoxDecoration(
-                                color: priorityColor.withOpacity(isDark ? 0.2 : 0.1),
+                                color: priorityColor.withValues(alpha: isDark ? 0.2 : 0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -117,7 +121,7 @@ class TodoTaskCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(task.statusId).withOpacity(isDark ? 0.2 : 0.1),
+                                color: _getStatusColor(task.statusId).withValues(alpha: isDark ? 0.2 : 0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -273,6 +277,70 @@ class TodoTaskCard extends StatelessWidget {
 
                     const Spacer(),
 
+                    // Calendar Sync (Feature Flagged)
+                    if (FeatureFlags.enableCalendarSync) ...[
+                      Tooltip(
+                        message: task.calendarEventId != null 
+                             ? 'Synced ${task.syncedAt != null ? DateFormat('d MMM HH:mm').format(task.syncedAt!) : ''}'
+                             : 'Sync with Google Calendar',
+                        child: InkWell(
+                          onTap: () async {
+                            final svc = GoogleCalendarService();
+                            final l10n = AppLocalizations.of(context);
+                            final listTitle = list?.title ?? 'Lista Sconosciuta';
+
+                            if (task.calendarEventId != null) {
+                               // Check if exists
+                               final exists = await svc.checkCalendarEventExists(task.calendarEventId!);
+                               if (!context.mounted) return;
+
+                               if (!exists) {
+                                  // Unlink
+                                  final updatedTask = task.copyWith(clearCalendarData: true);
+                                  await SmartTodoService().updateTask(task.listId, updatedTask);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('L\'evento è stato eliminato da Calendar. Scollegamento effettuato.'), backgroundColor: Colors.orange),
+                                  );
+                               } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Evento già sincronizzato su Google Calendar.'), backgroundColor: Colors.blue),
+                                  );
+                               }
+                            } else {
+                               // Sync new
+                               final eventId = await svc.syncTaskToCalendar(task, listTitle);
+                               if (eventId != null) {
+                                  // Update Task Model with sync metadata
+                                  final updatedTask = task.copyWith(
+                                    calendarEventId: eventId,
+                                    syncedAt: DateTime.now(),
+                                  );
+                                  await SmartTodoService().updateTask(task.listId, updatedTask);
+
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(l10n?.actionSave ?? 'Sincronizzato con Calendar!'), backgroundColor: Colors.green),
+                                    );
+                                  }
+                               } else {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Errore durante la sincronizzazione'), backgroundColor: Colors.red),
+                                    );
+                                  }
+                               }
+                            }
+                          },
+                          child: _buildMetaIcon(
+                            task.calendarEventId != null ? Icons.event_available_rounded : Icons.edit_calendar_rounded,
+                            '', // Nessun testo per salvare spazio
+                            color: task.calendarEventId != null ? Colors.green : (isDark ? Colors.blue[300]! : Colors.blue[600]!),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+
                     // Attachments (Clickable Link with menu for multiple)
                     if (task.attachments.isNotEmpty) ...[
                       _AttachmentLinkButton(
@@ -332,11 +400,11 @@ class TodoTaskCard extends StatelessWidget {
       width: 28,
       height: 28,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         shape: BoxShape.circle,
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.2) : Colors.white, width: 2),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.white, width: 2),
         boxShadow: [
-           BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2)),
+           BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2)),
         ],
       ),
       alignment: Alignment.center,

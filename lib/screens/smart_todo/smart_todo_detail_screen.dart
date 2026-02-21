@@ -13,6 +13,7 @@ import '../../widgets/smart_todo/todo_kanban_view.dart';
 import '../../widgets/smart_todo/todo_task_dialog.dart';
 import '../../widgets/smart_todo/smart_todo_participants_dialog.dart';
 import '../../widgets/smart_todo/todo_resource_view.dart';
+import 'todo_calendar_screen.dart';
 import '../../widgets/smart_todo/smart_task_import_dialog.dart';
 import '../../widgets/smart_todo/export_to_estimation_dialog.dart';
 import '../../widgets/smart_todo/export_to_eisenhower_dialog.dart';
@@ -30,7 +31,12 @@ import '../agile_project_detail_screen.dart';
 import 'smart_todo_audit_log_screen.dart';
 import 'smart_todo_cfd_screen.dart';
 
-enum TodoViewMode { kanban, list, resource }
+import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
+import '../../core/config/feature_flags.dart';
+import '../../services/google_calendar_service.dart';
+
+enum TodoViewMode { kanban, list, resource, calendar }
 
 class SmartTodoDetailScreen extends StatefulWidget {
   final TodoListModel list;
@@ -175,6 +181,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     _buildViewIcon(TodoViewMode.kanban, Icons.view_kanban, AppLocalizations.of(context)?.smartTodoViewKanban ?? 'Kanban'),
                     _buildViewIcon(TodoViewMode.list, Icons.list, AppLocalizations.of(context)?.smartTodoViewList ?? 'Lista'),
                     _buildViewIcon(TodoViewMode.resource, Icons.people_outline, AppLocalizations.of(context)?.smartTodoViewResource ?? 'Per Risorsa'),
+                    _buildViewIcon(TodoViewMode.calendar, Icons.calendar_month, AppLocalizations.of(context)?.smartTodoViewCalendar ?? 'Calendario'),
                   ],
                 ),
                 if (currentList.isOwner(_currentUserEmail))
@@ -208,6 +215,22 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   color: Colors.grey,
                 ),
                 const SizedBox(width: 4),
+                // Bulk Sync Button (Feature Flagged)
+                if (FeatureFlags.enableCalendarSync)
+                  StreamBuilder<List<TodoTaskModel>>(
+                    stream: _todoService.streamTasks(currentList.id),
+                    builder: (context, taskSnapshot) {
+                      final tasks = taskSnapshot.data ?? [];
+                      final hasSyncableTasks = tasks.any((t) => t.calendarEventId == null && t.dueDate != null);
+                      return IconButton(
+                        icon: const Icon(Icons.sync_rounded),
+                        tooltip: 'Mass Sync to Calendar', // AppLocalizations.of(context)?.smartTodoSyncMultiple
+                        onPressed: hasSyncableTasks
+                            ? () => _showBulkSyncDialog(currentList, tasks)
+                            : null,
+                      );
+                    },
+                  ),
                 // Import button
                 IconButton(
                   icon: const Icon(Icons.upload_file),
@@ -323,6 +346,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       onTaskTap: (t) => _editTask(t, currentList),
                       onTaskMoved: (t, s, [pos]) => _handleTaskMoved(t, s, currentList, tasks, pos), // Supports reorder
                       onAssigneeChanged: (t, u) => _handleAssigneeChanged(t, u, currentList),
+                    );
+                    break;
+                  case TodoViewMode.calendar:
+                    content = TodoCalendarScreen(
+                      list: currentList,
+                      tasks: tasks,
                     );
                     break;
                   case TodoViewMode.kanban:
@@ -444,7 +473,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E2633) : Colors.grey[100], // Dark Surface or Light Grey
                 borderRadius: BorderRadius.circular(20),
-                border: isDark ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
+                border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
               ),
               child: TextField(
                 controller: _searchController,
@@ -469,10 +498,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                  padding: const EdgeInsets.symmetric(horizontal: 16),
                  height: 40,
                  decoration: BoxDecoration(
-                   color: safeAssigneeFilters.isEmpty ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.blue.withOpacity(0.1),
+                   color: safeAssigneeFilters.isEmpty ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.blue.withValues(alpha: 0.1),
                    borderRadius: BorderRadius.circular(20),
                    border: Border.all(
-                     color: safeAssigneeFilters.isEmpty ? (isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)) : Colors.blue.withOpacity(0.3)
+                     color: safeAssigneeFilters.isEmpty ? (isDark ? Colors.grey.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.3)) : Colors.blue.withValues(alpha: 0.3)
                    ),
                  ),
                  child: Row(
@@ -515,10 +544,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                    padding: const EdgeInsets.symmetric(horizontal: 16),
                    height: 40,
                    decoration: BoxDecoration(
-                     color: safeTagFilters.isEmpty ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.blue.withOpacity(0.1),
+                     color: safeTagFilters.isEmpty ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.blue.withValues(alpha: 0.1),
                      borderRadius: BorderRadius.circular(20),
                      border: Border.all(
-                       color: safeTagFilters.isEmpty ? (isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)) : Colors.blue.withOpacity(0.3)
+                       color: safeTagFilters.isEmpty ? (isDark ? Colors.grey.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.3)) : Colors.blue.withValues(alpha: 0.3)
                      ),
                    ),
                    child: Row(
@@ -550,20 +579,21 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                  ),
                ),
 
-             const SizedBox(width: 12),
+             if (_viewMode != TodoViewMode.calendar) ...[
+               const SizedBox(width: 12),
 
-              // Today Filter Toggle
-              InkWell(
+                // Today Filter Toggle
+                InkWell(
                 onTap: () => setState(() => _filterToday = !_filterToday),
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   height: 40,
                   decoration: BoxDecoration(
-                    color: !_filterToday ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.orange.withOpacity(0.1),
+                    color: !_filterToday ? (isDark ? const Color(0xFF1E2633) : Colors.white) : Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: !_filterToday ? (isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)) : Colors.orange.withOpacity(0.3)
+                      color: !_filterToday ? (isDark ? Colors.grey.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.3)) : Colors.orange.withValues(alpha: 0.3)
                     ),
                   ),
                   child: Row(
@@ -668,7 +698,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                  decoration: BoxDecoration(
                    color: isDark ? const Color(0xFF1E2633) : Colors.white,
                    borderRadius: BorderRadius.circular(20),
-                   border: Border.all(color: isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3)),
+                   border: Border.all(color: isDark ? Colors.grey.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.3)),
                  ),
                  child: Row(
                    children: [
@@ -693,6 +723,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                  ),
                ),
              ),
+             ],
           ],
         ),
       ),
@@ -1001,7 +1032,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: dialogIsDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!)),
+                      border: Border(bottom: BorderSide(color: dialogIsDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!)),
                     ),
                     child: Row(
                       children: [
@@ -1019,7 +1050,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                         IconButton(
                           icon: Icon(Icons.close_rounded, color: dialogIsDark ? Colors.grey[400] : null),
                           onPressed: () => Navigator.pop(context),
-                          style: IconButton.styleFrom(backgroundColor: dialogIsDark ? Colors.white.withOpacity(0.1) : Colors.grey[100]),
+                          style: IconButton.styleFrom(backgroundColor: dialogIsDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[100]),
                         ),
                       ],
                     ),
@@ -1062,7 +1093,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                    shape: BoxShape.circle,
                                    border: isSelected ? Border.all(color: Colors.black, width: 2) : Border.all(color: Colors.transparent, width: 2),
                                    boxShadow: [
-                                      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))
+                                      BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))
                                    ],
                                  ),
                                  child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 20) : null,
@@ -1079,7 +1110,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                            decoration: BoxDecoration(
                              color: dialogIsDark ? const Color(0xFF2D3748) : Colors.grey[50],
                              borderRadius: BorderRadius.circular(12),
-                             border: Border.all(color: dialogIsDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!),
+                             border: Border.all(color: dialogIsDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200]!),
                            ),
                            child: Row(
                              children: [
@@ -1327,7 +1358,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           final isDark = Theme.of(context).brightness == Brightness.dark;
           final bgColor = isDark ? const Color(0xFF1E2633) : Colors.white;
           final textColor = isDark ? Colors.white : Colors.black87;
-          final dividerColor = isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200];
+          final dividerColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200];
           
           return Dialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -1341,12 +1372,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.4 : 0.12), 
+                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12), 
                         blurRadius: 20, 
                         spreadRadius: 5
                      )
                   ],
-                  border: isDark ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
+                  border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
                ),
                child: Column(
                  mainAxisSize: MainAxisSize.min,
@@ -1362,7 +1393,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          Container(
                            padding: const EdgeInsets.all(8),
                            decoration: BoxDecoration(
-                              color: isDark ? Colors.blue.withOpacity(0.2) : Colors.blue[50], 
+                              color: isDark ? Colors.blue.withValues(alpha: 0.2) : Colors.blue[50], 
                               borderRadius: BorderRadius.circular(8)
                            ),
                            child: const Icon(Icons.filter_list_rounded, color: Colors.blue, size: 20),
@@ -1376,7 +1407,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          IconButton(
                            icon: Icon(Icons.close_rounded, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                            onPressed: () => Navigator.pop(context),
-                           style: IconButton.styleFrom(backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100]),
+                           style: IconButton.styleFrom(backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100]),
                          ),
                        ],
                      ),
@@ -1427,9 +1458,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                      Container(
                                        width: 24, height: 24,
                                        decoration: BoxDecoration(
-                                          color: avatarColor.withOpacity(0.2),
+                                          color: avatarColor.withValues(alpha: 0.2),
                                           shape: BoxShape.circle,
-                                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.2) : Colors.transparent),
+                                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.transparent),
                                        ),
                                        alignment: Alignment.center,
                                        child: Text(
@@ -1529,7 +1560,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           final isDark = Theme.of(context).brightness == Brightness.dark;
           final bgColor = isDark ? const Color(0xFF1E2633) : Colors.white;
           final textColor = isDark ? Colors.white : Colors.black87;
-          final dividerColor = isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200];
+          final dividerColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey[200];
 
           return Dialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -1543,12 +1574,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.4 : 0.12),
+                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
                         blurRadius: 20,
                         spreadRadius: 5
                      )
                   ],
-                  border: isDark ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
+                  border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
                ),
                child: Column(
                  mainAxisSize: MainAxisSize.min,
@@ -1561,7 +1592,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          Container(
                            padding: const EdgeInsets.all(8),
                            decoration: BoxDecoration(
-                             color: Colors.blue.withOpacity(isDark ? 0.2 : 0.1),
+                             color: Colors.blue.withValues(alpha: isDark ? 0.2 : 0.1),
                              borderRadius: BorderRadius.circular(8),
                            ),
                            child: const Icon(Icons.label, color: Colors.blue, size: 20),
@@ -1619,7 +1650,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                   width: 24,
                                   height: 24,
                                   decoration: BoxDecoration(
-                                    color: Color(tag.colorValue).withOpacity(0.2),
+                                    color: Color(tag.colorValue).withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Icon(Icons.label, color: Color(tag.colorValue), size: 14),
@@ -1731,7 +1762,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               Navigator.pop(context);
               _todoService.deleteTask(
                 currentList.id,
-                task.id,
+                task,
                 taskTitle: task.title,
                 performedBy: _currentUserEmail,
                 performedByName: null,
@@ -2136,6 +2167,121 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         );
       }
     }
+  }
+
+  void _showBulkSyncDialog(TodoListModel list, List<TodoTaskModel> tasks) {
+    if (!FeatureFlags.enableCalendarSync) return;
+    
+    final syncableTasks = tasks.where((t) => t.calendarEventId == null && t.dueDate != null).toList();
+    if (syncableTasks.isEmpty) return;
+    
+    Set<String> selectedTaskIds = syncableTasks.map((t) => t.id).toSet();
+    bool isSyncing = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return AlertDialog(
+              backgroundColor: isDark ? const Color(0xFF1E2633) : Colors.white,
+              title: const Text('Sincronizza Massivamente'),
+              content: SizedBox(
+                width: 400,
+                child: isSyncing
+                    ? const Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text('Sincronizzazione in corso...'),
+                        ],
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Seleziona i task da inviare a Google Calendar:'),
+                          const SizedBox(height: 12),
+                          Flexible(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: syncableTasks.length,
+                              itemBuilder: (context, index) {
+                                final t = syncableTasks[index];
+                                final isSelected = selectedTaskIds.contains(t.id);
+                                return CheckboxListTile(
+                                  value: isSelected,
+                                  title: Text(t.title),
+                                  subtitle: Text(DateFormat('dd MMM yyyy HH:mm').format(t.dueDate!)),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      if (val == true) {
+                                        selectedTaskIds.add(t.id);
+                                      } else {
+                                        selectedTaskIds.remove(t.id);
+                                      }
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+              actions: [
+                if (!isSyncing)
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Annulla'),
+                  ),
+                if (!isSyncing)
+                  ElevatedButton(
+                    onPressed: selectedTaskIds.isEmpty ? null : () async {
+                      setState(() => isSyncing = true);
+                      int successCount = 0;
+                      final svc = GoogleCalendarService();
+                      
+                      final tasksToSync = syncableTasks.where((t) => selectedTaskIds.contains(t.id)).toList();
+                      
+                      for (final task in tasksToSync) {
+                        try {
+                           final eventId = await svc.syncTaskToCalendar(task, list.title);
+                           if (eventId != null) {
+                             final updatedTask = task.copyWith(
+                               calendarEventId: eventId,
+                               syncedAt: DateTime.now(),
+                             );
+                             await _todoService.updateTask(list.id, updatedTask, performedBy: _currentUserEmail);
+                             successCount++;
+                           }
+                        } catch (e) {
+                          if (kDebugMode) print('Sync error per task ${task.id}: $e');
+                        }
+                      }
+                      
+                      if (context.mounted) {
+                         Navigator.pop(context);
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(
+                             content: Text('$successCount task sincronizzati con successo su Calendar.'),
+                             backgroundColor: successCount > 0 ? Colors.green : Colors.red,
+                           ),
+                         );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    child: Text('Sincronizza (${selectedTaskIds.length})', style: const TextStyle(color: Colors.white)),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   /// Show dialog to select tasks and export to User Stories

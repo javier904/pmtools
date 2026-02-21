@@ -177,52 +177,90 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
             ),
           ],
         ),
-        actions: [
-          // Pulsante guida metodologie - piu visibile
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            decoration: BoxDecoration(
-              color: Colors.teal.shade50,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.teal.shade200),
-            ),
-            child: TextButton.icon(
-              onPressed: () => MethodologyGuideDialog.show(context),
-              icon: Icon(Icons.menu_book_rounded, size: 18, color: Colors.teal.shade700),
-              label: Text(
-                AppLocalizations.of(context)!.agileMethodologyGuide,
-                style: TextStyle(color: Colors.teal.shade700, fontWeight: FontWeight.w500),
+        actions: MediaQuery.of(context).size.width < 600
+          ? [
+              // ═══ MOBILE: compact actions ═══
+              IconButton(
+                icon: Icon(Icons.menu_book_rounded, color: Colors.teal.shade700),
+                tooltip: AppLocalizations.of(context)!.agileMethodologyGuide,
+                onPressed: () => MethodologyGuideDialog.show(context),
               ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Archived toggle
-          FilterChip(
-            label: Text(
-              _showArchived
-                  ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
-                  : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
-              style: const TextStyle(fontSize: 12),
-            ),
-            selected: _showArchived,
-            onSelected: (value) => setState(() => _showArchived = value),
-            avatar: Icon(
-              _showArchived ? Icons.visibility_off : Icons.visibility,
-              size: 16,
-              color: const Color(0xFF8B5CF6),
-            ),
-            selectedColor: AppColors.warning.withOpacity(0.2),
-            showCheckmark: false,
-          ),
-          // Home button - sempre ultimo a destra
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.home_rounded),
-            tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
-            color: const Color(0xFF8B5CF6), // Viola come icona app
-            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-          ),
-        ],
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  if (value == 'toggle_archived') {
+                    setState(() => _showArchived = !_showArchived);
+                  } else if (value == 'home') {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'toggle_archived',
+                    child: Row(children: [
+                      Icon(_showArchived ? Icons.visibility_off : Icons.visibility, size: 18, color: const Color(0xFF8B5CF6)),
+                      const SizedBox(width: 8),
+                      Text(_showArchived
+                          ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                          : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived')),
+                    ]),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'home',
+                    child: Row(children: [
+                      const Icon(Icons.home_rounded, size: 18, color: Color(0xFF8B5CF6)),
+                      const SizedBox(width: 8),
+                      Text(AppLocalizations.of(context)?.navHome ?? 'Home'),
+                    ]),
+                  ),
+                ],
+              ),
+            ]
+          : [
+              // ═══ DESKTOP: full actions ═══
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.teal.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.teal.shade200),
+                ),
+                child: TextButton.icon(
+                  onPressed: () => MethodologyGuideDialog.show(context),
+                  icon: Icon(Icons.menu_book_rounded, size: 18, color: Colors.teal.shade700),
+                  label: Text(
+                    AppLocalizations.of(context)!.agileMethodologyGuide,
+                    style: TextStyle(color: Colors.teal.shade700, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
+                label: Text(
+                  _showArchived
+                      ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                      : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
+                  style: const TextStyle(fontSize: 12),
+                ),
+                selected: _showArchived,
+                onSelected: (value) => setState(() => _showArchived = value),
+                avatar: Icon(
+                  _showArchived ? Icons.visibility_off : Icons.visibility,
+                  size: 16,
+                  color: const Color(0xFF8B5CF6),
+                ),
+                selectedColor: AppColors.warning.withOpacity(0.2),
+                showCheckmark: false,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.home_rounded),
+                tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
+                color: const Color(0xFF8B5CF6),
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+              ),
+            ],
       ),
       body: _buildProjectList(),
       floatingActionButton: _buildFAB(),
@@ -394,26 +432,24 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   Widget _buildProjectGrid(List<AgileProjectModel> projects) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth > 1200
-            ? 4
-            : constraints.maxWidth > 800
-                ? 3
-                : constraints.maxWidth > 500
-                    ? 2
-                    : 1;
+        // ═══ MOBILE (<600px): ListView a tutta larghezza ═══
+        if (constraints.maxWidth < 600) {
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+            itemCount: projects.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, index) => _buildProjectCard(projects[index]),
+          );
+        }
 
-        // Card molto più compatte - circa 50% della dimensione originale
+        // ═══ DESKTOP (>=600px): GridView originale ═══
         final compactCrossAxisCount = constraints.maxWidth > 1400
             ? 6
             : constraints.maxWidth > 1100
                 ? 5
                 : constraints.maxWidth > 800
                     ? 4
-                    : constraints.maxWidth > 550
-                        ? 3
-                        : constraints.maxWidth > 350
-                            ? 2
-                            : 1;
+                    : 3;
 
         return GridView.builder(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

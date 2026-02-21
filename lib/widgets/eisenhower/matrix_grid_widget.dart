@@ -22,6 +22,7 @@ class MatrixGridWidget extends StatelessWidget {
   final Function(EisenhowerActivityModel)? onVoteTap;
   final Function(EisenhowerActivityModel)? onDeleteTap;
   final bool showActions;
+  final bool isMobile;
 
   const MatrixGridWidget({
     super.key,
@@ -30,6 +31,7 @@ class MatrixGridWidget extends StatelessWidget {
     this.onVoteTap,
     this.onDeleteTap,
     this.showActions = true,
+    this.isMobile = false,
   });
 
   @override
@@ -66,6 +68,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        isMobile: isMobile,
                         l10n: l10n,
                       ),
                     ),
@@ -79,6 +82,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        isMobile: isMobile,
                         l10n: l10n,
                       ),
                     ),
@@ -99,6 +103,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        isMobile: isMobile,
                         l10n: l10n,
                       ),
                     ),
@@ -112,6 +117,7 @@ class MatrixGridWidget extends StatelessWidget {
                         onVoteTap: onVoteTap,
                         onDeleteTap: onDeleteTap,
                         showActions: showActions,
+                        isMobile: isMobile,
                         l10n: l10n,
                       ),
                     ),
@@ -185,6 +191,7 @@ class _QuadrantCell extends StatelessWidget {
   final Function(EisenhowerActivityModel)? onVoteTap;
   final Function(EisenhowerActivityModel)? onDeleteTap;
   final bool showActions;
+  final bool isMobile;
   final AppLocalizations l10n;
 
   const _QuadrantCell({
@@ -195,6 +202,7 @@ class _QuadrantCell extends StatelessWidget {
     this.onVoteTap,
     this.onDeleteTap,
     this.showActions = true,
+    this.isMobile = false,
   });
 
   @override
@@ -293,6 +301,7 @@ class _QuadrantCell extends StatelessWidget {
                               : null,
                           showActions: showActions,
                           compact: true,
+                          isMobile: isMobile,
                         ),
                       );
                     },

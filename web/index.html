@@ -447,7 +447,8 @@
                 <strong>Kaizen philosophy of continuous improvement</strong>. It includes 5 integrated tools: Smart Todo
                 with Kanban board, Eisenhower Matrix for prioritization, Estimation Room with 7 estimation modes, Agile
                 Process Manager for Scrum/Kanban/Hybrid frameworks, and Retrospective Board with 6 templates. It works
-                entirely in the browser with no installation required.</div>
+                entirely in the browser with no installation required.
+              </div>
             </details>
             <details class="faq-item">
               <summary class="faq-question">What does Keisen mean? Is it related to Kaizen?</summary>
@@ -481,7 +482,8 @@
                 analytics), <strong>Todoist</strong> (5 projects, no customizable Kanban, no CFD), or
                 <strong>Asana</strong> (10 teammates, audit log Enterprise-only), Keisen offers <strong>WIP limits, CFD
                   analytics, audit trail, and 5 integrated tools</strong> on the free tier. No other free platform
-                combines Kanban, Eisenhower, Planning Poker, Sprint Management, and Retrospective boards.</div>
+                combines Kanban, Eisenhower, Planning Poker, Sprint Management, and Retrospective boards.
+              </div>
             </details>
             <details class="faq-item">
               <summary class="faq-question">Do I need to install anything?</summary>
@@ -608,19 +610,38 @@
   <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js">
   <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js">
 
-  <script src="flutter_bootstrap.js" async></script>
-
   <script>
-    // Hide loading screen when Flutter is ready
-    window.addEventListener('flutter-first-frame', function () {
-      var loadingScreen = document.getElementById('loading-screen');
-      if (loadingScreen) {
-        loadingScreen.classList.add('hidden');
-        setTimeout(function () {
-          loadingScreen.style.display = 'none';
-        }, 300);
-      }
-    });
+    // Marketing pages that should NEVER load the Flutter SPA.
+    // These are static HTML pages served by Firebase Hosting for SEO.
+    var MARKETING_SLUGS = [
+      'smart-todo', 'eisenhower', 'estimation-room',
+      'agile-process', 'retrospective-list',
+      'privacy', 'terms', 'changelog', '404'
+    ];
+    var pathParts = window.location.pathname.replace(/^\/|\/$/g, '').split('/');
+    // The slug is the last path segment (e.g., "/it/smart-todo" → "smart-todo")
+    var slug = pathParts[pathParts.length - 1] || '';
+    var isMarketingPage = MARKETING_SLUGS.indexOf(slug) !== -1;
+
+    if (!isMarketingPage) {
+      // Load Flutter SPA normally
+      var s = document.createElement('script');
+      s.src = 'flutter_bootstrap.js';
+      s.async = true;
+      document.head.appendChild(s);
+
+      // Hide loading screen when Flutter is ready
+      window.addEventListener('flutter-first-frame', function () {
+        var loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+          loadingScreen.classList.add('hidden');
+          setTimeout(function () {
+            loadingScreen.style.display = 'none';
+          }, 300);
+        }
+      });
+    }
+    // On marketing pages: Flutter is NOT loaded, the static HTML stays visible.
   </script>
 </body>
 

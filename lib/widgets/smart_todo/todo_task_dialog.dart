@@ -9,6 +9,7 @@ import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../themes/app_theme.dart';
 
 class TodoTaskDialog extends StatefulWidget {
   final String listId;
@@ -81,10 +82,10 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
   @override
   Widget build(BuildContext context) {
     final dialogIsDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = dialogIsDark ? const Color(0xFF1E2633) : Colors.white;
-    final dialogInputBg = dialogIsDark ? const Color(0xFF2D3748) : Colors.grey[50];
-    final dialogBorder = dialogIsDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!;
-    final dialogTextColor = dialogIsDark ? Colors.white : Colors.black87;
+    final dialogBg = context.surfaceColor;
+    final dialogInputBg = context.surfaceVariantColor;
+    final dialogBorder = context.borderColor;
+    final dialogTextColor = context.textPrimaryColor;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -477,12 +478,15 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                        children: [
                                          Icon(Icons.calendar_today_rounded, size: 16, color: _dueDate != null ? Colors.blue : Colors.grey),
                                          const SizedBox(width: 8),
-                                         Text(
-                                            _dueDate != null ? DateFormat('dd MMM yyyy').format(_dueDate!) : AppLocalizations.of(context)!.smartTodoSetDate,
-                                            style: TextStyle(
-                                              color: _dueDate != null ? (dialogIsDark ? Colors.white : Colors.black) : Colors.grey,
-                                              fontWeight: _dueDate != null ? FontWeight.w500 : FontWeight.normal
-                                            ),
+                                         Expanded(
+                                           child: Text(
+                                              _dueDate != null ? DateFormat('dd MMM yyyy HH:mm').format(_dueDate!) : AppLocalizations.of(context)!.smartTodoSetDate,
+                                              style: TextStyle(
+                                                color: _dueDate != null ? (dialogIsDark ? Colors.white : Colors.black) : Colors.grey,
+                                                fontWeight: _dueDate != null ? FontWeight.w500 : FontWeight.normal
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                           ),
                                          ),
                                        ],
                                      ),
@@ -552,22 +556,21 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
     return InputDecoration(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8), 
-        borderSide: BorderSide(color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[300]!)
+        borderSide: BorderSide(color: context.borderColor)
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8), 
-        borderSide: BorderSide(color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[300]!)
+        borderSide: BorderSide(color: context.borderColor)
       ),
       filled: true,
-      fillColor: isDark ? const Color(0xFF2D3748) : Colors.grey[50],
+      fillColor: context.surfaceVariantColor,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       isDense: true,
     );
   }
 
   Widget _buildSectionHeader(String title) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey));
+    return Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: context.textSecondaryColor));
   }
   
   Widget _buildSidebarGroup({required String title, required Widget child, bool isDark = false}) {
@@ -576,7 +579,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.grey[400] : Colors.grey)),
+        Text(title, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: context.textSecondaryColor)),
         const SizedBox(height: 8),
         child,
       ],
@@ -736,7 +739,39 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       },
     );
     if (date != null) {
-      setState(() => _dueDate = date);
+      if (!mounted) return;
+      final time = await showTimePicker(
+        context: context,
+        initialTime: _dueDate != null ? TimeOfDay.fromDateTime(_dueDate!) : const TimeOfDay(hour: 9, minute: 0),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: isDark 
+                  ? const ColorScheme.dark(
+                      primary: Color(0xFF1E2633),
+                      onPrimary: Colors.white,
+                      surface: Color(0xFF2D3748),
+                      onSurface: Colors.white,
+                    )
+                  : const ColorScheme.light(
+                      primary: Colors.blue,
+                      onPrimary: Colors.white,
+                      surface: Colors.white,
+                      onSurface: Colors.black,
+                    ),
+              dialogBackgroundColor: isDark ? const Color(0xFF1E2633) : Colors.white,
+            ),
+            child: child!,
+          );
+        },
+      );
+      
+      if (time != null) {
+        setState(() => _dueDate = DateTime(date.year, date.month, date.day, time.hour, time.minute));
+      } else {
+        // Fallback to midnight if time picker is cancelled
+        setState(() => _dueDate = DateTime(date.year, date.month, date.day));
+      }
     }
   }
 

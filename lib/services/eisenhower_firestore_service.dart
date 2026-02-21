@@ -1446,14 +1446,12 @@ class EisenhowerFirestoreService {
     bool includeArchived = false,
   }) {
     final normalizedEmail = userEmail.toLowerCase();
-    print('🔍 [EISENHOWER] streamMatricesFiltered for: $normalizedEmail');
 
     // Stream 1: Matrici create dall'utente
     final ownedStream = _matricesRef
         .where('createdBy', isEqualTo: normalizedEmail)
         .snapshots()
         .map((snapshot) {
-          print('🔍 [EISENHOWER] Owned matrices found: ${snapshot.docs.length}');
           return snapshot.docs
               .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
               .toList();
@@ -1464,7 +1462,6 @@ class EisenhowerFirestoreService {
         .where('participantEmails', arrayContains: normalizedEmail)
         .snapshots()
         .map((snapshot) {
-          print('🔍 [EISENHOWER] Participant matrices found: ${snapshot.docs.length}');
           return snapshot.docs
               .map((doc) => EisenhowerMatrixModel.fromFirestore(doc))
               .toList();
@@ -1483,7 +1480,6 @@ class EisenhowerFirestoreService {
       }
 
       var matrices = allMatrices.values.toList();
-      print('🔍 [EISENHOWER] Total unique matrices: ${matrices.length}');
 
       // Filtro client-side per isArchived
       if (!includeArchived) {

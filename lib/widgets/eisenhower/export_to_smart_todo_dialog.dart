@@ -79,8 +79,8 @@ class _ExportToSmartTodoFromEisenhowerDialogState extends State<ExportToSmartTod
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
-        width: 550,
-        constraints: const BoxConstraints(maxHeight: 650),
+        width: MediaQuery.of(context).size.width > 600 ? 550 : MediaQuery.of(context).size.width * 0.9,
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height > 700 ? 650 : MediaQuery.of(context).size.height * 0.85),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -257,38 +257,39 @@ class _ExportToSmartTodoFromEisenhowerDialogState extends State<ExportToSmartTod
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.activitiesSelectedCount(_selectedActivityIds.length),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: _selectedActivityIds.isEmpty ? Colors.red : Colors.green,
+                  Flexible(
+                    child: Text(
+                      l10n.activitiesSelectedCount(_selectedActivityIds.length),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
+                        color: _selectedActivityIds.isEmpty ? Colors.red : Colors.green,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Row(
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            for (final activity in filteredActivities) {
-                              _selectedActivityIds.add(activity.id);
-                            }
-                          });
-                        },
-                        child: Text(l10n.selectAll),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            for (final activity in filteredActivities) {
-                              _selectedActivityIds.remove(activity.id);
-                            }
-                          });
-                        },
-                        child: Text(l10n.deselectAll),
-                      ),
-                    ],
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        for (final activity in filteredActivities) {
+                          _selectedActivityIds.add(activity.id);
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8)),
+                    child: Text(l10n.selectAll, style: const TextStyle(fontSize: 12)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        for (final activity in filteredActivities) {
+                          _selectedActivityIds.remove(activity.id);
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8)),
+                    child: Text(l10n.deselectAll, style: const TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
@@ -446,11 +447,14 @@ class _ExportToSmartTodoFromEisenhowerDialogState extends State<ExportToSmartTod
               color: isSelected ? Colors.green : Colors.grey,
             ),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.green : (isDark ? Colors.white70 : Colors.black87),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.green : (isDark ? Colors.white70 : Colors.black87),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

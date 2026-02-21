@@ -13248,6 +13248,12 @@ abstract class AppLocalizations {
   /// **'Per Risorsa'**
   String get smartTodoViewResource;
 
+  /// No description provided for @smartTodoViewCalendar.
+  ///
+  /// In it, this message translates to:
+  /// **'Calendario'**
+  String get smartTodoViewCalendar;
+
   /// No description provided for @smartTodoInviteTooltip.
   ///
   /// In it, this message translates to:

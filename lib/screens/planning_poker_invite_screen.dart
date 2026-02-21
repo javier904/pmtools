@@ -6,6 +6,7 @@ import '../models/planning_poker_participant_model.dart';
 import '../services/invite_service.dart';
 import '../services/planning_poker_firestore_service.dart';
 import '../services/auth_service.dart';
+import '../services/user_profile_service.dart';
 
 /// Screen per accettare o rifiutare un invito a una sessione Planning Poker
 ///

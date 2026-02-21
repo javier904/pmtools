@@ -115,57 +115,112 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
             Text(AppLocalizations.of(context)!.retroBoardTitle),
           ],
         ),
-        actions: [
-          // Toggle archivio
-          FilterChip(
-            label: Text(
-              _showArchived
-                  ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
-                  : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
-              style: const TextStyle(fontSize: 12),
-            ),
-            selected: _showArchived,
-            onSelected: (value) {
-              _showArchived = value;
-              _updateRetrosStream();
-            },
-            avatar: Icon(
-              _showArchived ? Icons.visibility_off : Icons.visibility,
-              size: 16,
-            ),
-            selectedColor: AppColors.warning.withValues(alpha: 0.2),
-            showCheckmark: false,
-          ),
-          const SizedBox(width: 16),
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            tooltip: AppLocalizations.of(context)!.retroGuidance,
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => Theme(
-                data: Theme.of(context).copyWith(
-                  primaryColor: AppColors.retroPrimary,
-                  colorScheme: Theme.of(context).colorScheme.copyWith(
-                    primary: AppColors.retroPrimary,
+        actions: MediaQuery.of(context).size.width < 600
+          ? [
+              // ═══ MOBILE: compact actions ═══
+              IconButton(
+                icon: const Icon(Icons.help_outline),
+                tooltip: AppLocalizations.of(context)!.retroGuidance,
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => Theme(
+                    data: Theme.of(context).copyWith(
+                      primaryColor: AppColors.retroPrimary,
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: AppColors.retroPrimary,
+                      ),
+                    ),
+                    child: RetroMethodologyDialog(
+                      onSelect: (template) {
+                        setState(() => selectedTemplate = template);
+                      },
+                    ),
                   ),
                 ),
-                child: RetroMethodologyDialog(
-                  onSelect: (template) {
-                    setState(() => selectedTemplate = template);
-                  },
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  if (value == 'toggle_archived') {
+                    _showArchived = !_showArchived;
+                    _updateRetrosStream();
+                  } else if (value == 'home') {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'toggle_archived',
+                    child: Row(children: [
+                      Icon(_showArchived ? Icons.visibility_off : Icons.visibility, size: 18),
+                      const SizedBox(width: 8),
+                      Text(_showArchived
+                          ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                          : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived')),
+                    ]),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'home',
+                    child: Row(children: [
+                      const Icon(Icons.home_rounded, size: 18, color: Color(0xFF8B5CF6)),
+                      const SizedBox(width: 8),
+                      Text(AppLocalizations.of(context)?.navHome ?? 'Home'),
+                    ]),
+                  ),
+                ],
+              ),
+            ]
+          : [
+              // ═══ DESKTOP: full actions ═══
+              FilterChip(
+                label: Text(
+                  _showArchived
+                      ? (AppLocalizations.of(context)?.archiveHideArchived ?? 'Hide archived')
+                      : (AppLocalizations.of(context)?.archiveShowArchived ?? 'Show archived'),
+                  style: const TextStyle(fontSize: 12),
+                ),
+                selected: _showArchived,
+                onSelected: (value) {
+                  _showArchived = value;
+                  _updateRetrosStream();
+                },
+                avatar: Icon(
+                  _showArchived ? Icons.visibility_off : Icons.visibility,
+                  size: 16,
+                ),
+                selectedColor: AppColors.warning.withValues(alpha: 0.2),
+                showCheckmark: false,
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                icon: const Icon(Icons.help_outline),
+                tooltip: AppLocalizations.of(context)!.retroGuidance,
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => Theme(
+                    data: Theme.of(context).copyWith(
+                      primaryColor: AppColors.retroPrimary,
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: AppColors.retroPrimary,
+                      ),
+                    ),
+                    child: RetroMethodologyDialog(
+                      onSelect: (template) {
+                        setState(() => selectedTemplate = template);
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Home button - sempre ultimo a destra
-          IconButton(
-            icon: const Icon(Icons.home_rounded),
-            tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
-            color: const Color(0xFF8B5CF6), // Viola come icona app
-            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-          ),
-        ],
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.home_rounded),
+                tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
+                color: const Color(0xFF8B5CF6),
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+              ),
+            ],
       ),
       body: Column(
         children: [

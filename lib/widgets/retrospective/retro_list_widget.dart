@@ -59,18 +59,26 @@ class RetroListWidget extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Card compatte - stesso layout di Agile Process Manager
+        // ═══ MOBILE (<600px): ListView a tutta larghezza ═══
+        if (constraints.maxWidth < 600) {
+          return ListView.separated(
+            shrinkWrap: shrinkWrap,
+            physics: physics,
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+            itemCount: retrospectives.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, index) => _buildRetroCard(context, retrospectives[index]),
+          );
+        }
+
+        // ═══ DESKTOP (>=600px): GridView originale ═══
         final compactCrossAxisCount = constraints.maxWidth > 1400
             ? 6
             : constraints.maxWidth > 1100
                 ? 5
                 : constraints.maxWidth > 800
                     ? 4
-                    : constraints.maxWidth > 550
-                        ? 3
-                        : constraints.maxWidth > 350
-                            ? 2
-                            : 1;
+                    : 3;
 
         return GridView.builder(
           shrinkWrap: shrinkWrap,

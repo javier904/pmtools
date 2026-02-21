@@ -110,60 +110,140 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             Text('To-Do'),
           ],
         ),
-        actions: [
-          // Filter chips
-          _buildFilterChip(l10n?.smartTodoFilterToday ?? 'Today', Icons.today, 'today', currentFilter),
-          const SizedBox(width: 8),
-          _buildFilterChip(l10n?.smartTodoFilterMyTasks ?? 'My Tasks', Icons.person_outline, 'all_my', currentFilter),
-          const SizedBox(width: 8),
-          _buildFilterChip(l10n?.smartTodoFilterOwner ?? 'Owner', Icons.folder_shared_outlined, 'owner', currentFilter),
-          const SizedBox(width: 16),
-          Container(width: 1, height: 24, color: Colors.grey[600]), // Divider
-          const SizedBox(width: 16),
-          // Archived toggle
-          FilterChip(
-            label: Text(
-              _showArchived
-                  ? (l10n?.archiveHideArchived ?? 'Hide archived')
-                  : (l10n?.archiveShowArchived ?? 'Show archived'),
-              style: const TextStyle(fontSize: 12),
-            ),
-            selected: _showArchived,
-            onSelected: (value) => setState(() => _showArchived = value),
-            avatar: Icon(
-              _showArchived ? Icons.visibility_off : Icons.visibility,
-              size: 16,
-              color: const Color(0xFF00B0FF), // Celeste
-            ),
-            selectedColor: const Color(0xFF00B0FF).withOpacity(0.2),
-            showCheckmark: false,
-          ),
-          const SizedBox(width: 16),
-          // View toggle (lists/global)
-          IconButton(
-            icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
-            tooltip: _viewMode == 'lists'
-                ? (l10n?.smartTodoViewGlobalTasks ?? 'View Global Tasks')
-                : (l10n?.smartTodoViewLists ?? 'View Lists'),
-            onPressed: () => setState(() {
-              if (_viewMode == 'lists') {
-                _viewMode = 'global';
-                _filterMode = 'all_my'; // Default to "My Tasks" when entering global view
-              } else {
-                _viewMode = 'lists';
-                _filterMode = null; // Clear filter when going back to lists
-              }
-            }),
-          ),
-          // Home button
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.home_rounded),
-            tooltip: l10n?.navHome ?? 'Home',
-            color: const Color(0xFF8B5CF6), // Viola come icona app
-            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-          ),
-        ],
+        actions: MediaQuery.of(context).size.width < 600
+          ? [
+              // ═══ MOBILE: compact actions ═══
+              // View toggle
+              IconButton(
+                icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
+                tooltip: _viewMode == 'lists'
+                    ? (l10n?.smartTodoViewGlobalTasks ?? 'View Global Tasks')
+                    : (l10n?.smartTodoViewLists ?? 'View Lists'),
+                onPressed: () => setState(() {
+                  if (_viewMode == 'lists') {
+                    _viewMode = 'global';
+                    _filterMode = 'all_my';
+                  } else {
+                    _viewMode = 'lists';
+                    _filterMode = null;
+                  }
+                }),
+              ),
+              // Overflow menu with filters
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  if (value == 'toggle_archived') {
+                    setState(() => _showArchived = !_showArchived);
+                  } else if (value == 'home') {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                  } else {
+                    // Filter modes
+                    setState(() => _filterMode = value);
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'today',
+                    child: Row(children: [
+                      Icon(Icons.today, size: 18, color: currentFilter == 'today' ? Colors.blue : Colors.grey),
+                      const SizedBox(width: 8),
+                      Text(l10n?.smartTodoFilterToday ?? 'Today',
+                        style: TextStyle(fontWeight: currentFilter == 'today' ? FontWeight.bold : FontWeight.normal)),
+                    ]),
+                  ),
+                  PopupMenuItem(
+                    value: 'all_my',
+                    child: Row(children: [
+                      Icon(Icons.person_outline, size: 18, color: currentFilter == 'all_my' ? Colors.blue : Colors.grey),
+                      const SizedBox(width: 8),
+                      Text(l10n?.smartTodoFilterMyTasks ?? 'My Tasks',
+                        style: TextStyle(fontWeight: currentFilter == 'all_my' ? FontWeight.bold : FontWeight.normal)),
+                    ]),
+                  ),
+                  PopupMenuItem(
+                    value: 'owner',
+                    child: Row(children: [
+                      Icon(Icons.folder_shared_outlined, size: 18, color: currentFilter == 'owner' ? Colors.blue : Colors.grey),
+                      const SizedBox(width: 8),
+                      Text(l10n?.smartTodoFilterOwner ?? 'Owner',
+                        style: TextStyle(fontWeight: currentFilter == 'owner' ? FontWeight.bold : FontWeight.normal)),
+                    ]),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'toggle_archived',
+                    child: Row(children: [
+                      Icon(_showArchived ? Icons.visibility_off : Icons.visibility, size: 18, color: const Color(0xFF00B0FF)),
+                      const SizedBox(width: 8),
+                      Text(_showArchived
+                          ? (l10n?.archiveHideArchived ?? 'Hide archived')
+                          : (l10n?.archiveShowArchived ?? 'Show archived')),
+                    ]),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'home',
+                    child: Row(children: [
+                      const Icon(Icons.home_rounded, size: 18, color: Color(0xFF8B5CF6)),
+                      const SizedBox(width: 8),
+                      Text(l10n?.navHome ?? 'Home'),
+                    ]),
+                  ),
+                ],
+              ),
+            ]
+          : [
+              // ═══ DESKTOP: full actions ═══
+              _buildFilterChip(l10n?.smartTodoFilterToday ?? 'Today', Icons.today, 'today', currentFilter),
+              const SizedBox(width: 8),
+              _buildFilterChip(l10n?.smartTodoFilterMyTasks ?? 'My Tasks', Icons.person_outline, 'all_my', currentFilter),
+              const SizedBox(width: 8),
+              _buildFilterChip(l10n?.smartTodoFilterOwner ?? 'Owner', Icons.folder_shared_outlined, 'owner', currentFilter),
+              const SizedBox(width: 16),
+              Container(width: 1, height: 24, color: Colors.grey[600]),
+              const SizedBox(width: 16),
+              FilterChip(
+                label: Text(
+                  _showArchived
+                      ? (l10n?.archiveHideArchived ?? 'Hide archived')
+                      : (l10n?.archiveShowArchived ?? 'Show archived'),
+                  style: const TextStyle(fontSize: 12),
+                ),
+                selected: _showArchived,
+                onSelected: (value) => setState(() => _showArchived = value),
+                avatar: Icon(
+                  _showArchived ? Icons.visibility_off : Icons.visibility,
+                  size: 16,
+                  color: const Color(0xFF00B0FF),
+                ),
+                selectedColor: const Color(0xFF00B0FF).withOpacity(0.2),
+                showCheckmark: false,
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                icon: Icon(_viewMode == 'lists' ? Icons.view_module : Icons.list_alt),
+                tooltip: _viewMode == 'lists'
+                    ? (l10n?.smartTodoViewGlobalTasks ?? 'View Global Tasks')
+                    : (l10n?.smartTodoViewLists ?? 'View Lists'),
+                onPressed: () => setState(() {
+                  if (_viewMode == 'lists') {
+                    _viewMode = 'global';
+                    _filterMode = 'all_my';
+                  } else {
+                    _viewMode = 'lists';
+                    _filterMode = null;
+                  }
+                }),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.home_rounded),
+                tooltip: l10n?.navHome ?? 'Home',
+                color: const Color(0xFF8B5CF6),
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+              ),
+            ],
       ),
       body: StreamBuilder<List<TodoListModel>>(
         stream: _todoService.streamListsFiltered(
@@ -224,34 +304,37 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         : _buildNoResultsState()) // Data exists but filtered out -> No Results
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          // Card compatte - stesso layout di Agile Process Manager
-                          final compactCrossAxisCount = constraints.maxWidth > 1400
-                  
-                        ? 6
-                        : constraints.maxWidth > 1100
-                            ? 5
-                            : constraints.maxWidth > 800
-                                ? 4
-                                : constraints.maxWidth > 550
-                                    ? 3
-                                    : constraints.maxWidth > 350
-                                        ? 2
-                                        : 1;
+                          // ═══ MOBILE (<600px): ListView a tutta larghezza ═══
+                          if (constraints.maxWidth < 600) {
+                            return ListView.separated(
+                              padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+                              itemCount: lists.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 8),
+                              itemBuilder: (context, index) => _buildListCard(lists[index]),
+                            );
+                          }
 
-                    return GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), // Reverted to 16
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: compactCrossAxisCount,
-                        childAspectRatio: 2.5, // Reverted to original compact ratio
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
-                      itemCount: lists.length,
-                      itemBuilder: (context, index) {
-                        return _buildListCard(lists[index]);
-                      },
-                    );
-                  },
+                          // ═══ DESKTOP (>=600px): GridView originale ═══
+                          final compactCrossAxisCount = constraints.maxWidth > 1400
+                              ? 6
+                              : constraints.maxWidth > 1100
+                                  ? 5
+                                  : constraints.maxWidth > 800
+                                      ? 4
+                                      : 3;
+
+                          return GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: compactCrossAxisCount,
+                              childAspectRatio: 2.5,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                            itemCount: lists.length,
+                            itemBuilder: (context, index) => _buildListCard(lists[index]),
+                          );
+                        },
                 ),
               ),
             ],

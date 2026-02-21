@@ -29,7 +29,11 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   /// Stream dello stato di autenticazione
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  late final Stream<User?> _authStateChanges = _auth.authStateChanges();
+  late final Stream<User?> _userChanges = _auth.userChanges();
+
+  Stream<User?> get authStateChanges => _authStateChanges;
+  Stream<User?> get userChanges => _userChanges;
 
   /// Email utente corrente
   String? get currentUserEmail => currentUser?.email;

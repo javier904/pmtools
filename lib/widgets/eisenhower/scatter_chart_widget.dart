@@ -32,8 +32,9 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isMobile ? 8 : 16),
       decoration: BoxDecoration(
         color: context.surfaceColor,
         borderRadius: BorderRadius.circular(12),
@@ -51,21 +52,24 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
           // Header
           Row(
             children: [
-              Icon(Icons.scatter_plot, color: AppColors.secondary),
+              Icon(Icons.scatter_plot, color: AppColors.secondary, size: isMobile ? 18 : 24),
               const SizedBox(width: 8),
-              Text(
-                l10n.eisenhowerChartTitle,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  l10n.eisenhowerChartTitle,
+                  style: TextStyle(
+                    fontSize: isMobile ? 14 : 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               // Legenda
               _buildLegend(),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           // Grafico
           Expanded(
             child: _buildChart(),

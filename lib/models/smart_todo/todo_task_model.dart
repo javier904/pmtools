@@ -166,6 +166,10 @@ class TodoTaskModel {
   final bool isArchived;
   final DateTime? archivedAt;
 
+  // 📅 Sincronizzazione Esterna
+  final String? calendarEventId;
+  final DateTime? syncedAt;
+
   // 📊 Ordinamento
   final double position;
 
@@ -188,6 +192,8 @@ class TodoTaskModel {
     required this.updatedAt,
     this.isArchived = false,
     this.archivedAt,
+    this.calendarEventId,
+    this.syncedAt,
     this.position = 0.0, // Default 0.0 (will be set on creation)
   });
 
@@ -216,6 +222,8 @@ class TodoTaskModel {
       'updatedAt': updatedAt.toIso8601String(),
       'isArchived': isArchived,
       if (archivedAt != null) 'archivedAt': archivedAt!.toIso8601String(),
+      if (calendarEventId != null) 'calendarEventId': calendarEventId,
+      if (syncedAt != null) 'syncedAt': syncedAt!.toIso8601String(),
       'position': position,
     };
   }
@@ -251,6 +259,8 @@ class TodoTaskModel {
       updatedAt: _parseDate(map['updatedAt']),
       isArchived: map['isArchived'] ?? false,
       archivedAt: map['archivedAt'] != null ? _parseDate(map['archivedAt']) : null,
+      calendarEventId: map['calendarEventId'],
+      syncedAt: map['syncedAt'] != null ? _parseDate(map['syncedAt']) : null,
       // Default to timestamp if missing to ensure stable order for legacy tasks
       position: (map['position'] as num?)?.toDouble() ?? DateTime.now().millisecondsSinceEpoch.toDouble(),
     );
@@ -284,7 +294,10 @@ class TodoTaskModel {
     DateTime? updatedAt,
     bool? isArchived,
     DateTime? archivedAt,
+    String? calendarEventId,
+    DateTime? syncedAt,
     double? position,
+    bool clearCalendarData = false,
   }) {
     return TodoTaskModel(
       id: id ?? this.id,
@@ -305,6 +318,8 @@ class TodoTaskModel {
       updatedAt: updatedAt ?? DateTime.now(),
       isArchived: isArchived ?? this.isArchived,
       archivedAt: archivedAt ?? this.archivedAt,
+      calendarEventId: clearCalendarData ? null : (calendarEventId ?? this.calendarEventId),
+      syncedAt: clearCalendarData ? null : (syncedAt ?? this.syncedAt),
       position: position ?? this.position,
     );
   }

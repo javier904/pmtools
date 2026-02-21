@@ -16,7 +16,8 @@ import '../widgets/language_selector_widget.dart';
 /// Landing Page moderna stile Appwrite - Supporta Dark/Light Theme
 /// SEO-optimized con sezioni dettagliate per metodologie Agile
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({super.key});
+  final String? initialSection;
+  const LandingScreen({super.key, this.initialSection});
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -24,7 +25,44 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   final _authService = AuthService();
+  final _scrollController = ScrollController();
   bool _isLoading = false;
+
+  // Keys for sectional navigation
+  final Map<String, GlobalKey> _sectionKeys = {
+    'smart-todo': GlobalKey(),
+    'eisenhower': GlobalKey(),
+    'estimation-room': GlobalKey(),
+    'agile-process': GlobalKey(),
+    'retrospective-list': GlobalKey(),
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSection != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSection(widget.initialSection!);
+      });
+    }
+  }
+
+  void _scrollToSection(String slug) {
+    final key = _sectionKeys[slug];
+    if (key != null && key.currentContext != null) {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
@@ -62,20 +100,12 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Future<void> _launchFeaturePage(String slug) async {
-    final l10n = AppLocalizations.of(context);
-    final locale = l10n?.localeName ?? 'en';
-    final path = locale == 'en' ? '$slug' : '$locale/$slug';
-    
-    // Construct full URL using current base
-    // Use Uri.base.resolve for reliable absolute URL construction
-    final uri = Uri.base.resolve(path);
-    
-    try {
-      // Direct launch is more reliable on web for same-origin links
-      // canLaunchUrl sometimes returns false for valid same-origin URLs
-      await launchUrl(uri, webOnlyWindowName: '_self');
-    } catch (e) {
-      debugPrint('Error launching feature page: $e');
+    if (_authService.isAuthenticated) {
+      // Authenticated: navigate to the actual tool screen inside the SPA.
+      Navigator.pushNamed(context, '/$slug');
+    } else {
+      // Guest: scroll to the marketing section on this same page.
+      _scrollToSection(slug);
     }
   }
 
@@ -88,6 +118,7 @@ class _LandingScreenState extends State<LandingScreen> {
     return Scaffold(
       backgroundColor: context.backgroundColor,
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             _buildHeader(isMobile, isDark),
@@ -95,20 +126,20 @@ class _LandingScreenState extends State<LandingScreen> {
               _buildHeroSection(isMobile, isDark),
               _buildFeaturesSection(isMobile, isDark),
               _buildIntegrationSection(isMobile, isDark),
-              _buildSmartTodoSection(isMobile, isDark),
-              _buildEisenhowerSection(isMobile, isDark),
-              _buildEstimationMethodsSection(isMobile, isDark),
-              _buildAgileMethodologySection(isMobile, isDark),
-              _buildRetrospectiveTypesSection(isMobile, isDark),
+              _buildSmartTodoSection(isMobile, isDark, key: _sectionKeys['smart-todo']),
+              _buildEisenhowerSection(isMobile, isDark, key: _sectionKeys['eisenhower']),
+              _buildEstimationMethodsSection(isMobile, isDark, key: _sectionKeys['estimation-room']),
+              _buildAgileMethodologySection(isMobile, isDark, key: _sectionKeys['agile-process']),
+              _buildRetrospectiveTypesSection(isMobile, isDark, key: _sectionKeys['retrospective-list']),
             ] else ...[
               _buildIntegratedDesktopLayout(context, isDark),
               _buildIntegrationSection(isMobile, isDark),
 
-              _buildSmartTodoSection(isMobile, isDark),
-              _buildEisenhowerSection(isMobile, isDark),
-              _buildEstimationMethodsSection(isMobile, isDark),
-              _buildAgileMethodologySection(isMobile, isDark),
-              _buildRetrospectiveTypesSection(isMobile, isDark),
+              _buildSmartTodoSection(isMobile, isDark, key: _sectionKeys['smart-todo']),
+              _buildEisenhowerSection(isMobile, isDark, key: _sectionKeys['eisenhower']),
+              _buildEstimationMethodsSection(isMobile, isDark, key: _sectionKeys['estimation-room']),
+              _buildAgileMethodologySection(isMobile, isDark, key: _sectionKeys['agile-process']),
+              _buildRetrospectiveTypesSection(isMobile, isDark, key: _sectionKeys['retrospective-list']),
             ],
             _buildWorkflowSection(isMobile, isDark),
             _buildCTASection(isMobile, isDark),
@@ -957,9 +988,10 @@ class _LandingScreenState extends State<LandingScreen> {
   // SEZIONE: SMART TODO
   // ═══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildSmartTodoSection(bool isMobile, bool isDark) {
+  Widget _buildSmartTodoSection(bool isMobile, bool isDark, {Key? key}) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
+      key: key,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
         vertical: 80,
@@ -1070,9 +1102,10 @@ class _LandingScreenState extends State<LandingScreen> {
   // SEZIONE: MATRICE EISENHOWER
   // ═══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildEisenhowerSection(bool isMobile, bool isDark) {
+  Widget _buildEisenhowerSection(bool isMobile, bool isDark, {Key? key}) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
+      key: key,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
         vertical: 80,
@@ -1364,9 +1397,10 @@ class _LandingScreenState extends State<LandingScreen> {
   // SEZIONE: METODOLOGIE AGILE
   // ═══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildAgileMethodologySection(bool isMobile, bool isDark) {
+  Widget _buildAgileMethodologySection(bool isMobile, bool isDark, {Key? key}) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
+      key: key,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
         vertical: 80,
@@ -1439,9 +1473,10 @@ class _LandingScreenState extends State<LandingScreen> {
   // SEZIONE: METODI DI STIMA
   // ═══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildEstimationMethodsSection(bool isMobile, bool isDark) {
+  Widget _buildEstimationMethodsSection(bool isMobile, bool isDark, {Key? key}) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
+      key: key,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
         vertical: 80,
@@ -1666,9 +1701,10 @@ class _LandingScreenState extends State<LandingScreen> {
   // SEZIONE: TIPI DI RETROSPETTIVA
   // ═══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildRetrospectiveTypesSection(bool isMobile, bool isDark) {
+  Widget _buildRetrospectiveTypesSection(bool isMobile, bool isDark, {Key? key}) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
+      key: key,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 80,
         vertical: 80,

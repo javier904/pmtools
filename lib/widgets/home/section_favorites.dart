@@ -101,32 +101,37 @@ class _SectionFavoritesState extends State<SectionFavorites> {
       {'value': 'retro', 'icon': Icons.psychology_rounded, 'tooltip': l10n.favFilterRetro},
     ];
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: filters.map((f) {
-        final isSelected = _selectedFilter == f['value'];
-        return Tooltip(
-          message: f['tooltip'] as String,
-          child: InkWell(
-            onTap: () => setState(() => _selectedFilter = f['value'] as String),
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.only(left: 4),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.amber.withValues(alpha: 0.2) : Colors.transparent,
+    return Flexible(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: filters.map((f) {
+            final isSelected = _selectedFilter == f['value'];
+            return Tooltip(
+              message: f['tooltip'] as String,
+              child: InkWell(
+                onTap: () => setState(() => _selectedFilter = f['value'] as String),
                 borderRadius: BorderRadius.circular(8),
-                border: isSelected ? Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 1) : null,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  margin: const EdgeInsets.only(left: 2),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.amber.withValues(alpha: 0.2) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    border: isSelected ? Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 1) : null,
+                  ),
+                  child: Icon(
+                    f['icon'] as IconData,
+                    size: 18,
+                    color: isSelected ? Colors.amber[700] : context.textTertiaryColor,
+                  ),
+                ),
               ),
-              child: Icon(
-                f['icon'] as IconData,
-                size: 20,
-                color: isSelected ? Colors.amber[700] : context.textTertiaryColor,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

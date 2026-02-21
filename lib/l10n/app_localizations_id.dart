@@ -7323,6 +7323,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get smartTodoViewResource => 'Per Sumber Daya';
 
   @override
+  String get smartTodoViewCalendar => 'Calendario';
+
+  @override
   String get smartTodoInviteTooltip => 'Undang';
 
   @override

@@ -226,6 +226,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   final matrixId = args?['matrixId'] as String?;
                   return MaterialPageRoute(
                     builder: (context) => _AuthGuard(
+                      redirectSection: 'eisenhower',
                       child: EisenhowerScreen(initialMatrixId: matrixId),
                     ),
                     settings: settings,
@@ -237,6 +238,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   if (matrixId != null && matrixId.isNotEmpty) {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
+                        redirectSection: 'eisenhower',
                         child: EisenhowerScreen(initialMatrixId: matrixId),
                       ),
                       settings: settings,
@@ -249,6 +251,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   final sessionId = args?['sessionId'] as String?;
                   return MaterialPageRoute(
                     builder: (context) => _AuthGuard(
+                      redirectSection: 'estimation-room',
                       child: EstimationRoomScreen(initialSessionId: sessionId),
                     ),
                     settings: settings,
@@ -260,6 +263,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   if (sessionId != null && sessionId.isNotEmpty) {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
+                        redirectSection: 'estimation-room',
                         child: EstimationRoomScreen(initialSessionId: sessionId),
                       ),
                       settings: settings,
@@ -271,6 +275,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 if (settings.name == '/agile-project') {
                   return MaterialPageRoute(
                     builder: (context) => const _AuthGuard(
+                      redirectSection: 'agile-process',
                       child: AgileProjectLoaderScreen(),
                     ),
                     settings: settings,
@@ -282,6 +287,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   if (projectId != null && projectId.isNotEmpty) {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
+                        redirectSection: 'agile-process',
                         child: AgileProjectLoaderScreen(),
                       ),
                       settings: RouteSettings(
@@ -296,6 +302,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 if (settings.name == '/agile-process') {
                   return MaterialPageRoute(
                     builder: (context) => const _AuthGuard(
+                      redirectSection: 'agile-process',
                       child: AgileProcessScreen(),
                     ),
                     settings: settings,
@@ -307,6 +314,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   if (projectId != null && projectId.isNotEmpty) {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
+                        redirectSection: 'agile-process',
                         child: AgileProcessScreen(initialProjectId: projectId),
                       ),
                       settings: settings,
@@ -318,6 +326,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 if (settings.name == '/retrospective-board') {
                   return MaterialPageRoute(
                     builder: (context) => const _AuthGuard(
+                      redirectSection: 'retrospective-list',
                       child: RetroBoardLoaderScreen(),
                     ),
                     settings: settings,
@@ -329,6 +338,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   if (retroId != null && retroId.isNotEmpty) {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
+                        redirectSection: 'retrospective-list',
                         child: RetroBoardLoaderScreen(),
                       ),
                       settings: RouteSettings(
@@ -343,6 +353,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 if (settings.name == '/smart-todo') {
                   return MaterialPageRoute(
                     builder: (context) => const _AuthGuard(
+                      redirectSection: 'smart-todo',
                       child: SmartTodoDashboard(),
                     ),
                     settings: settings,
@@ -355,6 +366,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                   if (listId != null && listId.isNotEmpty) {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
+                        redirectSection: 'smart-todo',
                         child: SmartTodoDetailLoader(listId: listId),
                       ),
                       settings: settings,
@@ -427,31 +439,39 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
 /// Guard che reindirizza alla LandingScreen se non autenticato
 class _AuthGuard extends StatelessWidget {
   final Widget child;
+  final String? redirectSection;
 
-  const _AuthGuard({required this.child});
+  const _AuthGuard({required this.child, this.redirectSection});
 
   @override
   Widget build(BuildContext context) {
-    // Use currentUser as initialData to prevent flash redirect on refresh
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final authService = AuthService();
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      initialData: currentUser,
+      stream: authService.userChanges,
+      initialData: authService.currentUser,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && currentUser == null) {
+        // 1. Loading state
+        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.hasData) {
+
+        // 2. Authenticated state
+        if (snapshot.hasData && snapshot.data != null) {
           final user = snapshot.data!;
+          
+          // Check for email verification if applicable
           final isEmailProvider = user.providerData.any((p) => p.providerId == 'password');
           if (isEmailProvider && !user.emailVerified) {
             return const VerifyEmailScreen();
           }
+          
           return child;
         }
-        return const LandingScreen();
+
+        // 3. Unauthenticated state
+        return LandingScreen(initialSection: redirectSection); 
       },
     );
   }
@@ -463,14 +483,13 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use currentUser as initialData to prevent flash redirect on refresh
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final authService = AuthService();
     return StreamBuilder<User?>(
-      stream: AuthService().authStateChanges,
-      initialData: currentUser,
+      stream: authService.userChanges,
+      initialData: authService.currentUser,
       builder: (context, snapshot) {
         // Loading — only show spinner if no cached user exists
-        if (snapshot.connectionState == ConnectionState.waiting && currentUser == null) {
+        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
           final l10n = AppLocalizations.of(context);
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -496,7 +515,7 @@ class AuthWrapper extends StatelessWidget {
         }
 
         // Autenticato
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data != null) {
           final user = snapshot.data!;
           // Se provider email e non ha verificato → VerifyEmailScreen
           final isEmailProvider = user.providerData.any((p) => p.providerId == 'password');

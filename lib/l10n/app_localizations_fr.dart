@@ -7394,6 +7394,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get smartTodoViewResource => 'Par Ressource';
 
   @override
+  String get smartTodoViewCalendar => 'Calendario';
+
+  @override
   String get smartTodoInviteTooltip => 'Inviter';
 
   @override

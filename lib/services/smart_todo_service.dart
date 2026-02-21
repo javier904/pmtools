@@ -10,6 +10,8 @@ import 'subscription/subscription_limits_service.dart';
 import 'smart_todo_audit_service.dart';
 import 'favorite_service.dart';
 import 'user_profile_service.dart';
+import 'google_calendar_service.dart';
+import '../core/config/feature_flags.dart';
 
 class SmartTodoService {
   final FirebaseFirestore _firestore;
@@ -343,6 +345,19 @@ class SmartTodoService {
         .doc(task.id)
         .update(task.toMap());
 
+    // 🔄 Auto-Sync Silente Google Calendar
+    if (FeatureFlags.enableCalendarSync && task.calendarEventId != null) {
+      // Fetch list title for the description
+      _firestore.collection(_listsCollection).doc(listId).get().then((doc) {
+        if (doc.exists) {
+          final title = doc.data()?['title'] ?? 'Smart To-Do';
+          GoogleCalendarService().syncTaskToCalendar(task, title).catchError((e) {
+            if (kDebugMode) print('Errore Auto-Sync Background Calendar: $e');
+          });
+        }
+      });
+    }
+
     // 📋 Audit log (delta detection)
     if (performedBy != null && previousTask != null) {
       final changes = _auditService.detectTaskChanges(previousTask, task);
@@ -390,25 +405,32 @@ class SmartTodoService {
     // Nota: non logghiamo ogni singolo reorder per evitare spam
   }
 
-  Future<void> deleteTask(String listId, String taskId, {String? taskTitle, String? performedBy, String? performedByName}) async {
+  Future<void> deleteTask(String listId, TodoTaskModel task, {String? taskTitle, String? performedBy, String? performedByName}) async {
     await _firestore
         .collection(_listsCollection)
         .doc(listId)
         .collection(_tasksSubcollection)
-        .doc(taskId)
+        .doc(task.id)
         .delete();
+
+    // 🔄 Auto-Delete Silente Google Calendar
+    if (FeatureFlags.enableCalendarSync && task.calendarEventId != null) {
+      GoogleCalendarService().deleteEventFromCalendar(task.calendarEventId!).catchError((e) {
+        if (kDebugMode) print('Errore Auto-Delete Background Calendar: $e');
+      });
+    }
 
     // 📋 Audit log
     if (performedBy != null) {
       _auditService.log(
         listId: listId,
         entityType: TodoAuditEntityType.task,
-        entityId: taskId,
-        entityName: taskTitle,
+        entityId: task.id,
+        entityName: taskTitle ?? task.title,
         action: TodoAuditAction.delete,
         performedBy: performedBy,
         performedByName: await _resolveName(performedBy, performedByName),
-        description: 'Task "${taskTitle ?? taskId}" eliminato',
+        description: 'Task "${taskTitle ?? task.title}" eliminato',
       );
     }
   }

@@ -392,14 +392,16 @@
               metrics, <strong>Throughput</strong> (daily and weekly averages with trend), <strong>WIP
                 monitoring</strong> with aging detection (ok/watch/aging thresholds), <strong>Flow health</strong>
               (arrival vs completion rates with status), <strong>Bottleneck detection</strong> with severity levels, and
-              <strong>Team workload balance</strong> analysis with per-member distribution.</div>
+              <strong>Team workload balance</strong> analysis with per-member distribution.
+            </div>
           </details>
           <details class="faq-item">
             <summary class="faq-question">Can I collaborate with my team?</summary>
             <div class="faq-answer">Yes. Smart Todo supports 3 participant roles: <strong>Owner</strong> (full control
               over list settings, columns and members), <strong>Editor</strong> (can create, edit and move tasks), and
               <strong>Viewer</strong> (read-only access). Invite team members via email with automatic deep link
-              support. All changes are tracked in a detailed audit trail with field-level change tracking.</div>
+              support. All changes are tracked in a detailed audit trail with field-level change tracking.
+            </div>
           </details>
           <details class="faq-item">
             <summary class="faq-question">What cross-tool integrations are available?</summary>
@@ -485,6 +487,33 @@
       <p class="footer-copy">&copy; 2026 Keisen. All rights reserved.</p>
     </div>
   </footer>
+
+  <!-- Prevent Flutter Service Worker from hijacking this static page -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        registrations.forEach(function(reg) {
+          if (reg.active && reg.active.scriptURL.indexOf('flutter_service_worker') !== -1) {
+            reg.unregister();
+          }
+        });
+      });
+    }
+  </script>
+
+  <!-- Prevent Flutter Service Worker from hijacking this static page -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        registrations.forEach(function (reg) {
+          // Unregister Flutter SW so it can't redirect away from this page
+          if (reg.active && reg.active.scriptURL.indexOf('flutter_service_worker') !== -1) {
+            reg.unregister();
+          }
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>

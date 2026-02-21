@@ -118,6 +118,14 @@ class _PokerCardWidgetState extends State<PokerCardWidget>
   }
 
   Widget _buildFrontCard(BuildContext context, double width, double height, Color color) {
+    // Adaptive font sizes based on card dimensions
+    final isCompact = width < 50;
+    final valueLength = widget.value.length;
+    final centerFontSize = isCompact
+        ? (valueLength > 2 ? width * 0.35 : width * 0.5)
+        : (valueLength > 2 ? 26.0 : 32.0);
+    final cornerFontSize = isCompact ? width * 0.25 : 14.0;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: width,
@@ -146,44 +154,52 @@ class _PokerCardWidgetState extends State<PokerCardWidget>
         children: [
           // Valore centrale
           Center(
-            child: Text(
-              widget.value,
-              style: TextStyle(
-                fontSize: widget.value.length > 2 ? 26 : 32,
-                fontWeight: FontWeight.bold,
-                color: widget.isSelected ? Colors.white : color,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: isCompact ? 2 : 4),
+                child: Text(
+                  widget.value,
+                  style: TextStyle(
+                    fontSize: centerFontSize,
+                    fontWeight: FontWeight.bold,
+                    color: widget.isSelected ? Colors.white : color,
+                  ),
+                ),
               ),
             ),
           ),
-          // Valore angolo alto sinistro
-          Positioned(
-            top: 6,
-            left: 8,
-            child: Text(
-              widget.value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: widget.isSelected ? Colors.white70 : color.withOpacity(0.6),
-              ),
-            ),
-          ),
-          // Valore angolo basso destro (ruotato)
-          Positioned(
-            bottom: 6,
-            right: 8,
-            child: Transform.rotate(
-              angle: math.pi,
+          // Valore angolo alto sinistro (hidden on compact cards)
+          if (!isCompact)
+            Positioned(
+              top: 6,
+              left: 8,
               child: Text(
                 widget.value,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: cornerFontSize,
                   fontWeight: FontWeight.bold,
                   color: widget.isSelected ? Colors.white70 : color.withOpacity(0.6),
                 ),
               ),
             ),
-          ),
+          // Valore angolo basso destro (hidden on compact cards)
+          if (!isCompact)
+            Positioned(
+              bottom: 6,
+              right: 8,
+              child: Transform.rotate(
+                angle: math.pi,
+                child: Text(
+                  widget.value,
+                  style: TextStyle(
+                    fontSize: cornerFontSize,
+                    fontWeight: FontWeight.bold,
+                    color: widget.isSelected ? Colors.white70 : color.withOpacity(0.6),
+                  ),
+                ),
+              ),
+            ),
           // Overlay disabled
           if (!widget.enabled)
             Positioned.fill(

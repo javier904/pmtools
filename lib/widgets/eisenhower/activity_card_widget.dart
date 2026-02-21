@@ -21,6 +21,7 @@ class ActivityCardWidget extends StatelessWidget {
   final VoidCallback? onDeleteTap;
   final bool showActions;
   final bool compact;
+  final bool isMobile;
 
   // Parametri per votazione collettiva
   final String? currentUserEmail;
@@ -41,6 +42,7 @@ class ActivityCardWidget extends StatelessWidget {
     this.onDeleteTap,
     this.showActions = true,
     this.compact = false,
+    this.isMobile = false,
     // Parametri votazione collettiva
     this.currentUserEmail,
     this.isFacilitator = false,
@@ -104,7 +106,7 @@ class ActivityCardWidget extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: EdgeInsets.only(left: 10, right: isMobile ? 0 : 10, top: 8, bottom: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : color.withOpacity(0.2)),
@@ -134,65 +136,116 @@ class ActivityCardWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              // Punteggio se votato E rivelato
-              if (activity.isRevealed && activity.hasVotes) ...[
+              // Punteggio se votato E rivelato (nascosto su mobile)
+              if (!isMobile && activity.isRevealed && activity.hasVotes) ...[
                 const SizedBox(width: 4),
                 _buildScoreBadge(color),
               ]
-              // Indicatore "Hai votato" se l'utente ha votato ma non è ancora rivelato
-              else if (_hasCurrentUserVoted && !activity.isRevealed) ...[
+              // Indicatore "Hai votato" se l'utente ha votato ma non è ancora rivelato (nascosto su mobile)
+              else if (!isMobile && _hasCurrentUserVoted && !activity.isRevealed) ...[
                 const SizedBox(width: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check, size: 12, color: Colors.green),
-                      const SizedBox(width: 2),
-                      Text(
-                        l10n.retrospectivesVoted,
-                        style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.green),
-                      ),
-                    ],
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.check, size: 12, color: Colors.green),
+                        const SizedBox(width: 2),
+                        Flexible(
+                          child: Text(
+                            l10n.retrospectivesVoted,
+                            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.green),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
-              // Azioni
+              // Azioni: su mobile usa PopupMenu, su desktop usa icone singole
               if (showActions) ...[
-                if (onVoteTap != null)
-                  IconButton(
-                    icon: Icon(
-                      activity.hasVotes ? Icons.edit : Icons.how_to_vote,
-                      size: 16,
-                      color: context.textSecondaryColor,
+                if (isMobile && (onVoteTap != null || onDeleteTap != null))
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.more_vert, size: 18, color: context.textSecondaryColor),
+                    padding: const EdgeInsets.only(right: 4),
+                    splashRadius: 16,
+                    constraints: const BoxConstraints(minWidth: 24, minHeight: 28),
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'vote':
+                          onVoteTap?.call();
+                          break;
+                        case 'delete':
+                          onDeleteTap?.call();
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      if (onVoteTap != null)
+                        PopupMenuItem(
+                          value: 'vote',
+                          child: Row(
+                            children: [
+                              Icon(
+                                activity.hasVotes ? Icons.edit : Icons.how_to_vote,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote),
+                            ],
+                          ),
+                        ),
+                      if (onDeleteTap != null)
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                              const SizedBox(width: 8),
+                              Text(l10n.actionDelete, style: const TextStyle(color: Colors.red)),
+                            ],
+                          ),
+                        ),
+                    ],
+                  )
+                else ...[
+                  if (onVoteTap != null)
+                    IconButton(
+                      icon: Icon(
+                        activity.hasVotes ? Icons.edit : Icons.how_to_vote,
+                        size: 16,
+                        color: context.textSecondaryColor,
+                      ),
+                      onPressed: onVoteTap,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 28,
+                        minHeight: 28,
+                      ),
+                      tooltip: activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote,
                     ),
-                    onPressed: onVoteTap,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(
-                      minWidth: 28,
-                      minHeight: 28,
+                  if (onDeleteTap != null)
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: context.textTertiaryColor,
+                      ),
+                      onPressed: onDeleteTap,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 28,
+                        minHeight: 28,
+                      ),
+                      tooltip: l10n.actionDelete,
                     ),
-                    tooltip: activity.hasVotes ? l10n.eisenhowerModifyVotes : l10n.eisenhowerVote,
-                  ),
-                if (onDeleteTap != null)
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      size: 16,
-                      color: context.textTertiaryColor,
-                    ),
-                    onPressed: onDeleteTap,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(
-                      minWidth: 28,
-                      minHeight: 28,
-                    ),
-                    tooltip: l10n.actionDelete,
-                  ),
+                ],
               ],
             ],
           ),
@@ -717,11 +770,14 @@ class ActivityCardWidget extends StatelessWidget {
                             children: [
                               const Icon(Icons.check_circle, size: 16, color: Colors.green),
                               const SizedBox(width: 6),
-                              Text(
-                                l10n.eisenhowerVotedSuccess,
-                                style: TextStyle(
-                                  color: Colors.green[700],
-                                  fontWeight: FontWeight.w500,
+                              Flexible(
+                                child: Text(
+                                  l10n.eisenhowerVotedSuccess,
+                                  style: TextStyle(
+                                    color: Colors.green[700],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -773,30 +829,18 @@ class ActivityCardWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'U:${activity.aggregatedUrgency.toStringAsFixed(1)}',
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              color: color.withOpacity(0.8),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            'I:${activity.aggregatedImportance.toStringAsFixed(1)}',
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              color: color.withOpacity(0.8),
-            ),
-          ),
-        ],
+      child: Text(
+        'U:${activity.aggregatedUrgency.toStringAsFixed(1)} I:${activity.aggregatedImportance.toStringAsFixed(1)}',
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w600,
+          color: color.withValues(alpha: 0.8),
+        ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
       ),
     );
   }
@@ -883,28 +927,39 @@ class UnvotedActivityCard extends StatelessWidget {
                 style: TextStyle(color: isDark ? Colors.grey[400] : null),
               )
             : null,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Pulsante voto solo se l'utente puo' votare
-            if (onVoteTap != null)
-              ElevatedButton.icon(
-                onPressed: onVoteTap,
-                icon: const Icon(Icons.how_to_vote, size: 16),
-                label: Text(l10n.eisenhowerVote),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                ),
-              ),
-            if (onDeleteTap != null)
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.red),
-                onPressed: onDeleteTap,
-                tooltip: l10n.actionDelete,
-              ),
-          ],
+        trailing: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = MediaQuery.of(context).size.width < 500;
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Pulsante voto solo se l'utente puo' votare
+                if (onVoteTap != null)
+                  isCompact
+                    ? IconButton(
+                        icon: const Icon(Icons.how_to_vote, color: Colors.blue),
+                        onPressed: onVoteTap,
+                        tooltip: l10n.eisenhowerVote,
+                      )
+                    : ElevatedButton.icon(
+                        onPressed: onVoteTap,
+                        icon: const Icon(Icons.how_to_vote, size: 16),
+                        label: Text(l10n.eisenhowerVote),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                      ),
+                if (onDeleteTap != null)
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    onPressed: onDeleteTap,
+                    tooltip: l10n.actionDelete,
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );

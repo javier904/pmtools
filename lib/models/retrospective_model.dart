@@ -401,7 +401,34 @@ class RetroColumn {
     );
   }
 
-  IconData get icon => IconData(iconCode, fontFamily: 'MaterialIcons');
+  IconData get icon {
+    if (iconCode == Icons.play_circle_outline.codePoint) return Icons.play_circle_outline;
+    if (iconCode == Icons.not_interested_rounded.codePoint) return Icons.not_interested_rounded;
+    if (iconCode == Icons.autorenew_rounded.codePoint) return Icons.autorenew_rounded;
+    if (iconCode == Icons.air.codePoint) return Icons.air;
+    if (iconCode == Icons.anchor.codePoint) return Icons.anchor;
+    if (iconCode == Icons.warning_amber_rounded.codePoint) return Icons.warning_amber_rounded;
+    if (iconCode == Icons.flag_rounded.codePoint) return Icons.flag_rounded;
+    if (iconCode == Icons.thumb_up_alt_rounded.codePoint) return Icons.thumb_up_alt_rounded;
+    if (iconCode == Icons.lightbulb_outline.codePoint) return Icons.lightbulb_outline;
+    if (iconCode == Icons.highlight_remove_rounded.codePoint) return Icons.highlight_remove_rounded;
+    if (iconCode == Icons.stars_rounded.codePoint) return Icons.stars_rounded;
+    if (iconCode == Icons.check_circle_outline.codePoint) return Icons.check_circle_outline;
+    if (iconCode == Icons.cancel_outlined.codePoint) return Icons.cancel_outlined;
+    if (iconCode == Icons.add_circle_outline.codePoint) return Icons.add_circle_outline;
+    if (iconCode == Icons.remove_circle_outline.codePoint) return Icons.remove_circle_outline;
+    if (iconCode == Icons.sentiment_very_dissatisfied.codePoint) return Icons.sentiment_very_dissatisfied;
+    if (iconCode == Icons.sentiment_dissatisfied.codePoint) return Icons.sentiment_dissatisfied;
+    if (iconCode == Icons.sentiment_very_satisfied.codePoint) return Icons.sentiment_very_satisfied;
+    if (iconCode == Icons.delete_outline.codePoint) return Icons.delete_outline;
+    if (iconCode == Icons.trending_up.codePoint) return Icons.trending_up;
+    if (iconCode == Icons.thumb_up_alt_outlined.codePoint) return Icons.thumb_up_alt_outlined;
+    if (iconCode == Icons.healing_outlined.codePoint) return Icons.healing_outlined;
+    
+    // Default fallback
+    return Icons.help_outline;
+  }
+
   Color get color => Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
 
   String getLocalizedTitle(AppLocalizations l10n) {

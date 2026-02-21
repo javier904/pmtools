@@ -492,6 +492,19 @@
       <p class="footer-copy">&copy; 2026 Keisen. Todos os direitos reservados.</p>
     </div>
   </footer>
+
+  <!-- Prevent Flutter Service Worker from hijacking this static page -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        registrations.forEach(function(reg) {
+          if (reg.active && reg.active.scriptURL.indexOf('flutter_service_worker') !== -1) {
+            reg.unregister();
+          }
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>

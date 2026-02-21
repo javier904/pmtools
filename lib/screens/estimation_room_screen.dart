@@ -383,49 +383,167 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
   List<Widget> _buildAppBarActions() {
     final l10n = AppLocalizations.of(context)!;
+    final isMobile = MediaQuery.of(context).size.width < 600;
 
     // Home button - always last on the right with app color
     final homeButton = IconButton(
       icon: const Icon(Icons.home_rounded),
       tooltip: l10n.navHome,
-      color: const Color(0xFF8B5CF6), // Viola come icona app
+      color: const Color(0xFF8B5CF6),
       onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
     );
 
-    // Archived toggle
-    final archivedToggle = FilterChip(
-      label: Text(
-        _showArchived
-            ? (l10n.archiveHideArchived ?? 'Hide archived')
-            : (l10n.archiveShowArchived ?? 'Show archived'),
-        style: const TextStyle(fontSize: 12),
-      ),
-      selected: _showArchived,
-      onSelected: (value) => setState(() => _showArchived = value),
-      avatar: Icon(
-        _showArchived ? Icons.visibility_off : Icons.visibility,
-        size: 16,
-        color: Colors.amber,
-      ),
-      selectedColor: AppColors.warning.withOpacity(0.2),
-      showCheckmark: false,
-    );
-
     // Se siamo nella lista sessioni, mostra toggle archivio
-      if (_selectedSession == null) {
+    if (_selectedSession == null) {
+      if (isMobile) {
         return [
-          archivedToggle,
-          const SizedBox(width: 8),
-          homeButton,
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'toggle_archived') {
+                setState(() => _showArchived = !_showArchived);
+              } else if (value == 'home') {
+                Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'toggle_archived',
+                child: Row(children: [
+                  Icon(_showArchived ? Icons.visibility_off : Icons.visibility, size: 18, color: Colors.amber),
+                  const SizedBox(width: 8),
+                  Text(_showArchived
+                      ? (l10n.archiveHideArchived ?? 'Hide archived')
+                      : (l10n.archiveShowArchived ?? 'Show archived')),
+                ]),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'home',
+                child: Row(children: [
+                  const Icon(Icons.home_rounded, size: 18, color: Color(0xFF8B5CF6)),
+                  const SizedBox(width: 8),
+                  Text(l10n.navHome),
+                ]),
+              ),
+            ],
+          ),
         ];
       }
+      // Desktop: full actions
+      return [
+        FilterChip(
+          label: Text(
+            _showArchived
+                ? (l10n.archiveHideArchived ?? 'Hide archived')
+                : (l10n.archiveShowArchived ?? 'Show archived'),
+            style: const TextStyle(fontSize: 12),
+          ),
+          selected: _showArchived,
+          onSelected: (value) => setState(() => _showArchived = value),
+          avatar: Icon(
+            _showArchived ? Icons.visibility_off : Icons.visibility,
+            size: 16,
+            color: Colors.amber,
+          ),
+          selectedColor: AppColors.warning.withOpacity(0.2),
+          showCheckmark: false,
+        ),
+        const SizedBox(width: 8),
+        homeButton,
+      ];
+    }
 
+    // ═══ Session detail view ═══
+    void goBackToList() {
+      _stopPresenceHeartbeat();
+      _storiesSubscription?.cancel();
+      setState(() {
+        _selectedSession = null;
+        _stories = [];
+        _currentStory = null;
+        _myVote = null;
+      });
+      SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room'));
+    }
+
+    if (isMobile) {
+      // ═══ MOBILE: essential icons + overflow menu ═══
+      return [
+        _buildStatusBadge(),
+        const SizedBox(width: 4),
+        IconButton(
+          icon: Badge(
+            label: Text('${_selectedSession!.participantCount}'),
+            child: const Icon(Icons.people),
+          ),
+          tooltip: l10n.participants,
+          onPressed: _showParticipantsDialog,
+        ),
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (value) {
+            switch (value) {
+              case 'export_todo':
+                _showExportToSmartTodoDialog();
+                break;
+              case 'export_sprint':
+                _showExportToAgileSprintDialog();
+                break;
+              case 'settings':
+                _showSessionSettings();
+                break;
+              case 'back':
+                goBackToList();
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            if (_selectedSession!.isFacilitator(_currentUserEmail)) ...[
+              PopupMenuItem(
+                value: 'export_todo',
+                enabled: _stories.any((s) => s.finalEstimate != null),
+                child: Row(children: [
+                  const Icon(Icons.check_circle_outline_rounded, size: 18),
+                  const SizedBox(width: 8),
+                  Text(l10n.exportFromEstimation),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'export_sprint',
+                enabled: _stories.any((s) => s.finalEstimate != null),
+                child: Row(children: [
+                  const Icon(Icons.rocket_launch_rounded, size: 18),
+                  const SizedBox(width: 8),
+                  Text(l10n.exportToAgileSprint),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'settings',
+                child: Row(children: [
+                  const Icon(Icons.settings, size: 18),
+                  const SizedBox(width: 8),
+                  Text(l10n.estimationSessionSettings),
+                ]),
+              ),
+              const PopupMenuDivider(),
+            ],
+            PopupMenuItem(
+              value: 'back',
+              child: Row(children: [
+                const Icon(Icons.arrow_back, size: 18),
+                const SizedBox(width: 8),
+                Text(l10n.estimationList),
+              ]),
+            ),
+          ],
+        ),
+      ];
+    }
+
+    // ═══ DESKTOP: full detail actions ═══
     return [
-      // ═══════════════════════════════════════════════════════════
-      // EXPORT/INTEGRATION BUTTONS (left side)
-      // ═══════════════════════════════════════════════════════════
       if (_selectedSession!.isFacilitator(_currentUserEmail)) ...[
-        // Export to Smart Todo
         IconButton(
           icon: const Icon(Icons.check_circle_outline_rounded),
           tooltip: l10n.exportFromEstimation,
@@ -433,7 +551,6 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
               ? _showExportToSmartTodoDialog
               : null,
         ),
-        // Export to Agile Sprint
         IconButton(
           icon: const Icon(Icons.rocket_launch_rounded),
           tooltip: l10n.exportToAgileSprint,
@@ -442,26 +559,13 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
               : null,
         ),
       ],
-      // ═══════════════════════════════════════════════════════════
-      // SEPARATOR
-      // ═══════════════════════════════════════════════════════════
       const SizedBox(width: 8),
-      Container(
-        width: 1,
-        height: 24,
-        color: Colors.grey,
-      ),
+      Container(width: 1, height: 24, color: Colors.grey),
       const SizedBox(width: 8),
-      // ═══════════════════════════════════════════════════════════
-      // PAGE FUNCTIONALITY BUTTONS (right side)
-      // ═══════════════════════════════════════════════════════════
-      // Status badge
       _buildStatusBadge(),
       const SizedBox(width: 8),
-      // Online counter
       _buildOnlineCounter(),
       const SizedBox(width: 8),
-      // Partecipanti
       IconButton(
         icon: Badge(
           label: Text('${_selectedSession!.participantCount}'),
@@ -470,7 +574,6 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         tooltip: l10n.participants,
         onPressed: _showParticipantsDialog,
       ),
-      // Impostazioni (Solo Facilitator)
       if (_selectedSession!.isFacilitator(_currentUserEmail))
         IconButton(
           icon: const Icon(Icons.settings),
@@ -478,31 +581,13 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           onPressed: _showSessionSettings,
         ),
       const SizedBox(width: 8),
-      // Torna alla lista
       TextButton.icon(
         icon: const Icon(Icons.arrow_back, size: 18),
         label: Text(l10n.estimationList),
         style: TextButton.styleFrom(foregroundColor: Colors.white),
-        onPressed: () {
-          _stopPresenceHeartbeat();
-          _storiesSubscription?.cancel();
-          setState(() {
-            _selectedSession = null;
-            _stories = [];
-            _currentStory = null;
-            _myVote = null;
-          });
-          // Aggiorna l'URL del browser al dashboard
-          SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room'));
-        },
+        onPressed: goBackToList,
       ),
       const SizedBox(width: 8),
-      /*IconButton(
-        icon: const Icon(Icons.home_rounded),
-        tooltip: l10n.navHome,
-        color: const Color(0xFF8B5CF6), // Viola come icona app
-        onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-      ),*/
     ];
   }
 
@@ -711,18 +796,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                           ))
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          // Card compatte - stesso layout di Agile Process Manager
+                          // ═══ MOBILE (<600px): ListView a tutta larghezza ═══
+                          if (constraints.maxWidth < 600) {
+                            return ListView.separated(
+                              padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+                              itemCount: filteredSessions.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 8),
+                              itemBuilder: (context, index) => _buildSessionCard(filteredSessions[index]),
+                            );
+                          }
+
+                          // ═══ DESKTOP (>=600px): GridView originale ═══
                           final compactCrossAxisCount = constraints.maxWidth > 1400
                               ? 6
                               : constraints.maxWidth > 1100
                                   ? 5
                                   : constraints.maxWidth > 800
                                       ? 4
-                                      : constraints.maxWidth > 550
-                                          ? 3
-                                          : constraints.maxWidth > 350
-                                              ? 2
-                                              : 1;
+                                      : 3;
 
                           return GridView.builder(
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

@@ -3369,6 +3369,7 @@
   "smartTodoViewKanban": "Kanban",
   "smartTodoViewList": "List",
   "smartTodoViewResource": "By Resource",
+  "smartTodoViewCalendar": "Calendar",
   "smartTodoInviteTooltip": "Invite",
   "smartTodoOptionsTooltip": "More Options",
   "smartTodoActionImport": "Import Tasks",

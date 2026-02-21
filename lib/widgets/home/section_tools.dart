@@ -42,52 +42,45 @@ class SectionTools extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Responsive grid logic
                   final width = constraints.maxWidth;
+
+                  final tools = [
+                    _ToolData(l10n.toolSmartTodo, Icons.check_circle_outline_rounded, AppColors.secondary, '/smart-todo', l10n.toolSmartTodoDescShort),
+                    _ToolData(l10n.toolEisenhower, Icons.grid_view_rounded, AppColors.success, '/eisenhower', l10n.toolEisenhowerDescShort),
+                    _ToolData(l10n.toolEstimation, Icons.casino_rounded, Colors.amber, '/estimation-room', l10n.toolEstimationDescShort),
+                    _ToolData(l10n.toolAgileProcess, Icons.rocket_launch_rounded, AppColors.primary, '/agile-process', l10n.toolAgileProcessDescShort),
+                    _ToolData(l10n.toolRetro, Icons.psychology_rounded, AppColors.pink, '/retrospective-list', l10n.toolRetroDescShort),
+                  ];
+
+                  // ═══ MOBILE (<500px): lista orizzontale scrollabile ═══
+                  if (width < 500) {
+                    return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: tools.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final t = tools[index];
+                        return SizedBox(
+                          width: 140,
+                          child: _ToolCard(title: t.title, icon: t.icon, color: t.color, onTap: () => Navigator.pushNamed(context, t.route), description: t.description),
+                        );
+                      },
+                    );
+                  }
+
+                  // ═══ DESKTOP: griglia originale ═══
                   final crossAxisCount = width > 1200 ? 5 : width > 900 ? 4 : width > 600 ? 3 : 2;
-                  
+
                   return GridView.count(
                     crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                     childAspectRatio: 1.2,
-                    children: [
-                      _ToolCard(
-                        title: l10n.toolSmartTodo,
-                        icon: Icons.check_circle_outline_rounded,
-                        color: AppColors.secondary,
-                        onTap: () => Navigator.pushNamed(context, '/smart-todo'),
-                        description: l10n.toolSmartTodoDescShort,
-                      ),
-                      _ToolCard(
-                        title: l10n.toolEisenhower,
-                        icon: Icons.grid_view_rounded,
-                        color: AppColors.success,
-                        onTap: () => Navigator.pushNamed(context, '/eisenhower'),
-                        description: l10n.toolEisenhowerDescShort,
-                      ),
-                      _ToolCard(
-                        title: l10n.toolEstimation,
-                        icon: Icons.casino_rounded,
-                        color: Colors.amber,
-                        onTap: () => Navigator.pushNamed(context, '/estimation-room'),
-                        description: l10n.toolEstimationDescShort,
-                      ),
-                      _ToolCard(
-                        title: l10n.toolAgileProcess,
-                        icon: Icons.rocket_launch_rounded,
-                        color: AppColors.primary,
-                        onTap: () => Navigator.pushNamed(context, '/agile-process'),
-                        description: l10n.toolAgileProcessDescShort,
-                      ),
-                      _ToolCard(
-                        title: l10n.toolRetro,
-                        icon: Icons.psychology_rounded,
-                        color: AppColors.pink,
-                        onTap: () => Navigator.pushNamed(context, '/retrospective-list'),
-                        description: l10n.toolRetroDescShort,
-                      ),
-                    ],
+                    children: tools.map((t) => _ToolCard(
+                      title: t.title, icon: t.icon, color: t.color,
+                      onTap: () => Navigator.pushNamed(context, t.route),
+                      description: t.description,
+                    )).toList(),
                   );
                 },
               ),
@@ -191,4 +184,13 @@ class _ToolCardState extends State<_ToolCard> {
       ),
     );
   }
+}
+
+class _ToolData {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final String route;
+  final String description;
+  const _ToolData(this.title, this.icon, this.color, this.route, this.description);
 }

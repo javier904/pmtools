@@ -73,8 +73,8 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
         ],
       ),
       content: SizedBox(
-        width: 650,
-        height: 550,
+        width: MediaQuery.of(context).size.width > 700 ? 650 : MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height > 650 ? 550 : MediaQuery.of(context).size.height * 0.7,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -229,32 +229,34 @@ class _CsvImportDialogState extends State<CsvImportDialog> {
                   : (isDark ? Colors.blue.shade300 : Colors.blue.shade700),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _fileName ?? l10n.eisenhowerImportClickToSelect,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: _fileName != null
-                        ? (isDark ? Colors.green.shade300 : Colors.green.shade700)
-                        : (isDark ? Colors.blue.shade300 : Colors.blue.shade700),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _fileName ?? l10n.eisenhowerImportClickToSelect,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: _fileName != null
+                          ? (isDark ? Colors.green.shade300 : Colors.green.shade700)
+                          : (isDark ? Colors.blue.shade300 : Colors.blue.shade700),
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Text(
-                  l10n.eisenhowerImportSupportedFormats,
-                  style: TextStyle(fontSize: 11, color: context.textTertiaryColor),
-                ),
-              ],
-            ),
-            if (_fileName != null) ...[
-              const Spacer(),
-              TextButton.icon(
-                onPressed: _pickFile,
-                icon: const Icon(Icons.refresh, size: 16),
-                label: Text(l10n.eisenhowerImportChangeFile),
+                  Text(
+                    l10n.eisenhowerImportSupportedFormats,
+                    style: TextStyle(fontSize: 11, color: context.textTertiaryColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-            ],
+            ),
+            if (_fileName != null)
+              IconButton(
+                onPressed: _pickFile,
+                icon: const Icon(Icons.refresh, size: 18),
+                tooltip: l10n.eisenhowerImportChangeFile,
+              ),
           ],
         ),
       ),

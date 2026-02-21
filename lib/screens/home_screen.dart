@@ -166,8 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              constraints: const BoxConstraints(maxWidth: 300),
+            Flexible(
+              child: Container(
+              constraints: BoxConstraints(maxWidth: isMobile ? 200 : 300),
               height: 36,
               child: TextField(
                 controller: _searchController,
@@ -205,6 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(fontSize: 13, color: context.textPrimaryColor),
               ),
             ),
+            ), // close Flexible
             // Toggle per includere archiviati nella ricerca
             if (_isSearching || _searchController.text.isNotEmpty) ...[
               const SizedBox(width: 8),
@@ -454,14 +456,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMobileLayout(BuildContext context, AppLocalizations l10n) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    // Altezza sezioni proporzionale allo schermo, con min/max ragionevoli
+    final sectionHeight = (screenHeight * 0.45).clamp(300.0, 500.0);
+    final toolsSectionHeight = (screenHeight * 0.35).clamp(250.0, 400.0);
+
     return SingleChildScrollView(
       child: Column(
         children: [
-          const SizedBox(height: 400, child: SectionFavorites()),
+          SizedBox(height: sectionHeight, child: const SectionFavorites()),
+          const SizedBox(height: 12),
+          SizedBox(height: sectionHeight, child: const SectionDeadlines()),
+          const SizedBox(height: 12),
+          SizedBox(height: toolsSectionHeight, child: const SectionTools()),
           const SizedBox(height: 16),
-          const SizedBox(height: 400, child: SectionDeadlines()),
-          const SizedBox(height: 16),
-          const SizedBox(height: 400, child: SectionTools()),
         ],
       ),
     );

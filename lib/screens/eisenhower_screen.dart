@@ -92,6 +92,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
   // Vista: 0 = Griglia, 1 = Grafico, 2 = Lista Priorità, 3 = RACI
   int _viewMode = 0;
+  final PageController _viewPageController = PageController();
 
   // Filtro ricerca matrici
   String _searchQuery = '';
@@ -102,6 +103,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   bool _showArchived = false;
   Map<String, String>? _resolvedNames = {};
   final UserProfileService _userProfileService = UserProfileService();
+
+  // Cached stream per evitare ri-creazione ad ogni rebuild
+  Stream<List<EisenhowerMatrixModel>>? _matricesStream;
+  bool _showArchivedCached = false;
+  bool _isResolvingNames = false;
 
   // TabController per il side panel (Partecipanti/Inviti)
   late TabController _sidePanelTabController;
@@ -228,28 +234,49 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     WidgetsBinding.instance.removeObserver(this);
     _sidePanelTabController.dispose();
     _searchController.dispose();
+    _viewPageController.dispose();
     _cancelSubscriptions();
     _stopPresenceHeartbeat();
     super.dispose();
   }
 
   /// Resolve display names for all participants in the matrix list
+  /// Batch: raccoglie tutti i nomi e fa un solo setState alla fine
   Future<void> _resolveParticipantNames(List<EisenhowerMatrixModel> matrices) async {
+    if (_isResolvingNames) return; // Evita ri-entranza
+
     final Set<String> emailsToResolve = {};
     for (final matrix in matrices) {
       emailsToResolve.addAll(matrix.participants.keys.map((key) => EisenhowerParticipantModel.unescapeEmail(key)));
     }
 
-    for (final email in emailsToResolve) {
-      final normalizedEmail = email.toLowerCase().trim();
-      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+    // Filtra solo email non ancora risolte
+    final unresolvedEmails = emailsToResolve
+        .map((e) => e.toLowerCase().trim())
+        .where((e) => !(_resolvedNames?.containsKey(e) ?? false))
+        .toSet();
+
+    if (unresolvedEmails.isEmpty) return;
+
+    _isResolvingNames = true;
+    final newNames = <String, String>{};
+
+    for (final email in unresolvedEmails) {
+      try {
         final name = await _userProfileService.getNameByEmail(email);
-        if (mounted) {
-          setState(() {
-            (_resolvedNames ??= {})[normalizedEmail] = name;
-          });
-        }
+        newNames[email] = name;
+      } catch (_) {
+        // Segna come risolto con email stessa per evitare retry continui
+        newNames[email] = email;
       }
+    }
+
+    _isResolvingNames = false;
+
+    if (mounted && newNames.isNotEmpty) {
+      setState(() {
+        (_resolvedNames ??= {}).addAll(newNames);
+      });
     }
   }
 
@@ -343,6 +370,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     setState(() {
       _selectedMatrix = null;
       _activities = [];
+      _matricesStream = null; // Reset so a fresh stream is created when list rebuilds
     });
     // Aggiorna l'URL del browser al dashboard
     SystemNavigator.routeInformationUpdated(uri: Uri.parse('/eisenhower'));
@@ -438,143 +466,23 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                }
             },
           ),
-          title: Row(
-            children: [
-              Icon(Icons.grid_4x4, color: context.textPrimaryColor),
-              const SizedBox(width: 8),
-              Text(_selectedMatrix?.title ?? l10n.eisenhowerTitle),
-            ],
-          ),
-          actions: [
-            // Guida Metodologia
-            if (_selectedMatrix == null) const SizedBox.shrink(),
-            if (_selectedMatrix != null) ...[
-              // ═══════════════════════════════════════════════════════════
-              // ONLINE PARTICIPANTS COUNTER
-              // ═══════════════════════════════════════════════════════════
-              _buildOnlineCounter(),
-              const SizedBox(width: 12),
-              // ═══════════════════════════════════════════════════════════
-              // EXPORT/INTEGRATION BUTTONS (solo Facilitatore)
-              // ═══════════════════════════════════════════════════════════
-              if (_isFacilitator) ...[
-                // Export to Smart Todo
-                IconButton(
-                  icon: const Icon(Icons.check_circle_outline_rounded),
-                  tooltip: l10n.exportFromEisenhower,
-                  onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
+          titleSpacing: _selectedMatrix != null && _isMobileLayout ? 0 : null,
+          title: GestureDetector(
+            onTap: _selectedMatrix != null ? () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(_selectedMatrix!.title),
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
                 ),
-                // Export to Estimation Room
-                IconButton(
-                  icon: const Icon(Icons.casino),
-                  tooltip: l10n.exportToEstimation,
-                  onPressed: _activities.isNotEmpty ? _showExportToEstimationDialog : null,
-                ),
-                // Export to Sprint (Agile Process Manager)
-                IconButton(
-                  icon: const Icon(Icons.rocket_launch),
-                  tooltip: l10n.exportToUserStories,
-                  onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
-                ),
-                // Separator
-                const SizedBox(width: 8),
-                Container(
-                  width: 1,
-                  height: 24,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 8),
-              ],
-              // ═══════════════════════════════════════════════════════════
-              // PAGE FUNCTIONALITY BUTTONS (tutti i ruoli)
-              // ═══════════════════════════════════════════════════════════
-              // Toggle viste (Griglia / Grafico / Lista)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: context.surfaceVariantColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildViewToggleButton(0, Icons.grid_view, l10n.eisenhowerViewGrid),
-                    _buildViewToggleButton(1, Icons.scatter_plot, l10n.eisenhowerViewChart),
-                    _buildViewToggleButton(2, Icons.format_list_numbered, l10n.eisenhowerViewList),
-                    _buildViewToggleButton(3, Icons.table_chart, l10n.eisenhowerViewRaci),
-                  ],
-                ),
-              ),
-              // ═══════════════════════════════════════════════════════════
-              // MANAGEMENT BUTTONS (solo Facilitatore)
-              // ═══════════════════════════════════════════════════════════
-              if (_isFacilitator) ...[
-                // Export Google Sheets
-                IconButton(
-                  icon: _isExporting
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: context.textPrimaryColor,
-                          ),
-                        )
-                      : const Icon(Icons.download), // Changed from upload_file to download
-                  tooltip: l10n.actionExportCsv,
-                  onPressed: _isExporting ? null : _showExportCsvDialog,
-                ),
-                // Import CSV
-                IconButton(
-                  icon: const Icon(Icons.upload_file),
-                  tooltip: l10n.eisenhowerImportCsv,
-                  onPressed: _showImportCsvDialog,
-                ),
-                // Invita partecipanti
-                IconButton(
-                  icon: const Icon(Icons.person_add),
-                  tooltip: l10n.eisenhowerInviteParticipants,
-                  onPressed: _showInviteDialog,
-                ),
-                // Impostazioni matrice
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  tooltip: l10n.eisenhowerMatrixSettings,
-                  onPressed: _showMatrixSettings,
-                ),
-              ],
-              const SizedBox(width: 8),
-
-            ],
-            // Archived toggle
-            const SizedBox(width: 8),
-            if (_selectedMatrix == null)
-              FilterChip(
-                label: Text(
-                  _showArchived
-                      ? (l10n.archiveHideArchived ?? 'Hide archived')
-                      : (l10n.archiveShowArchived ?? 'Show archived'),
-                  style: const TextStyle(fontSize: 12),
-                ),
-                selected: _showArchived,
-                onSelected: (value) => setState(() => _showArchived = value),
-                avatar: Icon(
-                  _showArchived ? Icons.visibility_off : Icons.visibility,
-                  size: 16,
-                  color: AppColors.success,
-                ),
-                selectedColor: AppColors.warning.withOpacity(0.2),
-                showCheckmark: false,
-              ),
-            // Home button - sempre ultimo a destra
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.home_rounded),
-              tooltip: l10n.navHome,
-              color: const Color(0xFF8B5CF6), // Viola come icona app
-              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+              );
+            } : null,
+            child: Text(
+              _selectedMatrix?.title ?? l10n.eisenhowerTitle,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
+          ),
+          actions: _buildAppBarActions(l10n),
         ),
         body: _selectedMatrix == null ? _buildMatrixList() : _buildMatrixDetail(),
         floatingActionButton: _buildFAB(),
@@ -589,11 +497,17 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   Widget _buildMatrixList() {
     final l10n = AppLocalizations.of(context)!;
 
-    return StreamBuilder<List<EisenhowerMatrixModel>>(
-      stream: _firestoreService.streamMatricesFiltered(
+    // Cache lo stream per evitare ri-creazione ad ogni rebuild/setState
+    if (_matricesStream == null || _showArchivedCached != _showArchived) {
+      _showArchivedCached = _showArchived;
+      _matricesStream = _firestoreService.streamMatricesFiltered(
         userEmail: _currentUserEmail,
         includeArchived: _showArchived,
-      ),
+      );
+    }
+
+    return StreamBuilder<List<EisenhowerMatrixModel>>(
+      stream: _matricesStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -664,18 +578,24 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                           ))
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          // Compact cards
+                          // ═══ MOBILE (<600px): ListView con card a tutta larghezza ═══
+                          if (constraints.maxWidth < 600) {
+                            return ListView.separated(
+                              padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+                              itemCount: filteredMatrices.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 8),
+                              itemBuilder: (context, index) => _buildMobileMatrixCard(filteredMatrices[index]),
+                            );
+                          }
+
+                          // ═══ DESKTOP (>=600px): GridView originale ═══
                           final compactCrossAxisCount = constraints.maxWidth > 1400
                               ? 6
                               : constraints.maxWidth > 1100
                                   ? 5
                                   : constraints.maxWidth > 800
                                       ? 4
-                                      : constraints.maxWidth > 550
-                                          ? 3
-                                          : constraints.maxWidth > 350
-                                              ? 2
-                                              : 1;
+                                      : 3;
 
                           return GridView.builder(
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -832,6 +752,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
 
     return Card(
       margin: EdgeInsets.zero,
+      clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () => _selectMatrix(matrix),
         borderRadius: BorderRadius.circular(6),
@@ -839,7 +760,6 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
               // Header: Icona + Titolo + Menu
               Row(
@@ -933,25 +853,170 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
               ],
               
               // Stats compatte
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Row(
+                    children: [
+                      _buildCompactMatrixStat(
+                        Icons.how_to_vote_outlined,
+                        '${matrix.votedActivityCount}',
+                        l10n.eisenhowerVotedActivities,
+                        iconColor: AppColors.success,
+                      ),
+                      const SizedBox(width: 10),
+                      if (activityCount - matrix.votedActivityCount > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: _buildCompactMatrixStat(
+                            Icons.pending_actions,
+                            '${activityCount - matrix.votedActivityCount}',
+                            l10n.eisenhowerPendingVoting,
+                            iconColor: AppColors.warning,
+                          ),
+                        ),
+                      _buildParticipantStat(matrix, l10n),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Card mobile per la lista Eisenhower - layout a tutta larghezza, altezza intrinseca
+  Widget _buildMobileMatrixCard(EisenhowerMatrixModel matrix) {
+    final l10n = AppLocalizations.of(context)!;
+    final activityCount = matrix.activityCount;
+    final votedCount = matrix.votedActivityCount;
+    final pendingCount = activityCount - votedCount;
+    final isDone = activityCount > 0 && votedCount >= activityCount;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.hardEdge,
+      child: InkWell(
+        onTap: () => _selectMatrix(matrix),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ─── Riga 1: Icona + Titolo + Azioni ───
               Row(
                 children: [
-                  _buildCompactMatrixStat(
-                    Icons.how_to_vote_outlined,
-                    '${matrix.votedActivityCount}',
-                    l10n.eisenhowerVotedActivities,
-                    iconColor: AppColors.success,
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: (isDone ? Colors.green : AppColors.success).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      isDone ? Icons.check_circle : Icons.grid_4x4,
+                      color: isDone ? Colors.green : AppColors.success,
+                      size: 16,
+                    ),
                   ),
                   const SizedBox(width: 10),
-                  if (activityCount - matrix.votedActivityCount > 0)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          matrix.title,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: matrix.isArchived ? context.textMutedColor : context.textPrimaryColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (matrix.description.isNotEmpty)
+                          Text(
+                            matrix.description,
+                            style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (matrix.isArchived)
                     Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: _buildCompactMatrixStat(
-                        Icons.pending_actions,
-                        '${activityCount - matrix.votedActivityCount}',
-                        l10n.eisenhowerPendingVoting,
-                        iconColor: AppColors.warning,
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.warning.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
                       ),
                     ),
+                  FavoriteStar(
+                    resourceId: matrix.id,
+                    type: 'eisenhower_matrix',
+                    title: matrix.title,
+                    colorHex: '#4CAF50',
+                    size: 18,
+                  ),
+                  GestureDetector(
+                    onTapDown: (details) => _showMatrixMenuAtPosition(context, matrix, details.globalPosition),
+                    child: const SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: Icon(Icons.more_vert, size: 18),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // ─── Riga 2: Progress bar + Stats ───
+              if (activityCount > 0) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: LinearProgressIndicator(
+                          value: votedCount / activityCount,
+                          minHeight: 4,
+                          backgroundColor: context.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isDone ? Colors.green : AppColors.success,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '$votedCount/$activityCount',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: isDone ? Colors.green : context.textSecondaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+              ],
+              // ─── Riga 3: Stats compatte ───
+              Row(
+                children: [
+                  _buildMobileStat(Icons.how_to_vote_outlined, '$votedCount', AppColors.success),
+                  if (pendingCount > 0) ...[
+                    const SizedBox(width: 12),
+                    _buildMobileStat(Icons.pending_actions, '$pendingCount', AppColors.warning),
+                  ],
+                  const Spacer(),
                   _buildParticipantStat(matrix, l10n),
                 ],
               ),
@@ -959,6 +1024,20 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMobileStat(IconData icon, String value, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 4),
+        Text(
+          value,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: color),
+        ),
+      ],
     );
   }
 
@@ -1116,22 +1195,287 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     );
   }
 
-  Widget _buildViewToggleButton(int mode, IconData icon, String tooltip) {
+  /// Breakpoint mobile per layout condizionale
+  bool get _isMobileLayout => MediaQuery.of(context).size.width < 800;
+
+  /// Costruisce le actions dell'AppBar in modo condizionale mobile/desktop
+  List<Widget> _buildAppBarActions(AppLocalizations l10n) {
+    final isMobile = _isMobileLayout;
+
+    if (_selectedMatrix == null) {
+      // Home: solo archived toggle + home button
+      return [
+        const SizedBox(width: 8),
+        FilterChip(
+          label: Text(
+            _showArchived
+                ? (l10n.archiveHideArchived ?? 'Hide archived')
+                : (l10n.archiveShowArchived ?? 'Show archived'),
+            style: const TextStyle(fontSize: 12),
+          ),
+          selected: _showArchived,
+          onSelected: (value) => setState(() => _showArchived = value),
+          avatar: Icon(
+            _showArchived ? Icons.visibility_off : Icons.visibility,
+            size: 16,
+            color: AppColors.success,
+          ),
+          selectedColor: AppColors.warning.withOpacity(0.2),
+          showCheckmark: false,
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          icon: const Icon(Icons.home_rounded),
+          tooltip: l10n.navHome,
+          color: const Color(0xFF8B5CF6),
+          onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+        ),
+      ];
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MATRIX DETAIL: layout condizionale mobile/desktop
+    // ═══════════════════════════════════════════════════════════════════
+    return [
+      _buildOnlineCounter(),
+      const SizedBox(width: 4),
+
+      // ─── EXPORT BUTTONS: su mobile vanno nel menu overflow ───
+      if (!isMobile && _isFacilitator) ...[
+        IconButton(
+          icon: const Icon(Icons.check_circle_outline_rounded),
+          tooltip: l10n.exportFromEisenhower,
+          onPressed: _activities.isNotEmpty ? _showExportToSmartTodoDialog : null,
+        ),
+        IconButton(
+          icon: const Icon(Icons.casino),
+          tooltip: l10n.exportToEstimation,
+          onPressed: _activities.isNotEmpty ? _showExportToEstimationDialog : null,
+        ),
+        IconButton(
+          icon: const Icon(Icons.rocket_launch),
+          tooltip: l10n.exportToUserStories,
+          onPressed: _activities.isNotEmpty ? _showExportToSprintDialog : null,
+        ),
+        const SizedBox(width: 8),
+        Container(width: 1, height: 24, color: Colors.grey),
+        const SizedBox(width: 8),
+      ],
+
+      // ─── VIEW TOGGLE: sempre visibile (compatto su mobile) ───
+      if (isMobile)
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: context.surfaceVariantColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildViewToggleButton(0, Icons.grid_view, l10n.eisenhowerViewGrid, compact: true),
+              _buildViewToggleButton(1, Icons.scatter_plot, l10n.eisenhowerViewChart, compact: true),
+              _buildViewToggleButton(2, Icons.format_list_numbered, l10n.eisenhowerViewList, compact: true),
+              _buildViewToggleButton(3, Icons.table_chart, l10n.eisenhowerViewRaci, compact: true),
+            ],
+          ),
+        )
+      else
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: context.surfaceVariantColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildViewToggleButton(0, Icons.grid_view, l10n.eisenhowerViewGrid),
+              _buildViewToggleButton(1, Icons.scatter_plot, l10n.eisenhowerViewChart),
+              _buildViewToggleButton(2, Icons.format_list_numbered, l10n.eisenhowerViewList),
+              _buildViewToggleButton(3, Icons.table_chart, l10n.eisenhowerViewRaci),
+            ],
+          ),
+        ),
+
+      // ─── MANAGEMENT BUTTONS: su desktop icone singole, su mobile menu overflow ───
+      if (!isMobile && _isFacilitator) ...[
+        IconButton(
+          icon: _isExporting
+              ? SizedBox(
+                  width: 20, height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: context.textPrimaryColor),
+                )
+              : const Icon(Icons.download),
+          tooltip: l10n.actionExportCsv,
+          onPressed: _isExporting ? null : _showExportCsvDialog,
+        ),
+        IconButton(
+          icon: const Icon(Icons.upload_file),
+          tooltip: l10n.eisenhowerImportCsv,
+          onPressed: _showImportCsvDialog,
+        ),
+        IconButton(
+          icon: const Icon(Icons.person_add),
+          tooltip: l10n.eisenhowerInviteParticipants,
+          onPressed: _showInviteDialog,
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings),
+          tooltip: l10n.eisenhowerMatrixSettings,
+          onPressed: _showMatrixSettings,
+        ),
+      ],
+
+      // ─── MOBILE: menu overflow con tutte le azioni ───
+      if (isMobile) ...[
+        // Viste aggiuntive + management in un PopupMenuButton
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          padding: EdgeInsets.zero,
+          onSelected: (value) {
+            switch (value) {
+              case 'side_panel':
+                _showMobileSidePanel();
+                break;
+              case 'export_todo':
+                if (_activities.isNotEmpty) _showExportToSmartTodoDialog();
+                break;
+              case 'export_estimation':
+                if (_activities.isNotEmpty) _showExportToEstimationDialog();
+                break;
+              case 'export_sprint':
+                if (_activities.isNotEmpty) _showExportToSprintDialog();
+                break;
+              case 'export_csv':
+                if (!_isExporting) _showExportCsvDialog();
+                break;
+              case 'import_csv':
+                _showImportCsvDialog();
+                break;
+              case 'invite':
+                _showInviteDialog();
+                break;
+              case 'settings':
+                _showMatrixSettings();
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            // Side panel (attivita' e partecipanti)
+            PopupMenuItem(
+              value: 'side_panel',
+              child: Row(children: [
+                const Icon(Icons.people, size: 20),
+                const SizedBox(width: 12),
+                Text(l10n.participants),
+              ]),
+            ),
+            // Facilitator actions
+            if (_isFacilitator) ...[
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'export_todo',
+                enabled: _activities.isNotEmpty,
+                child: Row(children: [
+                  const Icon(Icons.check_circle_outline_rounded, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.exportFromEisenhower),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'export_estimation',
+                enabled: _activities.isNotEmpty,
+                child: Row(children: [
+                  const Icon(Icons.casino, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.exportToEstimation),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'export_sprint',
+                enabled: _activities.isNotEmpty,
+                child: Row(children: [
+                  const Icon(Icons.rocket_launch, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.exportToUserStories),
+                ]),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'export_csv',
+                child: Row(children: [
+                  const Icon(Icons.download, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.actionExportCsv),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'import_csv',
+                child: Row(children: [
+                  const Icon(Icons.upload_file, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.eisenhowerImportCsv),
+                ]),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'invite',
+                child: Row(children: [
+                  const Icon(Icons.person_add, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.eisenhowerInviteParticipants),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'settings',
+                child: Row(children: [
+                  const Icon(Icons.settings, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.eisenhowerMatrixSettings),
+                ]),
+              ),
+            ],
+          ],
+        ),
+      ],
+
+      // Home button - sempre visibile, padding ridotto per avvicinare al menu
+      SizedBox(
+        width: 36,
+        child: IconButton(
+          icon: const Icon(Icons.home_rounded, size: 22),
+          tooltip: l10n.navHome,
+          color: const Color(0xFF8B5CF6),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+        ),
+      ),
+    ];
+  }
+
+  Widget _buildViewToggleButton(int mode, IconData icon, String tooltip, {bool compact = false}) {
     final isSelected = _viewMode == mode;
     return Tooltip(
       message: tooltip,
       child: InkWell(
-        onTap: () => setState(() => _viewMode = mode),
+        onTap: () {
+          setState(() => _viewMode = mode);
+          if (_isMobileLayout && _viewPageController.hasClients) {
+            _viewPageController.animateToPage(mode, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          }
+        },
         borderRadius: BorderRadius.circular(6),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 12, vertical: compact ? 4 : 6),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.success : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(
             icon,
-            size: 20,
+            size: compact ? 18 : 20,
             color: isSelected ? Colors.white : context.textSecondaryColor,
           ),
         ),
@@ -1143,6 +1487,81 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    // ═══ MOBILE: PageView con swipe per tutte e 4 le viste ═══
+    if (_isMobileLayout) {
+      return Stack(
+        children: [
+          PageView(
+            controller: _viewPageController,
+            onPageChanged: (page) {
+              setState(() => _viewMode = page);
+            },
+            children: [
+              // Pagina 0: Griglia
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: MatrixGridWidget(
+                  activities: _activities,
+                  onActivityTap: _showActivityDetail,
+                  onVoteTap: _canVote ? (activity) {
+                    if (_canVoteOnActivity(activity)) {
+                      _submitIndependentVote(activity);
+                    } else {
+                      _showError('Questa attività è già stata votata. Il facilitatore deve riaprire la votazione.');
+                    }
+                  } : null,
+                  onDeleteTap: _isFacilitator ? _confirmDeleteActivity : null,
+                  isMobile: true,
+                ),
+              ),
+              // Pagina 1: Grafico
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: EisenhowerScatterChartWidget(
+                  activities: _activities,
+                  onActivityTap: _showActivityDetail,
+                ),
+              ),
+              // Pagina 2: Lista Priorità
+              _buildPriorityListView(),
+              // Pagina 3: RACI
+              RaciMatrixWidget(
+                matrix: _selectedMatrix!,
+                activities: _activities,
+                onActivityTap: _showActivityDetail,
+                onMatrixUpdate: (updatedMatrix) {
+                  setState(() => _selectedMatrix = updatedMatrix);
+                },
+                onDataChanged: () => _loadActivities(_selectedMatrix!.id),
+                onAddActivity: _showAddActivityDialog,
+              ),
+            ],
+          ),
+          // FAB per aprire il side panel (solo nella vista quadranti)
+          if (_viewMode == 0)
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton.small(
+              heroTag: 'eisenhower_side_panel_fab',
+              onPressed: _showMobileSidePanel,
+              backgroundColor: AppColors.success,
+              child: Badge(
+                isLabelVisible: _activities.where((a) => !a.hasVotes).isNotEmpty,
+                label: Text(
+                  '${_activities.where((a) => !a.hasVotes).length}',
+                  style: const TextStyle(fontSize: 10),
+                ),
+                child: const Icon(Icons.people, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // ═══ DESKTOP: logica originale ═══
 
     // Vista Lista Priorità (a schermo intero senza pannello laterale)
     if (_viewMode == 2) {
@@ -1163,34 +1582,36 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       );
     }
 
+    final mainContent = Padding(
+      padding: const EdgeInsets.all(16),
+      child: _viewMode == 1
+          ? EisenhowerScatterChartWidget(
+              activities: _activities,
+              onActivityTap: _showActivityDetail,
+            )
+          : MatrixGridWidget(
+              activities: _activities,
+              onActivityTap: _showActivityDetail,
+              // Solo voter/facilitator possono votare su attività non rivelate
+              onVoteTap: _canVote ? (activity) {
+                if (_canVoteOnActivity(activity)) {
+                  _submitIndependentVote(activity);
+                } else {
+                  _showError('Questa attività è già stata votata. Il facilitatore deve riaprire la votazione.');
+                }
+              } : null,
+              // Solo facilitator puo' cancellare
+              onDeleteTap: _isFacilitator ? _confirmDeleteActivity : null,
+            ),
+    );
+
+    // ═══ DESKTOP: layout originale con side panel affiancato ═══
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Pannello sinistro: Griglia o Grafico
         Expanded(
           flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: _viewMode == 1
-                ? EisenhowerScatterChartWidget(
-                    activities: _activities,
-                    onActivityTap: _showActivityDetail,
-                  )
-                : MatrixGridWidget(
-                    activities: _activities,
-                    onActivityTap: _showActivityDetail,
-                    // Solo voter/facilitator possono votare su attività non rivelate
-                    onVoteTap: _canVote ? (activity) {
-                      if (_canVoteOnActivity(activity)) {
-                        _submitIndependentVote(activity);
-                      } else {
-                        _showError('Questa attività è già stata votata. Il facilitatore deve riaprire la votazione.');
-                      }
-                    } : null,
-                    // Solo facilitator puo' cancellare
-                    onDeleteTap: _isFacilitator ? _confirmDeleteActivity : null,
-                  ),
-          ),
+          child: mainContent,
         ),
         // Pannello destro: Attività e partecipanti
         Container(
@@ -1202,6 +1623,45 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           child: _buildSidePanel(),
         ),
       ],
+    );
+  }
+
+  /// Mostra il side panel come bottom sheet su mobile
+  void _showMobileSidePanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: context.surfaceColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (_, controller) {
+            return Column(
+              children: [
+                // Handle
+                Container(
+                  margin: const EdgeInsets.only(top: 8, bottom: 4),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Side panel content riusato identico
+                Expanded(child: _buildSidePanel()),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1244,27 +1704,65 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
-            children: [
-              const Icon(Icons.format_list_numbered, color: AppColors.success),
-              const SizedBox(width: 8),
-              Text(
-                l10n.eisenhowerPriorityList,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: context.textPrimaryColor,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Text(
-                l10n.eisenhowerActivityCountLabel(_activities.length),
-                style: TextStyle(color: context.textSecondaryColor),
-              ),
-              const Spacer(),
-              // Legenda compatta
-              _buildPriorityLegend(),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 550;
+              if (isCompact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.format_list_numbered, color: AppColors.success),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            l10n.eisenhowerPriorityList,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: context.textPrimaryColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.eisenhowerActivityCountLabel(_activities.length),
+                          style: TextStyle(color: context.textSecondaryColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: _buildPriorityLegend(),
+                    ),
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  const Icon(Icons.format_list_numbered, color: AppColors.success),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.eisenhowerPriorityList,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: context.textPrimaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    l10n.eisenhowerActivityCountLabel(_activities.length),
+                    style: TextStyle(color: context.textSecondaryColor),
+                  ),
+                  const Spacer(),
+                  _buildPriorityLegend(),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           // Lista
@@ -1333,6 +1831,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     final color = quadrant != null
         ? _getQuadrantColor(quadrant)
         : context.textTertiaryColor;
+    final isMobile = _isMobileLayout;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -1345,8 +1844,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
             children: [
               // Posizione
               Container(
-                width: 36,
-                height: 36,
+                width: isMobile ? 30 : 36,
+                height: isMobile ? 30 : 36,
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -1358,7 +1857,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: color,
-                      fontSize: 12,
+                      fontSize: isMobile ? 10 : 12,
                     ),
                   ),
                 ),
@@ -1376,6 +1875,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                         fontSize: 14,
                         color: context.textPrimaryColor,
                       ),
+                      maxLines: isMobile ? 2 : null,
+                      overflow: isMobile ? TextOverflow.ellipsis : null,
                     ),
                     if (activity.description.isNotEmpty)
                       Padding(
@@ -1387,55 +1888,92 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                    // ═══ MOBILE: punteggi e badge quadrante sotto il titolo ═══
+                    if (isMobile) ...[
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          // Badge quadrante (compatto)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: color.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: color.withOpacity(0.5)),
+                            ),
+                            child: Text(
+                              hasVotes ? (quadrant?.title ?? '-') : l10n.eisenhowerToVote,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: hasVotes ? color : AppColors.warning,
+                              ),
+                            ),
+                          ),
+                          // Punteggi inline
+                          if (hasVotes)
+                            Text(
+                              'U:${activity.aggregatedUrgency.toStringAsFixed(1)} I:${activity.aggregatedImportance.toStringAsFixed(1)} · ${activity.voteCount}v',
+                              style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
+                            ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
-              // Punteggi
-              if (hasVotes) ...[
+              // ═══ DESKTOP: punteggi e badge quadrante a destra (layout originale) ═══
+              if (!isMobile) ...[
+                // Punteggi
+                if (hasVotes) ...[
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'U: ${activity.aggregatedUrgency.toStringAsFixed(1)}',
+                            style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'I: ${activity.aggregatedImportance.toStringAsFixed(1)}',
+                            style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.eisenhowerVoteCountLabel(activity.voteCount),
+                        style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'U: ${activity.aggregatedUrgency.toStringAsFixed(1)}',
-                          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'I: ${activity.aggregatedImportance.toStringAsFixed(1)}',
-                          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-                        ),
-                      ],
+                // Badge quadrante
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: color.withOpacity(0.5)),
+                  ),
+                  child: Text(
+                    hasVotes ? (quadrant?.title ?? '-') : l10n.eisenhowerToVote,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: hasVotes ? color : AppColors.warning,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.eisenhowerVoteCountLabel(activity.voteCount),
-                      style: TextStyle(fontSize: 10, color: context.textTertiaryColor),
-                    ),
-                  ],
-                ),
-              ],
-              const SizedBox(width: 12),
-              // Badge quadrante
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: color.withOpacity(0.5)),
-                ),
-                child: Text(
-                  hasVotes ? (quadrant?.title ?? '-') : l10n.eisenhowerToVote,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: hasVotes ? color : AppColors.warning,
                   ),
                 ),
-              ),
+              ],
               const SizedBox(width: 8),
               // Azioni (mostra solo se ci sono azioni disponibili)
               if (_canVote || _isFacilitator)
