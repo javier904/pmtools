@@ -94,6 +94,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get actionExportCsv => 'CSV exportieren';
 
   @override
+  String get actionExportPdf => 'PDF-Bericht exportieren';
+
+  @override
   String get retroBoard => 'Board-Elemente';
 
   @override
@@ -1122,6 +1125,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get eisenhowerChartCardTitle => 'Verteilungsgrafik';
+
+  @override
+  String get eisenhowerPdfLegend => 'Aktivitäten-Legende';
+
+  @override
+  String get eisenhowerPdfRaciTitle => 'RACI-Verantwortlichkeitsmatrix';
+
+  @override
+  String get marketingPdfFeatureTitle => 'Professionelle PDF-Berichte';
+
+  @override
+  String get marketingPdfFeatureDesc =>
+      'Erstellen Sie druckfertige Berichte mit Quadranten-Raster, Streudiagramm und RACI-Matrizen für Ihre Teambesprechungen.';
 
   @override
   String get raciAddColumnTitle => 'RACI-Spalte hinzufügen';

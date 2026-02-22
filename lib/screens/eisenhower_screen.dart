@@ -15,6 +15,7 @@ import '../widgets/user_display_name_widget.dart';
 import '../services/eisenhower_firestore_service.dart';
 import '../services/invite_service.dart';
 import '../services/eisenhower_csv_export_service.dart';
+import '../services/eisenhower_pdf_export_service.dart';
 import '../models/unified_invite_model.dart';
 import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
@@ -77,6 +78,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   final SmartTodoService _todoService = SmartTodoService();
   final InviteService _inviteService = InviteService();
   final EisenhowerCsvExportService _csvExportService = EisenhowerCsvExportService();
+  final EisenhowerPdfExportService _pdfExportService = EisenhowerPdfExportService();
   final AuthService _authService = AuthService();
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
 
@@ -1311,6 +1313,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           onPressed: _isExporting ? null : _showExportCsvDialog,
         ),
         IconButton(
+          icon: const Icon(Icons.picture_as_pdf),
+          tooltip: l10n.actionExportPdf,
+          onPressed: _isExporting ? null : _exportPdf,
+        ),
+        IconButton(
           icon: const Icon(Icons.upload_file),
           tooltip: l10n.eisenhowerImportCsv,
           onPressed: _showImportCsvDialog,
@@ -1349,6 +1356,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                 break;
               case 'export_csv':
                 if (!_isExporting) _showExportCsvDialog();
+                break;
+              case 'export_pdf':
+                if (!_isExporting) _exportPdf();
                 break;
               case 'import_csv':
                 _showImportCsvDialog();
@@ -1408,6 +1418,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                   const Icon(Icons.download, size: 20),
                   const SizedBox(width: 12),
                   Text(l10n.actionExportCsv),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'export_pdf',
+                child: Row(children: [
+                  const Icon(Icons.picture_as_pdf, size: 20),
+                  const SizedBox(width: 12),
+                  Text(l10n.actionExportPdf),
                 ]),
               ),
               PopupMenuItem(
@@ -2756,6 +2774,19 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       _showSuccess('RACI exported!');
     } catch (e) {
       _showError('Error exporting RACI: $e');
+    }
+  }
+
+  Future<void> _exportPdf() async {
+    if (_selectedMatrix == null) return;
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isExporting = true);
+    try {
+      await _pdfExportService.exportToPdf(l10n, _selectedMatrix!, _activities);
+    } catch (e) {
+      _showError('Error exporting PDF: $e');
+    } finally {
+      if (mounted) setState(() => _isExporting = false);
     }
   }
 

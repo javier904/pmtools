@@ -189,17 +189,22 @@ class _EisenhowerScatterChartWidgetState extends State<EisenhowerScatterChartWid
                   touchTooltipData: ScatterTouchTooltipData(
                     getTooltipColor: (spot) => Colors.blueGrey.withOpacity(0.9),
                     getTooltipItems: (spot) {
-                      final activity = votedActivities.firstWhere(
+                      final overlappingActivities = votedActivities.where(
                         (a) =>
-                            (a.aggregatedUrgency - spot.x).abs() < 0.01 &&
-                            (a.aggregatedImportance - spot.y).abs() < 0.01,
-                        orElse: () => votedActivities.first,
-                      );
+                            (a.aggregatedUrgency - spot.x).abs() < 0.05 &&
+                            (a.aggregatedImportance - spot.y).abs() < 0.05,
+                      ).toList();
+
+                      if (overlappingActivities.isEmpty) return null;
+
+                      final String combinedText = overlappingActivities.map((a) {
+                        return '${a.title}\n'
+                               'Urgenza: ${a.aggregatedUrgency.toStringAsFixed(1)}, '
+                               'Importanza: ${a.aggregatedImportance.toStringAsFixed(1)}';
+                      }).join('\n\n');
+
                       return ScatterTooltipItem(
-                        '${activity.title}\n'
-                        'Urgenza: ${activity.aggregatedUrgency.toStringAsFixed(1)}\n'
-                        'Importanza: ${activity.aggregatedImportance.toStringAsFixed(1)}\n'
-                        '${activity.quadrant?.title ?? ""}',
+                        combinedText,
                         textStyle: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,

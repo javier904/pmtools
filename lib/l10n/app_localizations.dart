@@ -278,6 +278,12 @@ abstract class AppLocalizations {
   /// **'Esporta CSV'**
   String get actionExportCsv;
 
+  /// No description provided for @actionExportPdf.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta Report PDF'**
+  String get actionExportPdf;
+
   /// No description provided for @retroBoard.
   ///
   /// In it, this message translates to:
@@ -2173,6 +2179,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Grafico Distribuzione'**
   String get eisenhowerChartCardTitle;
+
+  /// No description provided for @eisenhowerPdfLegend.
+  ///
+  /// In it, this message translates to:
+  /// **'Legenda Attività'**
+  String get eisenhowerPdfLegend;
+
+  /// No description provided for @eisenhowerPdfRaciTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Matrice di Responsabilità RACI'**
+  String get eisenhowerPdfRaciTitle;
+
+  /// No description provided for @marketingPdfFeatureTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Report PDF Professionali'**
+  String get marketingPdfFeatureTitle;
+
+  /// No description provided for @marketingPdfFeatureDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Genera report pronti per la stampa con griglia dei quadranti, scatter plot e matrici RACI per i tuoi meeting di team.'**
+  String get marketingPdfFeatureDesc;
 
   /// No description provided for @raciAddColumnTitle.
   ///

@@ -94,6 +94,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get actionExportCsv => 'Ekspor CSV';
 
   @override
+  String get actionExportPdf => 'Ekspor Laporan PDF';
+
+  @override
   String get retroBoard => 'Elemen Board';
 
   @override
@@ -1116,6 +1119,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get eisenhowerChartCardTitle => 'Grafik Distribusi';
+
+  @override
+  String get eisenhowerPdfLegend => 'Legenda Aktivitas';
+
+  @override
+  String get eisenhowerPdfRaciTitle => 'Matriks Tanggung Jawab RACI';
+
+  @override
+  String get marketingPdfFeatureTitle => 'Laporan PDF Profesional';
+
+  @override
+  String get marketingPdfFeatureDesc =>
+      'Hasilkan laporan siap cetak dengan Kotak Kuadran, Grafik Scatter, dan matriks RACI untuk pertemuan tim Anda.';
 
   @override
   String get raciAddColumnTitle => 'Tambah Kolom RACI';

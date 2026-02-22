@@ -94,6 +94,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get actionExportCsv => 'Экспорт в CSV';
 
   @override
+  String get actionExportPdf => 'Экспорт PDF-отчета';
+
+  @override
   String get retroBoard => 'Элементы доски';
 
   @override
@@ -1116,6 +1119,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get eisenhowerChartCardTitle => 'Диаграмма распределения';
+
+  @override
+  String get eisenhowerPdfLegend => 'Легенда активностей';
+
+  @override
+  String get eisenhowerPdfRaciTitle => 'Матрица ответственности RACI';
+
+  @override
+  String get marketingPdfFeatureTitle => 'Профессиональные PDF-отчеты';
+
+  @override
+  String get marketingPdfFeatureDesc =>
+      'Создавайте готовые к печати отчеты с сеткой квадрантов, диаграммой рассеяния и матрицами RACI для встреч вашей команды.';
 
   @override
   String get raciAddColumnTitle => 'Добавить колонку RACI';
