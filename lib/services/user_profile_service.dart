@@ -69,6 +69,8 @@ class UserProfileService {
         'lastLoginAt': Timestamp.fromDate(DateTime.now()),
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
+      // Incrementa loginCount e resetta dismissed per feedback prompt
+      await _incrementFeedbackLoginCount(user.uid);
     } else {
       // Crea nuovo profilo
       userProfile = profile_model.UserProfileModel.fromAuthUser(
@@ -545,6 +547,45 @@ class UserProfileService {
     await updateSettings(
       settings.copyWith(featureFlags: FeatureFlags.fromMap(currentFlags)),
     );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FEEDBACK SYSTEM
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Incrementa il contatore login per il feedback prompt e resetta dismissed
+  Future<void> _incrementFeedbackLoginCount(String userId) async {
+    try {
+      final settingsDoc = await _firestore
+          .collection(_usersCollection)
+          .doc(userId)
+          .collection(_settingsSubcollection)
+          .doc('preferences')
+          .get();
+
+      if (!settingsDoc.exists) return;
+
+      final data = settingsDoc.data() ?? {};
+      final moduleSettings = Map<String, dynamic>.from(data['moduleSettings'] ?? {});
+      final feedback = Map<String, dynamic>.from(moduleSettings['feedback'] ?? {});
+
+      final currentCount = (feedback['loginCount'] as int?) ?? 0;
+      feedback['loginCount'] = currentCount + 1;
+      feedback['dismissed'] = false; // Resetta ad ogni login
+      moduleSettings['feedback'] = feedback;
+      debugPrint('🌟 Feedback loginCount: ${currentCount} → ${currentCount + 1}');
+
+      await _firestore
+          .collection(_usersCollection)
+          .doc(userId)
+          .collection(_settingsSubcollection)
+          .doc('preferences')
+          .update({'moduleSettings': moduleSettings});
+
+      _cachedSettings = null; // Invalida cache settings
+    } catch (e) {
+      debugPrint('Errore incremento feedback loginCount: $e');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

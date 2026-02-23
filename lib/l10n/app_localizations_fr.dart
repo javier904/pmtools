@@ -12117,4 +12117,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agileRoleDevelopmentTeamDesc => 'Membres qui exécutent le travail';
+
+  @override
+  String get feedbackTitle => 'Comment trouvez-vous Keisen ?';
+
+  @override
+  String get feedbackSubtitle => 'Votre avis nous aide à nous améliorer';
+
+  @override
+  String get feedbackCommentHint => 'Laissez un commentaire (optionnel)';
+
+  @override
+  String get feedbackSubmit => 'Envoyer';
+
+  @override
+  String get feedbackDismiss => 'Pas maintenant';
+
+  @override
+  String get feedbackThankYou => 'Merci pour votre avis !';
 }

@@ -12058,4 +12058,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get agileRoleDevelopmentTeamDesc => 'Miembros que ejecutan el trabajo';
+
+  @override
+  String get feedbackTitle => '¿Cómo te va con Keisen?';
+
+  @override
+  String get feedbackSubtitle => 'Tu opinión nos ayuda a mejorar';
+
+  @override
+  String get feedbackCommentHint => 'Deja un comentario (opcional)';
+
+  @override
+  String get feedbackSubmit => 'Enviar';
+
+  @override
+  String get feedbackDismiss => 'Ahora no';
+
+  @override
+  String get feedbackThankYou => '¡Gracias por tu opinión!';
 }

@@ -10,6 +10,7 @@ import '../l10n/app_localizations.dart';
 import '../widgets/profile_menu_widget.dart';
 import '../widgets/language_selector_widget.dart';
 import '../widgets/pending_invites_button.dart';
+import '../widgets/feedback_dialog.dart';
 import '../services/user_profile_service.dart';
 import '../controllers/locale_controller.dart';
 import '../widgets/home/section_favorites.dart';
@@ -44,9 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Inizializza lingua utente salvata su Firestore
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initUserLocale();
+    // Inizializza lingua utente salvata su Firestore + check feedback
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _initUserLocale();
+      _checkFeedbackPrompt();
     });
   }
 
@@ -68,6 +70,36 @@ class _HomeScreenState extends State<HomeScreen> {
       } catch (e) {
         debugPrint('Errore init locale utente: $e');
       }
+    }
+  }
+
+  /// Verifica se mostrare il prompt di feedback (stelline)
+  Future<void> _checkFeedbackPrompt() async {
+    final user = _authService.currentUser;
+    if (user == null || !mounted) return;
+
+    try {
+      final profileService = UserProfileService();
+      // Forza rilettura da Firestore (cache potrebbe essere stale)
+      profileService.invalidateCache();
+      final settings = await profileService.getCurrentSettings();
+      if (settings == null || !mounted) return;
+
+      final loginCount = settings.getModuleSetting<int>('feedback', 'loginCount', defaultValue: 0) ?? 0;
+      final rating = settings.getModuleSetting<int>('feedback', 'rating');
+      final dismissed = settings.getModuleSetting<bool>('feedback', 'dismissed', defaultValue: false) ?? false;
+
+      debugPrint('🌟 Feedback check: loginCount=$loginCount, rating=$rating, dismissed=$dismissed');
+
+      // Mostra solo se: >= 1 login (temporaneo, poi rimettere >= 3), non ha mai votato, non ha declinato in questa sessione
+      if (loginCount >= 1 && rating == null && !dismissed && mounted) {
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) {
+          FeedbackDialog.show(context);
+        }
+      }
+    } catch (e) {
+      debugPrint('Errore check feedback prompt: $e');
     }
   }
 

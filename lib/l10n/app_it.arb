@@ -5385,5 +5385,12 @@
   "agileRoleDevelopmentTeamDesc": "Membri che eseguono il lavoro",
   "agileAddToTeam": "Aggiungi al Team",
   "agileAllMembersAssigned": "Tutti i membri disponibili sono già assegnati",
-  "agileClose": "Chiudi"
+  "agileClose": "Chiudi",
+
+  "feedbackTitle": "Come ti trovi con Keisen?",
+  "feedbackSubtitle": "La tua opinione ci aiuta a migliorare",
+  "feedbackCommentHint": "Lascia un commento (opzionale)",
+  "feedbackSubmit": "Invia",
+  "feedbackDismiss": "Non ora",
+  "feedbackThankYou": "Grazie per il tuo feedback!"
 }

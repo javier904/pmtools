@@ -11961,4 +11961,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileRoleDevelopmentTeamDesc => 'Members who execute the work';
+
+  @override
+  String get feedbackTitle => 'How\'s your experience with Keisen?';
+
+  @override
+  String get feedbackSubtitle => 'Your feedback helps us improve';
+
+  @override
+  String get feedbackCommentHint => 'Leave a comment (optional)';
+
+  @override
+  String get feedbackSubmit => 'Submit';
+
+  @override
+  String get feedbackDismiss => 'Not now';
+
+  @override
+  String get feedbackThankYou => 'Thank you for your feedback!';
 }

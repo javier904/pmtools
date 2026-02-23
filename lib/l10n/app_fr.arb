@@ -5264,5 +5264,12 @@
   "tipKanbanWipLimitsDesc": "Les limites WIP sont fondamentales en Kanban. Limitez le travail en cours pour améliorer le flux.",
   "tipScrumSprintReady": "Prêt pour un Sprint ?",
   "tipScrumSprintReadyDesc": "Vous avez assez d'histoires dans le backlog. Envisagez de planifier le premier Sprint.",
-  "velocityTooltipAverage": "Basé sur les {count} derniers sprints terminés"
+  "velocityTooltipAverage": "Basé sur les {count} derniers sprints terminés",
+
+  "feedbackTitle": "Comment trouvez-vous Keisen ?",
+  "feedbackSubtitle": "Votre avis nous aide à nous améliorer",
+  "feedbackCommentHint": "Laissez un commentaire (optionnel)",
+  "feedbackSubmit": "Envoyer",
+  "feedbackDismiss": "Pas maintenant",
+  "feedbackThankYou": "Merci pour votre avis !"
 }

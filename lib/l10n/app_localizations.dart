@@ -21581,6 +21581,42 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Membri che eseguono il lavoro'**
   String get agileRoleDevelopmentTeamDesc;
+
+  /// No description provided for @feedbackTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Come ti trovi con Keisen?'**
+  String get feedbackTitle;
+
+  /// No description provided for @feedbackSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'La tua opinione ci aiuta a migliorare'**
+  String get feedbackSubtitle;
+
+  /// No description provided for @feedbackCommentHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Lascia un commento (opzionale)'**
+  String get feedbackCommentHint;
+
+  /// No description provided for @feedbackSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia'**
+  String get feedbackSubmit;
+
+  /// No description provided for @feedbackDismiss.
+  ///
+  /// In it, this message translates to:
+  /// **'Non ora'**
+  String get feedbackDismiss;
+
+  /// No description provided for @feedbackThankYou.
+  ///
+  /// In it, this message translates to:
+  /// **'Grazie per il tuo feedback!'**
+  String get feedbackThankYou;
 }
 
 class _AppLocalizationsDelegate
