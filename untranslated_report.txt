@@ -1,6 +1,12 @@
 {
   "de": [
-    "smartTodoViewCalendar"
+    "smartTodoViewCalendar",
+    "feedbackTitle",
+    "feedbackSubtitle",
+    "feedbackCommentHint",
+    "feedbackSubmit",
+    "feedbackDismiss",
+    "feedbackThankYou"
   ],
 
   "es": [
@@ -12,14 +18,32 @@
   ],
 
   "id": [
-    "smartTodoViewCalendar"
+    "smartTodoViewCalendar",
+    "feedbackTitle",
+    "feedbackSubtitle",
+    "feedbackCommentHint",
+    "feedbackSubmit",
+    "feedbackDismiss",
+    "feedbackThankYou"
   ],
 
   "pt": [
-    "smartTodoViewCalendar"
+    "smartTodoViewCalendar",
+    "feedbackTitle",
+    "feedbackSubtitle",
+    "feedbackCommentHint",
+    "feedbackSubmit",
+    "feedbackDismiss",
+    "feedbackThankYou"
   ],
 
   "ru": [
-    "smartTodoViewCalendar"
+    "smartTodoViewCalendar",
+    "feedbackTitle",
+    "feedbackSubtitle",
+    "feedbackCommentHint",
+    "feedbackSubmit",
+    "feedbackDismiss",
+    "feedbackThankYou"
   ]
 }

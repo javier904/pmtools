@@ -14,10 +14,18 @@ class SectionFavorites extends StatefulWidget {
 
 class _SectionFavoritesState extends State<SectionFavorites> {
   String _selectedFilter = 'all';
+  late final FavoriteService _service;
+  late final Stream<List<FavoriteModel>> _favoritesStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _service = FavoriteService();
+    _favoritesStream = _service.streamFavoritesExcludingArchived();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final service = FavoriteService();
     final isDark = context.isDarkMode;
 
     final l10n = AppLocalizations.of(context)!;
@@ -53,7 +61,7 @@ class _SectionFavoritesState extends State<SectionFavorites> {
           const Divider(height: 1),
           Expanded(
             child: StreamBuilder<List<FavoriteModel>>(
-              stream: service.streamFavoritesExcludingArchived(),
+              stream: _favoritesStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

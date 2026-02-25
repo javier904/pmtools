@@ -203,6 +203,14 @@ class AppTheme {
         indicatorColor: AppColors.primary,
       ),
 
+      // Page Transitions
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+          for (final platform in TargetPlatform.values)
+            platform: const _FadeSlideTransitionBuilder(),
+        },
+      ),
+
       // Text Theme
       textTheme: const TextTheme(
         displayLarge: TextStyle(color: AppColors.darkTextPrimary),
@@ -421,6 +429,14 @@ class AppTheme {
         indicatorColor: AppColors.primary,
       ),
 
+      // Page Transitions
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+          for (final platform in TargetPlatform.values)
+            platform: const _FadeSlideTransitionBuilder(),
+        },
+      ),
+
       // Text Theme
       textTheme: const TextTheme(
         displayLarge: TextStyle(color: AppColors.lightTextPrimary),
@@ -512,4 +528,33 @@ extension AppColorsExtension on BuildContext {
   Color get q4BackgroundColor => isDarkMode
       ? AppColors.q4ColorDark
       : AppColors.q4ColorLight;
+}
+
+/// Transizione pagina: fade + micro-slide verticale
+class _FadeSlideTransitionBuilder extends PageTransitionsBuilder {
+  const _FadeSlideTransitionBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+    );
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.02),
+          end: Offset.zero,
+        ).animate(curved),
+        child: child,
+      ),
+    );
+  }
 }

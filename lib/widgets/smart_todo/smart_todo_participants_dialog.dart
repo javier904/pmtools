@@ -136,12 +136,13 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
   }
 
   final SmartTodoService _todoService = SmartTodoService();
+  late final Stream<TodoListModel?> _listStream = _todoService.streamList(widget.list.id);
 
   Widget _buildParticipantsTab(bool isDark, Color inputBg, Color borderColor, Color textColor) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return StreamBuilder<TodoListModel?>(
-      stream: _todoService.streamList(widget.list.id),
+      stream: _listStream,
       initialData: widget.list,
       builder: (context, snapshot) {
         final currentList = snapshot.data ?? widget.list;

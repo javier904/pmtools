@@ -14,6 +14,8 @@ class SectionDeadlines extends StatefulWidget {
 
 class _SectionDeadlinesState extends State<SectionDeadlines> {
   int _daysFilter = -1; // -1 = All, 0 = Today, 1 = Tomorrow, etc.
+  late final DeadlineService _service;
+  late Stream<List<DeadlineItem>> _deadlinesStream;
 
   // Filters config: map of days -> visible
   final Map<int, bool> _visibleFilters = {
@@ -25,11 +27,22 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
     5: false,
   };
 
+  @override
+  void initState() {
+    super.initState();
+    _service = DeadlineService();
+    _deadlinesStream = _service.streamDeadlines(daysAhead: _daysFilter);
+  }
 
+  void _updateDaysFilter(int days) {
+    setState(() {
+      _daysFilter = days;
+      _deadlinesStream = _service.streamDeadlines(daysAhead: _daysFilter);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final service = DeadlineService();
     final isDark = context.isDarkMode;
 
     final l10n = AppLocalizations.of(context)!;
@@ -78,7 +91,7 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
           const Divider(height: 1),
           Expanded(
             child: StreamBuilder<List<DeadlineItem>>(
-              stream: service.streamDeadlines(daysAhead: _daysFilter),
+              stream: _deadlinesStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -188,7 +201,7 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
         });
         // If hidden and currently selected, reset to default (0)
         if (val == false && _daysFilter == days) {
-          setState(() => _daysFilter = 0);
+          _updateDaysFilter(0);
         }
       },
       dense: true,
@@ -219,7 +232,7 @@ class _SectionDeadlinesState extends State<SectionDeadlines> {
           child: _FilterChip(
             label: label,
             isSelected: _daysFilter == days,
-            onTap: () => setState(() => _daysFilter = days),
+            onTap: () => _updateDaysFilter(days),
           ),
         );
       }).toList(),

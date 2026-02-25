@@ -60,7 +60,7 @@ class ParticipantPresenceIndicator extends StatelessWidget {
 }
 
 /// Widget con avatar e indicatore di presenza combinati
-class ParticipantAvatarWithPresence extends StatelessWidget {
+class ParticipantAvatarWithPresence extends StatefulWidget {
   final String email;
   final String? displayName;
   final bool isOnline;
@@ -75,47 +75,70 @@ class ParticipantAvatarWithPresence extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      future: UserProfileService().getNameByEmail(email),
-      initialData: displayName ?? email.split('@').first,
-      builder: (context, snapshot) {
-        final name = snapshot.data ?? email.split('@').first;
-        final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+  State<ParticipantAvatarWithPresence> createState() => _ParticipantAvatarWithPresenceState();
+}
 
-        return Stack(
-          children: [
-            CircleAvatar(
-              radius: avatarRadius,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              child: Text(
-                initial,
-                style: TextStyle(
-                  fontSize: avatarRadius * 0.8,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-              ),
+class _ParticipantAvatarWithPresenceState extends State<ParticipantAvatarWithPresence> {
+  String? _resolvedName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadName();
+  }
+
+  @override
+  void didUpdateWidget(ParticipantAvatarWithPresence oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.email != widget.email) {
+      _resolvedName = null;
+      _loadName();
+    }
+  }
+
+  Future<void> _loadName() async {
+    final name = await UserProfileService().getNameByEmail(widget.email);
+    if (mounted) {
+      setState(() => _resolvedName = name);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final name = _resolvedName ?? widget.displayName ?? widget.email.split('@').first;
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: widget.avatarRadius,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          child: Text(
+            initial,
+            style: TextStyle(
+              fontSize: widget.avatarRadius * 0.8,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
-            // Indicatore di presenza in basso a destra
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(1.5),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                child: ParticipantPresenceIndicator(
-                  isOnline: isOnline,
-                  size: avatarRadius * 0.5,
-                ),
-              ),
+          ),
+        ),
+        // Indicatore di presenza in basso a destra
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: Container(
+            padding: const EdgeInsets.all(1.5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
-          ],
-        );
-      },
+            child: ParticipantPresenceIndicator(
+              isOnline: widget.isOnline,
+              size: widget.avatarRadius * 0.5,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

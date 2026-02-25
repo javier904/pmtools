@@ -109,14 +109,17 @@ class _HomeScreenState extends State<HomeScreen> {
         _searchQuery = '';
         _isSearching = false;
         _searchResults = [];
+        _isLoading = false;
       });
       return;
     }
 
+    // Single setState for loading state - show search mode immediately
     setState(() {
       _searchQuery = query;
       _isSearching = true;
       _isLoading = true;
+      _searchResults = []; // Clear previous results to avoid stale display
     });
 
     final user = _authService.currentUser;
@@ -211,14 +214,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   hintText: l10n.searchPlaceholder,
                   hintStyle: TextStyle(color: context.textMutedColor, fontSize: 12),
                   prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? GestureDetector(
-                          onTap: () {
-                             _performSearch(_searchController.text);
-                          },
-                          child: const Icon(Icons.arrow_forward_rounded, size: 16),
-                        )
-                      : null,
+                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _searchController,
+                    builder: (context, value, _) {
+                      if (value.text.isEmpty) return const SizedBox.shrink();
+                      return GestureDetector(
+                        onTap: () => _performSearch(_searchController.text),
+                        child: const Icon(Icons.arrow_forward_rounded, size: 16),
+                      );
+                    },
+                  ),
                   filled: true,
                   fillColor: context.surfaceVariantColor,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12),

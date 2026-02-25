@@ -20,70 +20,90 @@ class PendingInvitesButton extends StatefulWidget {
 
 class _PendingInvitesButtonState extends State<PendingInvitesButton> {
   final InviteAggregatorService _inviteService = InviteAggregatorService();
-  bool _isHovered = false;
+  late final Stream<int> _countStream;
+  final ValueNotifier<bool> _isHovered = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    _countStream = _inviteService.streamPendingInviteCount();
+  }
+
+  @override
+  void dispose() {
+    _isHovered.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return StreamBuilder<int>(
-      stream: _inviteService.streamPendingInviteCount(),
+      stream: _countStream,
       builder: (context, snapshot) {
         final count = snapshot.data ?? 0;
 
         return Tooltip(
           message: l10n.pendingInvites,
-          child: InkWell(
-            onTap: () => _showInvitesDialog(context),
-            onHover: (hovering) => setState(() => _isHovered = hovering),
-            borderRadius: BorderRadius.circular(8),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: _isHovered
-                    ? context.surfaceVariantColor
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    count > 0 ? Icons.notifications_active : Icons.notifications_outlined,
-                    color: _isHovered
-                        ? context.textPrimaryColor
-                        : context.textSecondaryColor,
-                    size: 20,
-                  ),
-                  if (count > 0)
-                    Positioned(
-                      right: -6,
-                      top: -6,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: AppColors.error,
-                          shape: BoxShape.circle,
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: Text(
-                          count > 9 ? '9+' : '$count',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _isHovered,
+            builder: (context, hovering, child) {
+              return MouseRegion(
+                onEnter: (_) => _isHovered.value = true,
+                onExit: (_) => _isHovered.value = false,
+                child: GestureDetector(
+                  onTap: () => _showInvitesDialog(context),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: hovering
+                          ? context.surfaceVariantColor
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                ],
-              ),
-            ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          count > 0 ? Icons.notifications_active : Icons.notifications_outlined,
+                          color: hovering
+                              ? context.textPrimaryColor
+                              : context.textSecondaryColor,
+                          size: 20,
+                        ),
+                        if (count > 0)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: AppColors.error,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                count > 9 ? '9+' : '$count',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         );
       },

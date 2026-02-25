@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/favorite_service.dart';
 
-class FavoriteStar extends StatelessWidget {
+class FavoriteStar extends StatefulWidget {
   final String resourceId;
   final String type;
   final String title;
@@ -18,11 +18,34 @@ class FavoriteStar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final service = FavoriteService();
+  State<FavoriteStar> createState() => _FavoriteStarState();
+}
 
+class _FavoriteStarState extends State<FavoriteStar> {
+  late final FavoriteService _service;
+  late Stream<bool> _isFavoriteStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _service = FavoriteService();
+    _isFavoriteStream = _service.isFavorite(widget.resourceId);
+  }
+
+  @override
+  void didUpdateWidget(FavoriteStar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.resourceId != widget.resourceId) {
+      setState(() {
+        _isFavoriteStream = _service.isFavorite(widget.resourceId);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-      stream: service.isFavorite(resourceId),
+      stream: _isFavoriteStream,
       builder: (context, snapshot) {
         final isFav = snapshot.data ?? false;
 
@@ -30,17 +53,17 @@ class FavoriteStar extends StatelessWidget {
           icon: Icon(
             isFav ? Icons.star_rounded : Icons.star_outline_rounded,
             color: isFav ? Colors.amber : Colors.grey.withValues(alpha: 0.5),
-            size: size,
+            size: widget.size,
           ),
-          onPressed: () => service.toggleFavorite(
-            resourceId: resourceId,
-            type: type,
-            title: title,
-            colorHex: colorHex,
+          onPressed: () => _service.toggleFavorite(
+            resourceId: widget.resourceId,
+            type: widget.type,
+            title: widget.title,
+            colorHex: widget.colorHex,
           ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
-          splashRadius: size,
+          splashRadius: widget.size,
           tooltip: isFav ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti',
         );
       },
