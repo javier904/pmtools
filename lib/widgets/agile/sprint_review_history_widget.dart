@@ -120,20 +120,35 @@ class SprintReviewHistoryWidget extends StatelessWidget {
             ),
           ),
           title: Text(sprint.name),
-          subtitle: Row(
+          subtitle: Wrap(
+            spacing: 12,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Icon(Icons.calendar_today, size: 12, color: Colors.grey[600]),
-              const SizedBox(width: 4),
-              Text(
-                dateFormat.format(review.date),
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.calendar_today, size: 12, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Text(
+                    dateFormat.format(review.date),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Icon(Icons.person, size: 12, color: Colors.grey[600]),
-              const SizedBox(width: 4),
-              Text(
-                review.conductedByName,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person, size: 12, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      review.conductedByName,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

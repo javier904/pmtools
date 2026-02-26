@@ -204,7 +204,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
         ],
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
         decoration: BoxDecoration(
           color: onlineCount > 0 ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
@@ -226,12 +226,12 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                 ] : null,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             Text(
               '$onlineCount / $totalCount',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 12,
+                fontSize: 11,
                 color: onlineCount > 0 ? Colors.green : Colors.grey,
               ),
             ),
@@ -258,176 +258,275 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
         final isFacilitator = retro.createdBy == widget.currentUserEmail || 
                             (retro.participantEmails.isNotEmpty && retro.participantEmails.first == widget.currentUserEmail);
 
-        return Theme(
-          data: Theme.of(context).copyWith(
-            primaryColor: AppColors.retroPrimary,
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppColors.retroPrimary,
-              secondary: AppColors.retroPrimary,
-              onPrimary: Colors.white,
-            ),
-            // Removed appBarTheme to allow default (Dark/Black) to propagate
-            floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
-              backgroundColor: AppColors.retroPrimary,
-              foregroundColor: Colors.white,
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-               style: ElevatedButton.styleFrom(
-                 backgroundColor: AppColors.retroPrimary,
-                 foregroundColor: Colors.white,
-               ),
-            ),
-          ),
-          child: Scaffold(
-            appBar: AppBar(
-            title: Row(
-              children: [
-                Text(retro.title.isNotEmpty ? retro.title : (l10n?.favTypeRetro ?? 'Retrospective')),
-                const SizedBox(width: 32),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: RetroPhase.values.map((p) {
-                        final isActive = p == retro.currentPhase;
-                        final isCompleted = p.index < retro.currentPhase.index;
-                        final theme = Theme.of(context);
-                        
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: isActive 
-                                  ? theme.primaryColor 
-                                  : isCompleted ? Colors.green.withOpacity(0.1) : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
-                              border: isActive 
-                                  ? Border.all(color: theme.primaryColor) 
-                                  : isCompleted ? Border.all(color: Colors.green) : Border.all(color: theme.disabledColor.withOpacity(0.3)),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 1000 || MediaQuery.of(context).size.width < 1000;
+            final theme = Theme.of(context);
+
+            return Theme(
+              data: theme.copyWith(
+                primaryColor: AppColors.retroPrimary,
+                colorScheme: theme.colorScheme.copyWith(
+                  primary: AppColors.retroPrimary,
+                  secondary: AppColors.retroPrimary,
+                  onPrimary: Colors.white,
+                ),
+                floatingActionButtonTheme: theme.floatingActionButtonTheme.copyWith(
+                  backgroundColor: AppColors.retroPrimary,
+                  foregroundColor: Colors.white,
+                ),
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                   style: ElevatedButton.styleFrom(
+                     backgroundColor: AppColors.retroPrimary,
+                     foregroundColor: Colors.white,
+                   ),
+                ),
+              ),
+              child: Scaffold(
+                appBar: AppBar(
+                title: Row(
+                  children: [
+                    if (isMobile)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: InkWell(
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(retro.title.isNotEmpty ? retro.title : (l10n?.favTypeRetro ?? 'Retrospective')),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Tooltip(
+                            message: retro.title.isNotEmpty ? retro.title : (l10n?.favTypeRetro ?? 'Retrospective'),
+                            child: const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(Icons.info_outline, size: 20),
                             ),
+                          ),
+                        ),
+                      )
+                    else
+                      Flexible(
+                        child: Text(
+                          retro.title.isNotEmpty ? retro.title : (l10n?.favTypeRetro ?? 'Retrospective'),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    
+                    if (!isMobile) ...[
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: RetroPhase.values.map((p) => _buildPhaseIndicator(p, retro, theme)).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                centerTitle: false,
+                elevation: 0,
+                actions: [
+                   if (isFacilitator) ...[
+                     if (!isMobile && retro.currentPhase == RetroPhase.writing)
+                       Padding(
+                         padding: const EdgeInsets.symmetric(horizontal: 8),
+                         child: FilledButton.icon(
+                           onPressed: () => _service.setTeamCardsVisibility(retro.id, !retro.areTeamCardsVisible),
+                           icon: Icon(retro.areTeamCardsVisible ? Icons.visibility_off : Icons.visibility, size: 16),
+                           label: Text(retro.areTeamCardsVisible ? 'Hide Cards' : (l10n?.voteReveal ?? 'Reveal Cards')),
+                           style: FilledButton.styleFrom(
+                             backgroundColor: retro.areTeamCardsVisible ? Colors.grey : Colors.orange,
+                             visualDensity: VisualDensity.compact,
+                           ),
+                         ),
+                       ),
+
+                     if (retro.currentPhase.index > 0)
+                       isMobile ? IconButton(
+                         padding: EdgeInsets.zero,
+                         constraints: const BoxConstraints(),
+                         onPressed: () => _regressPhase(retro),
+                         icon: const Icon(Icons.arrow_back, size: 20),
+                         tooltip: 'Prev',
+                       ) : TextButton.icon(
+                         onPressed: () => _regressPhase(retro),
+                         icon: const Icon(Icons.arrow_back, size: 16),
+                         label: const Text('Prev'),
+                         style: TextButton.styleFrom(foregroundColor: theme.colorScheme.onSurface),
+                       ),
+                       
+                       if (retro.currentPhase != RetroPhase.completed)
+                        isMobile ? IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          onPressed: () => _advancePhase(retro),
+                          icon: const Icon(Icons.arrow_forward, size: 20),
+                          tooltip: 'Next',
+                        ) : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: TextButton(
+                            onPressed: () => _advancePhase(retro),
+                            style: TextButton.styleFrom(foregroundColor: theme.colorScheme.onSurface),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isCompleted) 
-                                  const Icon(Icons.check_circle, size: 14, color: Colors.green)
-                                else if (isActive)
-                                  Icon(Icons.play_circle_fill, size: 14, color: theme.colorScheme.onPrimary)
-                                else
-                                  Icon(Icons.radio_button_unchecked, size: 14, color: theme.disabledColor),
-                                
-                                const SizedBox(width: 6),
-                                Text(
-                                  p.name.toUpperCase(),
-                                  style: TextStyle(
-                                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                    color: isActive 
-                                        ? theme.colorScheme.onPrimary 
-                                        : isCompleted ? Colors.green : theme.disabledColor,
-                                    fontSize: 11,
-                                  ),
-                                ),
+                              children: const [
+                                Text('Next'),
+                                SizedBox(width: 8),
+                                Icon(Icons.arrow_forward, size: 16),
                               ],
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            centerTitle: false,
-            elevation: 0,
-            actions: [
-               // Navigation Controls (Moved from bottom)
-               if (isFacilitator) ...[
-                 // Reveal/Hide Toggle (Writing Phase)
-                 if (retro.currentPhase == RetroPhase.writing)
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                     child: FilledButton.icon(
-                       onPressed: () => _service.setTeamCardsVisibility(retro.id, !retro.areTeamCardsVisible),
-                       icon: Icon(retro.areTeamCardsVisible ? Icons.visibility_off : Icons.visibility, size: 16),
-                       label: Text(retro.areTeamCardsVisible ? 'Hide Cards' : (l10n?.voteReveal ?? 'Reveal Cards')),
-                       style: FilledButton.styleFrom(
-                         backgroundColor: retro.areTeamCardsVisible ? Colors.grey : Colors.orange,
-                         visualDensity: VisualDensity.compact,
-                       ),
-                     ),
-                   ),
+                        ),
+                        
+                      if (!isMobile) const SizedBox(width: 8),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 2 : 8),
+                        child: Container(width: 1, height: 24, color: theme.dividerColor), // Separator
+                      ),
+                   ],
 
-                 if (retro.currentPhase.index > 0)
-                   TextButton.icon(
-                     onPressed: () => _regressPhase(retro),
-                     icon: const Icon(Icons.arrow_back, size: 16),
-                     label: Text('Prev'),
-                     style: TextButton.styleFrom(
-                       foregroundColor: Theme.of(context).colorScheme.onSurface,
-                     ),
+                   if (isMobile) const SizedBox(width: 2),
+
+                   RetroTimerWidget(
+                     retroId: retro.id,
+                     timer: retro.timer,
+                     isFacilitator: isFacilitator
                    ),
+                   SizedBox(width: isMobile ? 2 : 8),
+
+                   if (isFacilitator && !isMobile) ...[
+                     IconButton(
+                       icon: const Icon(Icons.person_add),
+                       tooltip: l10n?.inviteSendNew ?? 'Invite',
+                       onPressed: () => _showInviteDialog(retro),
+                     ),
+                     IconButton(
+                       icon: Icon(retro.showAuthorNames ? Icons.visibility : Icons.visibility_off),
+                       tooltip: retro.showAuthorNames ? 'Hide Names' : 'Show Names',
+                       onPressed: () => _service.toggleAuthorNames(retro.id, !retro.showAuthorNames),
+                     ),
+                   ],
                    
-                  if (retro.currentPhase != RetroPhase.completed)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: TextButton(
-                        onPressed: () => _advancePhase(retro),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text('Next'),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward, size: 16),
-                          ],
-                        ),
+                   if (isFacilitator && isMobile)
+                     PopupMenuButton<String>(
+                       icon: const Icon(Icons.more_vert),
+                       onSelected: (value) {
+                         if (value == 'reveal') _service.setTeamCardsVisibility(retro.id, !retro.areTeamCardsVisible);
+                         if (value == 'invite') _showInviteDialog(retro);
+                         if (value == 'names') _service.toggleAuthorNames(retro.id, !retro.showAuthorNames);
+                       },
+                       itemBuilder: (context) => [
+                         if (retro.currentPhase == RetroPhase.writing)
+                           PopupMenuItem(
+                             value: 'reveal',
+                             child: Row(
+                               children: [
+                                 Icon(retro.areTeamCardsVisible ? Icons.visibility_off : Icons.visibility, color: retro.areTeamCardsVisible ? Colors.grey : Colors.orange),
+                                 const SizedBox(width: 8),
+                                 Text(retro.areTeamCardsVisible ? 'Hide Cards' : (l10n?.voteReveal ?? 'Reveal Cards')),
+                               ],
+                             ),
+                           ),
+                         PopupMenuItem(
+                           value: 'invite',
+                           child: Row(
+                             children: [
+                               const Icon(Icons.person_add),
+                               const SizedBox(width: 8),
+                               Text(l10n?.inviteSendNew ?? 'Invite'),
+                             ],
+                           ),
+                         ),
+                         PopupMenuItem(
+                           value: 'names',
+                           child: Row(
+                             children: [
+                               Icon(retro.showAuthorNames ? Icons.visibility : Icons.visibility_off),
+                               const SizedBox(width: 8),
+                               Text(retro.showAuthorNames ? 'Hide Names' : 'Show Names'),
+                             ],
+                           ),
+                         ),
+                       ],
+                     ),
+
+                   const SizedBox(width: 8),
+                   _buildOnlineCounter(retro),
+                   SizedBox(width: isMobile ? 4 : 16),
+                ],
+              ),
+              body: Column(
+                children: [
+                  if (isMobile)
+                    Container(
+                      height: 40,
+                      color: theme.colorScheme.surface,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        children: RetroPhase.values.map((p) => _buildPhaseIndicator(p, retro, theme)).toList(),
                       ),
                     ),
-                  const SizedBox(width: 8),
-                  Container(width: 1, height: 24, color: Theme.of(context).dividerColor), // Separator
-                  const SizedBox(width: 8),
-               ],
-
-               // Timer
-               RetroTimerWidget(
-                 retroId: retro.id,
-                 timer: retro.timer,
-                 isFacilitator: isFacilitator
-               ),
-               const SizedBox(width: 8),
-
-               if (isFacilitator)
-                 IconButton(
-                   icon: const Icon(Icons.person_add),
-                   tooltip: l10n?.inviteSendNew ?? 'Invite',
-                   onPressed: () => _showInviteDialog(retro),
-                 ),
-               if (isFacilitator)
-                 IconButton(
-                   icon: Icon(retro.showAuthorNames ? Icons.visibility : Icons.visibility_off),
-                   tooltip: retro.showAuthorNames ? 'Hide Names' : 'Show Names',
-                   onPressed: () => _service.toggleAuthorNames(retro.id, !retro.showAuthorNames),
-                 ),
-               const SizedBox(width: 8),
-               const SizedBox(width: 8),
-               // Online Presence Counter (Replaces old participants dialog)
-               _buildOnlineCounter(retro),
-               const SizedBox(width: 16),
-            ],
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                child: _buildPhaseContent(retro, isFacilitator),
+                  Expanded(
+                    child: _buildPhaseContent(retro, isFacilitator),
+                  ),
+                ],
               ),
-            ],
-          ),
-          // bottomNavigationBar: removed as requested
-        ));
+            ));
+          }
+        );
       },
+    );
+  }
+
+  Widget _buildPhaseIndicator(RetroPhase p, RetrospectiveModel retro, ThemeData theme) {
+    final isActive = p == retro.currentPhase;
+    final isCompleted = p.index < retro.currentPhase.index;
+    
+    return Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive 
+              ? theme.primaryColor 
+              : isCompleted ? Colors.green.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: isActive 
+              ? Border.all(color: theme.primaryColor) 
+              : isCompleted ? Border.all(color: Colors.green) : Border.all(color: theme.disabledColor.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isCompleted) 
+              const Icon(Icons.check_circle, size: 14, color: Colors.green)
+            else if (isActive)
+              Icon(Icons.play_circle_fill, size: 14, color: theme.colorScheme.onPrimary)
+            else
+              Icon(Icons.radio_button_unchecked, size: 14, color: theme.disabledColor),
+            
+            const SizedBox(width: 6),
+            Text(
+              p.name.toUpperCase(),
+              style: TextStyle(
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                color: isActive 
+                    ? theme.colorScheme.onPrimary 
+                    : isCompleted ? Colors.green : theme.disabledColor,
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -577,11 +676,14 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
         content = _buildCompletionDashboard(retro, isFacilitator);
         break;
     }
+    final isMobile = MediaQuery.of(context).size.width < 1000;
+    final shouldShowCoach = retro.currentPhase != RetroPhase.completed &&
+        !(isMobile && retro.currentPhase == RetroPhase.discuss);
 
     return Stack(
       children: [
         content,
-        if (retro.currentPhase != RetroPhase.completed)
+        if (shouldShowCoach)
           Positioned(
             bottom: 80,
             right: 20,
@@ -712,21 +814,22 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                         children: [
                   // Main Content Area: Guide (Left) + Table (Right)
 
-                  // Main Content Area: Guide (Left) + Table (Right)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Facilitator Action Collection Guide - Side Panel
-                      if (isFacilitator && retro.currentPhase == RetroPhase.discuss)
-                         Container(
-                           width: 300, 
-                           margin: const EdgeInsets.only(right: 16, bottom: 16),
-                           child: ActionCollectionGuideWidget(retro: retro),
-                         ),
-
-                      // Action Items List / Limitless Table
-                      Expanded(
-                        child: retro.actionItems.isEmpty && !isHovering
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isMobile = constraints.maxWidth < 800;
+                      
+                      final guideWidget = isFacilitator && retro.currentPhase == RetroPhase.discuss
+                          ? Container(
+                              width: isMobile ? double.infinity : 300, 
+                              margin: EdgeInsets.only(
+                                right: isMobile ? 0 : 16, 
+                                bottom: 16
+                              ),
+                              child: ActionCollectionGuideWidget(retro: retro),
+                            )
+                          : const SizedBox.shrink();
+                          
+                      final tableWidget = retro.actionItems.isEmpty && !isHovering
                             ? SizedBox(
                                 height: 200,
                                 child: Center(
@@ -745,9 +848,28 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                                 items: retro.items,
                                 template: retro.template,
                                 columns: retro.columns,
-                              ),
-                      ),
-                    ],
+                              );
+
+                      if (isMobile) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (isFacilitator && retro.currentPhase == RetroPhase.discuss)
+                              guideWidget,
+                            tableWidget,
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (isFacilitator && retro.currentPhase == RetroPhase.discuss)
+                            guideWidget,
+                          Expanded(child: tableWidget),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -892,51 +1014,57 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '🎉 ${l10n?.sessionCompletedSuccess ?? "Retrospective Completed!"}',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    if (isFacilitator)
-                      TextButton.icon(
-                        onPressed: () => _reopenRetro(retro),
-                        icon: const Icon(Icons.refresh, color: Colors.orange),
-                        label: Text(l10n?.actionReopen ?? 'Riapri', style: const TextStyle(color: Colors.orange)),
-                      ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: () => _showExportDialog(retro),
-                      icon: const Icon(Icons.download_rounded, color: Colors.white, size: 20),
-                      label: Text(
-                        l10n?.actionExportCsv ?? 'Export CSV', 
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        )
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.retroPrimary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Pill shape
-                        ),
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              Text(
+                '🎉 ${l10n?.sessionCompletedSuccess ?? "Retrospective Completed!"}',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (isFacilitator)
+                    TextButton.icon(
+                      onPressed: () => _reopenRetro(retro),
+                      icon: const Icon(Icons.refresh, color: Colors.orange),
+                      label: Text(l10n?.actionReopen ?? 'Riapri', style: const TextStyle(color: Colors.orange)),
+                    ),
+                  ElevatedButton.icon(
+                    onPressed: () => _showExportDialog(retro),
+                    icon: const Icon(Icons.download_rounded, color: Colors.white, size: 20),
+                    label: Text(
+                      l10n?.actionExportCsv ?? 'Export CSV', 
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      )
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.retroPrimary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50), // Pill shape
                       ),
                     ),
-
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(height: 24),
           
-          Row(
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
             children: [
               _buildSummaryCard(
                 'Participants', 
@@ -944,14 +1072,12 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                 Icons.people, 
                 Colors.blue
               ),
-              const SizedBox(width: 16),
               _buildSummaryCard(
                 'Sentiment', 
                 retro.averageSentiment != null ? retro.averageSentiment!.toStringAsFixed(1) : '-', 
                 Icons.mood, 
                 Colors.orange
               ),
-               const SizedBox(width: 16),
               _buildSummaryCard(
                 'Action Items', 
                 '${retro.actionItems.length}', 
@@ -1239,22 +1365,21 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
   }
 
   Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
-            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-            Text(title, style: TextStyle(color: color.withOpacity(0.8))),
-          ],
-        ),
+    return Container(
+      width: 140, // Fixed width so it wraps nicely
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1), // Note: using withOpacity per existing code, although deprecated
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+          Text(title, style: TextStyle(color: color.withOpacity(0.8), fontSize: 13), overflow: TextOverflow.ellipsis, maxLines: 1),
+        ],
       ),
     );
   }
