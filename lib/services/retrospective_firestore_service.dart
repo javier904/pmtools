@@ -512,7 +512,7 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
     // However, the model uses raw email. We will just use the raw email for the map path
     try {
       await docRef.update({
-        FieldPath(const ['sentimentVotes'], userEmail): score,
+        FieldPath(['sentimentVotes', userEmail]): score,
       });
 
       // Optional: Asynchronously log the audit without blocking the UI vote
@@ -539,7 +539,7 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   Future<void> submitOneWord(String retroId, String userEmail, String word) async {
     final docRef = _retrosCollection.doc(retroId);
     await docRef.update({
-      FieldPath(const ['oneWordVotes'], userEmail): word,
+      FieldPath(['oneWordVotes', userEmail]): word,
     });
 
     final retro = await getRetrospective(retroId);
@@ -562,7 +562,7 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   Future<void> submitWeather(String retroId, String userEmail, String weather) async {
     final docRef = _retrosCollection.doc(retroId);
     await docRef.update({
-      FieldPath(const ['weatherVotes'], userEmail): weather,
+      FieldPath(['weatherVotes', userEmail]): weather,
     });
 
     final retro = await getRetrospective(retroId);
