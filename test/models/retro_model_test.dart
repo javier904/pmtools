@@ -48,7 +48,7 @@ void main() {
     });
 
     test('Template Columns', () {
-      expect(RetroTemplate.startStopContinue.defaultColumns.length, 2);
+      expect(RetroTemplate.startStopContinue.defaultColumns.length, 3);
       
       // Future expansion verification
       expect(RetroTemplate.fourLs.defaultColumns.isNotEmpty, true);

@@ -213,54 +213,66 @@ class _ActionItemDialogState extends State<ActionItemDialog> {
                 ),
                 const SizedBox(height: 16),
 
-                Row(
-                  children: [
-                    // Assignee Dropdown
-                    Expanded(
-                      flex: 3,
-                      child: DropdownButtonFormField<String>(
-                        value: _assigneeEmail,
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: l10n.retroActionAssignee,
-                          border: const OutlineInputBorder(),
-                          prefixIcon: const Icon(Icons.person_outline),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        ),
-                        items: [
-                          DropdownMenuItem(value: null, child: Text(l10n.retroActionNoAssignee)),
-                          ...widget.participants.map((email) => DropdownMenuItem(
-                            value: email,
-                            child: Text(email, overflow: TextOverflow.ellipsis),
-                          ))
-                        ],
-                        onChanged: (val) => setState(() => _assigneeEmail = val),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                Builder(
+                  builder: (context) {
+                    final isMobile = MediaQuery.of(context).size.width < 500;
 
-                    // Priority
-                    Expanded(
-                      flex: 2,
-                      child: DropdownButtonFormField<ActionPriority>(
-                        value: _priority,
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          labelText: l10n.retroActionPriority,
-                          border: const OutlineInputBorder(),
-                          prefixIcon: const Icon(Icons.flag_outlined),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        ),
-                        items: ActionPriority.values.map((p) => DropdownMenuItem(
-                          value: p,
-                          child: Text(p.displayName, overflow: TextOverflow.ellipsis),
-                        )).toList(),
-                        onChanged: (val) {
-                          if (val != null) setState(() => _priority = val);
-                        },
+                    final assigneeWidget = DropdownButtonFormField<String>(
+                      value: _assigneeEmail,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: l10n.retroActionAssignee,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.person_outline),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                       ),
-                    ),
-                  ],
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.retroActionNoAssignee)),
+                        ...widget.participants.map((email) => DropdownMenuItem(
+                          value: email,
+                          child: Text(email, overflow: TextOverflow.ellipsis),
+                        ))
+                      ],
+                      onChanged: (val) => setState(() => _assigneeEmail = val),
+                    );
+
+                    final priorityWidget = DropdownButtonFormField<ActionPriority>(
+                      value: _priority,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: l10n.retroActionPriority,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.flag_outlined),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      ),
+                      items: ActionPriority.values.map((p) => DropdownMenuItem(
+                        value: p,
+                        child: Text(p.displayName, overflow: TextOverflow.ellipsis),
+                      )).toList(),
+                      onChanged: (val) {
+                        if (val != null) setState(() => _priority = val);
+                      },
+                    );
+
+                    if (isMobile) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          assigneeWidget,
+                          const SizedBox(height: 16),
+                          priorityWidget,
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        Expanded(flex: 3, child: assigneeWidget),
+                        const SizedBox(width: 12),
+                        Expanded(flex: 2, child: priorityWidget),
+                      ],
+                    );
+                  }
                 ),
                 const SizedBox(height: 16),
 

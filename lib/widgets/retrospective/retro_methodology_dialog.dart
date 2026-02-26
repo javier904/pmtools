@@ -20,7 +20,7 @@ class _RetroMethodologyDialogState extends State<RetroMethodologyDialog> {
     return AlertDialog(
       title: Text(l10n.retroChooseMethodology),
       content: SizedBox(
-        width: 500,
+        width: MediaQuery.of(context).size.width > 550 ? 500 : double.maxFinite,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

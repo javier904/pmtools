@@ -55,8 +55,19 @@ class _ActionItemsTableWidgetState extends State<ActionItemsTableWidget> {
       );
     }
 
-    return Column(
-      children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double parentWidth = constraints.hasBoundedWidth ? constraints.maxWidth : MediaQuery.of(context).size.width;
+        final double minTableWidth = 1100.0;
+        final double tableWidth = parentWidth > minTableWidth ? parentWidth : minTableWidth;
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: tableWidth,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
         // Header Row
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -293,6 +304,10 @@ class _ActionItemsTableWidgetState extends State<ActionItemsTableWidget> {
           },
         ),
       ],
+    ),
+          ),
+        );
+      },
     );
   }
 

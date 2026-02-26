@@ -1134,6 +1134,72 @@ details[open] .faq-question::before {
   text-align: center;
 }
 
+/* ===== RETROSPECTIVE SCREENSHOTS SECTION ===== */
+.screenshots-section {
+  padding: 48px 24px;
+  border-top: 1px solid var(--border-dark);
+}
+
+.screenshots-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.screenshots-section .screenshots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.screenshot-item {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-surface-dark);
+}
+
+.screenshot-item picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 12px;
+}
+
+.screenshot-item img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.screenshot-item:not(.screenshot-narrow) {
+  flex: 1 1 100%;
+}
+
+.screenshot-item.screenshot-narrow {
+  flex: 0 1 320px;
+}
+
+.screenshot-item.screenshot-narrow img {
+  max-height: 420px;
+  object-fit: contain;
+}
+
+.screenshot-caption {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text-secondary-dark);
+  text-align: center;
+  margin: 0;
+}
+
 /* ===== ORIGIN SECTION ===== */
 .origin-section {
   padding: 64px 24px;
@@ -1288,6 +1354,20 @@ details[open] .faq-question::before {
 
   .screenshots-grid picture {
     min-height: 200px;
+  }
+
+  .screenshots-section {
+    padding: 32px 16px;
+  }
+
+  .screenshots-section .screenshots-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .screenshot-item.screenshot-narrow {
+    flex: 1 1 100%;
+    max-width: 320px;
   }
 
   .step-card img {

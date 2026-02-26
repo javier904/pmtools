@@ -20,19 +20,40 @@ class RetroCanvasWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    // Starfish template requires 5 columns
+    Widget content;
     if (retro.template == RetroTemplate.starfish) {
       if (retro.columns.length < 5) {
         return Center(child: Text(l10n.retroCanvasMinColumns));
       }
-      return _buildStarfishLayout(context);
+      content = _buildStarfishLayout(context);
+    } else {
+      if (retro.columns.length < 4) {
+        return Center(child: Text(l10n.retroCanvasMinColumns));
+      }
+      content = _buildSailboatLayout(context);
     }
 
-    // Sailboat template requires 4 columns
-    if (retro.columns.length < 4) {
-      return Center(child: Text(l10n.retroCanvasMinColumns));
-    }
-    return _buildSailboatLayout(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 1000;
+        
+        if (isMobile) {
+          return InteractiveViewer(
+            constrained: false, // Allows the child to be larger than the viewport
+            minScale: 0.5,
+            maxScale: 2.0,
+            boundaryMargin: const EdgeInsets.all(100), // Let them pan past the edges a bit
+            child: SizedBox(
+              width: 800, // Fixed minimum width for the canvas logic to draw correctly
+              height: 800, // Fixed minimum height
+              child: content,
+            ),
+          );
+        }
+
+        return content;
+      },
+    );
   }
 
   Widget _buildSailboatLayout(BuildContext context) {

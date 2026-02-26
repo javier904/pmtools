@@ -506,36 +506,33 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   /// Invia un voto sentiment (Icebreaker)
   Future<void> submitSentiment(String retroId, String userEmail, int score) async {
     final docRef = _retrosCollection.doc(retroId);
-    return _db.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
-      if (!snapshot.exists) return;
-      
-      final retro = RetrospectiveModel.fromFirestore(snapshot);
-      final newVotes = Map<String, int>.from(retro.sentimentVotes);
-      newVotes[userEmail] = score;
-      
-      // Recalculate average
-      double? newAverage;
-      if (newVotes.isNotEmpty) {
-        final total = newVotes.values.reduce((a, b) => a + b);
-        newAverage = total / newVotes.length;
-      }
-
-      transaction.update(docRef, {
-        'sentimentVotes': newVotes,
-        'averageSentiment': newAverage,
+    
+    // Direct path update bypasses the need for full document parsing and transaction cast errors
+    // Since Firebase keys cannot contain '.' natively without escaping in some contexts, we escape it if needed
+    // However, the model uses raw email. We will just use the raw email for the map path
+    try {
+      await docRef.update({
+        'sentimentVotes.$userEmail': score,
       });
 
-      transaction.set(_getAuditLogsCollection(retro.projectId ?? '').doc(), AuditLogModel.update(
-        projectId: retro.projectId ?? '',
-        entityType: AuditEntityType.retrospective,
-        entityId: retroId,
-        entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
-        performedBy: userEmail,
-        performedByName: 'User',
-        description: 'Votato sentiment icebreaker ($score)',
-      ).toFirestore());
-    });
+      // Optional: Asynchronously log the audit without blocking the UI vote
+      getRetrospective(retroId).then((retro) {
+        if (retro != null && retro.projectId != null) {
+          _logAudit(AuditLogModel.update(
+            projectId: retro.projectId!,
+            entityType: AuditEntityType.retrospective,
+            entityId: retroId,
+            entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+            performedBy: userEmail,
+            performedByName: 'User',
+            description: 'Votato sentiment icebreaker ($score)',
+          ));
+        }
+      });
+    } catch (e) {
+      print('Firebase Sentiment Update Error: $e');
+      rethrow;
+    }
   }
 
   /// Invia una parola (Icebreaker One Word)

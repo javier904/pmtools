@@ -222,7 +222,7 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
         ],
       ),
       content: SizedBox(
-        width: 450,
+        width: MediaQuery.of(context).size.width > 500 ? 450 : double.maxFinite,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -264,17 +264,18 @@ class _RetroParticipantInviteDialogState extends State<RetroParticipantInviteDia
                     ),
                     const SizedBox(height: 12),
 
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         Text(l10n?.inviteRole ?? 'Ruolo:'),
-                        const SizedBox(width: 8),
                         ChoiceChip(
                           label: Text(l10n?.participantRoleVoters ?? 'Partecipante'),
                           selected: _selectedRole == 'participant',
                           onSelected: (_) => setState(
                               () => _selectedRole = 'participant'),
                         ),
-                        const SizedBox(width: 8),
                         ChoiceChip(
                           label: Text(l10n?.participantObserver ?? 'Osservatore'),
                           selected: _selectedRole == 'observer',

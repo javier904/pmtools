@@ -39,33 +39,41 @@ class WeatherIcebreakerWidget extends StatelessWidget {
       weatherCounts[weather] = (weatherCounts[weather] ?? 0) + 1;
     }
 
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Center(
       child: Card(
-        margin: const EdgeInsets.all(24),
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.retroIcebreakerWeatherTitle,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+        margin: EdgeInsets.all(isMobile ? 8 : 24),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(isMobile ? 12 : 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.retroIcebreakerWeatherTitle,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: isMobile ? 18 : null,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.retroIcebreakerWeatherQuestion,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: context.textSecondaryColor,
+                SizedBox(height: isMobile ? 8 : 16),
+                Text(
+                  l10n.retroIcebreakerWeatherQuestion,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: context.textSecondaryColor,
+                    fontSize: isMobile ? 12 : null,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
+                SizedBox(height: isMobile ? 12 : 32),
 
               // Weather Options
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // Weather Options
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: isMobile ? 8 : 16,
+                runSpacing: isMobile ? 8 : 16,
                 children: weatherOptions.map((option) {
                   final (type, emoji, label) = option;
                   final isSelected = myWeather == type;
@@ -82,14 +90,16 @@ class WeatherIcebreakerWidget extends StatelessWidget {
                 }).toList(),
               ),
 
-              const SizedBox(height: 48),
+              SizedBox(height: isMobile ? 16 : 48),
 
               // Progress
               Text(
                 l10n.retroParticipantsVoted(currentWeather.length),
-                style: Theme.of(context).textTheme.titleSmall,
+                style: isMobile 
+                    ? Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12) 
+                    : Theme.of(context).textTheme.titleSmall,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: isMobile ? 12 : 24),
 
               if (isFacilitator)
                 ElevatedButton.icon(
@@ -100,6 +110,7 @@ class WeatherIcebreakerWidget extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
@@ -113,6 +124,7 @@ class WeatherIcebreakerWidget extends StatelessWidget {
     int count,
   ) {
     final selectedColor = Colors.blue;
+    final isMobile = MediaQuery.of(context).size.width < 600;
 
     return InkWell(
       onTap: () {
@@ -121,7 +133,8 @@ class WeatherIcebreakerWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        width: isMobile ? 80 : 120, // Constrain width based on screen
+        padding: EdgeInsets.all(isMobile ? 8 : 16),
         decoration: BoxDecoration(
           color: isSelected ? selectedColor.withValues(alpha: 0.25) : Colors.transparent,
           border: Border.all(
@@ -135,12 +148,13 @@ class WeatherIcebreakerWidget extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 48)),
-            const SizedBox(height: 8),
+            Text(emoji, style: TextStyle(fontSize: isMobile ? 28 : 48)),
+            SizedBox(height: isMobile ? 4 : 8),
             Text(
               label,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: isMobile ? 10 : 12,
                 color: isSelected ? selectedColor : context.textSecondaryColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),

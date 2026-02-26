@@ -113,6 +113,7 @@ class _RetroTimerWidgetState extends State<RetroTimerWidget> {
     final theme = Theme.of(context);
     final isRunning = widget.timer.isActive;
     final isOver = isRunning && _remaining.inSeconds <= 0;
+    final isMobile = MediaQuery.of(context).size.width < 1000;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -126,12 +127,14 @@ class _RetroTimerWidgetState extends State<RetroTimerWidget> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.timer_outlined,
-            size: 16,
-            color: isOver ? Colors.red : theme.primaryColor,
-          ),
-          const SizedBox(width: 8),
+          if (!isMobile) ...[
+            Icon(
+              Icons.timer_outlined,
+              size: 16,
+              color: isOver ? Colors.red : theme.primaryColor,
+            ),
+            const SizedBox(width: 8),
+          ],
           Text(
             _formatDuration(_remaining),
             style: TextStyle(
