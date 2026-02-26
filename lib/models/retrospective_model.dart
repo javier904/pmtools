@@ -191,7 +191,7 @@ class RetrospectiveModel {
       areTeamCardsVisible: data['areTeamCardsVisible'] ?? false,
       actionItems: (data['actionItems'] as List? ?? []).map((i) => ActionItem.fromMap(i)).toList(),
       phaseDurations: (data['phaseDurations'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k, v is num ? v.toInt() : 0)),
-      sentimentVotes: (data['sentimentVotes'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k, v is num ? v.toInt() : 0)),
+      sentimentVotes: (data['sentimentVotes'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k.toLowerCase(), v is num ? v.toInt() : 0)),
       oneWordVotes: (data['oneWordVotes'] as Map<String, dynamic>? ?? {}).map((k, v) {
         String val = v?.toString() ?? '';
         // Clean legacy/dirty data format {COM: VALUE}

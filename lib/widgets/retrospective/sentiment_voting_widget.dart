@@ -23,7 +23,8 @@ class SentimentVotingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final int? myVote = currentVotes[currentUserEmail];
+    final String safeEmail = currentUserEmail.toLowerCase();
+    final int? myVote = currentVotes[safeEmail];
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Center(
@@ -103,7 +104,7 @@ class SentimentVotingWidget extends StatelessWidget {
         // Vote logic
         try {
           final service = RetrospectiveFirestoreService();
-          await service.submitSentiment(retroId, currentUserEmail, value);
+          await service.submitSentiment(retroId, currentUserEmail.toLowerCase(), value);
         } catch (e, stack) {
           print('Error submitting sentiment vote: $e');
         }
