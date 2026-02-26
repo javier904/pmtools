@@ -660,17 +660,14 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
-                const SizedBox(width: 8),
-                _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
-                const SizedBox(width: 8),
-                _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
-              ],
-            ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
+              _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
+              _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
+            ],
           ),
         ],
       ),

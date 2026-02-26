@@ -351,18 +351,14 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           ),
           const SizedBox(height: 12),
           // Filter Chips
-           SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterChip(AppLocalizations.of(context)!.retroFilterAll, null),
-                const SizedBox(width: 8),
-                _buildFilterChip(AppLocalizations.of(context)!.retroFilterActive, RetroStatus.active),
-                const SizedBox(width: 8),
-                const SizedBox(width: 8),
-                _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
-              ],
-            ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildFilterChip(AppLocalizations.of(context)!.retroFilterAll, null),
+              _buildFilterChip(AppLocalizations.of(context)!.retroFilterActive, RetroStatus.active),
+              _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
+            ],
           ),
         ],
       ),
