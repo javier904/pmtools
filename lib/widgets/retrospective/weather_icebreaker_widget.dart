@@ -159,24 +159,6 @@ class WeatherIcebreakerWidget extends StatelessWidget {
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-            if (count > 0) ...[
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: selectedColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  '$count',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: selectedColor,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),

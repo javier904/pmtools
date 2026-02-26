@@ -685,8 +685,8 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
         content,
         if (shouldShowCoach)
           Positioned(
-            bottom: 80,
-            right: 20,
+            bottom: 24,
+            right: 24,
             child: AgileCoachOverlay(phase: retro.currentPhase, template: retro.template),
           ),
       ],
