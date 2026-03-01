@@ -375,14 +375,30 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildStandardFilterChip((l10n?.retroFilterAll ?? 'All'), 'all'),
-              _buildStandardFilterChip((l10n?.retroFilterActive ?? 'Active'), 'active'),
-              _buildStandardFilterChip((l10n?.retroFilterCompleted ?? 'Completed'), 'completed'),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n?.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n?.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n?.retroFilterCompleted ?? 'Completed'), 'completed'),
+                if (MediaQuery.of(context).size.width < 700) ...[
+                  const SizedBox(width: 8),
+                  ActionChip(
+                    label: const Text(
+                      'New Project',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                    ),
+                    backgroundColor: AppColors.primary,
+                    side: const BorderSide(color: Colors.transparent),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: _showCreateProjectDialog,
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),
@@ -464,6 +480,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   }
 
   Widget _buildProjectCard(AgileProjectModel project) {
+    final l10n = AppLocalizations.of(context)!;
     final isOwner = project.isOwner(_currentUserEmail);
     final canManage = project.canManage(_currentUserEmail);
     final frameworkColor = _getFrameworkColor(project.framework);
@@ -553,6 +570,23 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                         ),
                       ),
                     ),
+                  // Badge ruolo
+                  Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                     decoration: BoxDecoration(
+                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                     child: Text(
+                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                       style: TextStyle(
+                         fontSize: 10,
+                         fontWeight: FontWeight.bold,
+                         color: isOwner ? Colors.blue : Colors.purple,
+                       ),
+                     ),
+                  ),
+                  const SizedBox(width: 4),
                   FavoriteStar(
                     resourceId: project.id,
                     type: 'agile_project',
@@ -987,6 +1021,9 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
 
   Widget? _buildFAB() {
     // FAB solo nella lista progetti (il dettaglio ha il suo FAB)
+    if (MediaQuery.of(context).size.width < 700) {
+      return null;
+    }
     return FloatingActionButton.extended(
       onPressed: _showCreateProjectDialog,
       icon: const Icon(Icons.add, color: Colors.white),

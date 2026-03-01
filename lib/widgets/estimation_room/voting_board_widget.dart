@@ -3,7 +3,6 @@ import '../../l10n/app_localizations.dart';
 import '../../models/planning_poker_story_model.dart';
 import '../../models/planning_poker_session_model.dart';
 import '../../themes/app_theme.dart';
-import '../../themes/app_colors.dart';
 import 'poker_card_widget.dart';
 import '../user_display_name_widget.dart';
 
@@ -26,7 +25,16 @@ class VotingBoardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final voters = session.participants.entries
         .where((e) => e.value.canVote)
-        .toList();
+        .toList()
+        ..sort((a, b) {
+          if (a.key == currentUserEmail) return -1;
+          if (b.key == currentUserEmail) return 1;
+          
+          if (a.value.isFacilitator && !b.value.isFacilitator) return -1;
+          if (!a.value.isFacilitator && b.value.isFacilitator) return 1;
+          
+          return a.value.name.toLowerCase().compareTo(b.value.name.toLowerCase());
+        });
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -77,27 +85,31 @@ class VotingBoardWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Griglia voti compatta
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: voters.map((entry) {
-              final email = entry.key;
-              final participant = entry.value;
-              final vote = story.votes[email];
-              final hasVoted = vote != null;
-              final isCurrentUser = email == currentUserEmail;
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: voters.map((entry) {
+                final email = entry.key;
+                final participant = entry.value;
+                final vote = story.votes[email];
+                final hasVoted = vote != null;
+                final isCurrentUser = email == currentUserEmail;
 
-              return _buildVoterCard(
-                context: context,
-                name: participant.name,
-                email: email,
-                hasVoted: hasVoted,
-                voteValue: vote?.value,
-                isRevealed: isRevealed,
-                isCurrentUser: isCurrentUser,
-                isFacilitator: participant.isFacilitator,
-              );
-            }).toList(),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: _buildVoterCard(
+                    context: context,
+                    name: participant.name,
+                    email: email,
+                    hasVoted: hasVoted,
+                    voteValue: vote?.value,
+                    isRevealed: isRevealed,
+                    isCurrentUser: isCurrentUser,
+                    isFacilitator: participant.isFacilitator,
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),

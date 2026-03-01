@@ -77,41 +77,88 @@ class ResultsPanelWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // Statistiche
-          Row(
-            children: [
-              Expanded(child: _buildStatCard(
-                context,
-                l10n.estimationAverage,
-                stats.numericAverage?.toStringAsFixed(1) ?? '-',
-                Colors.blue,
-                tooltip: l10n.estimationAverageTooltip,
-              )),
-              const SizedBox(width: 12),
-              Expanded(child: _buildStatCard(
-                context,
-                l10n.estimationMedian,
-                stats.numericMedian?.toStringAsFixed(1) ?? '-',
-                Colors.amber,
-                tooltip: l10n.estimationMedianTooltip,
-              )),
-              const SizedBox(width: 12),
-              Expanded(child: _buildStatCard(
-                context,
-                l10n.estimationMode,
-                stats.mode ?? '-',
-                Colors.orange,
-                tooltip: l10n.estimationModeTooltip,
-              )),
-              const SizedBox(width: 12),
-              Expanded(child: _buildStatCard(
-                context,
-                l10n.estimationVoters,
-                '${stats.totalVoters}',
-                Colors.purple,
-                tooltip: l10n.estimationVotersTooltip,
-              )),
-            ],
+          // Statistiche — 4 colonne su ≥450px, 2×2 su mobile
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isMobile = constraints.maxWidth < 450;
+              if (isMobile) {
+                return Row(
+                  children: [
+                    Expanded(child: _buildStatCard(
+                      context,
+                      l10n.estimationAverage,
+                      stats.numericAverage?.toStringAsFixed(1) ?? '-',
+                      Colors.blue,
+                      tooltip: l10n.estimationAverageTooltip,
+                      isMobile: true,
+                    )),
+                    const SizedBox(width: 4),
+                    Expanded(child: _buildStatCard(
+                      context,
+                      l10n.estimationMedian,
+                      stats.numericMedian?.toStringAsFixed(1) ?? '-',
+                      Colors.amber,
+                      tooltip: l10n.estimationMedianTooltip,
+                      isMobile: true,
+                    )),
+                    const SizedBox(width: 4),
+                    Expanded(child: _buildStatCard(
+                      context,
+                      l10n.estimationMode,
+                      stats.mode ?? '-',
+                      Colors.orange,
+                      tooltip: l10n.estimationModeTooltip,
+                      isMobile: true,
+                    )),
+                    const SizedBox(width: 4),
+                    Expanded(child: _buildStatCard(
+                      context,
+                      l10n.estimationVoters,
+                      '${stats.totalVoters}',
+                      Colors.purple,
+                      tooltip: l10n.estimationVotersTooltip,
+                      isMobile: true,
+                    )),
+                  ],
+                );
+              }
+              // Desktop: 4 colonne
+              return Row(
+                children: [
+                  Expanded(child: _buildStatCard(
+                    context,
+                    l10n.estimationAverage,
+                    stats.numericAverage?.toStringAsFixed(1) ?? '-',
+                    Colors.blue,
+                    tooltip: l10n.estimationAverageTooltip,
+                  )),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildStatCard(
+                    context,
+                    l10n.estimationMedian,
+                    stats.numericMedian?.toStringAsFixed(1) ?? '-',
+                    Colors.amber,
+                    tooltip: l10n.estimationMedianTooltip,
+                  )),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildStatCard(
+                    context,
+                    l10n.estimationMode,
+                    stats.mode ?? '-',
+                    Colors.orange,
+                    tooltip: l10n.estimationModeTooltip,
+                  )),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildStatCard(
+                    context,
+                    l10n.estimationVoters,
+                    '${stats.totalVoters}',
+                    Colors.purple,
+                    tooltip: l10n.estimationVotersTooltip,
+                  )),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           // Distribuzione
@@ -187,12 +234,15 @@ class ResultsPanelWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, String label, String value, Color color, {String? tooltip}) {
+  Widget _buildStatCard(BuildContext context, String label, String value, Color color, {String? tooltip, bool isMobile = false}) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     final card = Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 8 : 14,
+        horizontal: isMobile ? 6 : 10,
+      ),
       decoration: BoxDecoration(
         color: color.withOpacity(isDark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -203,12 +253,12 @@ class ResultsPanelWidget extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: isMobile ? 18 : 24,
               fontWeight: FontWeight.bold,
               color: isDark ? color.withOpacity(0.9) : color,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -217,17 +267,17 @@ class ResultsPanelWidget extends StatelessWidget {
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: isMobile ? 11 : 13,
                     color: isDark ? color.withOpacity(0.7) : color.withOpacity(0.8),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (tooltip != null) ...[
-                const SizedBox(width: 4),
+                const SizedBox(width: 2),
                 Icon(
                   Icons.info_outline,
-                  size: 14,
+                  size: isMobile ? 12 : 14,
                   color: color.withOpacity(0.5),
                 ),
               ],

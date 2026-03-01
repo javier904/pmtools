@@ -1634,6 +1634,8 @@
   "estimationReveal": "Раскрыть",
   "estimationSkip": "Пропустить",
   "estimationStories": "Истории",
+  "estimationVotingTab": "Голосование",
+  "estimationTeamTab": "Команда",
   "estimationAddStory": "Добавить историю",
   "estimationStartVoting": "Начать голосование",
   "estimationViewVotes": "Посмотреть голоса",

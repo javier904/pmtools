@@ -78,6 +78,21 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
       _currentValue = value;
     });
     widget.onValueSubmitted(value);
+    
+    // Provide explicit feedback that the vote was submitted
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.voteSubmitted),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -163,7 +178,7 @@ class _DecimalInputWidgetState extends State<DecimalInputWidget> {
                     vertical: 14,
                   ),
                 ),
-                child: const Text('Vota'),
+                child: Text(l10n.estimationDecimalVote),
               ),
             ],
           ),

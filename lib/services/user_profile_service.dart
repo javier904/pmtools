@@ -211,9 +211,11 @@ class UserProfileService {
         }
       }
     } catch (e) {
-      debugPrint('Error resolving name for $normalizedEmail: $e');
+      final isPermissionDenied = e.toString().contains('permission-denied');
+      if (!isPermissionDenied) {
+        debugPrint('Error settling name for $normalizedEmail: $e');
+      }
     }
-
     // Fallback: display name from Auth for current user (anche se Firestore ha fallito)
     if (_auth.currentUser?.email?.toLowerCase() == normalizedEmail) {
       final authDisplayName = _auth.currentUser?.displayName;

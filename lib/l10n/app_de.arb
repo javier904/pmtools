@@ -1520,6 +1520,8 @@
   "estimationReveal": "Aufdecken",
   "estimationSkip": "Überspringen",
   "estimationStories": "Stories",
+  "estimationVotingTab": "Abstimmung",
+  "estimationTeamTab": "Team",
   "estimationAddStory": "Story hinzufügen",
   "estimationStartVoting": "Abstimmung starten",
   "estimationViewVotes": "Stimmen sehen",

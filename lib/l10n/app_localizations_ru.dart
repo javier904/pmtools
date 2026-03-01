@@ -3842,6 +3842,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get estimationStories => 'Истории';
 
   @override
+  String get estimationVotingTab => 'Голосование';
+
+  @override
+  String get estimationTeamTab => 'Команда';
+
+  @override
   String get estimationAddStory => 'Добавить историю';
 
   @override

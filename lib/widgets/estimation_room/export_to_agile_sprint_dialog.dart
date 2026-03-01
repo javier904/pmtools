@@ -247,6 +247,7 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
                   else if (widget.availableProjects.isNotEmpty)
                     DropdownButtonFormField<AgileProjectModel>(
                       value: _selectedProject,
+                      isExpanded: true,
                       decoration: InputDecoration(
                         labelText: l10n.selectProject,
                         border: const OutlineInputBorder(),
@@ -309,6 +310,7 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
                     else
                       DropdownButtonFormField<SprintModel>(
                         value: _selectedSprint,
+                        isExpanded: true,
                         decoration: InputDecoration(
                           labelText: l10n.selectSprint,
                           border: const OutlineInputBorder(),
@@ -358,48 +360,61 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.storiesSelectedCount(_selectedStoryIds.length),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: _selectedStoryIds.isEmpty ? Colors.red : Colors.purple,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.storiesSelectedCount(_selectedStoryIds.length),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: _selectedStoryIds.isEmpty ? Colors.red : Colors.purple,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
-                      ),
-                      Text(
-                        l10n.totalStoryPoints(_selectedTotalPoints),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
+                        Text(
+                          l10n.totalStoryPoints(_selectedTotalPoints),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            for (final story in _estimatedStories) {
-                              _selectedStoryIds.add(story.id);
-                            }
-                          });
-                        },
-                        child: Text(l10n.selectAll),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedStoryIds.clear();
-                          });
-                        },
-                        child: Text(l10n.deselectAll),
-                      ),
-                    ],
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        for (final story in _estimatedStories) {
+                          _selectedStoryIds.add(story.id);
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(l10n.selectAll),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedStoryIds.clear();
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(l10n.deselectAll),
                   ),
                 ],
               ),
@@ -580,11 +595,15 @@ class _ExportToAgileSprintDialogState extends State<ExportToAgileSprintDialog> {
               color: isSelected ? Colors.purple : Colors.grey,
             ),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.purple : (isDark ? Colors.white70 : Colors.black87),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.purple : (isDark ? Colors.white70 : Colors.black87),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],

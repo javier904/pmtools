@@ -2635,6 +2635,8 @@
   "estimationStartVoting": "Iniciar Votação",
   "estimationStatus": "Status",
   "estimationStories": "Stories",
+  "estimationVotingTab": "Votar",
+  "estimationTeamTab": "Equipa",
   "estimationStoriesCompleted": "Stories concluídas",
   "estimationStoriesTotal": "Stories totais",
   "estimationViewDetail": "Ver detalhe",

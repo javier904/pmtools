@@ -1217,7 +1217,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String estimationVoteValue(String value) {
-    return 'Voto: $value giorni';
+    return 'Voto inviato: $value giorni';
   }
 
   @override
@@ -3837,6 +3837,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get estimationStories => 'Stories';
+
+  @override
+  String get estimationVotingTab => 'Voto';
+
+  @override
+  String get estimationTeamTab => 'Team';
 
   @override
   String get estimationAddStory => 'Aggiungi Story';

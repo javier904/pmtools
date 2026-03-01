@@ -341,12 +341,14 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showCreateListDialog,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: Text(l10n?.smartTodoNewListDialogTitle ?? 'New List', style: const TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue,
-      ),
+      floatingActionButton: MediaQuery.of(context).size.width < 700
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _showCreateListDialog,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: Text(l10n?.smartTodoNewListDialogTitle ?? 'New List', style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.blue,
+            ),
     );
   }
 
@@ -392,14 +394,30 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildStandardFilterChip((l10n?.retroFilterAll ?? 'All'), 'all'),
-              _buildStandardFilterChip((l10n?.retroFilterActive ?? 'Active'), 'active'),
-              _buildStandardFilterChip((l10n?.retroFilterCompleted ?? 'Completed'), 'completed'),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n?.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n?.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n?.retroFilterCompleted ?? 'Completed'), 'completed'),
+                if (MediaQuery.of(context).size.width < 700) ...[
+                  const SizedBox(width: 8),
+                  ActionChip(
+                    label: Text(
+                      l10n?.smartTodoNewListDialogTitle ?? 'New List',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                    ),
+                    backgroundColor: Colors.blue,
+                    side: const BorderSide(color: Colors.transparent),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: _showCreateListDialog,
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),
@@ -566,6 +584,23 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         ),
                       ),
                     ),
+                  // Badge ruolo
+                  Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                     decoration: BoxDecoration(
+                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                     child: Text(
+                       isOwner ? (l10n?.retroOwner ?? 'Owner') : (l10n?.retroGuest ?? 'Ospite'),
+                       style: TextStyle(
+                         fontSize: 10,
+                         fontWeight: FontWeight.bold,
+                         color: isOwner ? Colors.blue : Colors.purple,
+                       ),
+                     ),
+                  ),
+                  const SizedBox(width: 4),
                   FavoriteStar(
                     resourceId: list.id,
                     type: 'todo_list',

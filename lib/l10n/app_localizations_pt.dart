@@ -3793,6 +3793,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get estimationStories => 'Stories';
 
   @override
+  String get estimationVotingTab => 'Votar';
+
+  @override
+  String get estimationTeamTab => 'Equipa';
+
+  @override
   String get estimationAddStory => 'Adicionar Story';
 
   @override

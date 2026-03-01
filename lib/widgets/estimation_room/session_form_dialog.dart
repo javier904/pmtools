@@ -211,14 +211,27 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     isDense: true,
                     prefixIcon: const Icon(Icons.style, size: 20, color: Colors.amber),
                   ),
+                  isExpanded: true,
                   items: [
                     DropdownMenuItem(
                       value: 'fibonacci',
-                      child: Text(l10n.cardSetFibonacci),
+                      child: Flexible(
+                        child: Text(
+                          l10n.cardSetFibonacci,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'simplified',
-                      child: Text(l10n.cardSetSimplified),
+                      child: Flexible(
+                        child: Text(
+                          l10n.cardSetSimplified,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
                     ),
                   ],
                   onChanged: (value) => setState(() => _selectedCardSet = value!),

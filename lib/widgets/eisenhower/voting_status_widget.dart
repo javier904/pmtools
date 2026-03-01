@@ -35,7 +35,16 @@ class VotingStatusWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final voters = participants.entries
         .where((e) => e.value.canVote)
-        .toList();
+        .toList()
+        ..sort((a, b) {
+          if (a.key == currentUserEmail) return -1;
+          if (b.key == currentUserEmail) return 1;
+          
+          if (a.value.isFacilitator && !b.value.isFacilitator) return -1;
+          if (!a.value.isFacilitator && b.value.isFacilitator) return 1;
+          
+          return a.value.name.toLowerCase().compareTo(b.value.name.toLowerCase());
+        });
     final readyCount = activity.readyVoters.length;
     final totalVoters = voters.length;
     final progress = totalVoters > 0 ? readyCount / totalVoters : 0.0;

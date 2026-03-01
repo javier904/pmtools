@@ -343,7 +343,12 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
           }
           return !invitedEmails.contains(email);
         })
-        .toList();
+        .toList()
+        ..sort((a, b) {
+          if (a.value.isFacilitator && !b.value.isFacilitator) return -1;
+          if (!a.value.isFacilitator && b.value.isFacilitator) return 1;
+          return a.value.name.toLowerCase().compareTo(b.value.name.toLowerCase());
+        });
 
     final hasContent = _invites.isNotEmpty || membersWithoutInvites.isNotEmpty;
 

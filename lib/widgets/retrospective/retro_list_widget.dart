@@ -181,6 +181,7 @@ class RetroListWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final statusColor = _getStatusColor(retro.status);
     final statusLabel = _getStatusLabel(retro.status, l10n);
+    final isOwner = retro.createdBy.toLowerCase() == currentUserEmail.toLowerCase();
 
     return Card(
       margin: EdgeInsets.zero,
@@ -261,6 +262,23 @@ class RetroListWidget extends StatelessWidget {
                         ),
                       ),
                     ),
+                  // Badge ruolo
+                  Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                     decoration: BoxDecoration(
+                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                     child: Text(
+                       isOwner ? (l10n.retroOwner) : (l10n.retroGuest),
+                       style: TextStyle(
+                         fontSize: 10,
+                         fontWeight: FontWeight.bold,
+                         color: isOwner ? Colors.blue : Colors.purple,
+                       ),
+                     ),
+                  ),
+                  const SizedBox(width: 4),
                   FavoriteStar(
                     resourceId: retro.id,
                     type: 'retrospective',

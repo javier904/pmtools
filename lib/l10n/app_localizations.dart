@@ -2357,7 +2357,7 @@ abstract class AppLocalizations {
   /// No description provided for @estimationVoteValue.
   ///
   /// In it, this message translates to:
-  /// **'Voto: {value} giorni'**
+  /// **'Voto inviato: {value} giorni'**
   String estimationVoteValue(String value);
 
   /// No description provided for @estimationEnterValueAlert.
@@ -6983,6 +6983,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Stories'**
   String get estimationStories;
+
+  /// No description provided for @estimationVotingTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Voto'**
+  String get estimationVotingTab;
+
+  /// No description provided for @estimationTeamTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Team'**
+  String get estimationTeamTab;
 
   /// No description provided for @estimationAddStory.
   ///

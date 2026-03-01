@@ -660,14 +660,30 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
-              _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
-              _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
+                if (MediaQuery.of(context).size.width < 700) ...[
+                  const SizedBox(width: 8),
+                  ActionChip(
+                    label: const Text(
+                      'New Matrix',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                    ),
+                    backgroundColor: AppColors.success,
+                    side: const BorderSide(color: Colors.transparent),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: _showCreateMatrixDialog,
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),
@@ -748,6 +764,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   Widget _buildMatrixCard(EisenhowerMatrixModel matrix) {
     final l10n = AppLocalizations.of(context)!;
     final activityCount = matrix.activityCount;
+    final isOwner = matrix.createdBy.toLowerCase() == _currentUserEmail.toLowerCase();
 
     return Card(
       margin: EdgeInsets.zero,
@@ -809,6 +826,23 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                         ),
                       ),
                     ),
+                  // Badge ruolo
+                  Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                     decoration: BoxDecoration(
+                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                     child: Text(
+                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                       style: TextStyle(
+                         fontSize: 10,
+                         fontWeight: FontWeight.bold,
+                         color: isOwner ? Colors.blue : Colors.purple,
+                       ),
+                     ),
+                  ),
+                  const SizedBox(width: 4),
                   FavoriteStar(
                     resourceId: matrix.id,
                     type: 'eisenhower_matrix',
@@ -893,6 +927,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     final votedCount = matrix.votedActivityCount;
     final pendingCount = activityCount - votedCount;
     final isDone = activityCount > 0 && votedCount >= activityCount;
+    final isOwner = matrix.createdBy.toLowerCase() == _currentUserEmail.toLowerCase();
 
     return Card(
       margin: EdgeInsets.zero,
@@ -959,6 +994,23 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                         child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
                       ),
                     ),
+                  // Badge ruolo
+                  Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                     decoration: BoxDecoration(
+                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                     child: Text(
+                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                       style: TextStyle(
+                         fontSize: 10,
+                         fontWeight: FontWeight.bold,
+                         color: isOwner ? Colors.blue : Colors.purple,
+                       ),
+                     ),
+                  ),
+                  const SizedBox(width: 4),
                   FavoriteStar(
                     resourceId: matrix.id,
                     type: 'eisenhower_matrix',
@@ -2163,7 +2215,15 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
-                children: _selectedMatrix!.participants.entries.map((entry) {
+                children: (_selectedMatrix!.participants.entries.toList()
+                  ..sort((a, b) {
+                    final roleOrder = {'facilitator': 0, 'voter': 1, 'observer': 2};
+                    final orderA = roleOrder[a.value.role.name] ?? 2;
+                    final orderB = roleOrder[b.value.role.name] ?? 2;
+                    final roleCmp = orderA.compareTo(orderB);
+                    if (roleCmp != 0) return roleCmp;
+                    return a.value.name.toLowerCase().compareTo(b.value.name.toLowerCase());
+                  })).map((entry) {
                   final p = entry.value;
                   final email = entry.key;
                   final isFacilitator = _selectedMatrix!.isFacilitator(email);
@@ -2460,6 +2520,9 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     // FAB solo per creare nuova matrice (quando nessuna è selezionata)
     // Il pulsante "Aggiungi attività" è ora nell'header della lista
     if (_selectedMatrix == null) {
+      if (MediaQuery.of(context).size.width < 700) {
+        return null;
+      }
       return FloatingActionButton.extended(
         onPressed: _showCreateMatrixDialog,
         icon: const Icon(Icons.add, color: Colors.white),

@@ -546,7 +546,7 @@
   "estimationDecimalHint": "Inserisci la tua stima in giorni (es: 1.5, 2.25)",
   "estimationQuickSelect": "Selezione rapida:",
   "estimationDaysSuffix": "giorni",
-  "estimationVoteValue": "Voto: {value} giorni",
+  "estimationVoteValue": "Voto inviato: {value} giorni",
   "@estimationVoteValue": {
     "placeholders": {
       "value": {
@@ -1613,6 +1613,8 @@
   "estimationReveal": "Rivela",
   "estimationSkip": "Salta",
   "estimationStories": "Stories",
+  "estimationVotingTab": "Voto",
+  "estimationTeamTab": "Team",
   "estimationAddStory": "Aggiungi Story",
   "estimationStartVoting": "Inizia votazione",
   "estimationViewVotes": "Vedi voti",

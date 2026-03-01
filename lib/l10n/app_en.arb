@@ -1632,6 +1632,8 @@
   "estimationReveal": "Reveal",
   "estimationSkip": "Skip",
   "estimationStories": "Stories",
+  "estimationVotingTab": "Vote",
+  "estimationTeamTab": "Team",
   "estimationAddStory": "Add Story",
   "estimationStartVoting": "Start voting",
   "estimationViewVotes": "View votes",

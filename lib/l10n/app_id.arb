@@ -2547,6 +2547,8 @@
   "estimationReveal": "Buka",
   "estimationSkip": "Lewati",
   "estimationStories": "Story",
+  "estimationVotingTab": "Voting",
+  "estimationTeamTab": "Tim",
   "estimationAddStory": "Tambah Story",
   "estimationStartVoting": "Mulai voting",
   "estimationViewVotes": "Lihat suara",

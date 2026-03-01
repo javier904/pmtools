@@ -21,10 +21,13 @@ class ParticipantListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Separa per ruolo
-    final facilitators = participants.where((p) => p.isFacilitator).toList();
-    final voters = participants.where((p) => p.role == ParticipantRole.voter).toList();
-    final observers = participants.where((p) => p.isObserver).toList();
+    // Separa per ruolo e ordina per nome per evitare flickering/scambi di posizione
+    final facilitators = participants.where((p) => p.isFacilitator).toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    final voters = participants.where((p) => p.role == ParticipantRole.voter).toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    final observers = participants.where((p) => p.isObserver).toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
     final votedCount = currentStory != null
         ? participants.where((p) => p.canVote && currentStory!.hasUserVoted(p.email)).length

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/estimation_mode.dart';
 import '../../themes/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Widget per Three-Point Estimation (PERT)
 /// Formula: (O + 4M + P) / 6
@@ -117,6 +118,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -259,7 +261,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
             child: ElevatedButton.icon(
               onPressed: widget.enabled ? _validateAndSubmit : null,
               icon: const Icon(Icons.send),
-              label: const Text('Vota'),
+              label: Text(l10n.estimationDecimalVote),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               ),

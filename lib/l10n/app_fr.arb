@@ -742,6 +742,8 @@
   "estimationReveal": "Révéler",
   "estimationSkip": "Passer",
   "estimationStories": "Stories",
+  "estimationVotingTab": "Vote",
+  "estimationTeamTab": "Équipe",
   "estimationAddStory": "Ajouter une story",
   "estimationStartVoting": "Démarrer le vote",
   "estimationViewVotes": "Voir les votes",

@@ -87,7 +87,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   bool _isDeepLink = false;
   String? _resolvedUserName;
 
-  // TabController per sidebar (Partecipanti/Inviti)
+  // TabController per sidebar desktop (Partecipanti/Inviti)
   late TabController _sidePanelTabController;
 
   // Filtri ricerca sessioni
@@ -125,16 +125,25 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
       emailsToResolve.addAll(session.participants.keys);
     }
 
-    for (final email in emailsToResolve) {
+    final newEmails = emailsToResolve.where((email) {
       final normalizedEmail = email.toLowerCase().trim();
-      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
-        final name = await _userProfileService.getNameByEmail(email);
-        if (mounted) {
-          setState(() {
-            (_resolvedNames ??= {})[normalizedEmail] = name;
-          });
+      return !(_resolvedNames?.containsKey(normalizedEmail) ?? false);
+    }).toList();
+
+    if (newEmails.isEmpty) return;
+
+    final names = await Future.wait(
+      newEmails.map((email) => _userProfileService.getNameByEmail(email))
+    );
+
+    if (mounted) {
+      setState(() {
+        _resolvedNames ??= {};
+        for (int i = 0; i < newEmails.length; i++) {
+          final normalizedEmail = newEmails[i].toLowerCase().trim();
+          _resolvedNames![normalizedEmail] = names[i];
         }
-      }
+      });
     }
   }
 
@@ -878,14 +887,30 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
-              _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
-              _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStandardFilterChip((l10n.retroFilterAll ?? 'All'), 'all'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterActive ?? 'Active'), 'active'),
+                const SizedBox(width: 8),
+                _buildStandardFilterChip((l10n.retroFilterCompleted ?? 'Completed'), 'completed'),
+                if (MediaQuery.of(context).size.width < 700) ...[
+                  const SizedBox(width: 8),
+                  ActionChip(
+                    label: const Text(
+                      'New Room',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                    ),
+                    backgroundColor: Colors.amber,
+                    side: const BorderSide(color: Colors.transparent),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: _showCreateSessionDialog,
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),
@@ -988,6 +1013,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         ? session.completedStoryCount / session.storyCount
         : 0.0;
 
+    final isOwner = session.createdBy == _currentUserEmail;
+
     return Card(
       margin: EdgeInsets.zero,
       child: InkWell(
@@ -1071,6 +1098,23 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                         ),
                       ),
                     ),
+                  // Badge ruolo
+                  Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                     decoration: BoxDecoration(
+                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                     child: Text(
+                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                       style: TextStyle(
+                         fontSize: 10,
+                         fontWeight: FontWeight.bold,
+                         color: isOwner ? Colors.blue : Colors.purple,
+                       ),
+                     ),
+                  ),
+                  const SizedBox(width: 4),
                   FavoriteStar(
                     resourceId: session.id,
                     type: 'planning_poker',
@@ -1263,8 +1307,6 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     }
 
     // Session stream al livello più alto per sincronizzare tutti i child widget
-    // Questo risolve il problema dove facilitatore e votanti vedevano dati diversi
-    // dopo il reveal, perché i nested StreamBuilder avevano timing diversi
     return StreamBuilder<PlanningPokerSessionModel?>(
       stream: _firestoreService.streamSession(_selectedSession!.id),
       builder: (context, sessionSnapshot) {
@@ -1275,30 +1317,289 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           builder: (context, storiesSnapshot) {
             final stories = storiesSnapshot.data ?? _stories;
 
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Area principale: Story + Votazione
-                Expanded(
-                  flex: 3,
-                  child: _buildMainArea(stories, session),
-                ),
-                // Sidebar: Lista stories + Partecipanti
-                Container(
-                  width: 600,
-                  decoration: BoxDecoration(
-                    color: context.surfaceVariantColor,
-                    border: Border(left: BorderSide(color: context.borderColor)),
-                  ),
-                  child: _buildSidebar(stories),
-                ),
-              ],
+            return LayoutBuilder(
+              builder: (ctx, constraints) {
+                final isMobile = constraints.maxWidth < 700;
+
+                if (isMobile) {
+                  return _buildMobileSessionDetail(stories, session);
+                }
+
+                // ═══ DESKTOP: area principale + sidebar ═══
+                final sidebarWidth = (constraints.maxWidth * 0.38).clamp(280.0, 600.0);
+
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildMainArea(stories, session),
+                    ),
+                    Container(
+                      width: sidebarWidth,
+                      decoration: BoxDecoration(
+                        color: context.surfaceVariantColor,
+                        border: Border(left: BorderSide(color: context.borderColor)),
+                      ),
+                      child: _buildSidebar(stories),
+                    ),
+                  ],
+                );
+              },
             );
           },
         );
       },
     );
   }
+
+  /// Layout mobile: 3 tab swipeable (Voto / Stories / Team)
+  Widget _buildMobileSessionDetail(
+    List<PlanningPokerStoryModel> stories,
+    PlanningPokerSessionModel session,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Contatori per i badge delle tab
+    final votingStory = stories.where((s) => s.isVoting).firstOrNull;
+    final voteCount = votingStory?.voteCount ?? 0;
+    final totalVoters = session.participants.values.where((p) => p.canVote).length;
+    final completedCount = stories.where((s) => s.isCompleted).length;
+
+    // DefaultTabController gestisce il proprio ticker internamente al widget tree,
+    // senza richiedere un secondo vsync sullo State (compatibile con SingleTickerProviderStateMixin)
+    return DefaultTabController(
+      length: 3,
+      child: Column(
+        children: [
+          // ── TabBar fissa ──
+          Container(
+            color: context.surfaceColor,
+            child: TabBar(
+              // Nessun controller: esplicitato — usa il DefaultTabController ancestor
+              indicatorColor: AppColors.warning,
+              labelColor: AppColors.warning,
+              unselectedLabelColor: context.textSecondaryColor,
+              indicatorWeight: 2,
+              labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              unselectedLabelStyle: const TextStyle(fontSize: 12),
+              tabs: [
+                // Tab 0: Voto
+                Tab(
+                  child: _buildMobileTabLabel(
+                    Icons.how_to_vote_rounded,
+                    l10n.estimationVotingTab,
+                    badge: stories.any((s) => s.isVoting)
+                        ? '$voteCount/$totalVoters'
+                        : null,
+                    badgeColor: voteCount >= totalVoters && totalVoters > 0
+                        ? Colors.green
+                        : Colors.orange,
+                  ),
+                ),
+                // Tab 1: Stories
+                Tab(
+                  child: _buildMobileTabLabel(
+                    Icons.list_alt_rounded,
+                    l10n.estimationStories,
+                    badge: '$completedCount/${stories.length}',
+                    badgeColor: completedCount == stories.length && stories.isNotEmpty
+                        ? Colors.amber
+                        : context.textSecondaryColor,
+                  ),
+                ),
+                // Tab 2: Team
+                Tab(
+                  child: _buildMobileTabLabel(
+                    Icons.group_rounded,
+                    l10n.estimationTeamTab,
+                    badge: null,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: context.borderColor),
+
+          // ── TabBarView swipeable ──
+          Expanded(
+            child: TabBarView(
+              // Nessun controller: esplicitato — usa il DefaultTabController ancestor
+              children: [
+                // Tab 0: Pannello di voto (ex _buildMainArea)
+                _buildMainArea(stories, session),
+
+                // Tab 1: Lista stories
+                _buildMobileStoriesTab(stories, session),
+
+                // Tab 2: Partecipanti + Inviti
+                _buildMobileParticipantsPanel(stories, session),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Label compatta per le tab mobile con badge opzionale
+  Widget _buildMobileTabLabel(IconData icon, String label, {String? badge, Color? badgeColor}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15),
+        const SizedBox(width: 4),
+        Text(label),
+        if (badge != null) ...[
+          const SizedBox(width: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+            decoration: BoxDecoration(
+              color: (badgeColor ?? Colors.grey).withOpacity(0.18),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              badge,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: badgeColor ?? Colors.grey,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// Tab Stories mobile: lista stories + bottone aggiungi (facilitator)
+  Widget _buildMobileStoriesTab(
+    List<PlanningPokerStoryModel> stories,
+    PlanningPokerSessionModel session,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      children: [
+        // Header
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          color: context.surfaceColor,
+          child: Row(
+            children: [
+              Icon(Icons.list_alt_rounded, size: 18, color: Colors.amber),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '${l10n.estimationStories} (${stories.where((s) => s.isCompleted).length}/${stories.length})',
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+              ),
+              if (session.isFacilitator(_currentUserEmail))
+                TextButton.icon(
+                  onPressed: _showAddStoryDialog,
+                  icon: const Icon(Icons.add_task, size: 16, color: Colors.amber),
+                  label: Text(
+                    l10n.estimationAddStory,
+                    style: const TextStyle(color: Colors.amber, fontSize: 13),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Divider(height: 1, color: context.borderColor),
+
+        // Lista stories
+        Expanded(
+          child: stories.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.list_alt, size: 48, color: context.borderColor),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.estimationAddStoriesToStart,
+                        style: TextStyle(color: context.textSecondaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (session.isFacilitator(_currentUserEmail)) ...[
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: _showAddStoryDialog,
+                          icon: const Icon(Icons.add_task),
+                          label: Text(l10n.estimationAddStory),
+                        ),
+                      ],
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 80),
+                  itemCount: stories.sorted.length,
+                  itemBuilder: (context, index) => _buildStoryListItem(stories.sorted[index]),
+                ),
+        ),
+      ],
+    );
+  }
+
+  /// Tab Team mobile: partecipanti (con stato online/voto) + sezione inviti
+  Widget _buildMobileParticipantsPanel(
+    List<PlanningPokerStoryModel> stories,
+    PlanningPokerSessionModel session,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Sezione Partecipanti ──
+          StreamBuilder<PlanningPokerSessionModel?>(
+            stream: _firestoreService.streamSession(_selectedSession!.id),
+            builder: (context, snapshot) {
+              final liveSession = snapshot.data ?? session;
+              return ParticipantListWidget(
+                participants: liveSession.participants.values.toList(),
+                currentStory: stories.currentlyVoting,
+                currentUserEmail: _currentUserEmail,
+              );
+            },
+          ),
+
+          Divider(height: 1, color: context.borderColor),
+
+          // ── Sezione Inviti ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Row(
+              children: [
+                const Icon(Icons.mail_outline_rounded, size: 16, color: Colors.blueGrey),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.participantInvitesTab,
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 420,
+            child: EstimationRoomInviteTabWidget(
+              sessionId: _selectedSession!.id,
+              sessionTitle: _selectedSession!.name,
+              isFacilitator: _selectedSession!.isFacilitator(_currentUserEmail),
+              onInviteAccepted: () => setState(() {}),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   Widget _buildMainArea(List<PlanningPokerStoryModel> stories, PlanningPokerSessionModel session) {
     final l10n = AppLocalizations.of(context)!;
@@ -1469,8 +1770,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
   Widget _buildCurrentStoryCard(PlanningPokerStoryModel story, PlanningPokerSessionModel session) {
     final l10n = AppLocalizations.of(context)!;
+    final isFacilitator = session.isFacilitator(_currentUserEmail);
+
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.surfaceColor,
         borderRadius: BorderRadius.circular(12),
@@ -1482,96 +1784,177 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           ),
         ],
       ),
-      child: Row(
-        children: [
-          // Icona
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.description, color: Colors.amber),
-          ),
-          const SizedBox(width: 16),
-          // Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        l10n.estimationInVoting,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 480;
+
+          if (isNarrow) {
+            // ── Versione compatta mobile ──
+            // Badge + titolo + azioni tutto in una riga, niente icona grande
+            final totalVoters = session.participants.values.where((p) => p.canVote).length;
+            final allVoted = story.voteCount >= totalVoters && totalVoters > 0;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  // Badge stato
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      l10n.estimationInVoting,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  story.title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                if (story.description.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                  const SizedBox(width: 8),
+                  // Titolo (espanso)
+                  Expanded(
                     child: Text(
-                      story.description,
-                      style: TextStyle(color: context.textSecondaryColor),
-                      maxLines: 2,
+                      story.title,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-              ],
-            ),
-          ),
-          // Azioni facilitator
-          if (session.isFacilitator(_currentUserEmail))
-            Row(
+                  // Azioni facilitator inline
+                  if (isFacilitator) ...[
+                    const SizedBox(width: 8),
+                    if (!story.isRevealed)
+                      SizedBox(
+                        height: 32,
+                        child: ElevatedButton.icon(
+                          onPressed: allVoted ? () => _revealVotes(story.id) : null,
+                          icon: const Icon(Icons.visibility, size: 14),
+                          label: Text(l10n.estimationReveal, style: const TextStyle(fontSize: 12)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                      ),
+                    SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: IconButton(
+                        icon: const Icon(Icons.skip_next, size: 18),
+                        tooltip: l10n.estimationSkip,
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () => _skipStory(story.id),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }
+
+          // ── Versione desktop: layout originale con icona ──
+          Widget? facilitatorActions;
+          if (isFacilitator) {
+            facilitatorActions = Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 if (!story.isRevealed)
                   Builder(
                     builder: (context) {
-                      // Conta i partecipanti che possono votare (incluso facilitatore se canVote)
                       final totalVoters = session.participants.values.where((p) => p.canVote).length;
                       final allVoted = story.voteCount >= totalVoters && totalVoters > 0;
                       return ElevatedButton.icon(
                         onPressed: allVoted ? () => _revealVotes(story.id) : null,
-                        icon: const Icon(Icons.visibility),
+                        icon: const Icon(Icons.visibility, size: 18),
                         label: Text(l10n.estimationReveal),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         ),
                       );
                     },
                   ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
                 IconButton(
                   icon: const Icon(Icons.skip_next),
                   tooltip: l10n.estimationSkip,
+                  visualDensity: VisualDensity.compact,
                   onPressed: () => _skipStory(story.id),
                 ),
               ],
+            );
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.description, color: Colors.amber, size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          l10n.estimationInVoting,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        story.title,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      if (story.description.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            story.description,
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (facilitatorActions != null) facilitatorActions,
+              ],
             ),
-        ],
+          );
+        },
       ),
     );
   }
+
+
+
 
   Widget _buildSidebar(List<PlanningPokerStoryModel> stories) {
     final l10n = AppLocalizations.of(context)!;
@@ -1929,6 +2312,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   Widget? _buildFAB() {
     final l10n = AppLocalizations.of(context)!;
     if (_selectedSession == null) {
+      // Nascondi su mobile (usiamo il chip), mostra su desktop
+      if (MediaQuery.of(context).size.width < 700) {
+        return null;
+      }
       return FloatingActionButton.extended(
         onPressed: _showCreateSessionDialog,
         icon: const Icon(Icons.add, color: Colors.black),
@@ -3428,7 +3815,9 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
             final roleOrder = {'facilitator': 0, 'voter': 1, 'observer': 2};
             final orderA = roleOrder[a.value.role.name] ?? 2;
             final orderB = roleOrder[b.value.role.name] ?? 2;
-            return orderA.compareTo(orderB);
+            final roleCmp = orderA.compareTo(orderB);
+            if (roleCmp != 0) return roleCmp;
+            return a.key.compareTo(b.key);
           });
 
         return Column(
@@ -3616,9 +4005,12 @@ class _ParticipantsManagementDialogState extends State<_ParticipantsManagementDi
                       ),
                       title: Row(
                         children: [
-                          Text(
-                            participant.name,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          Flexible(
+                            child: Text(
+                              participant.name,
+                              style: const TextStyle(fontWeight: FontWeight.w500),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           if (isCurrentUser)
                             Container(

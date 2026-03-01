@@ -3832,6 +3832,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get estimationStories => 'Stories';
 
   @override
+  String get estimationVotingTab => 'Abstimmung';
+
+  @override
+  String get estimationTeamTab => 'Team';
+
+  @override
   String get estimationAddStory => 'Story hinzufügen';
 
   @override

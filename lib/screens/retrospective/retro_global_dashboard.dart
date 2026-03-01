@@ -298,15 +298,17 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showCreateStandaloneDialog,
-        backgroundColor: AppColors.pink,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: Text(
-          AppLocalizations.of(context)?.newRetro ?? 'New Retro',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
+      floatingActionButton: MediaQuery.of(context).size.width < 700
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _showCreateStandaloneDialog,
+              backgroundColor: AppColors.pink,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: Text(
+                AppLocalizations.of(context)?.newRetro ?? 'New Retro',
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
     ));
   }
 
@@ -351,14 +353,30 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
           ),
           const SizedBox(height: 12),
           // Filter Chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildFilterChip(AppLocalizations.of(context)!.retroFilterAll, null),
-              _buildFilterChip(AppLocalizations.of(context)!.retroFilterActive, RetroStatus.active),
-              _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterAll, null),
+                const SizedBox(width: 8),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterActive, RetroStatus.active),
+                const SizedBox(width: 8),
+                _buildFilterChip(AppLocalizations.of(context)!.retroFilterCompleted, RetroStatus.completed),
+                if (MediaQuery.of(context).size.width < 700) ...[
+                  const SizedBox(width: 8),
+                  ActionChip(
+                    label: Text(
+                      AppLocalizations.of(context)?.newRetro ?? 'New Retro',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                    ),
+                    backgroundColor: AppColors.pink,
+                    side: const BorderSide(color: Colors.transparent),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: _showCreateStandaloneDialog,
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),

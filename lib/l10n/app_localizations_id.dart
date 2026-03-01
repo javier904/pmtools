@@ -3831,6 +3831,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get estimationStories => 'Story';
 
   @override
+  String get estimationVotingTab => 'Voting';
+
+  @override
+  String get estimationTeamTab => 'Tim';
+
+  @override
   String get estimationAddStory => 'Tambah Story';
 
   @override
