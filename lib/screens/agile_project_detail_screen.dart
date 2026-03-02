@@ -1346,8 +1346,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             Expanded(child: Text('${l10n.actionSettings}: ${project.name}')),
           ],
         ),
+        insetPadding: const EdgeInsets.all(16),
         content: SizedBox(
-          width: 400,
+          width: MediaQuery.of(context).size.width < 400
+              ? MediaQuery.of(context).size.width * 0.85
+              : 400,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1751,27 +1754,24 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
     return Expanded(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 2),
-              Text(
-                unit,
-                style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color),
-              ),
-            ],
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
+          if (unit.isNotEmpty)
+            Text(
+              unit,
+              style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color),
+              overflow: TextOverflow.ellipsis,
+            ),
           Text(
             label,
             style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color),
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -1920,8 +1920,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             ),
           ],
         ),
+        insetPadding: const EdgeInsets.all(16),
         content: SizedBox(
-          width: 500,
+          width: MediaQuery.of(context).size.width < 500
+              ? MediaQuery.of(context).size.width * 0.85
+              : 500,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -2424,8 +2427,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               Expanded(child: Text(l10n.agileFinalizeSprint)),
             ],
           ),
+          insetPadding: const EdgeInsets.all(16),
           content: SizedBox(
-            width: 480,
+            width: MediaQuery.of(context).size.width < 480
+                ? MediaQuery.of(context).size.width * 0.85
+                : 480,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -2930,9 +2936,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               Expanded(child: Text('${l10n.agileRecordReview}: ${sprint.name}')),
             ],
           ),
+          insetPadding: const EdgeInsets.all(16),
           content: SizedBox(
-            width: 600,
-            height: 500,
+            width: MediaQuery.of(context).size.width < 600
+                ? MediaQuery.of(context).size.width * 0.85
+                : 600,
+            height: MediaQuery.of(context).size.height * 0.7,
             child: DefaultTabController(
               length: 4,
               child: Column(
@@ -3983,7 +3992,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
             labelText: 'Titolo',
             hintText: 'Es. Retrospective Sprint 5',
           ),
-          autofocus: true,
+          autofocus: MediaQuery.of(context).size.width > 600,
           textCapitalization: TextCapitalization.sentences,
         ),
         actions: [
@@ -4101,8 +4110,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               ),
           ],
         ),
+        insetPadding: const EdgeInsets.all(16),
         content: SizedBox(
-          width: 600,
+          width: MediaQuery.of(context).size.width < 600
+              ? MediaQuery.of(context).size.width * 0.85
+              : 600,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -4292,9 +4304,12 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               Expanded(child: Text('${l10n.retroQuickForm} - ${sprint.name}')),
             ],
           ),
+          insetPadding: const EdgeInsets.all(16),
           content: SizedBox(
-            width: 600,
-            height: 500,
+            width: MediaQuery.of(context).size.width < 600
+                ? MediaQuery.of(context).size.width * 0.85
+                : 600,
+            height: MediaQuery.of(context).size.height * 0.7,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -4610,12 +4625,15 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
               ),
             ),
             const SizedBox(width: 4),
-            Text(
-              '$sprintName • $statusText',
-              style: TextStyle(
-                fontSize: 11,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                fontWeight: FontWeight.w500,
+            Flexible(
+              child: Text(
+                '$sprintName • $statusText',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

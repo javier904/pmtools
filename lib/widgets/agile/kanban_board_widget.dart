@@ -910,8 +910,11 @@ class _KanbanBoardWidgetState extends State<KanbanBoardWidget> {
               Text(l10n.kanbanPoliciesTitle(column.name)),
             ],
           ),
+          insetPadding: const EdgeInsets.all(16),
           content: SizedBox(
-            width: 400,
+            width: MediaQuery.of(context).size.width < 400
+                ? MediaQuery.of(context).size.width * 0.85
+                : 400,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

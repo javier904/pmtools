@@ -87,27 +87,31 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
     final l10n = AppLocalizations.of(context)!;
     final isKanban = widget.framework == AgileFramework.kanban;
 
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Icon(
-          _viewMode == CapacityViewMode.scrumStandard
-              ? Icons.speed
-              : Icons.schedule,
-          color: _viewMode == CapacityViewMode.scrumStandard
-              ? Colors.indigo
-              : Colors.teal,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _viewMode == CapacityViewMode.scrumStandard
+                  ? Icons.speed
+                  : Icons.schedule,
+              color: _viewMode == CapacityViewMode.scrumStandard
+                  ? Colors.indigo
+                  : Colors.teal,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              _viewMode == CapacityViewMode.scrumStandard
+                  ? l10n.agileTeamCapacityScrum
+                  : l10n.agileTeamCapacityHours,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        Text(
-          _viewMode == CapacityViewMode.scrumStandard
-              ? l10n.agileTeamCapacityScrum
-              : l10n.agileTeamCapacityHours,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const Spacer(),
-        // Toggle button - Only show if NOT Kanban, or if you want to allow toggle
-        // Design decision: For Kanban we hide the toggle if we want to enforce Hours view
-        // But the user asked for context-aware views. Let's hide Scrum view for Kanban strictly.
         if (!isKanban)
           Container(
             decoration: BoxDecoration(
@@ -208,33 +212,52 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Metriche principali
-        Row(
-          children: [
-            Expanded(child: _buildMetricCard(
-              icon: Icons.speed,
-              label: l10n.agileAverageVelocity,
-              value: '${avgVelocity.toStringAsFixed(1)} SP',
-              subtitle: l10n.agileVelocityUnits,
-              color: Colors.indigo,
-              tooltip: l10n.velocityTooltipAverage(completedSprints.length),
-            )),
-            const SizedBox(width: 12),
-            Expanded(child: _buildMetricCard(
-              icon: Icons.check_circle_outline,
-              label: l10n.agileThroughput,
-              value: avgThroughput.toStringAsFixed(1),
-              subtitle: l10n.agileStoriesPerSprint,
-              color: Colors.green,
-            )),
-            const SizedBox(width: 12),
-            Expanded(child: _buildMetricCard(
-              icon: Icons.history,
-              label: l10n.agileStatsCompleted,
-              value: '${completedSprints.length}',
-              subtitle: l10n.agileSprints,
-              color: Colors.blue,
-            )),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final cards = [
+              _buildMetricCard(
+                icon: Icons.speed,
+                label: l10n.agileAverageVelocity,
+                value: '${avgVelocity.toStringAsFixed(1)} SP',
+                subtitle: l10n.agileVelocityUnits,
+                color: Colors.indigo,
+                tooltip: l10n.velocityTooltipAverage(completedSprints.length),
+              ),
+              _buildMetricCard(
+                icon: Icons.check_circle_outline,
+                label: l10n.agileThroughput,
+                value: avgThroughput.toStringAsFixed(1),
+                subtitle: l10n.agileStoriesPerSprint,
+                color: Colors.green,
+              ),
+              _buildMetricCard(
+                icon: Icons.history,
+                label: l10n.agileStatsCompleted,
+                value: '${completedSprints.length}',
+                subtitle: l10n.agileSprints,
+                color: Colors.blue,
+              ),
+            ];
+            if (constraints.maxWidth < 500) {
+              return Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: cards.map((c) => SizedBox(
+                  width: (constraints.maxWidth - 12) / 2,
+                  child: c,
+                )).toList(),
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: cards[0]),
+                const SizedBox(width: 12),
+                Expanded(child: cards[1]),
+                const SizedBox(width: 12),
+                Expanded(child: cards[2]),
+              ],
+            );
+          },
         ),
         const SizedBox(height: 16),
 
@@ -310,9 +333,12 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
             children: [
               Icon(icon, size: 16, color: color),
               const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -324,10 +350,12 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
               fontWeight: FontWeight.bold,
               color: color,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
           Text(
             subtitle,
             style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -362,11 +390,13 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
             children: [
               Icon(Icons.lightbulb_outline, color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700),
               const SizedBox(width: 8),
-              Text(
-                l10n.agileSuggestedCapacity,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
+              Flexible(
+                child: Text(
+                  l10n.agileSuggestedCapacity,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
+                  ),
                 ),
               ),
             ],
@@ -376,12 +406,15 @@ class _TeamCapacityWidgetState extends State<TeamCapacityWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  '${minSuggested.toStringAsFixed(0)} - ${maxSuggested.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
+                Flexible(
+                  child: Text(
+                    '${minSuggested.toStringAsFixed(0)} - ${maxSuggested.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),

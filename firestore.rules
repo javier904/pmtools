@@ -425,18 +425,22 @@ service cloud.firestore {
       match /smart_todo_tasks/{taskId} {
         allow read, write: if isAuthenticated() &&
                              (get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+                              get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('createdBy', '').lower() == userEmail() ||
                               userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', []));
       }
 
-      // Subcollection: audit_logs (owner-only read, participants write)
+      // Subcollection: audit_logs (owner/participants read/write)
       match /audit_logs/{logId} {
-        // Lettura: solo owner della lista
+        // Lettura: owner o partecipanti
         allow read: if isAuthenticated() &&
-                      get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail();
+                       (get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+                        get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('createdBy', '').lower() == userEmail() ||
+                        userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', []));
 
         // Scrittura: owner o partecipanti (il service scrive gli audit per tutte le azioni)
         allow write: if isAuthenticated() &&
                        (get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('ownerEmail', '').lower() == userEmail() ||
+                        get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('createdBy', '').lower() == userEmail() ||
                         userEmail() in get(/databases/$(database)/documents/smart_todo_lists/$(listId)).data.get('participantEmails', []));
       }
 

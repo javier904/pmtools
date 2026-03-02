@@ -82,9 +82,10 @@ class _ExportToEisenhowerDialogState extends State<ExportToEisenhowerDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        width: 550,
-        constraints: const BoxConstraints(maxHeight: 650),
+        width: MediaQuery.of(context).size.width * 0.9,
+        constraints: const BoxConstraints(maxWidth: 550, maxHeight: 650),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -189,6 +190,7 @@ class _ExportToEisenhowerDialogState extends State<ExportToEisenhowerDialog> {
                   else if (widget.availableMatrices.isNotEmpty)
                     DropdownButtonFormField<EisenhowerMatrixModel>(
                       value: _selectedMatrix,
+                      isExpanded: true,
                       decoration: InputDecoration(
                         labelText: l10n.selectMatrix,
                         border: const OutlineInputBorder(),
@@ -263,14 +265,17 @@ class _ExportToEisenhowerDialogState extends State<ExportToEisenhowerDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.tasksSelectedCount(_selectedTaskIds.length),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: _selectedTaskIds.isEmpty ? Colors.red : Colors.orange,
+                  Expanded(
+                    child: Text(
+                      l10n.tasksSelectedCount(_selectedTaskIds.length),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: _selectedTaskIds.isEmpty ? Colors.red : Colors.orange,
+                      ),
                     ),
                   ),
-                  Row(
+                  Wrap(
+                    spacing: 4,
                     children: [
                       TextButton(
                         onPressed: () {
@@ -379,14 +384,15 @@ class _ExportToEisenhowerDialogState extends State<ExportToEisenhowerDialog> {
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2))),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(l10n.actionCancel),
                   ),
-                  const SizedBox(width: 12),
                   ElevatedButton.icon(
                     onPressed: _canExport() ? _export : null,
                     icon: const Icon(Icons.grid_view_rounded, size: 18),
@@ -437,11 +443,15 @@ class _ExportToEisenhowerDialogState extends State<ExportToEisenhowerDialog> {
               color: isSelected ? Colors.orange : Colors.grey,
             ),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.orange : (isDark ? Colors.white70 : Colors.black87),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.orange : (isDark ? Colors.white70 : Colors.black87),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

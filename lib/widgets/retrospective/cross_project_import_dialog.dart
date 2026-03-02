@@ -465,15 +465,16 @@ class _CrossProjectImportDialogState extends State<CrossProjectImportDialog> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+      child: Wrap(
+        alignment: WrapAlignment.end,
+        spacing: 12,
+        runSpacing: 12,
         children: [
           TextButton(
             onPressed:
                 _isImporting ? null : () => Navigator.of(context).pop(),
             child: Text(l10n.actionCancel),
           ),
-          const SizedBox(width: 12),
           Tooltip(
             message: l10n.tooltipCrossProjectImportDesc,
             child: FilledButton.icon(

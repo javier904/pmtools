@@ -167,9 +167,12 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AlertDialog(
+      insetPadding: const EdgeInsets.all(16),
       title: Text(isEditing ? l10n.agileEditProjectTitle : l10n.agileCreateProjectTitle),
       content: SizedBox(
-        width: 500,
+        width: MediaQuery.of(context).size.width < 500
+            ? MediaQuery.of(context).size.width * 0.85
+            : 500,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -861,8 +864,11 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.agileAddToTeam),
+        insetPadding: const EdgeInsets.all(16),
         content: SizedBox(
-          width: 300,
+          width: MediaQuery.of(context).size.width < 400
+              ? MediaQuery.of(context).size.width * 0.8
+              : 300,
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: availableParticipants.length,

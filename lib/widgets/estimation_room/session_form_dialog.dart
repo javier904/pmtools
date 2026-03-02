@@ -120,7 +120,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   ),
                 ),
                 cursorColor: Colors.amber,
-                autofocus: true,
+                autofocus: MediaQuery.of(context).size.width > 600,
               ),
               const SizedBox(height: 16),
               // Descrizione (con validazione opzionale)

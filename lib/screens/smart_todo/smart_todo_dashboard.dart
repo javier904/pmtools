@@ -521,6 +521,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             children: [
               // Header: Icona + Titolo + Menu
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Icona lista con stato completamento
                   StreamBuilder<({int total, int completed})>(
@@ -552,75 +553,83 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                     },
                   ),
                   const SizedBox(width: 6),
-                  // Titolo con tooltip
+                  // Titolo e Badges
                   Expanded(
-                    child: Tooltip(
-                      message: '${list.title}${list.description.isNotEmpty ? '\n${list.description}' : ''}',
-                      child: Text(
-                        list.title,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: list.isArchived ? Colors.grey : null,
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: '${list.title}${list.description.isNotEmpty ? '\n${list.description}' : ''}',
+                          child: Text(
+                            list.title,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: list.isArchived ? Colors.grey : null,
+                            ),
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  // Badge archiviato
-                  if (list.isArchived)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Tooltip(
-                        message: l10n?.archiveBadge ?? 'Archived',
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        // Badge archiviato
+                        if (list.isArchived)
+                          Tooltip(
+                            message: l10n?.archiveBadge ?? 'Archived',
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                            ),
+                          ),
+                        // Badge ruolo
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.15),
+                            color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                          child: Text(
+                            isOwner ? (l10n?.retroOwner ?? 'Owner') : (l10n?.retroGuest ?? 'Ospite'),
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: isOwner ? Colors.blue : Colors.purple,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  // Badge ruolo
-                  Container(
-                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                     decoration: BoxDecoration(
-                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                     child: Text(
-                       isOwner ? (l10n?.retroOwner ?? 'Owner') : (l10n?.retroGuest ?? 'Ospite'),
-                       style: TextStyle(
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         color: isOwner ? Colors.blue : Colors.purple,
-                       ),
-                     ),
                   ),
                   const SizedBox(width: 4),
-                  FavoriteStar(
-                    resourceId: list.id,
-                    type: 'todo_list',
-                    title: list.title,
-                    colorHex: '#2196F3',
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  // Menu compatto
-                  if (isOwner)
-                    GestureDetector(
-                      onTapDown: (TapDownDetails details) {
-                        _showListMenuAtPosition(context, list, details.globalPosition);
-                      },
-                      child: SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
+                  // Azioni a destra fisse
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FavoriteStar(
+                        resourceId: list.id,
+                        type: 'todo_list',
+                        title: list.title,
+                        colorHex: '#2196F3',
+                        size: 16,
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      // Menu compatto
+                      if (isOwner)
+                        GestureDetector(
+                          onTapDown: (TapDownDetails details) {
+                            _showListMenuAtPosition(context, list, details.globalPosition);
+                          },
+                          child: SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 2), // Reduced spacing (was 4)
@@ -994,7 +1003,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         content: TextField(
           controller: controller,
           decoration: InputDecoration(labelText: l10n?.smartTodoNewNameLabel ?? 'New Name'),
-          autofocus: true,
+          autofocus: MediaQuery.of(dialogContext).size.width > 600,
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n?.smartTodoCancel ?? 'Cancel')),

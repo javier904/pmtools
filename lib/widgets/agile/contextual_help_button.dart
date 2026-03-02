@@ -34,6 +34,7 @@ class ContextualHelpButton extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        insetPadding: const EdgeInsets.all(16),
         title: Row(
           children: [
             Icon(help.icon, color: help.color),
@@ -47,7 +48,9 @@ class ContextualHelpButton extends StatelessWidget {
           ],
         ),
         content: SizedBox(
-          width: 400,
+          width: MediaQuery.of(context).size.width < 400
+              ? MediaQuery.of(context).size.width * 0.85
+              : 400,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

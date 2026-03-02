@@ -778,7 +778,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!isComingSoon) return Text(title);
     return Row(
       children: [
-        Text(title),
+        Expanded(child: Text(title)),
         const SizedBox(width: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

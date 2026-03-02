@@ -17,12 +17,14 @@ class AuditLogViewer extends StatefulWidget {
   });
 
   static Future<void> show(BuildContext context, String projectId) {
+    final screenSize = MediaQuery.of(context).size;
     return showDialog(
       context: context,
       builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(16),
         child: SizedBox(
-          width: 800,
-          height: 600,
+          width: screenSize.width < 800 ? screenSize.width * 0.95 : 800,
+          height: screenSize.height * 0.85,
           child: AuditLogViewer(projectId: projectId),
         ),
       ),
@@ -362,8 +364,11 @@ class _AuditLogViewerState extends State<AuditLogViewer> {
             Text(l10n.auditLogDetailsTitle),
           ],
         ),
+        insetPadding: const EdgeInsets.all(16),
         content: SizedBox(
-          width: 500,
+          width: MediaQuery.of(context).size.width < 500
+              ? MediaQuery.of(context).size.width * 0.85
+              : 500,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

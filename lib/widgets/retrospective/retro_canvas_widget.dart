@@ -313,7 +313,7 @@ class RetroCanvasWidget extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.retroAddTo(column.title)),
-        content: TextField(controller: controller, autofocus: true, maxLines: 3),
+        content: TextField(controller: controller, autofocus: MediaQuery.of(context).size.width > 600, maxLines: 3),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
           ElevatedButton(

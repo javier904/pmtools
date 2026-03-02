@@ -453,7 +453,7 @@ class MemberSkillsWidget extends StatelessWidget {
             labelText: l10n.agileNewSkillName,
             hintText: l10n.agileNewSkillHint,
           ),
-          autofocus: true,
+          autofocus: MediaQuery.of(context).size.width > 600,
           textCapitalization: TextCapitalization.words,
         ),
         actions: [

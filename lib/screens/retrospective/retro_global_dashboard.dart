@@ -648,7 +648,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                         labelText: AppLocalizations.of(context)!.retroSessionTitle,
                         hintText: AppLocalizations.of(context)!.retroSessionTitleHint,
                       ),
-                      autofocus: !linkToProject,
+                      autofocus: !linkToProject && MediaQuery.of(context).size.width > 600,
                     ),
   
                   const SizedBox(height: 16),

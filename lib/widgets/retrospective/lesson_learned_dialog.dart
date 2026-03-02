@@ -152,8 +152,10 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
     final primaryColor = theme.colorScheme.primary;
 
     return Dialog(
-      child: SizedBox(
-        width: 600,
+      insetPadding: const EdgeInsets.all(16),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        constraints: const BoxConstraints(maxWidth: 600),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -331,6 +333,7 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
   Widget _buildCategoryDropdown(AppLocalizations l10n) {
     return DropdownButtonFormField<LessonCategory>(
       value: _selectedCategory,
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: 'Category',
         border: const OutlineInputBorder(),
@@ -339,11 +342,10 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
         return DropdownMenuItem(
           value: cat,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Icon(cat.icon, size: 18, color: cat.color),
               const SizedBox(width: 8),
-              Text(cat.getLocalizedName(l10n)),
+              Flexible(child: Text(cat.getLocalizedName(l10n), overflow: TextOverflow.ellipsis)),
             ],
           ),
         );
@@ -357,6 +359,7 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
   Widget _buildTypeDropdown(AppLocalizations l10n) {
     return DropdownButtonFormField<LessonType>(
       value: _selectedType,
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: 'Type',
         border: const OutlineInputBorder(),
@@ -365,11 +368,10 @@ class _LessonLearnedDialogState extends State<LessonLearnedDialog> {
         return DropdownMenuItem(
           value: type,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Icon(type.icon, size: 18, color: type.color),
               const SizedBox(width: 8),
-              Text(type.getLocalizedName(l10n)),
+              Flexible(child: Text(type.getLocalizedName(l10n), overflow: TextOverflow.ellipsis)),
             ],
           ),
         );

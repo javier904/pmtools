@@ -111,8 +111,11 @@ class _TeamMemberFormDialogState extends State<TeamMemberFormDialog> {
           const Text('Modifica Membro'),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 450,
+        width: MediaQuery.of(context).size.width < 450
+            ? MediaQuery.of(context).size.width * 0.85
+            : 450,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -432,8 +435,11 @@ class _AddTeamMemberDialogState extends State<AddTeamMemberDialog> {
           Text('Aggiungi Membro'),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 400,
+        width: MediaQuery.of(context).size.width < 400
+            ? MediaQuery.of(context).size.width * 0.85
+            : 400,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(

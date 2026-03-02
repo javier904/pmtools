@@ -230,75 +230,82 @@ class RetroListWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  // Titolo con tooltip
+                  // Titolo e badged
                   Expanded(
-                    child: Tooltip(
-                      message: retro.title.isNotEmpty ? retro.title : retro.sprintName,
-                      child: Text(
-                        retro.title.isNotEmpty ? retro.title : retro.sprintName,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: retro.isArchived ? Colors.grey : null,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  // Badge archiviato
-                  if (retro.isArchived)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Tooltip(
-                        message: l10n.archiveBadge,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(4),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+                          child: Text(
+                            retro.title.isNotEmpty ? retro.title : retro.sprintName,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: retro.isArchived ? Colors.grey : null,
+                            ),
                           ),
-                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
                         ),
-                      ),
+                        // Badge archiviato
+                        if (retro.isArchived)
+                          Tooltip(
+                            message: l10n.archiveBadge,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                            ),
+                          ),
+                        // Badge ruolo
+                        Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                           decoration: BoxDecoration(
+                             color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                             borderRadius: BorderRadius.circular(4),
+                           ),
+                           child: Text(
+                             isOwner ? (l10n.retroOwner) : (l10n.retroGuest),
+                             style: TextStyle(
+                               fontSize: 10,
+                               fontWeight: FontWeight.bold,
+                               color: isOwner ? Colors.blue : Colors.purple,
+                             ),
+                           ),
+                        ),
+                      ],
                     ),
-                  // Badge ruolo
-                  Container(
-                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                     decoration: BoxDecoration(
-                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                     child: Text(
-                       isOwner ? (l10n.retroOwner) : (l10n.retroGuest),
-                       style: TextStyle(
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         color: isOwner ? Colors.blue : Colors.purple,
-                       ),
-                     ),
                   ),
                   const SizedBox(width: 4),
-                  FavoriteStar(
-                    resourceId: retro.id,
-                    type: 'retrospective',
-                    title: retro.title.isNotEmpty ? retro.title : retro.sprintName,
-                    colorHex: '#E91E63',
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  // Menu (Only for Creator)
-                  if (retro.createdBy == currentUserEmail && (onEdit != null || onDelete != null || onArchive != null || onRestore != null))
-                    GestureDetector(
-                      onTapDown: (TapDownDetails details) {
-                        _showRetroMenuAtPosition(context, retro, details.globalPosition);
-                      },
-                      child: const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Icon(Icons.more_vert, size: 16, color: Colors.grey),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FavoriteStar(
+                        resourceId: retro.id,
+                        type: 'retrospective',
+                        title: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+                        colorHex: '#E91E63',
+                        size: 16,
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      // Menu (Only for Creator)
+                      if (retro.createdBy == currentUserEmail && (onEdit != null || onDelete != null || onArchive != null || onRestore != null))
+                        GestureDetector(
+                          onTapDown: (TapDownDetails details) {
+                            _showRetroMenuAtPosition(context, retro, details.globalPosition);
+                          },
+                          child: const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Icon(Icons.more_vert, size: 16, color: Colors.grey),
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 4),

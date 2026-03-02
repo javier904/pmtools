@@ -538,75 +538,82 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  // Titolo con tooltip
+                  // Titolo e badged
                   Expanded(
-                    child: Tooltip(
-                      message: '${project.name}${project.description.isNotEmpty ? '\n${project.description}' : ''}',
-                      child: Text(
-                        project.name,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: project.isArchived ? context.textMutedColor : context.textPrimaryColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  // Badge archiviato
-                  if (project.isArchived)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Tooltip(
-                        message: AppLocalizations.of(context)!.archiveBadge,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(4),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: '${project.name}${project.description.isNotEmpty ? '\n${project.description}' : ''}',
+                          child: Text(
+                            project.name,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: project.isArchived ? context.textMutedColor : context.textPrimaryColor,
+                            ),
                           ),
-                          child: const Icon(Icons.archive, size: 12, color: Colors.orange),
                         ),
-                      ),
+                        // Badge archiviato
+                        if (project.isArchived)
+                          Tooltip(
+                            message: AppLocalizations.of(context)!.archiveBadge,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(Icons.archive, size: 12, color: Colors.orange),
+                            ),
+                          ),
+                        // Badge ruolo
+                        Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                           decoration: BoxDecoration(
+                             color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                             borderRadius: BorderRadius.circular(4),
+                           ),
+                           child: Text(
+                             isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                             style: TextStyle(
+                               fontSize: 10,
+                               fontWeight: FontWeight.bold,
+                               color: isOwner ? Colors.blue : Colors.purple,
+                             ),
+                           ),
+                        ),
+                      ],
                     ),
-                  // Badge ruolo
-                  Container(
-                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                     decoration: BoxDecoration(
-                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                     child: Text(
-                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
-                       style: TextStyle(
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         color: isOwner ? Colors.blue : Colors.purple,
-                       ),
-                     ),
                   ),
                   const SizedBox(width: 4),
-                  FavoriteStar(
-                    resourceId: project.id,
-                    type: 'agile_project',
-                    title: project.name,
-                    colorHex: '#9C27B0',
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  // Menu opzioni
-                  if (canManage)
-                    GestureDetector(
-                      onTapDown: (TapDownDetails details) {
-                        _showProjectMenuAtPosition(context, project, details.globalPosition, isOwner);
-                      },
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FavoriteStar(
+                        resourceId: project.id,
+                        type: 'agile_project',
+                        title: project.name,
+                        colorHex: '#9C27B0',
+                        size: 16,
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      // Menu opzioni
+                      if (canManage)
+                        GestureDetector(
+                          onTapDown: (TapDownDetails details) {
+                            _showProjectMenuAtPosition(context, project, details.globalPosition, isOwner);
+                          },
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 4),
@@ -1465,8 +1472,11 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
           Text(l10n.agileProjectSettingsTitle),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 500,
+        width: MediaQuery.of(context).size.width < 500
+            ? MediaQuery.of(context).size.width * 0.85
+            : 500,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1884,9 +1894,12 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        insetPadding: const EdgeInsets.all(16),
         title: Text(l10n.agileAddToTeam),
         content: SizedBox(
-          width: 300,
+          width: MediaQuery.of(context).size.width < 400
+              ? MediaQuery.of(context).size.width * 0.8
+              : 300,
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: availableParticipants.length,

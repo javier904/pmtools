@@ -257,30 +257,26 @@ class TodoTaskCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 
                 // 4. Badges / Footer
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
                   children: [
                     // Due Date
-                    if (task.dueDate != null) ...[
+                    if (task.dueDate != null)
                        _buildMetaIcon(
-                         Icons.calendar_today_rounded, 
+                         Icons.calendar_today_rounded,
                          DateFormat('d MMM').format(task.dueDate!),
                          color: isExpired ? Colors.red : (isDark ? Colors.grey[400]! : Colors.grey[600]!)
                        ),
-                       const SizedBox(width: 12),
-                    ],
 
                     // Effort
-                    if (task.effort != null) ...[
-                      _buildMetaIcon(Icons.bolt_rounded, '${task.effort} pt', color: isDark ? Colors.amber : Colors.orange[700]!), // Highlight effort
-                      const SizedBox(width: 12),
-                    ],
-
-                    const Spacer(),
+                    if (task.effort != null)
+                      _buildMetaIcon(Icons.bolt_rounded, '${task.effort} pt', color: isDark ? Colors.amber : Colors.orange[700]!),
 
                     // Calendar Sync (Feature Flagged)
-                    if (FeatureFlags.enableCalendarSync) ...[
+                    if (FeatureFlags.enableCalendarSync)
                       Tooltip(
-                        message: task.calendarEventId != null 
+                        message: task.calendarEventId != null
                              ? 'Synced ${task.syncedAt != null ? DateFormat('d MMM HH:mm').format(task.syncedAt!) : ''}'
                              : 'Sync with Google Calendar',
                         child: InkWell(
@@ -333,25 +329,21 @@ class TodoTaskCard extends StatelessWidget {
                           },
                           child: _buildMetaIcon(
                             task.calendarEventId != null ? Icons.event_available_rounded : Icons.edit_calendar_rounded,
-                            '', // Nessun testo per salvare spazio
+                            '',
                             color: task.calendarEventId != null ? Colors.green : (isDark ? Colors.blue[300]! : Colors.blue[600]!),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                    ],
 
                     // Attachments (Clickable Link with menu for multiple)
-                    if (task.attachments.isNotEmpty) ...[
+                    if (task.attachments.isNotEmpty)
                       _AttachmentLinkButton(
                         attachments: task.attachments,
                         isDark: isDark,
                       ),
-                      const SizedBox(width: 8),
-                    ],
 
                     // Comments (Improved Tooltip)
-                    if (task.comments.isNotEmpty) ...[
+                    if (task.comments.isNotEmpty)
                       Tooltip(
                         message: task.comments.map((c) => '${c.authorName}: ${c.text}').join('\n'),
                         padding: const EdgeInsets.all(12),
@@ -362,11 +354,9 @@ class TodoTaskCard extends StatelessWidget {
                         textStyle: const TextStyle(color: Colors.white, fontSize: 12),
                         child: _buildMetaIcon(Icons.chat_bubble_outline_rounded, '${task.comments.length}', color: isDark ? Colors.grey[400]! : Colors.grey[600]!),
                       ),
-                      const SizedBox(width: 8),
-                    ],
-                    
+
                     // Subtasks (Checklist Tooltip)
-                    if (task.subtasks.isNotEmpty) ...[
+                    if (task.subtasks.isNotEmpty)
                       Tooltip(
                         message: task.subtasks.map((s) => '${s.isCompleted ? '✅' : '⬜'} ${s.title}').join('\n'),
                         padding: const EdgeInsets.all(12),
@@ -376,12 +366,11 @@ class TodoTaskCard extends StatelessWidget {
                         ),
                         textStyle: const TextStyle(color: Colors.white, fontSize: 12),
                         child: _buildMetaIcon(
-                          Icons.check_circle_outline_rounded, 
+                          Icons.check_circle_outline_rounded,
                           '${task.completedSubtasks}/${task.subtasks.length}',
                           color: task.completedSubtasks == task.subtasks.length ? Colors.green : (isDark ? Colors.grey[400]! : Colors.grey[600]!)
                         ),
                       ),
-                    ],
                   ],
                 ),
               ],
@@ -496,8 +485,8 @@ class _TaskCardPopupMenu extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return SizedBox(
-      width: 24,
-      height: 24,
+      width: 44,
+      height: 44,
       child: PopupMenuButton<String>(
         padding: EdgeInsets.zero,
         icon: Icon(

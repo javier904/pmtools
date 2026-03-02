@@ -875,13 +875,28 @@ class _SmartTodoCfdScreenState extends State<SmartTodoCfdScreen> {
   // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildFlowAndBottlenecksSection(CfdMetrics metrics, bool isDark, AppLocalizations? l10n) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: _buildFlowAnalysis(metrics.flow, isDark, l10n)),
-        const SizedBox(width: 16),
-        Expanded(child: _buildBottleneckDetection(metrics.bottlenecks, isDark, l10n)),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 600) {
+          // Layout per mobile (incolonnato)
+          return Column(
+            children: [
+              _buildFlowAnalysis(metrics.flow, isDark, l10n),
+              const SizedBox(height: 16),
+              _buildBottleneckDetection(metrics.bottlenecks, isDark, l10n),
+            ],
+          );
+        }
+        // Layout per desktop/tablet (affiancato)
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: _buildFlowAnalysis(metrics.flow, isDark, l10n)),
+            const SizedBox(width: 16),
+            Expanded(child: _buildBottleneckDetection(metrics.bottlenecks, isDark, l10n)),
+          ],
+        );
+      },
     );
   }
 
@@ -1031,9 +1046,11 @@ class _SmartTodoCfdScreenState extends State<SmartTodoCfdScreen> {
                 children: [
                   const Icon(Icons.check_circle, color: Colors.green, size: 20),
                   const SizedBox(width: 8),
-                  Text(
-                    l10n?.smartTodoCfdNoBottlenecks ?? 'No bottlenecks detected',
-                    style: const TextStyle(color: Colors.green, fontSize: 13),
+                  Expanded(
+                    child: Text(
+                      l10n?.smartTodoCfdNoBottlenecks ?? 'No bottlenecks detected',
+                      style: const TextStyle(color: Colors.green, fontSize: 13),
+                    ),
                   ),
                 ],
               )

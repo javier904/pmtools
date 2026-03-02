@@ -258,9 +258,12 @@ class _StoryDetailDialogState extends State<StoryDetailDialog> {
              ),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 600,
-        height: 500,
+        width: MediaQuery.of(context).size.width < 600
+            ? MediaQuery.of(context).size.width * 0.85
+            : 600,
+        height: MediaQuery.of(context).size.height * 0.7,
         child: DefaultTabController(
           length: hasJira ? 2 : 1,
           child: Column(

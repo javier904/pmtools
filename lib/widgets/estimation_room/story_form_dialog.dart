@@ -37,7 +37,7 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
                 hintText: l10n.estimationStoryTitleHint,
                 border: const OutlineInputBorder(),
               ),
-              autofocus: true,
+              autofocus: MediaQuery.of(context).size.width > 600,
             ),
             const SizedBox(height: 16),
             TextField(

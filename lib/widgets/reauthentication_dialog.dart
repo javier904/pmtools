@@ -98,7 +98,7 @@ class _ReauthenticationDialogState extends State<ReauthenticationDialog> {
             TextField(
               controller: _passwordController,
               obscureText: true,
-              autofocus: true,
+              autofocus: MediaQuery.of(context).size.width > 600,
               onSubmitted: (_) => _reauthenticateWithEmail(),
               decoration: InputDecoration(
                 labelText: l10n.authCurrentPassword,

@@ -170,17 +170,24 @@ class _LessonsLearnedSectionWidgetState
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Icon(Icons.school, color: primaryColor),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.lessonsLearnedTitle,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.school, color: primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.lessonsLearnedTitle,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
                   ),
-                  const Spacer(),
                   Tooltip(
                     message: l10n.tooltipLessonImport,
                     child: OutlinedButton.icon(
@@ -189,7 +196,6 @@ class _LessonsLearnedSectionWidgetState
                       label: Text(l10n.crossProjectImport),
                     ),
                   ),
-                  const SizedBox(width: 8),
                   Tooltip(
                     message: l10n.tooltipLessonAdd,
                     child: FilledButton.icon(
@@ -240,7 +246,10 @@ class _LessonsLearnedSectionWidgetState
             // Filter row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   // Search field (compact)
                   SizedBox(
@@ -277,23 +286,24 @@ class _LessonsLearnedSectionWidgetState
                     ),
                   ),
 
-                  const SizedBox(width: 16),
-
-                  Icon(Icons.filter_list,
-                      size: 18, color: Colors.grey.shade600),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.actionFilter,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade700,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.filter_list,
+                          size: 18, color: Colors.grey.shade600),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.actionFilter,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
 
                   // Category dropdown
-                  Flexible(
-                    child: Tooltip(
+                  Tooltip(
                       message: l10n.tooltipLessonCategoryFilter,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<LessonCategory?>(
@@ -333,14 +343,10 @@ class _LessonsLearnedSectionWidgetState
                           },
                         ),
                       ),
-                    ),
                   ),
 
-                  const SizedBox(width: 12),
-
                   // Type dropdown
-                  Flexible(
-                    child: Tooltip(
+                  Tooltip(
                       message: l10n.tooltipLessonTypeFilter,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<LessonType?>(
@@ -380,10 +386,7 @@ class _LessonsLearnedSectionWidgetState
                           },
                         ),
                       ),
-                    ),
                   ),
-
-                  const SizedBox(width: 12),
 
                   // Resolved toggle
                   Tooltip(

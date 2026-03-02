@@ -794,73 +794,80 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                     ),
                   ),
                   const SizedBox(width: 6),
-                  // Titolo con tooltip
+                  // Titolo e badged
                   Expanded(
-                    child: Tooltip(
-                      message: '${matrix.title}${matrix.description.isNotEmpty ? '\n${matrix.description}' : ''}',
-                      child: Text(
-                        matrix.title,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: matrix.isArchived ? context.textMutedColor : context.textPrimaryColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  // Badge archiviato
-                  if (matrix.isArchived)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Tooltip(
-                        message: l10n.archiveBadge,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.warning.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(4),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: '${matrix.title}${matrix.description.isNotEmpty ? '\n${matrix.description}' : ''}',
+                          child: Text(
+                            matrix.title,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: matrix.isArchived ? context.textMutedColor : context.textPrimaryColor,
+                            ),
                           ),
-                          child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
+                        ),
+                        // Badge archiviato
+                        if (matrix.isArchived)
+                          Tooltip(
+                            message: l10n.archiveBadge,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.warning.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
+                            ),
+                          ),
+                        // Badge ruolo
+                        Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                           decoration: BoxDecoration(
+                             color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                             borderRadius: BorderRadius.circular(4),
+                           ),
+                           child: Text(
+                             isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                             style: TextStyle(
+                               fontSize: 10,
+                               fontWeight: FontWeight.bold,
+                               color: isOwner ? Colors.blue : Colors.purple,
+                             ),
+                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FavoriteStar(
+                        resourceId: matrix.id,
+                        type: 'eisenhower_matrix',
+                        title: matrix.title,
+                        colorHex: '#4CAF50', // Default color for matrices
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      // Menu compatto
+                      GestureDetector(
+                        onTapDown: (TapDownDetails details) {
+                          _showMatrixMenuAtPosition(context, matrix, details.globalPosition);
+                        },
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
                         ),
                       ),
-                    ),
-                  // Badge ruolo
-                  Container(
-                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                     decoration: BoxDecoration(
-                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                     child: Text(
-                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
-                       style: TextStyle(
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         color: isOwner ? Colors.blue : Colors.purple,
-                       ),
-                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  FavoriteStar(
-                    resourceId: matrix.id,
-                    type: 'eisenhower_matrix',
-                    title: matrix.title,
-                    colorHex: '#4CAF50', // Default color for matrices
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  // Menu compatto
-                  GestureDetector(
-                    onTapDown: (TapDownDetails details) {
-                      _showMatrixMenuAtPosition(context, matrix, details.globalPosition);
-                    },
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -959,72 +966,80 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Text(
-                          matrix.title,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: matrix.isArchived ? context.textMutedColor : context.textPrimaryColor,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              matrix.title,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: matrix.isArchived ? context.textMutedColor : context.textPrimaryColor,
+                              ),
+                            ),
+                            if (matrix.description.isNotEmpty)
+                              Text(
+                                matrix.description,
+                                style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                          ],
                         ),
-                        if (matrix.description.isNotEmpty)
-                          Text(
-                            matrix.description,
-                            style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        if (matrix.isArchived)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.warning.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
                           ),
+                        // Badge ruolo
+                        Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                           decoration: BoxDecoration(
+                             color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                             borderRadius: BorderRadius.circular(4),
+                           ),
+                           child: Text(
+                             isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                             style: TextStyle(
+                               fontSize: 10,
+                               fontWeight: FontWeight.bold,
+                               color: isOwner ? Colors.blue : Colors.purple,
+                             ),
+                           ),
+                        ),
                       ],
                     ),
                   ),
-                  if (matrix.isArchived)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.warning.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Icon(Icons.archive, size: 12, color: AppColors.warning),
-                      ),
-                    ),
-                  // Badge ruolo
-                  Container(
-                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                     decoration: BoxDecoration(
-                       color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                     child: Text(
-                       isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
-                       style: TextStyle(
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         color: isOwner ? Colors.blue : Colors.purple,
-                       ),
-                     ),
-                  ),
                   const SizedBox(width: 4),
-                  FavoriteStar(
-                    resourceId: matrix.id,
-                    type: 'eisenhower_matrix',
-                    title: matrix.title,
-                    colorHex: '#4CAF50',
-                    size: 18,
-                  ),
-                  GestureDetector(
-                    onTapDown: (details) => _showMatrixMenuAtPosition(context, matrix, details.globalPosition),
-                    child: const SizedBox(
-                      width: 28,
-                      height: 28,
-                      child: Icon(Icons.more_vert, size: 18),
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FavoriteStar(
+                        resourceId: matrix.id,
+                        type: 'eisenhower_matrix',
+                        title: matrix.title,
+                        colorHex: '#4CAF50',
+                        size: 18,
+                      ),
+                      GestureDetector(
+                        onTapDown: (details) => _showMatrixMenuAtPosition(context, matrix, details.globalPosition),
+                        child: const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: Icon(Icons.more_vert, size: 18),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -3930,7 +3945,7 @@ class _MatrixFormDialogState extends State<_MatrixFormDialog> {
                   hintText: l10n.formTitleHint,
                   border: const OutlineInputBorder(),
                 ),
-                autofocus: true,
+                autofocus: MediaQuery.of(context).size.width > 600,
               ),
               const SizedBox(height: 16),
               TextField(
@@ -4059,7 +4074,7 @@ class _ActivityFormDialogState extends State<_ActivityFormDialog> {
                 hintText: l10n.formActivityTitleHint,
                 border: const OutlineInputBorder(),
               ),
-              autofocus: true,
+              autofocus: MediaQuery.of(context).size.width > 600,
             ),
             const SizedBox(height: 16),
             TextField(

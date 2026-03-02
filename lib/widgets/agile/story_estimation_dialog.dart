@@ -136,8 +136,11 @@ class _StoryEstimationDialogState extends State<StoryEstimationDialog> {
           ),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 500,
+        width: MediaQuery.of(context).size.width < 500
+            ? MediaQuery.of(context).size.width * 0.85
+            : 500,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

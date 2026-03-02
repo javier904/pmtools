@@ -89,9 +89,12 @@ class RetroHistorySectionWidget extends StatelessWidget {
         leading: Icon(Icons.directions_run, color: colorScheme.primary),
         title: Row(
           children: [
-            Text(
-              sprintName,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Flexible(
+              child: Text(
+                sprintName,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const SizedBox(width: 8),
             Container(

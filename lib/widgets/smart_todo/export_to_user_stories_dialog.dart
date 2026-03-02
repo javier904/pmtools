@@ -80,9 +80,10 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        width: 550,
-        constraints: const BoxConstraints(maxHeight: 650),
+        width: MediaQuery.of(context).size.width * 0.9,
+        constraints: const BoxConstraints(maxWidth: 550, maxHeight: 650),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -179,6 +180,7 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
                   else if (widget.availableProjects.isNotEmpty)
                     DropdownButtonFormField<AgileProjectModel>(
                       value: _selectedProject,
+                      isExpanded: true,
                       decoration: InputDecoration(
                         labelText: l10n.selectProject,
                         border: const OutlineInputBorder(),
@@ -253,14 +255,17 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.tasksSelectedCount(_selectedTaskIds.length),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: _selectedTaskIds.isEmpty ? Colors.red : Colors.purple,
+                  Expanded(
+                    child: Text(
+                      l10n.tasksSelectedCount(_selectedTaskIds.length),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: _selectedTaskIds.isEmpty ? Colors.red : Colors.purple,
+                      ),
                     ),
                   ),
-                  Row(
+                  Wrap(
+                    spacing: 4,
                     children: [
                       TextButton(
                         onPressed: () {
@@ -411,19 +416,20 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2))),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(l10n.actionCancel, style: const TextStyle(color: Color(0xFFFFFFFF))),
                   ),
-                  const SizedBox(width: 12),
-                    ElevatedButton.icon(
-                      onPressed: _canExport() ? _export : null,
-                      icon: const Icon(Icons.rocket_launch, size: 18),
-                      label: Text(l10n.actionExport),
-                      style: ElevatedButton.styleFrom(
+                  ElevatedButton.icon(
+                    onPressed: _canExport() ? _export : null,
+                    icon: const Icon(Icons.rocket_launch, size: 18),
+                    label: Text(l10n.actionExport),
+                    style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -469,11 +475,15 @@ class _ExportToUserStoriesDialogState extends State<ExportToUserStoriesDialog> {
               color: isSelected ? Colors.purple : Colors.grey,
             ),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.purple : (isDark ? Colors.white70 : Colors.black87),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.purple : (isDark ? Colors.white70 : Colors.black87),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

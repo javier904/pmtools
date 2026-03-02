@@ -53,10 +53,10 @@ class TodoTaskRow extends StatelessWidget {
                const SizedBox(width: 8),
              ],
 
-            // Status Indicator (Fixed Width for Alignment)
+            // Status Indicator (Constrained Width for Alignment)
             if (column != null) ...[
-              SizedBox(
-                width: 85, // Fixed width to align all rows perfectly
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 60, maxWidth: 85),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -76,7 +76,7 @@ class TodoTaskRow extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 16), // Slightly more space
+              const SizedBox(width: 12),
             ],
 
             // Priority Dot (Minimalist)
@@ -128,40 +128,41 @@ class TodoTaskRow extends StatelessWidget {
             
             const SizedBox(width: 12),
 
-            // Metadata Row (Condensed)
-            
-            // 1. Assignee (Tiny Avatar)
-            if (task.assignedTo.isNotEmpty) ...[
-              _buildTinyAvatar(task.assignedTo.first, isDark),
-              const SizedBox(width: 8),
-            ],
-
-            // 2. Date 
-            if (task.dueDate != null) ...[
-              Text(
-                DateFormat('d MMM').format(task.dueDate!),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: task.dueDate!.isBefore(DateTime.now()) && !isDone 
-                      ? Colors.red 
-                      : (isDark ? Colors.grey[400] : Colors.grey),
-                ),
-              ),
-               const SizedBox(width: 8),
-            ],
-
-            // 3. Subtasks or Attachments count (Icons)
-            if (task.subtasks.isNotEmpty) ...[
-               Icon(Icons.check_circle_outline, size: 14, color: isDark ? Colors.grey[400] : Colors.grey[400]),
-               const SizedBox(width: 2),
-               Text('${task.completedSubtasks}/${task.subtasks.length}', style: TextStyle(fontSize: 10, color: isDark ? Colors.grey[500] : Colors.grey[600])),
+            // Metadata Row (Condensed) - hidden on very small screens
+            if (MediaQuery.of(context).size.width >= 400) ...[
+              // 1. Assignee (Tiny Avatar)
+              if (task.assignedTo.isNotEmpty) ...[
+                _buildTinyAvatar(task.assignedTo.first, isDark),
                 const SizedBox(width: 8),
+              ],
+
+              // 2. Date
+              if (task.dueDate != null) ...[
+                Text(
+                  DateFormat('d MMM').format(task.dueDate!),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: task.dueDate!.isBefore(DateTime.now()) && !isDone
+                        ? Colors.red
+                        : (isDark ? Colors.grey[400] : Colors.grey),
+                  ),
+                ),
+                 const SizedBox(width: 8),
+              ],
+
+              // 3. Subtasks or Attachments count (Icons)
+              if (task.subtasks.isNotEmpty) ...[
+                 Icon(Icons.check_circle_outline, size: 14, color: isDark ? Colors.grey[400] : Colors.grey[400]),
+                 const SizedBox(width: 2),
+                 Text('${task.completedSubtasks}/${task.subtasks.length}', style: TextStyle(fontSize: 10, color: isDark ? Colors.grey[500] : Colors.grey[600])),
+                  const SizedBox(width: 8),
+              ],
+
+              if (task.attachments.isNotEmpty)
+                Icon(Icons.attach_file, size: 14, color: isDark ? Colors.grey[400] : Colors.grey[400]),
             ],
-            
-            if (task.attachments.isNotEmpty)
-              Icon(Icons.attach_file, size: 14, color: isDark ? Colors.grey[400] : Colors.grey[400]),
-            
-            // Chevron
+
+            // Chevron (always visible)
             const SizedBox(width: 8),
             Icon(Icons.chevron_right, size: 16, color: isDark ? Colors.grey[600] : Colors.grey[300]),
           ],

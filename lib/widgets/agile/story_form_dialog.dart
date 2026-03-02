@@ -280,9 +280,12 @@ class _StoryFormDialogState extends State<StoryFormDialog> {
           Text(_isEditing ? l10n.agileEditStory : l10n.agileNewStory),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 600,
-        height: 500,
+        width: MediaQuery.of(context).size.width < 600
+            ? MediaQuery.of(context).size.width * 0.85
+            : 600,
+        height: MediaQuery.of(context).size.height * 0.7,
         child: Form(
           key: _formKey,
           child: DefaultTabController(

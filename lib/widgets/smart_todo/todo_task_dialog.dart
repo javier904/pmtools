@@ -91,8 +91,10 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0,
       backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-            width: 700,
+            width: MediaQuery.of(context).size.width * 0.9,
+            constraints: const BoxConstraints(maxWidth: 700),
             height: MediaQuery.of(context).size.height * 0.85,
             decoration: BoxDecoration(
                color: dialogBg,
@@ -115,14 +117,16 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                     child: Icon(widget.task == null ? Icons.add_rounded : Icons.edit_rounded, color: Colors.blue),
                   ),
                   const SizedBox(width: 16),
-                  Builder(builder: (context) {
-                    final l10n = AppLocalizations.of(context)!;
-                    return Text(
-                      widget.task == null ? l10n.smartTodoNewTask : l10n.smartTodoEditTask,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogTextColor),
-                    );
-                  }),
-                  const Spacer(),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      final l10n = AppLocalizations.of(context)!;
+                      return Text(
+                        widget.task == null ? l10n.smartTodoNewTask : l10n.smartTodoEditTask,
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogTextColor),
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    }),
+                  ),
                   IconButton(
                     icon: Icon(Icons.close_rounded, color: dialogIsDark ? Colors.grey[400] : null),
                     onPressed: () => Navigator.pop(context),
@@ -134,15 +138,12 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
             
             // Content
             Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // LEFT COLUMN: Main Info
-                  Expanded(
-                    flex: 7,
-                    child: ListView(
-                      padding: const EdgeInsets.all(24),
-                      children: [
+              child: Builder(
+                builder: (context) {
+                  final isMobile = MediaQuery.of(context).size.width < 700;
+                  
+                  // Extract the content of both columns to be reusable
+                  final leftColumnChildren = [
                          Builder(builder: (context) {
                            final l10n = AppLocalizations.of(context)!;
                            return TextField(
@@ -350,17 +351,9 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                              IconButton(icon: const Icon(Icons.send_rounded, color: Colors.blue), onPressed: _addComment),
                            ],
                          ),
-                      ],
-                    ),
-                  ),
-                  
-                  // RIGHT COLUMN: Sidebar Metadata
-                  Container(width: 1, color: dialogBorder),
-                  Expanded(
-                    flex: 3,
-                    child: ListView(
-                      padding: const EdgeInsets.all(20),
-                      children: [
+                  ];
+
+                  final rightColumnChildren = [
                         _buildSidebarGroup(
                            title: AppLocalizations.of(context)!.smartTodoStatus,
                            isDark: dialogIsDark,
@@ -520,21 +513,58 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                              ),
                            ),
                         ),
+                  ];
+
+                  if (isMobile) {
+                    return ListView(
+                      padding: const EdgeInsets.all(24),
+                      children: [
+                         ...leftColumnChildren,
+                         const SizedBox(height: 32),
+                         const Divider(),
+                         const SizedBox(height: 32),
+                         ...rightColumnChildren,
                       ],
-                    ),
-                  ),
-                ],
+                    );
+                  }
+
+                  return Flex(
+                    direction: Axis.horizontal,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // LEFT COLUMN: Main Info
+                      Expanded(
+                        flex: 7,
+                        child: ListView(
+                          padding: const EdgeInsets.all(24),
+                          children: leftColumnChildren,
+                        ),
+                      ),
+                      
+                      // RIGHT COLUMN: Sidebar Metadata
+                      Container(width: 1, color: dialogBorder),
+                      Expanded(
+                        flex: 3,
+                        child: ListView(
+                          padding: const EdgeInsets.all(20),
+                          children: rightColumnChildren,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             
             // Footer (Save)
              Padding(
               padding: const EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')),
-                  const SizedBox(width: 12),
                   ElevatedButton(
                     onPressed: _save,
                     style: ElevatedButton.styleFrom(
@@ -545,10 +575,10 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                   ),
                 ],
               ),
-                ),
-              ],
             ),
-          ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -781,7 +811,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)?.smartTodoNewItem ?? 'New item'),
-        content: TextField(controller: controller, autofocus: true),
+        content: TextField(controller: controller, autofocus: MediaQuery.of(context).size.width > 600),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)!.actionConfirm)),
         ],
@@ -985,7 +1015,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
           children: [
             Text(AppLocalizations.of(context)?.smartTodoImageUrlHint ?? 'Paste the image URL (e.g. captured with CleanShot/Gyazo)'),
             const SizedBox(height: 12),
-            TextField(controller: urlCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoImageUrl ?? 'Image URL'), autofocus: true),
+            TextField(controller: urlCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoImageUrl ?? 'Image URL'), autofocus: MediaQuery.of(context).size.width > 600),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () async {
@@ -1026,7 +1056,7 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text(AppLocalizations.of(context)?.smartTodoEditComment ?? 'Edit comment'),
-          content: TextField(controller: editCtrl, autofocus: true, maxLines: 3),
+          content: TextField(controller: editCtrl, autofocus: MediaQuery.of(context).size.width > 600, maxLines: 3),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')),
             ElevatedButton(
@@ -1058,8 +1088,8 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context).smartTodoEditItem),
         content: TextField(
-          controller: controller, 
-          autofocus: true,
+          controller: controller,
+          autofocus: MediaQuery.of(context).size.width > 600,
           decoration: InputDecoration(
           hintText: AppLocalizations.of(context).smartTodoItemTitle,
           ),

@@ -57,10 +57,12 @@ class _AgileHelpDialogState extends State<AgileHelpDialog> {
       ),
     ];
 
+    final screenSize = MediaQuery.of(context).size;
     return Dialog(
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        width: 500,
-        height: 400,
+        width: screenSize.width * 0.9,
+        constraints: BoxConstraints(maxWidth: 500, maxHeight: screenSize.height * 0.8),
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [

@@ -686,8 +686,11 @@ class _SprintFormDialogState extends State<SprintFormDialog> {
           Text(_isEditing ? '${l10n.actionEdit} ${l10n.agileSprintTitle}' : l10n.agileNewSprint),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 450,
+        width: MediaQuery.of(context).size.width < 450
+            ? MediaQuery.of(context).size.width * 0.85
+            : 450,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -944,9 +947,12 @@ class _SprintPlanningWizardState extends State<SprintPlanningWizard> {
           ),
         ],
       ),
+      insetPadding: const EdgeInsets.all(16),
       content: SizedBox(
-        width: 700,
-        height: 500,
+        width: MediaQuery.of(context).size.width < 700
+            ? MediaQuery.of(context).size.width * 0.9
+            : 700,
+        height: MediaQuery.of(context).size.height * 0.7,
         child: Column(
           children: [
             // Header stats

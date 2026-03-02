@@ -211,64 +211,50 @@ class MetricsDashboardWidget extends StatelessWidget {
     final totalStories = stories.length;
     final completedStories = stories.where((s) => s.status == StoryStatus.done).length;
 
-    return Row(
-      children: [
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileStatsCompleted,
-            '$completedSprints',
-            l10n.agileStatsTotalCount(sprints.length),
-            Icons.flag,
-            Colors.blue,
-            tooltip: l10n.agileStatsCompletedTooltip,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileAvgVelocitySprint,
-            avgSprintVelocity.toStringAsFixed(1),
-            l10n.agileStatsPtsPerSprint,
-            Icons.speed,
-            Colors.purple,
-            tooltip: l10n.agileAvgVelocitySprintTooltip,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileAvgVelocityWeekly,
-            avgWeeklyVelocity.toStringAsFixed(1),
-            l10n.agilePerWeekSuffix,
-            Icons.shutter_speed,
-            Colors.deepPurple,
-            tooltip: l10n.agileAvgVelocityWeeklyTooltip,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileStatsCompleted, // Shortened to save space
-            '$completedStories',
-            '${l10n.agileStatsTotalCount(totalStories)} stories',
-            Icons.check_circle,
-            Colors.green,
-            tooltip: l10n.agileStatsStoriesCompletedTooltip,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileStatsPoints,
-            '${_getTotalCompletedPoints()}',
-            l10n.agileStatsPlannedCount(_getTotalPlannedPoints()),
-            Icons.stars,
-            Colors.orange,
-            tooltip: l10n.agileStatsPointsTooltip,
-          ),
-        ),
-      ],
-    );
+    final cards = [
+      _buildSummaryCard(
+        l10n.agileStatsCompleted,
+        '$completedSprints',
+        l10n.agileStatsTotalCount(sprints.length),
+        Icons.flag,
+        Colors.blue,
+        tooltip: l10n.agileStatsCompletedTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileAvgVelocitySprint,
+        avgSprintVelocity.toStringAsFixed(1),
+        l10n.agileStatsPtsPerSprint,
+        Icons.speed,
+        Colors.purple,
+        tooltip: l10n.agileAvgVelocitySprintTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileAvgVelocityWeekly,
+        avgWeeklyVelocity.toStringAsFixed(1),
+        l10n.agilePerWeekSuffix,
+        Icons.shutter_speed,
+        Colors.deepPurple,
+        tooltip: l10n.agileAvgVelocityWeeklyTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileStatsCompleted,
+        '$completedStories',
+        '${l10n.agileStatsTotalCount(totalStories)} stories',
+        Icons.check_circle,
+        Colors.green,
+        tooltip: l10n.agileStatsStoriesCompletedTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileStatsPoints,
+        '${_getTotalCompletedPoints()}',
+        l10n.agileStatsPlannedCount(_getTotalPlannedPoints()),
+        Icons.stars,
+        Colors.orange,
+        tooltip: l10n.agileStatsPointsTooltip,
+      ),
+    ];
+
+    return _buildResponsiveCardRow(context, cards);
   }
 
   Widget _buildKanbanSummary(BuildContext context) {
@@ -279,53 +265,42 @@ class MetricsDashboardWidget extends StatelessWidget {
     final avgCycleTime = _calculateAverageCycleTime();
     final throughput = _calculateWeeklyThroughput();
 
-    return Row(
-      children: [
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileItemsCompleted,
-            '$completedItems',
-            l10n.agileStatsTotalCount(totalItems),
-            Icons.done_all,
-            Colors.green,
-            tooltip: l10n.agileItemsCompletedTooltip,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileInProgress,
-            '$inProgressItems',
-            l10n.agileStatsWorkInProgress,
-            Icons.engineering,
-            Colors.orange,
-            tooltip: l10n.agileInProgressTooltip,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileCycleTime,
-            avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-',
-            l10n.timeDays,
-            Icons.timer,
-            Colors.blue,
-            tooltip: l10n.agileCycleTimeTooltip,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileThroughput,
-            throughput > 0 ? throughput.toStringAsFixed(1) : '-',
-            l10n.agileStatsItemsPerWeek,
-            Icons.trending_up,
-            Colors.teal,
-            tooltip: l10n.agileThroughputTooltip,
-          ),
-        ),
-      ],
-    );
+    final cards = [
+      _buildSummaryCard(
+        l10n.agileItemsCompleted,
+        '$completedItems',
+        l10n.agileStatsTotalCount(totalItems),
+        Icons.done_all,
+        Colors.green,
+        tooltip: l10n.agileItemsCompletedTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileInProgress,
+        '$inProgressItems',
+        l10n.agileStatsWorkInProgress,
+        Icons.engineering,
+        Colors.orange,
+        tooltip: l10n.agileInProgressTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileCycleTime,
+        avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-',
+        l10n.timeDays,
+        Icons.timer,
+        Colors.blue,
+        tooltip: l10n.agileCycleTimeTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileThroughput,
+        throughput > 0 ? throughput.toStringAsFixed(1) : '-',
+        l10n.agileStatsItemsPerWeek,
+        Icons.trending_up,
+        Colors.teal,
+        tooltip: l10n.agileThroughputTooltip,
+      ),
+    ];
+
+    return _buildResponsiveCardRow(context, cards);
   }
 
   Widget _buildHybridSummary(BuildContext context) {
@@ -335,52 +310,84 @@ class MetricsDashboardWidget extends StatelessWidget {
     final avgCycleTime = _calculateAverageCycleTime();
     final completedStories = stories.where((s) => s.status == StoryStatus.done).length;
 
-    return Row(
-      children: [
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileSprintTitle,
-            '$completedSprints',
-            l10n.agileStatsTotalCount(sprints.length),
-            Icons.flag,
-            Colors.purple,
-            tooltip: l10n.agileHybridSprintTooltip,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileMetricsVelocityTitle,
-            avgVelocity.toStringAsFixed(1),
-            l10n.agileStatsPtsPerSprint,
-            Icons.speed,
-            Colors.blue,
-            tooltip: l10n.agileAverageVelocityTooltip,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileCycleTime,
-            avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-',
-            l10n.timeDays,
-            Icons.timer,
-            Colors.green,
-            tooltip: l10n.agileCycleTimeTooltip,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-            l10n.agileStatsCompleted,
-            '$completedStories',
-             l10n.agileStatsTotalCount(stories.length),
-            Icons.check_circle,
-            Colors.orange,
-            tooltip: l10n.agileHybridCompletedTooltip,
-          ),
-        ),
-      ],
+    final cards = [
+      _buildSummaryCard(
+        l10n.agileSprintTitle,
+        '$completedSprints',
+        l10n.agileStatsTotalCount(sprints.length),
+        Icons.flag,
+        Colors.purple,
+        tooltip: l10n.agileHybridSprintTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileMetricsVelocityTitle,
+        avgVelocity.toStringAsFixed(1),
+        l10n.agileStatsPtsPerSprint,
+        Icons.speed,
+        Colors.blue,
+        tooltip: l10n.agileAverageVelocityTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileCycleTime,
+        avgCycleTime > 0 ? avgCycleTime.toStringAsFixed(1) : '-',
+        l10n.timeDays,
+        Icons.timer,
+        Colors.green,
+        tooltip: l10n.agileCycleTimeTooltip,
+      ),
+      _buildSummaryCard(
+        l10n.agileStatsCompleted,
+        '$completedStories',
+        l10n.agileStatsTotalCount(stories.length),
+        Icons.check_circle,
+        Colors.orange,
+        tooltip: l10n.agileHybridCompletedTooltip,
+      ),
+    ];
+
+    return _buildResponsiveCardRow(context, cards);
+  }
+
+  Widget _buildResponsiveCardRow(BuildContext context, List<Widget> cards) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 500) {
+          final halfWidth = (constraints.maxWidth - 8) / 2;
+          return Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: cards.map((c) => SizedBox(width: halfWidth, child: c)).toList(),
+          );
+        }
+        return Row(
+          children: [
+            for (int i = 0; i < cards.length; i++) ...[
+              if (i > 0) const SizedBox(width: 8),
+              Expanded(child: cards[i]),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildResponsivePairedRow(Widget left, Widget right) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 500) {
+          return Column(
+            children: [left, const SizedBox(height: 16), right],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: left),
+            const SizedBox(width: 16),
+            Expanded(child: right),
+          ],
+        );
+      },
     );
   }
 
@@ -396,17 +403,9 @@ class MetricsDashboardWidget extends StatelessWidget {
     // Kanban-specific: Lead Time & Throughput
     if (_features.hasFlowMetrics) {
       widgets.add(
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: LeadTimeWidget(stories: stories),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ThroughputWidget(stories: stories),
-            ),
-          ],
+        _buildResponsivePairedRow(
+          LeadTimeWidget(stories: stories),
+          ThroughputWidget(stories: stories),
         ),
       );
       widgets.add(const SizedBox(height: 24));
@@ -417,19 +416,11 @@ class MetricsDashboardWidget extends StatelessWidget {
 
     // Common: Distribution & Cycle Time
     widgets.add(
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: CumulativeFlowWidget(stories: stories),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _features.hasFlowMetrics
-                ? CycleTimeWidget(stories: stories)
-                : StoryCompletionWidget(stories: stories),
-          ),
-        ],
+      _buildResponsivePairedRow(
+        CumulativeFlowWidget(stories: stories),
+        _features.hasFlowMetrics
+            ? CycleTimeWidget(stories: stories)
+            : StoryCompletionWidget(stories: stories),
       ),
     );
     widgets.add(const SizedBox(height: 24));
@@ -437,17 +428,9 @@ class MetricsDashboardWidget extends StatelessWidget {
     // Scrum-specific: Estimation Accuracy
     if (_features.hasVelocityTracking) {
       widgets.add(
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: CycleTimeWidget(stories: stories),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: EstimationAccuracyWidget(sprints: sprints),
-            ),
-          ],
+        _buildResponsivePairedRow(
+          CycleTimeWidget(stories: stories),
+          EstimationAccuracyWidget(sprints: sprints),
         ),
       );
     }

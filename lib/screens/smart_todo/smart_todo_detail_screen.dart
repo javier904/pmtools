@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
@@ -108,155 +107,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 children: [
                   Text(currentList.title, style: const TextStyle(fontSize: 18)),
                   Text(
-                    AppLocalizations.of(context)?.smartTodoMembersCount(currentList.participants.length) ?? '${currentList.participants.length} members',
+                    AppLocalizations.of(context).smartTodoMembersCount(currentList.participants.length),
                     style: const TextStyle(fontSize: 12, color: Colors.grey)
                   ),
                 ],
               ),
-              actions: [
-                // ═══════════════════════════════════════════════════════════
-                // EXPORT/INTEGRATION BUTTONS (left side)
-                // ═══════════════════════════════════════════════════════════
-                // Export to Estimation button
-                StreamBuilder<List<TodoTaskModel>>(
-                  stream: _todoService.streamTasks(currentList.id),
-                  builder: (context, taskSnapshot) {
-                    final tasks = taskSnapshot.data ?? [];
-                    final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
-                    return IconButton(
-                      icon: const Icon(Icons.casino_rounded),
-                      tooltip: AppLocalizations.of(context)?.exportToEstimation ?? 'Send to Estimation',
-                      onPressed: hasNonDoneTasks
-                          ? () => _showExportToEstimationDialog(currentList, tasks)
-                          : null,
-                    );
-                  },
-                ),
-                // Export to Eisenhower button
-                StreamBuilder<List<TodoTaskModel>>(
-                  stream: _todoService.streamTasks(currentList.id),
-                  builder: (context, taskSnapshot) {
-                    final tasks = taskSnapshot.data ?? [];
-                    final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
-                    return IconButton(
-                      icon: const Icon(Icons.grid_view_rounded),
-                      tooltip: AppLocalizations.of(context)?.exportToEisenhower ?? 'Send to Eisenhower',
-                      onPressed: hasNonDoneTasks
-                          ? () => _showExportToEisenhowerDialog(currentList, tasks)
-                          : null,
-                    );
-                  },
-                ),
-                // Export to User Stories button
-                StreamBuilder<List<TodoTaskModel>>(
-                  stream: _todoService.streamTasks(currentList.id),
-                  builder: (context, taskSnapshot) {
-                    final tasks = taskSnapshot.data ?? [];
-                    final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
-                    return IconButton(
-                      icon: const Icon(Icons.rocket_launch),
-                      tooltip: AppLocalizations.of(context)?.exportToUserStories ?? 'Move to Agile project',
-                      onPressed: hasNonDoneTasks
-                          ? () => _showExportToUserStoriesDialog(currentList, tasks)
-                          : null,
-                    );
-                  },
-                ),
-                // ═══════════════════════════════════════════════════════════
-                // SEPARATOR
-                // ═══════════════════════════════════════════════════════════
-                const SizedBox(width: 8),
-                Container(
-                  width: 1,
-                  height: 24,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 8),
-                // ═══════════════════════════════════════════════════════════
-                // PAGE FUNCTIONALITY BUTTONS (right side)
-                // ═══════════════════════════════════════════════════════════
-                // View Switcher
-                Row(
-                  children: [
-                    _buildViewIcon(TodoViewMode.kanban, Icons.view_kanban, AppLocalizations.of(context)?.smartTodoViewKanban ?? 'Kanban'),
-                    _buildViewIcon(TodoViewMode.list, Icons.list, AppLocalizations.of(context)?.smartTodoViewList ?? 'Lista'),
-                    _buildViewIcon(TodoViewMode.resource, Icons.people_outline, AppLocalizations.of(context)?.smartTodoViewResource ?? 'Per Risorsa'),
-                    _buildViewIcon(TodoViewMode.calendar, Icons.calendar_month, AppLocalizations.of(context)?.smartTodoViewCalendar ?? 'Calendario'),
-                  ],
-                ),
-                if (currentList.isOwner(_currentUserEmail))
-                  IconButton(
-                    icon: const Icon(Icons.history),
-                    tooltip: 'Audit Log',
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)),
-                    ),
-                  ),
-                // CFD Chart - Owner only
-                if (currentList.isOwner(_currentUserEmail))
-                  IconButton(
-                    icon: const Icon(Icons.stacked_line_chart),
-                    tooltip: AppLocalizations.of(context)?.smartTodoCfdTooltip ?? 'Cumulative Flow Diagram',
-                    onPressed: () => _showCfdChart(currentList),
-                  ),
-                IconButton(
-                  icon: const Icon(Icons.person_add),
-                  tooltip: AppLocalizations.of(context)?.smartTodoInviteTooltip ?? 'Invita',
-                  onPressed: () => _showInviteDialog(currentList),
-                ),
-                // ═══════════════════════════════════════════════════════════
-                // SEPARATOR - Import/Export section
-                // ═══════════════════════════════════════════════════════════
-                const SizedBox(width: 4),
-                Container(
-                  width: 1,
-                  height: 24,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 4),
-                // Bulk Sync Button (Feature Flagged)
-                if (FeatureFlags.enableCalendarSync)
-                  StreamBuilder<List<TodoTaskModel>>(
-                    stream: _todoService.streamTasks(currentList.id),
-                    builder: (context, taskSnapshot) {
-                      final tasks = taskSnapshot.data ?? [];
-                      final hasSyncableTasks = tasks.any((t) => t.calendarEventId == null && t.dueDate != null);
-                      return IconButton(
-                        icon: const Icon(Icons.sync_rounded),
-                        tooltip: 'Mass Sync to Calendar', // AppLocalizations.of(context)?.smartTodoSyncMultiple
-                        onPressed: hasSyncableTasks
-                            ? () => _showBulkSyncDialog(currentList, tasks)
-                            : null,
-                      );
-                    },
-                  ),
-                // Import button
-                IconButton(
-                  icon: const Icon(Icons.upload_file),
-                  tooltip: AppLocalizations.of(context)?.smartTodoActionImport ?? 'Importa Task',
-                  onPressed: () => _showImportDialog(currentList),
-                ),
-                  // Export button (CSV - SAFE)
-                IconButton(
-                  icon: const Icon(Icons.download), // Icon mismatch fix? Table chart was for sheets.
-                  tooltip: 'Export to CSV', // TODO: Localize
-                  onPressed: () => _exportToCsv(currentList),
-                ),
-
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () => _showListSettings(currentList),
-                ),
-                const SizedBox(width: 8),
-                // Home button - sempre ultimo a destra
-                IconButton(
-                  icon: const Icon(Icons.home_rounded),
-                  tooltip: AppLocalizations.of(context)?.navHome ?? 'Home',
-                  color: const Color(0xFF8B5CF6), // Viola come icona app
-                  onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
-                ),
-              ],
+              actions: _buildAppBarActions(context, currentList),
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(60),
                 child: _buildFilterBar(currentList),
@@ -270,7 +126,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 }
                 
                 if (snapshot.hasError) {
-                   return Center(child: Text(AppLocalizations.of(context)?.errorGeneric(snapshot.error.toString()) ?? 'Error: ${snapshot.error}'));
+                   return Center(child: Text(AppLocalizations.of(context).errorGeneric(snapshot.error.toString())));
                 }
   
                 var tasks = snapshot.data ?? [];
@@ -355,7 +211,6 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                     );
                     break;
                   case TodoViewMode.kanban:
-                  default: // Default case handles null
                     content = TodoKanbanView(
                       list: currentList,
                       tasks: tasks,
@@ -468,7 +323,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           children: [
             // Search Pill
             Container(
-              width: 240,
+              constraints: BoxConstraints(
+                minWidth: 140,
+                maxWidth: MediaQuery.of(context).size.width < 600 ? 180 : 240,
+              ),
               height: 40,
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E2633) : Colors.grey[100], // Dark Surface or Light Grey
@@ -478,7 +336,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)?.smartTodoSearchTasksHint ?? 'Search...',
+                  hintText: AppLocalizations.of(context).smartTodoSearchTasksHint,
                   hintStyle: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[500], fontSize: 14),
                   prefixIcon: Icon(Icons.search, size: 20, color: isDark ? Colors.grey[400] : Colors.grey[500]),
                   border: InputBorder.none,
@@ -514,8 +372,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      const SizedBox(width: 8),
                      Text(
                        safeAssigneeFilters.isEmpty
-                         ? (AppLocalizations.of(context)?.smartTodoAllPeople ?? "All people")
-                         : (AppLocalizations.of(context)?.smartTodoPeopleCount(safeAssigneeFilters.length) ?? "${safeAssigneeFilters.length} people"),
+                         ? (AppLocalizations.of(context).smartTodoAllPeople)
+                         : (AppLocalizations.of(context).smartTodoPeopleCount(safeAssigneeFilters.length)),
                        style: TextStyle(
                          fontSize: 14,
                          color: safeAssigneeFilters.isEmpty ? (isDark ? Colors.grey[300] : Colors.black) : Colors.blue,
@@ -560,8 +418,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                        const SizedBox(width: 8),
                        Text(
                          safeTagFilters.isEmpty
-                           ? (AppLocalizations.of(context)?.smartTodoAllTags ?? "All tags")
-                           : (AppLocalizations.of(context)?.smartTodoTagsCount(safeTagFilters.length) ?? "${safeTagFilters.length} tags"),
+                           ? (AppLocalizations.of(context).smartTodoAllTags)
+                           : (AppLocalizations.of(context).smartTodoTagsCount(safeTagFilters.length)),
                          style: TextStyle(
                            fontSize: 14,
                            color: safeTagFilters.isEmpty ? (isDark ? Colors.grey[300] : Colors.black) : Colors.blue,
@@ -605,7 +463,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        AppLocalizations.of(context)?.smartTodoFilterToday ?? "Today",
+                        AppLocalizations.of(context).smartTodoFilterToday,
                         style: TextStyle(
                           fontSize: 14,
                           color: !_filterToday ? (isDark ? Colors.grey[300] : Colors.black) : Colors.orange[800],
@@ -621,7 +479,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
              
              // Sort Menu (Manual / Recent / Reorder Actions)
              PopupMenuButton<String>(
-               tooltip: AppLocalizations.of(context)?.smartTodoSortTooltip ?? 'Sort Options',
+               tooltip: AppLocalizations.of(context).smartTodoSortTooltip,
                onSelected: (value) {
                  if (value == 'manual') {
                    setState(() => _sortByDate = false); // _sortByDate false = Manual
@@ -644,7 +502,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                        Icon(Icons.drag_indicator, size: 20, color: !_sortByDate ? Colors.blue : Colors.grey),
                        const SizedBox(width: 12),
                        Text(
-                         AppLocalizations.of(context)?.smartTodoSortManual ?? 'Manual (Drag & Drop)',
+                         AppLocalizations.of(context).smartTodoSortManual,
                          style: TextStyle(
                            fontWeight: !_sortByDate ? FontWeight.bold : FontWeight.normal,
                            color: !_sortByDate ? Colors.blue : null,
@@ -660,7 +518,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                        Icon(Icons.access_time, size: 20, color: _sortByDate ? Colors.blue : Colors.grey),
                        const SizedBox(width: 12),
                        Text(
-                         AppLocalizations.of(context)?.smartTodoSortDate ?? 'Recently Updated',
+                         AppLocalizations.of(context).smartTodoSortDate,
                          style: TextStyle(
                            fontWeight: _sortByDate ? FontWeight.bold : FontWeight.normal,
                            color: _sortByDate ? Colors.blue : null,
@@ -677,7 +535,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      children: [
                        const Icon(Icons.low_priority, size: 20, color: Colors.grey),
                        const SizedBox(width: 12),
-                       Text(AppLocalizations.of(context)?.smartTodoActionSortPriority ?? 'Reorder by Priority'),
+                       Text(AppLocalizations.of(context).smartTodoActionSortPriority),
                      ],
                    ),
                  ),
@@ -687,7 +545,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      children: [
                        const Icon(Icons.calendar_month, size: 20, color: Colors.grey),
                        const SizedBox(width: 12),
-                       Text(AppLocalizations.of(context)?.smartTodoActionSortDeadline ?? 'Reorder by Deadline'),
+                       Text(AppLocalizations.of(context).smartTodoActionSortDeadline),
                      ],
                    ),
                  ),
@@ -710,8 +568,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                      const SizedBox(width: 8),
                      Text(
                        _sortByDate 
-                         ? (AppLocalizations.of(context)?.smartTodoSortDate ?? "Recent")
-                         : (AppLocalizations.of(context)?.smartTodoSortManual ?? "Manual"),
+                         ? (AppLocalizations.of(context).smartTodoSortDate)
+                         : (AppLocalizations.of(context).smartTodoSortManual),
                        style: TextStyle(
                          fontSize: 14,
                          color: isDark ? Colors.grey[300] : Colors.black,
@@ -835,7 +693,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           final last = tasksInCol.isNotEmpty ? tasksInCol.last.position : 0.0;
           newPos = last + 10000.0;
        } else {
-          final afterTask = tasksInCol.firstWhere((t) => t.id == insertBeforeTask.id, orElse: () => insertBeforeTask!);
+          final afterTask = tasksInCol.firstWhere((t) => t.id == insertBeforeTask.id, orElse: () => insertBeforeTask);
           final index = tasksInCol.indexOf(afterTask); 
           
           if (index == -1) {
@@ -872,14 +730,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)?.smartTodoDeleteColumnTitle ?? 'Elimina Colonna'),
-          content: Text(AppLocalizations.of(context)?.smartTodoDeleteColumnContent ?? 'Sei sicuro? I task in questa colonna non saranno più visibili.'),
+          title: Text(AppLocalizations.of(context).smartTodoDeleteColumnTitle),
+          content: Text(AppLocalizations.of(context).smartTodoDeleteColumnContent),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context).actionCancel)),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true), 
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-              child: Text(AppLocalizations.of(context)?.actionDelete ?? 'Elimina')
+              child: Text(AppLocalizations.of(context).actionDelete)
             ),
           ],
         ),
@@ -949,7 +807,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       currentPos += 10000.0;
     }
      ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoOrderUpdated ?? 'Order updated manually')),
+      SnackBar(content: Text(AppLocalizations.of(context).smartTodoOrderUpdated)),
     );
   }
 
@@ -1043,7 +901,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                         ),
                         const SizedBox(width: 16),
                         Text(
-                          column == null ? (AppLocalizations.of(context)?.smartTodoNewColumn ?? 'Nuova Colonna') : (AppLocalizations.of(context)?.actionEdit ?? 'Modifica'),
+                          column == null ? (AppLocalizations.of(context).smartTodoNewColumn) : (AppLocalizations.of(context).actionEdit),
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.white : Colors.black87),
                         ),
                         const Spacer(),
@@ -1066,17 +924,17 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          TextField(
                            controller: titleCtrl, 
                            decoration: InputDecoration(
-                             hintText: AppLocalizations.of(context)?.smartTodoColumnNameHint ?? 'Nome Colonna',
+                             hintText: AppLocalizations.of(context).smartTodoColumnNameHint,
                              hintStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.grey[500] : Colors.grey[400]),
                              border: InputBorder.none,
                            ),
                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: dialogIsDark ? Colors.white : Colors.black87),
-                           autofocus: true,
+                           autofocus: MediaQuery.of(context).size.width > 600,
                          ),
                          const SizedBox(height: 24),
                          
                          // Color Picker Section
-                         Text((AppLocalizations.of(context)?.smartTodoColorLabel ?? 'COLORE'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: dialogIsDark ? Colors.grey[400] : Colors.grey)),
+                         Text((AppLocalizations.of(context).smartTodoColorLabel), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: dialogIsDark ? Colors.grey[400] : Colors.grey)),
                          const SizedBox(height: 12),
                          Wrap(
                            spacing: 12,
@@ -1118,10 +976,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                  child: Column(
                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(AppLocalizations.of(context)?.smartTodoMarkAsDone ?? 'Segna come completato', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: dialogIsDark ? Colors.white : Colors.black87)),
+                                      Text(AppLocalizations.of(context).smartTodoMarkAsDone, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: dialogIsDark ? Colors.white : Colors.black87)),
                                       const SizedBox(height: 4),
                                       Text(
-                                        AppLocalizations.of(context)?.smartTodoColumnDoneDescription ?? 'I task in questa colonna saranno considerati "Fatti" (barrati).',
+                                        AppLocalizations.of(context).smartTodoColumnDoneDescription,
                                         style: TextStyle(fontSize: 12, color: dialogIsDark ? Colors.grey[400] : Colors.grey[600]),
                                       ),
                                    ],
@@ -1150,7 +1008,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context), 
-                          child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla'),
+                          child: Text(AppLocalizations.of(context).actionCancel),
                           style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
                         ),
                         const SizedBox(width: 12),
@@ -1194,7 +1052,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             elevation: 0,
                           ),
-                          child: Text(AppLocalizations.of(context)?.actionSave ?? 'Salva'),
+                          child: Text(AppLocalizations.of(context).actionSave),
                         ),
                       ],
                     ),
@@ -1212,13 +1070,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Center(child: Text(AppLocalizations.of(context)?.smartTodoListSettingsTitle ?? 'Impostazioni Lista', style: const TextStyle(fontWeight: FontWeight.bold))),
+        title: Center(child: Text(AppLocalizations.of(context).smartTodoListSettingsTitle, style: const TextStyle(fontWeight: FontWeight.bold))),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         contentPadding: const EdgeInsets.all(16),
         children: [
           ListTile(
             leading: const Icon(Icons.edit, color: Colors.grey),
-            title: Text(AppLocalizations.of(context)?.smartTodoRenameList ?? 'Rinomina Lista'),
+            title: Text(AppLocalizations.of(context).smartTodoRenameList),
             onTap: () {
               Navigator.pop(context);
               _showRenameListDialog(currentList); 
@@ -1226,7 +1084,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.label_outline, color: Colors.grey),
-            title: Text(AppLocalizations.of(context)?.smartTodoManageTags ?? 'Gestisci Tag'),
+            title: Text(AppLocalizations.of(context).smartTodoManageTags),
             onTap: () {
               Navigator.pop(context);
               _showTagsDialog(currentList);
@@ -1235,7 +1093,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           if (currentList.canEdit(_currentUserEmail))
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
-              title: Text(AppLocalizations.of(context)?.smartTodoDeleteList ?? 'Elimina Lista', style: const TextStyle(color: Colors.red)),
+              title: Text(AppLocalizations.of(context).smartTodoDeleteList, style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 _confirmDeleteList(currentList);
@@ -1251,14 +1109,14 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)?.smartTodoRenameList ?? 'Rinomina Lista'),
+        title: Text(AppLocalizations.of(context).smartTodoRenameList),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(labelText: AppLocalizations.of(context)?.smartTodoNewNameLabel ?? 'Nuovo Nome'),
-          autofocus: true,
+          decoration: InputDecoration(labelText: AppLocalizations.of(context).smartTodoNewNameLabel),
+          autofocus: MediaQuery.of(context).size.width > 600,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context).actionCancel)),
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
@@ -1271,7 +1129,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text(AppLocalizations.of(context)?.actionSave ?? 'Salva'),
+            child: Text(AppLocalizations.of(context).actionSave),
           ),
         ],
       ),
@@ -1282,10 +1140,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)?.smartTodoDeleteList ?? 'Elimina Lista'),
-        content: Text(AppLocalizations.of(context)?.smartTodoDeleteListConfirm ?? 'Sei sicuro di voler eliminare questa lista e tutti i suoi task? Questa azione è irreversibile.'),
+        title: Text(AppLocalizations.of(context).smartTodoDeleteList),
+        content: Text(AppLocalizations.of(context).smartTodoDeleteListConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Annulla')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context).actionCancel)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             onPressed: () async {
@@ -1298,7 +1156,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               );
               if (mounted) Navigator.pop(context); // Go back to dashboard
             },
-            child: Text(AppLocalizations.of(context)?.actionDelete ?? 'Elimina'),
+            child: Text(AppLocalizations.of(context).actionDelete),
           ),
         ],
       ),
@@ -1309,7 +1167,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     // Permission check for editing
     if (task != null && !_canEditTask(task, currentList)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)?.smartTodoEditPermissionError ?? 'Puoi modificare solo i task a te assegnati')),
+        SnackBar(content: Text(AppLocalizations.of(context).smartTodoEditPermissionError)),
       );
       return;
     }
@@ -1400,7 +1258,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          ),
                          const SizedBox(width: 16),
                          Text(
-                           AppLocalizations.of(context)?.smartTodoFilterByPerson ?? 'Filter by Person',
+                           AppLocalizations.of(context).smartTodoFilterByPerson,
                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                          ),
                          const Spacer(),
@@ -1422,7 +1280,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                             ListTile(
                               leading: Icon(Icons.people_outline, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                               title: Text(
-                                AppLocalizations.of(context)?.smartTodoAllPeople ?? 'All people',
+                                AppLocalizations.of(context).smartTodoAllPeople,
                                 style: TextStyle(color: textColor),
                               ),
                               // Visual feedback: If clicked, it clears filters.
@@ -1505,7 +1363,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          TextButton(
                            onPressed: () => Navigator.pop(context),
                            style: TextButton.styleFrom(foregroundColor: isDark ? Colors.grey[400] : Colors.grey[600]),
-                           child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')
+                           child: Text(AppLocalizations.of(context).smartTodoCancel)
                          ),
                          const SizedBox(width: 12),
                          ElevatedButton(
@@ -1535,7 +1393,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                              elevation: 0,
                            ),
-                           child: Text(AppLocalizations.of(context)?.smartTodoApplyFilters ?? 'Apply Filters'),
+                           child: Text(AppLocalizations.of(context).smartTodoApplyFilters),
                          ),
                        ],
                      ),
@@ -1599,7 +1457,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          ),
                          const SizedBox(width: 12),
                          Text(
-                           AppLocalizations.of(context)?.smartTodoFilterByTag ?? 'Filter by Tag',
+                           AppLocalizations.of(context).smartTodoFilterByTag,
                            style: TextStyle(
                              fontSize: 18,
                              fontWeight: FontWeight.bold,
@@ -1628,7 +1486,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                               leading: Icon(Icons.label_outline, color: isDark ? Colors.grey[400] : Colors.grey[600]),
                               title: Text(
-                                AppLocalizations.of(context)?.smartTodoAllTags ?? 'All tags',
+                                AppLocalizations.of(context).smartTodoAllTags,
                                 style: TextStyle(color: textColor),
                               ),
                               trailing: selectedTagIds.isEmpty
@@ -1690,7 +1548,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                          TextButton(
                            onPressed: () => Navigator.pop(context),
                            style: TextButton.styleFrom(foregroundColor: isDark ? Colors.grey[400] : Colors.grey[600]),
-                           child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Cancel')
+                           child: Text(AppLocalizations.of(context).smartTodoCancel)
                          ),
                          const SizedBox(width: 12),
                          ElevatedButton(
@@ -1709,7 +1567,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                              elevation: 0,
                            ),
-                           child: Text(AppLocalizations.of(context)?.smartTodoApplyFilters ?? 'Apply Filters'),
+                           child: Text(AppLocalizations.of(context).smartTodoApplyFilters),
                          ),
                        ],
                      ),
@@ -1744,7 +1602,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
 
     if (!_canEditTask(task, currentList)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n?.smartTodoDeleteNoPermission ?? "You don't have permission to delete this task")),
+        SnackBar(content: Text(l10n.smartTodoDeleteNoPermission)),
       );
       return;
     }
@@ -1753,10 +1611,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n?.smartTodoDeleteTaskTitle ?? 'Delete Task'),
-        content: Text(l10n?.smartTodoDeleteTaskContent ?? 'Are you sure you want to delete this task?'),
+        title: Text(l10n.smartTodoDeleteTaskTitle),
+        content: Text(l10n.smartTodoDeleteTaskContent),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n?.actionCancel ?? 'Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -1769,7 +1627,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-            child: Text(l10n?.actionDelete ?? 'Delete'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -1914,7 +1772,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 TextField(
                   controller: textCtrl,
                   decoration: const InputDecoration(labelText: 'Nome Tag'),
-                  autofocus: true,
+                  autofocus: MediaQuery.of(context).size.width > 600,
                 ),
                 const SizedBox(height: 16),
                 Wrap(
@@ -1947,7 +1805,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                   if (tagExists) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(AppLocalizations.of(context)?.smartTodoTagAlreadyExists ?? 'Tag already exists'),
+                        content: Text(AppLocalizations.of(context).smartTodoTagAlreadyExists),
                         backgroundColor: Colors.orange,
                       ),
                     );
@@ -2053,7 +1911,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.exportSuccess ?? 'Exported successfully'),
+            content: Text(l10n.exportSuccess),
             backgroundColor: Colors.green,
             action: SnackBarAction(
               label: 'Open',
@@ -2140,10 +1998,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.activitiesCreated(createdCount) ?? '$createdCount activities created'),
+            content: Text(l10n.activitiesCreated(createdCount)),
             backgroundColor: Colors.green,
             action: SnackBarAction(
-              label: l10n?.actionOpen ?? 'Open',
+              label: l10n.actionOpen,
               textColor: Colors.white,
               onPressed: () {
                 Navigator.push(
@@ -2236,7 +2094,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 if (!isSyncing)
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(AppLocalizations.of(context)?.smartTodoCancel ?? 'Annulla'),
+                    child: Text(AppLocalizations.of(context).smartTodoCancel),
                   ),
                 if (!isSyncing)
                   ElevatedButton(
@@ -2359,10 +2217,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.storiesCreated(createdCount) ?? '$createdCount stories created'),
+            content: Text(l10n.storiesCreated(createdCount)),
             backgroundColor: Colors.green,
             action: SnackBarAction(
-              label: l10n?.actionOpen ?? 'Open',
+              label: l10n.actionOpen,
               textColor: Colors.white,
               onPressed: () {
                 if (targetProject != null) {
@@ -2405,18 +2263,6 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
     }
   }
 
-  /// Map task effort (hours) to story points (Fibonacci)
-  int _mapEffortToStoryPoints(int hours) {
-    // Using a simple mapping: 1h = 1 point, then Fibonacci scale
-    if (hours <= 1) return 1;
-    if (hours <= 2) return 2;
-    if (hours <= 4) return 3;
-    if (hours <= 8) return 5;
-    if (hours <= 16) return 8;
-    if (hours <= 24) return 13;
-    return 21;
-  }
-
   /// Map task priority to story priority
   StoryPriority _mapPriorityToStoryPriority(TodoTaskPriority priority) {
     switch (priority) {
@@ -2426,6 +2272,291 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         return StoryPriority.should;
       case TodoTaskPriority.low:
         return StoryPriority.could;
+    }
+  }
+
+  /// Builds a responsive AppBar actions list based on screen width.
+  List<Widget> _buildAppBarActions(BuildContext context, TodoListModel currentList) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 700;
+    final isTablet = screenWidth >= 700 && screenWidth < 900;
+    final l10n = AppLocalizations.of(context);
+
+    if (isMobile) {
+      // MOBILE COMPACT ACTIONS
+      final currentMode = _viewMode ?? TodoViewMode.kanban;
+      IconData currentIconIcon = Icons.view_kanban;
+      switch (currentMode) {
+        case TodoViewMode.kanban: currentIconIcon = Icons.view_kanban; break;
+        case TodoViewMode.list: currentIconIcon = Icons.list; break;
+        case TodoViewMode.resource: currentIconIcon = Icons.people_outline; break;
+        case TodoViewMode.calendar: currentIconIcon = Icons.calendar_month; break;
+      }
+
+      return [
+        // View Switcher (Dropdown)
+        PopupMenuButton<TodoViewMode>(
+          icon: Icon(currentIconIcon, color: Colors.blue),
+          tooltip: l10n.smartTodoViewKanban, // Generic tooltip
+          onSelected: (mode) => setState(() => _viewMode = mode),
+          itemBuilder: (context) => [
+            PopupMenuItem(value: TodoViewMode.kanban, child: Row(children: [Icon(Icons.view_kanban, color: currentMode == TodoViewMode.kanban ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewKanban)])),
+            PopupMenuItem(value: TodoViewMode.list, child: Row(children: [Icon(Icons.list, color: currentMode == TodoViewMode.list ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewList)])),
+            PopupMenuItem(value: TodoViewMode.resource, child: Row(children: [Icon(Icons.people_outline, color: currentMode == TodoViewMode.resource ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewResource)])),
+            PopupMenuItem(value: TodoViewMode.calendar, child: Row(children: [Icon(Icons.calendar_month, color: currentMode == TodoViewMode.calendar ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewCalendar)])),
+          ],
+        ),
+        
+        // Settings / More Menu
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (value) async {
+             if (value == 'invite') {
+                _showInviteDialog(currentList);
+             } else if (value == 'cfd' && currentList.isOwner(_currentUserEmail)) {
+                _showCfdChart(currentList);
+             } else if (value == 'history' && currentList.isOwner(_currentUserEmail)) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)));
+             } else if (value == 'settings') {
+                _showListSettings(currentList);
+             } else if (value == 'import') {
+                _showImportDialog(currentList);
+             } else if (value == 'export_csv') {
+                _exportToCsv(currentList);
+             } else if (value.startsWith('export_')) {
+                // Fetch tasks for export dialogs
+                final snapshot = await _todoService.streamTasks(currentList.id).first;
+                if (!mounted) return;
+                if (value == 'export_estimation') _showExportToEstimationDialog(currentList, snapshot);
+                if (value == 'export_eisenhower') _showExportToEisenhowerDialog(currentList, snapshot);
+                if (value == 'export_agile') _showExportToUserStoriesDialog(currentList, snapshot);
+                if (value == 'export_sync') _showBulkSyncDialog(currentList, snapshot);
+             }
+          },
+          itemBuilder: (context) {
+             return [
+               if (currentList.isOwner(_currentUserEmail)) ...[
+                 PopupMenuItem(value: 'cfd', child: Row(children: [const Icon(Icons.stacked_line_chart), const SizedBox(width: 8), Text(l10n.smartTodoCfdTooltip)])),
+                 const PopupMenuItem(value: 'history', child: Row(children: [Icon(Icons.history), SizedBox(width: 8), Text('Audit Log')])),
+                 const PopupMenuDivider(),
+               ],
+               PopupMenuItem(value: 'invite', child: Row(children: [const Icon(Icons.person_add), const SizedBox(width: 8), Text(l10n.smartTodoInviteTooltip)])),
+               const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings), SizedBox(width: 8), Text('Impostazioni')])),
+               const PopupMenuDivider(),
+               // Integrations
+               PopupMenuItem(value: 'export_estimation', child: Row(children: [const Icon(Icons.casino_rounded), const SizedBox(width: 8), Text(l10n.exportToEstimation)])),
+               PopupMenuItem(value: 'export_eisenhower', child: Row(children: [const Icon(Icons.grid_view_rounded), const SizedBox(width: 8), Text(l10n.exportToEisenhower)])),
+               PopupMenuItem(value: 'export_agile', child: Row(children: [const Icon(Icons.rocket_launch), const SizedBox(width: 8), Text(l10n.exportToUserStories)])),
+               if (FeatureFlags.enableCalendarSync)
+                  const PopupMenuItem(value: 'export_sync', child: Row(children: [Icon(Icons.sync_rounded), SizedBox(width: 8), Text('Calendar Sync')])),
+               const PopupMenuDivider(),
+               PopupMenuItem(value: 'import', child: Row(children: [const Icon(Icons.upload_file), const SizedBox(width: 8), Text(l10n.smartTodoActionImport)])),
+               const PopupMenuItem(value: 'export_csv', child: Row(children: [Icon(Icons.download), SizedBox(width: 8), Text('Export CSV')])),
+             ];
+          }
+        ),
+        // Home button
+        IconButton(
+          icon: const Icon(Icons.home_rounded),
+          tooltip: l10n.navHome,
+          color: const Color(0xFF8B5CF6),
+          onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+        ),
+      ];
+    } else if (isTablet) {
+      // TABLET ACTIONS: view switcher inline + invite + overflow menu
+      return [
+        // View Switcher (inline)
+        Row(
+          children: [
+            _buildViewIcon(TodoViewMode.kanban, Icons.view_kanban, l10n.smartTodoViewKanban),
+            _buildViewIcon(TodoViewMode.list, Icons.list, l10n.smartTodoViewList),
+            _buildViewIcon(TodoViewMode.resource, Icons.people_outline, l10n.smartTodoViewResource),
+            _buildViewIcon(TodoViewMode.calendar, Icons.calendar_month, l10n.smartTodoViewCalendar),
+          ],
+        ),
+        // Invite button
+        IconButton(
+          icon: const Icon(Icons.person_add),
+          tooltip: l10n.smartTodoInviteTooltip,
+          onPressed: () => _showInviteDialog(currentList),
+        ),
+        // Overflow menu for remaining actions
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (value) async {
+            if (value == 'cfd' && currentList.isOwner(_currentUserEmail)) {
+              _showCfdChart(currentList);
+            } else if (value == 'history' && currentList.isOwner(_currentUserEmail)) {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)));
+            } else if (value == 'settings') {
+              _showListSettings(currentList);
+            } else if (value == 'import') {
+              _showImportDialog(currentList);
+            } else if (value == 'export_csv') {
+              _exportToCsv(currentList);
+            } else if (value.startsWith('export_')) {
+              final snapshot = await _todoService.streamTasks(currentList.id).first;
+              if (!mounted) return;
+              if (value == 'export_estimation') _showExportToEstimationDialog(currentList, snapshot);
+              if (value == 'export_eisenhower') _showExportToEisenhowerDialog(currentList, snapshot);
+              if (value == 'export_agile') _showExportToUserStoriesDialog(currentList, snapshot);
+              if (value == 'export_sync') _showBulkSyncDialog(currentList, snapshot);
+            }
+          },
+          itemBuilder: (context) {
+            return [
+              if (currentList.isOwner(_currentUserEmail)) ...[
+                PopupMenuItem(value: 'cfd', child: Row(children: [const Icon(Icons.stacked_line_chart), const SizedBox(width: 8), Text(l10n.smartTodoCfdTooltip)])),
+                const PopupMenuItem(value: 'history', child: Row(children: [Icon(Icons.history), SizedBox(width: 8), Text('Audit Log')])),
+                const PopupMenuDivider(),
+              ],
+              const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings), SizedBox(width: 8), Text('Impostazioni')])),
+              const PopupMenuDivider(),
+              PopupMenuItem(value: 'export_estimation', child: Row(children: [const Icon(Icons.casino_rounded), const SizedBox(width: 8), Text(l10n.exportToEstimation)])),
+              PopupMenuItem(value: 'export_eisenhower', child: Row(children: [const Icon(Icons.grid_view_rounded), const SizedBox(width: 8), Text(l10n.exportToEisenhower)])),
+              PopupMenuItem(value: 'export_agile', child: Row(children: [const Icon(Icons.rocket_launch), const SizedBox(width: 8), Text(l10n.exportToUserStories)])),
+              if (FeatureFlags.enableCalendarSync)
+                const PopupMenuItem(value: 'export_sync', child: Row(children: [Icon(Icons.sync_rounded), SizedBox(width: 8), Text('Calendar Sync')])),
+              const PopupMenuDivider(),
+              PopupMenuItem(value: 'import', child: Row(children: [const Icon(Icons.upload_file), const SizedBox(width: 8), Text(l10n.smartTodoActionImport)])),
+              const PopupMenuItem(value: 'export_csv', child: Row(children: [Icon(Icons.download), SizedBox(width: 8), Text('Export CSV')])),
+            ];
+          },
+        ),
+        // Home button
+        IconButton(
+          icon: const Icon(Icons.home_rounded),
+          tooltip: l10n.navHome,
+          color: const Color(0xFF8B5CF6),
+          onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+        ),
+      ];
+    } else {
+      // DESKTOP VERBOSE ACTIONS (Current implementation)
+      return [
+        // Export to Estimation button
+        StreamBuilder<List<TodoTaskModel>>(
+          stream: _todoService.streamTasks(currentList.id),
+          builder: (context, taskSnapshot) {
+            final tasks = taskSnapshot.data ?? [];
+            final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
+            return IconButton(
+              icon: const Icon(Icons.casino_rounded),
+              tooltip: l10n.exportToEstimation,
+              onPressed: hasNonDoneTasks
+                  ? () => _showExportToEstimationDialog(currentList, tasks)
+                  : null,
+            );
+          },
+        ),
+        // Export to Eisenhower button
+        StreamBuilder<List<TodoTaskModel>>(
+          stream: _todoService.streamTasks(currentList.id),
+          builder: (context, taskSnapshot) {
+            final tasks = taskSnapshot.data ?? [];
+            final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
+            return IconButton(
+              icon: const Icon(Icons.grid_view_rounded),
+              tooltip: l10n.exportToEisenhower,
+              onPressed: hasNonDoneTasks
+                  ? () => _showExportToEisenhowerDialog(currentList, tasks)
+                  : null,
+            );
+          },
+        ),
+        // Export to User Stories button
+        StreamBuilder<List<TodoTaskModel>>(
+          stream: _todoService.streamTasks(currentList.id),
+          builder: (context, taskSnapshot) {
+            final tasks = taskSnapshot.data ?? [];
+            final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
+            return IconButton(
+              icon: const Icon(Icons.rocket_launch),
+              tooltip: l10n.exportToUserStories,
+              onPressed: hasNonDoneTasks
+                  ? () => _showExportToUserStoriesDialog(currentList, tasks)
+                  : null,
+            );
+          },
+        ),
+        const SizedBox(width: 8),
+        Container(width: 1, height: 24, color: Colors.grey),
+        const SizedBox(width: 8),
+        // View Switcher
+        Row(
+          children: [
+            _buildViewIcon(TodoViewMode.kanban, Icons.view_kanban, l10n.smartTodoViewKanban),
+            _buildViewIcon(TodoViewMode.list, Icons.list, l10n.smartTodoViewList),
+            _buildViewIcon(TodoViewMode.resource, Icons.people_outline, l10n.smartTodoViewResource),
+            _buildViewIcon(TodoViewMode.calendar, Icons.calendar_month, l10n.smartTodoViewCalendar),
+          ],
+        ),
+        if (currentList.isOwner(_currentUserEmail))
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Audit Log',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)),
+            ),
+          ),
+        // CFD Chart - Owner only
+        if (currentList.isOwner(_currentUserEmail))
+          IconButton(
+            icon: const Icon(Icons.stacked_line_chart),
+            tooltip: l10n.smartTodoCfdTooltip,
+            onPressed: () => _showCfdChart(currentList),
+          ),
+        IconButton(
+          icon: const Icon(Icons.person_add),
+          tooltip: l10n.smartTodoInviteTooltip,
+          onPressed: () => _showInviteDialog(currentList),
+        ),
+        const SizedBox(width: 4),
+        Container(width: 1, height: 24, color: Colors.grey),
+        const SizedBox(width: 4),
+        // Bulk Sync Button (Feature Flagged)
+        if (FeatureFlags.enableCalendarSync)
+          StreamBuilder<List<TodoTaskModel>>(
+            stream: _todoService.streamTasks(currentList.id),
+            builder: (context, taskSnapshot) {
+              final tasks = taskSnapshot.data ?? [];
+              final hasSyncableTasks = tasks.any((t) => t.calendarEventId == null && t.dueDate != null);
+              return IconButton(
+                icon: const Icon(Icons.sync_rounded),
+                tooltip: 'Mass Sync to Calendar',
+                onPressed: hasSyncableTasks
+                    ? () => _showBulkSyncDialog(currentList, tasks)
+                    : null,
+              );
+            },
+          ),
+        // Import button
+        IconButton(
+          icon: const Icon(Icons.upload_file),
+          tooltip: l10n.smartTodoActionImport,
+          onPressed: () => _showImportDialog(currentList),
+        ),
+        // Export button (CSV - SAFE)
+        IconButton(
+          icon: const Icon(Icons.download),
+          tooltip: 'Export to CSV',
+          onPressed: () => _exportToCsv(currentList),
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () => _showListSettings(currentList),
+        ),
+        const SizedBox(width: 8),
+        // Home button
+        IconButton(
+          icon: const Icon(Icons.home_rounded),
+          tooltip: l10n.navHome,
+          color: const Color(0xFF8B5CF6),
+          onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
+        ),
+      ];
     }
   }
 }

@@ -445,20 +445,25 @@ class _ActionItemsTrackerWidgetState extends State<ActionItemsTrackerWidget> {
                     ),
 
                     // Source retro info
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(retro.template.icon, size: 14, color: Colors.grey.shade600),
-                        const SizedBox(width: 4),
-                        Text(
-                          retro.title.isNotEmpty
-                              ? '${retro.template.displayName} - ${retro.title}'
-                              : retro.sprintName.isNotEmpty
-                                  ? '${retro.template.displayName} - ${retro.sprintName}'
-                              : retro.template.displayName,
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                        ),
-                      ],
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(retro.template.icon, size: 14, color: Colors.grey.shade600),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              retro.title.isNotEmpty
+                                  ? '${retro.template.displayName} - ${retro.title}'
+                                  : retro.sprintName.isNotEmpty
+                                      ? '${retro.template.displayName} - ${retro.sprintName}'
+                                  : retro.template.displayName,
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
 
                     // Due date

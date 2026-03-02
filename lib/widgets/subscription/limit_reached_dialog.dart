@@ -43,13 +43,15 @@ class LimitReachedDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
+    final screenWidth = MediaQuery.of(context).size.width;
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
+      insetPadding: const EdgeInsets.all(16),
       contentPadding: EdgeInsets.zero,
       content: Container(
-        width: 400,
+        width: screenWidth < 400 ? screenWidth * 0.9 : 400,
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -97,11 +97,14 @@ class TodoResourceView extends StatelessWidget {
       builder: (context, candidateData, rejectedData) {
         final isHovering = candidateData.isNotEmpty;
         
+        final screenWidth = MediaQuery.of(context).size.width;
+        final columnWidth = screenWidth < 600 ? screenWidth - 48 : 320.0;
+
         return Container(
-          width: 320,
+          width: columnWidth,
           decoration: BoxDecoration(
-            color: isHovering 
-                ? (isDark ? Colors.blue.withOpacity(0.1) : Colors.blue[50]) 
+            color: isHovering
+                ? (isDark ? Colors.blue.withOpacity(0.1) : Colors.blue[50])
                 : (isDark ? const Color(0xFF1E2633) : Colors.grey[100]), // Darker column bg in dark mode
             borderRadius: BorderRadius.circular(16),
             border: isHovering 

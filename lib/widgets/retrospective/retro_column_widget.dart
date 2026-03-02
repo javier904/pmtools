@@ -483,7 +483,7 @@ class RetroColumnWidget extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(hintText: l10n.retroAddCardHint),
             maxLines: 3,
-            autofocus: true,
+            autofocus: MediaQuery.of(context).size.width > 600,
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),
@@ -535,7 +535,7 @@ class RetroColumnWidget extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(hintText: l10n.retroAddCardHint),
             maxLines: 3,
-            autofocus: true,
+            autofocus: MediaQuery.of(context).size.width > 600,
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionCancel)),

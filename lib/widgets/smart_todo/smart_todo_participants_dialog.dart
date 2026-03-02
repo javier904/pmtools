@@ -72,9 +72,11 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: dialogBg,
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        width: 600,
-        height: 700,
+        width: MediaQuery.of(context).size.width * 0.9,
+        constraints: const BoxConstraints(maxWidth: 600),
+        height: MediaQuery.of(context).size.height * 0.85,
         padding: const EdgeInsets.all(0),
         child: Column(
           children: [
@@ -330,6 +332,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                  flex: 1,
                  child: DropdownButtonFormField<String>(
                    value: _role,
+                   isExpanded: true,
                    dropdownColor: isDark ? const Color(0xFF2D3748) : null,
                    style: TextStyle(color: textColor, fontSize: 12),
                    decoration: InputDecoration(

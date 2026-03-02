@@ -51,10 +51,12 @@ class _MethodologyGuideDialogState extends State<MethodologyGuideDialog>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Dialog(
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        width: 800,
-        height: 600,
+        width: screenSize.width * 0.9,
+        constraints: BoxConstraints(maxWidth: 800, maxHeight: screenSize.height * 0.85),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Theme.of(context).dialogBackgroundColor,
@@ -109,6 +111,8 @@ class _MethodologyGuideDialogState extends State<MethodologyGuideDialog>
             // Tab bar
             TabBar(
               controller: _tabController,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
               tabs: MethodologyGuide.getAllGuides(context).map((guide) => Tab(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

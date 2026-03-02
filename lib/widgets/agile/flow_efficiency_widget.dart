@@ -166,21 +166,26 @@ class FlowEfficiencyWidget extends StatelessWidget {
       children: [
         Icon(Icons.speed, size: 20, color: theme.colorScheme.primary),
         const SizedBox(width: 8),
-        Tooltip(
-          message: l10n.agileFlowEfficiencyTooltip,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.agileFlowEfficiencyTitle,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontWeight: FontWeight.w600,
+        Flexible(
+          child: Tooltip(
+            message: l10n.agileFlowEfficiencyTooltip,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    l10n.agileFlowEfficiencyTitle,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Icon(Icons.info_outline, size: 14, color: theme.colorScheme.onSurface.withOpacity(0.4)),
-            ],
+                const SizedBox(width: 4),
+                Icon(Icons.info_outline, size: 14, color: theme.colorScheme.onSurface.withOpacity(0.4)),
+              ],
+            ),
           ),
         ),
       ],
@@ -201,46 +206,62 @@ class FlowEfficiencyWidget extends StatelessWidget {
   ) {
     final hasData = flowData.isNotEmpty;
 
-    return Row(
-      children: [
-        // Circular indicator
-        _buildCircularEfficiency(
-          hasData ? efficiency : null,
-          l10n,
-          theme,
-        ),
-        const SizedBox(width: 16),
-        // Cycle / Lead time boxes
-        Expanded(
-          child: Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final timeMetrics = Column(
+          children: [
+            Tooltip(
+              message: l10n.getAgileFlowCycleTimeTooltip,
+              child: _buildTimeMetric(
+                label: l10n.agileFlowCycleTime,
+                value: hasData
+                    ? '${avgCycle.toStringAsFixed(1)} ${l10n.agileFlowDays}'
+                    : '-',
+                color: AppColors.success,
+                theme: theme,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Tooltip(
+              message: l10n.agileFlowLeadTimeTooltip,
+              child: _buildTimeMetric(
+                label: l10n.agileFlowLeadTime,
+                value: hasData
+                    ? '${avgLead.toStringAsFixed(1)} ${l10n.agileFlowDays}'
+                    : '-',
+                color: AppColors.secondary,
+                theme: theme,
+              ),
+            ),
+          ],
+        );
+
+        if (constraints.maxWidth < 300) {
+          return Column(
             children: [
-              Tooltip(
-                message: l10n.getAgileFlowCycleTimeTooltip,
-                child: _buildTimeMetric(
-                  label: l10n.agileFlowCycleTime,
-                  value: hasData
-                      ? '${avgCycle.toStringAsFixed(1)} ${l10n.agileFlowDays}'
-                      : '-',
-                  color: AppColors.success,
-                  theme: theme,
-                ),
+              _buildCircularEfficiency(
+                hasData ? efficiency : null,
+                l10n,
+                theme,
               ),
-              const SizedBox(height: 8),
-              Tooltip(
-                message: l10n.agileFlowLeadTimeTooltip,
-                child: _buildTimeMetric(
-                  label: l10n.agileFlowLeadTime,
-                  value: hasData
-                      ? '${avgLead.toStringAsFixed(1)} ${l10n.agileFlowDays}'
-                      : '-',
-                  color: AppColors.secondary,
-                  theme: theme,
-                ),
-              ),
+              const SizedBox(height: 12),
+              timeMetrics,
             ],
-          ),
-        ),
-      ],
+          );
+        }
+
+        return Row(
+          children: [
+            _buildCircularEfficiency(
+              hasData ? efficiency : null,
+              l10n,
+              theme,
+            ),
+            const SizedBox(width: 16),
+            Expanded(child: timeMetrics),
+          ],
+        );
+      },
     );
   }
 
@@ -321,13 +342,17 @@ class FlowEfficiencyWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          const SizedBox(width: 8),
           Text(
             value,
             style: theme.textTheme.labelMedium?.copyWith(

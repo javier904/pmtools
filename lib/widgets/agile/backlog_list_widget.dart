@@ -185,15 +185,13 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
         children: [
           // Riga superiore: titolo e pulsanti
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 0, 0),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
               children: [
                 Icon(
                   Icons.list_alt,
                   color: AppColors.primary,
                 ),
-                const SizedBox(width: 8),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
@@ -207,18 +205,6 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                   ),
                 ),
                 const Spacer(),
-                // Stats badges - Moved to RIGHT side
-                _buildStatBadge(l10n.agileBacklogStatsStories(count), Colors.blue),
-                const SizedBox(width: 8),
-                _buildStatBadge(l10n.agileBacklogStatsPoints(totalPoints), Colors.green),
-                const SizedBox(width: 8),
-                _buildStatBadge(l10n.agileBacklogStatsEstimated(estimatedCount), Colors.orange),
-                const SizedBox(width: 8),
-                Tooltip(
-                  message: l10n.agileBacklogDoneBadgeTooltip,
-                  child: _buildStatBadge(l10n.agileBacklogDoneBadge(archivedCount), Colors.teal),
-                ),
-                const SizedBox(width: 16),
                 // Bottone filtri
                 IconButton(
                   icon: Icon(
@@ -239,6 +225,23 @@ class _BacklogListWidgetState extends State<BacklogListWidget> {
                       foregroundColor: Colors.white,
                     ),
                   ),
+              ],
+            ),
+          ),
+          // Stats badges row
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                _buildStatBadge(l10n.agileBacklogStatsStories(count), Colors.blue),
+                _buildStatBadge(l10n.agileBacklogStatsPoints(totalPoints), Colors.green),
+                _buildStatBadge(l10n.agileBacklogStatsEstimated(estimatedCount), Colors.orange),
+                Tooltip(
+                  message: l10n.agileBacklogDoneBadgeTooltip,
+                  child: _buildStatBadge(l10n.agileBacklogDoneBadge(archivedCount), Colors.teal),
+                ),
               ],
             ),
           ),

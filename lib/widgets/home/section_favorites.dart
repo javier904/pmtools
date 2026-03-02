@@ -41,19 +41,27 @@ class _SectionFavoritesState extends State<SectionFavorites> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 12,
               children: [
-                const Icon(Icons.star_rounded, color: Colors.amber, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.favTitle,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: context.textPrimaryColor,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.star_rounded, color: Colors.amber, size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.favTitle,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: context.textPrimaryColor,
+                      ),
+                    ),
+                  ],
                 ),
-                const Spacer(),
                 _buildFilterDropdown(l10n),
               ],
             ),
@@ -109,37 +117,33 @@ class _SectionFavoritesState extends State<SectionFavorites> {
       {'value': 'retro', 'icon': Icons.psychology_rounded, 'tooltip': l10n.favFilterRetro},
     ];
 
-    return Flexible(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: filters.map((f) {
-            final isSelected = _selectedFilter == f['value'];
-            return Tooltip(
-              message: f['tooltip'] as String,
-              child: InkWell(
-                onTap: () => setState(() => _selectedFilter = f['value'] as String),
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      alignment: WrapAlignment.end,
+      children: filters.map((f) {
+        final isSelected = _selectedFilter == f['value'];
+        return Tooltip(
+          message: f['tooltip'] as String,
+          child: InkWell(
+            onTap: () => setState(() => _selectedFilter = f['value'] as String),
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.amber.withValues(alpha: 0.2) : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  margin: const EdgeInsets.only(left: 2),
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.amber.withValues(alpha: 0.2) : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                    border: isSelected ? Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 1) : null,
-                  ),
-                  child: Icon(
-                    f['icon'] as IconData,
-                    size: 18,
-                    color: isSelected ? Colors.amber[700] : context.textTertiaryColor,
-                  ),
-                ),
+                border: isSelected ? Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 1) : null,
               ),
-            );
-          }).toList(),
-        ),
-      ),
+              child: Icon(
+                f['icon'] as IconData,
+                size: 18,
+                color: isSelected ? Colors.amber[700] : context.textTertiaryColor,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

@@ -69,8 +69,11 @@ class TodoKanbanView extends StatelessWidget {
       builder: (context, candidateData, rejectedData) {
         final isHovered = candidateData.isNotEmpty;
 
+        final screenWidth = MediaQuery.of(context).size.width;
+        final columnWidth = screenWidth < 600 ? screenWidth - 48 : 320.0;
+
         return Container(
-          width: 320, // Slightly wider
+          width: columnWidth,
           margin: const EdgeInsets.only(right: 16),
           decoration: BoxDecoration(
             color: isHovered ? color.withOpacity(0.1) : bgColor,
@@ -256,10 +259,13 @@ class TodoKanbanView extends StatelessWidget {
     );
   }
   Widget _buildDraggableCard(TodoTaskModel task, TodoColumn col, Function(TodoTaskModel, String, double?)? onDrop) {
+    final screenWidth = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.width /
+        WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+    final feedbackWidth = screenWidth < 600 ? screenWidth - 48 : 320.0;
     return Draggable<TodoTaskModel>(
       data: task,
       feedback: SizedBox(
-        width: 320,
+        width: feedbackWidth,
         child: Opacity(
           opacity: 0.9,
           child: Transform.rotate(

@@ -71,9 +71,11 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
 
     return Dialog(
        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+       insetPadding: const EdgeInsets.all(16),
        child: Container(
-         width: 800,
-         height: 600,
+         width: MediaQuery.of(context).size.width * 0.9,
+         constraints: const BoxConstraints(maxWidth: 800),
+         height: MediaQuery.of(context).size.height * 0.8,
          padding: const EdgeInsets.all(24),
          decoration: BoxDecoration(
            color: dialogBg,
@@ -104,18 +106,19 @@ class _SmartTaskImportDialogState extends State<SmartTaskImportDialog> {
           child: const Icon(Icons.upload_file, color: Colors.blue),
         ),
         const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.smartTodoImportTasks, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
-            Text(
-              _getStepTitle(l10n),
-              style: TextStyle(fontSize: 14, color: isDark ? Colors.grey[400] : Colors.grey[600])
-            ),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.smartTodoImportTasks, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
+              Text(
+                _getStepTitle(l10n),
+                style: TextStyle(fontSize: 14, color: isDark ? Colors.grey[400] : Colors.grey[600])
+              ),
+            ],
+          ),
         ),
-        const Spacer(),
         IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close, color: isDark ? Colors.grey[400] : null)),
       ],
     );

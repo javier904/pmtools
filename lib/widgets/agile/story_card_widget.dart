@@ -209,21 +209,18 @@ class _StoryCardWidgetState extends State<StoryCardWidget> {
           ),
         ),
         // Status & Policy area
-        Flexible(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 90),
-                child: _buildStatusBadge(),
-              ),
-              if (widget.policyWarnings.isNotEmpty) ... [
-                const SizedBox(width: 4),
-                _buildPolicyWarningBadge(context),
-              ],
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 90),
+              child: _buildStatusBadge(),
+            ),
+            if (widget.policyWarnings.isNotEmpty) ... [
+              const SizedBox(width: 4),
+              _buildPolicyWarningBadge(context),
             ],
-          ),
+          ],
         ),
       ],
     );

@@ -326,13 +326,11 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
           ),
           const SizedBox(width: 8),
           if (!_filter.isEmpty)
-            TextButton.icon(
+            IconButton(
               onPressed: _clearFilters,
-              icon: const Icon(Icons.clear, size: 18),
-              label: Text(l10n?.smartTodoAuditClearFilters ?? 'Clear Filters'),
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF00BCD4), // Cyan - colore della sezione
-              ),
+              icon: const Icon(Icons.filter_alt_off),
+              tooltip: l10n?.smartTodoAuditClearFilters ?? 'Clear Filters',
+              color: const Color(0xFF00BCD4), // Cyan - colore della sezione
             ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -377,227 +375,200 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       color: Theme.of(context).colorScheme.surfaceContainerLow,
-      child: Row(
+      width: double.infinity,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 12,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           // Date range chips
           ...dateOptions.map((days) {
             final isSelected = _selectedDays == days;
             final isDisabled = !_isPremium && days > _maxAllowedDays;
-            return Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: Tooltip(
-                message: isDisabled
-                    ? (l10n?.smartTodoAuditPremiumRequired ?? 'Premium required')
-                    : '${l10n?.smartTodoAuditLastDays(days) ?? 'Last $days days'}',
-                child: ChoiceChip(
-                  label: Text('${days}d'),
-                  selected: isSelected,
-                  onSelected: isDisabled ? null : (_) => _applyDateFilter(days),
-                  selectedColor: Colors.blue,
-                  labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : (isDisabled ? Colors.grey : null),
-                    fontSize: 12,
-                  ),
-                  visualDensity: VisualDensity.compact,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+            return Tooltip(
+              message: isDisabled
+                  ? (l10n?.smartTodoAuditPremiumRequired ?? 'Premium required')
+                  : '${l10n?.smartTodoAuditLastDays(days) ?? 'Last $days days'}',
+              child: ChoiceChip(
+                label: Text('${days}d'),
+                selected: isSelected,
+                onSelected: isDisabled ? null : (_) => _applyDateFilter(days),
+                selectedColor: Colors.blue,
+                labelStyle: TextStyle(
+                  color: isSelected ? Colors.white : (isDisabled ? Colors.grey : null),
+                  fontSize: 12,
                 ),
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
               ),
             );
           }),
 
-          const SizedBox(width: 8),
-          Container(
-            width: 1,
-            height: 32,
-            color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-          ),
-          const SizedBox(width: 8),
-
-          // Filters row with consistent sizing
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Filter by user
-                  SizedBox(
-                    width: 140,
-                    height: 40,
-                    child: DropdownButtonFormField<String?>(
-                      isExpanded: true,
-                      value: _filter.performedBy,
-                      decoration: InputDecoration(
-                        labelText: l10n?.smartTodoAuditFilterUser ?? 'User',
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        border: const OutlineInputBorder(),
-                      ),
-                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
-                      items: [
-                        DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
-                        ...participants.map((p) {
-                          final normalizedEmail = p.key.toLowerCase().trim();
-                          final displayName = _resolvedNames?[normalizedEmail] ?? p.value.displayName ?? p.key;
-                          return DropdownMenuItem(
-                            value: displayName,
-                            child: Text(displayName, overflow: TextOverflow.ellipsis),
-                          );
-                        }),
-                      ],
-                      onChanged: (val) {
-                        if (val == null) {
-                          _applyFilter(_filter.copyWith(clearPerformedBy: true));
-                        } else {
-                          _applyFilter(_filter.copyWith(performedBy: val));
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Filter by entity type
-                  SizedBox(
-                    width: 140,
-                    height: 40,
-                    child: DropdownButtonFormField<TodoAuditEntityType?>(
-                      isExpanded: true,
-                      value: _filter.entityType,
-                      decoration: InputDecoration(
-                        labelText: l10n?.smartTodoAuditFilterType ?? 'Type',
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        border: const OutlineInputBorder(),
-                      ),
-                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
-                      items: [
-                        DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
-                        ...TodoAuditEntityType.values.map((t) => DropdownMenuItem(
-                          value: t,
-                          child: Text(_getLocalizedEntityType(t)),
-                        )),
-                      ],
-                      onChanged: (val) {
-                        if (val == null) {
-                          _applyFilter(_filter.copyWith(clearEntityType: true));
-                        } else {
-                          _applyFilter(_filter.copyWith(entityType: val));
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Filter by action
-                  SizedBox(
-                    width: 140,
-                    height: 40,
-                    child: DropdownButtonFormField<TodoAuditAction?>(
-                      isExpanded: true,
-                      value: _filter.action,
-                      decoration: InputDecoration(
-                        labelText: l10n?.smartTodoAuditFilterAction ?? 'Action',
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        border: const OutlineInputBorder(),
-                      ),
-                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
-                      items: [
-                        DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAllFemale ?? 'All')),
-                        ...TodoAuditAction.values.map((a) => DropdownMenuItem(
-                          value: a,
-                          child: Text(_getLocalizedAction(a)),
-                        )),
-                      ],
-                      onChanged: (val) {
-                        if (val == null) {
-                          _applyFilter(_filter.copyWith(clearAction: true));
-                        } else {
-                          _applyFilter(_filter.copyWith(action: val));
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Filter by tags (multi-select) - stesso stile degli altri dropdown
-                  if (widget.list.availableTags.isNotEmpty)
-                    SizedBox(
-                      width: 140,
-                      height: 40,
-                      child: InkWell(
-                        onTap: () => _showTagMultiSelectDialog(),
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: l10n?.smartTodoAuditFilterTag ?? 'Tag',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                            border: const OutlineInputBorder(),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _selectedTagIds.isEmpty
-                                    ? Text(
-                                        l10n?.smartTodoAuditFilterAll ?? 'All',
-                                        style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
-                                      )
-                                    : Row(
-                                        children: [
-                                          ..._selectedTagIds.take(3).map((tagId) {
-                                            final tag = widget.list.availableTags.firstWhere(
-                                              (t) => t.id == tagId,
-                                              orElse: () => TodoLabel(id: '', title: '', colorValue: 0xFF9E9E9E),
-                                            );
-                                            return Container(
-                                              width: 12,
-                                              height: 12,
-                                              margin: const EdgeInsets.only(right: 3),
-                                              decoration: BoxDecoration(
-                                                color: Color(tag.colorValue),
-                                                borderRadius: BorderRadius.circular(2),
-                                              ),
-                                            );
-                                          }),
-                                          if (_selectedTagIds.length > 3)
-                                            Text(
-                                              '+${_selectedTagIds.length - 3}',
-                                              style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-                                            ),
-                                        ],
-                                      ),
-                              ),
-                              Icon(Icons.arrow_drop_down, size: 20, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (widget.list.availableTags.isNotEmpty)
-                    const SizedBox(width: 8),
-
-                  // Search - consistent with dropdowns
-                  SizedBox(
-                    width: 140,
-                    height: 40,
-                    child: TextField(
-                      controller: _searchController,
-                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
-                      decoration: InputDecoration(
-                        hintText: l10n?.smartTodoAuditFilterSearch ?? 'Search',
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.search, size: 16),
-                        prefixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                      ),
-                      onSubmitted: (val) {
-                        _applyFilter(_filter.copyWith(searchQuery: val.isEmpty ? '' : val));
-                      },
-                    ),
-                  ),
-                ],
+          // Filter by user
+          SizedBox(
+            width: 140,
+            child: DropdownButtonFormField<String?>(
+              isExpanded: true,
+              value: _filter.performedBy,
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterUser ?? 'User',
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
               ),
+              style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+              items: [
+                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
+                ...participants.map((p) {
+                  final normalizedEmail = p.key.toLowerCase().trim();
+                  final displayName = _resolvedNames?[normalizedEmail] ?? p.value.displayName ?? p.key;
+                  return DropdownMenuItem(
+                    value: displayName,
+                    child: Text(displayName, overflow: TextOverflow.ellipsis),
+                  );
+                }),
+              ],
+              onChanged: (val) {
+                if (val == null) {
+                  _applyFilter(_filter.copyWith(clearPerformedBy: true));
+                } else {
+                  _applyFilter(_filter.copyWith(performedBy: val));
+                }
+              },
+            ),
+          ),
+
+          // Filter by entity type
+          SizedBox(
+            width: 140,
+            child: DropdownButtonFormField<TodoAuditEntityType?>(
+              isExpanded: true,
+              value: _filter.entityType,
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterType ?? 'Type',
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
+              ),
+              style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+              items: [
+                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAll ?? 'All')),
+                ...TodoAuditEntityType.values.map((t) => DropdownMenuItem(
+                  value: t,
+                  child: Text(_getLocalizedEntityType(t)),
+                )),
+              ],
+              onChanged: (val) {
+                if (val == null) {
+                  _applyFilter(_filter.copyWith(clearEntityType: true));
+                } else {
+                  _applyFilter(_filter.copyWith(entityType: val));
+                }
+              },
+            ),
+          ),
+
+          // Filter by action
+          SizedBox(
+            width: 140,
+            child: DropdownButtonFormField<TodoAuditAction?>(
+              isExpanded: true,
+              value: _filter.action,
+              decoration: InputDecoration(
+                labelText: l10n?.smartTodoAuditFilterAction ?? 'Action',
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
+              ),
+              style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+              items: [
+                DropdownMenuItem(value: null, child: Text(l10n?.smartTodoAuditFilterAllFemale ?? 'All')),
+                ...TodoAuditAction.values.map((a) => DropdownMenuItem(
+                  value: a,
+                  child: Text(_getLocalizedAction(a)),
+                )),
+              ],
+              onChanged: (val) {
+                if (val == null) {
+                  _applyFilter(_filter.copyWith(clearAction: true));
+                } else {
+                  _applyFilter(_filter.copyWith(action: val));
+                }
+              },
+            ),
+          ),
+
+          // Filter by tags (multi-select)
+          if (widget.list.availableTags.isNotEmpty)
+            SizedBox(
+              width: 140,
+              child: InkWell(
+                onTap: () => _showTagMultiSelectDialog(),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n?.smartTodoAuditFilterTag ?? 'Tag',
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    border: const OutlineInputBorder(),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _selectedTagIds.isEmpty
+                            ? Text(
+                                l10n?.smartTodoAuditFilterAll ?? 'All',
+                                style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+                              )
+                            : Row(
+                                children: [
+                                  ..._selectedTagIds.take(3).map((tagId) {
+                                    final tag = widget.list.availableTags.firstWhere(
+                                      (t) => t.id == tagId,
+                                      orElse: () => TodoLabel(id: '', title: '', colorValue: 0xFF9E9E9E),
+                                    );
+                                    return Container(
+                                      width: 12,
+                                      height: 12,
+                                      margin: const EdgeInsets.only(right: 3),
+                                      decoration: BoxDecoration(
+                                        color: Color(tag.colorValue),
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                    );
+                                  }),
+                                  if (_selectedTagIds.length > 3)
+                                    Text(
+                                      '+${_selectedTagIds.length - 3}',
+                                      style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                                    ),
+                                ],
+                              ),
+                      ),
+                      Icon(Icons.arrow_drop_down, size: 20, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+          // Search
+          SizedBox(
+            width: 140,
+            child: TextField(
+              controller: _searchController,
+              style: TextStyle(fontSize: 13, color: isDark ? Colors.white : Colors.black87),
+              decoration: InputDecoration(
+                hintText: l10n?.smartTodoAuditFilterSearch ?? 'Search',
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search, size: 16),
+                prefixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              ),
+              onSubmitted: (val) {
+                _applyFilter(_filter.copyWith(searchQuery: val.isEmpty ? '' : val));
+              },
             ),
           ),
         ],
@@ -1077,9 +1048,12 @@ class _SmartTodoAuditLogScreenState extends State<SmartTodoAuditLogScreen> {
                 children: [
                   Icon(Icons.person_outline, size: 14, color: subtitleColor),
                   const SizedBox(width: 4),
-                  Text(
-                    log.performedByName,
-                    style: TextStyle(fontSize: 12, color: subtitleColor),
+                  Flexible(
+                    child: Text(
+                      log.performedByName,
+                      style: TextStyle(fontSize: 12, color: subtitleColor),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const Spacer(),
                   Icon(Icons.access_time, size: 14, color: subtitleColor),

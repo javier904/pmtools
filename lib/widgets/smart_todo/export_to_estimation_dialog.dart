@@ -52,9 +52,10 @@ class _ExportToEstimationDialogState extends State<ExportToEstimationDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        width: 500,
-        constraints: const BoxConstraints(maxHeight: 600),
+        width: MediaQuery.of(context).size.width * 0.9,
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -133,14 +134,17 @@ class _ExportToEstimationDialogState extends State<ExportToEstimationDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.tasksSelectedCount(_selectedTaskIds.length),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: _selectedTaskIds.isEmpty ? Colors.red : Colors.green,
+                  Expanded(
+                    child: Text(
+                      l10n.tasksSelectedCount(_selectedTaskIds.length),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: _selectedTaskIds.isEmpty ? Colors.red : Colors.green,
+                      ),
                     ),
                   ),
-                  Row(
+                  Wrap(
+                    spacing: 4,
                     children: [
                       TextButton(
                         onPressed: () {
@@ -249,14 +253,15 @@ class _ExportToEstimationDialogState extends State<ExportToEstimationDialog> {
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2))),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(l10n.actionCancel),
                   ),
-                  const SizedBox(width: 12),
                   ElevatedButton.icon(
                     onPressed: _selectedTaskIds.isEmpty
                         ? null
