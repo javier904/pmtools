@@ -63,6 +63,7 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
   bool _allowPop = false;
+  bool _hasCheckedPromotion = false;
 
   List<String> get safeAssigneeFilters => _assigneeFilters ?? [];
   List<String> get safeTagFilters => _tagFilters ?? [];
@@ -268,42 +269,35 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
 
 
   void _checkAndPromoteUser(TodoListModel list) {
+    // Guard: run only once per screen lifecycle to avoid infinite loop
+    // (Firestore write → stream emit → rebuild → write → ...)
+    if (_hasCheckedPromotion) return;
     if (_currentUserEmail.isEmpty) return;
-    
+    _hasCheckedPromotion = true;
+
     // Check if user is in pending list
     if (list.pendingEmails.contains(_currentUserEmail)) {
-      // User is pending. Promote to active and update DisplayName!
       final displayName = _authService.currentUserName ?? _currentUserEmail.split('@').first;
-      
+
       final participant = TodoParticipant(
         email: _currentUserEmail,
         displayName: displayName,
-        role: TodoParticipantRole.editor, // Default role for promoted users? Or Viewer? User requested "same as owner permissions".
+        role: TodoParticipantRole.editor,
         joinedAt: DateTime.now(),
       );
-      
+
       _todoService.promotePendingToActive(list.id, participant).then((_) {
         print('✅ User promoted to active: $_currentUserEmail with name: $displayName');
       }).catchError((e) {
         print('❌ Error promoting user: $e');
       });
     }
-    
-    // Also check if user is already active but missing DisplayName (Legacy fix)
-    // Only if it's ME (I can only update my own name ideally, or system does it)
+    // Legacy fix: update missing DisplayName for active users
     else if (list.participants.containsKey(_currentUserEmail)) {
        final me = list.participants[_currentUserEmail]!;
-       // If display name is null or empty, and we have a name now, update it.
        if ((me.displayName == null || me.displayName!.isEmpty) && _authService.currentUserName != null) {
-          // We need a method to just update participant details. 
-          // Re-using promotePendingToActive logic partially or just manual update?
-          // promotePendingToActive handles participant map update correctly.
-          // Let's use it? No, it removes from pending. 
-          // But pending remove is safe if not present.
-          // Actually, let's create a specific update or just use promote (it does upsert on participants map).
-          
           final updatedMe = me.copyWith(displayName: _authService.currentUserName);
-           _todoService.promotePendingToActive(list.id, updatedMe); // Updates map and ensures consistency
+           _todoService.promotePendingToActive(list.id, updatedMe);
        }
     }
   }
@@ -2433,50 +2427,40 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         ),
       ];
     } else {
-      // DESKTOP VERBOSE ACTIONS (Current implementation)
+      // DESKTOP VERBOSE ACTIONS — single StreamBuilder for all export buttons
       return [
-        // Export to Estimation button
+        // Export buttons (single stream for all 3 + calendar sync)
         StreamBuilder<List<TodoTaskModel>>(
           stream: _todoService.streamTasks(currentList.id),
           builder: (context, taskSnapshot) {
             final tasks = taskSnapshot.data ?? [];
             final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
-            return IconButton(
-              icon: const Icon(Icons.casino_rounded),
-              tooltip: l10n.exportToEstimation,
-              onPressed: hasNonDoneTasks
-                  ? () => _showExportToEstimationDialog(currentList, tasks)
-                  : null,
-            );
-          },
-        ),
-        // Export to Eisenhower button
-        StreamBuilder<List<TodoTaskModel>>(
-          stream: _todoService.streamTasks(currentList.id),
-          builder: (context, taskSnapshot) {
-            final tasks = taskSnapshot.data ?? [];
-            final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
-            return IconButton(
-              icon: const Icon(Icons.grid_view_rounded),
-              tooltip: l10n.exportToEisenhower,
-              onPressed: hasNonDoneTasks
-                  ? () => _showExportToEisenhowerDialog(currentList, tasks)
-                  : null,
-            );
-          },
-        ),
-        // Export to User Stories button
-        StreamBuilder<List<TodoTaskModel>>(
-          stream: _todoService.streamTasks(currentList.id),
-          builder: (context, taskSnapshot) {
-            final tasks = taskSnapshot.data ?? [];
-            final hasNonDoneTasks = tasks.any((t) => t.statusId != 'done' && t.statusId != 'completed');
-            return IconButton(
-              icon: const Icon(Icons.rocket_launch),
-              tooltip: l10n.exportToUserStories,
-              onPressed: hasNonDoneTasks
-                  ? () => _showExportToUserStoriesDialog(currentList, tasks)
-                  : null,
+            final hasSyncableTasks = FeatureFlags.enableCalendarSync && tasks.any((t) => t.calendarEventId == null && t.dueDate != null);
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.casino_rounded),
+                  tooltip: l10n.exportToEstimation,
+                  onPressed: hasNonDoneTasks ? () => _showExportToEstimationDialog(currentList, tasks) : null,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.grid_view_rounded),
+                  tooltip: l10n.exportToEisenhower,
+                  onPressed: hasNonDoneTasks ? () => _showExportToEisenhowerDialog(currentList, tasks) : null,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.rocket_launch),
+                  tooltip: l10n.exportToUserStories,
+                  onPressed: hasNonDoneTasks ? () => _showExportToUserStoriesDialog(currentList, tasks) : null,
+                ),
+                if (hasSyncableTasks)
+                  IconButton(
+                    icon: const Icon(Icons.sync_rounded),
+                    tooltip: 'Mass Sync to Calendar',
+                    onPressed: () => _showBulkSyncDialog(currentList, tasks),
+                  ),
+              ],
             );
           },
         ),
@@ -2501,7 +2485,6 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
               MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)),
             ),
           ),
-        // CFD Chart - Owner only
         if (currentList.isOwner(_currentUserEmail))
           IconButton(
             icon: const Icon(Icons.stacked_line_chart),
@@ -2516,29 +2499,11 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         const SizedBox(width: 4),
         Container(width: 1, height: 24, color: Colors.grey),
         const SizedBox(width: 4),
-        // Bulk Sync Button (Feature Flagged)
-        if (FeatureFlags.enableCalendarSync)
-          StreamBuilder<List<TodoTaskModel>>(
-            stream: _todoService.streamTasks(currentList.id),
-            builder: (context, taskSnapshot) {
-              final tasks = taskSnapshot.data ?? [];
-              final hasSyncableTasks = tasks.any((t) => t.calendarEventId == null && t.dueDate != null);
-              return IconButton(
-                icon: const Icon(Icons.sync_rounded),
-                tooltip: 'Mass Sync to Calendar',
-                onPressed: hasSyncableTasks
-                    ? () => _showBulkSyncDialog(currentList, tasks)
-                    : null,
-              );
-            },
-          ),
-        // Import button
         IconButton(
           icon: const Icon(Icons.upload_file),
           tooltip: l10n.smartTodoActionImport,
           onPressed: () => _showImportDialog(currentList),
         ),
-        // Export button (CSV - SAFE)
         IconButton(
           icon: const Icon(Icons.download),
           tooltip: 'Export to CSV',

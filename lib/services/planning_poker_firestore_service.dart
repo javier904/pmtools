@@ -413,23 +413,6 @@ class PlanningPokerFirestoreService {
     }
   }
 
-  /// Aggiorna stato online di un partecipante
-  Future<void> updateParticipantOnlineStatus({
-    required String sessionId,
-    required String email,
-    required bool isOnline,
-  }) async {
-    try {
-      final escapedEmail = _escapeEmailKey(email.toLowerCase());
-      await _sessionsCollection.doc(sessionId).update({
-        'participants.$escapedEmail.isOnline': isOnline,
-        'participants.$escapedEmail.lastActivity': Timestamp.fromDate(DateTime.now()),
-      });
-    } catch (e) {
-      print('❌ [PlanningPoker] Errore aggiornamento status: $e');
-    }
-  }
-
   /// Aggiorna ruolo di un partecipante
   Future<void> updateParticipantRole({
     required String sessionId,

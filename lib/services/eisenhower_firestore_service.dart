@@ -737,22 +737,6 @@ class EisenhowerFirestoreService {
     }
   }
 
-  /// Aggiorna lo stato online di un partecipante
-  Future<bool> updateParticipantOnlineStatus(String matrixId, String email, bool isOnline) async {
-    try {
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(email.toLowerCase());
-      await _matricesRef.doc(matrixId).update({
-        'participants.$escapedEmail.isOnline': isOnline,
-        'participants.$escapedEmail.lastActivity': Timestamp.fromDate(DateTime.now()),
-        'updatedAt': Timestamp.fromDate(DateTime.now()),
-      });
-      return true;
-    } catch (e) {
-      print('❌ Errore updateParticipantOnlineStatus: $e');
-      return false;
-    }
-  }
-
   /// Aggiorna il ruolo di un partecipante
   Future<bool> updateParticipantRole(String matrixId, String email, EisenhowerParticipantRole role) async {
     try {
@@ -808,11 +792,13 @@ class EisenhowerFirestoreService {
   /// Promuove un partecipante da pending ad attivo
   Future<bool> promotePendingToActive(String matrixId, EisenhowerParticipantModel participant) async {
     try {
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(participant.email);
+      final normalizedEmail = participant.email.toLowerCase();
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(normalizedEmail);
        // Batch update atomico
       await _matricesRef.doc(matrixId).update({
-        'pendingEmails': FieldValue.arrayRemove([participant.email.toLowerCase()]),
-        'participants.$escapedEmail': participant.copyWith(email: participant.email.toLowerCase()).toMap(),
+        'pendingEmails': FieldValue.arrayRemove([normalizedEmail, participant.email]),
+        'participants.$escapedEmail': participant.copyWith(email: normalizedEmail).toMap(),
+        'participantEmails': FieldValue.arrayUnion([normalizedEmail]), // Sync per query arrayContains
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
       print('✅ Promosso da Pending ad Attivo: ${participant.email}');

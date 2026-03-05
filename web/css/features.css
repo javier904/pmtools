@@ -1380,13 +1380,31 @@ details[open] .faq-question::before {
 }
 
 @media (max-width: 480px) {
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+  }
+
   .tools-grid {
     grid-template-columns: 1fr;
+  }
+
+  .lang-switcher {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .lang-switcher a {
     padding: 4px 8px;
     font-size: 12px;
+  }
+
+  .integration-steps {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .step-card img {

@@ -186,27 +186,28 @@ class SmartTodoInviteService {
       }
 
       // 3. Prepare Updates
-      
+
       // Update Participants Map
-      // FORCE KEY TO BE EMAIL for permission checks (isOwner)
+      // FORCE KEY TO BE EMAIL (normalized lowercase) for permission checks (isOwner)
+      final normalizedEmail = userEmail.toLowerCase();
       final existingParticipants = Map<String, dynamic>.from(listSnapshot.data()?['participants'] ?? {});
-      
+
       final participant = TodoParticipant(
-        email: userEmail,
+        email: normalizedEmail,
         role: inviteData.role,
         displayName: userDisplayName,
         joinedAt: DateTime.now(),
       );
-      
-      existingParticipants[userEmail] = participant.toMap();
+
+      existingParticipants[normalizedEmail] = participant.toMap();
 
       // Remove from Pending
       final pending = List<String>.from(listSnapshot.data()?['pendingEmails'] ?? []);
-      pending.remove(userEmail.toLowerCase());
+      pending.remove(normalizedEmail);
 
-      // Add to Participant Emails
+      // Add to Participant Emails (normalized lowercase)
       final emails = List<String>.from(listSnapshot.data()?['participantEmails'] ?? []);
-      if (!emails.contains(userEmail)) emails.add(userEmail);
+      if (!emails.contains(normalizedEmail)) emails.add(normalizedEmail);
 
       // 4. Commit Updates
       transaction.update(inviteDocRef, {'status': 'accepted'});

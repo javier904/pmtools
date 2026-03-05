@@ -290,20 +290,22 @@ class EisenhowerInviteService {
       });
 
       // 2. Aggiungi l'utente come partecipante alla matrice e rimuovi da pending
+      final normalizedEmail = userEmail.toLowerCase();
       final participant = EisenhowerParticipantModel(
-        email: userEmail,
-        name: accepterName ?? await UserProfileService().getNameByEmail(userEmail),
+        email: normalizedEmail,
+        name: accepterName ?? await UserProfileService().getNameByEmail(normalizedEmail),
         role: invite.role,
         joinedAt: DateTime.now(),
         isOnline: true,
       );
 
-      final escapedEmail = EisenhowerParticipantModel.escapeEmail(userEmail);
+      final escapedEmail = EisenhowerParticipantModel.escapeEmail(normalizedEmail);
       final matrixRef = _firestore.collection('eisenhower_matrices').doc(invite.matrixId);
 
       batch.update(matrixRef, {
         'participants.$escapedEmail': participant.toMap(),
-        'pendingEmails': FieldValue.arrayRemove([userEmail]), // Rimuovi da pending
+        'pendingEmails': FieldValue.arrayRemove([normalizedEmail, userEmail]), // Rimuovi da pending (entrambi i formati)
+        'participantEmails': FieldValue.arrayUnion([normalizedEmail]), // Sync per query arrayContains
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 

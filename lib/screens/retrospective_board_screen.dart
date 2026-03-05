@@ -18,6 +18,8 @@ import 'package:agile_tools/widgets/retrospective/action_item_dialog.dart';
 import 'package:agile_tools/widgets/retrospective/action_collection_guide_widget.dart';
 import 'package:agile_tools/services/retrospective_csv_export_service.dart';
 import 'package:agile_tools/widgets/retrospective/participant_presence_indicator.dart';
+import 'package:agile_tools/services/presence_service.dart';
+import 'package:agile_tools/mixins/presence_mixin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -42,12 +44,8 @@ class RetroBoardScreen extends StatefulWidget {
   State<RetroBoardScreen> createState() => _RetroBoardScreenState();
 }
 
-class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBindingObserver {
+class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBindingObserver, PresenceMixin {
   final RetrospectiveFirestoreService _service = RetrospectiveFirestoreService();
-
-  // 🟢 Online Presence Heartbeat
-  Timer? _heartbeatTimer;
-  static const int _heartbeatIntervalSeconds = 15;
 
   // Cached stream to avoid Firestore SDK assertion errors on rebuild
   late Stream<RetrospectiveModel?> _retroStream;
@@ -59,15 +57,21 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
     super.initState();
     _retroStream = _service.streamRetrospective(widget.retroId);
     WidgetsBinding.instance.addObserver(this);
-    _setupWebBeforeUnload();
-    _startHeartbeat();
+    setupPresenceWebUnload();
+    startPresence(
+      config: PresenceConfig(
+        collection: 'retrospectives',
+        documentId: widget.retroId,
+        presenceFieldPrefix: 'participantPresence',
+      ),
+      userEmail: widget.currentUserEmail,
+    );
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _heartbeatTimer?.cancel();
-    _setOfflineImmediately();
+    disposePresence();
     super.dispose();
   }
 
@@ -75,73 +79,10 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
   // LIFECYCLE & PRESENCE SYNC
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /// Setup listener per chiusura tab browser (web only)
-  void _setupWebBeforeUnload() {
-    if (kIsWeb) {
-      html.window.onBeforeUnload.listen((event) {
-        _setOfflineImmediately();
-      });
-    }
-  }
-
-  /// Imposta lo stato offline immediatamente (sincrono per beforeunload)
-  void _setOfflineImmediately() {
-    if (widget.currentUserEmail.isNotEmpty) {
-      _service.markOffline(widget.retroId, widget.currentUserEmail);
-      print('🔴 [Retro] User ${widget.currentUserEmail} set offline immediately');
-    }
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-
-    switch (state) {
-      case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-        // App in background o chiusa - imposta offline
-        _setOfflineImmediately();
-        _heartbeatTimer?.cancel();
-        break;
-      case AppLifecycleState.resumed:
-        // App tornata in primo piano - riavvia heartbeat con burst iniziale
-        _startHeartbeat();
-        break;
-    }
-  }
-
-  /// Avvia il timer heartbeat per segnalare presenza online
-  /// Usa "burst" iniziale per propagazione rapida: 0s, 1s, 3s, poi 15s
-  void _startHeartbeat() {
-    // Cancella eventuale timer esistente
-    _heartbeatTimer?.cancel();
-
-    // Heartbeat immediato
-    _sendHeartbeat();
-    print('🟢 [Retro] Initial heartbeat sent for ${widget.currentUserEmail}');
-
-    // Burst di heartbeat rapidi per sincronizzazione veloce
-    Timer(const Duration(seconds: 1), () {
-      if (mounted) _sendHeartbeat();
-    });
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) _sendHeartbeat();
-    });
-
-    // Timer periodico ogni 15 secondi
-    _heartbeatTimer = Timer.periodic(
-      const Duration(seconds: _heartbeatIntervalSeconds),
-      (_) {
-        if (mounted) _sendHeartbeat();
-      },
-    );
-  }
-
-  /// Invia un heartbeat al server
-  Future<void> _sendHeartbeat() async {
-    await _service.sendHeartbeat(widget.retroId, widget.currentUserEmail);
+    handlePresenceLifecycle(state);
   }
 
   /// Conta i partecipanti online

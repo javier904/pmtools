@@ -56,6 +56,7 @@
     "inLanguage": "en",
     "softwareVersion": "1.0.0",
     "datePublished": "2024-01-15",
+    "dateModified": "2026-03-03",
     "description": "Free collaborative Kanban board with custom columns, drag and drop, CFD analytics, bottleneck detection, subtasks, comments, file attachments, team roles and cross-tool integrations.",
     "screenshot": "https://keisenapp.com/screenshots/smart-todo.png",
     "featureList": [
@@ -72,7 +73,8 @@
       "Export to Eisenhower Matrix, Estimation Room and Agile Process",
       "Batch task import and CSV export",
       "Google Sheets export",
-      "Dark mode and light mode support"
+      "Dark mode and light mode support",
+      "Fully responsive — works on mobile, tablet and desktop browsers"
     ],
     "offers": {
       "@type": "Offer",
@@ -151,6 +153,14 @@
       },
       {
         "@type": "Question",
+        "name": "Does Smart Todo work on mobile devices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Keisen Smart Todo is fully responsive and works on smartphones, tablets, and desktop browsers. You can manage tasks, move cards on the Kanban board, and check analytics from any device — no app download needed."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "How does Keisen Smart Todo compare to Trello or Todoist?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -199,7 +209,7 @@
         <h1>Smart Todo & Kanban Board</h1>
         <p class="hero-subtitle">Collaborative task management with custom Kanban columns, drag and drop, CFD analytics,
           bottleneck detection, team roles and cross-tool integrations. Everything your team needs to manage work
-          visually and stay organized.</p>
+          visually and stay organized. Works on any device — desktop, tablet and mobile.</p>
         <a href="https://keisenapp.com/" class="btn-cta">Get Started Free →</a>
       </div>
     </section>
@@ -420,6 +430,13 @@
             </div>
           </details>
           <details class="faq-item">
+            <summary class="faq-question">Does Smart Todo work on mobile devices?</summary>
+            <div class="faq-answer">Yes, Keisen Smart Todo is fully responsive and works on smartphones, tablets, and
+              desktop browsers. You can manage tasks, move cards on the Kanban board, and check analytics from any device
+              — no app download needed. The interface adapts to your screen size for the best experience on every
+              device.</div>
+          </details>
+          <details class="faq-item">
             <summary class="faq-question">How does Keisen compare to Trello or Todoist?</summary>
             <div class="faq-answer">Unlike Trello (limited to 10 boards and 10 members on the free plan, no built-in
               analytics) or Todoist (5 projects and 5 collaborators free, no Kanban view), Keisen Smart Todo offers
@@ -501,19 +518,7 @@
     }
   </script>
 
-  <!-- Prevent Flutter Service Worker from hijacking this static page -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function (registrations) {
-        registrations.forEach(function (reg) {
-          // Unregister Flutter SW so it can't redirect away from this page
-          if (reg.active && reg.active.scriptURL.indexOf('flutter_service_worker') !== -1) {
-            reg.unregister();
-          }
-        });
-      });
-    }
-  </script>
+
 </body>
 
 </html>

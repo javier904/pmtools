@@ -51,7 +51,23 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   bool _showArchived = false;
   bool _isCreating = false;
   Map<String, String>? _resolvedNames = {};
+  bool _isResolvingNames = false;
   final UserProfileService _userProfileService = UserProfileService();
+
+  // Cached stream to prevent recreation on setState
+  Stream<List<AgileProjectModel>>? _projectsStream;
+  bool _lastProjectShowArchived = false;
+
+  Stream<List<AgileProjectModel>> _getProjectsStream() {
+    if (_projectsStream == null || _lastProjectShowArchived != _showArchived) {
+      _lastProjectShowArchived = _showArchived;
+      _projectsStream = _firestoreService.streamProjectsFiltered(
+        userEmail: _currentUserEmail,
+        includeArchived: _showArchived,
+      );
+    }
+    return _projectsStream!;
+  }
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _authService.currentUser?.displayName ?? 'Utente';
@@ -134,23 +150,39 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
   }
 
   /// Resolve display names for all participants in the project list
+  /// Batch: raccoglie tutti i nomi e fa un solo setState alla fine
   Future<void> _resolveParticipantNames(List<AgileProjectModel> projects) async {
+    if (_isResolvingNames) return; // Evita ri-entranza
+
     final Set<String> emailsToResolve = {};
     for (final project in projects) {
       emailsToResolve.add(project.createdBy);
       emailsToResolve.addAll(project.participants.keys);
     }
 
-    for (final email in emailsToResolve) {
-      final normalizedEmail = email.toLowerCase().trim();
-      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+    // Filtra solo email non ancora risolte
+    final unresolvedEmails = emailsToResolve
+        .map((e) => e.toLowerCase().trim())
+        .where((e) => !(_resolvedNames?.containsKey(e) ?? false))
+        .toSet();
+
+    if (unresolvedEmails.isEmpty) return;
+
+    _isResolvingNames = true;
+    final Map<String, String> newNames = {};
+    for (final email in unresolvedEmails) {
+      try {
         final name = await _userProfileService.getNameByEmail(email);
-        if (mounted) {
-          setState(() {
-            (_resolvedNames ??= {})[normalizedEmail] = name;
-          });
-        }
+        newNames[email] = name;
+      } catch (_) {
+        newNames[email] = email;
       }
+    }
+    _isResolvingNames = false;
+    if (newNames.isNotEmpty && mounted) {
+      setState(() {
+        (_resolvedNames ??= {}).addAll(newNames);
+      });
     }
   }
 
@@ -273,10 +305,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
 
   Widget _buildProjectList() {
     return StreamBuilder<List<AgileProjectModel>>(
-      stream: _firestoreService.streamProjectsFiltered(
-        userEmail: _currentUserEmail,
-        includeArchived: _showArchived,
-      ),
+      stream: _getProjectsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -303,6 +332,11 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         final projects = snapshot.data ?? [];
         if (projects.isNotEmpty) {
           _resolveParticipantNames(projects);
+        }
+
+        // Mostra loading finché i nomi non sono risolti (prima volta)
+        if (_isResolvingNames && (_resolvedNames == null || _resolvedNames!.isEmpty)) {
+          return const Center(child: CircularProgressIndicator());
         }
 
         // Filtra per ricerca
@@ -451,7 +485,10 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
             itemCount: projects.length,
             separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) => _buildProjectCard(projects[index]),
+            itemBuilder: (context, index) => SizedBox(
+              height: 90,
+              child: _buildProjectCard(projects[index]),
+            ),
           );
         }
 
@@ -634,17 +671,24 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                   ),
                 ),
               const SizedBox(height: 4),
-              // Stats compatte
-              Row(
-                children: [
-                  _buildParticipantAgileProjectStat(project),
-                  const SizedBox(width: 12),
-                  _buildCompactStat(Icons.assignment_outlined, '${project.backlogCount}', 'User Stories'),
-                  if (project.sprintCount > 0) ...[
-                    const SizedBox(width: 12),
-                    _buildCompactStat(Icons.replay, '${project.sprintCount}', 'Sprint'),
-                  ],
-                ],
+              // Stats compatte — FittedBox scala proporzionalmente, mai nasconde
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildParticipantAgileProjectStat(project),
+                      const SizedBox(width: 12),
+                      _buildCompactStat(Icons.assignment_outlined, '${project.backlogCount}', 'User Stories'),
+                      if (project.sprintCount > 0) ...[
+                        const SizedBox(width: 12),
+                        _buildCompactStat(Icons.replay, '${project.sprintCount}', 'Sprint'),
+                      ],
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -1064,17 +1108,11 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
     );
 
     if (result != null && mounted) {
-      // Validate limits before creating
-      final results = await Future.wait([
-        _limitsService.canCreateProject(
-          _currentUserEmail,
-          entityType: 'agile_project',
-        ),
-        _limitsService.validateServerSide('agile_project'),
-      ]);
-
-      final limitCheck = results[0];
-      final serverCheck = results[1];
+      // Fast client-side limit check (instant)
+      final limitCheck = await _limitsService.canCreateProject(
+        _currentUserEmail,
+        entityType: 'agile_project',
+      );
 
       if (!limitCheck.allowed) {
         if (mounted) {
@@ -1088,17 +1126,8 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
         return;
       }
 
-      if (!serverCheck.allowed) {
-        if (mounted) {
-          LimitReachedDialog.show(
-            context: context,
-            limitResult: serverCheck,
-            entityType: 'agile_project',
-          );
-        }
-        _isCreating = false;
-        return;
-      }
+      // Server-side validation fire-and-forget (audit only, non-blocking)
+      _limitsService.validateServerSide('agile_project');
 
       try {
         final project = await _firestoreService.createProject(

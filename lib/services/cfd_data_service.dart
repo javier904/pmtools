@@ -1076,10 +1076,17 @@ class CfdDataService {
   DateTime _parseTimestamp(dynamic value) {
     if (value == null) return DateTime.now();
     if (value is DateTime) return value;
+    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
-    if (value.runtimeType.toString() == 'Timestamp') {
-      return (value as dynamic).toDate();
-    }
+    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+    
+    // Fallback for older dynamic checks
+    try {
+      if (value.runtimeType.toString() == 'Timestamp') {
+        return (value as dynamic).toDate();
+      }
+    } catch (_) {}
+    
     return DateTime.now();
   }
 

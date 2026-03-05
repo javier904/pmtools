@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'todo_participant_model.dart';
 import 'todo_task_model.dart';
 
@@ -159,10 +160,16 @@ class TodoListModel {
   
   static DateTime _parseDate(dynamic value) {
     if (value is DateTime) return value;
+    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
-    if (value != null && value.runtimeType.toString() == 'Timestamp') {
-       return (value as dynamic).toDate(); 
-    }
+    
+    // Fallback for minified builds
+    try {
+      if (value != null && value.runtimeType.toString() == 'Timestamp') {
+         return (value as dynamic).toDate(); 
+      }
+    } catch (_) {}
+    
     return DateTime.now();
   }
 

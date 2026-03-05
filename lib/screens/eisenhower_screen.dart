@@ -21,6 +21,8 @@ import '../services/auth_service.dart';
 import '../themes/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../themes/app_colors.dart';
+import '../services/presence_service.dart';
+import '../mixins/presence_mixin.dart';
 import '../themes/app_colors.dart';
 // import '../widgets/eisenhower/matrix_search_widget.dart'; // Removed
 import '../widgets/eisenhower/vote_reveal_widget.dart';
@@ -73,7 +75,7 @@ class EisenhowerScreen extends StatefulWidget {
   State<EisenhowerScreen> createState() => _EisenhowerScreenState();
 }
 
-class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin, PresenceMixin {
   final EisenhowerFirestoreService _firestoreService = EisenhowerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final InviteService _inviteService = InviteService();
@@ -119,14 +121,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   // ═══════════════════════════════════════════════════════════════════════════
   StreamSubscription<List<EisenhowerActivityModel>>? _activitiesSubscription;
   StreamSubscription<EisenhowerMatrixModel?>? _matrixSubscription;
-  Timer? _presenceHeartbeat;
 
-  /// Intervallo heartbeat per aggiornare lo stato online (15 secondi)
-  static const _heartbeatInterval = Duration(seconds: 15);
-
-  /// Soglia per considerare un utente offline (45 secondi senza heartbeat)
-  /// Ridotto per aggiornamenti più reattivi del contatore online
-  static const _offlineThreshold = Duration(seconds: 45);
+  Timer? _uiRefreshTimer;
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
@@ -135,49 +131,22 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _sidePanelTabController = TabController(length: 2, vsync: this);
-    _setupWebBeforeUnload();
+    setupPresenceWebUnload();
+    
+    // Timer periodico per forzare il refresh della UI e ricalcolare 
+    // l'età del lastActivity dei partecipanti online.
+    _uiRefreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) setState(() {});
+    });
+    
     // _loadData sarà chiamato in didChangeDependencies se non ci sono argomenti
-  }
-
-  /// Setup listener per beforeunload (web) - forza aggiornamento offline
-  void _setupWebBeforeUnload() {
-    if (kIsWeb) {
-      html.window.onBeforeUnload.listen((event) {
-        _setOfflineImmediately();
-      });
-    }
-  }
-
-  /// Imposta lo stato offline immediatamente (sincrono per beforeunload)
-  void _setOfflineImmediately() {
-    if (_selectedMatrix != null && _currentUserEmail.isNotEmpty) {
-      _firestoreService.updateParticipantOnlineStatus(
-        _selectedMatrix!.id,
-        _currentUserEmail,
-        false,
-      );
-    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
-
-    switch (state) {
-      case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-        // App in background o chiusa - imposta offline
-        _setOfflineImmediately();
-        _presenceHeartbeat?.cancel();
-        break;
-      case AppLifecycleState.resumed:
-        // App tornata in primo piano - riavvia heartbeat
-        _startPresenceHeartbeat();
-        break;
-    }
+    handlePresenceLifecycle(state);
   }
 
   @override
@@ -234,11 +203,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _uiRefreshTimer?.cancel();
     _sidePanelTabController.dispose();
     _searchController.dispose();
     _viewPageController.dispose();
     _cancelSubscriptions();
-    _stopPresenceHeartbeat();
+    disposePresence();
     super.dispose();
   }
 
@@ -298,83 +268,36 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
   void _startPresenceTracking() {
     if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
 
-    // Avvia il tracking della presenza
-    _startPresenceHeartbeat();
+    startPresence(
+      config: PresenceConfig(
+        collection: 'eisenhower_matrices',
+        documentId: _selectedMatrix!.id,
+        presenceFieldPrefix: 'participants',
+      ),
+      userEmail: _currentUserEmail,
+    );
   }
 
-  /// Avvia il tracking della presenza (estratto per riutilizzo in didChangeAppLifecycleState)
-  /// Usa "burst" iniziale per propagazione rapida: 0s, 1s, 3s, poi 15s
-  void _startPresenceHeartbeat() {
-    if (_selectedMatrix == null || _currentUserEmail.isEmpty) return;
-
-    // Cancella eventuale timer esistente
-    _presenceHeartbeat?.cancel();
-
-    // Helper per inviare heartbeat
-    void sendHeartbeat() {
-      if (_selectedMatrix != null && mounted) {
-        _firestoreService.updateParticipantOnlineStatus(
-          _selectedMatrix!.id,
-          _currentUserEmail,
-          true,
-        );
-      }
-    }
-
-    // Heartbeat immediato
-    sendHeartbeat();
-    print('🟢 [Eisenhower] Initial heartbeat sent for $_currentUserEmail');
-
-    // Burst di heartbeat rapidi per sincronizzazione veloce
-    Timer(const Duration(seconds: 1), () {
-      if (mounted && _selectedMatrix != null) sendHeartbeat();
-    });
-    Timer(const Duration(seconds: 3), () {
-      if (mounted && _selectedMatrix != null) sendHeartbeat();
-    });
-
-    // Avvia heartbeat periodico
-    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) => sendHeartbeat());
-
-    print('🟢 Presence tracking started for $_currentUserEmail');
-  }
-
-  /// Ferma il tracking della presenza
-  void _stopPresenceHeartbeat() {
-    _presenceHeartbeat?.cancel();
-    _presenceHeartbeat = null;
-
-    // Imposta offline quando lascia la matrice
-    if (_selectedMatrix != null && _currentUserEmail.isNotEmpty) {
-      _firestoreService.updateParticipantOnlineStatus(
-        _selectedMatrix!.id,
-        _currentUserEmail,
-        false,
-      );
-      print('🔴 Presence tracking stopped for ${_currentUserEmail}');
-    }
-  }
-
-  /// Conta i partecipanti online (lastActivity < 2 minuti)
+  /// Conta i partecipanti online (lastActivity < threshold)
   int _countOnlineParticipants() {
     if (_selectedMatrix == null) return 0;
-    final now = DateTime.now();
     return _selectedMatrix!.participants.values.where((p) {
-      if (p.lastActivity == null) return p.isOnline;
-      return now.difference(p.lastActivity!).inMinutes < _offlineThreshold.inMinutes;
+      return PresenceService.isEffectivelyOnline(
+        isOnlineFlag: p.isOnline,
+        lastActivity: p.lastActivity,
+      );
     }).length;
   }
 
   /// Gestisce l'uscita dalla matrice: ferma presenza e cancella subscription
   void _leaveMatrix() {
-    _stopPresenceHeartbeat();
+    stopPresence();
     _cancelSubscriptions();
     setState(() {
       _selectedMatrix = null;
       _activities = [];
-      _matricesStream = null; // Reset so a fresh stream is created when list rebuilds
+      _matricesStream = null;
     });
-    // Aggiorna l'URL del browser al dashboard
     SystemNavigator.routeInformationUpdated(uri: Uri.parse('/eisenhower'));
     print('👋 Left matrix - presence stopped, subscriptions cancelled');
   }
@@ -536,6 +459,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         final matrices = snapshot.data ?? [];
         if (matrices.isNotEmpty) {
           _resolveParticipantNames(matrices);
+        }
+
+        // Mostra loading finché i nomi non sono risolti (prima volta)
+        if (_isResolvingNames && (_resolvedNames == null || _resolvedNames!.isEmpty)) {
+          return const Center(child: CircularProgressIndicator());
         }
 
         // Applica i filtri
@@ -892,11 +820,13 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                  const SizedBox(height: 2),
               ],
               
-              // Stats compatte
+              // Stats compatte — FittedBox scala proporzionalmente, mai nasconde
               Expanded(
-                child: Align(
-                  alignment: Alignment.bottomLeft,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       _buildCompactMatrixStat(
                         Icons.how_to_vote_outlined,
@@ -904,17 +834,16 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                         l10n.eisenhowerVotedActivities,
                         iconColor: AppColors.success,
                       ),
-                      const SizedBox(width: 10),
-                      if (activityCount - matrix.votedActivityCount > 0)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: _buildCompactMatrixStat(
-                            Icons.pending_actions,
-                            '${activityCount - matrix.votedActivityCount}',
-                            l10n.eisenhowerPendingVoting,
-                            iconColor: AppColors.warning,
-                          ),
+                      const SizedBox(width: 12),
+                      if (activityCount - matrix.votedActivityCount > 0) ...[
+                        _buildCompactMatrixStat(
+                          Icons.pending_actions,
+                          '${activityCount - matrix.votedActivityCount}',
+                          l10n.eisenhowerPendingVoting,
+                          iconColor: AppColors.warning,
                         ),
+                        const SizedBox(width: 12),
+                      ],
                       _buildParticipantStat(matrix, l10n),
                     ],
                   ),
@@ -2565,17 +2494,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
     );
 
     if (result != null) {
-      // Validate limits before creating
-      final results = await Future.wait([
-        _limitsService.canCreateProject(
-          _currentUserEmail ?? '',
-          entityType: 'eisenhower',
-        ),
-        _limitsService.validateServerSide('eisenhower'),
-      ]);
-
-      final limitCheck = results[0];
-      final serverCheck = results[1];
+      // Fast client-side limit check (instant)
+      final limitCheck = await _limitsService.canCreateProject(
+        _currentUserEmail ?? '',
+        entityType: 'eisenhower',
+      );
 
       if (!limitCheck.allowed) {
         if (mounted) {
@@ -2589,17 +2512,8 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         return;
       }
 
-      if (!serverCheck.allowed) {
-        if (mounted) {
-          LimitReachedDialog.show(
-            context: context,
-            limitResult: serverCheck,
-            entityType: 'eisenhower',
-          );
-        }
-        _isCreating = false;
-        return;
-      }
+      // Server-side validation fire-and-forget (audit only, non-blocking)
+      _limitsService.validateServerSide('eisenhower');
 
       try {
         // Il creatore viene automaticamente aggiunto come facilitatore

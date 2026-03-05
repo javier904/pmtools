@@ -67,7 +67,10 @@ class RetroListWidget extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
             itemCount: retrospectives.length,
             separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) => _buildRetroCard(context, retrospectives[index]),
+            itemBuilder: (context, index) => SizedBox(
+              height: 90,
+              child: _buildRetroCard(context, retrospectives[index]),
+            ),
           );
         }
 
@@ -324,25 +327,32 @@ class RetroListWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              // Stats compatte
-              Row(
-                children: [
-                  _buildCompactRetroStat(
-                    Icons.sticky_note_2_outlined,
-                    '${retro.items.length}',
-                    l10n.retroNotesCreated,
+              // Stats compatte — FittedBox scala proporzionalmente, mai nasconde
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildCompactRetroStat(
+                        Icons.sticky_note_2_outlined,
+                        '${retro.items.length}',
+                        l10n.retroNotesCreated,
+                      ),
+                      const SizedBox(width: 12),
+                      if (retro.actionItems.isNotEmpty) ...[
+                        _buildCompactRetroStat(
+                          Icons.check_circle_outline,
+                          '${retro.actionItems.length}',
+                          l10n.retroActionItemsLabel,
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      _buildParticipantRetroStat(retro, l10n),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  if (retro.actionItems.isNotEmpty) ...[
-                    _buildCompactRetroStat(
-                      Icons.check_circle_outline,
-                      '${retro.actionItems.length}',
-                      l10n.retroActionItemsLabel,
-                    ),
-                    const SizedBox(width: 12),
-                  ],
-                  _buildParticipantRetroStat(retro, l10n),
-                ],
+                ),
               ),
             ],
           ),

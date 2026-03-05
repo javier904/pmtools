@@ -39,6 +39,21 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
   Timer? _debounce;
   bool _isCreating = false;
 
+  // Cached stream to prevent recreation on setState
+  Stream<List<TodoListModel>>? _listsStream;
+  bool _lastShowArchived = false;
+
+  Stream<List<TodoListModel>> _getListsStream() {
+    if (_listsStream == null || _lastShowArchived != _showArchived) {
+      _lastShowArchived = _showArchived;
+      _listsStream = _todoService.streamListsFiltered(
+        userEmail: _currentUserEmail,
+        includeArchived: _showArchived,
+      );
+    }
+    return _listsStream!;
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -104,10 +119,11 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
           },
         ),
         title: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.check_circle_outline, color: Colors.blue),
             SizedBox(width: 8),
-            Text('To-Do'),
+            Flexible(child: Text('To-Do', overflow: TextOverflow.ellipsis)),
           ],
         ),
         actions: MediaQuery.of(context).size.width < 600
@@ -246,10 +262,7 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
             ],
       ),
       body: StreamBuilder<List<TodoListModel>>(
-        stream: _todoService.streamListsFiltered(
-          userEmail: _currentUserEmail,
-          includeArchived: _showArchived,
-        ),
+        stream: _getListsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -310,7 +323,10 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                               padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
                               itemCount: lists.length,
                               separatorBuilder: (_, __) => const SizedBox(height: 8),
-                              itemBuilder: (context, index) => _buildListCard(lists[index]),
+                              itemBuilder: (context, index) => SizedBox(
+                                height: 90,
+                                child: _buildListCard(lists[index]),
+                              ),
                             );
                           }
 
@@ -514,135 +530,120 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
         },
         borderRadius: BorderRadius.circular(6),
         child: Padding(
-          padding: const EdgeInsets.all(6), // Reduced padding (was 8)
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header: Icona + Titolo + Menu
-              Row(
+          padding: const EdgeInsets.all(8),
+          child: StreamBuilder<({int total, int completed})>(
+            stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
+            builder: (context, snapshot) {
+              final stats = snapshot.data;
+              final total = stats?.total ?? 0;
+              final completed = stats?.completed ?? 0;
+              final allDone = total > 0 && completed == total;
+              final pendingTasks = total - completed;
+              final progress = total > 0 ? completed / total : 0.0;
+
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Icona lista con stato completamento
-                  StreamBuilder<({int total, int completed})>(
-                    stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
-                    builder: (context, snapshot) {
-                      final stats = snapshot.data;
-                      final total = stats?.total ?? 0;
-                      final completed = stats?.completed ?? 0;
-                      final allDone = total > 0 && completed == total;
-
-                      return Tooltip(
-                        message: total == 0
-                            ? (l10n?.smartTodoNoTasks ?? 'No tasks')
-                            : '${l10n?.smartTodoCompletionStats(completed, total) ?? '$completed/$total completed'}',
-                        child: Container(
-                          width: 26,
-                          height: 26,
-                          decoration: BoxDecoration(
-                            color: (allDone ? Colors.green : Colors.blue).withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Icon(
-                            allDone ? Icons.check_circle : Icons.checklist,
-                            color: allDone ? Colors.green : Colors.blue,
-                            size: 14,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 6),
-                  // Titolo e Badges
-                  Expanded(
-                    child: Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
+                  // Header fisso: Icona + Titolo + Favoriti + Menu
+                  SizedBox(
+                    height: 26,
+                    child: Row(
                       children: [
                         Tooltip(
-                          message: '${list.title}${list.description.isNotEmpty ? '\n${list.description}' : ''}',
-                          child: Text(
-                            list.title,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: list.isArchived ? Colors.grey : null,
+                          message: total == 0
+                              ? (l10n?.smartTodoNoTasks ?? 'No tasks')
+                              : '${l10n?.smartTodoCompletionStats(completed, total) ?? '$completed/$total completed'}',
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: (allDone ? Colors.green : Colors.blue).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Icon(
+                              allDone ? Icons.check_circle : Icons.checklist,
+                              color: allDone ? Colors.green : Colors.blue,
+                              size: 14,
                             ),
                           ),
                         ),
-                        // Badge archiviato
-                        if (list.isArchived)
-                          Tooltip(
-                            message: l10n?.archiveBadge ?? 'Archived',
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(4),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Tooltip(
+                            message: '${list.title}${list.description.isNotEmpty ? '\n${list.description}' : ''}',
+                            child: Text(
+                              list.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: list.isArchived ? Colors.grey : null,
                               ),
-                              child: const Icon(Icons.archive, size: 12, color: Colors.orange),
-                            ),
-                          ),
-                        // Badge ruolo
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            isOwner ? (l10n?.retroOwner ?? 'Owner') : (l10n?.retroGuest ?? 'Ospite'),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: isOwner ? Colors.blue : Colors.purple,
                             ),
                           ),
                         ),
+                        const SizedBox(width: 4),
+                        FavoriteStar(
+                          resourceId: list.id,
+                          type: 'todo_list',
+                          title: list.title,
+                          colorHex: '#2196F3',
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        if (isOwner)
+                          GestureDetector(
+                            onTapDown: (TapDownDetails details) {
+                              _showListMenuAtPosition(context, list, details.globalPosition);
+                            },
+                            child: SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  // Azioni a destra fisse
+                  const SizedBox(height: 2),
+                  // Badges: ruolo + archiviato
                   Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      FavoriteStar(
-                        resourceId: list.id,
-                        type: 'todo_list',
-                        title: list.title,
-                        colorHex: '#2196F3',
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      // Menu compatto
-                      if (isOwner)
-                        GestureDetector(
-                          onTapDown: (TapDownDetails details) {
-                            _showListMenuAtPosition(context, list, details.globalPosition);
-                          },
-                          child: SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: Icon(Icons.more_vert, size: 16, color: Colors.grey[600]),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          isOwner ? (l10n?.retroOwner ?? 'Owner') : (l10n?.retroGuest ?? 'Ospite'),
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: isOwner ? Colors.blue : Colors.purple,
                           ),
                         ),
+                      ),
+                      if (list.isArchived) ...[
+                        const SizedBox(width: 4),
+                        Tooltip(
+                          message: l10n?.archiveBadge ?? 'Archived',
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Icon(Icons.archive, size: 10, color: Colors.orange),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 2), // Reduced spacing (was 4)
-              // Progress bar
-              StreamBuilder<({int total, int completed})>(
-                stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
-                builder: (context, snapshot) {
-                  final stats = snapshot.data;
-                  final total = stats?.total ?? 0;
-                  final completed = stats?.completed ?? 0;
-                  final progress = total > 0 ? completed / total : 0.0;
-
-                  return Tooltip(
+                  const SizedBox(height: 2),
+                  // Progress bar
+                  Tooltip(
                     message: l10n?.smartTodoCompletionStats(completed, total) ?? '$completed/$total completed',
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(2),
@@ -655,51 +656,52 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         minHeight: 2,
                       ),
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 2), // Reduced spacing (was 4)
-              // Stats compatte
-              StreamBuilder<({int total, int completed})>(
-                stream: _todoService.streamTaskCompletionStats(list.id, doneColumnIds: doneColumnIds),
-                builder: (context, statsSnapshot) {
-                  final statsData = statsSnapshot.data;
-                  final totalTasks = statsData?.total ?? 0;
-                  final completedTasks = statsData?.completed ?? 0;
-                  final pendingTasks = totalTasks - completedTasks;
-
-                  return Wrap(
-                    spacing: 12,
-                    runSpacing: 4,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (pendingTasks > 0)
-                        _buildCompactListStat(
-                          Icons.radio_button_unchecked,
-                          '$pendingTasks',
-                          l10n?.smartTodoPendingTasks ?? 'Tasks to complete',
-                          iconColor: AppColors.warning,
-                        ),
-                      if (completedTasks > 0)
-                        _buildCompactListStat(
-                          Icons.check_circle_outline,
-                          '$completedTasks',
-                          l10n?.smartTodoCompletedTasks ?? 'Completed tasks',
-                          iconColor: AppColors.success,
-                        ),
-                      _buildCompactListStat(
-                        Icons.calendar_today,
-                        _formatDate(list.createdAt),
-                        l10n?.smartTodoCreatedDate ?? 'Created date',
+                  ),
+                  const SizedBox(height: 2),
+                  // Stats compatte — FittedBox scala proporzionalmente, mai nasconde
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (pendingTasks > 0) ...[
+                            _buildCompactListStat(
+                              Icons.radio_button_unchecked,
+                              '$pendingTasks',
+                              l10n?.smartTodoPendingTasks ?? 'Tasks to complete',
+                              iconColor: AppColors.warning,
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          if (completed > 0) ...[
+                            _buildCompactListStat(
+                              Icons.check_circle_outline,
+                              '$completed',
+                              l10n?.smartTodoCompletedTasks ?? 'Completed tasks',
+                              iconColor: AppColors.success,
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          _buildCompactListStat(
+                            Icons.calendar_today,
+                            _formatDate(list.createdAt),
+                            l10n?.smartTodoCreatedDate ?? 'Created date',
+                          ),
+                          const SizedBox(width: 12),
+                          _buildParticipantListStat(list, l10n),
+                          if (list.availableTags.isNotEmpty) ...[
+                            const SizedBox(width: 12),
+                            _buildTagsListStat(list, l10n),
+                          ],
+                        ],
                       ),
-                      _buildParticipantListStat(list, l10n),
-                      if (list.availableTags.isNotEmpty)
-                        _buildTagsListStat(list, l10n),
-                    ],
-                  );
-                },
-              ),
-            ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -844,14 +846,8 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
 
                       setDialogState(() => isSubmitting = true);
 
-                      // Validate limits before creating
-                      final results = await Future.wait([
-                        _limitsService.canCreateList(_currentUserEmail),
-                        _limitsService.validateServerSide('smart_todo'),
-                      ]);
-
-                      final limitCheck = results[0];
-                      final serverCheck = results[1];
+                      // Fast client-side limit check (instant)
+                      final limitCheck = await _limitsService.canCreateList(_currentUserEmail);
 
                       if (!limitCheck.allowed) {
                         if (dialogContext.mounted) Navigator.pop(dialogContext);
@@ -865,17 +861,8 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
                         return;
                       }
 
-                      if (!serverCheck.allowed) {
-                        if (dialogContext.mounted) Navigator.pop(dialogContext);
-                        if (mounted) {
-                          LimitReachedDialog.show(
-                            context: this.context,
-                            limitResult: serverCheck,
-                            entityType: 'smart_todo',
-                          );
-                        }
-                        return;
-                      }
+                      // Server-side validation fire-and-forget (audit only, non-blocking)
+                      _limitsService.validateServerSide('smart_todo');
 
                       final newList = TodoListModel(
                         id: '',

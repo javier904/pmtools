@@ -10,10 +10,6 @@ import 'agile_audit_service.dart';
 class RetrospectiveFirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  /// Escape dei punti nell'email per usarla come chiave Firestore
-  /// (i punti in Firestore indicano accesso a campi nidificati)
-  static String _escapeEmailKey(String email) => email.replaceAll('.', '_DOT_');
-
   /// Unescape dei punti nell'email (per leggere chiavi Firestore)
   static String unescapeEmailKey(String key) => key.replaceAll('_DOT_', '.');
 
@@ -781,55 +777,13 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
 
   /// Aggiunge un partecipante alla retrospettiva
   Future<void> addParticipant(String retroId, String email) async {
+    final normalizedEmail = email.toLowerCase();
     final docRef = _retrosCollection.doc(retroId);
     await docRef.update({
-      'participantEmails': FieldValue.arrayUnion([email]),
+      'participantEmails': FieldValue.arrayUnion([normalizedEmail]),
     });
   }
 
-  // =========================================================================
-  // ONLINE PRESENCE - Heartbeat System
-  // =========================================================================
-
-  /// Invia heartbeat per segnalare presenza online
-  ///
-  /// Chiamato periodicamente (ogni 15 secondi) per mantenere lo stato online.
-  /// [retroId] - ID della retrospettiva
-  /// [userEmail] - Email dell'utente che invia l'heartbeat
-  Future<void> sendHeartbeat(String retroId, String userEmail) async {
-    try {
-      final docRef = _retrosCollection.doc(retroId);
-      final escapedEmail = _escapeEmailKey(userEmail.toLowerCase());
-      await docRef.update({
-        'participantPresence.$escapedEmail': {
-          'isOnline': true,
-          'lastActivity': FieldValue.serverTimestamp(),
-        },
-      });
-    } catch (e) {
-      print('⚠️ Errore sendHeartbeat: $e');
-      // Non rilanciare l'errore - heartbeat fallito non deve bloccare l'app
-    }
-  }
-
-  /// Marca l'utente come offline
-  ///
-  /// Chiamato quando l'utente lascia esplicitamente la retrospettiva
-  /// o quando l'app viene chiusa.
-  /// [retroId] - ID della retrospettiva
-  /// [userEmail] - Email dell'utente da marcare offline
-  Future<void> markOffline(String retroId, String userEmail) async {
-    try {
-      final docRef = _retrosCollection.doc(retroId);
-      final escapedEmail = _escapeEmailKey(userEmail.toLowerCase());
-      await docRef.update({
-        'participantPresence.$escapedEmail.isOnline': false,
-      });
-    } catch (e) {
-      print('⚠️ Errore markOffline: $e');
-      // Non rilanciare l'errore - può fallire se la retrospettiva non esiste più
-    }
-  }
 
   /// Helper per log
   Future<void> _logAudit(AuditLogModel log) async {

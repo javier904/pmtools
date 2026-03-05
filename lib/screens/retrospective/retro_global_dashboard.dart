@@ -31,6 +31,7 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   bool _showArchived = false;
   bool _isCreating = false;
   Map<String, String>? _resolvedNames = {};
+  bool _isResolvingNames = false;
   final UserProfileService _userProfileService = UserProfileService();
 
   // State
@@ -71,23 +72,40 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
   }
 
   /// Resolve display names for all participants in the retrospective list
+  /// Resolve display names for all participants in the retrospective list
+  /// Batch: raccoglie tutti i nomi e fa un solo setState alla fine
   Future<void> _resolveParticipantNames(List<RetrospectiveModel> retros) async {
+    if (_isResolvingNames) return; // Evita ri-entranza
+
     final Set<String> emailsToResolve = {};
     for (final retro in retros) {
       emailsToResolve.add(retro.createdBy);
       emailsToResolve.addAll(retro.participantEmails);
     }
 
-    for (final email in emailsToResolve) {
-      final normalizedEmail = email.toLowerCase().trim();
-      if (!(_resolvedNames?.containsKey(normalizedEmail) ?? false)) {
+    // Filtra solo email non ancora risolte
+    final unresolvedEmails = emailsToResolve
+        .map((e) => e.toLowerCase().trim())
+        .where((e) => !(_resolvedNames?.containsKey(e) ?? false))
+        .toSet();
+
+    if (unresolvedEmails.isEmpty) return;
+
+    _isResolvingNames = true;
+    final Map<String, String> newNames = {};
+    for (final email in unresolvedEmails) {
+      try {
         final name = await _userProfileService.getNameByEmail(email);
-        if (mounted) {
-          setState(() {
-            (_resolvedNames ??= {})[normalizedEmail] = name;
-          });
-        }
+        newNames[email] = name;
+      } catch (_) {
+        newNames[email] = email;
       }
+    }
+    _isResolvingNames = false;
+    if (newNames.isNotEmpty && mounted) {
+      setState(() {
+        (_resolvedNames ??= {}).addAll(newNames);
+      });
     }
   }
 
@@ -240,6 +258,11 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                 var retros = snapshot.data ?? [];
                 if (retros.isNotEmpty) {
                   _resolveParticipantNames(retros);
+                }
+
+                // Mostra loading finché i nomi non sono risolti (prima volta)
+                if (_isResolvingNames && (_resolvedNames == null || _resolvedNames!.isEmpty)) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 // Filter logic
@@ -866,17 +889,11 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                         ? selectedSprint!.name 
                         : title;
 
-                    // Validate limits before creating
-                    final results = await Future.wait([
-                      _limitsService.canCreateProject(
-                        _currentUserEmail,
-                        entityType: 'retrospective',
-                      ),
-                      _limitsService.validateServerSide('retrospective'),
-                    ]);
-
-                    final limitCheck = results[0];
-                    final serverCheck = results[1];
+                    // Fast client-side limit check (instant)
+                    final limitCheck = await _limitsService.canCreateProject(
+                      _currentUserEmail,
+                      entityType: 'retrospective',
+                    );
 
                     if (!limitCheck.allowed) {
                       if (context.mounted) Navigator.pop(context);
@@ -890,17 +907,8 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                       return;
                     }
 
-                    if (!serverCheck.allowed) {
-                      if (context.mounted) Navigator.pop(context);
-                      if (this.mounted) {
-                        LimitReachedDialog.show(
-                          context: this.context,
-                          limitResult: serverCheck,
-                          entityType: 'retrospective',
-                        );
-                      }
-                      return;
-                    }
+                    // Server-side validation fire-and-forget (audit only, non-blocking)
+                    _limitsService.validateServerSide('retrospective');
 
                     // Crea modello
                     final newRetro = RetrospectiveModel(

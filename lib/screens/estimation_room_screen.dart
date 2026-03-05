@@ -19,6 +19,8 @@ import '../services/planning_poker_firestore_service.dart';
 import '../services/invite_service.dart';
 import '../services/smart_todo_service.dart';
 import '../services/auth_service.dart';
+import '../services/presence_service.dart';
+import '../mixins/presence_mixin.dart';
 import '../widgets/estimation_room/session_form_dialog.dart';
 import '../widgets/estimation_room/story_form_dialog.dart';
 import '../widgets/estimation_room/voting_board_widget.dart';
@@ -60,7 +62,7 @@ class EstimationRoomScreen extends StatefulWidget {
 }
 
 class _EstimationRoomScreenState extends State<EstimationRoomScreen>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin, PresenceMixin {
   final PlanningPokerFirestoreService _firestoreService = PlanningPokerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final AgileFirestoreService _agileService = AgileFirestoreService();
@@ -80,9 +82,6 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   StreamSubscription<List<PlanningPokerStoryModel>>? _storiesSubscription;
 
   // Presence tracking
-  Timer? _presenceHeartbeat;
-  static const _heartbeatInterval = Duration(seconds: 15);
-  static const _offlineThreshold = Duration(seconds: 45);
 
   bool _isDeepLink = false;
   String? _resolvedUserName;
@@ -97,7 +96,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   EstimationMode? _modeFilter;
   bool _showArchived = false;
   Timer? _debounce;
+  Timer? _uiRefreshTimer;
   Map<String, String>? _resolvedNames = {};
+  bool _isResolvingNames = false;
+
+  // Cached stream to prevent recreation on setState
+  Stream<List<PlanningPokerSessionModel>>? _sessionsStream;
+  bool _lastSessionShowArchived = false;
+
+  Stream<List<PlanningPokerSessionModel>> _getSessionsStream() {
+    if (_sessionsStream == null || _lastSessionShowArchived != _showArchived) {
+      _lastSessionShowArchived = _showArchived;
+      _sessionsStream = _firestoreService.streamSessionsByUserFiltered(
+        userEmail: _currentUserEmail,
+        includeArchived: _showArchived,
+      );
+    }
+    return _sessionsStream!;
+  }
 
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
   String get _currentUserName => _resolvedUserName ?? _authService.currentUser?.displayName ?? _currentUserEmail.split('@').first;
@@ -108,7 +124,13 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     _resolveCurrentUserName();
     WidgetsBinding.instance.addObserver(this);
     _sidePanelTabController = TabController(length: 2, vsync: this);
-    _setupWebBeforeUnload();
+    setupPresenceWebUnload();
+    
+    // Timer periodico per forzare il refresh della UI e ricalcolare 
+    // l'età del lastActivity dei partecipanti online.
+    _uiRefreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) setState(() {});
+    });
   }
 
   Future<void> _resolveCurrentUserName() async {
@@ -119,7 +141,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   }
 
   /// Resolve display names for all participants in the session list
+  /// Batch: raccoglie tutti i nomi e fa un solo setState alla fine
   Future<void> _resolveParticipantNames(List<PlanningPokerSessionModel> sessions) async {
+    if (_isResolvingNames) return; // Evita ri-entranza
+
     final Set<String> emailsToResolve = {};
     for (final session in sessions) {
       emailsToResolve.addAll(session.participants.keys);
@@ -132,9 +157,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
     if (newEmails.isEmpty) return;
 
+    _isResolvingNames = true;
     final names = await Future.wait(
       newEmails.map((email) => _userProfileService.getNameByEmail(email))
     );
+    _isResolvingNames = false;
 
     if (mounted) {
       setState(() {
@@ -150,8 +177,9 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _uiRefreshTimer?.cancel();
     _sidePanelTabController.dispose();
-    _stopPresenceHeartbeat();
+    disposePresence();
     _storiesSubscription?.cancel();
     _searchController.dispose();
     super.dispose();
@@ -161,101 +189,33 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   // PRESENZA ONLINE
   // ══════════════════════════════════════════════════════════════════════════
 
-  /// Setup listener per chiusura tab browser (web only)
-  void _setupWebBeforeUnload() {
-    if (kIsWeb) {
-      html.window.onBeforeUnload.listen((event) {
-        _setOfflineImmediately();
-      });
-    }
-  }
-
-  /// Imposta l'utente offline immediatamente (sincrono)
-  void _setOfflineImmediately() {
-    if (_selectedSession != null && _currentUserEmail.isNotEmpty) {
-      _firestoreService.updateParticipantOnlineStatus(
-        sessionId: _selectedSession!.id,
-        email: _currentUserEmail,
-        isOnline: false,
-      );
-      print('🔴 User $_currentUserEmail set offline immediately');
-    }
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-        _setOfflineImmediately();
-        _presenceHeartbeat?.cancel();
-        break;
-      case AppLifecycleState.resumed:
-        _startPresenceHeartbeat();
-        break;
-    }
+    if (_selectedSession == null || _currentUserEmail.isEmpty) return;
+    handlePresenceLifecycle(state);
   }
 
   /// Avvia il tracking della presenza quando si entra in una sessione
   void _startPresenceTracking() {
     if (_selectedSession == null || _currentUserEmail.isEmpty) return;
-    _startPresenceHeartbeat();
-  }
-
-  /// Avvia l'heartbeat per aggiornare lo stato online periodicamente
-  /// Usa "burst" iniziale per propagazione rapida: 0s, 1s, 3s, poi 15s
-  void _startPresenceHeartbeat() {
-    if (_selectedSession == null || _currentUserEmail.isEmpty) return;
-
-    // Cancella eventuale timer esistente
-    _presenceHeartbeat?.cancel();
-
-    // Helper per inviare heartbeat
-    void sendHeartbeat() {
-      if (_selectedSession != null && mounted) {
-        _firestoreService.updateParticipantOnlineStatus(
-          sessionId: _selectedSession!.id,
-          email: _currentUserEmail,
-          isOnline: true,
-        );
-      }
-    }
-
-    // Heartbeat immediato
-    sendHeartbeat();
-    print('🟢 [EstimationRoom] Initial heartbeat sent for $_currentUserEmail');
-
-    // Burst di heartbeat rapidi per sincronizzazione veloce
-    Timer(const Duration(seconds: 1), () {
-      if (mounted && _selectedSession != null) sendHeartbeat();
-    });
-    Timer(const Duration(seconds: 3), () {
-      if (mounted && _selectedSession != null) sendHeartbeat();
-    });
-
-    // Avvia heartbeat periodico
-    _presenceHeartbeat = Timer.periodic(_heartbeatInterval, (_) => sendHeartbeat());
-
-    print('🟢 Presence tracking started for $_currentUserEmail in session ${_selectedSession!.id}');
-  }
-
-  /// Ferma l'heartbeat e imposta offline
-  void _stopPresenceHeartbeat() {
-    _presenceHeartbeat?.cancel();
-    _presenceHeartbeat = null;
-    _setOfflineImmediately();
-    print('🔴 Presence tracking stopped');
+    startPresence(
+      config: PresenceConfig(
+        collection: 'planning_poker_sessions',
+        documentId: _selectedSession!.id,
+        presenceFieldPrefix: 'participants',
+      ),
+      userEmail: _currentUserEmail,
+    );
   }
 
   /// Conta i partecipanti online nella sessione corrente
   int _countOnlineParticipants() {
     if (_selectedSession == null) return 0;
-    final now = DateTime.now();
     return _selectedSession!.participants.values.where((p) {
-      if (p.lastActivity == null) return p.isOnline;
-      return p.isOnline && now.difference(p.lastActivity!).inSeconds < _offlineThreshold.inSeconds;
+      return PresenceService.isEffectivelyOnline(
+        isOnlineFlag: p.isOnline,
+        lastActivity: p.lastActivity,
+      );
     }).length;
   }
 
@@ -359,7 +319,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
               if (_isDeepLink && Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
               } else {
-                _stopPresenceHeartbeat();
+                stopPresence();
                 _storiesSubscription?.cancel();
                 setState(() => _selectedSession = null);
                 // Aggiorna l'URL del browser al dashboard
@@ -465,7 +425,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
     // ═══ Session detail view ═══
     void goBackToList() {
-      _stopPresenceHeartbeat();
+      stopPresence();
       _storiesSubscription?.cancel();
       setState(() {
         _selectedSession = null;
@@ -653,7 +613,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         final now = DateTime.now();
         final onlineCount = session.participants.values.where((p) {
           if (p.lastActivity == null) return p.isOnline;
-          return p.isOnline && now.difference(p.lastActivity!).inSeconds < _offlineThreshold.inSeconds;
+          return p.isOnline && now.difference(p.lastActivity!).inSeconds < PresenceService.offlineThresholdSeconds;
         }).length;
         final totalCount = session.participantCount;
 
@@ -721,10 +681,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   Widget _buildSessionList() {
     final l10n = AppLocalizations.of(context)!;
     return StreamBuilder<List<PlanningPokerSessionModel>>(
-      stream: _firestoreService.streamSessionsByUserFiltered(
-        userEmail: _currentUserEmail,
-        includeArchived: _showArchived,
-      ),
+      stream: _getSessionsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -751,6 +708,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         final sessions = snapshot.data ?? [];
         if (sessions.isNotEmpty) {
           _resolveParticipantNames(sessions);
+        }
+
+        // Mostra loading finché i nomi non sono risolti (prima volta)
+        if (_isResolvingNames && (_resolvedNames == null || _resolvedNames!.isEmpty)) {
+          return const Center(child: CircularProgressIndicator());
         }
 
         // Applica i filtri manually
@@ -811,7 +773,10 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                               padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
                               itemCount: filteredSessions.length,
                               separatorBuilder: (_, __) => const SizedBox(height: 8),
-                              itemBuilder: (context, index) => _buildSessionCard(filteredSessions[index]),
+                              itemBuilder: (context, index) => SizedBox(
+                                height: 90,
+                                child: _buildSessionCard(filteredSessions[index]),
+                              ),
                             );
                           }
 
@@ -1024,123 +989,120 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              // Header: Icona + Titolo + Menu
+              // Header: Icona + Titolo + Azioni
+              SizedBox(
+                height: 26,
+                child: Row(
+                  children: [
+                    // Icona con status indicator
+                    Tooltip(
+                      message: '${_getEstimationModeName(session.estimationMode)} - $statusLabel',
+                      child: Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Icon(
+                                _getEstimationModeIcon(session.estimationMode),
+                                color: Colors.amber,
+                                size: 14,
+                              ),
+                            ),
+                            Positioned(
+                              right: 1,
+                              bottom: 1,
+                              child: Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: statusColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: context.surfaceColor, width: 1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    // Titolo (1 riga, ellipsis, tooltip al hover)
+                    Expanded(
+                      child: Tooltip(
+                        message: '${session.name}${session.description.isNotEmpty ? '\n${session.description}' : ''}',
+                        child: Text(
+                          session.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: session.isArchived ? context.textMutedColor : context.textPrimaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    FavoriteStar(
+                      resourceId: session.id,
+                      type: 'planning_poker',
+                      title: session.name,
+                      colorHex: '#FFC107',
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        _showSessionMenuAtPosition(context, session, details.globalPosition);
+                      },
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 2),
+              // Badges: ruolo + archiviato
               Row(
                 children: [
-                  // Icona verde con status indicator
-                  Tooltip(
-                    message: '${_getEstimationModeName(session.estimationMode)} - $statusLabel',
-                    child: Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Icon(
-                              _getEstimationModeIcon(session.estimationMode),
-                              color: Colors.amber,
-                              size: 14,
-                            ),
-                          ),
-                          Positioned(
-                            right: 1,
-                            bottom: 1,
-                            child: Container(
-                              width: 7,
-                              height: 7,
-                              decoration: BoxDecoration(
-                                color: statusColor,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: context.surfaceColor, width: 1),
-                              ),
-                            ),
-                          ),
-                        ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: isOwner ? Colors.blue : Colors.purple,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  // Titolo e badged
-                  Expanded(
-                    child: Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Tooltip(
-                          message: '${session.name}${session.description.isNotEmpty ? '\n${session.description}' : ''}',
-                          child: Text(
-                            session.name,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: session.isArchived ? context.textMutedColor : context.textPrimaryColor,
-                            ),
-                          ),
+                  if (session.isArchived) ...[
+                    const SizedBox(width: 4),
+                    Tooltip(
+                      message: l10n.archiveBadge,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                        // Badge archiviato
-                        if (session.isArchived)
-                          Tooltip(
-                            message: l10n.archiveBadge,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Icon(Icons.archive, size: 12, color: Colors.orange),
-                            ),
-                          ),
-                        // Badge ruolo
-                        Container(
-                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                           decoration: BoxDecoration(
-                             color: isOwner ? Colors.blue.withOpacity(0.1) : Colors.purple.withOpacity(0.1),
-                             borderRadius: BorderRadius.circular(4),
-                           ),
-                           child: Text(
-                             isOwner ? (l10n.retroOwner ?? 'Owner') : (l10n.retroGuest ?? 'Ospite'),
-                             style: TextStyle(
-                               fontSize: 10,
-                               fontWeight: FontWeight.bold,
-                               color: isOwner ? Colors.blue : Colors.purple,
-                             ),
-                           ),
-                        ),
-                      ],
+                        child: const Icon(Icons.archive, size: 10, color: Colors.orange),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FavoriteStar(
-                        resourceId: session.id,
-                        type: 'planning_poker',
-                        title: session.name,
-                        colorHex: '#FFC107', // Amber for Planning Poker
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      // Menu compatto
-                      GestureDetector(
-                        onTapDown: (TapDownDetails details) {
-                          _showSessionMenuAtPosition(context, session, details.globalPosition);
-                        },
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: Icon(Icons.more_vert, size: 16, color: context.textSecondaryColor),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ],
               ),
               const SizedBox(height: 4),
@@ -1160,23 +1122,30 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                 ),
               ),
               const SizedBox(height: 4),
-              // Stats compatte su una riga
-              Row(
-                children: [
-                  _buildCompactSessionStat(
-                    Icons.list_alt,
-                    '${session.storyCount}',
-                    l10n.estimationStoriesTotal,
+              // Stats compatte — FittedBox scala proporzionalmente, mai nasconde
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildCompactSessionStat(
+                        Icons.list_alt,
+                        '${session.storyCount}',
+                        l10n.estimationStoriesTotal,
+                      ),
+                      const SizedBox(width: 12),
+                      _buildCompactSessionStat(
+                        Icons.check_circle_outline,
+                        '${session.completedStoryCount}',
+                        l10n.estimationStoriesCompleted,
+                      ),
+                      const SizedBox(width: 12),
+                      _buildParticipantSessionStat(session, l10n),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  _buildCompactSessionStat(
-                    Icons.check_circle_outline,
-                    '${session.completedStoryCount}',
-                    l10n.estimationStoriesCompleted,
-                  ),
-                  const SizedBox(width: 12),
-                  _buildParticipantSessionStat(session, l10n),
-                ],
+                ),
               ),
             ],
           ),
@@ -1598,7 +1567,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
               sessionId: _selectedSession!.id,
               sessionTitle: _selectedSession!.name,
               isFacilitator: _selectedSession!.isFacilitator(_currentUserEmail),
-              onInviteAccepted: () => setState(() {}),
+              onInviteAccepted: () {}, // Data refreshes via stream
             ),
           ),
         ],
@@ -2019,10 +1988,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
                 sessionId: _selectedSession!.id,
                 sessionTitle: _selectedSession!.name,
                 isFacilitator: _selectedSession!.isFacilitator(_currentUserEmail),
-                onInviteAccepted: () {
-                  // Ricarica dati quando un invito viene accettato
-                  setState(() {});
-                },
+                onInviteAccepted: () {}, // Data refreshes via stream
               ),
             ],
           ),
@@ -2348,17 +2314,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     );
 
     if (result != null) {
-      // Validate limits before creating
-      final results = await Future.wait([
-        _limitsService.canCreateProject(
-          _currentUserEmail,
-          entityType: 'estimation',
-        ),
-        _limitsService.validateServerSide('estimation'),
-      ]);
-
-      final limitCheck = results[0];
-      final serverCheck = results[1];
+      // Fast client-side limit check (instant)
+      final limitCheck = await _limitsService.canCreateProject(
+        _currentUserEmail,
+        entityType: 'estimation',
+      );
 
       if (!limitCheck.allowed) {
         if (mounted) {
@@ -2372,17 +2332,8 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
         return;
       }
 
-      if (!serverCheck.allowed) {
-        if (mounted) {
-          LimitReachedDialog.show(
-            context: context,
-            limitResult: serverCheck,
-            entityType: 'estimation',
-          );
-        }
-        _isCreating = false;
-        return;
-      }
+      // Server-side validation fire-and-forget (audit only, non-blocking)
+      _limitsService.validateServerSide('estimation');
 
       try {
         await _firestoreService.createSession(

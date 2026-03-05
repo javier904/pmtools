@@ -221,19 +221,19 @@ class UnifiedInviteModel {
     return diff.inHours;
   }
 
-  /// Route per aprire direttamente l'istanza
+  /// Route per aprire direttamente l'istanza (con sourceId nel path)
   String get instanceRoute {
     switch (sourceType) {
       case InviteSourceType.eisenhower:
-        return '/eisenhower';
+        return '/eisenhower/$sourceId';
       case InviteSourceType.estimationRoom:
-        return '/estimation-room';
+        return '/estimation-room/$sourceId';
       case InviteSourceType.agileProject:
-        return '/agile-project';
+        return '/agile-process/$sourceId';
       case InviteSourceType.smartTodo:
-        return '/smart-todo';
+        return '/smart-todo/$sourceId';
       case InviteSourceType.retroBoard:
-        return '/retrospective-board';
+        return '/retrospective-board/$sourceId';
     }
   }
 

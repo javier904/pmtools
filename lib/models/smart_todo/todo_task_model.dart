@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum TodoTaskStatus {
   todo,
@@ -268,12 +269,16 @@ class TodoTaskModel {
 
   static DateTime _parseDate(dynamic value) {
     if (value is DateTime) return value;
+    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
-    // Handle Firestore Timestamp if imported, or dynamic check
-    // Since we might not want to depend on cloud_firestore in pure model, we check runtime type via dynamic
-    if (value != null && value.runtimeType.toString() == 'Timestamp') {
-       return (value as dynamic).toDate(); 
-    }
+    
+    // Fallback for minified builds
+    try {
+      if (value != null && value.runtimeType.toString() == 'Timestamp') {
+         return (value as dynamic).toDate(); 
+      }
+    } catch (_) {}
+    
     return DateTime.now();
   }
 
