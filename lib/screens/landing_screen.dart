@@ -104,8 +104,11 @@ class _LandingScreenState extends State<LandingScreen> {
       // Authenticated: navigate to the actual tool screen inside the SPA.
       Navigator.pushNamed(context, '/$slug');
     } else {
-      // Guest: scroll to the marketing section on this same page.
-      _scrollToSection(slug);
+      // Guest: open the dedicated static feature page.
+      await launchUrl(
+        Uri.parse('https://keisenapp.com/$slug'),
+        mode: LaunchMode.platformDefault,
+      );
     }
   }
 

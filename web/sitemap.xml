@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- Landing Pages -->
   <url>
@@ -237,7 +238,31 @@
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://keisenapp.com/estimation-room"/>
-    <lastmod>2026-02-21</lastmod>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/estimation-voting.webp</image:loc>
+      <image:title>Planning Poker anonymous voting in progress - Keisen Estimation Room</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/estimation-statistics.webp</image:loc>
+      <image:title>Vote statistics with average, median, mode - Keisen Planning Poker</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/estimation-results.webp</image:loc>
+      <image:title>Voting Results with vote distribution and final estimate - Keisen</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/estimation-methods.webp</image:loc>
+      <image:title>7 estimation methods - Fibonacci, T-Shirt, PERT, Dot Voting, Bucket, Five Fingers, Decimal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/estimation-participants.webp</image:loc>
+      <image:title>Participant panel with Facilitator and Voter roles - Keisen Planning Poker</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/estimation-session-create.webp</image:loc>
+      <image:title>New estimation session creation with Fibonacci method - Keisen</image:title>
+    </image:image>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -251,7 +276,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -265,7 +290,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -279,7 +304,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -293,7 +318,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/estimation-room"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/estimation-room"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
