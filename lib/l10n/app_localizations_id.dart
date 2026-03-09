@@ -319,6 +319,65 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get feedbackReportBug => 'Laporkan Bug';
+
+  @override
+  String get feedbackRequestFeature => 'Minta Fitur';
+
+  @override
+  String get feedbackHistory => 'Riwayat Umpan Balik';
+
+  @override
+  String get feedbackTypeBug => 'Laporan Bug';
+
+  @override
+  String get feedbackTypeFeature => 'Permintaan Fitur';
+
+  @override
+  String get feedbackSubject => 'Subjek';
+
+  @override
+  String get feedbackSubjectHint => 'Jelaskan secara singkat masalahnya...';
+
+  @override
+  String get feedbackDescription => 'Deskripsi';
+
+  @override
+  String get feedbackDescriptionHint =>
+      'Berikan detail lebih lanjut di sini...';
+
+  @override
+  String get feedbackConsent =>
+      'Saya mengizinkan pemrosesan data saya untuk melacak dan mencatat permintaan ini sesuai dengan Kebijakan Privasi.';
+
+  @override
+  String get feedbackSubmit => 'Kirim Permintaan';
+
+  @override
+  String get feedbackSuccess => 'Permintaan berhasil dikirim!';
+
+  @override
+  String get feedbackError => 'Gagal mengirim permintaan';
+
+  @override
+  String get feedbackStatusNew => 'Baru';
+
+  @override
+  String get feedbackStatusInProgress => 'Sedang Diproses';
+
+  @override
+  String get feedbackStatusResolved => 'Selesai';
+
+  @override
+  String get feedbackStatusClosed => 'Ditutup';
+
+  @override
+  String get feedbackNoRequests => 'Tidak ada permintaan ditemukan';
+
+  @override
+  String get feedbackAdminTitle => 'Administrasi Umpan Balik';
+
+  @override
   String get navHome => 'Beranda';
 
   @override
@@ -2517,6 +2576,42 @@ class AppLocalizationsId extends AppLocalizations {
   String get retroUsageDAKI => 'Tegas: Fokus pada keputusan Hapus atau Tambah.';
 
   @override
+  String get retroTemplateCustom => 'Personalizzato';
+
+  @override
+  String get retroDescCustom =>
+      'Definisci le tue colonne in base alle esigenze del team.';
+
+  @override
+  String get retroUsageCustom =>
+      'Ideale quando i template standard non si adattano alle esigenze specifiche del team.';
+
+  @override
+  String get collectionRationaleCustom =>
+      'Rivedi ogni colonna personalizzata e crea azioni in base alle priorità del team.';
+
+  @override
+  String get retroCustomAddColumn => 'Aggiungi Colonna';
+
+  @override
+  String get retroCustomRemoveColumn => 'Rimuovi';
+
+  @override
+  String get retroCustomColumnTitle => 'Titolo Colonna';
+
+  @override
+  String get retroCustomColumnDesc => 'Descrizione (opzionale)';
+
+  @override
+  String get retroCustomMinColumns => 'Sono necessarie almeno 2 colonne';
+
+  @override
+  String get retroCustomMaxColumns => 'Massimo 8 colonne consentite';
+
+  @override
+  String get retroCustomConfigureColumns => 'Configura Colonne';
+
+  @override
   String get retroIcebreakerSentiment => 'Vote Sentimen';
 
   @override
@@ -4128,6 +4223,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get errorSkipping => 'Gagal melewati';
+
+  @override
+  String get genericWarningTitle => 'Peringatan';
+
+  @override
+  String get skipRevealedStoryWarning =>
+      'Cerita ini telah diungkap dan berisi suara. Apakah Anda yakin ingin melewatinya dan kehilangan suara saat ini?';
+
+  @override
+  String get skipRevealedStoryConfirm => 'Ya, lewati';
 
   @override
   String get retroIcebreakerTitle => 'Icebreaker: Moral Tim';
@@ -12047,11 +12152,51 @@ class AppLocalizationsId extends AppLocalizations {
   String get feedbackCommentHint => 'Lascia un commento (opzionale)';
 
   @override
-  String get feedbackSubmit => 'Invia';
-
-  @override
   String get feedbackDismiss => 'Non ora';
 
   @override
   String get feedbackThankYou => 'Grazie per il tuo feedback!';
+
+  @override
+  String get estimationThreePointFormula => 'Formula: (O + 4M + P) / 6';
+
+  @override
+  String get estimationThreePointOptHint => 'Best case';
+
+  @override
+  String get estimationThreePointRealHint => 'Most likely';
+
+  @override
+  String get estimationThreePointPessHint => 'Worst case';
+
+  @override
+  String get estimationThreePointReqError => 'All fields are required';
+
+  @override
+  String get estimationThreePointInvalidError => 'Invalid values';
+
+  @override
+  String get estimationThreePointGuideTitle => 'Guide:';
+
+  @override
+  String get estimationThreePointGuideText =>
+      'O: Best-case estimate (everything goes right)\nM: Most likely estimate (normal conditions)\nP: Worst-case estimate (unforeseen events)';
+
+  @override
+  String get estimationThreePointVarPERT => 'PERT';
+
+  @override
+  String get estimationThreePointVarDevStd => 'Std. Dev';
+
+  @override
+  String get estimationThreePointVarRange => 'Range';
+
+  @override
+  String get exportCsv => 'Ekspor CSV';
+
+  @override
+  String get exportCsvSelected => 'Ekspor CSV dimulai...';
+
+  @override
+  String get errorExportingCsv => 'Gagal mengekspor CSV';
 }

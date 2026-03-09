@@ -3,6 +3,7 @@ import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_participant_model.dart';
 import '../../l10n/app_localizations.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget che mostra i voti rivelati con animazione
 ///
@@ -229,8 +230,9 @@ class _VoteRevealWidgetState extends State<VoteRevealWidget>
           ),
           const SizedBox(width: 6),
           Expanded(
-            child: Text(
-              voterName,
+            child: UserDisplayName(
+              email: unescapedEmail,
+              fallback: voterName,
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: textColor),
             ),
           ),

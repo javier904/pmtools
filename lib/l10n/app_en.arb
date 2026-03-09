@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "agileEstimate": "ESTIMATE",
+  "agileEstimate": "Estimate",
   "agileAssign": "Assign",
   "agileCardMenuTooltip": "Options (Priority, Estimate, etc.)",
   "kanbanPolicyHelpTitle": "Column Policies (Rules)",
@@ -151,6 +151,25 @@
   "authWrongCurrentPassword": "Current password is incorrect",
   "profileSecurity": "Security",
   "authCooldownWait": "Wait {seconds}s before resending",
+  "feedbackReportBug": "Report a Bug",
+  "feedbackRequestFeature": "Request a Feature",
+  "feedbackHistory": "Feedback History",
+  "feedbackTypeBug": "Bug Report",
+  "feedbackTypeFeature": "Feature Request",
+  "feedbackSubject": "Subject",
+  "feedbackSubjectHint": "Briefly describe the issue...",
+  "feedbackDescription": "Description",
+  "feedbackDescriptionHint": "Provide more details here...",
+  "feedbackConsent": "I authorize the processing of my data to track and record this request in accordance with the Privacy Policy.",
+  "feedbackSubmit": "Submit",
+  "feedbackSuccess": "Request submitted!",
+  "feedbackError": "Failed to submit request",
+  "feedbackStatusNew": "New",
+  "feedbackStatusInProgress": "In Progress",
+  "feedbackStatusResolved": "Resolved",
+  "feedbackStatusClosed": "Closed",
+  "feedbackNoRequests": "No feedback requests found",
+  "feedbackAdminTitle": "Feedback Administration",
   "navHome": "Home",
   "navProfile": "Profile",
   "navSettings": "Settings",
@@ -696,8 +715,8 @@
   "agileRoleSMDesc": "Facilitates the process and removes obstacles",
   "agileRoleDevTeamDesc": "Members developing the product",
   "agileRoleStakeholdersDesc": "Provide feedback and requirements",
-  "agileRoleSRMDesc": "Manages incoming requests",
-  "agileRoleSDMDesc": "Optimizes workflow",
+  "agileRoleSRMDesc": "Manage incoming requests and facilitate prioritization (replacing Product Owner)",
+  "agileRoleSDMDesc": "Manage flow of work and facilitate delivery (replacing Scrum Master)",
   "agileRoleTeamDesc": "Executes work respecting WIP limits",
   "agileRoleFlowMasterDesc": "Optimizes flow and facilitates",
   "agileRoleTeamHybridDesc": "Cross-functional, self-organized",
@@ -762,11 +781,8 @@
   "agileWorkloadAvgItems": "Avg Items/Person",
   "agileKanbanCapacityNote": "Capacity is calculated on a weekly basis (5 working days).",
   "agilePriority": "Priority",
-  "agileEstimate": "Estimate",
   "agileRoleSRM": "Service Request Manager",
-  "agileRoleSRMDesc": "Manage incoming requests and facilitate prioritization (replacing Product Owner)",
   "agileRoleSDM": "Service Delivery Manager",
-  "agileRoleSDMDesc": "Manage flow of work and facilitate delivery (replacing Scrum Master)",
   "agileRoleTeamMember": "Team Member",
   "agileFrameworkLocked": "Cannot change framework for projects with existing activities",
   "agileComingSoon": "Coming Soon",
@@ -868,7 +884,7 @@
   "retroFilterAll": "All",
   "retroFilterActive": "Active",
   "retroFilterCompleted": "Completed",
-  "agileNoAssignee": "No assignee",
+  "agileNoAssignee": "Unassigned",
   "retroFilterDraft": "Draft",
   "retroDeleteTitle": "Delete Retrospective",
   "retroDeleteConfirm": "Are you sure?",
@@ -956,6 +972,17 @@
   "retroUsageStarfish": "Calibration: Best for scaling efforts (doing more/less of something), not just binary stop/start.",
   "retroUsageMadSadGlad": "Best for emotional check-ins, resolving conflicts, or after a stressful sprint.",
   "retroUsageDAKI": "Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).",
+  "retroTemplateCustom": "Custom",
+  "retroDescCustom": "Define your own columns to match your team's unique needs.",
+  "retroUsageCustom": "Best when standard templates don't fit your team's specific needs or process.",
+  "collectionRationaleCustom": "Review each custom column and create actions based on your team's priorities.",
+  "retroCustomAddColumn": "Add Column",
+  "retroCustomRemoveColumn": "Remove",
+  "retroCustomColumnTitle": "Column Title",
+  "retroCustomColumnDesc": "Description (optional)",
+  "retroCustomMinColumns": "At least 2 columns are required",
+  "retroCustomMaxColumns": "Maximum 8 columns allowed",
+  "retroCustomConfigureColumns": "Configure Columns",
   "retroIcebreakerSentiment": "Sentiment Voting",
   "retroIcebreakerOneWord": "One Word",
   "retroIcebreakerWeather": "Weather Report",
@@ -1144,7 +1171,6 @@
   "agileInformation": "Information",
   "agileBusinessValue": "Business Value",
   "agileAssignee": "Assignee",
-  "agileNoAssignee": "Unassigned",
   "agileCreatedBy": "Created by",
   "agileCreatedAt": "Created at",
   "agileStartedAt": "Started at",
@@ -1171,13 +1197,17 @@
   "agileSprintOverdue": "Overdue by {days} days",
   "@agileSprintOverdue": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "agileSprintDaysWarning": "{days} days remaining",
   "@agileSprintDaysWarning": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "agileStoryDisposition": "Story Disposition",
@@ -1334,7 +1364,7 @@
   "agileUnassigned": "Unassigned",
   "agileAssignableLater": "Assignable after creation",
   "agileAddToTeam": "Add to Team",
-  "agileAllMembersAssigned": "All participants are already assigned to a role.",
+  "agileAllMembersAssigned": "All available members are already assigned",
   "agileClose": "Close",
   "agileProjectNameLabel": "Project Name *",
   "agileProjectNameHint": "E.g: Fashion PMO v2",
@@ -1838,6 +1868,9 @@
   "errorRevealingVotes": "Error revealing",
   "errorSavingEstimate": "Error saving estimate",
   "errorSkipping": "Error skipping",
+  "genericWarningTitle": "Warning",
+  "skipRevealedStoryWarning": "This story has been revealed and contains votes. Are you sure you want to skip it and lose the current votes?",
+  "skipRevealedStoryConfirm": "Yes, skip",
   "retroIcebreakerTitle": "Icebreaker: Team Morale",
   "retroIcebreakerQuestion": "How did you feel about this sprint?",
   "retroParticipantsVoted": "{count} participants voted",
@@ -2398,13 +2431,17 @@
   "sprintDeletePlanningConfirm": "Do you want to delete sprint \"{sprintName}\"? Associated stories will be moved back to the backlog.",
   "@sprintDeletePlanningConfirm": {
     "placeholders": {
-      "sprintName": { "type": "String" }
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "sprintDeletedSuccess": "Sprint \"{sprintName}\" deleted. Stories have been moved back to the backlog.",
   "@sprintDeletedSuccess": {
     "placeholders": {
-      "sprintName": { "type": "String" }
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "sprintEditTitle": "Edit Sprint",
@@ -5611,14 +5648,23 @@
   "agileTeam": "Team",
   "agileRoleDevelopmentTeam": "Development Team",
   "agileRoleDevelopmentTeamDesc": "Members who execute the work",
-  "agileAddToTeam": "Add to Team",
-  "agileAllMembersAssigned": "All available members are already assigned",
-  "agileClose": "Close",
-
   "feedbackTitle": "How's your experience with Keisen?",
   "feedbackSubtitle": "Your feedback helps us improve",
   "feedbackCommentHint": "Leave a comment (optional)",
-  "feedbackSubmit": "Submit",
   "feedbackDismiss": "Not now",
-  "feedbackThankYou": "Thank you for your feedback!"
+  "feedbackThankYou": "Thank you for your feedback!",
+  "estimationThreePointFormula": "Formula: (O + 4M + P) / 6",
+  "estimationThreePointOptHint": "Best case",
+  "estimationThreePointRealHint": "Most likely",
+  "estimationThreePointPessHint": "Worst case",
+  "estimationThreePointReqError": "All fields are required",
+  "estimationThreePointInvalidError": "Invalid values",
+  "estimationThreePointGuideTitle": "Guide:",
+  "estimationThreePointGuideText": "O: Best-case estimate (everything goes right)\nM: Most likely estimate (normal conditions)\nP: Worst-case estimate (unforeseen events)",
+  "estimationThreePointVarPERT": "PERT",
+  "estimationThreePointVarDevStd": "Std. Dev",
+  "estimationThreePointVarRange": "Range",
+  "exportCsv": "Export CSV",
+  "exportCsvSelected": "CSV export started...",
+  "errorExportingCsv": "Failed to export CSV"
 }

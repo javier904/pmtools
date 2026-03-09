@@ -7,12 +7,14 @@ import '../models/user_profile/user_settings_model.dart';
 import '../services/user_profile_service.dart';
 import '../services/auth_service.dart';
 import '../l10n/app_localizations.dart';
+import '../main.dart'; // Contains ThemeControllerProvider
+import 'language_selector_widget.dart';
 
 /// Widget menu profilo per accesso rapido
 ///
 /// Mostra:
 /// - Avatar utente
-/// - Menu dropdown con Profilo e Logout
+/// - Menu dropdown con Profilo e Logout, più Impostazioni App (Tema, Lingua) su Mobile
 class ProfileMenuWidget extends StatefulWidget {
   /// Callback quando si naviga al profilo
   final VoidCallback? onProfileTap;
@@ -217,6 +219,30 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
           value: 'profile',
         ),
 
+        // Feedback
+        _buildMenuItem(
+          icon: Icons.forum_outlined,
+          label: AppLocalizations.of(context)?.feedbackHistory ?? 'Feedback History',
+          value: 'feedback',
+        ),
+
+        // Extra Mobile Actions: Theme and Language
+        if (MediaQuery.of(context).size.width < 800) ...[
+          const PopupMenuDivider(),
+          _buildMenuItem(
+            icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+            label: isDark 
+              ? (AppLocalizations.of(context)?.themeLightMode ?? 'Light Mode') 
+              : (AppLocalizations.of(context)?.themeDarkMode ?? 'Dark Mode'),
+            value: 'toggle_theme',
+          ),
+          _buildMenuItem(
+            icon: Icons.language_rounded,
+            label: 'Language',
+            value: 'change_language',
+          ),
+        ],
+
         const PopupMenuDivider(),
 
         // Logout
@@ -236,12 +262,48 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
               Navigator.pushNamed(context, '/profile');
             }
             break;
+          case 'feedback':
+            Navigator.pushNamed(context, '/feedback-dashboard');
+            break;
+          case 'toggle_theme':
+            final themeController = ThemeControllerProvider.maybeOf(context);
+            if (themeController != null) {
+              themeController.toggleTheme();
+            }
+            break;
+          case 'change_language':
+            // Open language selector dialog
+            _showLanguageSelectorDialog(context);
+            break;
           case 'logout':
             _handleLogout();
             break;
         }
       },
       child: _buildTrigger(theme, isDark),
+    );
+  }
+
+  void _showLanguageSelectorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)?.settingsLanguage ?? 'Language'),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 300),
+            child: const LanguageSelectorWidget(
+              showAsDropdown: false, // Ensures it displays as a dialog or list inside
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(AppLocalizations.of(context)?.actionCancel ?? 'Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -40,6 +40,7 @@ import '../services/agile_firestore_service.dart';
 import '../services/subscription/subscription_limits_service.dart';
 import '../widgets/home/favorite_star.dart';
 import '../widgets/subscription/limit_reached_dialog.dart';
+import '../services/estimation_csv_export_service.dart';
 import 'agile_project_detail_screen.dart';
 
 /// Screen principale per l'Estimation Room
@@ -66,6 +67,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   final PlanningPokerFirestoreService _firestoreService = PlanningPokerFirestoreService();
   final SmartTodoService _todoService = SmartTodoService();
   final AgileFirestoreService _agileService = AgileFirestoreService();
+  final EstimationRoomCsvExportService _csvExportService = EstimationRoomCsvExportService();
   final AuthService _authService = AuthService();
   final SubscriptionLimitsService _limitsService = SubscriptionLimitsService();
   final UserProfileService _userProfileService = UserProfileService();
@@ -80,6 +82,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
 
   // Stream subscription per aggiornamenti real-time delle storie
   StreamSubscription<List<PlanningPokerStoryModel>>? _storiesSubscription;
+  StreamSubscription<PlanningPokerSessionModel?>? _sessionSubscription;
 
   // Presence tracking
 
@@ -181,6 +184,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     _sidePanelTabController.dispose();
     disposePresence();
     _storiesSubscription?.cancel();
+    _sessionSubscription?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -453,11 +457,17 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           icon: const Icon(Icons.more_vert),
           onSelected: (value) {
             switch (value) {
+              case 'edit_session':
+                _showRestrictedEditSession();
+                break;
               case 'export_todo':
                 _showExportToSmartTodoDialog();
                 break;
               case 'export_sprint':
                 _showExportToAgileSprintDialog();
+                break;
+              case 'export_csv':
+                _exportCsv();
                 break;
               case 'settings':
                 _showSessionSettings();
@@ -468,7 +478,24 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
             }
           },
           itemBuilder: (context) => [
+            if (_selectedSession!.createdBy == _currentUserEmail)
+              PopupMenuItem(
+                value: 'edit_session',
+                child: Row(children: [
+                   const Icon(Icons.edit_outlined, size: 18),
+                   const SizedBox(width: 8),
+                   Text(l10n.estimationEditSession),
+                ]),
+              ),
             if (_selectedSession!.isFacilitator(_currentUserEmail)) ...[
+              PopupMenuItem(
+                value: 'export_csv',
+                child: Row(children: [
+                   const Icon(Icons.download_rounded, size: 18),
+                   const SizedBox(width: 8),
+                   Text(l10n.exportCsv),
+                ]),
+              ),
               PopupMenuItem(
                 value: 'export_todo',
                 enabled: _stories.any((s) => s.finalEstimate != null),
@@ -514,6 +541,11 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     return [
       if (_selectedSession!.isFacilitator(_currentUserEmail)) ...[
         IconButton(
+          icon: const Icon(Icons.download_rounded),
+          tooltip: l10n.exportCsv,
+          onPressed: _exportCsv,
+        ),
+        IconButton(
           icon: const Icon(Icons.check_circle_outline_rounded),
           tooltip: l10n.exportFromEstimation,
           onPressed: _stories.any((s) => s.finalEstimate != null)
@@ -550,6 +582,14 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           onPressed: _showSessionSettings,
         ),
       const SizedBox(width: 8),
+      if (_selectedSession!.createdBy == _currentUserEmail) ...[
+         IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: l10n.estimationEditSession,
+            onPressed: _showRestrictedEditSession,
+         ),
+         const SizedBox(width: 4),
+      ],
       TextButton.icon(
         icon: const Icon(Icons.arrow_back, size: 18),
         label: Text(l10n.estimationList),
@@ -2533,6 +2573,44 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     }
   }
 
+  Future<void> _showRestrictedEditSession() async {
+    if (_selectedSession == null) return;
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => SessionFormDialog(
+         session: _selectedSession,
+         isRestricted: true,
+      ),
+    );
+
+    if (result != null) {
+      try {
+        await _firestoreService.updateSession(
+          sessionId: _selectedSession!.id,
+          name: result['name'],
+          autoReveal: result['autoReveal'],
+        );
+        final l10n = AppLocalizations.of(context)!;
+        _showSuccess(l10n.sessionUpdated);
+      } catch (e) {
+        final l10n = AppLocalizations.of(context)!;
+        _showError('${l10n.errorUpdatingSession}: $e');
+      }
+    }
+  }
+
+  Future<void> _exportCsv() async {
+    if (_selectedSession == null) return;
+    try {
+      await _csvExportService.exportSessionToCsv(_selectedSession!, _stories);
+      final l10n = AppLocalizations.of(context)!;
+      _showSuccess(l10n.exportCsvSelected); // Assuming a generic success or using a new string
+    } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
+      _showError('${l10n.errorExportingCsv}: $e');
+    }
+  }
+
   /// Export estimated stories to a Smart Todo list
   Future<void> _showExportToSmartTodoDialog() async {
     if (_selectedSession == null) return;
@@ -2960,6 +3038,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   Future<void> _selectSession(PlanningPokerSessionModel session) async {
     // Cancel any existing subscription
     await _storiesSubscription?.cancel();
+    await _sessionSubscription?.cancel();
 
     setState(() {
       _selectedSession = session;
@@ -2968,6 +3047,18 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
     // Aggiorna l'URL del browser con il sessionId
     SystemNavigator.routeInformationUpdated(uri: Uri.parse('/estimation-room/${session.id}'));
     await _loadStories(session.id);
+
+    // Set up stream subscription for session context
+    _sessionSubscription = _firestoreService.streamSession(session.id).listen(
+      (updatedSession) {
+        if (mounted && updatedSession != null) {
+          setState(() {
+            _selectedSession = updatedSession;
+          });
+        }
+      },
+      onError: (e) {},
+    );
 
     // Set up stream subscription for real-time updates
     _storiesSubscription = _firestoreService.streamStories(session.id).listen(
@@ -2982,6 +3073,7 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
           // 🤖 AUTO-REVEAL LOGIC
           if (_selectedSession != null &&
               _selectedSession!.autoReveal &&
+              _selectedSession!.isFacilitator(_currentUserEmail) &&
               _currentStory != null &&
               !_currentStory!.isRevealed &&
               _currentStory!.isEveryoneVoted(_selectedSession!.voterCount)) {
@@ -3589,6 +3681,34 @@ class _EstimationRoomScreenState extends State<EstimationRoomScreen>
   Future<void> _skipStory(String storyId) async {
     if (_selectedSession == null) return;
     final l10n = AppLocalizations.of(context)!;
+
+    try {
+      final story = _stories.firstWhere((s) => s.id == storyId);
+      if (story.isRevealed && story.voteCount > 0) {
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.genericWarningTitle),
+            content: Text(l10n.skipRevealedStoryWarning),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.actionCancel),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: Text(l10n.skipRevealedStoryConfirm),
+              ),
+            ],
+          ),
+        );
+        if (confirm != true) return;
+      }
+    } catch (e) {
+      // Ignora e procedi se la storia non viene trovata
+    }
+
     try {
       await _firestoreService.skipStory(
         sessionId: _selectedSession!.id,

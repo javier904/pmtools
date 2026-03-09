@@ -151,6 +151,7 @@ class ParticipantListWidget extends StatelessWidget {
           // Indicatore online
           Tooltip(
             message: isOnline ? 'Online' : 'Offline', // Questi potrebbero rimanere così o essere tradotti se necessario
+            triggerMode: TooltipTriggerMode.tap,
             child: Container(
               width: 8,
               height: 8,

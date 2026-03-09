@@ -6,6 +6,7 @@ import '../../models/sprint_model.dart';
 import '../../models/team_member_model.dart';
 import '../../models/user_story_model.dart';
 import '../../themes/app_colors.dart';
+import '../user_display_name_widget.dart';
 
 class TeamWorkloadWidget extends StatelessWidget {
   final List<TeamMemberModel> teamMembers;
@@ -427,13 +428,13 @@ class TeamWorkloadWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    mw.member.name,
+                  child: UserDisplayName(
+                    email: mw.member.email,
+                    fallback: mw.member.name,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 _buildRoleChip(theme, colorScheme, mw.member.teamRole),

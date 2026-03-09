@@ -1015,6 +1015,8 @@ ActionType? suggestActionType(RetroTemplate template, String columnId) {
         case 'improve': return ActionType.enhance;
       }
       break;
+    case RetroTemplate.custom:
+      return null; // No automatic suggestion for custom columns
   }
   return null;
 }
@@ -1039,6 +1041,7 @@ enum RetroTemplate {
   madSadGlad,
   daki, // Drop, Add, Keep, Improve
   quickForm,
+  custom, // User-defined columns
 } 
 
 extension RetroTemplateExt on RetroTemplate {
@@ -1051,6 +1054,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.madSadGlad: return 'Mad Sad Glad';
       case RetroTemplate.daki: return 'DAKI (Drop Add Keep Improve)';
       case RetroTemplate.quickForm: return 'Quick Form';
+      case RetroTemplate.custom: return 'Custom';
     }
   }
 
@@ -1063,6 +1067,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.madSadGlad: return l10n.retroTemplateMadSadGlad;
       case RetroTemplate.daki: return l10n.retroTemplateDAKI;
       case RetroTemplate.quickForm: return l10n.retroQuickForm;
+      case RetroTemplate.custom: return l10n.retroTemplateCustom;
     }
   }
 
@@ -1075,6 +1080,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.madSadGlad: return 'Emotional: Mad, Sad, Glad.';
       case RetroTemplate.daki: return 'Pragmatic: Drop, Add, Keep, Improve.';
       case RetroTemplate.quickForm: return 'Compact form for quick sprint wrap-up.';
+      case RetroTemplate.custom: return 'Define your own columns to match your team needs.';
     }
   }
 
@@ -1087,6 +1093,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.madSadGlad: return l10n.retroDescMadSadGlad;
       case RetroTemplate.daki: return l10n.retroDescDAKI;
       case RetroTemplate.quickForm: return l10n.retroQuickModeDesc;
+      case RetroTemplate.custom: return l10n.retroDescCustom;
     }
   }
 
@@ -1107,6 +1114,8 @@ extension RetroTemplateExt on RetroTemplate {
         return 'Decisive: Best for clean-ups. Focuses on concrete decisions to Drop (remove) or Add (innovate).';
       case RetroTemplate.quickForm:
         return 'Best for very fast, individual reflections when full team interaction is not possible.';
+      case RetroTemplate.custom:
+        return 'Best when standard templates don\'t fit your team\'s unique needs or process.';
     }
   }
 
@@ -1119,6 +1128,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.madSadGlad: return l10n.retroUsageMadSadGlad;
       case RetroTemplate.daki: return l10n.retroUsageDAKI;
       case RetroTemplate.quickForm: return l10n.retroQuickModeDesc;
+      case RetroTemplate.custom: return l10n.retroUsageCustom;
     }
   }
 
@@ -1131,6 +1141,7 @@ extension RetroTemplateExt on RetroTemplate {
       case RetroTemplate.madSadGlad: return Icons.mood;
       case RetroTemplate.daki: return Icons.delete_sweep;
       case RetroTemplate.quickForm: return Icons.flash_on;
+      case RetroTemplate.custom: return Icons.dashboard_customize;
     }
   }
 
@@ -1182,6 +1193,8 @@ extension RetroTemplateExt on RetroTemplate {
                 RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#A5D6A7', iconCode: Icons.thumb_up_alt_outlined.codePoint),
                 RetroColumn(id: 'improve', title: 'To Improve', description: 'Cosa può essere migliorato?', colorHex: '#EF9A9A', iconCode: Icons.healing_outlined.codePoint),
             ];
+        case RetroTemplate.custom:
+            return []; // User-defined columns — stored in Firestore document
         default:
             return [
                 RetroColumn(id: 'went_well', title: 'Went Well', description: 'Cosa è andato bene?', colorHex: '#A5D6A7', iconCode: Icons.thumb_up_alt_outlined.codePoint),

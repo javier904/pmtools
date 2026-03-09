@@ -3,6 +3,7 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import 'todo_task_card.dart';
+import '../user_display_name_widget.dart';
 
 class TodoResourceView extends StatelessWidget {
   final TodoListModel list;
@@ -126,7 +127,7 @@ class TodoResourceView extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 12,
                           backgroundColor: Colors.blue[100],
-                          child: Text(title[0].toUpperCase(), style: const TextStyle(fontSize: 10, color: Colors.blue)),
+                          child: Text(assigneeId[0].toUpperCase(), style: const TextStyle(fontSize: 10, color: Colors.blue)),
                         ),
                       )
                     else
@@ -136,11 +137,18 @@ class TodoResourceView extends StatelessWidget {
                       ),
                     
                     Expanded(
-                      child: Text(
-                        title,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black87),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      child: assigneeId == 'unassigned'
+                          ? Text(
+                              title,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : UserDisplayName(
+                              email: assigneeId,
+                              fallback: title,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black87),
+                              overflow: true,
+                            ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

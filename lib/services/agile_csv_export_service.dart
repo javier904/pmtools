@@ -6,6 +6,7 @@ import '../models/user_story_model.dart';
 import '../models/sprint_model.dart';
 import '../models/team_member_model.dart';
 import '../models/agile_enums.dart';
+import 'user_profile_service.dart';
 
 /// Service for exporting Agile Project data to CSV
 class AgileCsvExportService {
@@ -13,27 +14,33 @@ class AgileCsvExportService {
   factory AgileCsvExportService() => _instance;
   AgileCsvExportService._internal();
 
+  final UserProfileService _userProfileService = UserProfileService();
+
   /// Exports Product Backlog to CSV
   Future<void> exportBacklogToCsv(String projectName, List<UserStoryModel> stories) async {
-    final rows = _generateBacklogRows(stories);
+    final namesMap = await _resolveEmails(stories.map((s) => s.assigneeEmail).whereType<String>().toSet());
+    final rows = _generateBacklogRows(stories, namesMap);
     await _downloadCsv(rows, 'Backlog_${projectName.replaceAll(' ', '_')}');
   }
 
   /// Exports Sprints to CSV
   Future<void> exportSprintsToCsv(String projectName, List<SprintModel> sprints, List<UserStoryModel> stories) async {
+    final namesMap = await _resolveEmails(stories.map((s) => s.assigneeEmail).whereType<String>().toSet());
     final rows = _generateSprintRows(sprints, stories);
     await _downloadCsv(rows, 'Sprints_${projectName.replaceAll(' ', '_')}');
   }
 
   /// Exports Team to CSV
   Future<void> exportTeamToCsv(String projectName, List<TeamMemberModel> members) async {
-    final rows = _generateTeamRows(members);
+    final namesMap = await _resolveEmails(members.map((m) => m.email).toSet());
+    final rows = _generateTeamRows(members, namesMap);
     await _downloadCsv(rows, 'Team_${projectName.replaceAll(' ', '_')}');
   }
 
   /// Exports Kanban Board to CSV
   Future<void> exportKanbanToCsv(String projectName, List<UserStoryModel> stories) async {
-    final rows = _generateKanbanRows(stories);
+    final namesMap = await _resolveEmails(stories.map((s) => s.assigneeEmail).whereType<String>().toSet());
+    final rows = _generateKanbanRows(stories, namesMap);
     await _downloadCsv(rows, 'Kanban_${projectName.replaceAll(' ', '_')}');
   }
 
@@ -50,11 +57,16 @@ class AgileCsvExportService {
     List<SprintModel> sprints,
     List<TeamMemberModel> members,
   ) async {
+    final Set<String> emails = {};
+    emails.addAll(stories.map((s) => s.assigneeEmail).whereType<String>());
+    emails.addAll(members.map((m) => m.email));
+    final namesMap = await _resolveEmails(emails);
+
     List<List<dynamic>> allRows = [];
 
     // Backlog Section
     allRows.add(['=== BACKLOG / USER STORIES ===']);
-    allRows.addAll(_generateBacklogRows(stories));
+    allRows.addAll(_generateBacklogRows(stories, namesMap));
     allRows.add([]); // Empty row as separator
 
     // Sprints Section
@@ -64,12 +76,12 @@ class AgileCsvExportService {
 
     // Team Section
     allRows.add(['=== TEAM ===']);
-    allRows.addAll(_generateTeamRows(members));
+    allRows.addAll(_generateTeamRows(members, namesMap));
     allRows.add([]);
 
     // Kanban Section
     allRows.add(['=== KANBAN BOARD ===']);
-    allRows.addAll(_generateKanbanRows(stories));
+    allRows.addAll(_generateKanbanRows(stories, namesMap));
     allRows.add([]);
 
     // Metrics Section
@@ -83,7 +95,7 @@ class AgileCsvExportService {
   // ROW GENERATORS
   // --------------------------------------------------------------------------
 
-  List<List<dynamic>> _generateBacklogRows(List<UserStoryModel> stories) {
+  List<List<dynamic>> _generateBacklogRows(List<UserStoryModel> stories, Map<String, String> namesMap) {
     final headers = [
       'ID',
       'Titolo',
@@ -115,7 +127,7 @@ class AgileCsvExportService {
         story.storyPoints ?? '',
         story.businessValue,
         story.tags.join('; '),
-        story.assigneeEmail ?? '',
+        story.assigneeEmail != null ? (namesMap[story.assigneeEmail] ?? story.assigneeEmail) : '',
         story.sprintId ?? '',
         _formatDate(story.createdAt),
         story.completedAt != null ? _formatDate(story.completedAt!) : '',
@@ -161,7 +173,7 @@ class AgileCsvExportService {
     return rows;
   }
 
-  List<List<dynamic>> _generateTeamRows(List<TeamMemberModel> members) {
+  List<List<dynamic>> _generateTeamRows(List<TeamMemberModel> members, Map<String, String> namesMap) {
     final headers = [
       'Nome',
       'Email',
@@ -175,7 +187,7 @@ class AgileCsvExportService {
 
     for (var member in members) {
       rows.add([
-        member.name ?? member.email,
+        namesMap[member.email] ?? member.name ?? member.email,
         member.email,
         member.participantRole.displayName,
         member.role.displayName,
@@ -186,7 +198,7 @@ class AgileCsvExportService {
     return rows;
   }
 
-  List<List<dynamic>> _generateKanbanRows(List<UserStoryModel> stories) {
+  List<List<dynamic>> _generateKanbanRows(List<UserStoryModel> stories, Map<String, String> namesMap) {
     // Kanban export typically emphasizes Status (Columns)
     final headers = [
       'Titolo',
@@ -210,7 +222,7 @@ class AgileCsvExportService {
     for (var story in sortedStories) {
       rows.add([
         story.title,
-        story.assigneeEmail ?? '',
+        story.assigneeEmail != null ? (namesMap[story.assigneeEmail] ?? story.assigneeEmail) : '',
         story.status.displayName,
         story.storyPoints ?? '',
         story.priority.displayName,
@@ -336,6 +348,14 @@ class AgileCsvExportService {
     }
 
     return rows;
+  }
+
+  Future<Map<String, String>> _resolveEmails(Set<String> emails) async {
+    final Map<String, String> results = {};
+    for (final email in emails) {
+      results[email] = await _userProfileService.getNameByEmail(email);
+    }
+    return results;
   }
 
   String _formatDate(DateTime date) {

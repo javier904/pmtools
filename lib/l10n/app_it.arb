@@ -121,7 +121,13 @@
   "authResetPasswordSent": "Email di reset inviata. Controlla la posta.",
   "authVerifyEmail": "Verifica la tua email",
   "authVerifyEmailDesc": "Ti abbiamo inviato un'email di verifica a {email}. Clicca il link per attivare il tuo account.",
-  "@authVerifyEmailDesc": {"placeholders": {"email": {"type": "String"}}},
+  "@authVerifyEmailDesc": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "authResendVerification": "Reinvia email di verifica",
   "authVerificationSent": "Email di verifica inviata!",
   "authEmailVerified": "Email verificata!",
@@ -140,7 +146,32 @@
   "authWrongCurrentPassword": "La password attuale non è corretta",
   "profileSecurity": "Sicurezza",
   "authCooldownWait": "Attendi {seconds}s prima di reinviare",
-  "@authCooldownWait": {"placeholders": {"seconds": {"type": "int"}}},
+  "@authCooldownWait": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "feedbackReportBug": "Segnala un Bug",
+  "feedbackRequestFeature": "Richiedi una Feature",
+  "feedbackHistory": "Storico Feedback",
+  "feedbackTypeBug": "Segnalazione Bug",
+  "feedbackTypeFeature": "Richiesta Feature",
+  "feedbackSubject": "Oggetto",
+  "feedbackSubjectHint": "Descrivi brevemente il problema...",
+  "feedbackDescription": "Descrizione",
+  "feedbackDescriptionHint": "Fornisci maggiori dettagli qui...",
+  "feedbackConsent": "Autorizzo il trattamento dei miei dati per tracciare e registrare questa richiesta ai sensi della Privacy Policy.",
+  "feedbackSubmit": "Invia",
+  "feedbackSuccess": "Richiesta inviata!",
+  "feedbackError": "Errore durante l'invio della richiesta",
+  "feedbackStatusNew": "Nuova",
+  "feedbackStatusInProgress": "In Lavorazione",
+  "feedbackStatusResolved": "Risolta",
+  "feedbackStatusClosed": "Chiusa",
+  "feedbackNoRequests": "Nessuna segnalazione trovata",
+  "feedbackAdminTitle": "Amministrazione Feedback",
   "navHome": "Home",
   "navProfile": "Profilo",
   "navSettings": "Impostazioni",
@@ -207,7 +238,7 @@
   "eisenhowerUrgencyAvg": "Urgenza media",
   "eisenhowerImportanceAvg": "Importanza media",
   "eisenhowerVotesLabel": "Voti:",
-  "eisenhowerNoVotesYet": "Nessun voto ancora raccolto",
+  "eisenhowerNoVotesYet": "Ancora nessun voto raccolto",
   "eisenhowerEditMatrix": "Modifica Matrice",
   "eisenhowerAddActivity": "Aggiungi Attivita",
   "eisenhowerDeleteActivity": "Elimina Attivita",
@@ -301,8 +332,8 @@
       }
     }
   },
-  "eisenhowerVoteSubmit": "VOTA",
-  "eisenhowerVotedSuccess": "Hai votato",
+  "eisenhowerVoteSubmit": "Vota",
+  "eisenhowerVotedSuccess": "Voto inviato con successo!",
   "eisenhowerRevealVotes": "RIVELA VOTI",
   "eisenhowerQuickVote": "Voto Rapido",
   "eisenhowerTeamVote": "Voto Team",
@@ -310,7 +341,6 @@
   "eisenhowerImportance": "IMPORTANZA",
   "eisenhowerUrgencyShort": "U:",
   "eisenhowerImportanceShort": "I:",
-  "eisenhowerNoVotesYet": "Ancora nessun voto raccolto",
   "eisenhowerVoting": "Votazione",
   "eisenhowerVotingInProgress": "VOTAZIONE IN CORSO",
   "eisenhowerWaitingForOthers": "In attesa che tutti votino. Il facilitatore rivelerà i voti.",
@@ -356,8 +386,6 @@
   },
   "eisenhowerAllActivitiesVoted": "Tutte le attività sono state votate!",
   "eisenhowerAlreadyVotedError": "Questa attività è già stata votata. Il facilitatore deve riaprire la votazione per modificarla.",
-  "eisenhowerVoteSubmit": "Vota",
-  "eisenhowerVotedSuccess": "Voto inviato con successo!",
   "eisenhowerYourVote": "Il tuo voto: U={urgency}, I={importance}",
   "@eisenhowerYourVote": {
     "placeholders": {
@@ -602,7 +630,7 @@
   "retroToImproveHint": "Aggiungi un punto da migliorare...",
   "retroActionItemHint": "Aggiungi un action item...",
   "retroSave": "Salva Retrospettiva",
-  "agileEstimate": "Stima",
+  "agileEstimate": "STIMA",
   "agileAssign": "Assegna",
   "agileCardMenuTooltip": "Opzioni (Priorità, Stima, ecc.)",
   "kanbanPolicyHelpTitle": "Policies di Colonna (Regole)",
@@ -702,8 +730,8 @@
   "agileRoleSMDesc": "Facilita il processo e rimuove ostacoli",
   "agileRoleDevTeamDesc": "I membri che sviluppano il prodotto",
   "agileRoleStakeholdersDesc": "Forniscono feedback e requisiti",
-  "agileRoleSRMDesc": "Gestisce le richieste in ingresso",
-  "agileRoleSDMDesc": "Ottimizza il flusso di lavoro",
+  "agileRoleSRMDesc": "Gestisce le richieste in entrata e facilita la prioritarizzazione (sostituisce il Product Owner)",
+  "agileRoleSDMDesc": "Gestisce il flusso di lavoro e facilita il delivery (sostituisce lo Scrum Master)",
   "agileRoleTeamDesc": "Esegue il lavoro rispettando i WIP",
   "agileRoleFlowMasterDesc": "Ottimizza il flusso e facilita",
   "agileRoleTeamHybridDesc": "Cross-funzionale, autoorganizzato",
@@ -760,17 +788,13 @@
   "kanbanPrinciplesTitle": "I Principi Kanban",
   "kanbanPrinciplesContent": "Kanban si basa su principi di cambiamento incrementale e rispetto per i ruoli esistenti.",
   "kanbanPrinciple1": "Visualizza il flusso di lavoro: Rendi visibile tutto il lavoro",
-  "agileItems": "Elementi",
+  "agileItems": "items",
   "agileItemsShort": "elementi",
-  "agileWorkloadAvgItems": "Media Elementi/Persona",
   "agileWorkloadAvgItems": "Media Elementi/Persona",
   "agileKanbanCapacityNote": "La capacità è calcolata su base settimanale (5 giorni lavorativi).",
   "agilePriority": "Priorità",
-  "agileEstimate": "Stima",
   "agileRoleSRM": "Service Request Manager",
-  "agileRoleSRMDesc": "Gestisce le richieste in entrata e facilita la prioritarizzazione (sostituisce il Product Owner)",
   "agileRoleSDM": "Service Delivery Manager",
-  "agileRoleSDMDesc": "Gestisce il flusso di lavoro e facilita il delivery (sostituisce lo Scrum Master)",
   "agileRoleTeamMember": "Membro del Team",
   "agileFrameworkLocked": "Impossibile cambiare framework per progetti con attività esistenti",
   "agileComingSoon": "Prossimamente",
@@ -872,7 +896,7 @@
   "hybridFAQ4Q": "Scrumban è \"meno Agile\" di Scrum puro?",
   "hybridFAQ4A": "No. Agile non significa seguire un framework specifico. Scrumban può essere più Agile perché si adatta al contesto. L'importante è ispezionare e adattare continuamente.",
   "retroNoResults": "Nessun risultato per la ricerca",
-  "agileNoAssignee": "Nessun assegnatario",
+  "agileNoAssignee": "Non assegnato",
   "retroFilterAll": "Tutte",
   "retroFilterActive": "Active",
   "retroFilterCompleted": "Completed",
@@ -941,7 +965,6 @@
   "scrumWorkflowStatusContent": "In Scrum, il ciclo di vita di una storia segue questi stati:\n\n**Product Backlog** (visibile solo nel tab Backlog):\n1. **Backlog**: Dove nascono le idee. La storia non è ancora stata analizzata.\n2. **Refinement**: La storia è in fase di analisi/dettaglio. È un'attività collaborativa di tutto il team (lavoro verso la Definition of Ready).\n3. **Ready**: La storia rispetta la DoR e può essere selezionata allo Sprint Planning. Solo il Product Owner può marcare una storia come Ready.\n\n**Sprint Board** (visibile sulla board durante lo Sprint):\n4. **Da Fare**: Storie 'Ready' aggiunte allo Sprint.\n5. **In Corso**: Lavoro attivo del team.\n6. **In Revisione**: Revisione/Code Review.\n7. **Fatto**: Storia completata e verificata.",
   "kanbanWorkflowStatusContent": "In Kanban, il flusso è continuo:\n\n1. **Refinement**: Colonna dedicata per analizzare le richieste in ingresso.\n2. **Ready**: Code di attesa per il lavoro pronto (pull system).\n3. **Active Board**: Le storie fluiscono attraverso le colonne di lavoro.\n4. **WIP Limits**: Ogni colonna ha un limite per evitare colli di bottiglia.",
   "hybridWorkflowStatusContent": "Scrumban usa un approccio ibrido:\n\n• Puoi usare Sprint per la pianificazione, ma gestire il flusso giornaliero come Kanban.\n• Le storie 'Ready' possono essere tirate (pull) quando c'è capacità, indipendentemente dallo Sprint planning, se il team lo preferisce.",
-
   "contextualHelpButton": "Aiuto",
   "contextualHelpTips": "Suggerimenti",
   "contextualHelpBacklogTitle": "Product Backlog",
@@ -998,7 +1021,6 @@
   "contextualHelpRetroTip1": "Assegna un proprietario chiaro e una scadenza a ogni Action Item",
   "contextualHelpRetroTip2": "Celebra i 'Punti di Forza' nel tab Lessons Learned per costruire su ciò che funziona",
   "contextualHelpRetroTip3": "Usa la 'Quick Form' per digitalizzare i risultati di workshop fisici o riunioni di stato ad alto livello",
-
   "retroStatusCompleted": "Completata",
   "profileIntegrations": "Integrazioni",
   "profileJiraIntegration": "Integrazione Jira",
@@ -1028,6 +1050,17 @@
   "retroUsageStarfish": "Calibrazione: Ideale per scalare gli sforzi (fare di più/meno), non solo stop/start binari.",
   "retroUsageMadSadGlad": "Ideale per check-in emotivi, risolvere conflitti o dopo uno sprint stressante.",
   "retroUsageDAKI": "Decisiva: Ideale per fare pulizia. Focus su decisioni concrete di Eliminare o Aggiungere.",
+  "retroTemplateCustom": "Personalizzato",
+  "retroDescCustom": "Definisci le tue colonne in base alle esigenze del team.",
+  "retroUsageCustom": "Ideale quando i template standard non si adattano alle esigenze specifiche del team.",
+  "collectionRationaleCustom": "Rivedi ogni colonna personalizzata e crea azioni in base alle priorità del team.",
+  "retroCustomAddColumn": "Aggiungi Colonna",
+  "retroCustomRemoveColumn": "Rimuovi",
+  "retroCustomColumnTitle": "Titolo Colonna",
+  "retroCustomColumnDesc": "Descrizione (opzionale)",
+  "retroCustomMinColumns": "Sono necessarie almeno 2 colonne",
+  "retroCustomMaxColumns": "Massimo 8 colonne consentite",
+  "retroCustomConfigureColumns": "Configura Colonne",
   "retroIcebreakerSentiment": "Voto Sentiment",
   "retroIcebreakerOneWord": "Una Parola",
   "retroIcebreakerWeather": "Meteo",
@@ -1214,7 +1247,6 @@
   "agileInformation": "Informazioni",
   "agileBusinessValue": "Business Value",
   "agileAssignee": "Assegnatario",
-  "agileNoAssignee": "Non assegnato",
   "agileCreatedBy": "Creato da",
   "agileCreatedAt": "Creato il",
   "agileStartedAt": "Iniziato il",
@@ -1241,13 +1273,17 @@
   "agileSprintOverdue": "Scaduto da {days} giorni",
   "@agileSprintOverdue": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "agileSprintDaysWarning": "{days} giorni rimanenti",
   "@agileSprintDaysWarning": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "agileStoryDisposition": "Disposizione Stories",
@@ -1819,6 +1855,9 @@
   "errorRevealingVotes": "Errore reveal",
   "errorSavingEstimate": "Errore salvataggio stima",
   "errorSkipping": "Errore skip",
+  "genericWarningTitle": "Attenzione",
+  "skipRevealedStoryWarning": "Questa storia è stata rivelata e ci sono dei voti. Sei sicuro di volerla saltare perdendo i voti correnti?",
+  "skipRevealedStoryConfirm": "Sì, salta",
   "retroIcebreakerTitle": "Icebreaker: Morale del Team",
   "retroIcebreakerQuestion": "Come ti sei sentito riguardo a questo sprint?",
   "retroParticipantsVoted": "{count} partecipanti hanno votato",
@@ -2467,7 +2506,6 @@
   "profileLogoutDialogTitle": "Logout",
   "profileLogoutDialogConfirm": "Sei sicuro di voler uscire?",
   "agileAddToSprint": "Aggiungi a Sprint",
-  "agileEstimate": "STIMA",
   "agileEstimated": "Stimata",
   "agilePoints": "pt",
   "agilePointsValue": "{points} pt",
@@ -2569,7 +2607,7 @@
   "kanbanPolicyUnitDays": "Giorni",
   "kanbanPolicyHelpConfigurable": "Ogni colonna può ora avere limiti temporali e di WIP individuale personalizzati.",
   "kanbanPolicyMovingTip": "Puoi procedere se ritieni che sia un'eccezione valida.",
-  "kanbanMoveAnyway": "Sposta comunque",
+  "kanbanMoveAnyway": "Sposta Comunque",
   "backlogEmpty": "Backlog vuoto",
   "backlogAddFirstStory": "Aggiungi la prima User Story",
   "kanbanWipExceeded": "WIP Limit superato! Completa alcuni item prima di iniziarne di nuovi.",
@@ -2658,7 +2696,6 @@
     }
   },
   "kanbanSuggestion": "Suggerimento: completa o sposta altri item prima di iniziarne di nuovi per mantenere un flusso di lavoro ottimale.",
-  "kanbanMoveAnyway": "Sposta Comunque",
   "kanbanWipExplanationTitle": "Cosa sono i WIP Limits?",
   "kanbanWipWhat": "Cosa sono i WIP Limits?",
   "kanbanWipWhatDesc": "WIP (Work In Progress) Limits sono limiti sul numero di item che possono essere in una colonna contemporaneamente.",
@@ -2726,13 +2763,17 @@
   "sprintDeletePlanningConfirm": "Vuoi eliminare lo sprint \"{sprintName}\"? Le stories associate torneranno nel backlog.",
   "@sprintDeletePlanningConfirm": {
     "placeholders": {
-      "sprintName": {"type": "String"}
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "sprintDeletedSuccess": "Sprint \"{sprintName}\" eliminato. Le stories sono state spostate nel backlog.",
   "@sprintDeletedSuccess": {
     "placeholders": {
-      "sprintName": {"type": "String"}
+      "sprintName": {
+        "type": "String"
+      }
     }
   },
   "sprintEditTitle": "Modifica Sprint",
@@ -4489,7 +4530,7 @@
   "agileUnassigned": "Non assegnato",
   "agileAssignableLater": "Assegnabile dopo la creazione",
   "agileAddToTeam": "Aggiungi al Team",
-  "agileAllMembersAssigned": "Tutti i partecipanti sono già assegnati a un ruolo.",
+  "agileAllMembersAssigned": "Tutti i membri disponibili sono già assegnati",
   "agileClose": "Chiudi",
   "agileProjectNameLabel": "Nome Progetto *",
   "agileProjectNameHint": "Es: Fashion PMO v2",
@@ -5043,7 +5084,6 @@
   },
   "agileItemsCompletedLabel": "Elementi Completati",
   "agileDaysRemainingSuffix": "giorni rimanenti",
-  "agileItems": "items",
   "agileItemsMore": "altri items",
   "wipAgeTitle": "Età Work Items",
   "wipAgeEmpty": "Nessun item in lavorazione",
@@ -5358,16 +5398,11 @@
   "agileHelpStep3Title": "Lavora sulla Board",
   "agileHelpStep3Desc": "Usa il tab Board per visualizzare il progresso. Trascina le card per aggiornare lo stato.",
   "agileHelpStep4Title": "Sincronizza e Chiudi",
-  "agileHelpStep4Title": "Sincronizza e Chiudi",
   "agileHelpStep4Desc": "Se Jira è collegato, gli stati si aggiornano in automatico. Usa 'Completa Sprint' per terminare.",
   "actionNext": "Avanti",
   "actionBack": "Indietro",
   "actionFinish": "Fine",
   "agileStartSprintHint": "Avvia Sprint per vedere le storie attive",
-  "guideToolsTitle": "Strumenti & Integrazioni",
-  "guideJiraContent": "L'app si integra con Jira per mantenere sincronizzato il lavoro.\n\nFunzionalità principali:\n• **Import**: Le storie create in Jira appaiono qui.\n• **Link**: Cliccando sull'ID della storia (es. PROJ-123) si apre direttamente Jira.\n• **Sync**: Lo stato si aggiorna bidirezionalmente (se configurato).",
-  "guideWorkflowTitle": "Workflow & Qualità",
-
   "workflowTitle": "Flusso di Lavoro",
   "workflowShowButton": "Mostra Flusso",
   "workflowDiagramTitle": "Diagramma Flusso Stati",
@@ -5385,14 +5420,23 @@
   "agileTeam": "Team",
   "agileRoleDevelopmentTeam": "Development Team",
   "agileRoleDevelopmentTeamDesc": "Membri che eseguono il lavoro",
-  "agileAddToTeam": "Aggiungi al Team",
-  "agileAllMembersAssigned": "Tutti i membri disponibili sono già assegnati",
-  "agileClose": "Chiudi",
-
   "feedbackTitle": "Come ti trovi con Keisen?",
   "feedbackSubtitle": "La tua opinione ci aiuta a migliorare",
   "feedbackCommentHint": "Lascia un commento (opzionale)",
-  "feedbackSubmit": "Invia",
   "feedbackDismiss": "Non ora",
-  "feedbackThankYou": "Grazie per il tuo feedback!"
+  "feedbackThankYou": "Grazie per il tuo feedback!",
+  "estimationThreePointFormula": "Formula: (O + 4M + P) / 6",
+  "estimationThreePointOptHint": "Best case",
+  "estimationThreePointRealHint": "Most likely",
+  "estimationThreePointPessHint": "Worst case",
+  "estimationThreePointReqError": "Tutti i campi sono obbligatori",
+  "estimationThreePointInvalidError": "Valori non validi",
+  "estimationThreePointGuideTitle": "Guida:",
+  "estimationThreePointGuideText": "O: Stima nel caso migliore (tutto va bene)\nM: Stima piu' probabile (condizioni normali)\nP: Stima nel caso peggiore (imprevisti)",
+  "estimationThreePointVarPERT": "PERT",
+  "estimationThreePointVarDevStd": "Dev. Std",
+  "estimationThreePointVarRange": "Range",
+  "exportCsv": "Esporta CSV",
+  "exportCsvSelected": "Esportazione CSV avviata...",
+  "errorExportingCsv": "Errore durante l'esportazione CSV"
 }

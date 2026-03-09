@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/eisenhower_matrix_model.dart';
 import '../../models/eisenhower_activity_model.dart';
+import '../../models/eisenhower_participant_model.dart';
 import '../../models/raci_models.dart';
 import '../../services/eisenhower_firestore_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget per la gestione della Matrice RACI
 class RaciMatrixWidget extends StatefulWidget {
@@ -231,12 +233,19 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  col.name,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textPrimaryColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                if (col.type == RaciColumnType.person && col.referenceId != null)
+                  UserDisplayName(
+                    email: col.referenceId!,
+                    fallback: col.name,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textPrimaryColor),
+                  )
+                else
+                  Text(
+                    col.name,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textPrimaryColor),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 Text(
                   col.type.name.toUpperCase(),
                   style: TextStyle(fontSize: 9, color: context.textSecondaryColor),
@@ -450,12 +459,12 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
   }
 
   Future<void> _showAddColumnDialog() async {
-     final participantNames = widget.matrix.participants.values.map((p) => p.name).toList();
+     final participants = widget.matrix.participants.values.toList();
 
      final result = await showDialog<RaciColumn>(
        context: context,
        builder: (context) => _AddRaciColumnDialog(
-         availableParticipants: participantNames,
+         availableParticipants: participants,
          l10n: AppLocalizations.of(context)!,
        ),
      );
@@ -535,7 +544,7 @@ class _RaciMatrixWidgetState extends State<RaciMatrixWidget> {
 }
 
 class _AddRaciColumnDialog extends StatefulWidget {
-  final List<String> availableParticipants;
+  final List<EisenhowerParticipantModel> availableParticipants;
   final AppLocalizations l10n;
   const _AddRaciColumnDialog({required this.availableParticipants, required this.l10n});
 
@@ -569,7 +578,10 @@ class _AddRaciColumnDialogState extends State<_AddRaciColumnDialog> {
             DropdownButtonFormField<String>(
               value: _selectedParticipant,
               hint: Text(widget.l10n.raciSelectParticipant),
-              items: widget.availableParticipants.map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
+              items: widget.availableParticipants.map((p) => DropdownMenuItem(
+                value: EisenhowerParticipantModel.unescapeEmail(p.email),
+                child: UserDisplayName(email: EisenhowerParticipantModel.unescapeEmail(p.email), fallback: p.name),
+              )).toList(),
               onChanged: (v) => setState(() => _selectedParticipant = v),
             )
           else

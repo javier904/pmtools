@@ -319,6 +319,64 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get feedbackReportBug => 'Informar un error';
+
+  @override
+  String get feedbackRequestFeature => 'Solicitar una función';
+
+  @override
+  String get feedbackHistory => 'Historial de comentarios';
+
+  @override
+  String get feedbackTypeBug => 'Informe de error';
+
+  @override
+  String get feedbackTypeFeature => 'Solicitud de función';
+
+  @override
+  String get feedbackSubject => 'Asunto';
+
+  @override
+  String get feedbackSubjectHint => 'Describa brevemente el problema...';
+
+  @override
+  String get feedbackDescription => 'Descripción';
+
+  @override
+  String get feedbackDescriptionHint => 'Proporcione más detalles aquí...';
+
+  @override
+  String get feedbackConsent =>
+      'Autorizo el procesamiento de mis datos para rastrear y registrar esta solicitud de acuerdo con la Política de privacidad.';
+
+  @override
+  String get feedbackSubmit => 'Enviar';
+
+  @override
+  String get feedbackSuccess => '¡Solicitud enviada!';
+
+  @override
+  String get feedbackError => 'Error al enviar la solicitud';
+
+  @override
+  String get feedbackStatusNew => 'Nuevo';
+
+  @override
+  String get feedbackStatusInProgress => 'En curso';
+
+  @override
+  String get feedbackStatusResolved => 'Resuelto';
+
+  @override
+  String get feedbackStatusClosed => 'Cerrado';
+
+  @override
+  String get feedbackNoRequests => 'No se encontraron solicitudes';
+
+  @override
+  String get feedbackAdminTitle => 'Administración de comentarios';
+
+  @override
   String get navHome => 'Inicio';
 
   @override
@@ -2510,6 +2568,42 @@ class AppLocalizationsEs extends AppLocalizations {
       'Decisiva: Mejor para limpieza. Foco en decisiones concretas.';
 
   @override
+  String get retroTemplateCustom => 'Personalizzato';
+
+  @override
+  String get retroDescCustom =>
+      'Definisci le tue colonne in base alle esigenze del team.';
+
+  @override
+  String get retroUsageCustom =>
+      'Ideale quando i template standard non si adattano alle esigenze specifiche del team.';
+
+  @override
+  String get collectionRationaleCustom =>
+      'Rivedi ogni colonna personalizzata e crea azioni in base alle priorità del team.';
+
+  @override
+  String get retroCustomAddColumn => 'Aggiungi Colonna';
+
+  @override
+  String get retroCustomRemoveColumn => 'Rimuovi';
+
+  @override
+  String get retroCustomColumnTitle => 'Titolo Colonna';
+
+  @override
+  String get retroCustomColumnDesc => 'Descrizione (opzionale)';
+
+  @override
+  String get retroCustomMinColumns => 'Sono necessarie almeno 2 colonne';
+
+  @override
+  String get retroCustomMaxColumns => 'Massimo 8 colonne consentite';
+
+  @override
+  String get retroCustomConfigureColumns => 'Configura Colonne';
+
+  @override
   String get retroIcebreakerSentiment => 'Voto de Sentimiento';
 
   @override
@@ -4143,6 +4237,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorSkipping => 'Error al omitir';
+
+  @override
+  String get genericWarningTitle => 'Advertencia';
+
+  @override
+  String get skipRevealedStoryWarning =>
+      'Esta historia ha sido revelada y contiene votos. ¿Estás seguro de que quieres omitirla y perder los votos actuales?';
+
+  @override
+  String get skipRevealedStoryConfirm => 'Sí, omitir';
 
   @override
   String get retroIcebreakerTitle => 'Rompehielos: Moral del Equipo';
@@ -12075,11 +12179,51 @@ class AppLocalizationsEs extends AppLocalizations {
   String get feedbackCommentHint => 'Deja un comentario (opcional)';
 
   @override
-  String get feedbackSubmit => 'Enviar';
-
-  @override
   String get feedbackDismiss => 'Ahora no';
 
   @override
   String get feedbackThankYou => '¡Gracias por tu opinión!';
+
+  @override
+  String get estimationThreePointFormula => 'Formula: (O + 4M + P) / 6';
+
+  @override
+  String get estimationThreePointOptHint => 'Best case';
+
+  @override
+  String get estimationThreePointRealHint => 'Most likely';
+
+  @override
+  String get estimationThreePointPessHint => 'Worst case';
+
+  @override
+  String get estimationThreePointReqError => 'All fields are required';
+
+  @override
+  String get estimationThreePointInvalidError => 'Invalid values';
+
+  @override
+  String get estimationThreePointGuideTitle => 'Guide:';
+
+  @override
+  String get estimationThreePointGuideText =>
+      'O: Best-case estimate (everything goes right)\nM: Most likely estimate (normal conditions)\nP: Worst-case estimate (unforeseen events)';
+
+  @override
+  String get estimationThreePointVarPERT => 'PERT';
+
+  @override
+  String get estimationThreePointVarDevStd => 'Std. Dev';
+
+  @override
+  String get estimationThreePointVarRange => 'Range';
+
+  @override
+  String get exportCsv => 'Exportar CSV';
+
+  @override
+  String get exportCsvSelected => 'Exportación CSV iniciada...';
+
+  @override
+  String get errorExportingCsv => 'Error al exportar CSV';
 }

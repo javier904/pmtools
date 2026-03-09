@@ -18,6 +18,7 @@ import '../../widgets/smart_todo/export_to_estimation_dialog.dart';
 import '../../widgets/smart_todo/export_to_eisenhower_dialog.dart';
 import '../../widgets/smart_todo/export_to_user_stories_dialog.dart';
 import '../../widgets/estimation_room/session_form_dialog.dart';
+import '../../widgets/user_display_name_widget.dart';
 
 import '../../services/smart_todo_csv_export_service.dart';
 import '../../services/agile_firestore_service.dart';
@@ -1322,10 +1323,11 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                                      ),
                                      const SizedBox(width: 12),
                                      Expanded(
-                                       child: Text(
-                                         displayName, 
-                                         overflow: TextOverflow.ellipsis,
+                                       child: UserDisplayName(
+                                         email: p.email,
+                                         fallback: displayName,
                                          style: TextStyle(color: textColor),
+                                         overflow: true,
                                        )
                                      ),
                                    ],

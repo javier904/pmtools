@@ -8,6 +8,7 @@ import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../services/auth_service.dart';
+import '../user_display_name_widget.dart';
 import '../../l10n/app_localizations.dart';
 import '../../themes/app_theme.dart';
 
@@ -411,7 +412,12 @@ class _TodoTaskDialogState extends State<TodoTaskDialog> {
                                      spacing: 4,
                                      runSpacing: 4,
                                      children: _assignedTo.map((e) => Chip(
-                                       label: Text(e.split('@')[0], style: TextStyle(fontSize: 10, color: dialogTextColor)),
+                                       label: UserDisplayName(
+                                         email: e, 
+                                         fallback: e.split('@')[0], 
+                                         style: TextStyle(fontSize: 10, color: dialogTextColor),
+                                         overflow: true,
+                                       ),
                                        avatar: CircleAvatar(child: Text(e[0].toUpperCase(), style: const TextStyle(fontSize: 8))),
                                        padding: EdgeInsets.zero,
                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

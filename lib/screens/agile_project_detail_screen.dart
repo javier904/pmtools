@@ -28,6 +28,7 @@ import '../widgets/retrospective/retro_tab_sections_widget.dart';
 import '../widgets/retrospective/retro_summary_dialog.dart';
 import '../widgets/agile/sprint_widgets.dart';
 import '../widgets/agile/kanban_board_widget.dart';
+import '../widgets/user_display_name_widget.dart';
 import '../widgets/agile/contextual_help_button.dart';
 import '../widgets/agile/agile_board_widget.dart';
 import '../widgets/agile/team_list_widget.dart';
@@ -3277,7 +3278,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                                   );
                                 });
                               },
-                              title: Text(attendee.name),
+                              title: UserDisplayName(email: attendee.email, fallback: attendee.name),
                               subtitle: Text('${attendee.roleIcon} ${attendee.roleDisplayName}'),
                               secondary: CircleAvatar(
                                 child: Text(attendee.name.isNotEmpty ? attendee.name[0].toUpperCase() : '?'),

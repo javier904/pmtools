@@ -4,6 +4,7 @@ import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../services/smart_todo_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/user_profile_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../themes/app_colors.dart';
 import 'smart_todo_detail_screen.dart';
@@ -731,43 +732,54 @@ class _SmartTodoDashboardState extends State<SmartTodoDashboard> {
 
   /// Costruisce la statistica partecipanti con tooltip dettagliato (owner + partecipanti)
   Widget _buildParticipantListStat(TodoListModel list, AppLocalizations? l10n) {
-    final participantLines = <String>[];
+    Future<String> buildTooltipText() async {
+      final participantLines = <String>[];
+      final userProfileService = UserProfileService();
+      
+      // Owner
+      final ownerParticipant = list.participants[list.ownerId];
+      final fallbackOwnerName = ownerParticipant?.displayName?.isNotEmpty == true
+          ? ownerParticipant!.displayName!
+          : list.ownerId;
+      final resolvedOwnerName = await userProfileService.tryGetNameByEmail(list.ownerId) ?? fallbackOwnerName;
+      participantLines.add('$resolvedOwnerName - 👑 Owner');
 
-    // Owner
-    final ownerParticipant = list.participants[list.ownerId];
-    final ownerName = ownerParticipant?.displayName?.isNotEmpty == true
-        ? ownerParticipant!.displayName!
-        : list.ownerId;
-    participantLines.add('$ownerName - 👑 Owner');
+      // Partecipanti (non-owner)
+      for (final entry in list.participants.entries) {
+        if (entry.key == list.ownerId) continue;
+        final fallbackName = entry.value.displayName?.isNotEmpty == true
+            ? entry.value.displayName!
+            : entry.key.split('@').first;
+        final resolvedName = await userProfileService.tryGetNameByEmail(entry.key) ?? fallbackName;
+        participantLines.add('$resolvedName - 👥 ${l10n?.smartTodoParticipantRole ?? 'Participant'}');
+      }
 
-    // Partecipanti (non-owner)
-    for (final entry in list.participants.entries) {
-      if (entry.key == list.ownerId) continue;
-      final name = entry.value.displayName?.isNotEmpty == true
-          ? entry.value.displayName!
-          : entry.value.email;
-      participantLines.add('$name - 👥 ${l10n?.smartTodoParticipantRole ?? 'Participant'}');
+      return '${l10n?.participants ?? 'Participants'}:\n${participantLines.join('\n')}';
     }
 
-    final tooltipText = '${l10n?.participants ?? 'Participants'}:\n${participantLines.join('\n')}';
-
-    return Tooltip(
-      message: tooltipText,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.people, size: 18, color: Colors.grey),
-          const SizedBox(width: 5),
-          Text(
-            '${list.participants.length}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
-            ),
+    return FutureBuilder<String>(
+      future: buildTooltipText(),
+      builder: (context, snapshot) {
+        final tooltipText = snapshot.data ?? '${l10n?.participants ?? 'Participants'}...';
+        return Tooltip(
+          message: tooltipText,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.people, size: 18, color: Colors.grey),
+              const SizedBox(width: 5),
+              Text(
+                '${list.participants.length}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

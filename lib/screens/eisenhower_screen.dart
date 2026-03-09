@@ -2176,7 +2176,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(p.name, style: const TextStyle(fontSize: 11)),
+                        UserDisplayName(
+                          email: EisenhowerParticipantModel.unescapeEmail(email),
+                          fallback: p.name,
+                          style: const TextStyle(fontSize: 11),
+                        ),
                         if (isFacilitator) ...[
                           const SizedBox(width: 4),
                           const Icon(Icons.star, size: 12, color: Colors.amber),

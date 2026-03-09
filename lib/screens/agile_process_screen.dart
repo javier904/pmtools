@@ -17,6 +17,7 @@ import '../l10n/app_localizations.dart';
 import '../widgets/agile/agile_project_form_dialog.dart';
 import '../services/subscription/subscription_limits_service.dart';
 import '../widgets/subscription/limit_reached_dialog.dart';
+import '../widgets/user_display_name_widget.dart';
 
 /// Screen principale per la gestione dei Progetti Agile
 ///
@@ -1739,8 +1740,9 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              p.name,
+                            UserDisplayName(
+                              email: p.email,
+                              fallback: p.name,
                               style: const TextStyle(fontWeight: FontWeight.w500),
                             ),
                             Text(
@@ -1888,7 +1890,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                     ),
                   ),
                 ),
-                label: Text(member.name),
+                label: UserDisplayName(email: member.email, fallback: member.name),
                 deleteIcon: const Icon(Icons.close, size: 16),
                 onDeleted: () {
                   setState(() {
@@ -1947,7 +1949,7 @@ class _ProjectSettingsDialogState extends State<_ProjectSettingsDialog> {
                     ),
                   ),
                 ),
-                title: Text(participant.name),
+                title: UserDisplayName(email: participant.email, fallback: participant.name),
                 subtitle: Text(
                   participant.email,
                   style: TextStyle(fontSize: 12, color: context.textMutedColor),

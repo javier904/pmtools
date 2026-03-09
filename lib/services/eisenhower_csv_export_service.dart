@@ -2,13 +2,16 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../models/eisenhower_matrix_model.dart';
 import '../models/eisenhower_activity_model.dart';
+import '../models/eisenhower_matrix_model.dart';
+import 'user_profile_service.dart';
 
 class EisenhowerCsvExportService {
   static final EisenhowerCsvExportService _instance = EisenhowerCsvExportService._internal();
   factory EisenhowerCsvExportService() => _instance;
   EisenhowerCsvExportService._internal();
+
+  final UserProfileService _userProfileService = UserProfileService();
 
   /// Exports All Data (Summary + Votes + RACI) to a single CSV
   Future<void> exportAllToCsv(EisenhowerMatrixModel matrix, List<EisenhowerActivityModel> activities) async {
@@ -21,7 +24,8 @@ class EisenhowerCsvExportService {
 
     // Votes
     rows.add(['=== VOTES ===']);
-    rows.addAll(_buildVotesRows(matrix, activities));
+    final namesMap = await _resolveVoterEmails(activities);
+    rows.addAll(_buildVotesRows(matrix, activities, namesMap));
     rows.add([]); // Spacing
 
     // RACI
@@ -39,7 +43,8 @@ class EisenhowerCsvExportService {
 
   /// Exports Votes to CSV
   Future<void> exportVotesToCsv(EisenhowerMatrixModel matrix, List<EisenhowerActivityModel> activities) async {
-    final rows = _buildVotesRows(matrix, activities);
+    final namesMap = await _resolveVoterEmails(activities);
+    final rows = _buildVotesRows(matrix, activities, namesMap);
     await _downloadCsv(rows, 'Eisenhower_Votes_${matrix.title.replaceAll(' ', '_')}');
   }
 
@@ -88,7 +93,11 @@ class EisenhowerCsvExportService {
     return rows;
   }
 
-  List<List<dynamic>> _buildVotesRows(EisenhowerMatrixModel matrix, List<EisenhowerActivityModel> activities) {
+  List<List<dynamic>> _buildVotesRows(
+    EisenhowerMatrixModel matrix,
+    List<EisenhowerActivityModel> activities,
+    Map<String, String> namesMap,
+  ) {
     final headers = [
       'Attività',
       'Partecipante',
@@ -102,7 +111,7 @@ class EisenhowerCsvExportService {
       for (final entry in activity.votes.entries) {
         rows.add([
           activity.title,
-          entry.key, // email or id
+          namesMap[entry.key] ?? entry.key, // email or id
           entry.value.urgency,
           entry.value.importance,
         ]);
@@ -138,6 +147,19 @@ class EisenhowerCsvExportService {
     return rows;
   }
 
+  Future<Map<String, String>> _resolveVoterEmails(List<EisenhowerActivityModel> activities) async {
+    final Set<String> emails = {};
+    for (final a in activities) {
+      emails.addAll(a.votes.keys);
+    }
+    
+    final Map<String, String> results = {};
+    for (final email in emails) {
+      results[email] = await _userProfileService.getNameByEmail(email);
+    }
+    return results;
+  }
+
   Future<void> _downloadCsv(List<List<dynamic>> rows, String filename) async {
     String csvContent = const ListToCsvConverter().convert(rows);
 
@@ -145,7 +167,7 @@ class EisenhowerCsvExportService {
       final bytes = utf8.encode('\uFEFF$csvContent');
       final blob = html.Blob([bytes]);
       final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
+      html.AnchorElement(href: url)
         ..setAttribute("download", "$filename.csv")
         ..click();
       html.Url.revokeObjectUrl(url);

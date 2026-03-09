@@ -759,7 +759,7 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
                     builder: (context, constraints) {
                       final isMobile = constraints.maxWidth < 800;
                       
-                      final guideWidget = isFacilitator && retro.currentPhase == RetroPhase.discuss
+                      final guideWidget = isFacilitator && retro.currentPhase == RetroPhase.discuss && retro.template != RetroTemplate.custom
                           ? Container(
                               width: isMobile ? double.infinity : 300, 
                               margin: EdgeInsets.only(
@@ -948,6 +948,18 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
     );
   }
 
+  IconData _getSentimentIcon(double score) {
+    if (score >= 4.0) return Icons.sentiment_very_satisfied;
+    if (score >= 3.0) return Icons.sentiment_neutral;
+    return Icons.sentiment_dissatisfied;
+  }
+
+  Color _getSentimentColor(double score) {
+    if (score >= 4.0) return Colors.green;
+    if (score >= 3.0) return Colors.orange;
+    return Colors.red;
+  }
+
   Widget _buildCompletionDashboard(RetrospectiveModel retro, bool isFacilitator) {
     final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
@@ -1015,9 +1027,9 @@ class _RetroBoardScreenState extends State<RetroBoardScreen> with WidgetsBinding
               ),
               _buildSummaryCard(
                 'Sentiment', 
-                retro.averageSentiment != null ? retro.averageSentiment!.toStringAsFixed(1) : '-', 
-                Icons.mood, 
-                Colors.orange
+                retro.averageSentiment != null ? '${retro.averageSentiment!.toStringAsFixed(1)} / 5' : '-', 
+                retro.averageSentiment != null ? _getSentimentIcon(retro.averageSentiment!) : Icons.sentiment_neutral_outlined, 
+                retro.averageSentiment != null ? _getSentimentColor(retro.averageSentiment!) : Colors.grey
               ),
               _buildSummaryCard(
                 'Action Items', 

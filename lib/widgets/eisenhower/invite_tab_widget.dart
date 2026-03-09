@@ -7,6 +7,7 @@ import '../../services/invite_aggregator_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../themes/app_colors.dart';
 import '../../themes/app_theme.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget per la tab degli inviti nella schermata Eisenhower
 ///
@@ -415,10 +416,10 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  participant.email,
+                child: UserDisplayName(
+                  email: participant.email,
+                  fallback: participant.name,
                   style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
@@ -465,13 +466,6 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
                   ],
                 ),
               ),
-              if (participant.name.isNotEmpty) ...[
-                const SizedBox(width: 8),
-                Text(
-                  participant.name,
-                  style: TextStyle(fontSize: 11, color: context.textMutedColor),
-                ),
-              ],
             ],
           ),
         ],
@@ -500,10 +494,9 @@ class _EisenhowerInviteTabWidgetState extends State<EisenhowerInviteTabWidget> {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  invite.email,
+                child: UserDisplayName(
+                  email: invite.email,
                   style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               // Role badge

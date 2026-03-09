@@ -181,6 +181,93 @@
           "@type": "Answer",
           "text": "Да, Keisen использует инфраструктуру Firebase (Google Cloud) с безопасностью корпоративного уровня. Аутентификация через Google или e-mail. Соответствует GDPR."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "Как связаны инструменты между собой?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Инструменты Keisen образуют единый Agile-воркфлоу: собирайте задачи в Smart Todo, приоритизируйте в Матрице Эйзенхауэра, оценивайте в Estimation Room, выполняйте спринты в Agile Process Manager и улучшайте процессы на Ретроспективе. Задачи можно переносить между инструментами."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Keisen работает на мобильных устройствах и планшетах?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да, Keisen — это веб-приложение с адаптивным интерфейсом. Оно работает в любом современном браузере на смартфонах, планшетах и компьютерах без установки."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как пригласить команду в проект?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "В каждом инструменте есть кнопка приглашения. Введите e-mail участника и выберите роль (Владелец, Редактор, Читатель). Приглашенный получит ссылку и сможет присоединиться одним кликом. Тариф Free позволяет до 10 приглашений на проект."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что входит в бесплатный тариф?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Бесплатный тариф включает до 5 проектов в каждом инструменте, до 50 задач на проект и до 10 приглашений. Все 5 инструментов доступны без ограничения по времени, включая аналитику CFD, burndown-графики и историю изменений."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Можно ли экспортировать данные из Keisen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да, Keisen поддерживает экспорт в Google Sheets с форматированием. Экспортируются бэклог, спринты, команда, ретроспективы и метрики. Данные остаются на вашем Google Drive."
+        }
+      }
+    ]
+  }
+  </script>
+
+    <!-- JSON-LD: HowTo -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Как использовать Keisen для Agile-управления проектами",
+    "description": "Пошаговое руководство по Agile-воркфлоу в Keisen: от сбора задач до непрерывного улучшения.",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Собрать задачи",
+        "text": "Создайте задачи и user stories в Smart Todo. Организуйте их на Kanban-доске с настраиваемыми колонками и лимитами WIP.",
+        "url": "https://keisenapp.com/ru/smart-todo"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Приоритизировать",
+        "text": "Расставьте приоритеты с помощью Матрицы Эйзенхауэра. Распределите задачи по 4 квадрантам срочности и важности с командным голосованием.",
+        "url": "https://keisenapp.com/ru/eisenhower"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Оценить сложность",
+        "text": "Оцените трудоемкость задач в Estimation Room. Используйте Planning Poker, Fibonacci, T-Shirt или PERT для командного консенсуса.",
+        "url": "https://keisenapp.com/ru/estimation-room"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Выполнить спринт",
+        "text": "Запустите спринт в Agile Process Manager. Отслеживайте прогресс с помощью burndown-графиков, velocity и Kanban-доски.",
+        "url": "https://keisenapp.com/ru/agile-process"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Улучшить процесс",
+        "text": "Проведите Ретроспективу с командой. Выберите один из 6 шаблонов, соберите обратную связь и определите экшн-итемы для следующей итерации.",
+        "url": "https://keisenapp.com/ru/retrospective-list"
       }
     ]
   }
@@ -254,7 +341,16 @@
                 </div>
             </section>
 
-            <section class="highlights">
+            <nav class="toc" aria-label="Содержание страницы">
+          <a href="#highlights">Почему Keisen</a>
+          <a href="#screenshots">Скриншоты</a>
+          <a href="#tools">5 Инструментов</a>
+          <a href="#how-it-works">Как это работает</a>
+          <a href="#features">Возможности</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+            <section id="highlights" class="highlights">
                 <div class="container">
                     <h2>Почему команды выбирают Keisen</h2>
                     <div class="highlights-grid">
@@ -295,7 +391,55 @@
                 </div>
             </section>
 
-            <section class="templates-detail">
+            <section id="screenshots" class="screenshots-section" style="padding:48px 24px 0;">
+                <div class="container">
+                    <h2>Keisen в действии</h2>
+                    <div class="screenshots-grid">
+                        <figure>
+                            <picture>
+                                <img src="../screenshots/eisenhower-quadrants.webp"
+                                    alt="Матрица Эйзенхауэра с 4 квадрантами приоритизации задач по срочности и важности в Keisen"
+                                    width="640" height="360" loading="lazy">
+                            </picture>
+                            <figcaption>Матрица Эйзенхауэра — приоритизация по 4 квадрантам</figcaption>
+                        </figure>
+                        <figure>
+                            <picture>
+                                <img src="../screenshots/estimation-voting.webp"
+                                    alt="Estimation Room: сессия Planning Poker с голосованием команды в реальном времени в Keisen"
+                                    width="640" height="360" loading="lazy">
+                            </picture>
+                            <figcaption>Estimation Room — Planning Poker с голосованием в реальном времени</figcaption>
+                        </figure>
+                        <figure>
+                            <picture>
+                                <img src="../screenshots/estimation-statistics.webp"
+                                    alt="Статистика оценок: средние значения, разброс голосов и консенсус команды в Keisen"
+                                    width="640" height="360" loading="lazy">
+                            </picture>
+                            <figcaption>Estimation Room — статистика и консенсус команды</figcaption>
+                        </figure>
+                        <figure>
+                            <picture>
+                                <img src="../screenshots/retro-board.webp"
+                                    alt="Доска ретроспективы с шаблоном Start Stop Continue и экшн-итемами в Keisen"
+                                    width="640" height="360" loading="lazy">
+                            </picture>
+                            <figcaption>Ретроспектива — доска с шаблонами и экшн-итемами</figcaption>
+                        </figure>
+                        <figure>
+                            <picture>
+                                <img src="../screenshots/eisenhower-scatter.webp"
+                                    alt="Scatter-диаграмма Матрицы Эйзенхауэра для визуализации распределения задач в Keisen"
+                                    width="640" height="360" loading="lazy">
+                            </picture>
+                            <figcaption>Матрица Эйзенхауэра — scatter-диаграмма распределения</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tools" class="templates-detail">
                 <div class="container">
                     <h2>Пять инструментов, одна платформа</h2>
                     <div class="templates-grid">
@@ -341,33 +485,33 @@
                 </div>
             </section>
 
-            <section class="integrations-section">
+            <section id="how-it-works" class="integrations-section">
                 <div class="container">
                     <h2>Интегрированный Agile-воркфлоу</h2>
                     <p>Все инструменты работают сообща в цикле непрерывного улучшения.</p>
                     <div class="integration-steps">
-                        <span class="step-chip">📋 Сбор</span>
+                        <a class="step-chip" href="/ru/smart-todo">📋 Сбор</a>
                         <span class="step-arrow">→</span>
-                        <span class="step-chip">🎯 Приоритет</span>
+                        <a class="step-chip" href="/ru/eisenhower">🎯 Приоритет</a>
                         <span class="step-arrow">→</span>
-                        <span class="step-chip">🃏 Оценка</span>
+                        <a class="step-chip" href="/ru/estimation-room">🃏 Оценка</a>
                         <span class="step-arrow">→</span>
-                        <span class="step-chip">🔄 Исполнение</span>
+                        <a class="step-chip" href="/ru/agile-process">🔄 Исполнение</a>
                         <span class="step-arrow">→</span>
-                        <span class="step-chip">💬 Улучшение (Kaizen)</span>
+                        <a class="step-chip" href="/ru/retrospective-list">💬 Улучшение (Kaizen)</a>
                     </div>
                 </div>
             </section>
 
-            <section class="features-detail" style="padding:64px 24px;">
+            <section id="features" class="features-detail" style="padding:64px 24px;">
                 <div class="container">
                     <h2>Возможности платформы</h2>
                     <ul class="features-list">
-                        <li><strong>Kanban-доска</strong> с лимитами WIP для оптимизации потока</li>
-                        <li><strong>Матрица Эйзенхауэра</strong> с командным голосованием</li>
-                        <li><strong>7 методов оценки</strong> с автоматическим поиском консенсуса</li>
-                        <li><strong>Управление спринтами</strong> с графиками burndown и velocity</li>
-                        <li><strong>6 шаблонов ретроспективы</strong> с пошаговой фасилитацией</li>
+                        <li><a href="/ru/smart-todo" style="text-decoration:none; color:inherit;"><strong>Kanban-доска</strong></a> с лимитами WIP для оптимизации потока</li>
+                        <li><a href="/ru/eisenhower" style="text-decoration:none; color:inherit;"><strong>Матрица Эйзенхауэра</strong></a> с командным голосованием</li>
+                        <li><a href="/ru/estimation-room" style="text-decoration:none; color:inherit;"><strong>7 методов оценки</strong></a> с автоматическим поиском консенсуса</li>
+                        <li><a href="/ru/agile-process" style="text-decoration:none; color:inherit;"><strong>Управление спринтами</strong></a> с графиками burndown и velocity</li>
+                        <li><a href="/ru/retrospective-list" style="text-decoration:none; color:inherit;"><strong>6 шаблонов ретроспективы</strong></a> с пошаговой фасилитацией</li>
                         <li><strong>Ролевой доступ</strong>: Владелец, Редактор, Читатель и роли Scrum</li>
                         <li><strong>Аналитика CFD</strong>: lead time, cycle time и поиск узких мест</li>
                         <li><strong>Интеграция</strong>: перенос задач между инструментами</li>
@@ -376,10 +520,11 @@
                         <li><strong>Темная и светлая темы</strong> с автоматическим переключением</li>
                         <li><strong>Вход через Google</strong> для мгновенного и безопасного доступа</li>
                     </ul>
+                    <p class="features-tip">Все инструменты работают в едином экосистеме: создайте задачу в <a href="/ru/smart-todo">Smart Todo</a>, приоритизируйте в <a href="/ru/eisenhower">Матрице Эйзенхауэра</a>, оцените через <a href="/ru/estimation-room">Planning Poker</a>, выполните в <a href="/ru/agile-process">Спринте</a> и улучшите процесс на <a href="/ru/retrospective-list">Ретроспективе</a>.</p>
                 </div>
             </section>
 
-            <section class="faq-section">
+            <section id="faq" class="faq-section">
                 <div class="container">
                     <h2>Часто задаваемые вопросы</h2>
                     <div class="faq-list">
@@ -418,6 +563,42 @@
                                     французском, испанском,
                                     португальском, немецком и индонезийском</strong>. Весь интерфейс и мануалы
                                 локализованы.</div>
+                        </details>
+                        <details class="faq-item">
+                            <summary class="faq-question">Как связаны инструменты между собой?</summary>
+                            <div class="faq-answer">Инструменты Keisen образуют единый <strong>Agile-воркфлоу</strong>:
+                                собирайте задачи в <a href="/ru/smart-todo">Smart Todo</a>,
+                                приоритизируйте в <a href="/ru/eisenhower">Матрице Эйзенхауэра</a>,
+                                оценивайте в <a href="/ru/estimation-room">Estimation Room</a>,
+                                выполняйте спринты в <a href="/ru/agile-process">Agile Process Manager</a>
+                                и улучшайте процессы на <a href="/ru/retrospective-list">Ретроспективе</a>.
+                                Задачи можно переносить между инструментами.</div>
+                        </details>
+                        <details class="faq-item">
+                            <summary class="faq-question">Keisen работает на мобильных устройствах и планшетах?</summary>
+                            <div class="faq-answer">Да, Keisen — это <strong>адаптивное веб-приложение</strong>.
+                                Оно работает в любом современном браузере на смартфонах, планшетах и компьютерах.
+                                Установка не требуется — просто откройте <a href="https://keisenapp.com">keisenapp.com</a> в браузере.</div>
+                        </details>
+                        <details class="faq-item">
+                            <summary class="faq-question">Как пригласить команду в проект?</summary>
+                            <div class="faq-answer">В каждом инструменте есть <strong>кнопка приглашения</strong>.
+                                Введите e-mail участника и выберите роль (Владелец, Редактор, Читатель).
+                                Приглашенный получит ссылку и сможет присоединиться одним кликом.
+                                Тариф Free позволяет до <strong>10 приглашений</strong> на проект.</div>
+                        </details>
+                        <details class="faq-item">
+                            <summary class="faq-question">Что входит в бесплатный тариф?</summary>
+                            <div class="faq-answer">Бесплатный тариф включает до <strong>5 проектов</strong> в каждом инструменте,
+                                до <strong>50 задач</strong> на проект и до <strong>10 приглашений</strong>.
+                                Все 5 инструментов доступны без ограничения по времени, включая аналитику CFD,
+                                burndown-графики и историю изменений.</div>
+                        </details>
+                        <details class="faq-item">
+                            <summary class="faq-question">Можно ли экспортировать данные из Keisen?</summary>
+                            <div class="faq-answer">Да, Keisen поддерживает <strong>экспорт в Google Sheets</strong>
+                                с форматированием. Экспортируются бэклог, спринты, команда, ретроспективы и метрики.
+                                Данные сохраняются на вашем Google Drive.</div>
                         </details>
                     </div>
                 </div>

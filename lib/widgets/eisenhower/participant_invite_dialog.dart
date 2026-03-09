@@ -6,6 +6,7 @@ import '../../models/eisenhower_participant_model.dart';
 import '../../services/invite_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../user_display_name_widget.dart';
 
 /// Dialog per invitare partecipanti a una matrice Eisenhower
 ///
@@ -403,8 +404,8 @@ class _ParticipantInviteDialogState extends State<ParticipantInviteDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  invite.email,
+                UserDisplayName(
+                  email: invite.email,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 Row(

@@ -1,6 +1,7 @@
 import 'package:agile_tools/l10n/app_localizations.dart';
 import 'package:agile_tools/models/retrospective_model.dart';
 import 'package:flutter/material.dart';
+import 'package:agile_tools/widgets/user_display_name_widget.dart';
 
 /// Helper to pair an action item with its source retrospective.
 class _ActionItemWithRetro {
@@ -284,9 +285,11 @@ class _ActionItemsTrackerWidgetState extends State<ActionItemsTrackerWidget> {
                 ..._uniqueAssignees.map(
                   (email) => DropdownMenuItem<String?>(
                     value: email,
-                    child: Text(
-                      _displayNameForEmail(email),
-                      overflow: TextOverflow.ellipsis,
+                    child: UserDisplayName(
+                      email: email,
+                      fallback: _displayNameForEmail(email),
+                      style: const TextStyle(fontSize: 12),
+                      overflow: true,
                     ),
                   ),
                 ),
@@ -437,9 +440,12 @@ class _ActionItemsTrackerWidgetState extends State<ActionItemsTrackerWidget> {
                       children: [
                         Icon(Icons.person_outline, size: 14, color: Colors.grey.shade600),
                         const SizedBox(width: 4),
-                        Text(
-                          assigneeDisplay,
+                        UserDisplayName(
+                          email: item.assigneeEmail ?? item.ownerEmail,
+                          fallback: assigneeDisplay,
                           style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                          // Do not use overflow: true here if it causes unbound errors without Expanded,
+                          // though we removed Expanded so it's safe to use standard Text behavior.
                         ),
                       ],
                     ),

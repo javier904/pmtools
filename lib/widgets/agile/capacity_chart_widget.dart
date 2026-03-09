@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../models/team_member_model.dart';
 import '../../models/sprint_model.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget per visualizzare il carico di lavoro del team
 class CapacityChartWidget extends StatelessWidget {
@@ -354,10 +355,10 @@ class MemberWorkloadWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        member.name ?? member.email,
+                      UserDisplayName(
+                        email: member.email,
+                        fallback: member.name ?? member.email,
                         style: const TextStyle(fontWeight: FontWeight.w500),
-                        overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         member.role.displayName,
@@ -480,7 +481,7 @@ class OverloadAlertWidget extends StatelessWidget {
                     style: const TextStyle(color: Colors.red),
                   ),
                 ),
-                title: Text(member.name ?? member.email),
+                title: UserDisplayName(email: member.email, fallback: member.name ?? member.email),
                 subtitle: Text(
                   '${assigned}h assegnate su ${capacity}h disponibili (+${overload}h)',
                   style: const TextStyle(fontSize: 12),

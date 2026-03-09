@@ -141,11 +141,17 @@ class RetroSummaryDialog extends StatelessWidget {
 
   Widget _buildSentiment(BuildContext context, AppLocalizations l10n) {
     final sentiment = retro.averageSentiment!;
-    final color = sentiment > 3.5
+    final color = sentiment >= 4.0
         ? Colors.green
-        : sentiment > 2.5
-            ? Colors.amber
+        : sentiment >= 3.0
+            ? Colors.orange
             : Colors.red;
+            
+    final icon = sentiment >= 4.0
+        ? Icons.sentiment_very_satisfied
+        : sentiment >= 3.0
+            ? Icons.sentiment_neutral
+            : Icons.sentiment_dissatisfied;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -156,7 +162,7 @@ class RetroSummaryDialog extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.sentiment_satisfied_alt, color: color, size: 24),
+          Icon(icon, color: color, size: 24),
           const SizedBox(width: 12),
           Text(
             l10n.retroSummarySentiment,

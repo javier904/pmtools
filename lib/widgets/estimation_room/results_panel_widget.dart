@@ -290,6 +290,7 @@ class ResultsPanelWidget extends StatelessWidget {
     if (tooltip != null) {
       return Tooltip(
         message: tooltip,
+        triggerMode: TooltipTriggerMode.tap,
         child: card,
       );
     }

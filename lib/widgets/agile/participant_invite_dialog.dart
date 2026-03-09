@@ -11,6 +11,7 @@ import '../../services/auth_service.dart';
 import '../../themes/app_theme.dart';
 import '../../themes/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../user_display_name_widget.dart';
 
 ///
 /// Permette di:
@@ -496,9 +497,11 @@ class _AgileParticipantInviteDialogState extends State<AgileParticipantInviteDia
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    invite.email,
+                  UserDisplayName(
+                    email: invite.email,
+                    fallback: invite.email,
                     style: const TextStyle(fontWeight: FontWeight.w500),
+                    overflow: true,
                   ),
                   Row(
                     children: [

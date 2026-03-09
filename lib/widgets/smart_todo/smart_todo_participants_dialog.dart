@@ -9,6 +9,7 @@ import '../../services/invite_aggregator_service.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/smart_todo_service.dart';
+import '../user_display_name_widget.dart';
 
 class SmartTodoParticipantsDialog extends StatefulWidget {
   final TodoListModel list;
@@ -167,7 +168,7 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
                     backgroundColor: Colors.blue[100],
                     child: Text(p.email[0].toUpperCase(), style: const TextStyle(color: Colors.blue)),
                   ),
-                  title: Text(p.displayName ?? p.email.split('@')[0], style: TextStyle(color: textColor)),
+                  title: UserDisplayName(email: p.email, fallback: p.displayName ?? p.email.split('@')[0], style: TextStyle(color: textColor)),
                   subtitle: Text(p.email, style: TextStyle(color: isDark ? Colors.grey[400] : null)),
                   trailing: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -214,7 +215,12 @@ class _SmartTodoParticipantsDialogState extends State<SmartTodoParticipantsDialo
           ),
           child: ListTile(
             leading: Icon(statusInfo.$3, color: statusInfo.$2, size: 22),
-            title: Text(invite.email, style: TextStyle(color: textColor, fontSize: 13)),
+            title: UserDisplayName(
+              email: invite.email,
+              fallback: invite.email,
+              style: TextStyle(color: textColor, fontSize: 13),
+              overflow: true,
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

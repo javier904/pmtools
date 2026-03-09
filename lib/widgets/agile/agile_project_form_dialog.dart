@@ -5,6 +5,7 @@ import '../../models/team_member_model.dart';
 import '../../themes/app_theme.dart';
 import 'methodology_guide_dialog.dart';
 import '../../l10n/app_localizations.dart';
+import '../user_display_name_widget.dart';
 
 /// Result data from the project form dialog
 class AgileProjectFormResult {
@@ -653,8 +654,9 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        p.name,
+                      UserDisplayName(
+                        email: p.email,
+                        fallback: p.name,
                         style: const TextStyle(fontSize: 13),
                       ),
                     ],
@@ -802,8 +804,9 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            member.name,
+                          UserDisplayName(
+                            email: member.email,
+                            fallback: member.name,
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -887,7 +890,7 @@ class _AgileProjectFormDialogState extends State<AgileProjectFormDialog> {
                     ),
                   ),
                 ),
-                title: Text(participant.name),
+                title: UserDisplayName(email: participant.email, fallback: participant.name),
                 subtitle: Text(
                   participant.email,
                   style: TextStyle(fontSize: 12, color: context.textMutedColor),

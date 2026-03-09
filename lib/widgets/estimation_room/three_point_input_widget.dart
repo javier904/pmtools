@@ -79,13 +79,13 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
     }
   }
 
-  void _validateAndSubmit() {
+  void _validateAndSubmit(AppLocalizations l10n) {
     final oText = _optimisticController.text.trim().replaceAll(',', '.');
     final mText = _realisticController.text.trim().replaceAll(',', '.');
     final pText = _pessimisticController.text.trim().replaceAll(',', '.');
 
     if (oText.isEmpty || mText.isEmpty || pText.isEmpty) {
-      setState(() => _errorText = 'Tutti i campi sono obbligatori');
+      setState(() => _errorText = l10n.estimationThreePointReqError);
       return;
     }
 
@@ -94,21 +94,21 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
     final p = double.tryParse(pText);
 
     if (o == null || m == null || p == null) {
-      setState(() => _errorText = 'Valori non validi');
+      setState(() => _errorText = l10n.estimationThreePointInvalidError);
       return;
     }
 
     // Validazione logica: O <= M <= P
     if (o > m) {
-      setState(() => _errorText = 'Ottimistico deve essere <= Realistico');
+      setState(() => _errorText = l10n.estimationThreePointOptMustBeLteReal);
       return;
     }
     if (m > p) {
-      setState(() => _errorText = 'Realistico deve essere <= Pessimistico');
+      setState(() => _errorText = l10n.estimationThreePointRealMustBeLtePess);
       return;
     }
     if (o > p) {
-      setState(() => _errorText = 'Ottimistico deve essere <= Pessimistico');
+      setState(() => _errorText = l10n.estimationThreePointOptMustBeLtePess);
       return;
     }
 
@@ -143,11 +143,13 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
             children: [
               const Icon(Icons.analytics, color: Colors.purple),
               const SizedBox(width: 8),
-              const Text(
-                'Three-Point Estimation (PERT)',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  l10n.estimationThreePointTitle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
@@ -159,9 +161,9 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
               color: Colors.purple.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Text(
-              'Formula: (O + 4M + P) / 6',
-              style: TextStyle(
+            child: Text(
+              l10n.estimationThreePointFormula,
+              style: const TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 13,
                 color: Colors.purple,
@@ -175,27 +177,30 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
             children: [
               Expanded(
                 child: _buildInputField(
+                  context,
                   controller: _optimisticController,
-                  label: 'Ottimistico (O)',
-                  hint: 'Best case',
+                  label: l10n.estimationThreePointOptimistic,
+                  hint: l10n.estimationThreePointOptHint,
                   color: Colors.green,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildInputField(
+                  context,
                   controller: _realisticController,
-                  label: 'Realistico (M)',
-                  hint: 'Most likely',
+                  label: l10n.estimationThreePointRealistic,
+                  hint: l10n.estimationThreePointRealHint,
                   color: Colors.blue,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildInputField(
+                  context,
                   controller: _pessimisticController,
-                  label: 'Pessimistico (P)',
-                  hint: 'Worst case',
+                  label: l10n.estimationThreePointPessimistic,
+                  hint: l10n.estimationThreePointPessHint,
                   color: Colors.red,
                 ),
               ),
@@ -224,7 +229,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildStatItem(
-                    label: 'PERT',
+                    label: l10n.estimationThreePointVarPERT,
                     value: _pertValue!.toStringAsFixed(2),
                     color: Colors.purple,
                     tooltip: '(O + 4M + P) / 6',
@@ -235,7 +240,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
                     color: Colors.purple.withOpacity(0.3),
                   ),
                   _buildStatItem(
-                    label: 'Dev. Std',
+                    label: l10n.estimationThreePointVarDevStd,
                     value: _standardDeviation!.toStringAsFixed(2),
                     color: Colors.orange,
                     tooltip: '(P - O) / 6',
@@ -246,7 +251,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
                     color: Colors.purple.withOpacity(0.3),
                   ),
                   _buildStatItem(
-                    label: 'Range',
+                    label: l10n.estimationThreePointVarRange,
                     value: '${(_pertValue! - _standardDeviation!).toStringAsFixed(1)} - ${(_pertValue! + _standardDeviation!).toStringAsFixed(1)}',
                     color: Colors.blue,
                     tooltip: 'PERT ± Dev.Std',
@@ -259,7 +264,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
           const SizedBox(height: 16),
           Center(
             child: ElevatedButton.icon(
-              onPressed: widget.enabled ? _validateAndSubmit : null,
+              onPressed: widget.enabled ? () => _validateAndSubmit(l10n) : null,
               icon: const Icon(Icons.send),
               label: Text(l10n.estimationDecimalVote),
               style: ElevatedButton.styleFrom(
@@ -284,7 +289,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
                     Icon(Icons.info_outline, size: 16, color: context.textSecondaryColor),
                     const SizedBox(width: 6),
                     Text(
-                      'Guida:',
+                      l10n.estimationThreePointGuideTitle,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: context.textSecondaryColor,
@@ -295,9 +300,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'O: Stima nel caso migliore (tutto va bene)\n'
-                  'M: Stima piu\' probabile (condizioni normali)\n'
-                  'P: Stima nel caso peggiore (imprevisti)',
+                  l10n.estimationThreePointGuideText,
                   style: TextStyle(
                     fontSize: 11,
                     color: context.textTertiaryColor,
@@ -312,7 +315,8 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
     );
   }
 
-  Widget _buildInputField({
+  Widget _buildInputField(
+    BuildContext context, {
     required TextEditingController controller,
     required String label,
     required String hint,
@@ -409,6 +413,7 @@ class _ThreePointInputWidgetState extends State<ThreePointInputWidget> {
     if (tooltip != null) {
       return Tooltip(
         message: tooltip,
+        triggerMode: TooltipTriggerMode.tap,
         child: content,
       );
     }
@@ -453,6 +458,7 @@ class ThreePointVoteDisplay extends StatelessWidget {
     if (compact) {
       return Tooltip(
         message: 'O: $optimistic | M: $realistic | P: $pessimistic\nDev. Std: ${standardDeviation.toStringAsFixed(2)}',
+        triggerMode: TooltipTriggerMode.tap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(

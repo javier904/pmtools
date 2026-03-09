@@ -168,6 +168,93 @@
           "@type": "Answer",
           "text": "Si, Keisen utilizza l'infrastruttura Firebase (Google Cloud) con sicurezza enterprise-grade. Autenticazione tramite Google Account o email/password. Conforme al GDPR con privacy policy e gestione dati."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "Come uso più strumenti Keisen insieme?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keisen è progettato come un workflow agile integrato. Raccogli i task in Smart Todo, prioritizzali nella Matrice Eisenhower, stima l'effort con Planning Poker, eseguili negli Sprint e migliora con le Retrospettive. Puoi esportare task tra gli strumenti."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Keisen funziona su mobile e tablet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sì. Keisen è una web application completamente responsive che si adatta a qualsiasi dimensione di schermo. Tutti i 5 strumenti funzionano su smartphone, tablet e computer desktop."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Come invito il mio team?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ogni strumento ha un sistema di inviti integrato. Clicca il pulsante invita, inserisci l'email del tuo collega e assegna un ruolo. Tutti gli strumenti supportano permessi basati su ruoli — Owner, Editor e Viewer — più ruoli Scrum specifici nei progetti Agile."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Cosa include esattamente il piano Free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Il piano Free ti dà 5 entità per strumento, fino a 50 task per entità e 10 inviti team per entità. Tutte le funzionalità sono disponibili. Premium (4,99 EUR/mese) estende a 30 entità e 100 task. Elite (7,99 EUR/mese) offre tutto illimitato."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Posso esportare i miei dati?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sì. Keisen supporta l'esportazione Google Sheets con fogli formattati per i dati del progetto. I progetti Agile esportano 5 fogli: Product Backlog, Sprint Planning, Team e Capacità, Retrospettiva e Metriche."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Come gestire un progetto agile con Keisen",
+    "description": "Usa i 5 strumenti integrati di Keisen per un workflow agile completo — dalla raccolta idee al miglioramento continuo.",
+    "totalTime": "PT15M",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Raccogli task e idee",
+        "text": "Crea una lista Smart Todo con colonne Kanban personalizzabili. Aggiungi task, assegna i membri del team, imposta scadenze e organizza il lavoro con drag-and-drop.",
+        "url": "https://keisenapp.com/it/smart-todo"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Prioritizza con la Matrice Eisenhower",
+        "text": "Importa i task nella Matrice Eisenhower. Classifica per urgenza e importanza usando la votazione collaborativa con il team.",
+        "url": "https://keisenapp.com/it/eisenhower"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Stima l'effort con Planning Poker",
+        "text": "Crea una sessione Estimation Room. Scegli tra 7 metodi (Fibonacci, T-Shirt, PERT, Dot Voting, Bucket, Decimale, Five Fingers) e vota in tempo reale.",
+        "url": "https://keisenapp.com/it/estimation-room"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Esegui con sprint o flusso Kanban",
+        "text": "Configura un progetto Agile con framework Scrum, Kanban o Hybrid. Pianifica gli sprint, monitora la velocity e controlla il progresso con burndown chart.",
+        "url": "https://keisenapp.com/it/agile-process"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Migliora con le retrospettive",
+        "text": "Conduci una retrospettiva usando uno dei 6 template (Start/Stop/Continue, Sailboat, 4Ls, Starfish, Mad/Sad/Glad, DAKI). Registra action items e monitora il sentiment nel tempo.",
+        "url": "https://keisenapp.com/it/retrospective-list"
       }
     ]
   }
@@ -231,7 +318,16 @@
       </div>
     </section>
 
-    <section class="highlights">
+      <nav class="toc" aria-label="Contenuti pagina">
+          <a href="#highlights">Perché Keisen</a>
+          <a href="#screenshots">Screenshot</a>
+          <a href="#tools">5 Strumenti</a>
+          <a href="#how-it-works">Come Funziona</a>
+          <a href="#features">Funzionalità</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+    <section id="highlights" class="highlights">
       <div class="container">
         <h2>Perche' i Team Scelgono Keisen</h2>
         <div class="highlights-grid">
@@ -272,7 +368,45 @@
       </div>
     </section>
 
-    <section class="templates-detail">
+      <section id="screenshots" class="screenshots-section" style="padding:48px 24px 0;">
+        <div class="container">
+          <h2>Keisen in Azione</h2>
+          <div class="screenshots-grid">
+            <figure>
+              <picture>
+                <img src="../screenshots/homepage-smarttodo.webp" alt="Board Kanban Smart Todo con colonne personalizzabili, limiti WIP e gestione task drag-and-drop in Keisen" width="640" height="360" loading="lazy">
+              </picture>
+              <figcaption>Smart Todo — Board Kanban con colonne personalizzabili e limiti WIP</figcaption>
+            </figure>
+            <figure>
+              <picture>
+                <img src="../screenshots/homepage-eisenhower.webp" alt="Matrice Eisenhower con prioritizzazione a 4 quadranti e votazione team in Keisen" width="640" height="360" loading="lazy">
+              </picture>
+              <figcaption>Matrice Eisenhower — Prioritizzazione a 4 quadranti con votazione team</figcaption>
+            </figure>
+            <figure>
+              <picture>
+                <img src="../screenshots/homepage-estimation.webp" alt="Estimation Room sessione Planning Poker con votazione in tempo reale e statistiche in Keisen" width="640" height="360" loading="lazy">
+              </picture>
+              <figcaption>Estimation Room — Planning Poker con 7 modalità di stima</figcaption>
+            </figure>
+            <figure>
+              <picture>
+                <img src="../screenshots/homepage-agile.webp" alt="Agile Process Manager con sprint board, burndown chart e velocity tracking in Keisen" width="640" height="360" loading="lazy">
+              </picture>
+              <figcaption>Agile Process — Gestione sprint con burndown e velocity</figcaption>
+            </figure>
+            <figure>
+              <picture>
+                <img src="../screenshots/homepage-retro.webp" alt="Retrospective Board con template Start Stop Continue e action items in Keisen" width="640" height="360" loading="lazy">
+              </picture>
+              <figcaption>Retrospective Board — 6 template con facilitazione guidata</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+    <section id="tools" class="templates-detail">
       <div class="container">
         <h2>Cinque Strumenti, Una Piattaforma</h2>
         <div class="templates-grid">
@@ -318,48 +452,48 @@
       </div>
     </section>
 
-    <section class="integrations-section">
+    <section id="how-it-works" class="integrations-section">
       <div class="container">
         <h2>Workflow Agile Integrato</h2>
         <p>Tutti gli strumenti lavorano insieme in un flusso continuo dall'idea alla consegna.</p>
         <div class="integration-steps">
-          <span class="step-chip">📋 Raccogli</span>
+          <a href="/it/smart-todo" class="step-chip">📋 Raccogli</a>
           <span class="step-arrow">→</span>
-          <span class="step-chip">🎯 Prioritizza</span>
+          <a href="/it/eisenhower" class="step-chip">🎯 Prioritizza</a>
           <span class="step-arrow">→</span>
-          <span class="step-chip">🃏 Stima</span>
+          <a href="/it/estimation-room" class="step-chip">🃏 Stima</a>
           <span class="step-arrow">→</span>
-          <span class="step-chip">🔄 Esegui</span>
+          <a href="/it/agile-process" class="step-chip">🔄 Esegui</a>
           <span class="step-arrow">→</span>
-          <span class="step-chip">💬 Migliora</span>
+          <a href="/it/retrospective-list" class="step-chip">💬 Migliora</a>
         </div>
       </div>
     </section>
 
-    <section class="features-detail" style="padding:64px 24px;">
+    <section id="features" class="features-detail" style="padding:64px 24px;">
       <div class="container">
         <h2>Funzionalita' della Piattaforma</h2>
         <ul class="features-list">
-          <li><strong>Board Kanban</strong> con colonne personalizzabili e limiti WIP per ottimizzare il flusso</li>
-          <li><strong>Matrice Eisenhower</strong> per la prioritizzazione urgente/importante con votazione collaborativa
+          <li><a href="/it/smart-todo"><strong>Board Kanban</strong></a> con colonne personalizzabili e limiti WIP per ottimizzare il flusso</li>
+          <li><a href="/it/eisenhower"><strong>Matrice Eisenhower</strong></a> per la prioritizzazione urgente/importante con votazione collaborativa
           </li>
-          <li><strong>7 modalita' di stima</strong> in tempo reale con rilevamento consenso automatico</li>
-          <li><strong>Sprint management</strong> con burndown chart e velocity tracking per monitorare il progresso</li>
-          <li><strong>6 template retrospettiva</strong> con facilitazione guidata e tracciamento sentiment</li>
+          <li><a href="/it/estimation-room"><strong>7 modalita' di stima</strong></a> in tempo reale con rilevamento consenso automatico</li>
+          <li><a href="/it/agile-process"><strong>Sprint management</strong></a> con burndown chart e velocity tracking per monitorare il progresso</li>
+          <li><a href="/it/retrospective-list"><strong>6 template retrospettiva</strong></a> con facilitazione guidata e tracciamento sentiment</li>
           <li><strong>Permessi basati su ruoli</strong>: Owner, Editor, Viewer e ruoli Scrum (PO, SM, Dev)</li>
           <li><strong>Analytics CFD</strong> con lead time, cycle time, throughput e rilevamento bottleneck</li>
-          <li><strong>Integrazione cross-tool</strong>: esporta task tra Smart Todo, Eisenhower e Agile Process</li>
+          <li><strong>Integrazione cross-tool</strong>: esporta task tra <a href="/it/smart-todo">Smart Todo</a>, <a href="/it/eisenhower">Eisenhower</a> e <a href="/it/agile-process">Agile Process</a></li>
           <li><strong>Esportazione Google Sheets</strong> con 5 fogli formattati per reporting</li>
           <li><strong>Audit trail completo</strong> con 12 tipi di azione per storico modifiche</li>
           <li><strong>Dark mode e light mode</strong> con rilevamento automatico preferenza sistema</li>
           <li><strong>Autenticazione Google</strong> per accesso sicuro e immediato senza registrazione</li>
         </ul>
-        <p class="features-tip">Tutti gli strumenti condividono lo stesso ecosistema: esporta un task da Smart Todo alla
-          Matrice Eisenhower per prioritizzarlo, stimalo con Planning Poker e gestiscilo in uno Sprint.</p>
+        <p class="features-tip">Tutti gli strumenti condividono lo stesso ecosistema: esporta un task da <a href="/it/smart-todo">Smart Todo</a> alla
+          <a href="/it/eisenhower">Matrice Eisenhower</a> per prioritizzarlo, stimalo con <a href="/it/estimation-room">Planning Poker</a> e gestiscilo in uno <a href="/it/agile-process">Sprint</a>.</p>
       </div>
     </section>
 
-    <section class="faq-section">
+    <section id="faq" class="faq-section">
       <div class="container">
         <h2>Domande Frequenti</h2>
         <div class="faq-list">
@@ -418,6 +552,26 @@
               enterprise-grade. Autenticazione tramite Google Account o email/password. Conforme al
               <strong>GDPR</strong> con privacy policy, gestione dati e diritto all'oblio.</div>
           </details>
+            <details class="faq-item">
+              <summary class="faq-question">Come uso più strumenti Keisen insieme?</summary>
+              <div class="faq-answer">Keisen è progettato come un <strong>workflow agile integrato</strong>. Raccogli i task in <strong>Smart Todo</strong>, prioritizzali nella <strong>Matrice Eisenhower</strong>, stima l'effort con <strong>Planning Poker</strong>, eseguili negli <strong>Sprint</strong> e migliora con le <strong>Retrospettive</strong>. Puoi esportare task tra gli strumenti — ad esempio, spostare un task Smart Todo nella Matrice Eisenhower o importarlo nel backlog di uno Sprint.</div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Keisen funziona su mobile e tablet?</summary>
+              <div class="faq-answer">Sì. Keisen è una <strong>web application completamente responsive</strong> che si adatta a qualsiasi dimensione di schermo. Tutti i 5 strumenti funzionano su <strong>smartphone, tablet e computer desktop</strong>. Non serve installare nessuna app — basta aprire il browser e iniziare a lavorare.</div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Come invito il mio team?</summary>
+              <div class="faq-answer">Ogni strumento ha un <strong>sistema di inviti integrato</strong>. Clicca il pulsante invita, inserisci l'email del tuo collega e assegna un ruolo. Riceverà un'email con un link per unirsi. Tutti gli strumenti supportano <strong>permessi basati su ruoli</strong> — Owner, Editor e Viewer — più ruoli Scrum specifici nei progetti Agile.</div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Cosa include esattamente il piano Free?</summary>
+              <div class="faq-answer">Il piano Free ti dà <strong>5 entità per strumento</strong> (5 liste todo, 5 matrici, 5 sessioni di stima, 5 progetti agili, 5 retrospettive), fino a <strong>50 task per entità</strong> e <strong>10 inviti team per entità</strong>. Tutte le funzionalità sono disponibili — nessuna restrizione nascosta. Premium (€4,99/mese) estende a 30 entità e 100 task. Elite (€7,99/mese) offre tutto illimitato.</div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Posso esportare i miei dati?</summary>
+              <div class="faq-answer">Sì. Keisen supporta l'<strong>esportazione Google Sheets</strong> con fogli formattati per i dati del progetto. I progetti Agile esportano 5 fogli: Product Backlog, Sprint Planning, Team e Capacità, Retrospettiva e Metriche. Le liste Smart Todo possono essere condivise ed esportate per uso esterno.</div>
+            </details>
         </div>
       </div>
     </section>

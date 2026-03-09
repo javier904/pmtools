@@ -55,25 +55,37 @@ class UserProfileModel {
 
   /// Nome completo calcolato
   String get fullName {
-    if (firstName != null && lastName != null) {
+    if (displayName != null && displayName!.isNotEmpty) {
+      return displayName!;
+    }
+    if (firstName != null && firstName!.isNotEmpty && lastName != null && lastName!.isNotEmpty) {
       return '$firstName $lastName';
     }
-    return displayName ?? email.split('@').first;
+    if (firstName != null && firstName!.isNotEmpty) {
+      return firstName!;
+    }
+    return email.split('@').first;
   }
 
   /// Iniziali per avatar
   String get initials {
-    if (firstName != null && lastName != null) {
-      return '${firstName![0]}${lastName![0]}'.toUpperCase();
-    }
     if (displayName != null && displayName!.isNotEmpty) {
-      final parts = displayName!.split(' ');
-      if (parts.length >= 2) {
+      final parts = displayName!.trim().split(' ');
+      if (parts.length >= 2 && parts[1].isNotEmpty) {
         return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
       }
       return displayName![0].toUpperCase();
     }
-    return email[0].toUpperCase();
+    if (firstName != null && firstName!.isNotEmpty && lastName != null && lastName!.isNotEmpty) {
+      return '${firstName![0]}${lastName![0]}'.toUpperCase();
+    }
+    if (firstName != null && firstName!.isNotEmpty) {
+      return firstName![0].toUpperCase();
+    }
+    if (email.isNotEmpty) {
+      return email[0].toUpperCase();
+    }
+    return '?';
   }
 
   /// Verifica se l'account è attivo

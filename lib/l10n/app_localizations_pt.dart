@@ -319,6 +319,64 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get feedbackReportBug => 'Relatar um Bug';
+
+  @override
+  String get feedbackRequestFeature => 'Solicitar um Recurso';
+
+  @override
+  String get feedbackHistory => 'Histórico de Feedback';
+
+  @override
+  String get feedbackTypeBug => 'Relatório de Bug';
+
+  @override
+  String get feedbackTypeFeature => 'Solicitação de Recurso';
+
+  @override
+  String get feedbackSubject => 'Assunto';
+
+  @override
+  String get feedbackSubjectHint => 'Descreva o problema brevemente...';
+
+  @override
+  String get feedbackDescription => 'Descrição';
+
+  @override
+  String get feedbackDescriptionHint => 'Forneça mais detalhes aqui...';
+
+  @override
+  String get feedbackConsent =>
+      'Autorizo o processamento dos meus dados para rastrear e registrar esta solicitação de acordo com a Política de Privacidade.';
+
+  @override
+  String get feedbackSubmit => 'Enviar Solicitação';
+
+  @override
+  String get feedbackSuccess => 'Solicitação enviada com sucesso!';
+
+  @override
+  String get feedbackError => 'Falha ao enviar solicitação';
+
+  @override
+  String get feedbackStatusNew => 'Novo';
+
+  @override
+  String get feedbackStatusInProgress => 'Em Progresso';
+
+  @override
+  String get feedbackStatusResolved => 'Resolvido';
+
+  @override
+  String get feedbackStatusClosed => 'Fechado';
+
+  @override
+  String get feedbackNoRequests => 'Nenhuma solicitação encontrada';
+
+  @override
+  String get feedbackAdminTitle => 'Administração de Feedback';
+
+  @override
   String get navHome => 'Home';
 
   @override
@@ -2465,6 +2523,42 @@ class AppLocalizationsPt extends AppLocalizations {
       'Útil para identificar práticas a abandonar, manter, melhorar ou iniciar.';
 
   @override
+  String get retroTemplateCustom => 'Personalizzato';
+
+  @override
+  String get retroDescCustom =>
+      'Definisci le tue colonne in base alle esigenze del team.';
+
+  @override
+  String get retroUsageCustom =>
+      'Ideale quando i template standard non si adattano alle esigenze specifiche del team.';
+
+  @override
+  String get collectionRationaleCustom =>
+      'Rivedi ogni colonna personalizzata e crea azioni in base alle priorità del team.';
+
+  @override
+  String get retroCustomAddColumn => 'Aggiungi Colonna';
+
+  @override
+  String get retroCustomRemoveColumn => 'Rimuovi';
+
+  @override
+  String get retroCustomColumnTitle => 'Titolo Colonna';
+
+  @override
+  String get retroCustomColumnDesc => 'Descrizione (opzionale)';
+
+  @override
+  String get retroCustomMinColumns => 'Sono necessarie almeno 2 colonne';
+
+  @override
+  String get retroCustomMaxColumns => 'Massimo 8 colonne consentite';
+
+  @override
+  String get retroCustomConfigureColumns => 'Configura Colonne';
+
+  @override
   String get retroIcebreakerSentiment => 'Sentimento';
 
   @override
@@ -4087,6 +4181,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get errorSkipping => 'Erro ao pular';
+
+  @override
+  String get genericWarningTitle => 'Aviso';
+
+  @override
+  String get skipRevealedStoryWarning =>
+      'Esta história foi revelada e contém votos. Tem certeza de que deseja ignorá-la e perder os votos atuais?';
+
+  @override
+  String get skipRevealedStoryConfirm => 'Sim, ignorar';
 
   @override
   String get retroIcebreakerTitle => 'Icebreaker';
@@ -11990,11 +12094,51 @@ class AppLocalizationsPt extends AppLocalizations {
   String get feedbackCommentHint => 'Lascia un commento (opzionale)';
 
   @override
-  String get feedbackSubmit => 'Invia';
-
-  @override
   String get feedbackDismiss => 'Non ora';
 
   @override
   String get feedbackThankYou => 'Grazie per il tuo feedback!';
+
+  @override
+  String get estimationThreePointFormula => 'Fórmula: (O + 4M + P) / 6';
+
+  @override
+  String get estimationThreePointOptHint => 'Best case';
+
+  @override
+  String get estimationThreePointRealHint => 'Most likely';
+
+  @override
+  String get estimationThreePointPessHint => 'Worst case';
+
+  @override
+  String get estimationThreePointReqError => 'All fields are required';
+
+  @override
+  String get estimationThreePointInvalidError => 'Invalid values';
+
+  @override
+  String get estimationThreePointGuideTitle => 'Guide:';
+
+  @override
+  String get estimationThreePointGuideText =>
+      'O: Best-case estimate (everything goes right)\nM: Most likely estimate (normal conditions)\nP: Worst-case estimate (unforeseen events)';
+
+  @override
+  String get estimationThreePointVarPERT => 'PERT';
+
+  @override
+  String get estimationThreePointVarDevStd => 'Std. Dev';
+
+  @override
+  String get estimationThreePointVarRange => 'Range';
+
+  @override
+  String get exportCsv => 'Exportar CSV';
+
+  @override
+  String get exportCsvSelected => 'Exportação CSV iniciada...';
+
+  @override
+  String get errorExportingCsv => 'Falha ao exportar CSV';
 }

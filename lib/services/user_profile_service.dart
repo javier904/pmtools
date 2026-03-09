@@ -35,7 +35,7 @@ class UserProfileService {
   UserSettingsModel? _cachedSettings;
 
   /// Cache statica per la risoluzione dei nomi da email (condivisa tra istanze)
-  static final Map<String, String> _resolvedNamesCache = {};
+  static final Map<String, String?> _resolvedNamesCache = {};
 
   /// Ottiene l'ID dell'utente corrente
   String? get currentUserId => _auth.currentUser?.uid;
@@ -149,31 +149,27 @@ class UserProfileService {
   }
 
   /// Risolve il nome di un utente partendo dall'email.
+  /// Ritorna `null` se il nome non è stato trovato o se la security rule l'ha bloccato.
   /// Priorità: 
   /// 1. Cache locale (velocità massima)
   /// 2. Firestore (nome reale)
   /// 3. Firebase Auth (display name se disponibile)
-  /// 4. Fallback (split dell'email)
   /// Richieste in-flight per deduplicare chiamate concorrenti alla stessa email
-  final Map<String, Future<String>> _pendingRequests = {};
+  final Map<String, Future<String?>> _pendingRequests = {};
 
-  Future<String> getNameByEmail(String email) async {
-    if (email.isEmpty) return 'User';
+  Future<String?> tryGetNameByEmail(String email) async {
+    if (email.isEmpty) return null;
 
-    // Normalizza email per consistenza
     final normalizedEmail = email.toLowerCase().trim();
 
-    // 1. Controlla cache
     if (_resolvedNamesCache.containsKey(normalizedEmail)) {
-      return _resolvedNamesCache[normalizedEmail]!;
+      return _resolvedNamesCache[normalizedEmail];
     }
 
-    // 2. Deduplica: se c'è già una richiesta in-flight per questa email, aspetta quella
     if (_pendingRequests.containsKey(normalizedEmail)) {
       return _pendingRequests[normalizedEmail]!;
     }
 
-    // 3. Lancia la richiesta e registrala come in-flight
     final future = _resolveNameFromFirestore(normalizedEmail);
     _pendingRequests[normalizedEmail] = future;
     try {
@@ -183,9 +179,16 @@ class UserProfileService {
     }
   }
 
-  Future<String> _resolveNameFromFirestore(String normalizedEmail) async {
+  /// Risolve il nome garantendo che ritorni sempre una stringa (usa la prima parte dell'email come fallback)
+  Future<String> getNameByEmail(String email) async {
+    final name = await tryGetNameByEmail(email);
+    if (name != null && name.isNotEmpty) return name;
+    
+    return email.split('@').first;
+  }
+
+  Future<String?> _resolveNameFromFirestore(String normalizedEmail) async {
     try {
-      // Cerca in Firestore per email
       final query = await _firestore
           .collection(_usersCollection)
           .where('email', isEqualTo: normalizedEmail)
@@ -195,14 +198,12 @@ class UserProfileService {
       if (query.docs.isNotEmpty) {
         final profile = profile_model.UserProfileModel.fromFirestore(query.docs.first);
         final name = profile.fullName;
-        // Verify fullName is not just the email prefix
         if (name != normalizedEmail.split('@').first) {
           _resolvedNamesCache[normalizedEmail] = name;
           return name;
         }
       }
 
-      // Fallback a display name dell'utente corrente se coincide l'email
       if (_auth.currentUser?.email?.toLowerCase() == normalizedEmail) {
         final authDisplayName = _auth.currentUser?.displayName;
         if (authDisplayName != null && authDisplayName.isNotEmpty) {
@@ -216,7 +217,7 @@ class UserProfileService {
         debugPrint('Error settling name for $normalizedEmail: $e');
       }
     }
-    // Fallback: display name from Auth for current user (anche se Firestore ha fallito)
+
     if (_auth.currentUser?.email?.toLowerCase() == normalizedEmail) {
       final authDisplayName = _auth.currentUser?.displayName;
       if (authDisplayName != null && authDisplayName.isNotEmpty) {
@@ -225,11 +226,8 @@ class UserProfileService {
       }
     }
 
-    // Fallback finale: split dell'email — cache anche questo perché le security rules
-    // negano sempre la lettura di profili altrui, quindi ogni retry fallirebbe identico.
-    final fallback = normalizedEmail.split('@').first;
-    _resolvedNamesCache[normalizedEmail] = fallback;
-    return fallback;
+    _resolvedNamesCache[normalizedEmail] = null;
+    return null;
   }
 
   /// Richiede cancellazione account

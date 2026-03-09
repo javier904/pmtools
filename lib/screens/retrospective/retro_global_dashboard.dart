@@ -544,6 +544,40 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
     };
     int maxVotes = 3;
 
+    // Custom columns state
+    List<RetroColumn> customColumns = [
+      RetroColumn(id: 'custom_1', title: '', description: '', colorHex: '#A5D6A7', iconCode: Icons.lightbulb_outline.codePoint),
+      RetroColumn(id: 'custom_2', title: '', description: '', colorHex: '#EF9A9A', iconCode: Icons.build_outlined.codePoint),
+    ];
+
+    // Curated color palette for custom columns
+    const columnColors = [
+      '#A5D6A7', '#90CAF9', '#EF9A9A', '#FFCC80', '#CE93D8',
+      '#80DEEA', '#FFE082', '#B0BEC5', '#FFAB91', '#81D4FA',
+    ];
+
+    // Curated icon list for custom columns
+    final columnIcons = [
+      Icons.lightbulb_outline,
+      Icons.build_outlined,
+      Icons.thumb_up_alt_outlined,
+      Icons.thumb_down_alt_outlined,
+      Icons.trending_up,
+      Icons.trending_down,
+      Icons.warning_amber_rounded,
+      Icons.check_circle_outline,
+      Icons.highlight_remove_rounded,
+      Icons.play_circle_outline,
+      Icons.pause_circle_outline,
+      Icons.favorite_border,
+      Icons.star_outline,
+      Icons.flag_outlined,
+      Icons.emoji_emotions_outlined,
+      Icons.sentiment_dissatisfied_outlined,
+      Icons.question_mark,
+      Icons.rocket_launch_outlined,
+    ];
+
     final agileService = AgileFirestoreService();
 
     // Trigger explicit load
@@ -788,6 +822,148 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                       ),
                     ),
                   ),
+
+                  // === CUSTOM COLUMNS EDITOR ===
+                  if (selectedTemplate == RetroTemplate.custom) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context)!.retroCustomConfigureColumns,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    ...customColumns.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final col = entry.value;
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: Color(int.parse(col.colorHex.replaceFirst('#', '0xFF'))),
+                            width: 2,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              // Color picker
+                              PopupMenuButton<String>(
+                                tooltip: 'Color',
+                                child: Container(
+                                  width: 28, height: 28,
+                                  decoration: BoxDecoration(
+                                    color: Color(int.parse(col.colorHex.replaceFirst('#', '0xFF'))),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.grey.shade300),
+                                  ),
+                                ),
+                                itemBuilder: (_) => columnColors.map((c) {
+                                  return PopupMenuItem(
+                                    value: c,
+                                    child: Container(
+                                      width: 24, height: 24,
+                                      decoration: BoxDecoration(
+                                        color: Color(int.parse(c.replaceFirst('#', '0xFF'))),
+                                        shape: BoxShape.circle,
+                                        border: c == col.colorHex
+                                            ? Border.all(color: Colors.black, width: 2)
+                                            : Border.all(color: Colors.grey.shade300),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onSelected: (c) {
+                                  setDialogState(() {
+                                    customColumns[idx] = RetroColumn(
+                                      id: col.id, title: col.title, description: col.description,
+                                      colorHex: c, iconCode: col.iconCode,
+                                    );
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              // Icon picker
+                              PopupMenuButton<int>(
+                                tooltip: 'Icon',
+                                child: Icon(
+                                  IconData(col.iconCode, fontFamily: 'MaterialIcons'),
+                                  color: Color(int.parse(col.colorHex.replaceFirst('#', '0xFF'))),
+                                ),
+                                itemBuilder: (_) => columnIcons.map((ic) {
+                                  return PopupMenuItem(
+                                    value: ic.codePoint,
+                                    child: Icon(ic, color: ic.codePoint == col.iconCode ? Colors.blue : null),
+                                  );
+                                }).toList(),
+                                onSelected: (cp) {
+                                  setDialogState(() {
+                                    customColumns[idx] = RetroColumn(
+                                      id: col.id, title: col.title, description: col.description,
+                                      colorHex: col.colorHex, iconCode: cp,
+                                    );
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              // Title field
+                              Expanded(
+                                child: TextFormField(
+                                  initialValue: col.title,
+                                  decoration: InputDecoration(
+                                    hintText: AppLocalizations.of(context)!.retroCustomColumnTitle,
+                                    isDense: true,
+                                    border: const OutlineInputBorder(),
+                                  ),
+                                  onChanged: (val) {
+                                    customColumns[idx] = RetroColumn(
+                                      id: col.id, title: val, description: col.description,
+                                      colorHex: col.colorHex, iconCode: col.iconCode,
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              // Remove button
+                              if (customColumns.length > 2)
+                                IconButton(
+                                  icon: const Icon(Icons.close, size: 18),
+                                  tooltip: AppLocalizations.of(context)!.retroCustomRemoveColumn,
+                                  onPressed: () {
+                                    setDialogState(() => customColumns.removeAt(idx));
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    // Add column button
+                    if (customColumns.length < 8)
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          setDialogState(() {
+                            final nextIdx = customColumns.length + 1;
+                            final colorIdx = (customColumns.length) % columnColors.length;
+                            customColumns.add(RetroColumn(
+                              id: 'custom_$nextIdx',
+                              title: '',
+                              description: '',
+                              colorHex: columnColors[colorIdx],
+                              iconCode: columnIcons[colorIdx % columnIcons.length].codePoint,
+                            ));
+                          });
+                        },
+                        icon: const Icon(Icons.add, size: 16),
+                        label: Text(AppLocalizations.of(context)!.retroCustomAddColumn),
+                      )
+                    else
+                      Text(
+                        AppLocalizations.of(context)!.retroCustomMaxColumns,
+                        style: TextStyle(fontSize: 12, color: Colors.orange.shade700, fontStyle: FontStyle.italic),
+                      ),
+                  ],
                   const SizedBox(height: 16),
                   
                   // Icebreaker Configuration
@@ -916,6 +1092,9 @@ class _RetroGlobalDashboardState extends State<RetroGlobalDashboard> {
                       title: retroTitle,
                       sprintName: retroTitle,
                       template: selectedTemplate,
+                      columns: selectedTemplate == RetroTemplate.custom
+                          ? customColumns.where((c) => c.title.trim().isNotEmpty).toList()
+                          : selectedTemplate.defaultColumns,
                       createdAt: DateTime.now(),
                       createdBy: _currentUserEmail,
                       participantEmails: [_currentUserEmail],

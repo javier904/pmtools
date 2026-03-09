@@ -20,6 +20,9 @@ import 'screens/retro_board_loader_screen.dart';
 import 'screens/smart_todo/smart_todo_dashboard.dart';
 import 'screens/smart_todo/smart_todo_detail_loader.dart';
 import 'screens/profile_screen.dart';
+import 'screens/feedback/feedback_dashboard_screen.dart';
+import 'screens/feedback/feedback_form_screen.dart';
+import 'models/feedback_model.dart';
 import 'themes/app_theme.dart';
 import 'controllers/locale_controller.dart';
 import 'screens/legal/privacy_policy_screen.dart';
@@ -211,6 +214,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 '/retrospective-list': (context) => const _AuthGuard(child: RetroGlobalDashboard()),
                 // '/retrospective-board' gestito in onGenerateRoute per supportare URL path con retroId
                 // '/smart-todo' e '/smart-todo/{listId}' gestiti in onGenerateRoute
+                '/feedback-dashboard': (context) => const _AuthGuard(child: FeedbackDashboardScreen()),
                 '/privacy': (context) => const PrivacyPolicyScreen(),
                 '/terms': (context) => const TermsOfServiceScreen(),
                 '/cookies': (context) => const CookiePolicyScreen(),
@@ -219,6 +223,18 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
               onGenerateRoute: (settings) {
                 // Gestione route con arguments
                 final args = settings.arguments as Map<String, dynamic>?;
+
+                // Route /feedback-form
+                if (settings.name == '/feedback-form') {
+                  final typeStr = args?['type'] as String?;
+                  final type = typeStr == 'feature' ? FeedbackType.feature : FeedbackType.bug;
+                  return MaterialPageRoute(
+                    builder: (context) => _AuthGuard(
+                      child: FeedbackFormScreen(initialType: type),
+                    ),
+                    settings: settings,
+                  );
+                }
 
                 // Route /eisenhower o /eisenhower/{matrixId}
                 if (settings.name == '/eisenhower') {

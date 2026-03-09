@@ -3,6 +3,7 @@ import 'package:agile_tools/l10n/app_localizations.dart';
 import '../../models/team_member_model.dart';
 import '../../models/agile_enums.dart';
 import '../common/avatar_widget.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget per visualizzare la lista dei membri del team
 ///
@@ -170,13 +171,13 @@ class TeamListWidget extends StatelessWidget {
                         Row(
                           children: [
                             Flexible(
-                              child: Text(
-                                member.name,
+                              child: UserDisplayName(
+                                email: member.email,
+                                fallback: member.name,
                                 style: TextStyle(
                                   fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.w600,
                                   fontSize: 14,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             if (isCurrentUser) ...[

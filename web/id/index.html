@@ -113,6 +113,94 @@
           "@type": "Answer",
           "text": "Ya, Keisen dirancang khusus untuk tim remote dan hybrid dengan kolaborasi real-time di semua fiturnya."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara menggunakan beberapa alat Keisen secara bersamaan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keisen dirancang sebagai alur kerja Agile terintegrasi. Kumpulkan tugas di Smart Todo, prioritaskan dengan Matriks Eisenhower, estimasi dengan Planning Poker, jalankan di Sprint, dan tingkatkan dengan Retrospektif. Anda bisa mengekspor tugas antar alat untuk alur kerja yang mulus."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah Keisen bisa diakses di ponsel dan tablet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya. Keisen adalah aplikasi web yang sepenuhnya responsif dan menyesuaikan dengan ukuran layar apa pun. Semua 5 alat berfungsi di smartphone, tablet, dan komputer desktop. Tidak perlu menginstal aplikasi apa pun."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara mengundang tim saya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Setiap alat memiliki sistem undangan bawaan. Klik tombol undang, masukkan alamat email rekan tim Anda, dan tetapkan perannya. Semua alat mendukung izin berbasis peran — Owner, Editor, dan Viewer — plus peran Scrum khusus di proyek Agile."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa saja yang termasuk dalam paket Gratis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Paket Gratis memberikan Anda 5 entitas per alat (5 daftar todo, 5 matriks, 5 sesi estimasi, 5 proyek agile, 5 retrospektif), hingga 50 tugas per entitas, dan 10 undangan tim per entitas. Semua fitur tersedia tanpa batasan tersembunyi. Premium (EUR 4,99/bulan) memperluas hingga 30 entitas dan 100 tugas. Elite (EUR 7,99/bulan) menawarkan segalanya tanpa batas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bisakah saya mengekspor data saya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya. Keisen mendukung ekspor ke Google Sheets dengan spreadsheet terformat untuk data proyek. Proyek Agile mengekspor 5 lembar: Product Backlog, Sprint Planning, Tim & Kapasitas, Retrospektif, dan Metrik."
+        }
+      }
+    ]
+  }
+  </script>
+
+    <!-- Structured Data: HowTo -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Cara mengelola proyek agile dengan Keisen",
+    "description": "Gunakan 5 alat terintegrasi Keisen untuk menjalankan alur kerja agile lengkap — dari mengumpulkan ide hingga peningkatan berkelanjutan.",
+    "totalTime": "PT15M",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Kumpulkan tugas dan ide",
+        "text": "Buat daftar Smart Todo dengan kolom Kanban kustom. Tambahkan tugas, tetapkan anggota tim, atur tenggat waktu, dan organisasi pekerjaan dengan drag-and-drop.",
+        "url": "https://keisenapp.com/id/smart-todo"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Prioritaskan dengan Matriks Eisenhower",
+        "text": "Impor tugas ke Matriks Eisenhower. Klasifikasikan berdasarkan urgensi dan kepentingan menggunakan voting kolaboratif bersama tim Anda.",
+        "url": "https://keisenapp.com/id/eisenhower"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Estimasi beban kerja dengan Planning Poker",
+        "text": "Buat sesi Ruang Estimasi. Pilih dari 7 metode (Fibonacci, T-Shirt, PERT, Dot Voting, Bucket, Desimal, Five Fingers) dan voting secara real-time.",
+        "url": "https://keisenapp.com/id/estimation-room"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Jalankan dengan sprint atau alur Kanban",
+        "text": "Siapkan proyek Agile dengan framework Scrum, Kanban, atau Hybrid. Rencanakan sprint, lacak velocity, dan pantau kemajuan dengan burndown chart.",
+        "url": "https://keisenapp.com/id/agile-process"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Tingkatkan dengan retrospektif",
+        "text": "Jalankan retrospektif menggunakan salah satu dari 6 template (Start/Stop/Continue, Sailboat, 4Ls, Starfish, Mad/Sad/Glad, DAKI). Catat action items dan lacak sentimen tim dari waktu ke waktu.",
+        "url": "https://keisenapp.com/id/retrospective-list"
       }
     ]
   }
@@ -181,7 +269,16 @@
             </div>
         </section>
 
-        <section class="highlights">
+        <nav class="toc" aria-label="Isi halaman">
+            <a href="#highlights">Mengapa Keisen</a>
+            <a href="#screenshots">Tangkapan Layar</a>
+            <a href="#tools">5 Alat</a>
+            <a href="#how-it-works">Cara Kerja</a>
+            <a href="#features">Fitur</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+
+        <section id="highlights" class="highlights">
             <div class="container">
                 <h2>Semua yang Dibutuhkan Tim Anda untuk Sukses</h2>
                 <div class="highlights-grid">
@@ -213,8 +310,46 @@
             </div>
         </section>
 
+        <section id="screenshots" class="screenshots-section" style="padding:48px 24px 0;">
+            <div class="container">
+                <h2>Lihat Keisen Beraksi</h2>
+                <div class="screenshots-grid">
+                    <figure>
+                        <picture>
+                            <img src="../screenshots/eisenhower-quadrants.webp" alt="Matriks Eisenhower dengan 4 kuadran prioritas dan voting tim kolaboratif di Keisen" width="640" height="360" loading="lazy">
+                        </picture>
+                        <figcaption>Matriks Eisenhower — Prioritas 4 kuadran dengan voting tim</figcaption>
+                    </figure>
+                    <figure>
+                        <picture>
+                            <img src="../screenshots/estimation-voting.webp" alt="Ruang Estimasi dengan sesi Planning Poker dan voting real-time di Keisen" width="640" height="360" loading="lazy">
+                        </picture>
+                        <figcaption>Ruang Estimasi — Planning Poker dengan 7 metode estimasi</figcaption>
+                    </figure>
+                    <figure>
+                        <picture>
+                            <img src="../screenshots/estimation-statistics.webp" alt="Statistik sesi estimasi dengan rata-rata, median, dan distribusi suara di Keisen" width="640" height="360" loading="lazy">
+                        </picture>
+                        <figcaption>Statistik Estimasi — Analisis lengkap hasil voting tim</figcaption>
+                    </figure>
+                    <figure>
+                        <picture>
+                            <img src="../screenshots/retro-board.webp" alt="Papan Retrospektif dengan template Start Stop Continue dan item aksi di Keisen" width="640" height="360" loading="lazy">
+                        </picture>
+                        <figcaption>Papan Retrospektif — 6 template dengan fasilitasi terpandu</figcaption>
+                    </figure>
+                    <figure>
+                        <picture>
+                            <img src="../screenshots/retro-create.webp" alt="Pembuatan retrospektif baru dengan pilihan template dan konfigurasi di Keisen" width="640" height="360" loading="lazy">
+                        </picture>
+                        <figcaption>Buat Retrospektif — Pilih template dan mulai sesi tim</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
         <!-- Eisenhower Section -->
-        <section class="feature-detail-section feature-green">
+        <section id="tools" class="feature-detail-section feature-green">
             <div class="container">
                 <div class="feature-content">
                     <div class="feature-badge">🎯 Matriks Eisenhower</div>
@@ -310,11 +445,22 @@
         </section>
 
         <!-- Integrations Section -->
-        <section class="integrations-section">
+        <section id="how-it-works" class="integrations-section">
             <div class="container">
                 <h2>Alur Kerja yang Terintegrasi Penuh</h2>
                 <p class="section-subtitle">Data mengalir lancar antar alat kami, menghemat waktu dan mengurangi
                     kesalahan manual.</p>
+                <div class="integration-steps">
+                    <a href="/id/smart-todo" class="step-chip">📋 Kumpulkan</a>
+                    <span class="step-arrow">→</span>
+                    <a href="/id/eisenhower" class="step-chip">🎯 Prioritaskan</a>
+                    <span class="step-arrow">→</span>
+                    <a href="/id/estimation-room" class="step-chip">🃏 Estimasi</a>
+                    <span class="step-arrow">→</span>
+                    <a href="/id/agile-process" class="step-chip">🔄 Jalankan</a>
+                    <span class="step-arrow">→</span>
+                    <a href="/id/retrospective-list" class="step-chip">💬 Tingkatkan</a>
+                </div>
                 <div class="integrations-grid">
                     <div class="integ-card">
                         <h4>Matriks ke Estimasi</h4>
@@ -332,7 +478,28 @@
             </div>
         </section>
 
-        <section class="faq-section">
+        <section id="features" class="features-detail" style="padding:64px 24px;">
+            <div class="container">
+                <h2>Fitur Platform</h2>
+                <ul class="features-list">
+                    <li><a href="/id/smart-todo"><strong>Papan Kanban</strong></a> dengan kolom kustom dan batas WIP untuk mengoptimalkan alur kerja</li>
+                    <li><a href="/id/eisenhower"><strong>Matriks Eisenhower</strong></a> untuk prioritas berdasarkan urgensi/kepentingan dengan voting kolaboratif</li>
+                    <li><a href="/id/estimation-room"><strong>7 metode estimasi</strong></a> dengan voting real-time dan deteksi konsensus otomatis</li>
+                    <li><a href="/id/agile-process"><strong>Manajemen sprint</strong></a> dengan burndown chart dan pelacakan velocity untuk memantau kemajuan</li>
+                    <li><a href="/id/retrospective-list"><strong>6 template retrospektif</strong></a> dengan fasilitasi terpandu dan pelacakan sentimen</li>
+                    <li><strong>Izin berbasis peran</strong>: Owner, Editor, Viewer, dan peran Scrum (PO, SM, Dev)</li>
+                    <li><strong>Analitik CFD</strong> dengan lead time, cycle time, throughput, dan deteksi bottleneck</li>
+                    <li><strong>Integrasi lintas alat</strong>: ekspor tugas antara <a href="/id/smart-todo">Smart Todo</a>, <a href="/id/eisenhower">Eisenhower</a>, dan <a href="/id/agile-process">Proses Agile</a></li>
+                    <li><strong>Ekspor Google Sheets</strong> dengan 5 lembar terformat untuk pelaporan</li>
+                    <li><strong>Jejak audit lengkap</strong> dengan 12 jenis tindakan untuk riwayat perubahan</li>
+                    <li><strong>Mode gelap dan terang</strong> dengan deteksi preferensi sistem otomatis</li>
+                    <li><strong>Autentikasi Google</strong> untuk akses yang aman dan instan tanpa registrasi</li>
+                </ul>
+                <p class="features-tip">Semua alat berbagi ekosistem yang sama: ekspor tugas dari <a href="/id/smart-todo">Smart Todo</a> ke <a href="/id/eisenhower">Matriks Eisenhower</a> untuk prioritas, estimasi dengan <a href="/id/estimation-room">Planning Poker</a>, dan kelola di <a href="/id/agile-process">Sprint</a>.</p>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section">
             <div class="container">
                 <h2>Pertanyaan Umum</h2>
                 <div class="faq-list">
@@ -350,6 +517,26 @@
                         <summary class="faq-question">Bisakah saya berkolaborasi secara real-time?</summary>
                         <p class="faq-answer">Tentu saja. Semua alat di Keisen mendukung kolaborasi real-time. Anda akan
                             melihat perubahan yang dibuat oleh rekan tim Anda secara instan.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana cara menggunakan beberapa alat Keisen secara bersamaan?</summary>
+                        <p class="faq-answer">Keisen dirancang sebagai alur kerja Agile yang terintegrasi. Kumpulkan tugas di <a href="/id/smart-todo"><strong>Smart Todo</strong></a>, prioritaskan dengan <a href="/id/eisenhower"><strong>Matriks Eisenhower</strong></a>, estimasi beban kerja dengan <a href="/id/estimation-room"><strong>Planning Poker</strong></a>, jalankan di <a href="/id/agile-process"><strong>Sprint</strong></a>, dan tingkatkan melalui <a href="/id/retrospective-list"><strong>Retrospektif</strong></a>. Anda bisa mengekspor tugas antar alat untuk alur kerja yang mulus.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Apakah Keisen bisa diakses di ponsel dan tablet?</summary>
+                        <p class="faq-answer">Ya. Keisen adalah <strong>aplikasi web yang sepenuhnya responsif</strong> dan menyesuaikan dengan ukuran layar apa pun. Semua 5 alat berfungsi di <strong>smartphone, tablet, dan komputer desktop</strong>. Tidak perlu menginstal aplikasi apa pun — cukup buka browser dan mulai bekerja.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana cara mengundang tim saya?</summary>
+                        <p class="faq-answer">Setiap alat memiliki <strong>sistem undangan bawaan</strong>. Klik tombol undang, masukkan alamat email rekan tim Anda, dan tetapkan perannya. Mereka akan menerima email dengan tautan untuk bergabung. Semua alat mendukung <strong>izin berbasis peran</strong> — Owner, Editor, dan Viewer — plus peran Scrum khusus di proyek Agile.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa saja yang termasuk dalam paket Gratis?</summary>
+                        <p class="faq-answer">Paket Gratis memberikan Anda <strong>5 entitas per alat</strong> (5 daftar todo, 5 matriks, 5 sesi estimasi, 5 proyek agile, 5 retrospektif), hingga <strong>50 tugas per entitas</strong>, dan <strong>10 undangan tim per entitas</strong>. Semua fitur tersedia tanpa batasan tersembunyi. Premium (EUR 4,99/bulan) memperluas hingga 30 entitas dan 100 tugas. Elite (EUR 7,99/bulan) menawarkan segalanya tanpa batas.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Bisakah saya mengekspor data saya?</summary>
+                        <p class="faq-answer">Ya. Keisen mendukung <strong>ekspor ke Google Sheets</strong> dengan spreadsheet terformat untuk data proyek. Proyek Agile mengekspor 5 lembar: Product Backlog, Sprint Planning, Tim & Kapasitas, Retrospektif, dan Metrik. Daftar Smart Todo juga bisa dibagikan dan diekspor untuk penggunaan eksternal.</p>
                     </details>
                 </div>
             </div>

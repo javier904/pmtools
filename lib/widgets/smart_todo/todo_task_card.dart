@@ -9,6 +9,7 @@ import '../../core/config/feature_flags.dart';
 import '../../services/google_calendar_service.dart';
 import '../../services/smart_todo_service.dart';
 import '../../themes/app_theme.dart';
+import '../../services/user_profile_service.dart';
 
 class TodoTaskCard extends StatelessWidget {
   final TodoTaskModel task;
@@ -139,10 +140,7 @@ class TodoTaskCard extends StatelessWidget {
                     // Right side: Assignee + Menu (fixed position)
                     if (task.assignedTo.isNotEmpty) ...[
                       const SizedBox(width: 8),
-                      Tooltip(
-                        message: _getAssigneeName(task.assignedTo.first),
-                        child: _buildAvatar(task.assignedTo.first, isDark),
-                      ),
+                      _buildAssigneeAvatarWithTooltip(task.assignedTo.first, isDark),
                     ],
                     if (onDelete != null) ...[
                       const SizedBox(width: 4),
@@ -381,7 +379,33 @@ class TodoTaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(String email, bool isDark) {
+  Widget _buildAssigneeAvatarWithTooltip(String email, bool isDark) {
+    if (list == null) {
+      return Tooltip(
+        message: email,
+        child: _buildAvatarCore(email[0].toUpperCase(), email, isDark),
+      );
+    }
+    
+    return FutureBuilder<String?>(
+      future: UserProfileService().tryGetNameByEmail(email),
+      builder: (context, snapshot) {
+        final cleanEmail = email.replaceAll('_DOT_', '.');
+        final participant = list!.participants[cleanEmail];
+        final fallbackName = participant?.displayName ?? cleanEmail;
+        final resolvedName = snapshot.data ?? fallbackName;
+        
+        final initial = resolvedName.isNotEmpty ? resolvedName[0].toUpperCase() : '?';
+        
+        return Tooltip(
+          message: resolvedName,
+          child: _buildAvatarCore(initial, email, isDark),
+        );
+      }
+    );
+  }
+
+  Widget _buildAvatarCore(String initial, String email, bool isDark) {
     // Generate a consistent color based on email string
     final color = Colors.primaries[email.hashCode % Colors.primaries.length];
     
@@ -398,7 +422,7 @@ class TodoTaskCard extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: Text(
-        email[0].toUpperCase(),
+        initial,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -410,6 +434,7 @@ class TodoTaskCard extends StatelessWidget {
 
   Widget _buildMetaIcon(IconData icon, String text, {Color color = const Color(0xFF718096)}) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: color),
         const SizedBox(width: 4),
@@ -439,14 +464,6 @@ class TodoTaskCard extends StatelessWidget {
       case TodoTaskPriority.medium: return 'Medium';
       case TodoTaskPriority.low: return 'Low';
     }
-  }
-
-  String _getAssigneeName(String email) {
-    if (list == null) return email;
-    // Handle potential escaped email if it was already in task
-    final cleanEmail = email.replaceAll('_DOT_', '.');
-    final participant = list!.participants[cleanEmail];
-    return participant?.displayName ?? cleanEmail;
   }
 
   Color _getStatusColor(String statusId) {

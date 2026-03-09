@@ -692,6 +692,120 @@ abstract class AppLocalizations {
   /// **'Attendi {seconds}s prima di reinviare'**
   String authCooldownWait(int seconds);
 
+  /// No description provided for @feedbackReportBug.
+  ///
+  /// In it, this message translates to:
+  /// **'Segnala un Bug'**
+  String get feedbackReportBug;
+
+  /// No description provided for @feedbackRequestFeature.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiedi una Feature'**
+  String get feedbackRequestFeature;
+
+  /// No description provided for @feedbackHistory.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico Feedback'**
+  String get feedbackHistory;
+
+  /// No description provided for @feedbackTypeBug.
+  ///
+  /// In it, this message translates to:
+  /// **'Segnalazione Bug'**
+  String get feedbackTypeBug;
+
+  /// No description provided for @feedbackTypeFeature.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiesta Feature'**
+  String get feedbackTypeFeature;
+
+  /// No description provided for @feedbackSubject.
+  ///
+  /// In it, this message translates to:
+  /// **'Oggetto'**
+  String get feedbackSubject;
+
+  /// No description provided for @feedbackSubjectHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrivi brevemente il problema...'**
+  String get feedbackSubjectHint;
+
+  /// No description provided for @feedbackDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get feedbackDescription;
+
+  /// No description provided for @feedbackDescriptionHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Fornisci maggiori dettagli qui...'**
+  String get feedbackDescriptionHint;
+
+  /// No description provided for @feedbackConsent.
+  ///
+  /// In it, this message translates to:
+  /// **'Autorizzo il trattamento dei miei dati per tracciare e registrare questa richiesta ai sensi della Privacy Policy.'**
+  String get feedbackConsent;
+
+  /// No description provided for @feedbackSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia'**
+  String get feedbackSubmit;
+
+  /// No description provided for @feedbackSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiesta inviata!'**
+  String get feedbackSuccess;
+
+  /// No description provided for @feedbackError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'invio della richiesta'**
+  String get feedbackError;
+
+  /// No description provided for @feedbackStatusNew.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova'**
+  String get feedbackStatusNew;
+
+  /// No description provided for @feedbackStatusInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Lavorazione'**
+  String get feedbackStatusInProgress;
+
+  /// No description provided for @feedbackStatusResolved.
+  ///
+  /// In it, this message translates to:
+  /// **'Risolta'**
+  String get feedbackStatusResolved;
+
+  /// No description provided for @feedbackStatusClosed.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiusa'**
+  String get feedbackStatusClosed;
+
+  /// No description provided for @feedbackNoRequests.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna segnalazione trovata'**
+  String get feedbackNoRequests;
+
+  /// No description provided for @feedbackAdminTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Amministrazione Feedback'**
+  String get feedbackAdminTitle;
+
   /// No description provided for @navHome.
   ///
   /// In it, this message translates to:
@@ -4568,6 +4682,72 @@ abstract class AppLocalizations {
   /// **'Decisiva: Ideale per fare pulizia. Focus su decisioni concrete di Eliminare o Aggiungere.'**
   String get retroUsageDAKI;
 
+  /// No description provided for @retroTemplateCustom.
+  ///
+  /// In it, this message translates to:
+  /// **'Personalizzato'**
+  String get retroTemplateCustom;
+
+  /// No description provided for @retroDescCustom.
+  ///
+  /// In it, this message translates to:
+  /// **'Definisci le tue colonne in base alle esigenze del team.'**
+  String get retroDescCustom;
+
+  /// No description provided for @retroUsageCustom.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale quando i template standard non si adattano alle esigenze specifiche del team.'**
+  String get retroUsageCustom;
+
+  /// No description provided for @collectionRationaleCustom.
+  ///
+  /// In it, this message translates to:
+  /// **'Rivedi ogni colonna personalizzata e crea azioni in base alle priorità del team.'**
+  String get collectionRationaleCustom;
+
+  /// No description provided for @retroCustomAddColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Colonna'**
+  String get retroCustomAddColumn;
+
+  /// No description provided for @retroCustomRemoveColumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi'**
+  String get retroCustomRemoveColumn;
+
+  /// No description provided for @retroCustomColumnTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo Colonna'**
+  String get retroCustomColumnTitle;
+
+  /// No description provided for @retroCustomColumnDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione (opzionale)'**
+  String get retroCustomColumnDesc;
+
+  /// No description provided for @retroCustomMinColumns.
+  ///
+  /// In it, this message translates to:
+  /// **'Sono necessarie almeno 2 colonne'**
+  String get retroCustomMinColumns;
+
+  /// No description provided for @retroCustomMaxColumns.
+  ///
+  /// In it, this message translates to:
+  /// **'Massimo 8 colonne consentite'**
+  String get retroCustomMaxColumns;
+
+  /// No description provided for @retroCustomConfigureColumns.
+  ///
+  /// In it, this message translates to:
+  /// **'Configura Colonne'**
+  String get retroCustomConfigureColumns;
+
   /// No description provided for @retroIcebreakerSentiment.
   ///
   /// In it, this message translates to:
@@ -7511,6 +7691,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Errore skip'**
   String get errorSkipping;
+
+  /// No description provided for @genericWarningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Attenzione'**
+  String get genericWarningTitle;
+
+  /// No description provided for @skipRevealedStoryWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa storia è stata rivelata e ci sono dei voti. Sei sicuro di volerla saltare perdendo i voti correnti?'**
+  String get skipRevealedStoryWarning;
+
+  /// No description provided for @skipRevealedStoryConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Sì, salta'**
+  String get skipRevealedStoryConfirm;
 
   /// No description provided for @retroIcebreakerTitle.
   ///
@@ -21612,12 +21810,6 @@ abstract class AppLocalizations {
   /// **'Lascia un commento (opzionale)'**
   String get feedbackCommentHint;
 
-  /// No description provided for @feedbackSubmit.
-  ///
-  /// In it, this message translates to:
-  /// **'Invia'**
-  String get feedbackSubmit;
-
   /// No description provided for @feedbackDismiss.
   ///
   /// In it, this message translates to:
@@ -21629,6 +21821,90 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Grazie per il tuo feedback!'**
   String get feedbackThankYou;
+
+  /// No description provided for @estimationThreePointFormula.
+  ///
+  /// In it, this message translates to:
+  /// **'Formula: (O + 4M + P) / 6'**
+  String get estimationThreePointFormula;
+
+  /// No description provided for @estimationThreePointOptHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Best case'**
+  String get estimationThreePointOptHint;
+
+  /// No description provided for @estimationThreePointRealHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Most likely'**
+  String get estimationThreePointRealHint;
+
+  /// No description provided for @estimationThreePointPessHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Worst case'**
+  String get estimationThreePointPessHint;
+
+  /// No description provided for @estimationThreePointReqError.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti i campi sono obbligatori'**
+  String get estimationThreePointReqError;
+
+  /// No description provided for @estimationThreePointInvalidError.
+  ///
+  /// In it, this message translates to:
+  /// **'Valori non validi'**
+  String get estimationThreePointInvalidError;
+
+  /// No description provided for @estimationThreePointGuideTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Guida:'**
+  String get estimationThreePointGuideTitle;
+
+  /// No description provided for @estimationThreePointGuideText.
+  ///
+  /// In it, this message translates to:
+  /// **'O: Stima nel caso migliore (tutto va bene)\nM: Stima piu\' probabile (condizioni normali)\nP: Stima nel caso peggiore (imprevisti)'**
+  String get estimationThreePointGuideText;
+
+  /// No description provided for @estimationThreePointVarPERT.
+  ///
+  /// In it, this message translates to:
+  /// **'PERT'**
+  String get estimationThreePointVarPERT;
+
+  /// No description provided for @estimationThreePointVarDevStd.
+  ///
+  /// In it, this message translates to:
+  /// **'Dev. Std'**
+  String get estimationThreePointVarDevStd;
+
+  /// No description provided for @estimationThreePointVarRange.
+  ///
+  /// In it, this message translates to:
+  /// **'Range'**
+  String get estimationThreePointVarRange;
+
+  /// No description provided for @exportCsv.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta CSV'**
+  String get exportCsv;
+
+  /// No description provided for @exportCsvSelected.
+  ///
+  /// In it, this message translates to:
+  /// **'Esportazione CSV avviata...'**
+  String get exportCsvSelected;
+
+  /// No description provided for @errorExportingCsv.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'esportazione CSV'**
+  String get errorExportingCsv;
 }
 
 class _AppLocalizationsDelegate

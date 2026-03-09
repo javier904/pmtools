@@ -3,11 +3,15 @@ import 'dart:html' as html; // Web-only import for download
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
+import '../services/user_profile_service.dart';
+import 'package:intl/intl.dart';
 
 class SmartTodoCsvExportService {
   static final SmartTodoCsvExportService _instance = SmartTodoCsvExportService._internal();
   factory SmartTodoCsvExportService() => _instance;
   SmartTodoCsvExportService._internal();
+
+  final UserProfileService _userProfileService = UserProfileService();
 
   /// Generates a CSV string and triggers download (Web)
   Future<void> exportToCsv(TodoListModel list, List<TodoTaskModel> tasks) async {
@@ -24,6 +28,12 @@ class SmartTodoCsvExportService {
 
     final statusMap = {for (var c in list.columns) c.id: c.title};
 
+    final Set<String> emails = {};
+    for (var task in tasks) {
+      emails.addAll(task.assignedTo);
+    }
+    final namesMap = await _resolveEmails(emails);
+
     List<List<dynamic>> rows = [];
     rows.add(headers);
 
@@ -31,10 +41,10 @@ class SmartTodoCsvExportService {
       rows.add([
         task.title,
         task.description,
-        statusMap[task.statusId] ?? 'N/A',
+        task.statusId != null ? (statusMap[task.statusId] ?? 'N/A') : 'N/A',
         task.priority.name.toUpperCase(),
         task.dueDate?.toIso8601String().split('T')[0] ?? '',
-        task.assignedTo.join('; '),
+        task.assignedTo.map((e) => namesMap[e] ?? e).join('; '),
         task.tags.map((t) => t.title).join('; '),
         task.createdAt.toIso8601String()
       ]);
@@ -56,6 +66,14 @@ class SmartTodoCsvExportService {
       // But since user is Web-focused for now, we leave this placeholder
       print('CSV Export not fully implemented for Mobile yet');
     }
+  }
+
+  Future<Map<String, String>> _resolveEmails(Set<String> emails) async {
+    final Map<String, String> results = {};
+    for (final email in emails) {
+      results[email] = await _userProfileService.getNameByEmail(email);
+    }
+    return results;
   }
 }
 

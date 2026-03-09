@@ -43,7 +43,7 @@ class _UserDisplayNameState extends State<UserDisplayName> {
 
   Future<void> _loadName() async {
     if (widget.email.isEmpty) return;
-    final name = await UserProfileService().getNameByEmail(widget.email);
+    final name = await UserProfileService().tryGetNameByEmail(widget.email);
     if (mounted) {
       setState(() {
         _resolvedName = name;

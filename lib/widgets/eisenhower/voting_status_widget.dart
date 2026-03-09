@@ -3,6 +3,7 @@ import '../../models/eisenhower_activity_model.dart';
 import '../../models/eisenhower_participant_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../themes/app_theme.dart';
+import '../user_display_name_widget.dart';
 
 /// Widget che mostra lo stato della votazione indipendente
 ///
@@ -237,8 +238,9 @@ class VotingStatusWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      participant.name,
+                    UserDisplayName(
+                      email: EisenhowerParticipantModel.unescapeEmail(email),
+                      fallback: participant.name,
                       style: TextStyle(
                         fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
                       ),

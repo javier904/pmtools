@@ -24,12 +24,14 @@ class SessionFormDialog extends StatefulWidget {
   final PlanningPokerSessionModel? session;
   final List<PreloadedStory>? preloadedStories;
   final String? suggestedName;
+  final bool isRestricted;
 
   const SessionFormDialog({
     super.key,
     this.session,
     this.preloadedStories,
     this.suggestedName,
+    this.isRestricted = false,
   });
 
   @override
@@ -128,13 +130,16 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                 controller: _descriptionController,
                 maxLength: Validators.maxDescriptionLength,
                 validator: Validators.description,
+                enabled: !widget.isRestricted,
                 decoration: InputDecoration(
                   labelText: l10n.sessionDescription,
                   hintText: l10n.formDescriptionHint,
                   border: const OutlineInputBorder(),
-                  focusedBorder: const OutlineInputBorder(
+                  focusedBorder: widget.isRestricted ? const OutlineInputBorder() : const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.amber, width: 2.0),
                   ),
+                  filled: widget.isRestricted,
+                  fillColor: widget.isRestricted ? Theme.of(context).disabledColor.withOpacity(0.05) : null,
                 ),
                 cursorColor: Colors.amber,
                 maxLines: 2,
@@ -157,11 +162,13 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                 decoration: InputDecoration(
                   labelText: l10n.sessionEstimationMode,
                   border: const OutlineInputBorder(),
-                  focusedBorder: const OutlineInputBorder(
+                  focusedBorder: (widget.isRestricted || _isVotingStarted) ? const OutlineInputBorder() : const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.amber, width: 2.0),
                   ),
+                  filled: widget.isRestricted || _isVotingStarted,
+                  fillColor: (widget.isRestricted || _isVotingStarted) ? Theme.of(context).disabledColor.withOpacity(0.05) : null,
                   isDense: true,
-                  prefixIcon: Icon(_getEstimationModeIcon(_selectedEstimationMode), size: 20, color: Colors.amber),
+                  prefixIcon: Icon(_getEstimationModeIcon(_selectedEstimationMode), size: 20, color: (widget.isRestricted || _isVotingStarted) ? Colors.grey : Colors.amber),
                   helperText: _isVotingStarted ? l10n.sessionEstimationModeLocked : null,
                   helperStyle: const TextStyle(color: Colors.orange, fontSize: 11),
                 ),
@@ -179,7 +186,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     ],
                   ),
                 )).toList(),
-                onChanged: _isVotingStarted ? null : (value) {
+                onChanged: (_isVotingStarted || widget.isRestricted) ? null : (value) {
                   if (value != null) {
                     setState(() {
                       _selectedEstimationMode = value;
@@ -205,11 +212,13 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                   decoration: InputDecoration(
                     labelText: l10n.sessionCardSet,
                     border: const OutlineInputBorder(),
-                    focusedBorder: const OutlineInputBorder(
+                    focusedBorder: widget.isRestricted ? const OutlineInputBorder() : const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.amber, width: 2.0),
                     ),
+                    filled: widget.isRestricted,
+                    fillColor: widget.isRestricted ? Theme.of(context).disabledColor.withOpacity(0.05) : null,
                     isDense: true,
-                    prefixIcon: const Icon(Icons.style, size: 20, color: Colors.amber),
+                    prefixIcon: Icon(Icons.style, size: 20, color: widget.isRestricted ? Colors.grey : Colors.amber),
                   ),
                   isExpanded: true,
                   items: [
@@ -234,7 +243,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                       ),
                     ),
                   ],
-                  onChanged: (value) => setState(() => _selectedCardSet = value!),
+                  onChanged: widget.isRestricted ? null : (value) => setState(() => _selectedCardSet = value!),
                 ),
                 const SizedBox(height: 12),
               ],
@@ -256,16 +265,22 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                     ),
                   ),
                   Expanded(
-                    child: CheckboxListTile(
-                      value: _allowObservers,
-                      onChanged: (value) => setState(() => _allowObservers = value!),
-                      activeColor: Colors.amber,
-                      checkColor: Colors.white,
-                      title: Text(l10n.sessionAllowObservers, style: const TextStyle(fontSize: 14)),
-                      subtitle: Text(l10n.sessionAllowObserversDesc, style: const TextStyle(fontSize: 11)),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
+                    child: IgnorePointer(
+                      ignoring: widget.isRestricted,
+                      child: Opacity(
+                        opacity: widget.isRestricted ? 0.5 : 1.0,
+                        child: CheckboxListTile(
+                          value: _allowObservers,
+                          onChanged: (value) => setState(() => _allowObservers = value!),
+                          activeColor: Colors.amber,
+                          checkColor: Colors.white,
+                          title: Text(l10n.sessionAllowObservers, style: const TextStyle(fontSize: 14)),
+                          subtitle: Text(l10n.sessionAllowObserversDesc, style: const TextStyle(fontSize: 11)),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                        ),
+                      ),
                     ),
                   ),
                 ],

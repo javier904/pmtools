@@ -235,11 +235,8 @@ service cloud.firestore {
         resource.data.invitedBy.lower() == userEmail()
       );
 
-      // List: Solo inviti propri (ricevuti o inviati)
-      allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() ||
-        resource.data.invitedBy.lower() == userEmail()
-      );
+      // List: Permette query per source (sicurezza a livello UI) o per email
+      allow list: if isAuthenticated();
 
       allow create: if isAuthenticated();
       // Update: chi ha invitato (qualsiasi modifica) O l'invitato (solo per accettare/rifiutare)
@@ -610,11 +607,8 @@ service cloud.firestore {
         resource.data.invitedBy.lower() == userEmail()
       );
 
-      // List: Solo inviti propri (ricevuti o inviati)
-      allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() ||
-        resource.data.invitedBy.lower() == userEmail()
-      );
+      // List: Permette query per source (sicurezza a livello UI) o per email
+      allow list: if isAuthenticated();
 
       // Create: qualsiasi utente autenticato
       allow create: if isAuthenticated();
@@ -639,11 +633,8 @@ service cloud.firestore {
         resource.data.invitedBy.lower() == userEmail()
       );
 
-      // List: Solo inviti propri (ricevuti o inviati)
-      allow list: if isAuthenticated() && (
-        resource.data.email.lower() == userEmail() ||
-        resource.data.invitedBy.lower() == userEmail()
-      );
+      // List: Permette query per source (sicurezza a livello UI) o per email
+      allow list: if isAuthenticated();
 
       // Create: qualsiasi utente autenticato
       allow create: if isAuthenticated();
@@ -662,13 +653,35 @@ service cloud.firestore {
     // ════════════════════════════════════════════════════════════════════════════
 
     match /users/{userId} {
-      // Gli utenti possono solo leggere/scrivere il proprio profilo
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      // Gli utenti possono leggere i profili base degli altri (es. displayName, fullName)
+      // ma possono scrivere solo il proprio profilo.
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
       
-      // Accesso a tutte le subcollection dell'utente (subscription, settings, history)
+      // Accesso a tutte le subcollection dell'utente (subscription, settings, history) rimane strettamente privato
       match /{document=**} {
         allow read, write: if isAuthenticated() && request.auth.uid == userId;
       }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // SYSTEM FEEDBACK & FEATURE REQUESTS
+    // ════════════════════════════════════════════════════════════════════════════
+
+    match /system_feedback/{feedbackId} {
+      // Create: Qualsiasi utente autenticato può creare feedback proprio
+      allow create: if isAuthenticated() &&
+                      request.resource.data.get('userEmail', '') == userEmail();
+
+      // Read: Un utente può leggere solo i propri feedback.
+      // L'admin (leonardotorella4@gmail.com) può leggere tutto.
+      allow read: if isAuthenticated() && (
+                    resource.data.get('userEmail', '') == userEmail() ||
+                    userEmail() == 'leonardotorella4@gmail.com'
+                  );
+
+      // Update/Delete: Solo l'admin può modificare lo status o eliminare i feedback.
+      allow update, delete: if isAuthenticated() && userEmail() == 'leonardotorella4@gmail.com';
     }
 
     // ════════════════════════════════════════════════════════════════════════════

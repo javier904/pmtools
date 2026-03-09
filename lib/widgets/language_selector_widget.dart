@@ -8,12 +8,14 @@ import '../services/auth_service.dart';
 /// Sincronizza automaticamente con Firestore se l'utente è loggato.
 class LanguageSelectorWidget extends StatelessWidget {
   final bool showLabel;
+  final bool showAsDropdown;
   /// Callback opzionale per notificare il cambio lingua
   final void Function(String localeCode)? onLocaleChanged;
 
   const LanguageSelectorWidget({
     super.key,
     this.showLabel = false,
+    this.showAsDropdown = true,
     this.onLocaleChanged,
   });
 
@@ -45,6 +47,32 @@ class LanguageSelectorWidget extends StatelessWidget {
     final localeController = LocaleControllerProvider.of(context);
     final currentLocale = localeController.locale;
 
+    if (!showAsDropdown) {
+      return ListView(
+        shrinkWrap: true,
+        children: LocaleController.supportedLocales.map((locale) {
+          final isSelected = locale == currentLocale;
+          return ListTile(
+            leading: Text(
+              localeController.getFlagEmoji(locale),
+              style: const TextStyle(fontSize: 24),
+            ),
+            title: Text(localeController.getDisplayName(locale)),
+            trailing: isSelected
+                ? const Icon(Icons.check, color: Colors.green)
+                : null,
+            onTap: () {
+              final localeCode = locale.languageCode;
+              localeController.setLocale(localeCode);
+              _syncLocaleToFirestore(localeCode);
+              onLocaleChanged?.call(localeCode);
+              Navigator.of(context).pop(); // Close dialog
+            },
+          );
+        }).toList(),
+      );
+    }
+
     return PopupMenuButton<Locale>(
       tooltip: 'Lingua / Language',
       offset: const Offset(0, 40),
@@ -52,7 +80,7 @@ class LanguageSelectorWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(

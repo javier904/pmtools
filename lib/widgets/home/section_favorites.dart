@@ -163,7 +163,7 @@ class _FavoriteItemTile extends StatelessWidget {
       onTap: () => _navigateToResource(context),
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), // Reduced padding
         decoration: BoxDecoration(
           color: context.surfaceVariantColor.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(10),
@@ -171,14 +171,14 @@ class _FavoriteItemTile extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 8,
+              width: 6, // Marginally thinner accent line
               height: 32,
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8), // Reduced spacing
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +188,7 @@ class _FavoriteItemTile extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: context.textPrimaryColor,
-                      fontSize: 14,
+                      fontSize: 13, // Slightly smaller
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -199,12 +199,17 @@ class _FavoriteItemTile extends StatelessWidget {
                       color: context.textMutedColor,
                       fontSize: 11,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.star, size: 20, color: Colors.amber), // Classic yellow
+              icon: const Icon(Icons.star, size: 18, color: Colors.amber), // Smaller icon
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              splashRadius: 20,
               onPressed: () {
                 FavoriteService().toggleFavorite(
                   resourceId: item.resourceId,
@@ -214,8 +219,7 @@ class _FavoriteItemTile extends StatelessWidget {
               },
               tooltip: l10n.actionRemoveFromFavorites,
             ),
-            const SizedBox(width: 4),
-            Icon(Icons.chevron_right_rounded, size: 20, color: context.textTertiaryColor),
+            Icon(Icons.chevron_right_rounded, size: 18, color: context.textTertiaryColor),
           ],
         ),
       ),

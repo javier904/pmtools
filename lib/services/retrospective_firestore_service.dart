@@ -503,12 +503,27 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   Future<void> submitSentiment(String retroId, String userEmail, int score) async {
     final docRef = _retrosCollection.doc(retroId);
     
-    // Direct path update bypasses the need for full document parsing and transaction cast errors
-    // Since Firebase keys cannot contain '.' natively without escaping in some contexts, we escape it if needed
-    // However, the model uses raw email. We will just use the raw email for the map path
     try {
-      await docRef.update({
-        FieldPath(['sentimentVotes', userEmail]): score,
+      await _db.runTransaction((transaction) async {
+        final snapshot = await transaction.get(docRef);
+        if (!snapshot.exists) return;
+
+        final data = snapshot.data();
+        if (data == null) return;
+        
+        final sentimentVotes = Map<String, dynamic>.from(data['sentimentVotes'] ?? {});
+        sentimentVotes[userEmail] = score;
+        
+        double sum = 0;
+        for (var v in sentimentVotes.values) {
+          sum += (v as num).toDouble();
+        }
+        final double? average = sentimentVotes.isEmpty ? null : sum / sentimentVotes.length;
+
+        transaction.update(docRef, {
+          'sentimentVotes': sentimentVotes,
+          'averageSentiment': average,
+        });
       });
 
       // Optional: Asynchronously log the audit without blocking the UI vote
@@ -557,23 +572,60 @@ Future<void> setTeamCardsVisibility(String retroId, bool isVisible) async {
   /// Invia un meteo (Icebreaker Weather)
   Future<void> submitWeather(String retroId, String userEmail, String weather) async {
     final docRef = _retrosCollection.doc(retroId);
-    await docRef.update({
-      FieldPath(['weatherVotes', userEmail]): weather,
-    });
+    
+    try {
+      await _db.runTransaction((transaction) async {
+        final snapshot = await transaction.get(docRef);
+        if (!snapshot.exists) return;
 
-    final retro = await getRetrospective(retroId);
-    if (retro != null) {
-      await _logAudit(
-        AuditLogModel.update(
-          projectId: retro.projectId ?? '',
-          entityType: AuditEntityType.retrospective,
-          entityId: retroId,
-          entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
-          performedBy: userEmail,
-          performedByName: 'User',
-          description: 'Inviato meteo icebreaker: $weather',
-        ),
-      );
+        final data = snapshot.data();
+        if (data == null) return;
+
+        final weatherVotes = Map<String, dynamic>.from(data['weatherVotes'] ?? {});
+        weatherVotes[userEmail] = weather;
+
+        final Map<String, int> weatherScores = {
+          'sunny': 5,
+          'partly_cloudy': 4,
+          'cloudy': 3,
+          'rainy': 2,
+          'stormy': 1,
+        };
+
+        double sum = 0;
+        int count = 0;
+        for (var w in weatherVotes.values) {
+          final s = weatherScores[w as String];
+          if (s != null) {
+            sum += s;
+            count++;
+          }
+        }
+        final double? average = count == 0 ? null : sum / count;
+
+        transaction.update(docRef, {
+          'weatherVotes': weatherVotes,
+          if (average != null) 'averageSentiment': average,
+        });
+      });
+
+      final retro = await getRetrospective(retroId);
+      if (retro != null) {
+        await _logAudit(
+          AuditLogModel.update(
+            projectId: retro.projectId ?? '',
+            entityType: AuditEntityType.retrospective,
+            entityId: retroId,
+            entityName: retro.title.isNotEmpty ? retro.title : retro.sprintName,
+            performedBy: userEmail,
+            performedByName: 'User',
+            description: 'Inviato meteo icebreaker: $weather',
+          ),
+        );
+      }
+    } catch (e) {
+      print('Firebase Weather Update Error: $e');
+      rethrow;
     }
   }
 

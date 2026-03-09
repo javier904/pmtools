@@ -354,6 +354,7 @@ class RetroMethodologyGuide {
           suggestedFollowUp: 'decision_review',
         );
       case RetroTemplate.startStopContinue:
+      case RetroTemplate.custom:
       default:
         return const ExportConfig(
           includeActionSummary: true,
@@ -379,6 +380,7 @@ class RetroMethodologyGuide {
       case RetroTemplate.daki:
         return MethodologyFocus.decisional;
       case RetroTemplate.quickForm:
+      case RetroTemplate.custom:
         return MethodologyFocus.actionOriented;
     }
   }
@@ -443,6 +445,8 @@ class RetroMethodologyGuide {
         return ['drop', 'add', 'improve', 'keep'];
       case RetroTemplate.quickForm:
         return ['went_well', 'improve'];
+      case RetroTemplate.custom:
+        return []; // No predefined order for custom columns
     }
   }
 
@@ -464,6 +468,8 @@ class RetroMethodologyGuide {
         return ['drop', 'add']; // Must drop and add something
       case RetroTemplate.quickForm:
         return ['went_well', 'improve'];
+      case RetroTemplate.custom:
+        return []; // No required columns for custom
     }
   }
 
@@ -484,6 +490,8 @@ class RetroMethodologyGuide {
         return l10n.collectionRationaleDAKI;
       case RetroTemplate.quickForm:
         return l10n.collectionRationaleSSC;
+      case RetroTemplate.custom:
+        return l10n.collectionRationaleCustom;
     }
   }
 

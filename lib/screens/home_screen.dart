@@ -203,49 +203,49 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Flexible(
               child: Container(
-              constraints: BoxConstraints(maxWidth: isMobile ? 200 : 300),
-              height: 36,
-              child: TextField(
-                controller: _searchController,
-                onSubmitted: _performSearch,
-                textInputAction: TextInputAction.search,
-                textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
-                  hintText: l10n.searchPlaceholder,
-                  hintStyle: TextStyle(color: context.textMutedColor, fontSize: 12),
-                  prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
-                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                    valueListenable: _searchController,
-                    builder: (context, value, _) {
-                      if (value.text.isEmpty) return const SizedBox.shrink();
-                      return GestureDetector(
-                        onTap: () => _performSearch(_searchController.text),
-                        child: const Icon(Icons.arrow_forward_rounded, size: 16),
-                      );
-                    },
+                constraints: BoxConstraints(maxWidth: isMobile ? 180 : 300), // Increased width for better typing experience on mobile
+                height: 36,
+                child: TextField(
+                  controller: _searchController,
+                  onSubmitted: _performSearch,
+                  textInputAction: TextInputAction.search,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    hintText: isMobile ? l10n.searchPlaceholder : l10n.searchPlaceholder, // Can adjust hint text length if needed
+                    hintStyle: TextStyle(color: context.textMutedColor, fontSize: 12),
+                    prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
+                    suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _searchController,
+                      builder: (context, value, _) {
+                        if (value.text.isEmpty) return const SizedBox.shrink();
+                        return GestureDetector(
+                          onTap: () => _performSearch(_searchController.text),
+                          child: const Icon(Icons.arrow_forward_rounded, size: 16),
+                        );
+                      },
+                    ),
+                    filled: true,
+                    fillColor: context.surfaceVariantColor,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10), // Reduced padding
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                    ),
                   ),
-                  filled: true,
-                  fillColor: context.surfaceVariantColor,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-                  ),
+                  style: TextStyle(fontSize: 13, color: context.textPrimaryColor),
                 ),
-                style: TextStyle(fontSize: 13, color: context.textPrimaryColor),
               ),
             ),
-            ), // close Flexible
             // Toggle per includere archiviati nella ricerca
-            if (_isSearching || _searchController.text.isNotEmpty) ...[
+            if ((_isSearching || _searchController.text.isNotEmpty) && !isMobile) ...[ // Hide toggle on mobile to save space
               const SizedBox(width: 8),
               Tooltip(
                 message: _includeArchived
@@ -302,21 +302,44 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ],
         ),
-        centerTitle: true,
+        centerTitle: false, // Don't enforce center title on mobile to give more space 
         actions: [
           // Language Selector
           if (!isMobile) const LanguageSelectorWidget(),
-          const SizedBox(width: 4),
+          if (!isMobile) const SizedBox(width: 4),
+
           // Pending Invites Button
           const PendingInvitesButton(),
-          const SizedBox(width: 4),
+          const SizedBox(width: 2),
+
           // Theme Toggle Button
-          if (themeController != null)
+          if (themeController != null && !isMobile)
             _HoverIconButton(
               icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
               tooltip: isDark ? l10n.themeLightMode : l10n.themeDarkMode,
               onTap: () => themeController.toggleTheme(),
             ),
+          if (!isMobile) const SizedBox(width: 2),
+
+          // Report Bug / Mobile Feedback Button
+          _HoverIconButton(
+            icon: isMobile ? Icons.forum_outlined : Icons.bug_report_rounded,
+            tooltip: isMobile 
+                ? (AppLocalizations.of(context)?.feedbackHistory ?? 'Feedback') // Or some generic 'Feedback' string
+                : l10n.feedbackReportBug,
+            onTap: () => Navigator.pushNamed(context, '/feedback-form', arguments: {'type': 'bug'}),
+          ),
+          const SizedBox(width: 2),
+
+          // Request Feature Button
+          if (!isMobile)
+            _HoverIconButton(
+              icon: Icons.lightbulb_outline_rounded,
+              tooltip: l10n.feedbackRequestFeature,
+              onTap: () => Navigator.pushNamed(context, '/feedback-form', arguments: {'type': 'feature'}),
+            ),
+          if (!isMobile) const SizedBox(width: 2),
+
           // Profile Menu
           if (user != null)
             ProfileMenuWidget(
@@ -325,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
               showSubscriptionBadge: true,
               avatarSize: 32,
             ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
         ],
       ),
       body: Material( // Wrap in Material to avoid potential layer issues
