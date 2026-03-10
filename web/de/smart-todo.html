@@ -68,6 +68,7 @@
       "Umfangreiche Aufgaben mit Prioritäten, Fristen, Unteraufgaben und Checklisten",
       "Anhänge, Kommentare mit Bildern und Aktivitätsprotokoll",
       "Listenübergreifende Gesamtansicht mit smarten Filtern (Heute, Meine Aufgaben, Eigentümer)",
+      "Kalenderansicht mit Wochen-, Monats- und Agenda-Modus zur Fristenplanung",
       "CFD-Analysen mit Engpasserkennung und Flussgesundheits-Überwachung",
       "Metriken für Lead Time, Cycle Time und Throughput",
       "WIP-Überwachung mit Alterserkennung und konfigurierbaren Limits",
@@ -164,6 +165,14 @@
       },
       {
         "@type": "Question",
+        "name": "Hat Smart Todo eine Kalenderansicht?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ja. Smart Todo enthält eine vollständige Kalenderansicht, in der Aufgaben nach Fristdatum in Wochen-, Monats- oder Agenda-Layouts angezeigt werden. Aufgaben mit Aufwandsschätzungen erscheinen als zeitgeblockte Ereignisse (1-8 Stunden), während Aufgaben ohne Termin als Ganztags-Elemente angezeigt werden. So lassen sich Fristen leicht planen, die Teamverfügbarkeit einsehen und Aufgabenmanagement mit kalenderbasierter Planung kombinieren."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Wie ist Keisen Smart Todo im Vergleich zu Trello oder Todoist?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -181,6 +190,43 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Keisen", "item": "https://keisenapp.com/" },
       { "@type": "ListItem", "position": 2, "name": "Smart Todo", "item": "https://keisenapp.com/de/smart-todo" }
+    ]
+  }
+  </script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Aufgaben mit einem Kanban-Board und CFD-Analysen verwalten",
+    "description": "Erfahren Sie, wie Sie ein kollaboratives Kanban-Board erstellen, Aufgaben mit Ihrem Team verwalten und den Workflow mit kumulativen Flussdiagramm-Analysen in Keisen Smart Todo optimieren.",
+    "totalTime": "PT8M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Smart Todo"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Liste erstellen und Kanban-Spalten anpassen",
+        "text": "Erstellen Sie eine neue Aufgabenliste und richten Sie Ihren Kanban-Workflow ein. Fügen Sie benutzerdefinierte Spalten mit individuellen Farben hinzu, wählen Sie Sortierregeln (manuell, nach Priorität, nach Frist, nach Erstellungsdatum) und markieren Sie, welche Spalten Aufgaben als erledigt kennzeichnen.",
+        "url": "https://keisenapp.com/de/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Aufgaben hinzufügen und Team einladen",
+        "text": "Fügen Sie Aufgaben mit Prioritäten, Fristen, Unteraufgaben, Tags und Aufwandsschätzungen hinzu. Laden Sie Teammitglieder als Eigentümer, Bearbeiter oder Betrachter per E-Mail ein. Weisen Sie Aufgaben zu, fügen Sie Kommentare mit Bildern hinzu und hängen Sie Dateien an.",
+        "url": "https://keisenapp.com/de/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Fortschritt verfolgen und mit CFD-Analysen optimieren",
+        "text": "Verschieben Sie Aufgaben per Drag-and-Drop zwischen Spalten. Überwachen Sie die Workflow-Gesundheit mit CFD-Analysen: Lead Time, Cycle Time, Throughput, WIP-Alterung und Engpasserkennung. Exportieren Sie Aufgaben zur Eisenhower-Matrix zur Priorisierung, zum Estimation Room für Team-Schätzungen oder zum Agile Process Manager für Sprint-Planung.",
+        "url": "https://keisenapp.com/de/smart-todo#how-it-works"
+      }
     ]
   }
   </script>
@@ -214,11 +260,19 @@
                     Drag-and-Drop,
                     CFD-Analysen, Engpasserkennung, Teamrollen und Cross-Tool-Integrationen. Alles, was Ihr Team
                     benötigt, um die Arbeit visuell zu verwalten und organisiert zu bleiben. Funktioniert auf jedem Gerät.</p>
+                <nav class="toc" aria-label="Seiteninhalt">
+                    <a href="#highlights">Warum Smart Todo</a>
+                    <a href="#screenshots">Screenshots</a>
+                    <a href="#how-it-works">So funktioniert's</a>
+                    <a href="#views">4 Ansichten</a>
+                    <a href="#features">Funktionen</a>
+                    <a href="#faq">FAQ</a>
+                </nav>
                 <a href="https://keisenapp.com/login" class="btn-cta">Kostenlos starten →</a>
             </div>
         </section>
 
-        <section class="how-it-works">
+        <section class="how-it-works" id="how-it-works">
             <div class="container">
                 <h2>Wie es funktioniert</h2>
                 <div class="steps-grid">
@@ -246,7 +300,51 @@
             </div>
         </section>
 
-        <section class="highlights">
+        <section class="screenshots-showcase" id="screenshots">
+            <div class="container">
+                <h2>Smart Todo in Aktion</h2>
+                <div class="screenshots-grid">
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-kanban.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-kanban.png"
+                alt="Smart Todo Kanban-Board mit den Spalten To Do, In Progress und Done, farbcodierte Aufgabenkarten mit Prioritäts-Badges und Zuweisungs-Avataren"
+                width="1318" height="633" loading="lazy">
+            </picture>
+            <figcaption>Kanban-Board: benutzerdefinierte Spalten mit Farben, Prioritäts-Badges und Drag-and-Drop-Aufgabenkarten</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-list.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-list.png"
+                alt="Smart Todo Listenansicht mit Status-Badges, Prioritätsindikatoren und Aufgabenzeilen für schnelles Scannen"
+                width="1466" height="249" loading="lazy">
+            </picture>
+            <figcaption>Listenansicht: kompaktes Layout mit Status-Badges, Prioritäten und schneller Navigation</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-metrics.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-metrics.png"
+                alt="Dashboard für Schlüsselmetriken mit Lead Time, Cycle Time, Throughput, WIP-Überwachung, Flussanalyse, Engpasserkennung, Aging WIP und Team-Balance"
+                width="1448" height="671" loading="lazy">
+            </picture>
+            <figcaption>Analysen: Lead Time, Cycle Time, Throughput, WIP-Aging, Engpasserkennung und Team-Balance</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-task.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-task.png"
+                alt="Dialog Neue Aufgabe mit Titel, Beschreibung, Status, Priorität, Zuweisungen, Checkliste, Anhänge, Kommentare, Tags, Fälligkeitsdatum und Aufwand"
+                width="697" height="649" loading="lazy">
+            </picture>
+            <figcaption>Aufgabendetail: Titel, Beschreibung, Priorität, Zuweisungen, Checkliste, Anhänge, Tags und Fälligkeitsdatum</figcaption>
+          </figure>
+        </div>
+            </div>
+        </section>
+
+        <section class="highlights" id="highlights">
             <div class="container">
                 <div class="highlights-grid">
                     <div class="highlight-card">
@@ -277,10 +375,10 @@
             </div>
         </section>
 
-        <section class="templates-detail">
+        <section class="templates-detail" id="views">
             <div class="container">
-                <h2>3 leistungsstarke Ansichten, ein Tool</h2>
-                <p>Wechseln Sie zwischen den Ansichten, um Aufgaben so zu verwalten, wie es am besten zu Ihrem Team und
+                <h2>Kanban-Board, Globale Ansicht, Kalender & Analyse-Dashboard</h2>
+                <p>Wechseln Sie zwischen 4 Ansichten, um Aufgaben so zu verwalten, wie es am besten zu Ihrem Team und
                     Ihrem Workflow passt.</p>
                 <div class="templates-grid">
 
@@ -313,6 +411,19 @@
                     </div>
 
                     <div class="template-card">
+                        <div class="template-emoji">📅</div>
+                        <h3>Kalenderansicht</h3>
+                        <p>Visualisieren Sie Aufgaben auf einem Zeitplan-Kalender nach Fristdatum sortiert. Wechseln Sie
+                            zwischen Wochen-, Monats- und Agenda-Ansichten. Aufgaben mit Aufwandsschätzungen werden als
+                            zeitgeblockte Ereignisse (1-8 Stunden) angezeigt. Aufgaben ohne Termin erscheinen als
+                            Ganztags-Elemente, damit nichts verpasst wird. Ideal für termingesteuertes Planen und Ressourcenplanung.</p>
+                        <div class="template-best-for">
+                            <strong>Ideal für:</strong> Fristenmanagement, Sprint-Planung, Teamverfügbarkeit einsehen und
+                            Aufgaben neben Kalendereinträgen planen.
+                        </div>
+                    </div>
+
+                    <div class="template-card">
                         <div class="template-emoji">📈</div>
                         <h3>Analyse-Dashboard</h3>
                         <p>Verstehen Sie die Gesundheit des Workflows Ihres Teams mit kumulativen Flussdiagrammen (CFD).
@@ -330,7 +441,7 @@
             </div>
         </section>
 
-        <section class="features-detail">
+        <section class="features-detail" id="features">
             <div class="container">
                 <h2>Vollständiges Toolkit für das Aufgabenmanagement</h2>
                 <ul class="features-list">
@@ -360,6 +471,9 @@
                     <li><strong>Listenübergreifende Gesamtansicht</strong> — Sehen Sie alle Aufgaben jeder Liste in
                         einer Ansicht mit Filtern: Heute, Meine Aufgaben (Ihnen zugewiesen), Eigentümer (Ihre Listen),
                         plus Volltextsuche</li>
+                    <li><strong>Kalenderansicht</strong> — Visualisieren Sie Aufgaben in einem Wochen-, Monats- oder
+                        Agenda-Kalender nach Fristdatum sortiert, mit aufwandsbasierter Zeitblockierung (1-8 Stunden)
+                        und Ganztags-Ereignissen für Aufgaben ohne Termin</li>
                     <li><strong>CFD-Analysen</strong> — Kumulative Flussdiagramme mit Lead Time (Mittelwert, Median,
                         p85, p95), Cycle Time, Durchsatz (täglich/wöchentlich) und Flussgesundheitsstatus</li>
                     <li><strong>WIP- und Alterungsüberwachung</strong> — Überwachen Sie das Work In Progress mit
@@ -389,7 +503,25 @@
             </div>
         </section>
 
-        <section class="faq-section">
+        <section class="origin-section" id="origin">
+            <div class="container">
+                <h2>Mehr als ein Board: Lean-Flow-Analysen für das Aufgabenmanagement</h2>
+                <p>Die meisten Kanban-Tools hören bei Spalten und Karten auf. Keisen Smart Todo geht weiter, indem es
+                    <strong>Lean-Flow-Analysen</strong> — inspiriert von Don Reinertsens
+                    <em>Principles of Product Development Flow</em> — direkt in Ihren Aufgabenmanagement-Workflow einbettet.</p>
+                <p>Das integrierte <strong>Kumulative Flussdiagramm (CFD)</strong> zeigt, was ein Board allein nicht zeigen kann:
+                    wo sich Arbeit ansammelt, wie lange Aufgaben wirklich brauchen und ob der Durchsatz Ihres Teams sich
+                    verbessert oder sinkt. Lead-Time-Perzentile (p85, p95), WIP-Alterungsschwellen und Engpass-Schweregrade
+                    verwandeln subjektive Eindrücke in <strong>datengestützte Entscheidungen</strong>.</p>
+                <p>Kombiniert mit <strong>Cross-Tool-Integrationen</strong> — priorisieren Sie Aufgaben mit der
+                    <a href="/de/eisenhower">Eisenhower-Matrix</a>, schätzen Sie den Aufwand im
+                    <a href="/de/estimation-room">Estimation Room</a> und konvertieren Sie Aufgaben in User Stories im
+                    <a href="/de/agile-process">Agile Process Manager</a> — verwandelt Smart Todo eine persönliche Checkliste
+                    in ein <strong>Team-Intelligence-System</strong>, das jede Phase des agilen Workflows verbindet.</p>
+            </div>
+        </section>
+
+        <section class="faq-section" id="faq">
             <div class="container">
                 <h2>Häufig gestellte Fragen</h2>
                 <div class="faq-list">
@@ -467,6 +599,14 @@
                             auf jedem Gerät.</div>
                     </details>
                     <details class="faq-item">
+                        <summary class="faq-question">Hat Smart Todo eine Kalenderansicht?</summary>
+                        <div class="faq-answer">Ja. Smart Todo enthält eine vollständige Kalenderansicht, in der Aufgaben
+                            nach Fristdatum in Wochen-, Monats- oder Agenda-Layouts angezeigt werden. Aufgaben mit
+                            Aufwandsschätzungen erscheinen als zeitgeblockte Ereignisse (1-8 Stunden), während Aufgaben
+                            ohne Termin als Ganztags-Elemente angezeigt werden. So lassen sich Fristen leicht planen,
+                            die Teamverfügbarkeit einsehen und Aufgabenmanagement mit kalenderbasierter Planung kombinieren.</div>
+                    </details>
+                    <details class="faq-item">
                         <summary class="faq-question">Wie ist Keisen im Vergleich zu Trello oder Todoist?</summary>
                         <div class="faq-answer">Im Gegensatz zu Trello (begrenzt auf 10 Boards und 10 Mitglieder im
                             kostenlosen Plan, ohne integrierte Analysen) oder Todoist (5 Projekte und 5 kostenlose
@@ -481,7 +621,7 @@
             </div>
         </section>
 
-        <section class="other-tools">
+        <section class="other-tools" id="tools">
             <div class="container">
                 <h2>Weitere Tools erkunden</h2>
                 <div class="tools-grid">

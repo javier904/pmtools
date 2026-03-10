@@ -65,6 +65,7 @@
       "Tarefas completas com prioridades, prazos, subtarefas e checklists",
       "Anexos, comentarios com imagens e registro de atividade",
       "Vista global cross-lista com filtros inteligentes (Hoje, Minhas Tarefas, Proprietario)",
+      "Vista calendário com modos semana, mês e agenda para planejamento de prazos",
       "Analiticas CFD com deteccao de gargalos e monitoramento de saude do fluxo",
       "Metricas lead time, cycle time e throughput",
       "Monitoramento WIP com deteccao de envelhecimento e limites configuraveis",
@@ -161,6 +162,14 @@
       },
       {
         "@type": "Question",
+        "name": "O Smart Todo tem uma vista de calendário?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim. O Smart Todo inclui uma vista de calendário completa onde as tarefas são exibidas por prazo em layouts de semana, mês ou agenda. Tarefas com estimativas de esforço aparecem como eventos com blocos de tempo (1-8 horas), enquanto tarefas sem agendamento são mostradas como itens do dia inteiro. Isso facilita o planejamento de prazos, a visualização de disponibilidade da equipe e a combinação de gestão de tarefas com agendamento baseado em calendário."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Como o Keisen Smart Todo se compara ao Trello ou Todoist?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -178,6 +187,43 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Keisen", "item": "https://keisenapp.com/" },
       { "@type": "ListItem", "position": 2, "name": "Smart Todo", "item": "https://keisenapp.com/pt/smart-todo" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Como Gerenciar Tarefas com um Quadro Kanban e Análises CFD",
+    "description": "Aprenda como criar um quadro Kanban colaborativo, gerenciar tarefas com sua equipe e otimizar o fluxo de trabalho com análises de Diagrama de Fluxo Acumulativo no Keisen Smart Todo.",
+    "totalTime": "PT8M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Smart Todo"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Crie uma Lista e Personalize as Colunas Kanban",
+        "text": "Crie uma nova lista de tarefas e configure seu fluxo de trabalho Kanban. Adicione colunas personalizadas com cores individuais, escolha regras de ordenação (manual, por prioridade, por prazo, por data de criação) e defina quais colunas marcam as tarefas como concluídas com o toggle isDone.",
+        "url": "https://keisenapp.com/pt/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Adicione Tarefas e Convide Sua Equipe",
+        "text": "Adicione tarefas com prioridades, prazos, subtarefas, tags e estimativas de esforço. Convide membros da equipe como Owners, Editors ou Viewers com convites por email e suporte a deep link. Atribua tarefas, adicione comentários com imagens e anexe arquivos.",
+        "url": "https://keisenapp.com/pt/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Monitore o Progresso e Otimize com Análises CFD",
+        "text": "Mova tarefas entre colunas com arrastar e soltar. Monitore a saúde do fluxo de trabalho com análises CFD: lead time, cycle time, throughput, envelhecimento WIP e detecção de gargalos. Exporte tarefas para a Matriz Eisenhower para priorização, Estimation Room para estimativa em equipe, ou Agile Process Manager para planejamento de sprints.",
+        "url": "https://keisenapp.com/pt/smart-todo#how-it-works"
+      }
     ]
   }
   </script>
@@ -210,11 +256,19 @@
         <p class="hero-subtitle">Gestao de tarefas colaborativa com colunas Kanban personalizaveis, arrastar e soltar,
           analiticas CFD, deteccao de gargalos, funcoes de equipe e integracoes cross-tool. Tudo o que sua equipe
           precisa para gerenciar o trabalho visualmente e manter-se organizada. Funciona em qualquer dispositivo.</p>
+        <nav class="toc" aria-label="Page contents">
+          <a href="#highlights">Por que Smart Todo</a>
+          <a href="#screenshots">Capturas de Tela</a>
+          <a href="#how-it-works">Como Funciona</a>
+          <a href="#views">4 Visualizações</a>
+          <a href="#features">Funcionalidades</a>
+          <a href="#faq">FAQ</a>
+        </nav>
         <a href="https://keisenapp.com/login" class="btn-cta">Comece Gratis →</a>
       </div>
     </section>
 
-    <section class="how-it-works">
+    <section class="how-it-works" id="how-it-works">
       <div class="container">
         <h2>Como Funciona</h2>
         <div class="steps-grid">
@@ -240,7 +294,51 @@
       </div>
     </section>
 
-    <section class="highlights">
+    <section class="screenshots-showcase" id="screenshots">
+      <div class="container">
+        <h2>Smart Todo em Ação</h2>
+        <div class="screenshots-grid">
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-kanban.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-kanban.png"
+                alt="Quadro Kanban Smart Todo com colunas A Fazer, Em Progresso e Concluído, cartões de tarefas com badges de prioridade e avatares dos atribuídos"
+                width="1318" height="633" loading="lazy">
+            </picture>
+            <figcaption>Quadro Kanban: colunas personalizadas com cores, badges de prioridade e cartões arrastar e soltar</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-list.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-list.png"
+                alt="Vista lista Smart Todo com badges de status, indicadores de prioridade e linhas de tarefas para visualização rápida"
+                width="1466" height="249" loading="lazy">
+            </picture>
+            <figcaption>Vista lista: layout compacto com badges de status, prioridades e navegação rápida</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-metrics.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-metrics.png"
+                alt="Dashboard de Métricas Chave com Lead Time, Cycle Time, Throughput, monitoramento WIP, Análise de Fluxo, Detecção de Gargalos, Aging WIP e Equilíbrio da Equipe"
+                width="1448" height="671" loading="lazy">
+            </picture>
+            <figcaption>Analytics: Lead Time, Cycle Time, Throughput, aging WIP, detecção de gargalos e equilíbrio da equipe</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-task.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-task.png"
+                alt="Diálogo Nova Tarefa com título, descrição, status, prioridade, atribuídos, checklist, anexos, comentários, tags, prazo e esforço"
+                width="697" height="649" loading="lazy">
+            </picture>
+            <figcaption>Detalhe da tarefa: título, descrição, prioridade, atribuídos, checklist, anexos, tags e prazo</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlights" id="highlights">
       <div class="container">
         <div class="highlights-grid">
           <div class="highlight-card">
@@ -271,10 +369,10 @@
       </div>
     </section>
 
-    <section class="templates-detail">
+    <section class="templates-detail" id="views">
       <div class="container">
-        <h2>3 Vistas Poderosas, Uma Unica Ferramenta</h2>
-        <p>Alterne entre vistas para gerenciar as tarefas da forma que melhor funcione para sua equipe e seu fluxo de
+        <h2>Quadro Kanban, Vista Global, Calendário e Painel de Analíticas</h2>
+        <p>Alterne entre 4 vistas para gerenciar as tarefas da forma que melhor funcione para sua equipe e seu fluxo de
           trabalho.</p>
         <div class="templates-grid">
 
@@ -306,6 +404,19 @@
           </div>
 
           <div class="template-card">
+            <div class="template-emoji">📅</div>
+            <h3>Vista Calendário</h3>
+            <p>Visualize as tarefas em um calendário organizado por prazo. Alterne entre vistas de semana, mês e agenda.
+              Tarefas com estimativas de esforço são exibidas como eventos com blocos de tempo (1-8 horas). Tarefas sem
+              agendamento aparecem como itens do dia inteiro para que nada seja esquecido. Ideal para planejamento orientado
+              a prazos e alocação de recursos.</p>
+            <div class="template-best-for">
+              <strong>Ideal para:</strong> Gestão de prazos, planejamento de sprints, visualização de disponibilidade da
+              equipe e agendamento de tarefas junto a eventos do calendário.
+            </div>
+          </div>
+
+          <div class="template-card">
             <div class="template-emoji">📈</div>
             <h3>Painel de Analiticas</h3>
             <p>Compreenda a saude do fluxo de trabalho da sua equipe com Diagramas de Fluxo Acumulativo (CFD). Monitore
@@ -322,7 +433,7 @@
       </div>
     </section>
 
-    <section class="features-detail">
+    <section class="features-detail" id="features">
       <div class="container">
         <h2>Kit Completo de Gestao de Tarefas</h2>
         <ul class="features-list">
@@ -348,6 +459,8 @@
           <li><strong>Vista Global Cross-Lista</strong> — Veja todas as tarefas de cada lista em uma vista com filtros:
             Hoje (com prazo hoje), Minhas Tarefas (atribuidas a voce), Proprietario (suas listas), mais pesquisa de
             texto completo</li>
+          <li><strong>Vista Calendário</strong> — Visualize tarefas em um calendário de semana, mês ou agenda organizado por
+            prazo, com blocos de tempo baseados em esforço (1-8 horas) e eventos do dia inteiro para tarefas sem agendamento</li>
           <li><strong>Analiticas CFD</strong> — Diagramas de Fluxo Acumulativo mostrando lead time (media, mediana, p85,
             p95), cycle time, throughput (diario/semanal) e status de saude do fluxo (healthy/growing/critical)</li>
           <li><strong>Monitoramento WIP e Envelhecimento</strong> — Monitore o Work In Progress com limites
@@ -373,7 +486,25 @@
       </div>
     </section>
 
-    <section class="faq-section">
+    <section class="origin-section" id="origin">
+      <div class="container">
+        <h2>Além de um Quadro: Análises Lean Flow para Gerenciamento de Tarefas</h2>
+        <p>A maioria das ferramentas Kanban para nas colunas e cartões. O Keisen Smart Todo vai além ao incorporar
+          <strong>análises Lean flow</strong> — inspiradas nos <em>Principles of Product Development Flow</em> de Don
+          Reinertsen — diretamente no seu fluxo de gestão de tarefas.</p>
+        <p>O <strong>Diagrama de Fluxo Acumulativo (CFD)</strong> integrado revela o que um quadro sozinho não mostra:
+          onde o trabalho se acumula, quanto tempo as tarefas realmente levam e se o throughput da sua equipe está melhorando
+          ou diminuindo. Percentis de lead time (p85, p95), limites de envelhecimento WIP e pontuações de severidade de
+          gargalos transformam impressões subjetivas em <strong>decisões baseadas em dados</strong>.</p>
+        <p>Combinado com <strong>integrações cross-tool</strong> — priorize tarefas com a
+          <a href="/pt/eisenhower">Matriz Eisenhower</a>, estime esforço na
+          <a href="/pt/estimation-room">Estimation Room</a> e converta tarefas em User Stories no
+          <a href="/pt/agile-process">Agile Process Manager</a> — o Smart Todo transforma uma lista de tarefas pessoal em
+          um <strong>sistema de inteligência de equipe</strong> que conecta cada etapa do fluxo de trabalho ágil.</p>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
       <div class="container">
         <h2>Perguntas Frequentes</h2>
         <div class="faq-list">
@@ -441,6 +572,14 @@
               melhor experiencia em cada dispositivo.</div>
           </details>
           <details class="faq-item">
+            <summary class="faq-question">O Smart Todo tem uma vista de calendário?</summary>
+            <div class="faq-answer">Sim. O Smart Todo inclui uma vista de calendário completa onde as tarefas são exibidas
+              por prazo em layouts de semana, mês ou agenda. Tarefas com estimativas de esforço aparecem como eventos com
+              blocos de tempo (1-8 horas), enquanto tarefas sem agendamento são mostradas como itens do dia inteiro. Isso
+              facilita o planejamento de prazos, a visualização de disponibilidade da equipe e a combinação de gestão de
+              tarefas com agendamento baseado em calendário.</div>
+          </details>
+          <details class="faq-item">
             <summary class="faq-question">Como o Keisen se compara ao Trello ou Todoist?</summary>
             <div class="faq-answer">Diferente do Trello (limitado a 10 quadros e 10 membros no plano gratuito, sem
               analiticas integradas) ou Todoist (5 projetos e 5 colaboradores gratuitos, sem vista Kanban), o Keisen
@@ -454,7 +593,7 @@
       </div>
     </section>
 
-    <section class="other-tools">
+    <section class="other-tools" id="tools">
       <div class="container">
         <h2>Explore Outras Ferramentas</h2>
         <div class="tools-grid">

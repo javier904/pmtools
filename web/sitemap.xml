@@ -112,7 +112,23 @@
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://keisenapp.com/smart-todo"/>
-    <lastmod>2026-02-13</lastmod>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/smart-todo-kanban.webp</image:loc>
+      <image:title>Smart Todo Kanban board with custom columns, priority badges and drag-and-drop - Keisen</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/smart-todo-list.webp</image:loc>
+      <image:title>Smart Todo list view with status badges and priority indicators - Keisen</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/smart-todo-metrics.webp</image:loc>
+      <image:title>Smart Todo Key Metrics dashboard - Lead Time, Cycle Time, Throughput, WIP analysis - Keisen</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/smart-todo-task.webp</image:loc>
+      <image:title>Smart Todo new task dialog with checklist, attachments, tags and due date - Keisen</image:title>
+    </image:image>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -126,7 +142,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -140,7 +156,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -154,7 +170,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -168,7 +184,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -546,7 +562,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-18</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -560,7 +576,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-18</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -574,7 +590,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/smart-todo"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/smart-todo"/>
-    <lastmod>2026-02-18</lastmod>
+    <lastmod>2026-03-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

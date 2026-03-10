@@ -66,6 +66,7 @@
       "Задачи с приоритетами, сроками, подзадачами и чек-листами",
       "Вложения файлов, комментарии с изображениями и лог активности",
       "Глобальный вид всех задач с умными фильтрами",
+      "Календарный вид с режимами недели, месяца и повестки дня для планирования дедлайнов",
       "Аналитика CFD с поиском узких мест и мониторингом потока",
       "Метрики Lead time, cycle time и throughput",
       "Мониторинг WIP и времени нахождения задач в статусе",
@@ -161,6 +162,14 @@
       },
       {
         "@type": "Question",
+        "name": "Есть ли в Smart Todo календарный вид?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да. Smart Todo включает полноценный календарный вид, где задачи отображаются по дедлайнам в режимах недели, месяца или повестки дня. Задачи с оценкой трудоёмкости показываются как блоки времени (1-8 часов), а задачи без срока — как события на весь день. Это удобно для планирования дедлайнов, контроля доступности команды и совмещения управления задачами с календарным расписанием."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Чем Keisen Smart Todo отличается от Trello или Todoist?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -178,6 +187,43 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Keisen", "item": "https://keisenapp.com/ru/" },
       { "@type": "ListItem", "position": 2, "name": "Smart Todo", "item": "https://keisenapp.com/ru/smart-todo" }
+    ]
+  }
+  </script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Как управлять задачами с помощью Kanban-доски и CFD-аналитики",
+    "description": "Узнайте, как создать совместную Kanban-доску, управлять задачами с командой и оптимизировать рабочий процесс с помощью аналитики Кумулятивной диаграммы потока в Keisen Smart Todo.",
+    "totalTime": "PT8M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Smart Todo"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Создайте список и настройте Kanban-колонки",
+        "text": "Создайте новый список задач и настройте Kanban-воркфлоу. Добавьте колонки с индивидуальными цветами, выберите правила сортировки (вручную, по приоритету, по сроку, по дате создания) и отметьте, какие колонки считают задачи завершёнными с помощью флага isDone.",
+        "url": "https://keisenapp.com/ru/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Добавьте задачи и пригласите команду",
+        "text": "Добавьте задачи с приоритетами, сроками, подзадачами, тегами и оценкой трудоёмкости. Пригласите участников команды как Владельцев, Редакторов или Читателей по email с поддержкой deep link. Назначайте задачи, добавляйте комментарии с изображениями и прикрепляйте файлы.",
+        "url": "https://keisenapp.com/ru/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Отслеживайте прогресс и оптимизируйте с CFD-аналитикой",
+        "text": "Перемещайте задачи между колонками перетаскиванием. Следите за здоровьем процесса с помощью аналитики CFD: lead time, cycle time, throughput, старение WIP и обнаружение узких мест. Экспортируйте задачи в Матрицу Эйзенхауэра для приоритизации, в Estimation Room для командной оценки или в Agile Process Manager для планирования спринтов.",
+        "url": "https://keisenapp.com/ru/smart-todo#how-it-works"
+      }
     ]
   }
   </script>
@@ -210,11 +256,19 @@
                 <p class="hero-subtitle">Совместное управление задачами с настраиваемыми Kanban-колонками,
                     драг-энд-дроп, аналитикой CFD, поиском узких мест и ролями участников. Всё, что нужно вашей команде
                     для визуальной организации работы. Работает на любом устройстве.</p>
+                <nav class="toc" aria-label="Page contents">
+                    <a href="#highlights">Почему Smart Todo</a>
+                    <a href="#screenshots">Скриншоты</a>
+                    <a href="#how-it-works">Как это работает</a>
+                    <a href="#views">4 Представления</a>
+                    <a href="#features">Функции</a>
+                    <a href="#faq">FAQ</a>
+                </nav>
                 <a href="https://keisenapp.com/login" class="btn-cta">Начать бесплатно →</a>
             </div>
         </section>
 
-        <section class="how-it-works">
+        <section class="how-it-works" id="how-it-works">
             <div class="container">
                 <h2>Как это работает</h2>
                 <div class="steps-grid">
@@ -240,7 +294,51 @@
             </div>
         </section>
 
-        <section class="highlights">
+        <section class="screenshots-showcase" id="screenshots">
+            <div class="container">
+                <h2>Smart Todo в Действии</h2>
+                <div class="screenshots-grid">
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-kanban.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-kanban.png"
+                alt="Kanban-доска Smart Todo с колонками To Do, In Progress и Done, цветные карточки задач с бейджами приоритета и аватарами назначенных"
+                width="1318" height="633" loading="lazy">
+            </picture>
+            <figcaption>Kanban-доска: пользовательские колонки с цветами, бейджи приоритета и перетаскивание карточек</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-list.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-list.png"
+                alt="Списочный вид Smart Todo с бейджами статуса, индикаторами приоритета и строками задач для быстрого просмотра"
+                width="1466" height="249" loading="lazy">
+            </picture>
+            <figcaption>Списочный вид: компактный макет с бейджами статуса, приоритетами и быстрой навигацией</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-metrics.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-metrics.png"
+                alt="Дашборд ключевых метрик с Lead Time, Cycle Time, Throughput, мониторинг WIP, анализ потока, обнаружение узких мест, Aging WIP и баланс команды"
+                width="1448" height="671" loading="lazy">
+            </picture>
+            <figcaption>Аналитика: Lead Time, Cycle Time, Throughput, aging WIP, обнаружение узких мест и баланс команды</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-task.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-task.png"
+                alt="Диалог новой задачи с заголовком, описанием, статусом, приоритетом, назначениями, чек-листом, вложениями, комментариями, тегами, сроком и трудозатратами"
+                width="697" height="649" loading="lazy">
+            </picture>
+            <figcaption>Детали задачи: заголовок, описание, приоритет, назначения, чек-лист, вложения, теги и срок</figcaption>
+          </figure>
+        </div>
+            </div>
+        </section>
+
+        <section class="highlights" id="highlights">
             <div class="container">
                 <div class="highlights-grid">
                     <div class="highlight-card">
@@ -271,10 +369,10 @@
             </div>
         </section>
 
-        <section class="templates-detail">
+        <section class="templates-detail" id="views">
             <div class="container">
-                <h2>3 мощных режима просмотра</h2>
-                <p>Переключайтесь между режимами, чтобы управлять задачами максимально эффективно.</p>
+                <h2>Kanban-доска, Глобальный вид, Календарь и Дашборд аналитики</h2>
+                <p>Переключайтесь между 4 режимами, чтобы управлять задачами максимально эффективно.</p>
                 <div class="templates-grid">
 
                     <div class="template-card">
@@ -304,6 +402,19 @@
                     </div>
 
                     <div class="template-card">
+                        <div class="template-emoji">📅</div>
+                        <h3>Календарь</h3>
+                        <p>Визуализируйте задачи на временной шкале по дедлайнам. Переключайтесь между режимами недели,
+                            месяца и повестки дня. Задачи с оценкой трудоёмкости отображаются как блоки времени (1-8 часов).
+                            Задачи без дедлайна показываются как события на весь день. Идеально для планирования сроков и
+                            распределения ресурсов.</p>
+                        <div class="template-best-for">
+                            <strong>Идеально для:</strong> управления дедлайнами, планирования спринтов, контроля
+                            доступности команды и расписания задач наряду с событиями календаря.
+                        </div>
+                    </div>
+
+                    <div class="template-card">
                         <div class="template-emoji">📈</div>
                         <h3>Дашборд аналитики</h3>
                         <p>Поймите «здоровье» ваших процессов с диаграммами CFD. Отслеживайте Lead Time (средний,
@@ -319,7 +430,7 @@
             </div>
         </section>
 
-        <section class="features-detail">
+        <section class="features-detail" id="features">
             <div class="container">
                 <h2>Полный набор для управления задачами</h2>
                 <ul class="features-list">
@@ -341,6 +452,8 @@
                             href="/ru/estimation-room">Estimation Room</a></li>
                     <li><strong>Глобальный кросс-вид</strong> — все задачи из всех списков в одном окне с умными
                         фильтрами</li>
+                    <li><strong>Календарь</strong> — визуализация задач по дедлайнам в режимах недели, месяца или повестки
+                        дня, с блоками времени на основе трудоёмкости (1-8 часов) и событиями на весь день для задач без срока</li>
                     <li><strong>Продвинутая аналитика CFD</strong> — расчет Lead time (avg, median, p85, p95),
                         пропускной способности и здоровья потока</li>
                     <li><strong>Мониторинг WIP и старения</strong> — индикация замерших задач (норма до 2 дней, внимание
@@ -361,7 +474,25 @@
             </div>
         </section>
 
-        <section class="faq-section">
+        <section class="origin-section" id="origin">
+            <div class="container">
+                <h2>Больше, чем доска: Lean Flow аналитика для управления задачами</h2>
+                <p>Большинство Kanban-инструментов ограничиваются колонками и карточками. Keisen Smart Todo идёт дальше,
+                    встраивая <strong>аналитику Lean Flow</strong> — вдохновлённую принципами Дона Рейнертсена из
+                    <em>Principles of Product Development Flow</em> — непосредственно в ваш рабочий процесс.</p>
+                <p>Встроенная <strong>Кумулятивная диаграмма потока (CFD)</strong> показывает то, что не видно на доске:
+                    где накапливаются задачи, сколько времени они действительно занимают и улучшается ли пропускная
+                    способность вашей команды. Перцентили Lead Time (p85, p95), пороги старения WIP и оценка серьёзности
+                    узких мест превращают субъективные впечатления в <strong>решения, основанные на данных</strong>.</p>
+                <p>В сочетании с <strong>кросс-интеграциями</strong> — приоритизируйте задачи с помощью
+                    <a href="/ru/eisenhower">Матрицы Эйзенхауэра</a>, оценивайте трудоёмкость в
+                    <a href="/ru/estimation-room">Estimation Room</a> и конвертируйте задачи в User Stories в
+                    <a href="/ru/agile-process">Agile Process Manager</a> — Smart Todo превращает обычный чек-лист в
+                    <strong>систему командного интеллекта</strong>, связывающую каждый этап agile-процесса.</p>
+            </div>
+        </section>
+
+        <section class="faq-section" id="faq">
             <div class="container">
                 <h2>Часто задаваемые вопросы</h2>
                 <div class="faq-list">
@@ -437,6 +568,14 @@
                             устройстве.</div>
                     </details>
                     <details class="faq-item">
+                        <summary class="faq-question">Есть ли в Smart Todo календарный вид?</summary>
+                        <div class="faq-answer">Да. Smart Todo включает полноценный календарный вид, где задачи
+                            отображаются по дедлайнам в режимах недели, месяца или повестки дня. Задачи с оценкой
+                            трудоёмкости показываются как блоки времени (1-8 часов), а задачи без срока — как события
+                            на весь день. Это удобно для планирования дедлайнов, контроля доступности команды и
+                            совмещения управления задачами с календарным расписанием.</div>
+                    </details>
+                    <details class="faq-item">
                         <summary class="faq-question">Чем Keisen отличается от Trello или Todoist?</summary>
                         <div class="faq-answer">В отличие от Trello (ограничен 10 досками и 10 участниками в бесплатном
                             плане, без встроенной аналитики) или Todoist (5 проектов и 5 бесплатных сотрудников, без
@@ -451,7 +590,7 @@
             </div>
         </section>
 
-        <section class="other-tools">
+        <section class="other-tools" id="tools">
             <div class="container">
                 <h2>Другие инструменты</h2>
                 <div class="tools-grid">

@@ -65,6 +65,7 @@
       "Rich tasks with priorities, due dates, subtasks and checklists",
       "File attachments, comments with images and activity log",
       "Global cross-list view with smart filters (Today, My Tasks, Owner)",
+      "Calendar view with week, month and agenda modes for deadline planning",
       "CFD analytics with bottleneck detection and flow health monitoring",
       "Lead time, cycle time and throughput metrics",
       "WIP monitoring with aging detection and configurable limits",
@@ -161,6 +162,14 @@
       },
       {
         "@type": "Question",
+        "name": "Does Smart Todo have a calendar view?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Smart Todo includes a full calendar view where tasks are displayed by due date in week, month or agenda layouts. Tasks with effort estimates appear as time-blocked events (1-8 hours), while unscheduled tasks are shown as all-day items. This makes it easy to plan deadlines, see team availability, and combine task management with calendar-based scheduling."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "How does Keisen Smart Todo compare to Trello or Todoist?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -178,6 +187,43 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Keisen", "item": "https://keisenapp.com/" },
       { "@type": "ListItem", "position": 2, "name": "Smart Todo", "item": "https://keisenapp.com/smart-todo" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Manage Tasks with a Kanban Board and CFD Analytics",
+    "description": "Learn how to create a collaborative Kanban board, manage tasks with your team, and optimize workflow with Cumulative Flow Diagram analytics in Keisen Smart Todo.",
+    "totalTime": "PT8M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Smart Todo"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Create a List and Customize Kanban Columns",
+        "text": "Create a new task list and set up your Kanban workflow. Add custom columns with individual colors, choose sorting rules (manual, by priority, by due date, by creation date) and flag which columns mark tasks as completed with the isDone toggle.",
+        "url": "https://keisenapp.com/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Add Tasks and Invite Your Team",
+        "text": "Add tasks with priorities, due dates, subtasks, tags and effort estimates. Invite team members as Owners, Editors or Viewers with email-based invitations and deep link support. Assign tasks, add comments with images, and attach files.",
+        "url": "https://keisenapp.com/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Track Progress and Optimize with CFD Analytics",
+        "text": "Move tasks across columns with drag and drop. Monitor workflow health with CFD analytics: lead time, cycle time, throughput, WIP aging and bottleneck detection. Export tasks to Eisenhower Matrix for prioritization, Estimation Room for team estimation, or Agile Process Manager for sprint planning.",
+        "url": "https://keisenapp.com/smart-todo#how-it-works"
+      }
     ]
   }
   </script>
@@ -210,11 +256,19 @@
         <p class="hero-subtitle">Collaborative task management with custom Kanban columns, drag and drop, CFD analytics,
           bottleneck detection, team roles and cross-tool integrations. Everything your team needs to manage work
           visually and stay organized. Works on any device — desktop, tablet and mobile.</p>
+        <nav class="toc" aria-label="Page contents">
+          <a href="#highlights">Why Smart Todo</a>
+          <a href="#screenshots">Screenshots</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#views">4 Views</a>
+          <a href="#features">Features</a>
+          <a href="#faq">FAQ</a>
+        </nav>
         <a href="https://keisenapp.com/login" class="btn-cta">Get Started Free →</a>
       </div>
     </section>
 
-    <section class="how-it-works">
+    <section class="how-it-works" id="how-it-works">
       <div class="container">
         <h2>How It Works</h2>
         <div class="steps-grid">
@@ -240,7 +294,51 @@
       </div>
     </section>
 
-    <section class="highlights">
+    <section class="screenshots-showcase" id="screenshots">
+      <div class="container">
+        <h2>See Smart Todo in Action</h2>
+        <div class="screenshots-grid">
+          <figure>
+            <picture>
+              <source srcset="screenshots/smart-todo-kanban.webp" type="image/webp">
+              <img src="screenshots/smart-todo-kanban.png"
+                alt="Smart Todo Kanban board with To Do, In Progress and Done columns, color-coded task cards with priority badges and assignee avatars"
+                width="1318" height="633" loading="lazy">
+            </picture>
+            <figcaption>Kanban board: custom columns with colors, priority badges and drag-and-drop task cards</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="screenshots/smart-todo-list.webp" type="image/webp">
+              <img src="screenshots/smart-todo-list.png"
+                alt="Smart Todo list view with status badges, priority indicators and task rows for quick scanning"
+                width="1466" height="249" loading="lazy">
+            </picture>
+            <figcaption>List view: compact row layout with status badges, priorities and quick navigation</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="screenshots/smart-todo-metrics.webp" type="image/webp">
+              <img src="screenshots/smart-todo-metrics.png"
+                alt="Key Metrics dashboard showing Lead Time, Cycle Time, Throughput, WIP monitoring, Flow Analysis, Bottleneck Detection, Aging WIP and Team Balance"
+                width="1448" height="671" loading="lazy">
+            </picture>
+            <figcaption>Analytics: Lead Time, Cycle Time, Throughput, WIP aging, bottleneck detection and team balance</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="screenshots/smart-todo-task.webp" type="image/webp">
+              <img src="screenshots/smart-todo-task.png"
+                alt="New Task dialog with title, description, status, priority, assignees, checklist, attachments, comments, tags, due date and effort fields"
+                width="697" height="649" loading="lazy">
+            </picture>
+            <figcaption>Task detail: title, description, priority, assignees, checklist, attachments, tags and due date</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlights" id="highlights">
       <div class="container">
         <div class="highlights-grid">
           <div class="highlight-card">
@@ -271,10 +369,10 @@
       </div>
     </section>
 
-    <section class="templates-detail">
+    <section class="templates-detail" id="views">
       <div class="container">
-        <h2>3 Powerful Views, One Tool</h2>
-        <p>Switch between views to manage tasks the way that works best for your team and workflow.</p>
+        <h2>Kanban Board, Global View, Calendar & Analytics Dashboard</h2>
+        <p>Switch between 4 views to manage tasks the way that works best for your team and workflow.</p>
         <div class="templates-grid">
 
           <div class="template-card">
@@ -304,6 +402,18 @@
           </div>
 
           <div class="template-card">
+            <div class="template-emoji">📅</div>
+            <h3>Calendar View</h3>
+            <p>Visualize tasks on a timeline calendar organized by due date. Switch between week, month and agenda
+              views. Tasks with effort estimates are displayed as time-blocked events (1-8 hours). Unscheduled tasks
+              appear as all-day items so nothing is missed. Ideal for deadline-driven planning and resource scheduling.</p>
+            <div class="template-best-for">
+              <strong>Best for:</strong> Deadline management, sprint planning, seeing team availability and scheduling
+              tasks alongside calendar events.
+            </div>
+          </div>
+
+          <div class="template-card">
             <div class="template-emoji">📈</div>
             <h3>Analytics Dashboard</h3>
             <p>Understand your team's workflow health with Cumulative Flow Diagrams (CFD). Track lead time (average,
@@ -320,7 +430,7 @@
       </div>
     </section>
 
-    <section class="features-detail">
+    <section class="features-detail" id="features">
       <div class="container">
         <h2>Complete Task Management Toolkit</h2>
         <ul class="features-list">
@@ -344,6 +454,8 @@
             integration with the <a href="/estimation-room">Estimation Room</a></li>
           <li><strong>Global Cross-List View</strong> — See all tasks from every list in one view with filters: Today
             (due today), My Tasks (assigned to you), Owner (your lists), plus full-text search</li>
+          <li><strong>Calendar View</strong> — Visualize tasks on a week, month or agenda calendar organized by due
+            date, with effort-based time blocking (1-8 hours) and all-day events for unscheduled tasks</li>
           <li><strong>CFD Analytics</strong> — Cumulative Flow Diagrams showing lead time (avg, median, p85, p95), cycle
             time, throughput (daily/weekly), and flow health status (healthy/growing/critical)</li>
           <li><strong>WIP Monitoring & Aging</strong> — Track Work In Progress with configurable limits, task aging
@@ -368,7 +480,25 @@
       </div>
     </section>
 
-    <section class="faq-section">
+    <section class="origin-section" id="origin">
+      <div class="container">
+        <h2>Beyond a Board: Lean Flow Analytics for Task Management</h2>
+        <p>Most Kanban tools stop at columns and cards. Keisen Smart Todo goes further by embedding
+          <strong>Lean flow analytics</strong> — inspired by Don Reinertsen's
+          <em>Principles of Product Development Flow</em> — directly into your task management workflow.</p>
+        <p>The built-in <strong>Cumulative Flow Diagram (CFD)</strong> reveals what a board alone cannot show:
+          where work accumulates, how long tasks really take, and whether your team's throughput is improving or
+          declining. Lead time percentiles (p85, p95), WIP aging thresholds and bottleneck severity scores turn
+          subjective impressions into <strong>data-driven decisions</strong>.</p>
+        <p>Combined with <strong>cross-tool integrations</strong> — prioritize tasks with the
+          <a href="/eisenhower">Eisenhower Matrix</a>, estimate effort in the
+          <a href="/estimation-room">Estimation Room</a>, and convert tasks to User Stories in the
+          <a href="/agile-process">Agile Process Manager</a> — Smart Todo transforms a personal checklist into a
+          <strong>team intelligence system</strong> that connects every stage of the agile workflow.</p>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
       <div class="container">
         <h2>Frequently Asked Questions</h2>
         <div class="faq-list">
@@ -437,6 +567,13 @@
               device.</div>
           </details>
           <details class="faq-item">
+            <summary class="faq-question">Does Smart Todo have a calendar view?</summary>
+            <div class="faq-answer">Yes. Smart Todo includes a full calendar view where tasks are displayed by due
+              date in week, month or agenda layouts. Tasks with effort estimates appear as time-blocked events (1-8
+              hours), while unscheduled tasks are shown as all-day items. This makes it easy to plan deadlines, see
+              team availability, and combine task management with calendar-based scheduling.</div>
+          </details>
+          <details class="faq-item">
             <summary class="faq-question">How does Keisen compare to Trello or Todoist?</summary>
             <div class="faq-answer">Unlike Trello (limited to 10 boards and 10 members on the free plan, no built-in
               analytics) or Todoist (5 projects and 5 collaborators free, no Kanban view), Keisen Smart Todo offers
@@ -449,7 +586,7 @@
       </div>
     </section>
 
-    <section class="other-tools">
+    <section class="other-tools" id="tools">
       <div class="container">
         <h2>Explore Other Tools</h2>
         <div class="tools-grid">

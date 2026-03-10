@@ -66,6 +66,7 @@
       "Tugas kaya informasi dengan prioritas, tenggat waktu, sub-tugas, dan checklist",
       "Lampiran, komentar dengan gambar, dan log aktivitas",
       "Tampilan global lintas daftar dengan filter cerdas (Hari Ini, Tugas Saya, Owner)",
+      "Tampilan kalender dengan mode minggu, bulan, dan agenda untuk perencanaan deadline",
       "Analitik CFD dengan deteksi bottleneck dan pemantauan kesehatan alur kerja",
       "Metrik lead time, cycle time, dan throughput",
       "Pemantauan WIP dengan deteksi aging dan batas yang dapat dikonfigurasi",
@@ -162,6 +163,14 @@
       },
       {
         "@type": "Question",
+        "name": "Apakah Smart Todo memiliki tampilan kalender?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya. Smart Todo memiliki tampilan kalender lengkap di mana tugas ditampilkan berdasarkan tenggat waktu dalam tata letak minggu, bulan, atau agenda. Tugas dengan estimasi effort ditampilkan sebagai blok waktu (1-8 jam), sementara tugas tanpa jadwal ditampilkan sebagai item sepanjang hari. Ini memudahkan perencanaan deadline, melihat ketersediaan tim, dan menggabungkan manajemen tugas dengan penjadwalan berbasis kalender."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Bagaimana perbandingan Keisen Smart Todo dengan Trello atau Todoist?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -179,6 +188,43 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Keisen", "item": "https://keisenapp.com/" },
       { "@type": "ListItem", "position": 2, "name": "Smart Todo", "item": "https://keisenapp.com/id/smart-todo" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Cara Mengelola Tugas dengan Papan Kanban dan Analitik CFD",
+    "description": "Pelajari cara membuat papan Kanban kolaboratif, mengelola tugas bersama tim Anda, dan mengoptimalkan alur kerja dengan analitik Diagram Alur Kumulatif di Keisen Smart Todo.",
+    "totalTime": "PT8M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Smart Todo"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Buat Daftar dan Sesuaikan Kolom Kanban",
+        "text": "Buat daftar tugas baru dan atur alur kerja Kanban Anda. Tambahkan kolom kustom dengan warna individual, pilih aturan pengurutan (manual, prioritas, tenggat waktu, tanggal pembuatan) dan tandai kolom mana yang menandai tugas sebagai selesai dengan toggle isDone.",
+        "url": "https://keisenapp.com/id/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Tambah Tugas dan Undang Tim Anda",
+        "text": "Tambahkan tugas dengan prioritas, tenggat waktu, sub-tugas, tag, dan estimasi effort. Undang anggota tim sebagai Owner, Editor, atau Viewer dengan undangan berbasis email dan dukungan deep link. Tugaskan pekerjaan, tambahkan komentar dengan gambar, dan lampirkan file.",
+        "url": "https://keisenapp.com/id/smart-todo#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Pantau Progres dan Optimalkan dengan Analitik CFD",
+        "text": "Pindahkan tugas antar kolom dengan drag and drop. Pantau kesehatan alur kerja dengan analitik CFD: lead time, cycle time, throughput, aging WIP, dan deteksi bottleneck. Ekspor tugas ke Matriks Eisenhower untuk prioritas, Ruang Estimasi untuk estimasi tim, atau Manajer Proses Agile untuk perencanaan sprint.",
+        "url": "https://keisenapp.com/id/smart-todo#how-it-works"
+      }
     ]
   }
   </script>
@@ -213,11 +259,19 @@
                     analitik CFD, deteksi bottleneck, peran tim, dan integrasi lintas alat. Semua yang dibutuhkan tim
                     Anda untuk
                     mengelola pekerjaan secara visual dan tetap terorganisir. Berfungsi di perangkat apa pun.</p>
+                <nav class="toc" aria-label="Isi halaman">
+                    <a href="#highlights">Mengapa Smart Todo</a>
+                    <a href="#screenshots">Tangkapan Layar</a>
+                    <a href="#how-it-works">Cara Kerja</a>
+                    <a href="#views">4 Tampilan</a>
+                    <a href="#features">Fitur</a>
+                    <a href="#faq">FAQ</a>
+                </nav>
                 <a href="https://keisenapp.com/login" class="btn-cta">Mulai Gratis →</a>
             </div>
         </section>
 
-        <section class="how-it-works">
+        <section class="how-it-works" id="how-it-works">
             <div class="container">
                 <h2>Cara Kerjanya</h2>
                 <div class="steps-grid">
@@ -243,7 +297,51 @@
             </div>
         </section>
 
-        <section class="highlights">
+        <section class="screenshots-showcase" id="screenshots">
+            <div class="container">
+                <h2>Smart Todo dalam Aksi</h2>
+                <div class="screenshots-grid">
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-kanban.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-kanban.png"
+                alt="Papan Kanban Smart Todo dengan kolom To Do, In Progress dan Done, kartu tugas berwarna dengan badge prioritas dan avatar yang ditugaskan"
+                width="1318" height="633" loading="lazy">
+            </picture>
+            <figcaption>Papan Kanban: kolom kustom dengan warna, badge prioritas dan kartu tugas seret dan lepas</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-list.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-list.png"
+                alt="Tampilan daftar Smart Todo dengan badge status, indikator prioritas dan baris tugas untuk pemindaian cepat"
+                width="1466" height="249" loading="lazy">
+            </picture>
+            <figcaption>Tampilan daftar: tata letak kompak dengan badge status, prioritas dan navigasi cepat</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-metrics.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-metrics.png"
+                alt="Dashboard Metrik Utama dengan Lead Time, Cycle Time, Throughput, pemantauan WIP, Analisis Aliran, Deteksi Bottleneck, Aging WIP dan Keseimbangan Tim"
+                width="1448" height="671" loading="lazy">
+            </picture>
+            <figcaption>Analitik: Lead Time, Cycle Time, Throughput, aging WIP, deteksi bottleneck dan keseimbangan tim</figcaption>
+          </figure>
+          <figure>
+            <picture>
+              <source srcset="../screenshots/smart-todo-task.webp" type="image/webp">
+              <img src="../screenshots/smart-todo-task.png"
+                alt="Dialog Tugas Baru dengan judul, deskripsi, status, prioritas, yang ditugaskan, checklist, lampiran, komentar, tag, tenggat waktu dan effort"
+                width="697" height="649" loading="lazy">
+            </picture>
+            <figcaption>Detail tugas: judul, deskripsi, prioritas, yang ditugaskan, checklist, lampiran, tag dan tenggat waktu</figcaption>
+          </figure>
+        </div>
+            </div>
+        </section>
+
+        <section class="highlights" id="highlights">
             <div class="container">
                 <div class="highlights-grid">
                     <div class="highlight-card">
@@ -274,10 +372,10 @@
             </div>
         </section>
 
-        <section class="templates-detail">
+        <section class="templates-detail" id="views">
             <div class="container">
-                <h2>3 Tampilan Kuat, Satu Alat</h2>
-                <p>Beralih antar tampilan untuk mengelola tugas dengan cara yang paling sesuai bagi tim dan alur kerja
+                <h2>Papan Kanban, Tampilan Global, Kalender & Dashboard Analitik</h2>
+                <p>Beralih antar 4 tampilan untuk mengelola tugas dengan cara yang paling sesuai bagi tim dan alur kerja
                     Anda.</p>
                 <div class="templates-grid">
 
@@ -310,6 +408,19 @@
                     </div>
 
                     <div class="template-card">
+                        <div class="template-emoji">📅</div>
+                        <h3>Tampilan Kalender</h3>
+                        <p>Visualisasikan tugas pada kalender timeline yang diatur berdasarkan tenggat waktu. Beralih
+                            antara tampilan minggu, bulan, dan agenda. Tugas dengan estimasi effort ditampilkan sebagai
+                            blok waktu (1-8 jam). Tugas tanpa jadwal ditampilkan sebagai item sepanjang hari agar tidak
+                            ada yang terlewat. Ideal untuk perencanaan berbasis deadline dan penjadwalan sumber daya.</p>
+                        <div class="template-best-for">
+                            <strong>Ideal untuk:</strong> Manajemen deadline, perencanaan sprint, melihat ketersediaan
+                            tim, dan menjadwalkan tugas bersama acara kalender.
+                        </div>
+                    </div>
+
+                    <div class="template-card">
                         <div class="template-emoji">📈</div>
                         <h3>Dashboard Analitik</h3>
                         <p>Pahami kesehatan alur kerja tim Anda dengan Diagram Alur Kumulatif (CFD). Pantau lead time
@@ -326,7 +437,7 @@
             </div>
         </section>
 
-        <section class="features-detail">
+        <section class="features-detail" id="features">
             <div class="container">
                 <h2>Toolkit Manajemen Tugas Lengkap</h2>
                 <ul class="features-list">
@@ -353,6 +464,9 @@
                     </li>
                     <li><strong>Tampilan Global Lintas Daftar</strong> — Lihat semua tugas dari setiap daftar dalam satu
                         tampilan dengan filter: Hari Ini, Tugas Saya, Owner, plus pencarian teks lengkap</li>
+                    <li><strong>Tampilan Kalender</strong> — Visualisasikan tugas pada kalender minggu, bulan, atau
+                        agenda yang diatur berdasarkan tenggat waktu, dengan blok waktu berbasis effort (1-8 jam) dan
+                        item sepanjang hari untuk tugas tanpa jadwal</li>
                     <li><strong>Analitik CFD</strong> — Diagram alur kumulatif dengan lead time (rata-rata, median, p85,
                         p95), cycle time, throughput (harian/mingguan), dan status kesehatan alur kerja</li>
                     <li><strong>Pemantauan WIP & Aging</strong> — Pantau Work In Progress dengan batas yang dapat
@@ -379,7 +493,27 @@
             </div>
         </section>
 
-        <section class="faq-section">
+        <section class="origin-section" id="origin">
+            <div class="container">
+                <h2>Lebih dari Sekadar Papan: Analitik Lean Flow untuk Manajemen Tugas</h2>
+                <p>Sebagian besar alat Kanban berhenti di kolom dan kartu. Keisen Smart Todo melangkah lebih jauh
+                    dengan menanamkan <strong>analitik Lean flow</strong> — terinspirasi oleh
+                    <em>Principles of Product Development Flow</em> karya Don Reinertsen — langsung ke dalam alur
+                    kerja manajemen tugas Anda.</p>
+                <p><strong>Diagram Alur Kumulatif (CFD)</strong> bawaan mengungkapkan apa yang tidak bisa ditampilkan
+                    papan saja: di mana pekerjaan menumpuk, berapa lama tugas benar-benar memakan waktu, dan apakah
+                    throughput tim Anda meningkat atau menurun. Persentil lead time (p85, p95), ambang batas aging WIP,
+                    dan skor keparahan bottleneck mengubah kesan subjektif menjadi
+                    <strong>keputusan berbasis data</strong>.</p>
+                <p>Dikombinasikan dengan <strong>integrasi lintas alat</strong> — prioritaskan tugas dengan
+                    <a href="/id/eisenhower">Matriks Eisenhower</a>, estimasikan effort di
+                    <a href="/id/estimation-room">Ruang Estimasi</a>, dan konversikan tugas menjadi User Story di
+                    <a href="/id/agile-process">Manajer Proses Agile</a> — Smart Todo mengubah checklist pribadi
+                    menjadi <strong>sistem kecerdasan tim</strong> yang menghubungkan setiap tahap alur kerja agile.</p>
+            </div>
+        </section>
+
+        <section class="faq-section" id="faq">
             <div class="container">
                 <h2>Pertanyaan Umum</h2>
                 <div class="faq-list">
@@ -451,6 +585,15 @@
                             menyesuaikan dengan ukuran layar Anda untuk pengalaman terbaik di setiap perangkat.</div>
                     </details>
                     <details class="faq-item">
+                        <summary class="faq-question">Apakah Smart Todo memiliki tampilan kalender?</summary>
+                        <div class="faq-answer">Ya. Smart Todo memiliki tampilan kalender lengkap di mana tugas
+                            ditampilkan berdasarkan tenggat waktu dalam tata letak minggu, bulan, atau agenda. Tugas
+                            dengan estimasi effort ditampilkan sebagai blok waktu (1-8 jam), sementara tugas tanpa
+                            jadwal ditampilkan sebagai item sepanjang hari. Ini memudahkan perencanaan deadline, melihat
+                            ketersediaan tim, dan menggabungkan manajemen tugas dengan penjadwalan berbasis kalender.
+                        </div>
+                    </details>
+                    <details class="faq-item">
                         <summary class="faq-question">Bagaimana perbandingan Keisen dengan Trello atau Todoist?
                         </summary>
                         <div class="faq-answer">Berbeda dengan Trello (terbatas pada 10 papan dan 10 anggota pada paket
@@ -466,7 +609,7 @@
             </div>
         </section>
 
-        <section class="other-tools">
+        <section class="other-tools" id="tools">
             <div class="container">
                 <h2>Jelajahi Alat Lainnya</h2>
                 <div class="tools-grid">
@@ -488,7 +631,7 @@
                     <a href="/id/retrospective-list" class="tool-card tc-pink">
                         <div class="tool-emoji">💬</div>
                         <h3>Retrospektif</h3>
-                        <p>5 template retrospektif dengan fase terpandu dan feedback anonim</p>
+                        <p>6 template retrospektif dengan fase terpandu dan feedback anonim</p>
                     </a>
                 </div>
             </div>
