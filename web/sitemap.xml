@@ -371,7 +371,67 @@
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://keisenapp.com/agile-process"/>
-    <lastmod>2026-02-21</lastmod>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-product-backlog.webp</image:loc>
+      <image:title>Agile Product Backlog with MoSCoW priorities and setup checklist - Keisen</image:title>
+      <image:caption>Product Backlog with MoSCoW priority badges, setup checklist and user story cards</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-scrum-kanban-board.webp</image:loc>
+      <image:title>Scrum Kanban board with story cards and sprint tags - Keisen</image:title>
+      <image:caption>Scrum Kanban board with To Do, In Progress, In Review and Done columns</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-kanban-board-wip.webp</image:loc>
+      <image:title>Kanban board with 6 columns, WIP limits and column policies - Keisen</image:title>
+      <image:caption>Full Kanban board with Backlog, Refinement, Ready, In Progress, Review and Done columns with WIP limits and policy badges</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-sprint-management.webp</image:loc>
+      <image:title>Sprint management with burndown chart and velocity metrics - Keisen</image:title>
+      <image:caption>Sprint management tab with progress metrics, burndown area and sprint lifecycle cards</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-sprint-review.webp</image:loc>
+      <image:title>Sprint Review with story evaluations and stakeholder feedback - Keisen</image:title>
+      <image:caption>Sprint Review dialog with story-level evaluations, stakeholder feedback and formal decisions</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-story-workflow.webp</image:loc>
+      <image:title>7-state story workflow diagram from Backlog to Done - Keisen</image:title>
+      <image:caption>Story workflow with 7 states: Backlog, Refinement, Ready, Sprint, In Progress, In Review and Done</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-team-capacity-velocity.webp</image:loc>
+      <image:title>Team capacity with velocity trend and sprint planning - Keisen</image:title>
+      <image:caption>Team capacity view with velocity trend chart, suggested sprint capacity and team composition</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-metrics-dashboard.webp</image:loc>
+      <image:title>Agile metrics dashboard with sprint health and flow efficiency - Keisen</image:title>
+      <image:caption>Metrics dashboard showing sprint health, commitment reliability, flow efficiency and blocked items</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-retrospective-trends.webp</image:loc>
+      <image:title>Retrospective history with sentiment trends and action completion - Keisen</image:title>
+      <image:caption>Retrospective history with team sentiment trends and action completion rate charts over sprints</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-user-story-form.webp</image:loc>
+      <image:title>User Story form with Class of Service and MoSCoW priority - Keisen</image:title>
+      <image:caption>User Story creation form with Class of Service, MoSCoW priority, business value and status selection</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-kanban-column-policies.webp</image:loc>
+      <image:title>Kanban column policies dialog with acceptance criteria rules - Keisen</image:title>
+      <image:caption>Column policies configuration with acceptance criteria, estimation and time limit rules</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://keisenapp.com/screenshots/agile-kanban-wip-configuration.webp</image:loc>
+      <image:title>WIP limit configuration dialog for Kanban columns - Keisen</image:title>
+      <image:caption>WIP limit configuration with suggested values for optimal Kanban flow management</image:caption>
+    </image:image>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -385,7 +445,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -399,7 +459,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -413,7 +473,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -427,7 +487,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -694,7 +754,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-18</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -708,7 +768,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-18</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -722,7 +782,7 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://keisenapp.com/ru/agile-process"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://keisenapp.com/de/agile-process"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://keisenapp.com/id/agile-process"/>
-    <lastmod>2026-02-18</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

@@ -52,29 +52,45 @@
     "name": "Keisen Agile Process Manager",
     "url": "https://keisenapp.com/id/agile-process",
     "applicationCategory": "BusinessApplication",
-    "applicationSubCategory": "Alat Manajemen Agile",
+    "applicationSubCategory": "Alat Manajemen Proyek Agile",
     "operatingSystem": "Web",
     "inLanguage": "id",
     "softwareVersion": "1.0.0",
     "datePublished": "2024-01-15",
     "dateModified": "2026-03-03",
     "description": "Kelola proyek Agile dengan Scrum, Kanban, atau Scrumban (Hibrida). Product backlog, perencanaan sprint, papan Kanban dengan batasan WIP, grafik burndown, pelacakan velocity, dan peran sesuai Scrum Guide 2020. Gratis untuk semua tim.",
-    "screenshot": "https://keisenapp.com/screenshots/agile-process.png",
+    "screenshot": [
+      "https://keisenapp.com/screenshots/agile-product-backlog.webp",
+      "https://keisenapp.com/screenshots/agile-scrum-kanban-board.webp",
+      "https://keisenapp.com/screenshots/agile-kanban-board-wip.webp",
+      "https://keisenapp.com/screenshots/agile-sprint-management.webp",
+      "https://keisenapp.com/screenshots/agile-metrics-dashboard.webp",
+      "https://keisenapp.com/screenshots/agile-story-workflow.webp"
+    ],
     "featureList": [
-      "Framework Scrum dengan manajemen siklus hidup sprint",
-      "Papan Kanban dengan batasan WIP dan kebijakan kolom",
-      "Dukungan metodologi hibrida Scrumban",
-      "Product backlog dengan prioritas MoSCoW",
-      "User story dengan kriteria penerimaan dan dependensi",
-      "Perencanaan sprint dengan perhitungan kapasitas tim",
-      "Grafik burndown dan grafik velocity",
-      "Swimlane Kanban (Class of Service, Pemilik, Prioritas, Tag)",
-      "Izin peran sesuai dengan Scrum Guide 2020",
-      "Pelacakan standup harian dengan kendala",
-      "Review Sprint dengan hasil per story",
-      "Matriks keterampilan tim dan perencanaan kapasitas",
-      "Audit trail dengan 11 tindakan yang dilacak",
+      "Framework Scrum dengan manajemen siklus hidup sprint (Planning, Active, Review, Completed)",
+      "Papan Kanban dengan batasan WIP, kebijakan kolom, dan 6 kolom default",
+      "Metodologi Hibrida Scrumban dengan sprint opsional dan batasan WIP",
+      "Product backlog dengan prioritas MoSCoW dan penilaian nilai bisnis",
+      "Alur kerja story 7 status (Backlog, Refinement, Ready, In Sprint, In Progress, In Review, Done)",
+      "User story dengan kriteria penerimaan, dependensi, tag, dan Class of Service",
+      "Perencanaan sprint dengan perhitungan kapasitas tim tampilan ganda",
+      "Grafik Burndown, Burnup, dan Velocity dengan analisis tren",
+      "Cumulative Flow Diagram (CFD) untuk analisis alur Kanban",
+      "Metrik Lead Time, Cycle Time, Throughput, dan Flow Efficiency",
+      "5 jenis swimlane Kanban (Class of Service, Pemilik, Prioritas, Tag, Tanpa Grup)",
+      "4 Class of Service (Standard, Expedite, Fixed Date, Intangible)",
+      "Izin peran sesuai Scrum Guide 2020 dengan matriks terperinci",
+      "Padanan peran Kanban (Service Request Manager, Service Delivery Manager)",
+      "Pelacakan standup harian dengan deteksi kendala otomatis",
+      "Sprint Review dengan hasil per story dan keputusan formal",
+      "Ruang Estimasi terintegrasi dengan 7 metode estimasi",
+      "Papan Retrospektif terintegrasi dengan 6 template dan fase terpandu",
+      "Matriks keterampilan tim dan pelacakan ketersediaan anggota",
+      "Checklist setup untuk inisialisasi proyek terpandu",
+      "Audit trail dengan 11 tindakan yang dilacak pada 5 jenis entitas",
       "Ekspor Google Sheets (5 lembar terformat)",
+      "Panduan metodologi terintegrasi dengan praktik terbaik dan anti-pola",
       "Sepenuhnya responsif — berfungsi di ponsel, tablet, dan browser desktop"
     ],
     "offers": {
@@ -94,6 +110,43 @@
     <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Cara Menjalankan Proyek Agile dengan Scrum, Kanban atau Hibrida di Keisen",
+    "description": "Siapkan dan kelola proyek Agile dengan sprint Scrum, papan Kanban, atau Hibrida Scrumban menggunakan Manajer Proses Agile gratis dari Keisen.",
+    "totalTime": "PT10M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Agile Process Manager"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Pilih Framework & Buat Proyek",
+        "text": "Buat proyek Agile baru dan pilih Scrum, Kanban, atau Hibrida. Setiap framework dilengkapi kolom default, izin peran, metrik, dan alur kerja khusus. Konfigurasi durasi sprint (1-4 minggu) dan jam kerja per hari.",
+        "url": "https://keisenapp.com/id/agile-process#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Bangun Product Backlog & Estimasi",
+        "text": "Tambahkan user story dengan prioritas MoSCoW, kriteria penerimaan, story point, tag, dan dependensi. Estimasi menggunakan Ruang Estimasi terintegrasi dengan Planning Poker (Fibonacci, T-Shirt, PERT, metode Bucket). Undang tim Anda dan tetapkan peran sesuai Scrum Guide 2020.",
+        "url": "https://keisenapp.com/id/agile-process#frameworks"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Jalankan Sprint atau Alur Kanban & Lacak Metrik",
+        "text": "Untuk Scrum: rencanakan sprint dengan kapasitas tim, lacak burndown dan velocity, jalankan standup harian, lakukan Sprint Review dan Retrospektif. Untuk Kanban: kelola alur kontinu dengan batasan WIP, kebijakan kolom, swimlane, dan CFD. Pantau lead time, cycle time, throughput, dan flow efficiency di dashboard metrik.",
+        "url": "https://keisenapp.com/id/agile-process#features"
+      }
+    ]
+  }
+  </script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
       {
@@ -101,12 +154,12 @@
         "name": "Framework Agile apa saja yang didukung oleh Keisen?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen mendukung 3 framework Agile: Scrum (berbasis sprint dengan seremoni lengkap), Kanban (alur berkelanjutan dengan batasan WIP, swimlane, dan kebijakan kolom), dan Hibrida/Scrumban (kombinasi struktur sprint dengan alur Kanban). Setiap framework memiliki fitur, peran, dan metrik khusus."
+          "text": "Keisen mendukung 3 framework Agile: Scrum (berbasis sprint dengan dukungan seremoni lengkap), Kanban (alur kontinu dengan batasan WIP, swimlane, dan kebijakan kolom), dan Hibrida/Scrumban (kombinasi struktur sprint dengan alur Kanban). Setiap framework memiliki fitur, peran, dan metrik khusus."
         }
       },
       {
         "@type": "Question",
-        "name": "Apakah Keisen Agile Process Manager gratis?",
+        "name": "Apakah Agile Process Manager gratis?",
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Ya, Keisen Agile Process Manager sepenuhnya gratis. Anda dapat membuat proyek Agile, mengelola sprint, menggunakan papan Kanban dengan batasan WIP, melacak velocity, membuat grafik burndown, mengelola tim, dan mengundang anggota. Masuk dengan Google dan mulai dalam hitungan detik."
@@ -114,10 +167,18 @@
       },
       {
         "@type": "Question",
-        "name": "Bagaimana cara kerja papan Kanban di Keisen?",
+        "name": "Apa perbedaan antara Scrum, Kanban, dan Hibrida?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Papan Kanban Keisen menawarkan kolom yang dapat disesuaikan dengan batasan WIP (Work In Progress) yang dapat dikonfigurasi dan indikator visual (hijau di bawah batas, oranye di batas, merah melebihi batas). Anda dapat menetapkan kebijakan kolom eksplisit, menggunakan 5 jenis swimlane (Class of Service, Pemilik, Prioritas, Tag, Tanpa Grup), dan mengkategorikan pekerjaan dengan 4 Class of Service (Standard, Expedite, Fixed Date, Intangible)."
+          "text": "Scrum menggunakan sprint dengan durasi tetap (1-4 minggu) dengan 4 seremoni dan 3 peran yang ditentukan, melacak velocity dan burndown. Kanban menggunakan alur kontinu dengan batasan WIP, kebijakan kolom, swimlane, dan Class of Service, melacak CFD, lead time, dan flow efficiency. Hibrida (Scrumban) menggabungkan sprint opsional dengan batasan WIP dan metrik alur."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara kerja papan Kanban?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Papan Kanban Keisen menawarkan kolom yang dapat disesuaikan dengan batasan WIP (status visual: hijau/oranye/merah), kebijakan kolom eksplisit, 5 jenis swimlane (Class of Service, Pemilik, Prioritas, Tag, Tanpa Grup), 4 Class of Service (Standard, Expedite, Fixed Date, Intangible), dan manajemen kartu drag-and-drop mengikuti Metode Kanban David Anderson."
         }
       },
       {
@@ -125,7 +186,111 @@
         "name": "Bagaimana manajemen sprint bekerja?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Sprint mengikuti siklus lengkap: Planning (pilih story dari backlog, atur kapasitas per anggota), Active (lacak progress dengan burndown, catatan standup harian, deteksi kendala), Review (evaluasi setiap story dengan hasil formal: Disetujui, Perlu Perbaikan, Ditolak), dan Completed (perhitungan velocity otomatis, link ke retrospektif). Durasi sprint dapat dikonfigurasi dari 1 hingga 4 minggu."
+          "text": "Sprint mengikuti 4 fase: Planning (pilih story, atur kapasitas), Active (grafik burndown, standup harian, deteksi kendala), Review (hasil per story: Disetujui/Perlu Perbaikan/Ditolak, feedback stakeholder, keputusan formal), dan Completed (perhitungan velocity otomatis, link ke retrospektif). Durasi dapat dikonfigurasi dari 1-4 minggu."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana alur kerja story 7 status bekerja?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Story mengikuti 7 status: Backlog → Refinement (analisis, kriteria penerimaan) → Ready (Definition of Ready terpenuhi) → In Sprint (dikomitkan) → In Progress (pengembangan) → In Review (review kode/QA) → Done (kriteria penerimaan terpenuhi). Hanya story Ready yang dapat ditambahkan ke sprint."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana user story bekerja di Keisen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "User story menggunakan template 'Sebagai... Saya ingin... Sehingga...' dengan prioritas MoSCoW, kriteria penerimaan, story point (via Planning Poker), Class of Service, penilaian nilai bisnis (1-10), tag, dependensi, dan penerima tugas. Story juga melacak jam aktual dan persentase progress kustom."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu prioritas MoSCoW?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "MoSCoW mengklasifikasikan story sebagai Must Have (kritis), Should Have (penting), Could Have (diinginkan), atau Won't Have (di luar cakupan). Backlog dapat diurutkan berdasarkan prioritas, dan swimlane Kanban dapat mengelompokkan kartu berdasarkan tingkat prioritas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana Ruang Estimasi terintegrasi dengan Agile Process?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dari user story mana pun, Anda dapat meluncurkan sesi Planning Poker menggunakan metode Fibonacci, T-Shirt, PERT, Bucket, Desimal, Dot Voting, atau Five Fingers. Anggota tim memberikan suara secara anonim, berdiskusi, dan mencapai konsensus. Estimasi akhir ditetapkan oleh Product Owner."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu Class of Service di Kanban?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Class of Service mengkategorikan item pekerjaan: Standard (FIFO normal, mematuhi WIP), Expedite (mendesak, dapat melebihi WIP), Fixed Date (tenggat waktu tetap), Intangible (technical debt, tidak ada nilai langsung). Kartu dapat dikelompokkan berdasarkan CoS menggunakan swimlane."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu swimlane dan bagaimana cara kerjanya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Swimlane adalah pengelompokan horizontal di papan Kanban. Keisen mendukung 5 jenis: Class of Service, Pemilik (satu baris per anggota), Prioritas (MoSCoW), Tag, dan Tanpa Grup (tampilan datar). Swimlane membantu memvisualisasikan distribusi beban kerja dan mengidentifikasi bottleneck."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana Sprint Review bekerja?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sprint Review mengikuti Scrum Guide 2020: Scrum Master melakukan review dengan catatan demo, hasil per story (Disetujui/Perlu Perbaikan/Ditolak), feedback stakeholder, keputusan formal (action item, perubahan scope) dengan penerima tugas dan tenggat waktu, serta pelajaran yang dipetik."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu fitur Standup Harian?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Setiap sprint mencakup pelacakan standup harian terstruktur. Anggota tim mencatat: Apa yang Anda lakukan kemarin? Apa yang akan Anda lakukan hari ini? Ada kendala? Kendala terdeteksi dan ditandai secara otomatis. Catatan disimpan per anggota per hari."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana perencanaan kapasitas tim bekerja?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kapasitas tampilan ganda: Tampilan Standar Scrum menunjukkan velocity, throughput, dan poin yang disarankan. Tampilan Jam menunjukkan jam tersedia per anggota, jam yang dialokasikan, dan persentase utilisasi. Anggota memiliki jam/hari yang dapat dikonfigurasi, keterampilan, dan tanggal tidak tersedia (cuti)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu Matriks Keterampilan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Matriks Keterampilan memvisualisasikan kompetensi tim dalam bentuk grid. Setiap anggota mencantumkan keterampilan mereka, dan matriks menunjukkan cakupan di seluruh tim — membantu mengidentifikasi kesenjangan keterampilan, menyeimbangkan beban kerja, dan membuat keputusan penugasan yang tepat."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana batasan WIP bekerja?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Batasan WIP membatasi item per kolom Kanban. Indikator visual menunjukkan: hijau (di bawah batas), oranye (di batas), merah (melebihi). Item Expedite dapat melebihi WIP jika diperlukan. Batasan mencegah bottleneck dan multitasking, dapat dikonfigurasi oleh Scrum Master atau SDM."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu Cumulative Flow Diagram (CFD)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CFD menampilkan jumlah item pekerjaan per status dari waktu ke waktu sebagai pita warna bertumpuk. Ini mengungkapkan bottleneck (pita melebar), throughput (laju item mencapai Done), tren WIP, dan perkiraan lead time. Tersedia di framework Kanban dan Hibrida."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu Kebijakan Kolom?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kebijakan Kolom adalah aturan eksplisit per kolom Kanban mengikuti Praktik Kanban #4. Contoh: 'Perlu kriteria penerimaan' untuk Refinement, 'Maks 1 item per orang' untuk In Progress, 'Perlu review kode' untuk Review, 'Semua kriteria penerimaan terpenuhi' untuk Done."
         }
       },
       {
@@ -133,7 +298,15 @@
         "name": "Peran Scrum dan izin apa saja yang didukung Keisen?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen menerapkan peran sesuai Scrum Guide 2020: Product Owner (manajemen backlog, pembuatan story, prioritas, estimasi akhir), Scrum Master (manajemen sprint, fasilitasi, retrospektif), Tim Pengembang (estimasi, penugasan mandiri, pergerakan tugas). Untuk Kanban, peran yang setara adalah Service Request Manager (SRM) dan Service Delivery Manager (SDM)."
+          "text": "Peran sesuai Scrum Guide 2020 dengan izin terperinci: Product Owner (backlog, story, prioritas, estimasi akhir), Scrum Master (sprint, fasilitasi, konfigurasi WIP), Tim Pengembang (estimasi, penugasan mandiri). Padanan Kanban: SRM dan SDM. Stakeholder memiliki akses hanya-lihat."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana peran Kanban berbeda dari peran Scrum?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Di Kanban, peran Scrum dipetakan ulang: Product Owner → Service Request Manager (SRM), Scrum Master → Service Delivery Manager (SDM), Tim Pengembang → Anggota Tim. Matriks izin tetap sama — hanya terminologi yang berubah."
         }
       },
       {
@@ -141,7 +314,47 @@
         "name": "Metrik dan grafik apa saja yang tersedia?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Metrik menyesuaikan dengan framework yang dipilih: Scrum menawarkan pelacakan Velocity, grafik Burndown/Burnup, dan skor kesehatan Sprint. Kanban menawarkan Cumulative Flow Diagram (CFD), analisis WIP, dan efisiensi alur. Semua framework memiliki Lead Time dan Cycle Time (perhitungan langsung), metrik Throughput, analisis beban kerja tim, pelacakan perubahan scope, dan analisis tren komitmen."
+          "text": "Scrum: Velocity, Burndown/Burnup, Kesehatan sprint, Akurasi estimasi. Kanban: CFD, Distribusi WIP, Flow efficiency, Usia item pekerjaan. Semua: Lead Time, Cycle Time, Throughput, Beban kerja tim, Pelacakan perubahan scope, Analisis tren komitmen."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana Retrospektif terintegrasi dengan sprint?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Setelah menyelesaikan sprint, sprint terhubung ke papan Retrospektif terintegrasi. Pilih dari 6 template (Start/Stop/Continue, Sailboat, 4Ls, Starfish, Mad/Sad/Glad, DAKI) dengan fase terpandu, voting sentimen, tips coach, dan pelacakan action item."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana Audit Trail bekerja?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keisen mencatat 11 tindakan (buat, ubah, hapus, pindah, estimasi, tugaskan, selesaikan, mulai, tutup, undang, bergabung/keluar) pada 5 jenis entitas (proyek, story, sprint, tim, retrospektif). Dapat difilter berdasarkan tindakan, entitas, pengguna, dan tanggal."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Dapatkah saya mengekspor data proyek?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya, ekspor ke Google Sheets dengan 5 lembar terformat: Product Backlog, Perencanaan Sprint, Tim & Kapasitas, Retrospektif, dan Metrik Agregat. Menggunakan Google Sheets API v4."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu dependensi story?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dependensi story mendefinisikan hubungan pemblokiran antar user story. Jika Story B bergantung pada Story A, A harus selesai sebelum B dimulai. Dependensi membantu mengurutkan backlog dan mencegah pekerjaan yang terblokir dimulai."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Dapatkah saya mengganti framework setelah membuat proyek?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Framework ditetapkan saat pembuatan proyek dan menentukan tab, kolom, peran, dan metrik. Untuk mengganti framework, buat proyek baru. Hibrida adalah titik awal yang baik jika ragu — mendukung pekerjaan berbasis sprint dan berbasis alur."
         }
       },
       {
@@ -149,7 +362,7 @@
         "name": "Dapatkah saya menggunakan Keisen untuk tim Agile remote?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Tentu saja. Keisen adalah aplikasi web yang dapat diakses dari browser mana pun, dirancang untuk tim remote maupun tim yang berada di satu lokasi. Fitur seperti kolaborasi waktu nyata, undangan tim dengan penetapan peran, pelacakan standup harian, retrospektif terintegrasi, dan ekspor Google Sheets membuatnya ideal bagi tim Agile yang terdistribusi."
+          "text": "Ya, Keisen adalah aplikasi web yang dapat diakses dari browser mana pun, dirancang untuk tim remote dan yang berada di satu lokasi. Kolaborasi waktu nyata, undangan berbasis peran, standup harian, retrospektif, dan ekspor Google Sheets membuatnya ideal untuk tim terdistribusi."
         }
       },
       {
@@ -157,7 +370,7 @@
         "name": "Apakah Agile Process Manager berfungsi di perangkat mobile?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ya, Keisen Agile Process Manager sepenuhnya responsif dan berfungsi di smartphone, tablet, dan browser desktop. Anda dapat mengelola backlog, melacak sprint, dan melihat metrik dari perangkat apa pun — tanpa perlu mengunduh aplikasi."
+          "text": "Ya, sepenuhnya responsif di smartphone, tablet, dan browser desktop. Kelola backlog, lacak sprint, dan pantau metrik dari perangkat apa pun — tanpa perlu mengunduh aplikasi."
         }
       },
       {
@@ -165,7 +378,7 @@
         "name": "Bagaimana perbandingan Keisen dengan Jira atau Monday.com?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen menawarkan 3 framework Agile dalam satu alat (Scrum, Kanban, Hibrida), izin peran sesuai Scrum Guide 2020, integrasi Ruang Estimasi dengan 7 metode estimasi, papan Retrospektif dengan 5 template, matriks keterampilan tim, audit trail lengkap, dan ekspor Google Sheets — semuanya gratis. Tidak seperti alat perusahaan yang kompleks dengan biaya per pengguna, Keisen dirancang untuk tim yang menginginkan fitur Agile yang kuat tanpa kerumitan konfigurasi."
+          "text": "Keisen menawarkan 3 framework, izin Scrum Guide 2020, Ruang Estimasi terintegrasi dengan 7 metode, Retrospektif terintegrasi dengan 6 template, matriks keterampilan, audit trail, dan ekspor Google Sheets — semuanya gratis. Tanpa harga per pengguna atau penyiapan berbulan-bulan."
         }
       }
     ]
@@ -212,36 +425,19 @@
                     Product backlog, perencanaan sprint, papan Kanban dengan batasan WIP, grafik burndown, pelacakan
                     velocity, dan peran sesuai Scrum Guide 2020. Semua dalam satu alat gratis — berfungsi di perangkat apa pun.</p>
                 <a href="https://keisenapp.com/login" class="btn-cta">Coba Gratis →</a>
+                <nav class="toc" aria-label="Isi halaman">
+                    <a href="#highlights">Mengapa Keisen</a>
+                    <a href="#screenshots">Tangkapan Layar</a>
+                    <a href="#how-it-works">Cara Kerja</a>
+                    <a href="#frameworks">3 Framework</a>
+                    <a href="#permissions">Peran & Izin</a>
+                    <a href="#features">Fitur</a>
+                    <a href="#faq">FAQ</a>
+                </nav>
             </div>
         </section>
 
-        <section class="how-it-works">
-            <div class="container">
-                <h2>Cara Kerjanya</h2>
-                <div class="steps-grid">
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <h3>Pilih Framework</h3>
-                        <p>Buat proyek dan pilih Scrum, Kanban, atau Hibrida. Setiap framework mencakup kolom, peran,
-                            metrik, dan alur kerja khusus.</p>
-                    </div>
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <h3>Bangun Backlog</h3>
-                        <p>Tambahkan user story dengan prioritas MoSCoW, kriteria penerimaan, story point, dan tag.
-                            Estimasi dengan Planning Poker terintegrasi.</p>
-                    </div>
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <h3> Jalankan Sprint atau Alur</h3>
-                        <p>Rencanakan sprint dengan kapasitas tim, lacak kemajuan di papan Kanban, pantau burndown dan
-                            velocity, serta jalankan retrospektif.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="highlights">
+        <section id="highlights" class="highlights">
             <div class="container">
                 <div class="highlights-grid">
                     <div class="highlight-card">
@@ -264,15 +460,144 @@
                     </div>
                     <div class="highlight-card">
                         <div class="highlight-emoji">👥</div>
-                        <h3>Peran Scrum</h3>
-                        <p>Peran sesuai Scrum Guide 2020: Product Owner, Scrum Master, Tim Pengembang. Padanan Kanban:
-                            SRM dan SDM.</p>
+                        <h3>Peran Scrum Guide 2020</h3>
+                        <p>Matriks izin terperinci: Product Owner, Scrum Master, Tim Pengembang. Padanan Kanban: SRM
+                            dan SDM.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="templates-detail">
+        <section id="screenshots" class="screenshots-section">
+            <div class="container">
+                <h2>Lihat Langsung</h2>
+                <div class="screenshots-grid">
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-product-backlog.webp" type="image/webp">
+              <img src="../screenshots/agile-product-backlog.png" alt="Keisen Product Backlog Agile dengan prioritas MoSCoW, checklist setup dan user story" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Product Backlog dengan prioritas MoSCoW, checklist setup dan kartu story</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-user-story-form.webp" type="image/webp">
+              <img src="../screenshots/agile-user-story-form.png" alt="Keisen formulir pembuatan User Story dengan Class of Service, prioritas MoSCoW dan nilai bisnis" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Formulir User Story — Class of Service, prioritas MoSCoW, nilai bisnis dan status</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-sprint-management.webp" type="image/webp">
+              <img src="../screenshots/agile-sprint-management.png" alt="Keisen manajemen Sprint dengan area burndown, metrik kecepatan dan kartu sprint" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Manajemen Sprint — metrik kemajuan, area burndown dan siklus hidup sprint</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-sprint-review.webp" type="image/webp">
+              <img src="../screenshots/agile-sprint-review.png" alt="Keisen dialog Sprint Review dengan evaluasi story, feedback stakeholder dan keputusan" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Sprint Review — evaluasi story, feedback stakeholder dan keputusan formal</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-scrum-kanban-board.webp" type="image/webp">
+              <img src="../screenshots/agile-scrum-kanban-board.png" alt="Keisen papan Scrum Kanban dengan kolom To Do, In Progress, In Review dan Done" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Papan Scrum Kanban — 4 kolom dengan kartu story, tag sprint dan story point</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-story-workflow.webp" type="image/webp">
+              <img src="../screenshots/agile-story-workflow.png" alt="Keisen diagram workflow story 7 status dari Backlog ke Done dengan siklus pengerjaan ulang" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Workflow Story — 7 status dari Backlog melalui Refinement, Sprint hingga Done</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-team-capacity-velocity.webp" type="image/webp">
+              <img src="../screenshots/agile-team-capacity-velocity.png" alt="Keisen tampilan Kapasitas Tim dengan grafik tren kecepatan, kapasitas sprint yang disarankan dan komposisi tim" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Kapasitas Tim — tren kecepatan, kapasitas sprint yang disarankan dan komposisi tim</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-metrics-dashboard.webp" type="image/webp">
+              <img src="../screenshots/agile-metrics-dashboard.png" alt="Keisen Dashboard Metrik Agile dengan kesehatan sprint, keandalan komitmen, efisiensi alur dan item terblokir" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Dashboard Metrik — kesehatan sprint, keandalan komitmen dan efisiensi alur</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-retrospective-trends.webp" type="image/webp">
+              <img src="../screenshots/agile-retrospective-trends.png" alt="Keisen Riwayat Retrospektif dengan tren sentimen tim dan tingkat penyelesaian aksi" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Riwayat Retrospektif — tren sentimen dan tingkat penyelesaian aksi per sprint</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-kanban-board-wip.webp" type="image/webp">
+              <img src="../screenshots/agile-kanban-board-wip.png" alt="Keisen papan Kanban dengan 6 kolom, batas WIP, badge kebijakan dan kartu story" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Papan Kanban — 6 kolom dengan batas WIP dan badge kebijakan per kolom</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-kanban-column-policies.webp" type="image/webp">
+              <img src="../screenshots/agile-kanban-column-policies.png" alt="Keisen dialog kebijakan kolom Kanban dengan kriteria penerimaan dan batas waktu" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Kebijakan Kolom — tentukan aturan seperti kriteria penerimaan dan batas waktu</figcaption>
+          </figure>
+
+          <figure>
+            <picture>
+              <source srcset="../screenshots/agile-kanban-wip-configuration.webp" type="image/webp">
+              <img src="../screenshots/agile-kanban-wip-configuration.png" alt="Keisen dialog konfigurasi batas WIP untuk kolom Kanban dengan nilai yang disarankan" loading="lazy" width="800" height="500">
+            </picture>
+            <figcaption>Konfigurasi WIP — atur batas work-in-progress per kolom dengan saran</figcaption>
+          </figure>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2>Cara Kerjanya</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Pilih Framework</h3>
+                        <p>Buat proyek dan pilih Scrum, Kanban, atau Hibrida. Setiap framework mencakup kolom, peran,
+                            metrik, dan alur kerja khusus.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Bangun Backlog</h3>
+                        <p>Tambahkan user story dengan prioritas MoSCoW, kriteria penerimaan, story point, dan tag.
+                            Estimasi dengan Planning Poker terintegrasi.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Jalankan Sprint atau Alur</h3>
+                        <p>Rencanakan sprint dengan kapasitas tim, lacak kemajuan di papan Kanban, pantau burndown dan
+                            velocity, serta jalankan retrospektif.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="frameworks" class="templates-detail">
             <div class="container">
                 <h2>3 Framework Agile, Satu Alat</h2>
                 <p>Pilih metodologi yang sesuai untuk tim Anda. Beralih antar framework seiring perkembangan proses
@@ -326,15 +651,187 @@
             </div>
         </section>
 
-        <section class="features-detail">
+        <section id="framework-details" class="features-detail" style="background: rgba(123,31,162,0.04);">
+            <div class="container">
+                <h2>Pendalaman Framework</h2>
+                <p>Setiap framework dilengkapi kolom, peran, metrik, dan alur kerja khusus. Berikut cara kerjanya secara detail di dalam Keisen.</p>
+
+                <div style="margin-top:2rem;">
+                    <h3 id="scrum-detail">🏃 Scrum — Pengembangan Iteratif Berbasis Sprint</h3>
+                    <p>Keisen mengimplementasikan Scrum mengikuti <strong>Scrum Guide 2020</strong> dengan dukungan seremoni lengkap dan izin berbasis peran.</p>
+
+                    <h4>Siklus Hidup Sprint (4 Fase)</h4>
+                    <ol>
+                        <li><strong>Planning</strong> — Product Owner memilih story dari backlog yang diprioritaskan. Tim melakukan estimasi dengan <a href="/id/estimation-room">Planning Poker</a> terintegrasi dan berkomitmen berdasarkan kapasitas tim (jam per anggota, disesuaikan dengan ketersediaan dan cuti). Durasi sprint dapat dikonfigurasi dari 1 hingga 4 minggu.</li>
+                        <li><strong>Active</strong> — Tim Pengembang mengerjakan story yang dikomitkan. Papan Kanban menampilkan 4 kolom: <em>To Do → In Progress → In Review → Done</em>. Lacak kemajuan harian dengan <strong>grafik burndown</strong> (ideal vs. aktual), catat <strong>standup harian</strong> (Kemarin / Hari Ini / Kendala) per anggota tim, dan deteksi kendala secara otomatis.</li>
+                        <li><strong>Review</strong> — Scrum Master melakukan <strong>Sprint Review</strong> formal mengikuti Scrum Guide 2020. Setiap story mendapatkan hasil: <em>Disetujui</em>, <em>Perlu Perbaikan</em>, atau <em>Ditolak</em>. Tangkap feedback stakeholder, catatan demo, keputusan formal (action item, perubahan scope, keputusan teknis), dan pelajaran yang dipetik.</li>
+                        <li><strong>Completed</strong> — Velocity dihitung secara otomatis. Sprint terhubung ke papan <a href="/id/retrospective-list">Retrospektif</a> terintegrasi. Story yang belum selesai kembali ke backlog untuk sprint berikutnya.</li>
+                    </ol>
+
+                    <h4>Peran Scrum (Scrum Guide 2020)</h4>
+                    <ul>
+                        <li><strong>Product Owner</strong> — Pemilik backlog. Membuat, mengedit, menghapus, dan memprioritaskan story. Menetapkan Definition of Ready. Menentukan estimasi akhir setelah diskusi tim. Menugaskan anggota tim ke story.</li>
+                        <li><strong>Scrum Master</strong> — Memfasilitasi seremoni. Membuat, memulai, dan menyelesaikan sprint. Menjalankan Sprint Review dan Retrospektif. Mengkonfigurasi batasan WIP dan pengaturan papan. Menghilangkan hambatan.</li>
+                        <li><strong>Tim Pengembang</strong> (Developer, Designer, QA) — Mengestimasi story via Planning Poker. Menugas mandiri ke story. Memindahkan story milik sendiri di papan. Mencatat standup harian. Tidak dapat membuat story atau mengelola sprint.</li>
+                        <li><strong>Stakeholder</strong> — Akses hanya-lihat. Berpartisipasi dalam feedback Sprint Review. Tidak dapat mengubah story, sprint, atau papan.</li>
+                    </ul>
+
+                    <h4>Metrik Scrum</h4>
+                    <ul>
+                        <li><strong>Velocity</strong> — Story point yang diselesaikan per sprint, dengan garis tren antar sprint</li>
+                        <li><strong>Grafik Burndown</strong> — Poin tersisa per hari vs. garis burndown ideal</li>
+                        <li><strong>Grafik Burnup</strong> — Poin yang diselesaikan per hari menunjukkan perubahan scope</li>
+                        <li><strong>Skor Kesehatan Sprint</strong> — Deteksi risiko otomatis ketika kemajuan di bawah 80% dari ideal</li>
+                        <li><strong>Akurasi Estimasi</strong> — Perbandingan poin yang diestimasi vs. aktual</li>
+                        <li><strong>Lead Time &amp; Cycle Time</strong> — Hari dari pembuatan hingga selesai / dari pengerjaan hingga selesai</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top:2.5rem;">
+                    <h3 id="kanban-detail">📊 Kanban — Manajemen Alur Kontinu</h3>
+                    <p>Keisen mengimplementasikan Kanban mengikuti <strong>Metode Kanban David Anderson</strong> dengan 6 praktik: visualisasikan alur kerja, batasi WIP, kelola alur, buat kebijakan eksplisit, terapkan loop feedback, perbaiki secara kolaboratif.</p>
+
+                    <h4>Konfigurasi Papan (6 Kolom Default)</h4>
+                    <ol>
+                        <li><strong>Backlog</strong> — Semua pekerjaan masuk. Kebijakan: <em>"Urutkan berdasarkan prioritas"</em>. Tanpa batasan WIP.</li>
+                        <li><strong>Refinement</strong> — Story yang sedang dianalisis dan didetailkan. Batasan WIP: 5. Kebijakan: <em>"Maks 2 hari di kolom"</em>, <em>"Perlu kriteria penerimaan"</em>.</li>
+                        <li><strong>Ready</strong> — Story yang memenuhi Definition of Ready. Batasan WIP: 5. Kebijakan: <em>"Estimasi selesai"</em>.</li>
+                        <li><strong>In Progress</strong> — Pengembangan aktif. Batasan WIP: 3. Kebijakan: <em>"Maks 1 item per orang"</em>, <em>"Update status harian"</em>.</li>
+                        <li><strong>Review</strong> — Review kode / QA. Batasan WIP: 2. Kebijakan: <em>"Maks 24 jam di kolom"</em>, <em>"Perlu review kode"</em>.</li>
+                        <li><strong>Done</strong> — Pekerjaan selesai. Kebijakan: <em>"Semua kriteria penerimaan terpenuhi"</em>. Tanpa batasan WIP.</li>
+                    </ol>
+
+                    <h4>Batasan WIP &amp; Status Visual</h4>
+                    <p>Setiap kolom menampilkan indikator WIP waktu nyata dengan kode warna: <strong style="color:green;">hijau</strong> = di bawah batas, <strong style="color:orange;">oranye</strong> = di batas, <strong style="color:red;">merah</strong> = melebihi. Item Expedite (Class of Service) dapat melebihi batasan WIP jika diperlukan untuk pekerjaan mendesak.</p>
+
+                    <h4>5 Jenis Swimlane</h4>
+                    <ul>
+                        <li><strong>Class of Service</strong> — Expedite (atas, merah) → Fixed Date (ungu) → Standard (biru) → Intangible (abu-abu)</li>
+                        <li><strong>Pemilik</strong> — Satu baris horizontal per anggota tim</li>
+                        <li><strong>Prioritas</strong> — Must (atas) → Should → Could → Won't (bawah)</li>
+                        <li><strong>Tag</strong> — Satu baris per tag untuk pengelompokan berdasarkan kategori</li>
+                        <li><strong>Tanpa Grup</strong> — Tampilan kolom datar klasik</li>
+                    </ul>
+
+                    <h4>Class of Service (4 Kategori)</h4>
+                    <ul>
+                        <li><strong>Standard</strong> (biru) — Pemrosesan FIFO normal, mematuhi batasan WIP</li>
+                        <li><strong>Expedite</strong> (merah) — Pekerjaan mendesak, dapat melebihi batasan WIP, diproses segera</li>
+                        <li><strong>Fixed Date</strong> (ungu) — Tenggat waktu tetap, komitmen terjadwal</li>
+                        <li><strong>Intangible</strong> (abu-abu) — Technical debt, infrastruktur, tanpa nilai bisnis langsung</li>
+                    </ul>
+
+                    <h4>Peran Kanban</h4>
+                    <ul>
+                        <li><strong>Service Request Manager (SRM)</strong> — Setara dengan Product Owner. Mengelola permintaan masuk, memprioritaskan backlog, mendefinisikan kriteria penerimaan.</li>
+                        <li><strong>Service Delivery Manager (SDM)</strong> — Setara dengan Scrum Master. Mengelola alur, memantau batasan WIP, memfasilitasi pertemuan perbaikan, menghilangkan hambatan.</li>
+                        <li><strong>Anggota Tim</strong> — Mengambil pekerjaan dari papan, menugas mandiri, memperbarui status harian.</li>
+                    </ul>
+
+                    <h4>Metrik Kanban</h4>
+                    <ul>
+                        <li><strong>Cumulative Flow Diagram (CFD)</strong> — Memvisualisasikan jumlah item pekerjaan per status dari waktu ke waktu, mengungkapkan bottleneck</li>
+                        <li><strong>Lead Time</strong> — Hari dari pembuatan story hingga penyelesaian</li>
+                        <li><strong>Cycle Time</strong> — Hari dari "In Progress" hingga "Done"</li>
+                        <li><strong>Throughput</strong> — Item yang diselesaikan per minggu</li>
+                        <li><strong>Usia Item Pekerjaan</strong> — Berapa lama setiap item berada di status saat ini</li>
+                        <li><strong>Flow Efficiency</strong> — Rasio waktu kerja aktif vs. total lead time</li>
+                        <li><strong>Distribusi WIP</strong> — Item saat ini per kolom status</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top:2.5rem;">
+                    <h3 id="hybrid-detail">🔀 Hibrida (Scrumban) — Yang Terbaik dari Keduanya</h3>
+                    <p>Hibrida menggabungkan <strong>ritme sprint Scrum</strong> dengan <strong>manajemen alur Kanban</strong>. Pertahankan prediktabilitas iterasi bertengat waktu sambil menggunakan batasan WIP dan metrik alur untuk eksekusi harian.</p>
+
+                    <h4>Konfigurasi Papan (Disederhanakan)</h4>
+                    <ol>
+                        <li><strong>To Do</strong> — Story yang dikomitkan sprint siap dimulai. Tanpa batasan WIP.</li>
+                        <li><strong>In Progress</strong> — Pengembangan aktif. Batasan WIP: 5. Kebijakan: <em>"Maks 1 item per orang"</em>.</li>
+                        <li><strong>Done</strong> — Pekerjaan selesai. Kebijakan: <em>"Semua kriteria penerimaan terpenuhi"</em>.</li>
+                    </ol>
+
+                    <h4>Apa yang Hibrida Ambil dari Setiap Framework</h4>
+                    <table style="width:100%; border-collapse:collapse; margin:1rem 0; font-size:0.95rem;">
+                        <thead>
+                            <tr style="border-bottom:2px solid rgba(123,31,162,0.3);">
+                                <th style="text-align:left; padding:0.5rem;">Dari Scrum</th>
+                                <th style="text-align:left; padding:0.5rem;">Dari Kanban</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Time-boxing sprint opsional</td><td style="padding:0.5rem;">Batasan WIP per kolom</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Pelacakan velocity</td><td style="padding:0.5rem;">Metrik alur (CFD, lead/cycle time)</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Grafik Burndown / Burnup</td><td style="padding:0.5rem;">Irama perbaikan berkelanjutan</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Perencanaan sprint &amp; kapasitas</td><td style="padding:0.5rem;">Sistem tarik (tim memutuskan kapan memulai)</td></tr>
+                            <tr><td style="padding:0.5rem;">Retrospektif per sprint</td><td style="padding:0.5rem;">Kebijakan kolom</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Kapan Menggunakan Hibrida</h4>
+                    <ul>
+                        <li>Tim yang <strong>bertransisi</strong> dari Scrum ke Kanban (atau sebaliknya)</li>
+                        <li>Proyek yang mencampur <strong>pengembangan fitur</strong> (berbasis sprint) dengan <strong>pemeliharaan</strong> (berbasis alur)</li>
+                        <li>Tim yang membutuhkan <strong>struktur sprint untuk perencanaan</strong> tetapi menginginkan <strong>lebih banyak fleksibilitas</strong> dalam eksekusi harian</li>
+                        <li>Organisasi dengan <strong>tingkat kematangan yang beragam</strong> di seluruh tim</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="permissions" class="features-detail">
+            <div class="container">
+                <h2>Scrum Guide 2020 — Matriks Izin Peran</h2>
+                <p>Setiap tindakan dikontrol oleh <strong>sistem peran dua lapis</strong>: peran akses (owner, admin, member, viewer) dikombinasikan dengan peran fungsional (Product Owner, Scrum Master, Developer). Untuk proyek Kanban, peran dipetakan ulang: PO → Service Request Manager, SM → Service Delivery Manager.</p>
+
+                <div style="overflow-x:auto; margin:1.5rem 0;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.9rem; min-width:600px;">
+                        <thead>
+                            <tr style="border-bottom:2px solid rgba(123,31,162,0.4);">
+                                <th style="text-align:left; padding:0.6rem;">Tindakan</th>
+                                <th style="text-align:center; padding:0.6rem;">Product Owner</th>
+                                <th style="text-align:center; padding:0.6rem;">Scrum Master</th>
+                                <th style="text-align:center; padding:0.6rem;">Tim Pengembang</th>
+                                <th style="text-align:center; padding:0.6rem;">Stakeholder</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Manajemen Backlog</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Buat / Edit / Hapus Story</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Prioritaskan Backlog (MoSCoW)</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Tetapkan Estimasi Akhir</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Tugaskan Anggota Tim</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Manajemen Sprint</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Buat / Mulai / Selesaikan Sprint</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Fasilitasi Retrospektif</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Konfigurasi Batasan WIP</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Estimasi &amp; Pengembangan</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Estimasi Story Point (Planning Poker)</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Tugas Mandiri ke Story</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Pindahkan Story Milik Sendiri</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Pindahkan Story Mana Pun</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Manajemen Tim</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Undang Anggota</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Hapus Anggota / Ubah Peran</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size:0.9rem; opacity:0.8;"><strong>Padanan Kanban:</strong> Product Owner → Service Request Manager (SRM) · Scrum Master → Service Delivery Manager (SDM) · Tim Pengembang → Anggota Tim. Matriks izin sama, terminologi berbeda.</p>
+            </div>
+        </section>
+
+        <section id="features" class="features-detail">
             <div class="container">
                 <h2>Toolkit Agile Lengkap</h2>
                 <ul class="features-list">
                     <li><strong>Manajemen Product Backlog</strong> — User story dengan template "Sebagai... Saya
                         ingin... Sehingga...", <a href="/id/eisenhower">prioritas MoSCoW</a> (Must, Should, Could,
-                        Won't), kriteria penerimaan, nilai bisnis, dan dependensi antar story</li>
-                    <li><strong>Alur Kerja 7 Status</strong> — Lacak story melalui Backlog → Perbaikan → Siap → Dalam
-                        Sprint → Dalam Pengerjaan → Dalam Review → Selesai dengan manajemen status otomatis</li>
+                        Won't), kriteria penerimaan, penilaian nilai bisnis, dan dependensi antar story</li>
+                    <li><strong>Alur Kerja 7 Status</strong> — Lacak story melalui Backlog → Refinement → Ready → In
+                        Sprint → In Progress → In Review → Done dengan manajemen status otomatis</li>
                     <li><strong>Perencanaan Sprint dan Kapasitas</strong> — Atur durasi sprint (1-4 minggu), hitung
                         kapasitas tim berdasarkan ketersediaan anggota, alokasikan story dengan membandingkan story
                         point dan kapasitas</li>
@@ -342,7 +839,7 @@
                         Work In Progress, indikator visual status WIP (hijau/oranye/merah), dan kebijakan kolom
                         eksplisit untuk Praktik Kanban #4</li>
                     <li><strong>5 Jenis Swimlane</strong> — Kelompokkan kartu berdasarkan Class of Service, Pemilik,
-                        Prioritas (MoSCoW), Tag, atau tanpa grup untuk fleksibilitas maksimal</li>
+                        Prioritas (MoSCoW), Tag, atau tanpa grup untuk fleksibilitas papan maksimal</li>
                     <li><strong>Class of Service (Kanban)</strong> — Kategorikan item sebagai Standard (FIFO), Expedite
                         (dapat melebihi WIP), Fixed Date (tenggat waktu tetap), atau Intangible (technical debt)</li>
                     <li><strong>Grafik Burndown dan Velocity</strong> — Burndown waktu nyata dengan garis ideal vs.
@@ -353,7 +850,7 @@
                         mengelola sprint, Tim Pengembang mengestimasi dan menugas mandiri. Matriks izin mendetail untuk
                         setiap tindakan</li>
                     <li><strong>Pelacakan Standup Harian</strong> — Catatan terstruktur "Kemarin / Hari Ini / Kendala"
-                        untuk setiap anggota tim dengan pelacakan hambatan dan riwayat</li>
+                        untuk setiap anggota tim dengan deteksi kendala dan pelacakan riwayat</li>
                     <li><strong>Review Sprint dengan Hasil</strong> — Review formal dengan hasil per story (Disetujui /
                         Perlu Perbaikan / Ditolak), feedback stakeholder, catatan demo, dan keputusan formal</li>
                     <li><strong>Kapasitas Tim dan Matriks Keterampilan</strong> — Perencanaan kapasitas tampilan ganda
@@ -378,19 +875,30 @@
             </div>
         </section>
 
-        <section class="faq-section">
+        <section id="origin" class="features-detail" style="background: rgba(123,31,162,0.04);">
+            <div class="container">
+                <h2>Dibangun di Atas Metodologi yang Terbukti</h2>
+                <p>Manajer Proses Agile Keisen bukan hanya papan proyek biasa — ini mengimplementasikan framework yang sesungguhnya sebagaimana didefinisikan oleh penciptanya. Scrum mengikuti <strong>Scrum Guide 2020</strong> oleh Ken Schwaber dan Jeff Sutherland, dengan batasan akuntabilitas yang tepat antara Product Owner, Scrum Master, dan Developer. Kanban mengimplementasikan <strong>enam praktik David Anderson</strong> — dari memvisualisasikan alur kerja hingga perbaikan kolaboratif — dengan batasan WIP nyata, kebijakan eksplisit, dan kategorisasi Class of Service.</p>
+                <p>Matriks izin menegakkan pemisahan tanggung jawab Scrum: hanya Product Owner yang mengelola backlog, hanya Scrum Master yang mengelola sprint, dan hanya Developer yang melakukan estimasi. Ini bukan opsional — ini adalah cara framework dirancang untuk bekerja, dan Keisen menegakkannya agar tim Anda membangun kebiasaan yang benar sejak hari pertama.</p>
+                <p>Dikombinasikan dengan <a href="/id/estimation-room">Ruang Estimasi</a> terintegrasi untuk Planning Poker, <a href="/id/retrospective-list">Papan Retrospektif</a> untuk perbaikan berkelanjutan, <a href="/id/eisenhower">Matriks Eisenhower</a> untuk prioritas strategis, dan <a href="/id/smart-todo">Smart Todo</a> untuk manajemen tugas operasional, Keisen menyediakan ekosistem Agile yang lengkap — bukan sekadar alat yang terisolasi.</p>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section">
             <div class="container">
                 <h2>Pertanyaan Umum</h2>
                 <div class="faq-list">
+
                     <details class="faq-item">
                         <summary class="faq-question">Framework Agile apa saja yang didukung oleh Keisen?</summary>
                         <div class="faq-answer">Keisen mendukung 3 framework Agile: <strong>Scrum</strong> (berbasis
-                            sprint dengan seremoni lengkap: perencanaan, standup harian, review, dan retrospektif),
+                            sprint dengan dukungan seremoni lengkap termasuk perencanaan, standup harian, review, dan retrospektif),
                             <strong>Kanban</strong> (alur kontinu dengan batasan WIP, swimlane, kebijakan kolom, dan
-                            Class of Service), dan <strong>Hibrida/Scrumban</strong> (struktur sprint dikombinasikan
-                            dengan alur Kanban dan batasan WIP). Setiap framework memiliki fitur, peran, metrik, dan
+                            Class of Service), dan <strong>Hibrida/Scrumban</strong> (kombinasi struktur sprint dengan alur
+                            Kanban dan batasan WIP). Setiap framework memiliki fitur, peran, metrik, dan
                             konfigurasi papan khusus.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Apakah Agile Process Manager gratis?</summary>
                         <div class="faq-answer">Ya, Keisen Agile Process Manager sepenuhnya gratis. Anda dapat membuat
@@ -398,6 +906,12 @@
                             velocity, membuat grafik burndown, mengelola tim, dan mengundang anggota. Masuk dengan
                             Google dan mulai bekerja dalam hitungan detik.</div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa perbedaan antara Scrum, Kanban, dan Hibrida?</summary>
+                        <div class="faq-answer"><strong>Scrum</strong> menggunakan sprint dengan durasi tetap (1-4 minggu) dengan 4 seremoni (Planning, Daily Standup, Sprint Review, Retrospective) dan 3 peran yang ditentukan (Product Owner, Scrum Master, Tim Pengembang). Melacak velocity dan burndown. <strong>Kanban</strong> menggunakan alur kontinu tanpa sprint — pekerjaan ditarik saat kapasitas tersedia. Menggunakan batasan WIP, kebijakan kolom, swimlane, dan Class of Service. Melacak CFD, lead time, cycle time, dan flow efficiency. <strong>Hibrida (Scrumban)</strong> menggabungkan sprint opsional dengan batasan WIP dan metrik alur — memberikan ritme perencanaan Scrum dengan fleksibilitas Kanban.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Bagaimana cara kerja papan Kanban?</summary>
                         <div class="faq-answer">Papan Kanban Keisen menawarkan kolom yang dapat disesuaikan dengan
@@ -408,6 +922,7 @@
                             pekerjaan dengan 4 Class of Service (Standard, Expedite, Fixed Date, Intangible). Kartu
                             dikelola dengan drag-and-drop.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Bagaimana manajemen sprint bekerja?</summary>
                         <div class="faq-answer">Sprint mengikuti siklus lengkap: <strong>Planning</strong> (pilih story
@@ -418,25 +933,117 @@
                             otomatis, link ke retrospektif). Durasi sprint dapat dikonfigurasi dari 1 hingga 4 minggu.
                         </div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana alur kerja story 7 status bekerja?</summary>
+                        <div class="faq-answer">Setiap user story mengikuti 7 status: <strong>Backlog</strong> (baru, belum diprioritaskan) → <strong>Refinement</strong> (sedang dianalisis, kriteria penerimaan ditambahkan) → <strong>Ready</strong> (memenuhi Definition of Ready, estimasi selesai) → <strong>In Sprint</strong> (dikomitkan ke sprint) → <strong>In Progress</strong> (pengembangan dimulai) → <strong>In Review</strong> (review kode / QA) → <strong>Done</strong> (semua kriteria penerimaan terpenuhi). Hanya story bertanda "Ready" yang dapat ditambahkan ke sprint, menegakkan grooming yang tepat.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana user story bekerja di Keisen?</summary>
+                        <div class="faq-answer">User story menggunakan template "Sebagai... Saya ingin... Sehingga...". Setiap story mencakup: <strong>prioritas MoSCoW</strong> (Must, Should, Could, Won't), <strong>kriteria penerimaan</strong> (checklist kondisi untuk "Done"), <strong>story point</strong> (diestimasi via Planning Poker), <strong>Class of Service</strong> (Standard, Expedite, Fixed Date, Intangible), <strong>nilai bisnis</strong> (skor 1-10), <strong>tag</strong> untuk kategorisasi, <strong>dependensi</strong> pada story lain, dan <strong>penerima tugas</strong>. Story juga melacak jam aktual dan persentase progress kustom.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu prioritas MoSCoW?</summary>
+                        <div class="faq-answer">MoSCoW adalah teknik prioritas yang digunakan di product backlog Keisen. Setiap story diklasifikasikan sebagai: <strong>Must Have</strong> (kritis, proyek gagal tanpanya), <strong>Should Have</strong> (penting tetapi tidak vital), <strong>Could Have</strong> (diinginkan jika waktu memungkinkan), atau <strong>Won't Have</strong> (di luar cakupan untuk saat ini). Backlog dapat diurutkan berdasarkan prioritas MoSCoW, dan swimlane dapat mengelompokkan kartu berdasarkan tingkat prioritas di papan Kanban.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana Ruang Estimasi terintegrasi dengan Agile Process?</summary>
+                        <div class="faq-answer"><a href="/id/estimation-room">Ruang Estimasi</a> Keisen terintegrasi langsung dengan Manajer Proses Agile. Dari user story mana pun, Anda dapat meluncurkan sesi Planning Poker menggunakan metode Fibonacci, T-Shirt, PERT (3-poin), Bucket, Desimal, Dot Voting, atau Five Fingers. Anggota tim memberikan suara secara anonim, mendiskusikan perbedaan, dan mencapai konsensus. Estimasi akhir ditetapkan oleh Product Owner dan disimpan sebagai story point pada story. Hanya Tim Pengembang yang dapat mengestimasi — Product Owner hanya dapat menetapkan nilai akhir.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu Class of Service di Kanban?</summary>
+                        <div class="faq-answer">Class of Service mengkategorikan item pekerjaan berdasarkan urgensi dan sifatnya: <strong>Standard</strong> (biru) — pemrosesan FIFO normal, mematuhi batasan WIP; <strong>Expedite</strong> (merah) — pekerjaan mendesak yang dapat melebihi batasan WIP dan diproses segera; <strong>Fixed Date</strong> (ungu) — pekerjaan dengan tenggat waktu tetap; <strong>Intangible</strong> (abu-abu) — technical debt atau pekerjaan infrastruktur tanpa nilai bisnis langsung. Anda dapat mengelompokkan papan berdasarkan Class of Service menggunakan swimlane.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu swimlane dan bagaimana cara kerjanya?</summary>
+                        <div class="faq-answer">Swimlane adalah pengelompokan horizontal di papan Kanban. Keisen mendukung 5 jenis: <strong>Class of Service</strong> (Expedite di atas, lalu Fixed Date, Standard, Intangible), <strong>Pemilik</strong> (satu baris per anggota tim), <strong>Prioritas</strong> (Must → Should → Could → Won't), <strong>Tag</strong> (satu baris per tag), dan <strong>Tanpa Grup</strong> (tampilan datar klasik). Swimlane membantu memvisualisasikan distribusi beban kerja, mengidentifikasi bottleneck per kategori, dan mengelola alur kerja paralel.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana Sprint Review bekerja?</summary>
+                        <div class="faq-answer">Keisen mengimplementasikan Sprint Review sebagai acara formal Scrum Guide 2020. Scrum Master melakukan review, mencatat: <strong>catatan demo</strong> untuk setiap story yang didemonstrasikan, <strong>hasil per story</strong> (Disetujui, Perlu Perbaikan, atau Ditolak untuk setiap story), <strong>feedback stakeholder</strong> dari peserta (PO, SM, developer, stakeholder, tamu), <strong>keputusan formal</strong> (action item, perubahan backlog, perubahan scope, keputusan teknis) dengan penerima tugas dan tenggat waktu, serta <strong>pelajaran yang dipetik</strong>. Skor sentimen (1-5) menangkap suasana tim secara keseluruhan.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu fitur Standup Harian?</summary>
+                        <div class="faq-answer">Setiap sprint mencakup pelacakan standup harian terstruktur. Anggota tim mencatat tiga hal: <strong>Apa yang Anda lakukan kemarin?</strong>, <strong>Apa yang akan Anda lakukan hari ini?</strong>, dan <strong>Ada kendala?</strong> Kendala terdeteksi dan ditandai secara otomatis. Catatan standup disimpan per anggota per hari, menciptakan log historis yang membantu mengidentifikasi pola, kendala berulang, dan tren velocity tim.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana perencanaan kapasitas tim bekerja?</summary>
+                        <div class="faq-answer">Keisen menawarkan perencanaan kapasitas tampilan ganda: <strong>Tampilan Standar Scrum</strong> menunjukkan velocity, throughput, dan story point yang disarankan per sprint. <strong>Tampilan Jam</strong> menunjukkan jam tersedia per anggota (jam/hari yang dapat dikonfigurasi), jam yang dialokasikan, dan persentase utilisasi. Setiap anggota tim memiliki <strong>kapasitas jam per hari</strong> yang dapat dikonfigurasi (default 8), <strong>keterampilan</strong> untuk matriks keterampilan, dan <strong>tanggal tidak tersedia</strong> (cuti, hari libur) yang secara otomatis mengurangi kapasitas sprint.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu Matriks Keterampilan?</summary>
+                        <div class="faq-answer">Matriks Keterampilan memvisualisasikan kompetensi tim Anda dalam bentuk grid. Setiap anggota tim mencantumkan keterampilan mereka (misal: React, Python, UX Design, Testing), dan matriks menunjukkan cakupan di seluruh tim. Ini membantu perencanaan sprint dengan mengidentifikasi kesenjangan keterampilan, menyeimbangkan beban kerja di antara spesialis, dan membuat keputusan penugasan yang tepat. Sangat berguna untuk tim Scrum lintas-fungsi.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana batasan WIP bekerja?</summary>
+                        <div class="faq-answer">Batasan WIP (Work In Progress) membatasi jumlah item yang diizinkan di setiap kolom Kanban. Ketika kolom <strong style="color:green;">di bawah batas</strong>, header menunjukkan hijau. <strong style="color:orange;">Di batas</strong> menunjukkan oranye. <strong style="color:red;">Melebihi batas</strong> menunjukkan merah. Ini mencegah bottleneck dan multitasking. Item Expedite (Class of Service) dapat melebihi batasan WIP jika pekerjaan mendesak memerlukan perhatian segera. Batasan WIP dapat dikonfigurasi oleh Scrum Master / Service Delivery Manager.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu Cumulative Flow Diagram (CFD)?</summary>
+                        <div class="faq-answer">CFD adalah metrik Kanban yang menampilkan jumlah item pekerjaan di setiap status dari waktu ke waktu, bertumpuk sebagai pita berwarna. Ini mengungkapkan: <strong>bottleneck</strong> (pita yang melebar), <strong>throughput</strong> (laju item mencapai "Done"), <strong>tren WIP</strong> (total item aktif), dan <strong>perkiraan lead time</strong> (jarak horizontal antar pita). Ini adalah alat diagnostik utama untuk tim Kanban dan tersedia di framework Kanban dan Hibrida.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu Kebijakan Kolom?</summary>
+                        <div class="faq-answer">Kebijakan Kolom adalah aturan eksplisit yang mendefinisikan kapan item pekerjaan dapat masuk atau keluar dari kolom Kanban. Mengikuti <strong>Praktik Kanban #4 (Buat Kebijakan Eksplisit)</strong>, Keisen memungkinkan Anda mendefinisikan kebijakan per kolom — misalnya: <em>"Perlu kriteria penerimaan yang ditentukan"</em> untuk Refinement, <em>"Maks 1 item per orang"</em> untuk In Progress, <em>"Perlu persetujuan review kode"</em> untuk Review, atau <em>"Semua kriteria penerimaan terpenuhi"</em> untuk Done. Kebijakan terlihat di header kolom dan membantu tim membangun kebiasaan alur kerja yang konsisten.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Peran Scrum dan izin apa saja yang didukung Keisen?</summary>
                         <div class="faq-answer">Keisen menerapkan peran sesuai dengan <strong>Scrum Guide 2020</strong>
-                            dengan matriks izin yang mendetail: Product Owner (manajemen backlog, pembuatan story,
-                            prioritas, estimasi akhir), Scrum Master (manajemen sprint, fasilitasi, retrospektif), Tim
-                            Pengembang (estimasi, penugasan mandiri, pergerakan tugas). Untuk Kanban, peran yang setara
-                            adalah Service Request Manager (SRM) dan Service Delivery Manager (SDM). Setiap tindakan
-                            memiliki kontrol akses khusus berdasarkan peran.</div>
+                            dengan matriks izin yang terperinci: Product Owner (manajemen backlog, pembuatan story,
+                            prioritas, estimasi akhir, penugasan anggota), Scrum Master (manajemen sprint, fasilitasi, retrospektif, konfigurasi WIP), Tim
+                            Pengembang (estimasi via Planning Poker, penugasan mandiri, pergerakan story milik sendiri). Untuk Kanban, peran yang setara
+                            adalah Service Request Manager (SRM) dan Service Delivery Manager (SDM). Stakeholder memiliki akses hanya-lihat. Setiap tindakan
+                            memiliki kontrol akses khusus berdasarkan peran — <a href="#permissions">lihat matriks izin lengkap</a>.</div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana peran Kanban berbeda dari peran Scrum?</summary>
+                        <div class="faq-answer">Dalam proyek Kanban, Keisen memetakan ulang peran Scrum ke padanan Kanban: <strong>Product Owner → Service Request Manager (SRM)</strong> yang mengelola permintaan masuk dan memprioritaskan backlog, <strong>Scrum Master → Service Delivery Manager (SDM)</strong> yang mengelola alur, memantau batasan WIP, dan memfasilitasi pertemuan perbaikan, <strong>Tim Pengembang → Anggota Tim</strong> yang mengambil pekerjaan dan menugas mandiri. Matriks izin tetap sama — hanya terminologi yang berubah untuk menyesuaikan konvensi Kanban.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Metrik dan grafik apa saja yang tersedia?</summary>
-                        <div class="faq-answer">Metrik menyesuaikan dengan framework: <strong>Scrum</strong> menawarkan
-                            pelacakan Velocity, grafik Burndown/Burnup, dan skor kesehatan sprint.
-                            <strong>Kanban</strong> menawarkan Cumulative Flow Diagram (CFD), analisis WIP, dan
-                            efisiensi alur. <strong>Semua framework</strong> mencakup Lead Time dan Cycle Time
-                            (perhitungan langsung), metrik Throughput, analisis beban kerja tim, pelacakan perubahan
-                            scope, dan analisis tren komitmen. Metrik ditampilkan dalam dashboard khusus dengan grafik
-                            interaktif.</div>
+                        <div class="faq-answer">Metrik menyesuaikan dengan framework Anda: <strong>Scrum</strong> menawarkan pelacakan Velocity, grafik Burndown/Burnup, skor kesehatan sprint, dan akurasi estimasi. <strong>Kanban</strong> menawarkan Cumulative Flow Diagram (CFD), distribusi WIP, flow efficiency, dan usia item pekerjaan. <strong>Semua framework</strong> mencakup Lead Time dan Cycle Time (perhitungan langsung), metrik Throughput, analisis beban kerja tim, pelacakan perubahan scope, dan analisis tren komitmen. Metrik ditampilkan dalam dashboard khusus dengan grafik interaktif.</div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana Retrospektif terintegrasi dengan sprint?</summary>
+                        <div class="faq-answer">Setelah menyelesaikan sprint, Keisen menghubungkannya ke papan <a href="/id/retrospective-list">Retrospektif</a> terintegrasi. Anda dapat memilih dari 6 template: Start/Stop/Continue, Sailboat, 4Ls (Liked/Learned/Lacked/Longed For), Starfish, Mad/Sad/Glad, dan DAKI (Drop/Add/Keep/Improve). Retrospektif mengikuti fase terpandu: Buat → Curah Pendapat → Kelompokkan → Voting → Diskusi → Finalisasi. Termasuk voting sentimen, icebreaker cuaca, tips coach, dan pelacakan action item. Untuk Kanban, retrospektif dapat dijadwalkan pada irama apa pun.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Bagaimana Audit Trail bekerja?</summary>
+                        <div class="faq-answer">Keisen melacak setiap perubahan dalam proyek Agile Anda dengan audit trail lengkap. Mencatat <strong>11 tindakan</strong> (buat, ubah, hapus, pindah, estimasi, tugaskan, selesaikan, mulai, tutup, undang, bergabung/keluar) pada <strong>5 jenis entitas</strong> (proyek, story, sprint, tim, retrospektif). Setiap entri mencatat siapa yang melakukan tindakan, kapan, nilai sebelum dan sesudah, dan field mana yang berubah. Log audit dapat difilter berdasarkan jenis tindakan, entitas, pengguna, dan rentang tanggal.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Dapatkah saya mengekspor data proyek?</summary>
+                        <div class="faq-answer">Ya, Keisen mengekspor ke <strong>Google Sheets</strong> dengan 5 lembar terformat: <strong>Product Backlog</strong> (semua story dengan metadata), <strong>Perencanaan Sprint</strong> (timeline dan alokasi), <strong>Tim &amp; Kapasitas</strong> (roster dengan keterampilan dan kapasitas), <strong>Retrospektif</strong> (item, sentimen, action item), dan <strong>Metrik Agregat</strong> (velocity, throughput, lead/cycle time). Ekspor menggunakan Google Sheets API v4 dan memerlukan Google Sign-In.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Apa itu dependensi story?</summary>
+                        <div class="faq-answer">Dependensi story memungkinkan Anda mendefinisikan hubungan pemblokiran antar user story. Jika Story B bergantung pada Story A, artinya A harus diselesaikan sebelum B dapat dimulai. Dependensi membantu Product Owner mengurutkan backlog dengan benar dan mencegah tim memulai pekerjaan yang diblokir oleh prasyarat yang belum selesai. Dependensi terlihat di kartu story dan di tampilan backlog.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Dapatkah saya mengganti framework setelah membuat proyek?</summary>
+                        <div class="faq-answer">Framework (Scrum, Kanban, atau Hibrida) ditetapkan saat Anda membuat proyek dan menentukan tab yang tersedia, kolom default, peran, dan metrik. Jika Anda memerlukan framework yang berbeda, Anda dapat membuat proyek baru dengan framework yang diinginkan dan memindahkan story Anda. Framework Hibrida adalah titik awal yang baik jika Anda belum yakin — mendukung pekerjaan berbasis sprint dan berbasis alur.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Dapatkah saya menggunakan Keisen untuk tim Agile remote?</summary>
                         <div class="faq-answer">Tentu saja. Keisen adalah aplikasi web yang dapat diakses dari browser
@@ -446,6 +1053,7 @@
                             terdistribusi. Semua anggota tim dapat mengakses backlog, papan, dan metrik secara
                             bersamaan.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Apakah Agile Process Manager berfungsi di perangkat mobile?</summary>
                         <div class="faq-answer">Ya, Keisen Agile Process Manager sepenuhnya responsif dan berfungsi di
@@ -453,23 +1061,24 @@
                             melihat metrik dari perangkat apa pun — tanpa perlu mengunduh aplikasi. Antarmuka menyesuaikan
                             dengan ukuran layar Anda untuk pengalaman terbaik.</div>
                     </details>
+
                     <details class="faq-item">
-                        <summary class="faq-question">Bagaimana perbandingan Keisen dengan Jira atau Monday.com?
-                        </summary>
+                        <summary class="faq-question">Bagaimana perbandingan Keisen dengan Jira atau Monday.com?</summary>
                         <div class="faq-answer">Keisen menawarkan 3 framework Agile dalam satu alat (Scrum, Kanban,
                             Hibrida), izin peran sesuai Scrum Guide 2020, <a href="/id/estimation-room">Ruang
                                 Estimasi</a> terintegrasi dengan 7 metode estimasi, papan <a
-                                href="/id/retrospective-list">Retrospektif</a> dengan 5 template, matriks keterampilan
+                                href="/id/retrospective-list">Retrospektif</a> terintegrasi dengan 6 template, matriks keterampilan
                             tim, audit trail lengkap, dan ekspor Google Sheets — semuanya gratis. Tidak seperti alat
                             perusahaan yang kompleks dengan harga per pengguna dan penyiapan berbulan-bulan, Keisen
                             dirancang untuk tim yang menginginkan fitur Agile yang kuat dengan produktivitas instan.
                         </div>
                     </details>
+
                 </div>
             </div>
         </section>
 
-        <section class="other-tools">
+        <section id="tools" class="other-tools">
             <div class="container">
                 <h2>Temukan Alat Lainnya</h2>
                 <div class="tools-grid">

@@ -59,22 +59,38 @@
     "datePublished": "2024-01-15",
     "dateModified": "2026-03-03",
     "description": "Verwalten Sie agile Projekte mit Scrum, Kanban oder Scrumban (Hybrid). Product Backlog, Sprint-Planung, Kanban-Board mit WIP-Limits, Burndown-Charts, Velocity-Tracking und Rollen nach Scrum Guide 2020. Kostenlos für alle Teams.",
-    "screenshot": "https://keisenapp.com/screenshots/agile-process.png",
+    "screenshot": [
+      "https://keisenapp.com/screenshots/agile-product-backlog.webp",
+      "https://keisenapp.com/screenshots/agile-scrum-kanban-board.webp",
+      "https://keisenapp.com/screenshots/agile-kanban-board-wip.webp",
+      "https://keisenapp.com/screenshots/agile-sprint-management.webp",
+      "https://keisenapp.com/screenshots/agile-metrics-dashboard.webp",
+      "https://keisenapp.com/screenshots/agile-story-workflow.webp"
+    ],
     "featureList": [
-      "Scrum-Framework mit Sprint-Lebenszyklus-Management",
-      "Kanban-Board mit WIP-Limits und Spaltenrichtlinien",
-      "Unterstützung für hybride Scrumban-Methodik",
-      "Product Backlog mit MoSCoW-Priorisierung",
-      "User Stories mit Akzeptanzkriterien und Abhängigkeiten",
-      "Sprint-Planung mit Teamkapazitätsberechnung",
-      "Burndown-Charts und Velocity-Diagramme",
-      "Kanban Swimlanes (Serviceklassen, Bearbeiter, Priorität, Tags)",
-      "Rollenberechtigungen konform zum Scrum Guide 2020",
-      "Daily Standup Tracking mit Hindernissen",
-      "Sprint Review mit Ergebnissen pro Story",
-      "Team-Kompetenzmatrix und Kapazitätsplanung",
-      "Audit Trail mit 11 verfolgten Aktionen",
+      "Scrum-Framework mit Sprint-Lebenszyklus-Management (Planung, Aktiv, Review, Abgeschlossen)",
+      "Kanban-Board mit WIP-Limits, Spaltenrichtlinien und 6 Standard-Spalten",
+      "Hybride Scrumban-Methodik mit optionalen Sprints und WIP-Limits",
+      "Product Backlog mit MoSCoW-Priorisierung und Business-Value-Bewertung",
+      "7-Stufen-Story-Workflow (Backlog, Refinement, Ready, In Sprint, In Progress, In Review, Done)",
+      "User Stories mit Akzeptanzkriterien, Abhängigkeiten, Tags und Serviceklassen",
+      "Sprint-Planung mit Dual-View-Teamkapazitätsberechnung",
+      "Burndown-, Burnup- und Velocity-Charts mit Trendanalyse",
+      "Cumulative Flow Diagram (CFD) für Kanban-Flussanalyse",
+      "Lead Time, Cycle Time, Throughput und Flusseffizienz-Metriken",
+      "5 Kanban-Swimlane-Typen (Serviceklasse, Bearbeiter, Priorität, Tag, Keine)",
+      "4 Serviceklassen (Standard, Expedite, Fixed Date, Intangible)",
+      "Rollenberechtigungen konform zum Scrum Guide 2020 mit granularer Matrix",
+      "Kanban-Rollenäquivalente (Service Request Manager, Service Delivery Manager)",
+      "Daily Standup Tracking mit automatischer Hinderniserkennung",
+      "Sprint Review mit Story-Ergebnissen und formalen Entscheidungen",
+      "Integrierter Estimation Room mit 7 Schätzmethoden",
+      "Integriertes Retrospective Board mit 6 Vorlagen und geführten Phasen",
+      "Team-Kompetenzmatrix und Verfügbarkeits-Tracking",
+      "Setup-Checkliste für geführte Projektinitialisierung",
+      "Audit Trail mit 11 verfolgten Aktionen über 5 Entitätstypen",
       "Google Sheets Export (5 formatierte Blätter)",
+      "Integrierte Methodikleitfäden mit Best Practices und Anti-Patterns",
       "Vollständig responsiv — funktioniert auf Smartphones, Tablets und Desktop-Browsern"
     ],
     "offers": {
@@ -94,6 +110,43 @@
     <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Agile Projekte mit Scrum, Kanban oder Hybrid in Keisen verwalten",
+    "description": "Richten Sie agile Projekte mit Scrum-Sprints, Kanban-Boards oder hybridem Scrumban ein und verwalten Sie sie mit Keisens kostenlosem Agile Process Manager.",
+    "totalTime": "PT10M",
+    "tool": {
+      "@type": "HowToTool",
+      "name": "Keisen Agile Process Manager"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Framework wählen und Projekt erstellen",
+        "text": "Erstellen Sie ein neues agiles Projekt und wählen Sie Scrum, Kanban oder Hybrid. Jedes Framework enthält angepasste Standard-Spalten, Rollenberechtigungen, Metriken und Workflows. Konfigurieren Sie die Sprint-Dauer (1-4 Wochen) und Arbeitsstunden pro Tag.",
+        "url": "https://keisenapp.com/de/agile-process#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Product Backlog aufbauen und schätzen",
+        "text": "Fügen Sie User Stories mit MoSCoW-Priorität, Akzeptanzkriterien, Story Points, Tags und Abhängigkeiten hinzu. Schätzen Sie mit dem integrierten Estimation Room mit Planning Poker (Fibonacci, T-Shirt, PERT, Bucket-Methoden). Laden Sie Ihr Team ein und weisen Sie Rollen nach Scrum Guide 2020 zu.",
+        "url": "https://keisenapp.com/de/agile-process#frameworks"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Sprints oder Kanban-Fluss ausführen und Metriken verfolgen",
+        "text": "Für Scrum: Planen Sie Sprints mit Teamkapazität, verfolgen Sie Burndown und Velocity, führen Sie Daily Standups durch, halten Sie Sprint Review und Retrospektive ab. Für Kanban: Verwalten Sie den kontinuierlichen Fluss mit WIP-Limits, Spaltenrichtlinien, Swimlanes und CFD. Überwachen Sie Lead Time, Cycle Time, Throughput und Flusseffizienz im Metriken-Dashboard.",
+        "url": "https://keisenapp.com/de/agile-process#features"
+      }
+    ]
+  }
+  </script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
       {
@@ -101,23 +154,31 @@
         "name": "Welche agilen Frameworks unterstützt Keisen?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen unterstützt 3 agile Frameworks: Scrum (sprintbasiert mit vollständigen Zeremonien), Kanban (kontinuierlicher Fluss mit WIP-Limits, Swimlanes und Spaltenrichtlinien) und Hybrid/Scrumban (kombiniert Sprint-Struktur mit Kanban-Fluss). Jedes Framework verfügt über dedizierte Funktionen, Rollen und Metriken."
+          "text": "Keisen unterstützt 3 agile Frameworks: Scrum (sprintbasiert mit vollständiger Zeremonie-Unterstützung), Kanban (kontinuierlicher Fluss mit WIP-Limits, Swimlanes und Spaltenrichtlinien) und Hybrid/Scrumban (kombiniert Sprint-Struktur mit Kanban-Fluss). Jedes Framework verfügt über dedizierte Funktionen, Rollen und Metriken."
         }
       },
       {
         "@type": "Question",
-        "name": "Ist der Keisen Agile Process Manager kostenlos?",
+        "name": "Ist der Agile Process Manager kostenlos?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ja, der Keisen Agile Process Manager ist kostenlos. Sie können agile Projekte erstellen, Sprints verwalten, Kanban-Boards mit WIP-Limits nutzen, Velocity verfolgen, Burndown-Charts generieren, das Team verwalten und Mitglieder einladen. Melden Sie sich bei Google an und starten Sie in wenigen Sekunden."
+          "text": "Ja, der Keisen Agile Process Manager ist kostenlos. Sie können agile Projekte erstellen, Sprints verwalten, Kanban-Boards mit WIP-Limits nutzen, Velocity verfolgen, Burndown-Charts generieren und Ihr Team einladen. Melden Sie sich mit Google an und starten Sie in Sekunden."
         }
       },
       {
         "@type": "Question",
-        "name": "Wie funktioniert das Kanban-Board in Keisen?",
+        "name": "Was ist der Unterschied zwischen Scrum, Kanban und Hybrid?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Das Kanban-Board von Keisen bietet anpassbare Spalten mit konfigurierbaren WIP-Limits und visuellen Indikatoren (grün unter dem Limit, orange am Limit, rot überschritten). Sie können explizite Spaltenrichtlinien definieren, 5 Arten von Swimlanes verwenden (Serviceklasse, Bearbeiter, Priorität, Tag, Keine) und die Arbeit mit 4 Serviceklassen kategorisieren (Standard, Expedite, Fixed Date, Intangible)."
+          "text": "Scrum verwendet Sprints mit fester Dauer (1-4 Wochen) mit 4 Zeremonien und 3 definierten Rollen und verfolgt Velocity und Burndown. Kanban verwendet kontinuierlichen Fluss mit WIP-Limits, Spaltenrichtlinien, Swimlanes und Serviceklassen und verfolgt CFD, Lead Time und Flusseffizienz. Hybrid (Scrumban) kombiniert optionale Sprints mit WIP-Limits und Flussmetriken."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktioniert das Kanban-Board?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Das Kanban-Board von Keisen bietet anpassbare Spalten mit WIP-Limits (visueller Status: grün/orange/rot), explizite Spaltenrichtlinien, 5 Swimlane-Typen (Serviceklasse, Bearbeiter, Priorität, Tag, Keine), 4 Serviceklassen (Standard, Expedite, Fixed Date, Intangible) und Drag-and-Drop-Kartenverwaltung nach der Kanban-Methode von David Anderson."
         }
       },
       {
@@ -125,7 +186,111 @@
         "name": "Wie funktioniert das Sprint-Management?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Sprints folgen dem vollständigen Zyklus: Planung (Stories aus dem Backlog auswählen, Kapazität pro Mitglied festlegen), Aktiv (Fortschritt mit Burndown verfolgen, Daily Standup Notizen, Hinderniserkennung), Review (jede Story mit formalen Ergebnissen bewerten: Genehmigt, Zu verfeinern, Abgelehnt) und Abgeschlossen (automatische Velocity-Berechnung, Retrospektiven-Link). Die Sprint-Dauer ist von 1 bis 4 Wochen konfigurierbar."
+          "text": "Sprints folgen 4 Phasen: Planung (Stories auswählen, Kapazität festlegen), Aktiv (Burndown-Chart, Daily Standups, Hinderniserkennung), Review (Story-Ergebnisse: Genehmigt/Zu verfeinern/Abgelehnt, Stakeholder-Feedback, formale Entscheidungen) und Abgeschlossen (automatische Velocity-Berechnung, Retrospektiven-Link). Dauer konfigurierbar von 1-4 Wochen."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktioniert der 7-Stufen-Story-Workflow?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Stories durchlaufen 7 Stufen: Backlog → Refinement (Analyse, Akzeptanzkriterien) → Ready (Definition of Ready erfüllt) → In Sprint (committed) → In Progress (Entwicklung) → In Review (Code Review/QA) → Done (Akzeptanzkriterien erfüllt). Nur Ready-Stories können zu Sprints hinzugefügt werden."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktionieren User Stories in Keisen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "User Stories verwenden die Vorlage 'Als... möchte ich... damit...' mit MoSCoW-Priorität, Akzeptanzkriterien, Story Points (über Planning Poker), Serviceklasse, Business-Value-Bewertung (1-10), Tags, Abhängigkeiten und Bearbeiter. Stories verfolgen tatsächliche Stunden und benutzerdefinierten Fortschrittsprozentsatz."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was ist MoSCoW-Priorisierung?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "MoSCoW klassifiziert Stories als Must Have (kritisch), Should Have (wichtig), Could Have (wünschenswert) oder Won't Have (außerhalb des Umfangs). Das Backlog kann nach Priorität sortiert werden, und Kanban-Swimlanes können Karten nach Prioritätsstufe gruppieren."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie integriert sich der Estimation Room mit dem Agile Process?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Von jeder User Story aus können Sie eine Planning-Poker-Sitzung mit Fibonacci-, T-Shirt-, PERT-, Bucket-, Dezimal-, Dot-Voting- oder Five-Fingers-Methoden starten. Teammitglieder stimmen anonym ab, diskutieren und erreichen einen Konsens. Die endgültige Schätzung wird vom Product Owner festgelegt."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was ist die Serviceklasse in Kanban?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Die Serviceklasse kategorisiert Arbeitselemente: Standard (normales FIFO, respektiert WIP), Expedite (dringend, kann WIP überschreiten), Fixed Date (fester Termin), Intangible (technische Schulden, kein unmittelbarer Wert). Karten können per Swimlanes nach Serviceklasse gruppiert werden."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was sind Swimlanes und wie funktionieren sie?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Swimlanes sind horizontale Gruppierungen auf dem Kanban-Board. Keisen unterstützt 5 Typen: Serviceklasse, Bearbeiter (eine Zeile pro Mitglied), Priorität (MoSCoW), Tag und Keine (flache Ansicht). Sie helfen, die Arbeitsverteilung zu visualisieren und Engpässe zu identifizieren."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktioniert das Sprint Review?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Das Sprint Review folgt dem Scrum Guide 2020: Der Scrum Master leitet das Review mit Demo-Notizen, Story-Ergebnissen (Genehmigt/Zu verfeinern/Abgelehnt), Stakeholder-Feedback, formalen Entscheidungen (Action Items, Scope Changes) mit Zuständigen und Fälligkeitsdaten sowie Lessons Learned."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was ist die Daily-Standup-Funktion?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Jeder Sprint enthält strukturiertes Daily-Standup-Tracking. Teammitglieder notieren: Was haben Sie gestern gemacht? Was werden Sie heute tun? Gibt es Hindernisse? Hindernisse werden automatisch erkannt und markiert. Notizen werden pro Mitglied und Tag gespeichert."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktioniert die Teamkapazitätsplanung?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dual-View-Kapazität: Die Scrum-Standardansicht zeigt Velocity, Throughput und vorgeschlagene Punkte. Die Stundenansicht zeigt verfügbare Stunden pro Mitglied, zugewiesene Stunden und Auslastungsprozentsatz. Mitglieder haben konfigurierbare Stunden/Tag, Fähigkeiten und Abwesenheitszeiten (Urlaub)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was ist die Kompetenzmatrix?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Die Kompetenzmatrix visualisiert die Kompetenzen des Teams in einem Raster. Jedes Mitglied listet seine Fähigkeiten auf, und die Matrix zeigt die Abdeckung im gesamten Team — das hilft, Kompetenzlücken zu erkennen, die Arbeitslast auszugleichen und fundierte Zuweisungsentscheidungen zu treffen."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktionieren WIP-Limits?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "WIP-Limits begrenzen die Elemente pro Kanban-Spalte. Visuelle Indikatoren zeigen: grün (unter dem Limit), orange (am Limit), rot (überschritten). Expedite-Elemente können WIP bei Bedarf überschreiten. Limits verhindern Engpässe und Multitasking, konfigurierbar vom Scrum Master oder SDM."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was ist ein Cumulative Flow Diagram (CFD)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Das CFD zeigt die Anzahl der Arbeitselemente pro Status über die Zeit als gestapelte farbige Bänder. Es zeigt Engpässe (sich verbreiternde Bänder), Durchsatz (Rate, mit der Elemente Done erreichen), WIP-Trends und Lead-Time-Annäherung. Verfügbar in Kanban- und Hybrid-Frameworks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was sind Spaltenrichtlinien?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Spaltenrichtlinien sind explizite Regeln pro Kanban-Spalte gemäß Kanban-Praxis #4. Beispiele: 'Erfordert Akzeptanzkriterien' für Refinement, 'Max. 1 Element pro Person' für In Progress, 'Erfordert Code Review' für Review, 'Alle Akzeptanzkriterien erfüllt' für Done."
         }
       },
       {
@@ -133,7 +298,15 @@
         "name": "Welche Scrum-Rollen und Berechtigungen unterstützt Keisen?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen implementiert Rollen konform zum Scrum Guide 2020: Product Owner (Backlog-Management, Story-Erstellung, Priorisierung, Endschätzung), Scrum Master (Sprint-Management, Moderation, Retrospektive), Development Team (Schätzung, Selbstzuweisung, Task-Bewegung). Für Kanban sind die entsprechenden Rollen Service Request Manager (SRM) und Service Delivery Manager (SDM)."
+          "text": "Rollen konform zum Scrum Guide 2020 mit granularer Berechtigungsmatrix: Product Owner (Backlog, Stories, Priorisierung, Endschätzung), Scrum Master (Sprints, Moderation, WIP-Konfiguration), Development Team (Schätzung, Selbstzuweisung). Kanban-Äquivalente: SRM und SDM. Stakeholder haben nur Leserechte."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie unterscheiden sich Kanban-Rollen von Scrum-Rollen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bei Kanban werden die Scrum-Rollen umbenannt: Product Owner → Service Request Manager (SRM), Scrum Master → Service Delivery Manager (SDM), Development Team → Teammitglieder. Die Berechtigungsmatrix bleibt gleich — nur die Terminologie ändert sich."
         }
       },
       {
@@ -141,7 +314,47 @@
         "name": "Welche Metriken und Diagramme sind verfügbar?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Die Metriken passen sich dem gewählten Framework an: Scrum bietet Velocity-Tracking, Burndown/Burnup-Charts, Sprint Health Scoring. Kanban bietet Cumulative Flow Diagrams (CFD), WIP-Analysen, Flusseffizienz. Alle Frameworks verfügen über Lead Time und Cycle Time (Live-Berechnung), Throughput-Metriken, Team-Workload-Analyse, Scope-Change-Tracking und Commitment-Trend-Analyse."
+          "text": "Scrum: Velocity, Burndown/Burnup, Sprint Health, Schätzgenauigkeit. Kanban: CFD, WIP-Verteilung, Flusseffizienz, Arbeitselement-Alter. Alle: Lead Time, Cycle Time, Throughput, Team-Auslastung, Scope-Change-Tracking, Commitment-Trendanalyse."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie integriert sich die Retrospektive mit Sprints?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nach Abschluss eines Sprints wird er mit einem integrierten Retrospective Board verknüpft. Wählen Sie aus 6 Vorlagen (Start/Stop/Continue, Sailboat, 4Ls, Starfish, Mad/Sad/Glad, DAKI) mit geführten Phasen, Sentiment-Abstimmung, Coach-Tipps und Action-Item-Tracking."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Wie funktioniert der Audit Trail?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Keisen protokolliert 11 Aktionen (Erstellen, Bearbeiten, Löschen, Verschieben, Schätzen, Zuweisen, Abschließen, Starten, Schließen, Einladen, Beitreten/Verlassen) über 5 Entitätstypen (Projekt, Story, Sprint, Team, Retrospektive). Filterbar nach Aktion, Entität, Benutzer und Datum."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Kann ich Projektdaten exportieren?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ja, Export nach Google Sheets mit 5 formatierten Blättern: Product Backlog, Sprint Planning, Team & Kapazität, Retrospektive und Aggregierte Metriken. Verwendet Google Sheets API v4."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Was sind Story-Abhängigkeiten?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Story-Abhängigkeiten definieren blockierende Beziehungen zwischen User Stories. Wenn Story B von Story A abhängt, muss A abgeschlossen werden, bevor B beginnen kann. Abhängigkeiten helfen, das Backlog richtig zu sequenzieren und blockierte Arbeit zu verhindern."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Kann ich das Framework nach der Projekterstellung wechseln?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Das Framework wird bei der Projekterstellung festgelegt und bestimmt Tabs, Spalten, Rollen und Metriken. Um das Framework zu wechseln, erstellen Sie ein neues Projekt. Hybrid ist ein guter Ausgangspunkt bei Unsicherheit — es unterstützt sowohl sprintbasierte als auch flussbasierte Arbeit."
         }
       },
       {
@@ -149,7 +362,7 @@
         "name": "Kann ich Keisen für Remote-Agile-Teams nutzen?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Absolut ja. Keisen ist eine Web-Anwendung, die über jeden Browser zugänglich ist und sowohl für Remote- als auch für Co-located-Teams konzipiert wurde. Funktionen wie Echtzeit-Zusammenarbeit, Team-Einladungen mit Rollenzuweisung, Daily Standup Tracking, integrierte Retrospektiven und Google Sheets Export machen es ideal für verteilte agile Teams."
+          "text": "Ja, Keisen ist eine Web-Anwendung, die über jeden Browser zugänglich ist und für Remote- und Co-located-Teams konzipiert wurde. Echtzeit-Zusammenarbeit, rollenbasierte Einladungen, Daily Standups, Retrospektiven und Google Sheets Export machen es ideal für verteilte Teams."
         }
       },
       {
@@ -157,7 +370,7 @@
         "name": "Funktioniert der Agile Process Manager auf mobilen Geräten?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ja, Keisen Agile Process Manager ist vollständig responsiv und funktioniert auf Smartphones, Tablets und Desktop-Browsern. Sie können das Backlog verwalten, Sprints verfolgen und Metriken von jedem Gerät aus einsehen — kein App-Download erforderlich."
+          "text": "Ja, vollständig responsiv auf Smartphones, Tablets und Desktop-Browsern. Verwalten Sie das Backlog, verfolgen Sie Sprints und überwachen Sie Metriken von jedem Gerät — kein App-Download erforderlich."
         }
       },
       {
@@ -165,7 +378,7 @@
         "name": "Wie vergleicht sich Keisen mit Jira oder Monday.com?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen bietet 3 agile Frameworks in einem Tool (Scrum, Kanban, Hybrid), Rollenberechtigungen konform zum Scrum Guide 2020, integrierten Estimation Room mit 7 Schätzmethoden, Retrospective Board mit 5 Vorlagen, Team-Kompetenzmatrix, vollständigen Audit Trail und Google Sheets Export — alles kostenlos. Im Gegensatz zu komplexen Enterprise-Tools mit Preisgestaltung pro Benutzer ist Keisen für Teams konzipiert, die leistungsstarke agile Funktionen ohne Konfigurations-Overhead wünschen."
+          "text": "Keisen bietet 3 Frameworks, Scrum Guide 2020 Berechtigungen, integrierten Estimation Room mit 7 Methoden, integrierte Retrospektive mit 6 Vorlagen, Kompetenzmatrix, Audit Trail und Google Sheets Export — alles kostenlos. Keine Pro-Benutzer-Preise oder monatelange Einrichtung."
         }
       }
     ]
@@ -214,10 +427,153 @@
                     konform zum
                     Scrum Guide 2020. Alles in einem einzigen kostenlosen Tool — funktioniert auf jedem Gerät.</p>
                 <a href="https://keisenapp.com/login" class="btn-cta">Kostenlos testen →</a>
+                <nav class="toc" aria-label="Seiteninhalt">
+                    <a href="#highlights">Warum Keisen</a>
+                    <a href="#screenshots">Screenshots</a>
+                    <a href="#how-it-works">So funktioniert's</a>
+                    <a href="#frameworks">3 Frameworks</a>
+                    <a href="#permissions">Rollen & Berechtigungen</a>
+                    <a href="#features">Funktionen</a>
+                    <a href="#faq">FAQ</a>
+                </nav>
             </div>
         </section>
 
-        <section class="how-it-works">
+        <section id="highlights" class="highlights">
+            <div class="container">
+                <div class="highlights-grid">
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">🔄</div>
+                        <h3>3 Agile Frameworks</h3>
+                        <p>Scrum mit Sprints und Zeremonien, Kanban mit kontinuierlichem Fluss und WIP-Limits, oder
+                            hybrides Scrumban, das beide Ansätze kombiniert.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">📋</div>
+                        <h3>Product Backlog</h3>
+                        <p>User Stories mit MoSCoW-Priorisierung, Akzeptanzkriterien, Story Points, Serviceklassen,
+                            Abhängigkeiten und Tags.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">📈</div>
+                        <h3>Metriken & Diagramme</h3>
+                        <p>Velocity-Tracking, Burndown/Burnup-Charts, CFD, Lead/Cycle Time, Durchsatz, Sprint Health
+                            Score und Analyse der Team-Auslastung.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-emoji">👥</div>
+                        <h3>Scrum-Rollen nach Scrum Guide 2020</h3>
+                        <p>Granulare Berechtigungsmatrix: Product Owner, Scrum Master, Development Team.
+                            Kanban-Äquivalente: SRM und SDM.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screenshots" class="screenshots-section">
+            <div class="container">
+                <h2>In Aktion sehen</h2>
+                <div class="screenshots-grid">
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-product-backlog.webp" type="image/webp">
+                            <img src="../screenshots/agile-product-backlog.png" alt="Keisen Agiles Product Backlog mit MoSCoW-Prioritäten, Setup-Checkliste und User Stories" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Product Backlog mit MoSCoW-Prioritäten, Setup-Checkliste und Story-Karten</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-user-story-form.webp" type="image/webp">
+                            <img src="../screenshots/agile-user-story-form.png" alt="Keisen User Story Erstellungsformular mit Service-Klasse, MoSCoW-Priorität und Geschäftswert" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>User Story Formular — Service-Klasse, MoSCoW-Priorität, Geschäftswert und Status</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-sprint-management.webp" type="image/webp">
+                            <img src="../screenshots/agile-sprint-management.png" alt="Keisen Sprint-Verwaltung mit Burndown-Bereich, Velocity-Metriken und Sprint-Karten" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Sprint-Verwaltung — Fortschrittsmetriken, Burndown-Bereich und Sprint-Lebenszyklus</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-sprint-review.webp" type="image/webp">
+                            <img src="../screenshots/agile-sprint-review.png" alt="Keisen Sprint Review Dialog mit Story-Bewertungen, Stakeholder-Feedback und Entscheidungen" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Sprint Review — Story-Bewertungen, Stakeholder-Feedback und formelle Entscheidungen</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-scrum-kanban-board.webp" type="image/webp">
+                            <img src="../screenshots/agile-scrum-kanban-board.png" alt="Keisen Scrum Kanban-Board mit Spalten Zu Erledigen, In Bearbeitung, In Prüfung und Erledigt" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Scrum Kanban-Board — 4 Spalten mit Story-Karten, Sprint-Tags und Story Points</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-story-workflow.webp" type="image/webp">
+                            <img src="../screenshots/agile-story-workflow.png" alt="Keisen 7-Status Story-Workflow-Diagramm vom Backlog bis Erledigt mit Nacharbeitsschleife" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Story Workflow — 7 Status vom Backlog über Verfeinerung, Sprint bis Erledigt</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-team-capacity-velocity.webp" type="image/webp">
+                            <img src="../screenshots/agile-team-capacity-velocity.png" alt="Keisen Teamkapazitäts-Ansicht mit Velocity-Trenddiagramm, vorgeschlagener Sprint-Kapazität und Teamzusammensetzung" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Teamkapazität — Velocity-Trend, vorgeschlagene Sprint-Kapazität und Teamzusammensetzung</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-metrics-dashboard.webp" type="image/webp">
+                            <img src="../screenshots/agile-metrics-dashboard.png" alt="Keisen Agiles Metriken-Dashboard mit Sprint-Gesundheit, Commitment-Zuverlässigkeit, Flusseffizienz und blockierten Items" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Metriken-Dashboard — Sprint-Gesundheit, Commitment-Zuverlässigkeit und Flusseffizienz</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-retrospective-trends.webp" type="image/webp">
+                            <img src="../screenshots/agile-retrospective-trends.png" alt="Keisen Retrospektiven-Historie mit Team-Stimmungstrends und Aktions-Abschlussraten" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Retrospektiven-Historie — Stimmungstrends und Aktions-Abschlussraten über Sprints</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-kanban-board-wip.webp" type="image/webp">
+                            <img src="../screenshots/agile-kanban-board-wip.png" alt="Keisen Kanban-Board mit 6 Spalten, WIP-Limits, Richtlinien-Badges und Story-Karten" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Kanban-Board — 6 Spalten mit WIP-Limits und Richtlinien-Badges pro Spalte</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-kanban-column-policies.webp" type="image/webp">
+                            <img src="../screenshots/agile-kanban-column-policies.png" alt="Keisen Kanban-Spaltenrichtlinien-Dialog mit Akzeptanzkriterien und Zeitlimits" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>Spaltenrichtlinien — Akzeptanzkriterien und Zeitlimits pro Spalte definieren</figcaption>
+                    </figure>
+
+                    <figure>
+                        <picture>
+                            <source srcset="../screenshots/agile-kanban-wip-configuration.webp" type="image/webp">
+                            <img src="../screenshots/agile-kanban-wip-configuration.png" alt="Keisen WIP-Limit-Konfigurationsdialog für Kanban-Spalte mit vorgeschlagenen Werten" loading="lazy" width="800" height="500">
+                        </picture>
+                        <figcaption>WIP-Konfiguration — Work-in-Progress-Limits pro Spalte mit Vorschlägen festlegen</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
             <div class="container">
                 <h2>Wie es funktioniert</h2>
                 <div class="steps-grid">
@@ -243,55 +599,21 @@
             </div>
         </section>
 
-        <section class="highlights">
-            <div class="container">
-                <div class="highlights-grid">
-                    <div class="highlight-card">
-                        <div class="highlight-emoji">🔄</div>
-                        <h3>3 Agile Frameworks</h3>
-                        <p>Scrum mit Sprints und Zeremonien, Kanban mit kontinuierlichem Fluss und WIP-Limits, oder
-                            hybrides Scrumban, das beide Ansätze kombiniert.</p>
-                    </div>
-                    <div class="highlight-card">
-                        <div class="highlight-emoji">📋</div>
-                        <h3>Product Backlog</h3>
-                        <p>User Stories mit MoSCoW-Priorisierung, Akzeptanzkriterien, Story Points, Serviceklassen,
-                            Abhängigkeiten und Tags.</p>
-                    </div>
-                    <div class="highlight-card">
-                        <div class="highlight-emoji">📈</div>
-                        <h3>Metriken & Diagramme</h3>
-                        <p>Velocity-Tracking, Burndown/Burnup-Charts, CFD, Lead/Cycle Time, Durchsatz, Sprint Health
-                            Score und Analyse der Team-Auslastung.</p>
-                    </div>
-                    <div class="highlight-card">
-                        <div class="highlight-emoji">👥</div>
-                        <h3>Scrum-Rollen</h3>
-                        <p>Rollen konform zum Scrum Guide 2020: Product Owner, Scrum Master, Development Team.
-                            Entsprechende Kanban-Rollen: SRM und SDM.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="templates-detail">
+        <section id="frameworks" class="templates-detail">
             <div class="container">
                 <h2>3 Agile Frameworks, ein Tool</h2>
                 <p>Wählen Sie die passende Methodik für Ihr Team. Wechseln Sie zwischen Frameworks, während sich Ihr
-                    Prozess weiterentwickelt.
-                </p>
+                    Prozess weiterentwickelt.</p>
                 <div class="templates-grid">
 
                     <div class="template-card">
                         <div class="template-emoji">🏃</div>
                         <h3>Scrum</h3>
                         <p>Iterative Entwicklung basierend auf Sprints nach dem Scrum Guide 2020. Sprints mit fester
-                            Dauer (1-4 Wochen)
-                            mit Planung, Daily Standup, Sprint Review und Retrospektive. Rollen: Der Product Owner
-                            verwaltet das Backlog,
-                            der Scrum Master moderiert die Zeremonien, das Development Team schätzt und liefert.
-                            Verfolgen Sie Velocity und Burndown
-                            über die Sprints hinweg.</p>
+                            Dauer (1-4 Wochen) mit Planung, Daily Standup, Sprint Review und Retrospektive. Rollen: Der
+                            Product Owner verwaltet das Backlog, der Scrum Master moderiert die Zeremonien, das
+                            Development Team schätzt und liefert. Verfolgen Sie Velocity und Burndown über die Sprints
+                            hinweg.</p>
                         <div class="template-best-for">
                             <strong>Ideal für:</strong> Teams, die Produkte mit sich entwickelnden Anforderungen
                             entwickeln und von regelmäßigen Feedbackzyklen und einer vorhersehbaren Lieferkadenz
@@ -303,14 +625,11 @@
                         <div class="template-emoji">📊</div>
                         <h3>Kanban</h3>
                         <p>Kontinuierliches Fluss-Management basierend auf der Kanban-Methode von David Anderson.
-                            Visualisieren Sie die Arbeit auf einem Board
-                            mit anpassbaren Spalten, wenden Sie WIP-Limits (Work In Progress) an, definieren Sie
-                            explizite Spaltenrichtlinien
-                            und kategorisieren Sie die Arbeit mit Serviceklassen (Standard, Expedite, Fixed Date,
-                            Intangible). Verwenden Sie Swimlanes,
-                            um Karten nach Bearbeiter, Priorität, CoS oder Tags zu gruppieren. Rollen: Service Request
-                            Manager und Service
-                            Delivery Manager.</p>
+                            Visualisieren Sie die Arbeit auf einem Board mit anpassbaren Spalten, wenden Sie WIP-Limits
+                            (Work In Progress) an, definieren Sie explizite Spaltenrichtlinien und kategorisieren Sie
+                            die Arbeit mit Serviceklassen (Standard, Expedite, Fixed Date, Intangible). Verwenden Sie
+                            Swimlanes, um Karten nach Bearbeiter, Priorität, CoS oder Tags zu gruppieren. Rollen:
+                            Service Request Manager und Service Delivery Manager.</p>
                         <div class="template-best-for">
                             <strong>Ideal für:</strong> Support-Teams, Wartungs-Workflows, Umgebungen mit variablen
                             Prioritäten oder Teams im schrittweisen Übergang zu Agile.
@@ -321,7 +640,7 @@
                         <div class="template-emoji">🔀</div>
                         <h3>Hybrid (Scrumban)</h3>
                         <p>Kombiniert das Beste aus Scrum und Kanban: Behalten Sie die Sprint-Struktur für den
-                            Planungsrhythmus bei, während Sie WIP-Limits und Flusssmetriken von Kanban für die tägliche
+                            Planungsrhythmus bei, während Sie WIP-Limits und Flussmetriken von Kanban für die tägliche
                             Ausführung nutzen. Optionale Sprints, vereinfachte Zeremonien und Metriken sowohl für
                             Velocity als auch für Durchfluss. Erhalten Sie die Vorhersehbarkeit von Scrum mit der
                             Flexibilität von Kanban.</p>
@@ -336,7 +655,179 @@
             </div>
         </section>
 
-        <section class="features-detail">
+        <section id="framework-details" class="features-detail" style="background: rgba(123,31,162,0.04);">
+            <div class="container">
+                <h2>Framework-Detailanalyse</h2>
+                <p>Jedes Framework enthält angepasste Spalten, Rollen, Metriken und Workflows. So funktionieren sie in Keisen im Detail.</p>
+
+                <div style="margin-top:2rem;">
+                    <h3 id="scrum-detail">🏃 Scrum — Sprintbasierte iterative Entwicklung</h3>
+                    <p>Keisen implementiert Scrum nach dem <strong>Scrum Guide 2020</strong> mit vollständiger Zeremonie-Unterstützung und rollenbasierten Berechtigungen.</p>
+
+                    <h4>Sprint-Lebenszyklus (4 Phasen)</h4>
+                    <ol>
+                        <li><strong>Planung</strong> — Der Product Owner wählt Stories aus dem priorisierten Backlog. Das Team schätzt mit dem integrierten <a href="/de/estimation-room">Planning Poker</a> und committet basierend auf der Teamkapazität (Stunden pro Mitglied, angepasst an Verfügbarkeit und Urlaub). Die Sprint-Dauer ist von 1 bis 4 Wochen konfigurierbar.</li>
+                        <li><strong>Aktiv</strong> — Das Development Team arbeitet an den committed Stories. Das Kanban-Board zeigt 4 Spalten: <em>To Do → In Progress → In Review → Done</em>. Verfolgen Sie den täglichen Fortschritt mit dem <strong>Burndown-Chart</strong> (ideal vs. tatsächlich), notieren Sie <strong>Daily-Standup-Notizen</strong> (Gestern / Heute / Hindernisse) pro Teammitglied und erkennen Sie Hindernisse automatisch.</li>
+                        <li><strong>Review</strong> — Der Scrum Master leitet ein formales <strong>Sprint Review</strong> nach Scrum Guide 2020. Jede Story erhält ein Ergebnis: <em>Genehmigt</em>, <em>Zu verfeinern</em> oder <em>Abgelehnt</em>. Erfassen Sie Stakeholder-Feedback, Demo-Notizen, formale Entscheidungen (Action Items, Scope Changes, technische Entscheidungen) und Lessons Learned.</li>
+                        <li><strong>Abgeschlossen</strong> — Die Velocity wird automatisch berechnet. Der Sprint wird mit einem integrierten <a href="/de/retrospective-list">Retrospective</a> Board verknüpft. Unvollendete Stories kehren ins Backlog für den nächsten Sprint zurück.</li>
+                    </ol>
+
+                    <h4>Scrum-Rollen (Scrum Guide 2020)</h4>
+                    <ul>
+                        <li><strong>Product Owner</strong> — Verantwortlich für das Backlog. Erstellt, bearbeitet, löscht und priorisiert Stories. Definiert die Definition of Ready. Legt die endgültige Schätzung nach Teamdiskussion fest. Weist Teammitglieder den Stories zu.</li>
+                        <li><strong>Scrum Master</strong> — Moderiert die Zeremonien. Erstellt, startet und schließt Sprints ab. Leitet Sprint Review und Retrospektive. Konfiguriert WIP-Limits und Board-Einstellungen. Beseitigt Hindernisse.</li>
+                        <li><strong>Development Team</strong> (Entwickler, Designer, QA) — Schätzt Stories über Planning Poker. Weist sich selbst Stories zu. Verschiebt eigene Stories auf dem Board. Notiert Daily-Standup-Einträge. Kann keine Stories erstellen oder Sprints verwalten.</li>
+                        <li><strong>Stakeholder</strong> — Nur Lesezugriff. Nimmt am Sprint-Review-Feedback teil. Kann Stories, Sprints oder Board nicht ändern.</li>
+                    </ul>
+
+                    <h4>Scrum-Metriken</h4>
+                    <ul>
+                        <li><strong>Velocity</strong> — Abgeschlossene Story Points pro Sprint mit Trendlinie über Sprints</li>
+                        <li><strong>Burndown-Chart</strong> — Verbleibende Punkte pro Tag vs. ideale Burndown-Linie</li>
+                        <li><strong>Burnup-Chart</strong> — Abgeschlossene Punkte pro Tag mit Darstellung von Scope Changes</li>
+                        <li><strong>Sprint Health Score</strong> — Automatische Risikoerkennung wenn Fortschritt unter 80% des Ideals fällt</li>
+                        <li><strong>Schätzgenauigkeit</strong> — Vergleich geschätzte vs. tatsächliche Punkte</li>
+                        <li><strong>Lead Time &amp; Cycle Time</strong> — Tage von Erstellung bis Done / In Progress bis Done</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top:2.5rem;">
+                    <h3 id="kanban-detail">📊 Kanban — Kontinuierliches Fluss-Management</h3>
+                    <p>Keisen implementiert Kanban nach der <strong>Kanban-Methode von David Anderson</strong> mit 6 Praktiken: Workflow visualisieren, WIP begrenzen, Fluss verwalten, Richtlinien explizit machen, Feedback-Schleifen implementieren, kollaborativ verbessern.</p>
+
+                    <h4>Board-Konfiguration (6 Standard-Spalten)</h4>
+                    <ol>
+                        <li><strong>Backlog</strong> — Alle eingehenden Arbeiten. Richtlinie: <em>„Nach Priorität sortieren"</em>. Kein WIP-Limit.</li>
+                        <li><strong>Refinement</strong> — Stories werden analysiert und detailliert. WIP-Limit: 5. Richtlinien: <em>„Max. 2 Tage in Spalte"</em>, <em>„Erfordert Akzeptanzkriterien"</em>.</li>
+                        <li><strong>Ready</strong> — Stories, die die Definition of Ready erfüllen. WIP-Limit: 5. Richtlinie: <em>„Schätzungen abgeschlossen"</em>.</li>
+                        <li><strong>In Progress</strong> — Aktive Entwicklung. WIP-Limit: 3. Richtlinie: <em>„Max. 1 Element pro Person"</em>, <em>„Tägliches Status-Update"</em>.</li>
+                        <li><strong>Review</strong> — Code Review / QA. WIP-Limit: 2. Richtlinie: <em>„Max. 24h in Spalte"</em>, <em>„Erfordert Code Review"</em>.</li>
+                        <li><strong>Done</strong> — Abgeschlossene Arbeit. Richtlinie: <em>„Alle Akzeptanzkriterien erfüllt"</em>. Kein WIP-Limit.</li>
+                    </ol>
+
+                    <h4>WIP-Limits &amp; visueller Status</h4>
+                    <p>Jede Spalte zeigt einen Echtzeit-WIP-Indikator mit Farbcodierung: <strong style="color:green;">grün</strong> = unter dem Limit, <strong style="color:orange;">orange</strong> = am Limit, <strong style="color:red;">rot</strong> = überschritten. Expedite-Elemente (Serviceklasse) können WIP-Limits bei dringender Arbeit überschreiten.</p>
+
+                    <h4>5 Swimlane-Typen</h4>
+                    <ul>
+                        <li><strong>Serviceklasse</strong> — Expedite (oben, rot) → Fixed Date (lila) → Standard (blau) → Intangible (grau)</li>
+                        <li><strong>Bearbeiter</strong> — Eine horizontale Zeile pro Teammitglied</li>
+                        <li><strong>Priorität</strong> — Must (oben) → Should → Could → Won't (unten)</li>
+                        <li><strong>Tag</strong> — Eine Zeile pro Tag für kategoriebasierte Gruppierung</li>
+                        <li><strong>Keine</strong> — Klassische flache Spaltenansicht</li>
+                    </ul>
+
+                    <h4>Serviceklassen (4 Kategorien)</h4>
+                    <ul>
+                        <li><strong>Standard</strong> (blau) — Normale FIFO-Verarbeitung, respektiert WIP-Limits</li>
+                        <li><strong>Expedite</strong> (rot) — Dringende Arbeit, kann WIP-Limits überschreiten, wird sofort bearbeitet</li>
+                        <li><strong>Fixed Date</strong> (lila) — Fester Termin, termingebundene Verpflichtung</li>
+                        <li><strong>Intangible</strong> (grau) — Technische Schulden, Infrastruktur, kein unmittelbarer Geschäftswert</li>
+                    </ul>
+
+                    <h4>Kanban-Rollen</h4>
+                    <ul>
+                        <li><strong>Service Request Manager (SRM)</strong> — Entspricht dem Product Owner. Verwaltet eingehende Anfragen, priorisiert das Backlog, definiert Akzeptanzkriterien.</li>
+                        <li><strong>Service Delivery Manager (SDM)</strong> — Entspricht dem Scrum Master. Verwaltet den Fluss, überwacht WIP-Limits, moderiert Verbesserungsmeetings, beseitigt Hindernisse.</li>
+                        <li><strong>Teammitglieder</strong> — Ziehen Arbeit vom Board, weisen sich selbst zu, aktualisieren den Status täglich.</li>
+                    </ul>
+
+                    <h4>Kanban-Metriken</h4>
+                    <ul>
+                        <li><strong>Cumulative Flow Diagram (CFD)</strong> — Visualisiert die Anzahl der Arbeitselemente pro Status über die Zeit und zeigt Engpässe</li>
+                        <li><strong>Lead Time</strong> — Tage von der Story-Erstellung bis zum Abschluss</li>
+                        <li><strong>Cycle Time</strong> — Tage von „In Progress" bis „Done"</li>
+                        <li><strong>Throughput</strong> — Abgeschlossene Elemente pro Woche</li>
+                        <li><strong>Arbeitselement-Alter</strong> — Wie lange sich jedes Element in seinem aktuellen Status befindet</li>
+                        <li><strong>Flusseffizienz</strong> — Verhältnis von aktiver Arbeitszeit zur Gesamtdurchlaufzeit</li>
+                        <li><strong>WIP-Verteilung</strong> — Aktuelle Elemente pro Statusspalte</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top:2.5rem;">
+                    <h3 id="hybrid-detail">🔀 Hybrid (Scrumban) — Das Beste aus beiden Welten</h3>
+                    <p>Hybrid kombiniert <strong>Scrums Sprint-Rhythmus</strong> mit <strong>Kanbans Fluss-Management</strong>. Behalten Sie die Vorhersehbarkeit zeitgebundener Iterationen bei und nutzen Sie WIP-Limits und Flussmetriken für die tägliche Ausführung.</p>
+
+                    <h4>Board-Konfiguration (vereinfacht)</h4>
+                    <ol>
+                        <li><strong>To Do</strong> — Sprint-committed Stories, bereit zum Start. Kein WIP-Limit.</li>
+                        <li><strong>In Progress</strong> — Aktive Entwicklung. WIP-Limit: 5. Richtlinie: <em>„Max. 1 Element pro Person"</em>.</li>
+                        <li><strong>Done</strong> — Abgeschlossene Arbeit. Richtlinie: <em>„Alle Akzeptanzkriterien erfüllt"</em>.</li>
+                    </ol>
+
+                    <h4>Was Hybrid von jedem Framework übernimmt</h4>
+                    <table style="width:100%; border-collapse:collapse; margin:1rem 0; font-size:0.95rem;">
+                        <thead>
+                            <tr style="border-bottom:2px solid rgba(123,31,162,0.3);">
+                                <th style="text-align:left; padding:0.5rem;">Von Scrum</th>
+                                <th style="text-align:left; padding:0.5rem;">Von Kanban</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Optionale Sprint-Zeitboxen</td><td style="padding:0.5rem;">WIP-Limits pro Spalte</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Velocity-Tracking</td><td style="padding:0.5rem;">Flussmetriken (CFD, Lead/Cycle Time)</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Burndown-/Burnup-Charts</td><td style="padding:0.5rem;">Kontinuierliche Verbesserungskadenz</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:0.5rem;">Sprint-Planung &amp; Kapazität</td><td style="padding:0.5rem;">Pull-System (Team entscheidet, wann gestartet wird)</td></tr>
+                            <tr><td style="padding:0.5rem;">Retrospektiven pro Sprint</td><td style="padding:0.5rem;">Spaltenrichtlinien</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Wann Hybrid verwenden</h4>
+                    <ul>
+                        <li>Teams im <strong>Übergang</strong> von Scrum zu Kanban (oder umgekehrt)</li>
+                        <li>Projekte, die <strong>Feature-Entwicklung</strong> (sprintbasiert) mit <strong>Wartung</strong> (flussbasiert) kombinieren</li>
+                        <li>Teams, die <strong>Sprint-Struktur für die Planung</strong> brauchen, aber <strong>mehr Flexibilität</strong> in der täglichen Ausführung wünschen</li>
+                        <li>Organisationen mit <strong>unterschiedlichem Reifegrad</strong> in verschiedenen Teams</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="permissions" class="features-detail">
+            <div class="container">
+                <h2>Scrum Guide 2020 — Rollen-Berechtigungsmatrix</h2>
+                <p>Jede Aktion wird durch ein <strong>zweischichtiges Rollensystem</strong> gesteuert: Zugriffsrolle (Eigentümer, Admin, Mitglied, Betrachter) kombiniert mit funktionaler Rolle (Product Owner, Scrum Master, Entwickler). Für Kanban-Projekte werden Rollen umbenannt: PO → Service Request Manager, SM → Service Delivery Manager.</p>
+
+                <div style="overflow-x:auto; margin:1.5rem 0;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.9rem; min-width:600px;">
+                        <thead>
+                            <tr style="border-bottom:2px solid rgba(123,31,162,0.4);">
+                                <th style="text-align:left; padding:0.6rem;">Aktion</th>
+                                <th style="text-align:center; padding:0.6rem;">Product Owner</th>
+                                <th style="text-align:center; padding:0.6rem;">Scrum Master</th>
+                                <th style="text-align:center; padding:0.6rem;">Entwicklungsteam</th>
+                                <th style="text-align:center; padding:0.6rem;">Stakeholder</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Backlog-Management</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Stories erstellen / bearbeiten / löschen</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Backlog priorisieren (MoSCoW)</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Endschätzung festlegen</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Teammitglieder zuweisen</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Sprint-Management</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Sprint erstellen / starten / abschließen</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Retrospektive moderieren</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">WIP-Limits konfigurieren</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Schätzung &amp; Entwicklung</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Story Points schätzen (Planning Poker)</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Sich selbst Stories zuweisen</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Eigene Stories auf dem Board verschieben</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Beliebige Stories auf dem Board verschieben</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:0.5rem;" colspan="5"><strong>Team-Management</strong></td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Mitglieder einladen</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:0.4rem 0.5rem;">Mitglieder entfernen / Rollen ändern</td><td style="text-align:center;">✅</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size:0.9rem; opacity:0.8;"><strong>Kanban-Äquivalente:</strong> Product Owner → Service Request Manager (SRM) · Scrum Master → Service Delivery Manager (SDM) · Development Team → Teammitglieder. Gleiche Berechtigungsmatrix, andere Terminologie.</p>
+            </div>
+        </section>
+
+        <section id="features" class="features-detail">
             <div class="container">
                 <h2>Vollständiges Agile Toolkit</h2>
                 <ul class="features-list">
@@ -345,18 +836,15 @@
                         <a href="/de/eisenhower">MoSCoW-Priorisierung</a> (Must, Should, Could, Won't),
                         Akzeptanzkriterien, Business Value und Abhängigkeiten zwischen Stories
                     </li>
-                    <li><strong>7-Stufen-Workflow</strong> — Verfolgen Sie Stories durch Backlog → Refinement → Ready →
-                        In
-                        Sprint → In Progress → In Review → Done mit automatischem Status-Management</li>
+                    <li><strong>7-Stufen-Story-Workflow</strong> — Verfolgen Sie Stories durch Backlog → Refinement → Ready →
+                        In Sprint → In Progress → In Review → Done mit automatischem Status-Management</li>
                     <li><strong>Sprint-Planung und Kapazität</strong> — Konfigurieren Sie die Sprint-Dauer (1-4 Wochen),
                         berechnen Sie die Teamkapazität basierend auf der Verfügbarkeit der Mitglieder, weisen Sie
-                        Stories zu, indem Sie Story Points und Kapazität vergleichen
-                    </li>
+                        Stories zu, indem Sie Story Points und Kapazität vergleichen</li>
                     <li><strong>Kanban-Board mit WIP-Limits</strong> — Anpassbare Spalten mit Work-In-Progress-Limits,
                         visuellen WIP-Statusanzeigen (grün/orange/rot) und expliziten Spaltenrichtlinien für die
-                        Kanban-Praxis #4
-                    </li>
-                    <li><strong>5 Arten von Swimlanes</strong> — Gruppieren Sie Karten nach Serviceklasse, Bearbeiter,
+                        Kanban-Praxis #4</li>
+                    <li><strong>5 Swimlane-Typen</strong> — Gruppieren Sie Karten nach Serviceklasse, Bearbeiter,
                         Priorität (MoSCoW), Tags oder keine Gruppierung für maximale Flexibilität</li>
                     <li><strong>Serviceklassen (Kanban)</strong> — Kategorisieren Sie Elemente als Standard (FIFO),
                         Expedite (darf WIP überschreiten), Fixed Date (fester Termin) oder Intangible (technische
@@ -384,7 +872,7 @@
                         (Erstellen, Bearbeiten, Löschen, Verschieben, Schätzen, Zuweisen, Abschließen, Starten,
                         Schließen, Einladen, Beitreten) über 5 Entitätstypen</li>
                     <li><strong>Google Sheets Export</strong> — Exportieren Sie 5 formatierte Blätter: Product Backlog,
-                        Sprint Planing, Team und Kapazität, Retrospektive und aggregierte Metriken</li>
+                        Sprint Planning, Team und Kapazität, Retrospektive und aggregierte Metriken</li>
                 </ul>
                 <div class="features-tip">
                     <strong>Methodischer Leitfaden:</strong> Jedes Framework enthält einen integrierten interaktiven
@@ -394,10 +882,20 @@
             </div>
         </section>
 
-        <section class="faq-section">
+        <section id="origin" class="features-detail" style="background: rgba(123,31,162,0.04);">
+            <div class="container">
+                <h2>Aufgebaut auf Bewährten Methoden</h2>
+                <p>Keisens Agile Process Manager ist nicht nur ein weiteres Projektboard — er implementiert die tatsächlichen Frameworks, wie sie von ihren Schöpfern definiert wurden. Scrum folgt dem <strong>Scrum Guide 2020</strong> von Ken Schwaber und Jeff Sutherland mit klaren Verantwortungsgrenzen zwischen Product Owner, Scrum Master und Entwicklern. Kanban implementiert <strong>David Andersons sechs Praktiken</strong> — von der Workflow-Visualisierung bis zur kollaborativen Verbesserung — mit echten WIP-Limits, expliziten Richtlinien und Serviceklassen-Kategorisierung.</p>
+                <p>Die Berechtigungsmatrix erzwingt Scrums Aufgabentrennung: Nur der Product Owner verwaltet das Backlog, nur der Scrum Master verwaltet Sprints, und nur Entwickler schätzen. Das ist nicht optional — so ist das Framework konzipiert, und Keisen erzwingt es, damit Ihr Team von Anfang an die richtigen Gewohnheiten entwickelt.</p>
+                <p>Kombiniert mit dem integrierten <a href="/de/estimation-room">Estimation Room</a> für Planning Poker, dem <a href="/de/retrospective-list">Retrospective Board</a> für kontinuierliche Verbesserung, der <a href="/de/eisenhower">Eisenhower-Matrix</a> für strategische Priorisierung und <a href="/de/smart-todo">Smart Todo</a> für operatives Aufgabenmanagement bietet Keisen ein vollständiges agiles Ökosystem — nicht nur isolierte Tools.</p>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section">
             <div class="container">
                 <h2>Häufig gestellte Fragen</h2>
                 <div class="faq-list">
+
                     <details class="faq-item">
                         <summary class="faq-question">Welche agilen Frameworks unterstützt Keisen?</summary>
                         <div class="faq-answer">Keisen unterstützt 3 agile Frameworks: <strong>Scrum</strong>
@@ -405,9 +903,9 @@
                             Retrospektive), <strong>Kanban</strong> (kontinuierlicher Fluss mit WIP-Limits, Swimlanes,
                             Spaltenrichtlinien und Serviceklassen) und <strong>Hybrid/Scrumban</strong> (kombiniert
                             Sprint-Struktur mit Kanban-Fluss und WIP-Limits). Jedes Framework verfügt über dedizierte
-                            Funktionen, Rollen, Metriken und Board-Konfigurationen.
-                        </div>
+                            Funktionen, Rollen, Metriken und Board-Konfigurationen.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Ist der Agile Process Manager kostenlos?</summary>
                         <div class="faq-answer">Ja, der Keisen Agile Process Manager ist völlig kostenlos. Sie können
@@ -415,6 +913,12 @@
                             verfolgen, Burndown-Charts generieren, das Team verwalten und Mitglieder einladen. Melden
                             Sie sich bei Google an und beginnen Sie in wenigen Sekunden zu arbeiten.</div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was ist der Unterschied zwischen Scrum, Kanban und Hybrid?</summary>
+                        <div class="faq-answer"><strong>Scrum</strong> verwendet Sprints mit fester Dauer (1-4 Wochen) mit 4 Zeremonien (Planung, Daily Standup, Sprint Review, Retrospektive) und 3 definierten Rollen (Product Owner, Scrum Master, Development Team). Es verfolgt Velocity und Burndown. <strong>Kanban</strong> verwendet kontinuierlichen Fluss ohne Sprints — Arbeit wird gezogen, wenn Kapazität verfügbar ist. Es nutzt WIP-Limits, Spaltenrichtlinien, Swimlanes und Serviceklassen. Es verfolgt CFD, Lead Time, Cycle Time und Flusseffizienz. <strong>Hybrid (Scrumban)</strong> kombiniert optionale Sprints mit WIP-Limits und Flussmetriken — der Planungsrhythmus von Scrum mit der Flexibilität von Kanban.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Wie funktioniert das Kanban-Board?</summary>
                         <div class="faq-answer">Das Kanban-Board von Keisen bietet anpassbare Spalten mit
@@ -425,6 +929,7 @@
                             Serviceklassen kategorisieren (Standard, Expedite, Fixed Date, Intangible). Die Karten
                             werden per Drag-and-Drop verwaltet.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Wie funktioniert das Sprint-Management?</summary>
                         <div class="faq-answer">Sprints folgen dem vollständigen Zyklus: <strong>Planung</strong>
@@ -433,31 +938,120 @@
                             Hinderniserkennung), <strong>Review</strong> (jede Story mit formalen Ergebnissen bewerten:
                             Genehmigt, Zu verfeinern, Abgelehnt, plus Stakeholder-Feedback und formale Entscheidungen)
                             und <strong>Abgeschlossen</strong> (automatische Velocity-Berechnung, Retrospektiven-Link).
-                            Die Sprint-Dauer ist von 1 bis 4 Wochen konfigurierbar.
-                        </div>
+                            Die Sprint-Dauer ist von 1 bis 4 Wochen konfigurierbar.</div>
                     </details>
+
                     <details class="faq-item">
-                        <summary class="faq-question">Welche Scrum-Rollen und Berechtigungen unterstützt Keisen?
-                        </summary>
-                        <div class="faq-answer">Keisen implementiert Rollen konform zum <strong>Scrum Guide
-                                2020</strong> mit einer granularen Berechtigungsmatrix: Product Owner
-                            (Backlog-Management, Story-Erstellung, Priorisierung, Endschätzung), Scrum Master
-                            (Sprint-Management, Moderation, Retrospektive), Development Team (Schätzung,
-                            Selbstzuweisung, Task-Bewegung). Für Kanban sind die entsprechenden Rollen Service Request
-                            Manager (SRM) und Service Delivery Manager (SDM). Jede Aktion hat eine spezifische
-                            rollenbasierte Zugriffskontrolle.</div>
+                        <summary class="faq-question">Wie funktioniert der 7-Stufen-Story-Workflow?</summary>
+                        <div class="faq-answer">Jede User Story durchläuft 7 Stufen: <strong>Backlog</strong> (neu, unpriorisiert) → <strong>Refinement</strong> (wird analysiert, Akzeptanzkriterien hinzugefügt) → <strong>Ready</strong> (Definition of Ready erfüllt, Schätzung abgeschlossen) → <strong>In Sprint</strong> (committed zu einem Sprint) → <strong>In Progress</strong> (Entwicklung gestartet) → <strong>In Review</strong> (Code Review / QA) → <strong>Done</strong> (alle Akzeptanzkriterien erfüllt). Nur Stories mit dem Status „Ready" können einem Sprint hinzugefügt werden, was ein ordnungsgemäßes Grooming erzwingt.</div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie funktionieren User Stories in Keisen?</summary>
+                        <div class="faq-answer">User Stories folgen der Vorlage „Als... möchte ich... damit...". Jede Story enthält: <strong>MoSCoW-Priorität</strong> (Must, Should, Could, Won't), <strong>Akzeptanzkriterien</strong> (Checkliste der Bedingungen für „Done"), <strong>Story Points</strong> (geschätzt über Planning Poker), <strong>Serviceklasse</strong> (Standard, Expedite, Fixed Date, Intangible), <strong>Business Value</strong> (1-10 Bewertung), <strong>Tags</strong> zur Kategorisierung, <strong>Abhängigkeiten</strong> zu anderen Stories und <strong>Bearbeiter</strong>. Stories verfolgen auch tatsächliche Stunden und benutzerdefinierten Fortschrittsprozentsatz.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was ist MoSCoW-Priorisierung?</summary>
+                        <div class="faq-answer">MoSCoW ist eine Priorisierungstechnik, die in Keisens Product Backlog verwendet wird. Jede Story wird klassifiziert als: <strong>Must Have</strong> (kritisch, Projekt scheitert ohne), <strong>Should Have</strong> (wichtig, aber nicht vital), <strong>Could Have</strong> (wünschenswert, wenn Zeit vorhanden), oder <strong>Won't Have</strong> (derzeit außerhalb des Umfangs). Das Backlog kann nach MoSCoW-Priorität sortiert werden, und Swimlanes können Karten nach Prioritätsstufe auf dem Kanban-Board gruppieren.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie integriert sich der Estimation Room mit dem Agile Process?</summary>
+                        <div class="faq-answer">Keisens <a href="/de/estimation-room">Estimation Room</a> integriert sich direkt mit dem Agile Process Manager. Von jeder User Story aus können Sie eine Planning-Poker-Sitzung mit Fibonacci-, T-Shirt-, PERT- (3-Punkt), Bucket-, Dezimal-, Dot-Voting- oder Five-Fingers-Methoden starten. Teammitglieder stimmen anonym ab, diskutieren Unterschiede und erreichen einen Konsens. Die endgültige Schätzung wird vom Product Owner festgelegt und als Story Points in der Story gespeichert. Nur Development-Team-Mitglieder können schätzen — der Product Owner kann nur den Endwert festlegen.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was ist die Serviceklasse in Kanban?</summary>
+                        <div class="faq-answer">Die Serviceklasse kategorisiert Arbeitselemente nach Dringlichkeit und Art: <strong>Standard</strong> (blau) — normale FIFO-Verarbeitung, respektiert WIP-Limits; <strong>Expedite</strong> (rot) — dringende Arbeit, kann WIP-Limits überschreiten und wird sofort bearbeitet; <strong>Fixed Date</strong> (lila) — Arbeit mit einem festen Termin; <strong>Intangible</strong> (grau) — technische Schulden oder Infrastrukturarbeit ohne unmittelbaren Geschäftswert. Sie können das Board per Swimlanes nach Serviceklasse gruppieren.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was sind Swimlanes und wie funktionieren sie?</summary>
+                        <div class="faq-answer">Swimlanes sind horizontale Gruppierungen auf dem Kanban-Board. Keisen unterstützt 5 Typen: <strong>Serviceklasse</strong> (Expedite oben, dann Fixed Date, Standard, Intangible), <strong>Bearbeiter</strong> (eine Zeile pro Teammitglied), <strong>Priorität</strong> (Must → Should → Could → Won't), <strong>Tag</strong> (eine Zeile pro Tag) und <strong>Keine</strong> (klassische flache Ansicht). Swimlanes helfen, die Arbeitsverteilung zu visualisieren, Engpässe pro Kategorie zu identifizieren und parallele Workflows zu verwalten.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie funktioniert das Sprint Review?</summary>
+                        <div class="faq-answer">Keisen implementiert das Sprint Review als formales Scrum Guide 2020 Event. Der Scrum Master leitet das Review und erfasst: <strong>Demo-Notizen</strong> für jede vorgestellte Story, <strong>Story-Ergebnisse</strong> (Genehmigt, Zu verfeinern oder Abgelehnt für jede Story), <strong>Stakeholder-Feedback</strong> von Teilnehmern (PO, SM, Entwickler, Stakeholder, Gäste), <strong>formale Entscheidungen</strong> (Action Items, Backlog-Änderungen, Scope Changes, technische Entscheidungen) mit Zuständigen und Fälligkeitsdaten und <strong>Lessons Learned</strong>. Ein Sentiment-Score (1-5) erfasst die Gesamtstimmung des Teams.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was ist die Daily-Standup-Funktion?</summary>
+                        <div class="faq-answer">Jeder Sprint enthält strukturiertes Daily-Standup-Tracking. Teammitglieder notieren drei Dinge: <strong>Was haben Sie gestern gemacht?</strong>, <strong>Was werden Sie heute tun?</strong> und <strong>Gibt es Hindernisse?</strong> Hindernisse werden automatisch erkannt und markiert. Standup-Notizen werden pro Mitglied und Tag gespeichert, was ein historisches Protokoll erstellt, das hilft, Muster, wiederkehrende Blockaden und Velocity-Trends zu erkennen.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie funktioniert die Teamkapazitätsplanung?</summary>
+                        <div class="faq-answer">Keisen bietet Dual-View-Kapazitätsplanung: <strong>Scrum-Standardansicht</strong> zeigt Velocity, Throughput und vorgeschlagene Story Points pro Sprint. <strong>Stundenansicht</strong> zeigt verfügbare Stunden pro Mitglied (konfigurierbare Stunden/Tag), zugewiesene Stunden und Auslastungsprozentsatz. Jedes Teammitglied hat konfigurierbare <strong>Kapazitätsstunden pro Tag</strong> (Standard 8), <strong>Fähigkeiten</strong> für die Kompetenzmatrix und <strong>Abwesenheitszeiten</strong> (Urlaub, Feiertage), die automatisch die Sprint-Kapazität reduzieren.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was ist die Kompetenzmatrix?</summary>
+                        <div class="faq-answer">Die Kompetenzmatrix visualisiert die Kompetenzen Ihres Teams in einem Raster. Jedes Teammitglied listet seine Fähigkeiten auf (z. B. React, Python, UX Design, Testing), und die Matrix zeigt die Abdeckung im gesamten Team. Dies hilft bei der Sprint-Planung, Kompetenzlücken zu erkennen, die Arbeitslast unter Spezialisten auszugleichen und fundierte Zuweisungsentscheidungen zu treffen. Besonders nützlich für funktionsübergreifende Scrum-Teams.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie funktionieren WIP-Limits?</summary>
+                        <div class="faq-answer">WIP-Limits (Work In Progress) begrenzen die Anzahl der Elemente in jeder Kanban-Spalte. Wenn eine Spalte <strong style="color:green;">unter dem Limit</strong> ist, zeigt der Header grün. <strong style="color:orange;">Am Limit</strong> zeigt orange. <strong style="color:red;">Über dem Limit</strong> zeigt rot. Dies verhindert Engpässe und Multitasking. Expedite-Elemente (Serviceklasse) können WIP-Limits überschreiten, wenn dringende Arbeit sofortige Aufmerksamkeit erfordert. WIP-Limits sind vom Scrum Master / Service Delivery Manager konfigurierbar.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was ist ein Cumulative Flow Diagram (CFD)?</summary>
+                        <div class="faq-answer">Das CFD ist eine Kanban-Metrik, die die Anzahl der Arbeitselemente in jedem Status über die Zeit als gestapelte farbige Bänder zeigt. Es zeigt: <strong>Engpässe</strong> (sich verbreiternde Bänder), <strong>Throughput</strong> (Rate, mit der Elemente „Done" erreichen), <strong>WIP-Trends</strong> (gesamte aktive Elemente) und <strong>Lead-Time-Annäherung</strong> (horizontaler Abstand zwischen Bändern). Es ist das primäre Diagnosewerkzeug für Kanban-Teams und ist in Kanban- und Hybrid-Frameworks verfügbar.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was sind Spaltenrichtlinien?</summary>
+                        <div class="faq-answer">Spaltenrichtlinien sind explizite Regeln, die definieren, wann ein Arbeitselement eine Kanban-Spalte betreten oder verlassen kann. Gemäß <strong>Kanban-Praxis #4 (Richtlinien explizit machen)</strong> können Sie in Keisen Richtlinien pro Spalte definieren — zum Beispiel: <em>„Erfordert definierte Akzeptanzkriterien"</em> für Refinement, <em>„Max. 1 Element pro Person"</em> für In Progress, <em>„Erfordert Code-Review-Genehmigung"</em> für Review oder <em>„Alle Akzeptanzkriterien erfüllt"</em> für Done. Richtlinien sind in den Spaltenheadern sichtbar und helfen Teams, konsistente Workflow-Gewohnheiten aufzubauen.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Welche Scrum-Rollen und Berechtigungen unterstützt Keisen?</summary>
+                        <div class="faq-answer">Keisen implementiert <strong>Scrum Guide 2020 konforme</strong> Rollen mit einer granularen Berechtigungsmatrix: Product Owner (Backlog-Management, Story-Erstellung, Priorisierung, Endschätzung, Mitgliederzuweisung), Scrum Master (Sprint-Management, Moderation, Retrospektive, WIP-Konfiguration), Development Team (Schätzung über Planning Poker, Selbstzuweisung, eigene Story-Bewegung). Für Kanban sind die entsprechenden Rollen Service Request Manager (SRM) und Service Delivery Manager (SDM). Stakeholder haben nur Lesezugriff. Jede Aktion hat eine spezifische rollenbasierte Zugriffskontrolle — <a href="#permissions">siehe die vollständige Berechtigungsmatrix</a>.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie unterscheiden sich Kanban-Rollen von Scrum-Rollen?</summary>
+                        <div class="faq-answer">In Kanban-Projekten benennt Keisen die Scrum-Rollen in Kanban-Äquivalente um: <strong>Product Owner → Service Request Manager (SRM)</strong>, der eingehende Anfragen verwaltet und das Backlog priorisiert, <strong>Scrum Master → Service Delivery Manager (SDM)</strong>, der den Fluss verwaltet, WIP-Limits überwacht und Verbesserungsmeetings moderiert, <strong>Development Team → Teammitglieder</strong>, die Arbeit ziehen und sich selbst zuweisen. Die Berechtigungsmatrix bleibt gleich — nur die Terminologie ändert sich passend zu den Kanban-Konventionen.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Welche Metriken und Diagramme sind verfügbar?</summary>
                         <div class="faq-answer">Die Metriken passen sich dem Framework an: <strong>Scrum</strong> bietet
-                            Velocity-Tracking, Burndown/Burnup-Charts, Sprint Health Scoring. <strong>Kanban</strong>
-                            bietet Cumulative Flow Diagrams (CFD), WIP-Analysen, Flusseffizienz. <strong>Alle
+                            Velocity-Tracking, Burndown/Burnup-Charts, Sprint Health Scoring, Schätzgenauigkeit. <strong>Kanban</strong>
+                            bietet Cumulative Flow Diagrams (CFD), WIP-Verteilung, Flusseffizienz, Arbeitselement-Alter. <strong>Alle
                                 Frameworks</strong> enthalten Lead Time und Cycle Time (Live-Berechnung),
                             Durchsatz-Metriken, Team-Workload-Analyse, Scope-Change-Tracking und
-                            commitment-Trendanalyse. Die Metriken werden in einem dedizierten Dashboard mit interaktiven
-                            Grafiken visualisiert.
-                        </div>
+                            Commitment-Trendanalyse. Die Metriken werden in einem dedizierten Dashboard mit interaktiven
+                            Grafiken visualisiert.</div>
                     </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie integriert sich die Retrospektive mit Sprints?</summary>
+                        <div class="faq-answer">Nach Abschluss eines Sprints verknüpft Keisen ihn mit einem integrierten <a href="/de/retrospective-list">Retrospective Board</a>. Sie können aus 6 Vorlagen wählen: Start/Stop/Continue, Sailboat, 4Ls (Liked/Learned/Lacked/Longed For), Starfish, Mad/Sad/Glad und DAKI (Drop/Add/Keep/Improve). Die Retrospektive folgt geführten Phasen: Erstellen → Brainstorming → Gruppieren → Abstimmen → Diskutieren → Abschließen. Sie enthält Sentiment-Abstimmung, Wetter-Icebreaker, Coach-Tipps und Action-Item-Tracking. Für Kanban können Retrospektiven in beliebiger Kadenz geplant werden.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wie funktioniert der Audit Trail?</summary>
+                        <div class="faq-answer">Keisen verfolgt jede Änderung in Ihrem agilen Projekt mit einem vollständigen Audit Trail. Es protokolliert <strong>11 Aktionen</strong> (Erstellen, Bearbeiten, Löschen, Verschieben, Schätzen, Zuweisen, Abschließen, Starten, Schließen, Einladen, Beitreten/Verlassen) über <strong>5 Entitätstypen</strong> (Projekt, Story, Sprint, Team, Retrospektive). Jeder Eintrag dokumentiert, wer die Aktion durchgeführt hat, wann, die vorherigen und neuen Werte und welche Felder geändert wurden. Das Audit-Protokoll ist filterbar nach Aktionstyp, Entität, Benutzer und Datumsbereich.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Kann ich Projektdaten exportieren?</summary>
+                        <div class="faq-answer">Ja, Keisen exportiert nach <strong>Google Sheets</strong> mit 5 formatierten Blättern: <strong>Product Backlog</strong> (alle Stories mit Metadaten), <strong>Sprint Planning</strong> (Zeitplan und Zuweisungen), <strong>Team &amp; Kapazität</strong> (Roster mit Fähigkeiten und Kapazität), <strong>Retrospektive</strong> (Elemente, Sentiment, Action Items) und <strong>Aggregierte Metriken</strong> (Velocity, Throughput, Lead/Cycle Time). Der Export verwendet Google Sheets API v4 und erfordert Google-Anmeldung.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was sind Story-Abhängigkeiten?</summary>
+                        <div class="faq-answer">Story-Abhängigkeiten ermöglichen es, blockierende Beziehungen zwischen User Stories zu definieren. Wenn Story B von Story A abhängt, bedeutet das, dass A abgeschlossen sein muss, bevor B beginnen kann. Abhängigkeiten helfen dem Product Owner, das Backlog richtig zu sequenzieren und zu verhindern, dass das Team an Arbeit beginnt, die durch unvollständige Voraussetzungen blockiert ist. Abhängigkeiten sind auf der Story-Karte und in der Backlog-Ansicht sichtbar.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Kann ich das Framework nach der Projekterstellung wechseln?</summary>
+                        <div class="faq-answer">Das Framework (Scrum, Kanban oder Hybrid) wird bei der Projekterstellung festgelegt und bestimmt die verfügbaren Tabs, Standard-Spalten, Rollen und Metriken. Wenn Sie ein anderes Framework benötigen, können Sie ein neues Projekt mit dem gewünschten Framework erstellen und Ihre Stories verschieben. Das Hybrid-Framework ist ein guter Ausgangspunkt bei Unsicherheit — es unterstützt sowohl sprintbasierte als auch flussbasierte Arbeit.</div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Kann ich Keisen für Remote-Agile-Teams nutzen?</summary>
                         <div class="faq-answer">Absolut ja. Keisen ist eine Web-Anwendung, die über jeden Browser
@@ -467,6 +1061,7 @@
                             agile Teams. Alle Teammitglieder können gleichzeitig auf Backlog, Boards und Metriken
                             zugreifen.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Funktioniert der Agile Process Manager auf mobilen Geräten?</summary>
                         <div class="faq-answer">Ja, Keisen Agile Process Manager ist vollständig responsiv und funktioniert
@@ -474,22 +1069,24 @@
                             verfolgen und Metriken von jedem Gerät aus einsehen — kein App-Download erforderlich. Die
                             Oberfläche passt sich an Ihre Bildschirmgröße an für das beste Erlebnis.</div>
                     </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Wie vergleicht sich Keisen mit Jira oder Monday.com?</summary>
                         <div class="faq-answer">Keisen bietet 3 agile Frameworks in einem Tool (Scrum, Kanban, Hybrid),
                             Rollenberechtigungen konform zum Scrum Guide 2020, integrierten <a
-                                href="/de/estimation-room">Estimation Room</a> mit 7 Schätzmethoden, <a
-                                href="/de/retrospective-list">Retrospective Board</a> mit 5 Vorlagen,
+                                href="/de/estimation-room">Estimation Room</a> mit 7 Schätzmethoden, integrierte <a
+                                href="/de/retrospective-list">Retrospective Boards</a> mit 6 Vorlagen,
                             Team-Kompetenzmatrix, vollständigen Audit Trail und Google Sheets Export — alles kostenlos.
                             Im Gegensatz zu komplexen Enterprise-Tools mit Preisgestaltung pro Benutzer und monatelanger
                             Einrichtung ist Keisen für Teams konzipiert, die leistungsstarke agile Funktionen bei
                             sofortiger Produktivität wünschen.</div>
                     </details>
+
                 </div>
             </div>
         </section>
 
-        <section class="other-tools">
+        <section id="tools" class="other-tools">
             <div class="container">
                 <h2>Entdecken Sie die anderen Tools</h2>
                 <div class="tools-grid">
