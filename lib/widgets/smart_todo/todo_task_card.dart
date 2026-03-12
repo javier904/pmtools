@@ -46,7 +46,7 @@ class TodoTaskCard extends StatelessWidget {
     
     // Modern "Premium" Card Design with Theme Support
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: context.surfaceColor, // Dark surface or white
         borderRadius: BorderRadius.circular(12),
@@ -65,7 +65,7 @@ class TodoTaskCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -77,7 +77,7 @@ class TodoTaskCard extends StatelessWidget {
                     // Left side: Tags, Priority, Status (expandable)
                     Expanded(
                       child: Wrap(
-                        spacing: 6,
+                        spacing: 4,
                         runSpacing: 4,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
@@ -138,31 +138,77 @@ class TodoTaskCard extends StatelessWidget {
                       ),
                     ),
                     // Right side: Assignee + Menu (fixed position)
-                    if (task.assignedTo.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      _buildAssigneeAvatarWithTooltip(task.assignedTo.first, isDark),
-                    ],
-                    if (onDelete != null) ...[
-                      const SizedBox(width: 4),
-                      _TaskCardPopupMenu(
-                        task: task,
-                        onDelete: onDelete!,
-                        isDark: isDark,
-                      ),
-                    ],
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (task.assignedTo.isNotEmpty) ...[
+                          _buildAssigneeAvatarWithTooltip(task.assignedTo.first, isDark),
+                          const SizedBox(width: 4),
+                        ],
+                        // Calendar Sync Icon moved up here
+                        if (FeatureFlags.enableCalendarSync)
+                           Tooltip(
+                            message: task.calendarEventId != null
+                                 ? 'Synced ${task.syncedAt != null ? DateFormat('d MMM HH:mm').format(task.syncedAt!) : ''}'
+                                 : 'Sync with Google Calendar',
+                            child: InkWell(
+                              onTap: () async {
+                                final svc = GoogleCalendarService();
+                                final l10n = AppLocalizations.of(context);
+                                final listTitle = list?.title ?? 'Lista Sconosciuta';
+                                if (task.calendarEventId != null) {
+                                   final exists = await svc.checkCalendarEventExists(task.calendarEventId!);
+                                   if (!context.mounted) return;
+                                   if (!exists) {
+                                      final updatedTask = task.copyWith(clearCalendarData: true);
+                                      await SmartTodoService().updateTask(task.listId, updatedTask);
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('L\'evento è stato eliminato da Calendar. Scollegamento effettuato.'), backgroundColor: Colors.orange));
+                                   } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Evento già sincronizzato su Google Calendar.'), backgroundColor: Colors.blue));
+                                   }
+                                } else {
+                                   final eventId = await svc.syncTaskToCalendar(task, listTitle);
+                                   if (eventId != null) {
+                                      final updatedTask = task.copyWith(calendarEventId: eventId, syncedAt: DateTime.now());
+                                      await SmartTodoService().updateTask(task.listId, updatedTask);
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n?.actionSave ?? 'Sincronizzato con Calendar!'), backgroundColor: Colors.green));
+                                      }
+                                   } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Errore durante la sincronizzazione'), backgroundColor: Colors.red));
+                                      }
+                                   }
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                child: Icon(
+                                  task.calendarEventId != null ? Icons.event_available_rounded : Icons.edit_calendar_rounded,
+                                  size: 16,
+                                  color: task.calendarEventId != null ? Colors.green : (isDark ? Colors.blue[300]! : Colors.blue[600]!),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (onDelete != null)
+                          _TaskCardPopupMenu(
+                            task: task,
+                            onDelete: onDelete!,
+                            isDark: isDark,
+                          ),
+                      ],
+                    ),
                   ],
                 ),
-                
-                const SizedBox(height: 12),
-
                 // 2. Title
                 SelectableText(
                   task.title,
                   maxLines: 2,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                    height: 1.3,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    height: 1.0,
                     decoration: isDone ? TextDecoration.lineThrough : null,
                     color: isDone 
                       ? (isDark ? Colors.grey[500] : Colors.grey) 
@@ -172,11 +218,10 @@ class TodoTaskCard extends StatelessWidget {
 
                 // 2.5 Description (New)
                 if (task.description.isNotEmpty) ...[
-                  const SizedBox(height: 4),
                   Tooltip(
                     message: task.description,
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.all(8),
+                    margin: EdgeInsets.zero,
                     decoration: BoxDecoration(
                       color: const Color(0xFF333333), // Readable dark bg
                       borderRadius: BorderRadius.circular(8),
@@ -188,7 +233,7 @@ class TodoTaskCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        height: 1.4,
+                        height: 1.0,
                       ),
                     ),
                   ),
@@ -215,9 +260,9 @@ class TodoTaskCard extends StatelessWidget {
                     if (images.isEmpty) return const SizedBox.shrink();
 
                     return Padding(
-                      padding: const EdgeInsets.only(top: 12),
+                      padding: const EdgeInsets.only(top: 4),
                       child: SizedBox(
-                        height: 60,
+                        height: 48,
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: images.length > 4 ? 4 : images.length,
@@ -239,10 +284,10 @@ class TodoTaskCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
                                 images[index], 
-                                width: 60, 
-                                height: 60, 
+                                width: 48, 
+                                height: 48, 
                                 fit: BoxFit.cover,
-                                errorBuilder: (_,__,___) => Container(width: 60, height: 60, color: Colors.grey[200], child: const Icon(Icons.broken_image, size: 20, color: Colors.grey)),
+                                errorBuilder: (_,__,___) => Container(width: 48, height: 48, color: Colors.grey[200], child: const Icon(Icons.broken_image, size: 20, color: Colors.grey)),
                               ),
                             );
                           },
@@ -251,13 +296,11 @@ class TodoTaskCard extends StatelessWidget {
                     );
                   }
                 ),
-
-                const SizedBox(height: 12),
                 
                 // 4. Badges / Footer
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
+                  spacing: 6,
+                  runSpacing: 4,
                   children: [
                     // Due Date
                     if (task.dueDate != null)
@@ -270,68 +313,6 @@ class TodoTaskCard extends StatelessWidget {
                     // Effort
                     if (task.effort != null)
                       _buildMetaIcon(Icons.bolt_rounded, '${task.effort} pt', color: isDark ? Colors.amber : Colors.orange[700]!),
-
-                    // Calendar Sync (Feature Flagged)
-                    if (FeatureFlags.enableCalendarSync)
-                      Tooltip(
-                        message: task.calendarEventId != null
-                             ? 'Synced ${task.syncedAt != null ? DateFormat('d MMM HH:mm').format(task.syncedAt!) : ''}'
-                             : 'Sync with Google Calendar',
-                        child: InkWell(
-                          onTap: () async {
-                            final svc = GoogleCalendarService();
-                            final l10n = AppLocalizations.of(context);
-                            final listTitle = list?.title ?? 'Lista Sconosciuta';
-
-                            if (task.calendarEventId != null) {
-                               // Check if exists
-                               final exists = await svc.checkCalendarEventExists(task.calendarEventId!);
-                               if (!context.mounted) return;
-
-                               if (!exists) {
-                                  // Unlink
-                                  final updatedTask = task.copyWith(clearCalendarData: true);
-                                  await SmartTodoService().updateTask(task.listId, updatedTask);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('L\'evento è stato eliminato da Calendar. Scollegamento effettuato.'), backgroundColor: Colors.orange),
-                                  );
-                               } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Evento già sincronizzato su Google Calendar.'), backgroundColor: Colors.blue),
-                                  );
-                               }
-                            } else {
-                               // Sync new
-                               final eventId = await svc.syncTaskToCalendar(task, listTitle);
-                               if (eventId != null) {
-                                  // Update Task Model with sync metadata
-                                  final updatedTask = task.copyWith(
-                                    calendarEventId: eventId,
-                                    syncedAt: DateTime.now(),
-                                  );
-                                  await SmartTodoService().updateTask(task.listId, updatedTask);
-
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(l10n?.actionSave ?? 'Sincronizzato con Calendar!'), backgroundColor: Colors.green),
-                                    );
-                                  }
-                               } else {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Errore durante la sincronizzazione'), backgroundColor: Colors.red),
-                                    );
-                                  }
-                               }
-                            }
-                          },
-                          child: _buildMetaIcon(
-                            task.calendarEventId != null ? Icons.event_available_rounded : Icons.edit_calendar_rounded,
-                            '',
-                            color: task.calendarEventId != null ? Colors.green : (isDark ? Colors.blue[300]! : Colors.blue[600]!),
-                          ),
-                        ),
-                      ),
 
                     // Attachments (Clickable Link with menu for multiple)
                     if (task.attachments.isNotEmpty)
@@ -410,8 +391,8 @@ class TodoTaskCard extends StatelessWidget {
     final color = Colors.primaries[email.hashCode % Colors.primaries.length];
     
     return Container(
-      width: 28,
-      height: 28,
+      width: 20,
+      height: 20,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.2),
         shape: BoxShape.circle,
@@ -424,7 +405,7 @@ class TodoTaskCard extends StatelessWidget {
       child: Text(
         initial,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: FontWeight.bold,
           color: color,
         ),
@@ -502,13 +483,13 @@ class _TaskCardPopupMenu extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return SizedBox(
-      width: 44,
-      height: 44,
+      width: 28,
+      height: 28,
       child: PopupMenuButton<String>(
         padding: EdgeInsets.zero,
         icon: Icon(
           Icons.more_vert,
-          size: 18,
+          size: 16,
           color: isDark ? Colors.grey[400] : Colors.grey[500],
         ),
         tooltip: '',

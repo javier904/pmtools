@@ -45,10 +45,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Inizializza lingua utente salvata su Firestore + check feedback
+    // Inizializza lingua utente salvata su Firestore + check feedback e redirect
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _initUserLocale();
       _checkFeedbackPrompt();
+      
+      final redirect = Uri.base.queryParameters['redirect'];
+      if (redirect != null && redirect.isNotEmpty && mounted) {
+        // Redirige automaticamente l'utente loggato alla pagina indicata
+        Navigator.pushReplacementNamed(context, redirect);
+      }
     });
   }
 

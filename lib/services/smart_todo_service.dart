@@ -242,12 +242,11 @@ class SmartTodoService {
             .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
             .toList();
           // Client-side sort by position ascending (Mock Global Rank)
-          tasks.sort((a, b) {
-             // Default to 0 if null (though model has default)
-             final posA = a.position;
-             final posB = b.position;
-             return posA.compareTo(posB);
-          });
+        // Tiebreaker by ID to guarantee stable, deterministic order
+        tasks.sort((a, b) {
+           final cmp = a.position.compareTo(b.position);
+           return cmp != 0 ? cmp : a.id.compareTo(b.id);
+        });
           return tasks;
         });
   }
@@ -264,8 +263,11 @@ class SmartTodoService {
         .map((doc) => TodoTaskModel.fromMap(doc.data(), doc.id))
         .toList();
     
-    // Sort by position ascending
-    tasks.sort((a, b) => a.position.compareTo(b.position));
+    // Sort by position ascending, tiebreaker by ID
+    tasks.sort((a, b) {
+      final cmp = a.position.compareTo(b.position);
+      return cmp != 0 ? cmp : a.id.compareTo(b.id);
+    });
     return tasks;
   }
 

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import '../../models/smart_todo/todo_list_model.dart';
 import '../../models/smart_todo/todo_participant_model.dart';
 import '../../models/smart_todo/todo_task_model.dart';
@@ -61,6 +63,11 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   bool _filterToday = false;
   bool _sortByDate = false; // Default: Manual/Global Rank
 
+  // 🔒 Task stream: listen in state to prevent rebuild flash
+  StreamSubscription<List<TodoTaskModel>>? _tasksSubscription;
+  List<TodoTaskModel>? _cachedTasks; // null = still loading
+  String? _currentListId; // track which list we're subscribed to
+
   String get _currentUserEmail => _authService.currentUser?.email ?? '';
 
   bool _allowPop = false;
@@ -69,8 +76,26 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
   List<String> get safeAssigneeFilters => _assigneeFilters ?? [];
   List<String> get safeTagFilters => _tagFilters ?? [];
 
+  void _subscribeToTasks(String listId) {
+    if (_currentListId == listId) return; // Already subscribed
+    _tasksSubscription?.cancel();
+    _currentListId = listId;
+    int _emissionCount = 0;
+    _tasksSubscription = _todoService.streamTasks(listId)
+        .debounceTime(const Duration(milliseconds: 300))
+        .listen((tasks) {
+      _emissionCount++;
+      print('📋 Tasks stream emission #$_emissionCount: ${tasks.length} tasks, '
+          'positions: ${tasks.take(5).map((t) => '${t.title.substring(0, t.title.length.clamp(0, 10))}=${t.position}').toList()}');
+      if (mounted) {
+        setState(() => _cachedTasks = tasks);
+      }
+    });
+  }
+
   @override
   void dispose() {
+    _tasksSubscription?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -120,18 +145,17 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                 child: _buildFilterBar(currentList),
               ),
             ),
-            body: StreamBuilder<List<TodoTaskModel>>(
-              stream: _todoService.streamTasks(currentList.id),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+            body: Builder(
+              builder: (context) {
+                // Subscribe to tasks for this list (idempotent)
+                _subscribeToTasks(currentList.id);
+                
+                // Show spinner until the first task snapshot arrives
+                if (_cachedTasks == null) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                
-                if (snapshot.hasError) {
-                   return Center(child: Text(AppLocalizations.of(context).errorGeneric(snapshot.error.toString())));
-                }
   
-                var tasks = snapshot.data ?? [];
+                var tasks = List<TodoTaskModel>.from(_cachedTasks!);
   
                 // Apply Filters
                 if (_searchController.text.isNotEmpty) {
@@ -221,6 +245,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       onTaskDelete: (t) => _deleteTask(t, currentList),
                       onColumnAction: (a, c) => _handleColumnAction(a, c, currentList),
                       onQuickAdd: (statusId) => _showTaskDialog(currentList, initialStatusId: statusId),
+                      onQuickAddInline: (statusId, title) => _createInlineTask(title, statusId, currentList, tasks),
+                      onColumnReorder: (oldIndex, newIndex) => _handleColumnReorder(oldIndex, newIndex, currentList),
                     );
                     break;
                 }
@@ -710,6 +736,60 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           performedByName: null,
        );
     }
+  }
+
+  void _handleColumnReorder(int oldIndex, int newIndex, TodoListModel currentList) async {
+    if (oldIndex == newIndex || oldIndex < 0 || newIndex < 0 || 
+        oldIndex >= currentList.columns.length || newIndex >= currentList.columns.length) {
+      return;
+    }
+
+    final newColumns = List<TodoColumn>.from(currentList.columns);
+    final col = newColumns.removeAt(oldIndex);
+    newColumns.insert(newIndex, col);
+
+    await _todoService.updateList(
+      currentList.copyWith(columns: newColumns),
+      previousList: currentList,
+      performedBy: _currentUserEmail,
+      performedByName: null,
+    );
+  }
+
+  Future<void> _createInlineTask(String title, String statusId, TodoListModel currentList, List<TodoTaskModel> allTasks) async {
+    final userName = _authService.currentUserName ?? _currentUserEmail.split('@').first;
+    
+    final tasksInCol = allTasks.where((t) => t.statusId == statusId).toList();
+    tasksInCol.sort((a, b) => a.position.compareTo(b.position));
+    
+    double newPos = 10000.0;
+    if (tasksInCol.isNotEmpty) {
+       newPos = tasksInCol.last.position + 10000.0;
+    }
+
+    final newTask = TodoTaskModel(
+      id: '', // Empty ID, will be assigned by Firestore
+      listId: currentList.id,
+      title: title,
+      description: '',
+      statusId: statusId,
+      position: newPos,
+      priority: TodoTaskPriority.medium,
+      tags: [],
+      assignedTo: [],
+      subtasks: [],
+      comments: [],
+      attachments: [],
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    await _todoService.createTask(
+      currentList.id,
+      newTask,
+      performedBy: _currentUserEmail,
+      performedByName: userName,
+    );
   }
 
   void _handleColumnAction(String action, String columnId, TodoListModel currentList) async {

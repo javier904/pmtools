@@ -11476,6 +11476,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get agileSaveReview => 'Сохранить обзор';
 
   @override
+  String get agileGenerateRecap => 'Genera Recap';
+
+  @override
+  String get agileRecapCopied => 'Recap copiato negli appunti!';
+
+  @override
   String get agileConductedBy => 'Проводит';
 
   @override

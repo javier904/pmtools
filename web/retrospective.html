@@ -44,6 +44,32 @@
   <link rel="stylesheet" href="css/features.css">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="d8eb3e84-4871-4c5e-9944-dbec3d03508a"></script>
 
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated in Firebase
+                window.location.href = '/?redirect=/retrospective-list';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
+  </script>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -339,21 +365,27 @@
           <figure class="screenshot-item">
             <picture>
               <source srcset="screenshots/retro-board.webp" type="image/webp">
-              <img src="screenshots/retro-board.png" alt="Retrospective board with Start/Stop/Continue template showing guided phases and colored columns" loading="lazy" width="1554" height="467">
+              <img src="screenshots/retro-board.png"
+                alt="Retrospective board with Start/Stop/Continue template showing guided phases and colored columns"
+                loading="lazy" width="1554" height="467">
             </picture>
             <figcaption>Start/Stop/Continue board with guided facilitation phases</figcaption>
           </figure>
           <figure class="screenshot-item">
             <picture>
               <source srcset="screenshots/retro-completed.webp" type="image/webp">
-              <img src="screenshots/retro-completed.png" alt="Completed retrospective session showing participants, sentiment score, action items plan with status and priority" loading="lazy" width="1554" height="507">
+              <img src="screenshots/retro-completed.png"
+                alt="Completed retrospective session showing participants, sentiment score, action items plan with status and priority"
+                loading="lazy" width="1554" height="507">
             </picture>
             <figcaption>Session summary with sentiment tracking and Action Items Plan</figcaption>
           </figure>
           <figure class="screenshot-item screenshot-narrow">
             <picture>
               <source srcset="screenshots/retro-create.webp" type="image/webp">
-              <img src="screenshots/retro-create.png" alt="New Retrospective creation dialog with template selection, votes per user, icebreaker activity, and phase timers" loading="lazy" width="468" height="906">
+              <img src="screenshots/retro-create.png"
+                alt="New Retrospective creation dialog with template selection, votes per user, icebreaker activity, and phase timers"
+                loading="lazy" width="468" height="906">
             </picture>
             <figcaption>Quick setup: choose template, icebreaker, and phase timers</figcaption>
           </figure>
@@ -572,7 +604,8 @@
             <summary class="faq-question">Does the retrospective board work on mobile devices?</summary>
             <p class="faq-answer">Yes, Keisen is fully responsive and works on smartphones, tablets, and desktop
               browsers. You can create, facilitate, and participate in retrospectives from any device — no app download
-              needed. The interface adapts to your screen size for the best experience on every device, making it perfect
+              needed. The interface adapts to your screen size for the best experience on every device, making it
+              perfect
               for team members joining on the go.</p>
           </details>
           <details class="faq-item">
@@ -597,16 +630,19 @@
         <p>An <strong>agile retrospective</strong> (also called sprint retrospective or simply "retro") is a structured
           team meeting held at the end of each sprint or iteration. Defined in the
           <strong>Scrum Guide</strong>, its purpose is to inspect how the last sprint went with regard to people,
-          relationships, processes, and tools — and to identify actionable improvements for the next sprint.</p>
+          relationships, processes, and tools — and to identify actionable improvements for the next sprint.
+        </p>
         <p>The concept of continuous improvement through regular reflection has roots in the Japanese
           <strong>Kaizen</strong> philosophy and was formalized in agile software development by the
           <strong>Agile Manifesto</strong> (2001), which states: <em>"At regular intervals, the team reflects on how to
-            become more effective, then tunes and adjusts its behavior accordingly."</em></p>
+            become more effective, then tunes and adjusts its behavior accordingly."</em>
+        </p>
         <p><strong>Norm Kerth</strong> pioneered structured retrospective formats in his 2001 book
           <em>Project Retrospectives</em>, introducing the Prime Directive: <em>"Regardless of what we discover, we
             understand and truly believe that everyone did the best job they could."</em> Today, retrospectives are
           practiced by thousands of agile teams worldwide as the cornerstone of continuous improvement and team
-          learning.</p>
+          learning.
+        </p>
       </div>
     </section>
 
@@ -668,8 +704,8 @@
   <!-- Prevent Flutter Service Worker from hijacking this static page -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        registrations.forEach(function(reg) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        registrations.forEach(function (reg) {
           if (reg.active && reg.active.scriptURL.indexOf('flutter_service_worker') !== -1) {
             reg.unregister();
           }

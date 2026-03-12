@@ -11444,6 +11444,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get agileSaveReview => 'Simpan Review';
 
   @override
+  String get agileGenerateRecap => 'Genera Recap';
+
+  @override
+  String get agileRecapCopied => 'Recap copiato negli appunti!';
+
+  @override
   String get agileConductedBy => 'Dipandu oleh';
 
   @override

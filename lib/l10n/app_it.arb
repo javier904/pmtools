@@ -5145,6 +5145,8 @@
   "agileReviewNextFocus": "Focus Prossimo Sprint",
   "agileBacklogUpdatesLabel": "Modifiche Backlog",
   "agileSaveReview": "Salva Review",
+  "agileGenerateRecap": "Genera Recap",
+  "agileRecapCopied": "Recap copiato negli appunti!",
   "agileConductedBy": "Condotta da",
   "agileReviewDate": "Data Review",
   "agileReviewOutcome": "Esito Review",

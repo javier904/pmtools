@@ -44,6 +44,32 @@
   <link rel="stylesheet" href="css/features.css">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="d8eb3e84-4871-4c5e-9944-dbec3d03508a"></script>
 
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated in Firebase
+                window.location.href = '/?redirect=/smart-todo';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
+  </script>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -305,7 +331,8 @@
                 alt="Smart Todo Kanban board with To Do, In Progress and Done columns, color-coded task cards with priority badges and assignee avatars"
                 width="1318" height="633" loading="lazy">
             </picture>
-            <figcaption>Kanban board: custom columns with colors, priority badges and drag-and-drop task cards</figcaption>
+            <figcaption>Kanban board: custom columns with colors, priority badges and drag-and-drop task cards
+            </figcaption>
           </figure>
           <figure>
             <picture>
@@ -323,7 +350,8 @@
                 alt="Key Metrics dashboard showing Lead Time, Cycle Time, Throughput, WIP monitoring, Flow Analysis, Bottleneck Detection, Aging WIP and Team Balance"
                 width="1448" height="671" loading="lazy">
             </picture>
-            <figcaption>Analytics: Lead Time, Cycle Time, Throughput, WIP aging, bottleneck detection and team balance</figcaption>
+            <figcaption>Analytics: Lead Time, Cycle Time, Throughput, WIP aging, bottleneck detection and team balance
+            </figcaption>
           </figure>
           <figure>
             <picture>
@@ -332,7 +360,8 @@
                 alt="New Task dialog with title, description, status, priority, assignees, checklist, attachments, comments, tags, due date and effort fields"
                 width="697" height="649" loading="lazy">
             </picture>
-            <figcaption>Task detail: title, description, priority, assignees, checklist, attachments, tags and due date</figcaption>
+            <figcaption>Task detail: title, description, priority, assignees, checklist, attachments, tags and due date
+            </figcaption>
           </figure>
         </div>
       </div>
@@ -406,7 +435,8 @@
             <h3>Calendar View</h3>
             <p>Visualize tasks on a timeline calendar organized by due date. Switch between week, month and agenda
               views. Tasks with effort estimates are displayed as time-blocked events (1-8 hours). Unscheduled tasks
-              appear as all-day items so nothing is missed. Ideal for deadline-driven planning and resource scheduling.</p>
+              appear as all-day items so nothing is missed. Ideal for deadline-driven planning and resource scheduling.
+            </p>
             <div class="template-best-for">
               <strong>Best for:</strong> Deadline management, sprint planning, seeing team availability and scheduling
               tasks alongside calendar events.
@@ -485,7 +515,8 @@
         <h2>Beyond a Board: Lean Flow Analytics for Task Management</h2>
         <p>Most Kanban tools stop at columns and cards. Keisen Smart Todo goes further by embedding
           <strong>Lean flow analytics</strong> — inspired by Don Reinertsen's
-          <em>Principles of Product Development Flow</em> — directly into your task management workflow.</p>
+          <em>Principles of Product Development Flow</em> — directly into your task management workflow.
+        </p>
         <p>The built-in <strong>Cumulative Flow Diagram (CFD)</strong> reveals what a board alone cannot show:
           where work accumulates, how long tasks really take, and whether your team's throughput is improving or
           declining. Lead time percentiles (p85, p95), WIP aging thresholds and bottleneck severity scores turn
@@ -494,7 +525,8 @@
           <a href="/eisenhower">Eisenhower Matrix</a>, estimate effort in the
           <a href="/estimation-room">Estimation Room</a>, and convert tasks to User Stories in the
           <a href="/agile-process">Agile Process Manager</a> — Smart Todo transforms a personal checklist into a
-          <strong>team intelligence system</strong> that connects every stage of the agile workflow.</p>
+          <strong>team intelligence system</strong> that connects every stage of the agile workflow.
+        </p>
       </div>
     </section>
 
@@ -562,7 +594,8 @@
           <details class="faq-item">
             <summary class="faq-question">Does Smart Todo work on mobile devices?</summary>
             <div class="faq-answer">Yes, Keisen Smart Todo is fully responsive and works on smartphones, tablets, and
-              desktop browsers. You can manage tasks, move cards on the Kanban board, and check analytics from any device
+              desktop browsers. You can manage tasks, move cards on the Kanban board, and check analytics from any
+              device
               — no app download needed. The interface adapts to your screen size for the best experience on every
               device.</div>
           </details>
@@ -645,8 +678,8 @@
   <!-- Prevent Flutter Service Worker from hijacking this static page -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        registrations.forEach(function(reg) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        registrations.forEach(function (reg) {
           if (reg.active && reg.active.scriptURL.indexOf('flutter_service_worker') !== -1) {
             reg.unregister();
           }

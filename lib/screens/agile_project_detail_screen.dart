@@ -3359,11 +3359,11 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
                 
                 Clipboard.setData(ClipboardData(text: buffer.toString()));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Recap copiato negli appunti!')),
+                 SnackBar(content: Text(l10n.agileRecapCopied)),
                 );
               },
               icon: const Icon(Icons.share, size: 16),
-              label: const Text('Genera Recap'),
+              label: Text(l10n.agileGenerateRecap),
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -4519,6 +4519,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
 
 
   Widget? _buildFab(AgileProjectModel project) {
+    final l10n = AppLocalizations.of(context)!;
     // FAB diverso in base alla tab
     switch (_tabController.index) {
       case 0: // Backlog
@@ -4545,7 +4546,7 @@ class _AgileProjectDetailScreenState extends State<AgileProjectDetailScreen>
         return FloatingActionButton.extended(
           onPressed: () => _showInviteDialog(project),
           icon: const Icon(Icons.person_add),
-          label: const Text('Invita'),
+          label: Text(l10n.actionInviteMember),
         );
       default:
         return null;

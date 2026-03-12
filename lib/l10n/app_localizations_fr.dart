@@ -11522,6 +11522,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agileSaveReview => 'Enregistrer la Review';
 
   @override
+  String get agileGenerateRecap => 'Genera Recap';
+
+  @override
+  String get agileRecapCopied => 'Recap copiato negli appunti!';
+
+  @override
   String get agileConductedBy => 'Conduite par';
 
   @override

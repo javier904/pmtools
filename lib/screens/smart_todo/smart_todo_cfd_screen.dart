@@ -56,6 +56,7 @@ class _SmartTodoCfdScreenState extends State<SmartTodoCfdScreen> {
         endDate: _endDate,
         teamSize: widget.list.participants.length,
         customWipLimit: _customWipLimit,
+        participants: widget.list.participants,
       );
 
       setState(() {

@@ -5263,6 +5263,8 @@
   "agileReviewNextFocus": "Next Sprint Focus",
   "agileBacklogUpdatesLabel": "Backlog Updates",
   "agileSaveReview": "Save Review",
+  "agileGenerateRecap": "Generate Recap",
+  "agileRecapCopied": "Recap copied to clipboard!",
   "agileConductedBy": "Conducted by",
   "agileReviewDate": "Review Date",
   "agileReviewOutcome": "Review Outcome",

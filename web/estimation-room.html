@@ -44,6 +44,32 @@
   <link rel="stylesheet" href="css/features.css">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="d8eb3e84-4871-4c5e-9944-dbec3d03508a"></script>
 
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated in Firebase
+                window.location.href = '/?redirect=/estimation-room';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
+  </script>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -289,7 +315,8 @@
         <div class="hero-badge">🃏 Planning Poker & Estimation Room</div>
         <h1>Free Online Planning Poker with Anonymous Voting for Agile Teams</h1>
         <p class="hero-subtitle">Estimate user stories with <strong>7 methods</strong> — Fibonacci, T-Shirt, PERT, Dot
-          Voting, Bucket System, Five Fingers and Decimal. <strong>Anonymous real-time voting</strong> with hidden cards,
+          Voting, Bucket System, Five Fingers and Decimal. <strong>Anonymous real-time voting</strong> with hidden
+          cards,
           detailed statistics (mean, median, mode), consensus detection and <strong>unlimited stories</strong> per
           session. Import stories from Smart Todo, export to Agile Sprint backlog. Role-based permissions for
           Facilitator, Voter and Observer. Also known as Scrum Poker, Agile Poker or Team Estimation Game.
@@ -344,7 +371,8 @@
                 alt="Voting Results panel showing average 2.3, median 2.3, mode 2, vote distribution chart with percentage bars, and Select Final Estimate buttons in Keisen Planning Poker"
                 width="1024" height="400" loading="lazy">
             </picture>
-            <figcaption>Voting Results: average, median, mode, vote distribution and final estimate selection</figcaption>
+            <figcaption>Voting Results: average, median, mode, vote distribution and final estimate selection
+            </figcaption>
           </figure>
           <figure>
             <picture>
@@ -533,7 +561,8 @@
         <ul class="features-list">
           <li><strong>7 estimation methods</strong> covering every agile methodology — from Fibonacci story points to
             PERT risk analysis, T-Shirt sizing, Dot Voting, Bucket System, Five Fingers and free-form Decimal input</li>
-          <li><strong>Anonymous real-time voting</strong> — team members vote simultaneously with hidden cards to prevent
+          <li><strong>Anonymous real-time voting</strong> — team members vote simultaneously with hidden cards to
+            prevent
             anchoring bias. No one sees others' estimates until the facilitator triggers the collective reveal, ensuring
             each person's genuine assessment</li>
           <li><strong>Unlimited stories per session</strong> — no artificial caps on the number of items you can
@@ -544,7 +573,8 @@
           <li><strong>PERT three-point estimation</strong> with aggregate variance analysis across all voters —
             quantify uncertainty and risk with Optimistic, Most Likely and Pessimistic values</li>
           <li><strong>Role-based permissions</strong> — Facilitator (creates session, manages stories, controls reveal,
-            sets final estimates), Voter (estimates stories), Observer (watches without voting — ideal for stakeholders).
+            sets final estimates), Voter (estimates stories), Observer (watches without voting — ideal for
+            stakeholders).
             Roles assigned during the invitation process</li>
           <li><strong>Cross-tool import</strong> — import stories directly from your <a href="/smart-todo">Smart
               Todo</a> lists to avoid re-entering task titles and descriptions. Seamless workflow integration</li>
@@ -646,7 +676,8 @@
             <p class="faq-answer">Yes, Keisen offers <strong>full cross-tool integration</strong>. You can import
               stories directly from your <strong>Smart Todo</strong> lists into an estimation session — no need to
               re-enter task titles and descriptions. After estimation, you can export the results with story points and
-              final estimates to a <strong>new or existing Agile Process</strong> sprint backlog. This creates a seamless
+              final estimates to a <strong>new or existing Agile Process</strong> sprint backlog. This creates a
+              seamless
               workflow from task management to estimation to sprint planning.</p>
           </details>
           <details class="faq-item">

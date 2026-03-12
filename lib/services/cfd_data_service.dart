@@ -2,6 +2,7 @@ import 'dart:math' show sqrt;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/smart_todo/todo_list_model.dart';
 import '../models/smart_todo/todo_task_model.dart';
+import '../models/smart_todo/todo_participant_model.dart';
 import '../models/smart_todo/cfd_metrics_model.dart';
 
 /// Data model for a single CFD data point (one day)
@@ -74,6 +75,7 @@ class CfdDataService {
     required DateTime endDate,
     int teamSize = 3, // For WIP limit calculation (default)
     int? customWipLimit, // Optional custom WIP limit
+    Map<String, TodoParticipant> participants = const {},
   }) async {
     final normalizedStart = DateTime(startDate.year, startDate.month, startDate.day);
     final normalizedEnd = DateTime(endDate.year, endDate.month, endDate.day, 23, 59, 59);
@@ -108,6 +110,7 @@ class CfdDataService {
       currentTasks: currentTasks,
       teamSize: teamSize,
       customWipLimit: customWipLimit,
+      participants: participants,
     );
 
     return CfdAnalyticsData(
@@ -153,6 +156,7 @@ class CfdDataService {
     required List<_TaskSnapshotDetailed> currentTasks,
     required int teamSize,
     int? customWipLimit,
+    Map<String, TodoParticipant> participants = const {},
   }) async {
     final periodDays = endDate.difference(startDate).inDays + 1;
 
@@ -203,7 +207,7 @@ class CfdDataService {
     );
 
     final teamBalance = _calculateTeamBalance(
-      currentTasks, columns, doneColumnIds, todoColumnIds,
+      currentTasks, columns, doneColumnIds, todoColumnIds, participants,
     );
 
     return CfdMetrics(
@@ -747,6 +751,7 @@ class CfdDataService {
     List<TodoColumn> columns,
     Set<String> doneColumnIds,
     Set<String> todoColumnIds,
+    Map<String, TodoParticipant> participants,
   ) {
     // Group tasks by assignee
     final memberTasks = <String, List<_TaskSnapshotDetailed>>{};
@@ -794,7 +799,9 @@ class CfdDataService {
 
       members.add(MemberWorkload(
         email: email,
-        displayName: email == '_unassigned_' ? 'Unassigned' : _formatDisplayName(email),
+        displayName: email == '_unassigned_'
+            ? 'Unassigned'
+            : participants[email]?.displayName ?? _formatDisplayName(email),
         totalTasks: tasks.length,
         tasksByColumn: tasksByColumn,
         todoCount: todoCount,

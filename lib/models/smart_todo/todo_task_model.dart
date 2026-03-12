@@ -262,8 +262,8 @@ class TodoTaskModel {
       archivedAt: map['archivedAt'] != null ? _parseDate(map['archivedAt']) : null,
       calendarEventId: map['calendarEventId'],
       syncedAt: map['syncedAt'] != null ? _parseDate(map['syncedAt']) : null,
-      // Default to timestamp if missing to ensure stable order for legacy tasks
-      position: (map['position'] as num?)?.toDouble() ?? DateTime.now().millisecondsSinceEpoch.toDouble(),
+      // Default to 0.0 if missing — MUST be deterministic to avoid sort instability
+      position: (map['position'] as num?)?.toDouble() ?? 0.0,
     );
   }
 

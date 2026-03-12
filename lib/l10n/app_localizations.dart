@@ -20538,6 +20538,18 @@ abstract class AppLocalizations {
   /// **'Salva Review'**
   String get agileSaveReview;
 
+  /// No description provided for @agileGenerateRecap.
+  ///
+  /// In it, this message translates to:
+  /// **'Genera Recap'**
+  String get agileGenerateRecap;
+
+  /// No description provided for @agileRecapCopied.
+  ///
+  /// In it, this message translates to:
+  /// **'Recap copiato negli appunti!'**
+  String get agileRecapCopied;
+
   /// No description provided for @agileConductedBy.
   ///
   /// In it, this message translates to:

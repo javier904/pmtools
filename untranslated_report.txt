@@ -12,6 +12,8 @@
     "retroCustomMaxColumns",
     "retroCustomConfigureColumns",
     "smartTodoViewCalendar",
+    "agileGenerateRecap",
+    "agileRecapCopied",
     "feedbackTitle",
     "feedbackSubtitle",
     "feedbackCommentHint",
@@ -31,7 +33,9 @@
     "retroCustomMinColumns",
     "retroCustomMaxColumns",
     "retroCustomConfigureColumns",
-    "smartTodoViewCalendar"
+    "smartTodoViewCalendar",
+    "agileGenerateRecap",
+    "agileRecapCopied"
   ],
 
   "fr": [
@@ -46,7 +50,9 @@
     "retroCustomMinColumns",
     "retroCustomMaxColumns",
     "retroCustomConfigureColumns",
-    "smartTodoViewCalendar"
+    "smartTodoViewCalendar",
+    "agileGenerateRecap",
+    "agileRecapCopied"
   ],
 
   "id": [
@@ -62,6 +68,8 @@
     "retroCustomMaxColumns",
     "retroCustomConfigureColumns",
     "smartTodoViewCalendar",
+    "agileGenerateRecap",
+    "agileRecapCopied",
     "feedbackTitle",
     "feedbackSubtitle",
     "feedbackCommentHint",
@@ -82,6 +90,8 @@
     "retroCustomMaxColumns",
     "retroCustomConfigureColumns",
     "smartTodoViewCalendar",
+    "agileGenerateRecap",
+    "agileRecapCopied",
     "feedbackTitle",
     "feedbackSubtitle",
     "feedbackCommentHint",
@@ -102,6 +112,8 @@
     "retroCustomMaxColumns",
     "retroCustomConfigureColumns",
     "smartTodoViewCalendar",
+    "agileGenerateRecap",
+    "agileRecapCopied",
     "feedbackTitle",
     "feedbackSubtitle",
     "feedbackCommentHint",
