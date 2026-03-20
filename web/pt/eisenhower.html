@@ -67,7 +67,7 @@
       "Tres modos de visualizacao",
       "Edicao colaborativa em tempo real",
       "Importacao/exportacao CSV",
-      "Exportacao cross-tool para Smart Todo e Sprint Agil"
+      "Exportacao cross-tool para Smart Todo e Sprint Agil com sincronização automática de prioridades"
     ],
     "offers": {
       "@type": "Offer",
@@ -133,7 +133,7 @@
         "name": "No que o Keisen se diferencia de outras ferramentas de priorizacao?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "O Keisen combina a Matriz Eisenhower com funcionalidades unicas: votacao de equipe com revelacao, grafico de dispersao interativo, matriz RACI integrada, pontuacao automatica e exportacao cross-tool para Smart Todo, Estimation Room e Sprint Agil. Nao e apenas uma matriz estatica, mas un sistema de priorizacao colaborativo completo."
+          "text": "O Keisen combina a Matriz Eisenhower com funcionalidades unicas: votacao de equipe com revelacao, grafico de dispersao interativo, matriz RACI integrada, pontuacao automatica e exportacao cross-tool com sincronização automática de prioridades para Smart Todo, Estimation Room e Sprint Agil. Quando você revela os votos, as prioridades das tarefas se atualizam automaticamente no Smart Todo. Nao e apenas uma matriz estatica, mas un sistema de priorizacao colaborativo completo."
         }
       },
       {
@@ -141,7 +141,7 @@
         "name": "Posso exportar as tarefas priorizadas?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Sim, voce pode exportar em CSV para analise externa ou transferir diretamente as tarefas priorizadas para Smart Todo para gestao de tarefas, Estimation Room para estimativa colaborativa ou Agile Process para integra-las nos sprints. A exportacao cross-tool mantem todas as informacoes de prioridade."
+          "text": "Sim, voce pode exportar em CSV para analise externa ou transferir diretamente as tarefas priorizadas para Smart Todo para gestao de tarefas, Estimation Room para estimativa colaborativa ou Agile Process para integra-las nos sprints. A exportacao cross-tool mantem todas as informacoes de prioridade. Quando as tarefas foram importadas do Smart Todo, a revelação dos votos atualiza automaticamente a sua prioridade (Q1→Alta, Q2→Média, Q3/Q4→Baixa)."
         }
       },
       {
@@ -249,12 +249,36 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Agir com base nas prioridades",
-        "text": "Concentre-se nas tarefas \"Fazer agora\", agende as importantes, delegue as urgentes e elimine as distrações. Exporte os resultados para o Smart Todo ou Agile Sprint.",
+        "text": "Concentre-se nas tarefas \"Fazer agora\", agende as importantes, delegue as urgentes e elimine as distrações. Exporte os resultados para o Smart Todo ou Agile Sprint. As prioridades sincronizam-se automaticamente.",
         "image": "https://keisenapp.com/screenshots/howto-step3-act.webp",
         "url": "https://keisenapp.com/pt/eisenhower#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                window.location.href = '/eisenhower/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -471,9 +495,7 @@
             para alinhamento da equipe e apresentações corporativas. <strong>Totalmente compatível com dispositivos
               móveis e tablets</strong>, permite compartilhar e imprimir relatórios profissionais onde quer que você
             esteja.</li>
-          <li>Exportação cruzada para <a href="/pt/smart-todo">Smart Todo</a> para gerenciamento de tarefas ou <a
-              href="/pt/agile-process">Agile Process</a> para planeamento de sprints — as pontuações de prioridade são
-            transferidas automaticamente</li>
+          <li>Sincronização bidirecional com <a href="/pt/smart-todo">Smart Todo</a> — exporte tarefas para votação, depois as prioridades sincronizam-se automaticamente (Q1→Alta, Q2→Média, Q3/Q4→Baixa). Exporte também para <a href="/pt/agile-process">Agile Process</a> para planeamento de sprints</li>
           <li>Finalização e arquivo de tarefas — marque as tarefas como concluídas, arquive as sessões passadas e
             mantenha um histórico das decisões de priorização</li>
           <li>Etiquetas, descrições e notas em cada tarefa para uma priorização rica em contexto</li>

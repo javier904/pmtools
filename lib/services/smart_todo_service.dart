@@ -252,6 +252,19 @@ class SmartTodoService {
   }
 
   /// Get all tasks for a list once (for Export/Sync)
+  /// Ottiene un singolo task per ID
+  Future<TodoTaskModel?> getTask(String listId, String taskId) async {
+    final doc = await _firestore
+        .collection(_listsCollection)
+        .doc(listId)
+        .collection(_tasksSubcollection)
+        .doc(taskId)
+        .get();
+
+    if (!doc.exists) return null;
+    return TodoTaskModel.fromMap(doc.data()!, doc.id);
+  }
+
   Future<List<TodoTaskModel>> getTasks(String listId) async {
     final snapshot = await _firestore
         .collection(_listsCollection)

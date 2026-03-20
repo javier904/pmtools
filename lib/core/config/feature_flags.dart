@@ -9,5 +9,5 @@ class FeatureFlags {
   /// 
   /// MANTENERE `false` in produzione finché l'app non è verificata da Google.
   /// Impostare a `true` in locale per sviluppare e testare.
-  static const bool enableCalendarSync = true;
+  static const bool enableCalendarSync = false;
 }

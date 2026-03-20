@@ -447,6 +447,8 @@ class EisenhowerFirestoreService {
     required String title,
     String description = '',
     List<String> tags = const [],
+    String? sourceListId,
+    String? sourceTaskId,
   }) async {
     // 🔒 CHECK LIMITE TASK PER ENTITA'
     await _limitsService.enforceTaskLimit(entityType: 'eisenhower', entityId: matrixId);
@@ -460,6 +462,8 @@ class EisenhowerFirestoreService {
         createdAt: DateTime.now(),
         tags: tags,
         votes: {},
+        sourceListId: sourceListId,
+        sourceTaskId: sourceTaskId,
       );
 
       final docRef = await _activitiesRef(matrixId).add(activity.toFirestore());

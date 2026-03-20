@@ -219,6 +219,14 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
           value: 'profile',
         ),
 
+        // Admin Area (Only visible to admin)
+        if (_displayEmail == 'leonardotorella4@gmail.com')
+          _buildMenuItem(
+            icon: Icons.admin_panel_settings_outlined,
+            label: 'Admin Area',
+            value: 'admin',
+          ),
+
         // Feedback
         _buildMenuItem(
           icon: Icons.forum_outlined,
@@ -261,6 +269,9 @@ class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
             } else {
               Navigator.pushNamed(context, '/profile');
             }
+            break;
+          case 'admin':
+            Navigator.pushNamed(context, '/admin-dashboard');
             break;
           case 'feedback':
             Navigator.pushNamed(context, '/feedback-dashboard');

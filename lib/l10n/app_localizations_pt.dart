@@ -9,6 +9,9 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
+  String get smartTodoMyProjects => 'I MIEI PROGETTI';
+
+  @override
   String get smartTodoListOrigin => 'Lista de origem';
 
   @override
@@ -1520,6 +1523,26 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get agileNewProject => 'Novo Projeto';
+
+  @override
+  String get agileEmptyStateTitle => 'Nenhum Projeto Ágil';
+
+  @override
+  String get agileEmptyStateDesc =>
+      'Crie seu primeiro projeto para começar\na gerenciar sprints, backlog e equipe.';
+
+  @override
+  String get agileEmptyStateButton => 'Criar Projeto';
+
+  @override
+  String get agileEmptyStateGuideTitle => 'Não sabe qual metodologia escolher?';
+
+  @override
+  String get agileEmptyStateGuideDesc =>
+      'Descubra as diferenças entre Scrum, Kanban e Hybrid. O guia ajudará você a escolher a metodologia mais adequada para sua equipe.';
+
+  @override
+  String get agileEmptyStateGuideButton => 'Ler o Guia';
 
   @override
   String get agileRoles => 'PAPÉIS';

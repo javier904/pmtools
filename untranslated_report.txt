@@ -1,5 +1,6 @@
 {
   "de": [
+    "smartTodoMyProjects",
     "retroTemplateCustom",
     "retroDescCustom",
     "retroUsageCustom",
@@ -21,7 +22,12 @@
     "feedbackThankYou"
   ],
 
+  "en": [
+    "kanbanPolicyRule4Desc"
+  ],
+
   "es": [
+    "smartTodoMyProjects",
     "retroTemplateCustom",
     "retroDescCustom",
     "retroUsageCustom",
@@ -39,6 +45,7 @@
   ],
 
   "fr": [
+    "smartTodoMyProjects",
     "retroTemplateCustom",
     "retroDescCustom",
     "retroUsageCustom",
@@ -56,6 +63,7 @@
   ],
 
   "id": [
+    "smartTodoMyProjects",
     "retroTemplateCustom",
     "retroDescCustom",
     "retroUsageCustom",
@@ -78,6 +86,7 @@
   ],
 
   "pt": [
+    "smartTodoMyProjects",
     "retroTemplateCustom",
     "retroDescCustom",
     "retroUsageCustom",
@@ -100,6 +109,7 @@
   ],
 
   "ru": [
+    "smartTodoMyProjects",
     "retroTemplateCustom",
     "retroDescCustom",
     "retroUsageCustom",

@@ -71,7 +71,7 @@
       "Monitoraggio WIP con rilevamento aging e limiti configurabili",
       "Analisi bilanciamento carico di lavoro team",
       "Audit trail con 12 azioni tracciate su 6 tipi di entita",
-      "Export verso Matrice Eisenhower, Estimation Room e Agile Process",
+      "Sincronizzazione bidirezionale con la Matrice Eisenhower (back-sync automatico delle priorità), export verso Estimation Room e Agile Process",
       "Import batch task e export CSV",
       "Export Google Sheets",
       "Supporto dark mode e light mode",
@@ -101,7 +101,7 @@
         "name": "Cos'e Keisen Smart Todo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen Smart Todo e un board Kanban collaborativo gratuito e strumento di gestione task. Include colonne completamente personalizzabili, gestione task con drag-and-drop, collaborazione team con 3 ruoli (Owner, Editor, Viewer), analytics CFD con rilevamento colli di bottiglia, sottotask, commenti con immagini, allegati e integrazioni cross-tool con Matrice Eisenhower, Estimation Room e Agile Process."
+          "text": "Keisen Smart Todo e un board Kanban collaborativo gratuito e strumento di gestione task. Include colonne completamente personalizzabili, gestione task con drag-and-drop, collaborazione team con 3 ruoli (Owner, Editor, Viewer), analytics CFD con rilevamento colli di bottiglia, sottotask, commenti con immagini, allegati e integrazioni cross-tool con Matrice Eisenhower (con back-sync automatico delle priorità), Estimation Room e Agile Process."
         }
       },
       {
@@ -141,7 +141,7 @@
         "name": "Quali integrazioni cross-tool sono disponibili?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Smart Todo si integra con 3 altri strumenti Keisen: esporta task verso la Matrice Eisenhower per la prioritizzazione urgenza/importanza, invia task alla Estimation Room per sessioni di stima team, o converti task in User Story per l'Agile Process Manager. Puoi anche esportare in CSV e Google Sheets."
+          "text": "Smart Todo si integra con 3 altri strumenti Keisen: esporta task verso la Matrice Eisenhower per la prioritizzazione urgenza/importanza — quando i voti vengono rivelati, le priorità si sincronizzano automaticamente sui task Smart Todo (Q1→Alta, Q2→Media, Q3/Q4→Bassa). Invia task alla Estimation Room per sessioni di stima team, o converti task in User Story per l'Agile Process Manager. Puoi anche esportare in CSV e Google Sheets."
         }
       },
       {
@@ -221,11 +221,37 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Monitora i Progressi e Ottimizza con le Analytics CFD",
-        "text": "Sposta i task tra le colonne con drag and drop. Monitora la salute del flusso con le analytics CFD: lead time, cycle time, throughput, aging WIP e rilevamento colli di bottiglia. Esporta i task verso la Matrice Eisenhower per la prioritizzazione, l'Estimation Room per le stime di team, o l'Agile Process Manager per la pianificazione sprint.",
+        "text": "Sposta i task tra le colonne con drag and drop. Monitora la salute del flusso con le analytics CFD: lead time, cycle time, throughput, aging WIP e rilevamento colli di bottiglia. Esporta i task verso la Matrice Eisenhower per la prioritizzazione — quando i voti vengono rivelati, le priorità si sincronizzano automaticamente sui task (Q1→Alta, Q2→Media, Q3/Q4→Bassa). Invia task alla Estimation Room per le stime di team, o all'Agile Process Manager per la pianificazione sprint.",
         "url": "https://keisenapp.com/it/smart-todo#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated — redirect to /smart-todo/app
+                // /smart-todo/** → index.html bypasses the exact /smart-todo → .html rewrite
+                window.location.href = '/smart-todo/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -471,8 +497,8 @@
           <li><strong>Audit Trail</strong> — Cronologia completa delle modifiche che traccia 12 azioni (crea, modifica,
             elimina, archivia, ripristina, sposta, assegna, invita, partecipa, revoca, riordina, creazione batch) su 6
             tipi di entita con dettaglio a livello di campo</li>
-          <li><strong>Export Cross-Tool</strong> — Invia task alla <a href="/it/eisenhower">Matrice Eisenhower</a> per
-            la prioritizzazione, alla <a href="/it/estimation-room">Estimation Room</a> per la stima team, o converti in
+          <li><strong>Sync Cross-Tool</strong> — Invia task alla <a href="/it/eisenhower">Matrice Eisenhower</a> per
+            la prioritizzazione con <strong>back-sync automatico delle priorità</strong> (Q1→Alta, Q2→Media, Q3/Q4→Bassa), alla <a href="/it/estimation-room">Estimation Room</a> per la stima team, o converti in
             User Story per l'<a href="/it/agile-process">Agile Process Manager</a>. Esporta anche in CSV e Google Sheets
           </li>
         </ul>
@@ -513,7 +539,7 @@
               task. Include colonne completamente personalizzabili con colori e ordinamento, gestione task con
               drag-and-drop, collaborazione team con 3 ruoli (Owner, Editor, Viewer), analytics CFD con rilevamento
               colli di bottiglia, sottotask con tracciamento progresso, commenti con immagini, allegati e integrazioni
-              cross-tool con <a href="/it/eisenhower">Matrice Eisenhower</a>, <a href="/it/estimation-room">Estimation
+              cross-tool con <a href="/it/eisenhower">Matrice Eisenhower</a> (con back-sync automatico delle priorità), <a href="/it/estimation-room">Estimation
                 Room</a> e <a href="/it/agile-process">Agile Process</a>.</div>
           </details>
           <details class="faq-item">
@@ -550,7 +576,7 @@
           <details class="faq-item">
             <summary class="faq-question">Quali integrazioni cross-tool sono disponibili?</summary>
             <div class="faq-answer">Smart Todo si integra con 3 altri strumenti Keisen: esporta task verso la <a
-                href="/it/eisenhower">Matrice Eisenhower</a> per la prioritizzazione urgenza/importanza, invia task alla
+                href="/it/eisenhower">Matrice Eisenhower</a> per la prioritizzazione urgenza/importanza — quando i voti vengono rivelati, le priorità si sincronizzano automaticamente sui task Smart Todo (Q1→Alta, Q2→Media, Q3/Q4→Bassa). Invia task alla
               <a href="/it/estimation-room">Estimation Room</a> per sessioni di stima team (Fibonacci, T-Shirt, PERT,
               ecc.), o converti task in User Story per l'<a href="/it/agile-process">Agile Process Manager</a>. Puoi
               anche esportare in CSV e Google Sheets per report esterni.</div>

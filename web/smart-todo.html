@@ -58,8 +58,9 @@
             const countRequest = store.count();
             countRequest.onsuccess = function () {
               if (countRequest.result > 0) {
-                // User is authenticated in Firebase
-                window.location.href = '/?redirect=/smart-todo';
+                // User is authenticated — redirect to /smart-todo/app
+                // /smart-todo/** → index.html bypasses the exact /smart-todo → .html rewrite
+                window.location.href = '/smart-todo/app';
               }
             };
           }
@@ -97,7 +98,7 @@
       "WIP monitoring with aging detection and configurable limits",
       "Team workload balance analysis with member distribution",
       "Audit trail with 12 tracked actions across 6 entity types",
-      "Export to Eisenhower Matrix, Estimation Room and Agile Process",
+      "Bidirectional sync with Eisenhower Matrix (automatic priority back-sync), export to Estimation Room and Agile Process",
       "Batch task import and CSV export",
       "Google Sheets export",
       "Dark mode and light mode support",
@@ -127,7 +128,7 @@
         "name": "What is Keisen Smart Todo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen Smart Todo is a free collaborative Kanban board and task management tool. It features fully customizable columns, drag-and-drop task management, team collaboration with 3 roles (Owner, Editor, Viewer), CFD analytics with bottleneck detection, subtasks, comments with images, file attachments, and cross-tool integrations with Eisenhower Matrix, Estimation Room and Agile Process."
+          "text": "Keisen Smart Todo is a free collaborative Kanban board and task management tool. It features fully customizable columns, drag-and-drop task management, team collaboration with 3 roles (Owner, Editor, Viewer), CFD analytics with bottleneck detection, subtasks, comments with images, file attachments, and cross-tool integrations with Eisenhower Matrix (with automatic priority back-sync), Estimation Room and Agile Process."
         }
       },
       {
@@ -167,7 +168,7 @@
         "name": "What cross-tool integrations are available?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Smart Todo integrates with 3 other Keisen tools: Export tasks to the Eisenhower Matrix for urgency/importance prioritization, send tasks to the Estimation Room for team estimation sessions, or convert tasks into User Stories for the Agile Process Manager. You can also export to CSV and Google Sheets."
+          "text": "Smart Todo integrates with 3 other Keisen tools: Export tasks to the Eisenhower Matrix for urgency/importance prioritization — when votes are revealed, priorities automatically sync back to your Smart Todo tasks (Q1→High, Q2→Medium, Q3/Q4→Low). Send tasks to the Estimation Room for team estimation sessions, or convert tasks into User Stories for the Agile Process Manager. You can also export to CSV and Google Sheets."
         }
       },
       {
@@ -247,7 +248,7 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Track Progress and Optimize with CFD Analytics",
-        "text": "Move tasks across columns with drag and drop. Monitor workflow health with CFD analytics: lead time, cycle time, throughput, WIP aging and bottleneck detection. Export tasks to Eisenhower Matrix for prioritization, Estimation Room for team estimation, or Agile Process Manager for sprint planning.",
+        "text": "Move tasks across columns with drag and drop. Monitor workflow health with CFD analytics: lead time, cycle time, throughput, WIP aging and bottleneck detection. Export tasks to Eisenhower Matrix for prioritization — when votes are revealed, priorities automatically sync back to your tasks (Q1→High, Q2→Medium, Q3/Q4→Low). Send tasks to Estimation Room for team estimation, or Agile Process Manager for sprint planning.",
         "url": "https://keisenapp.com/smart-todo#how-it-works"
       }
     ]
@@ -497,8 +498,8 @@
           <li><strong>Audit Trail</strong> — Complete change history tracking 12 actions (create, update, delete,
             archive, restore, move, assign, invite, join, revoke, reorder, batch create) across 6 entity types with
             field-level detail</li>
-          <li><strong>Cross-Tool Export</strong> — Send tasks to the <a href="/eisenhower">Eisenhower Matrix</a> for
-            prioritization, to the <a href="/estimation-room">Estimation Room</a> for team estimation, or convert to
+          <li><strong>Cross-Tool Sync</strong> — Send tasks to the <a href="/eisenhower">Eisenhower Matrix</a> for
+            prioritization with <strong>automatic priority back-sync</strong> (Q1→High, Q2→Medium, Q3/Q4→Low), to the <a href="/estimation-room">Estimation Room</a> for team estimation, or convert to
             User Stories for the <a href="/agile-process">Agile Process Manager</a>. Also export to CSV and Google
             Sheets</li>
         </ul>
@@ -540,7 +541,7 @@
               features fully customizable columns with colors and sorting, drag-and-drop task management, team
               collaboration with 3 roles (Owner, Editor, Viewer), CFD analytics with bottleneck detection, subtasks with
               progress tracking, comments with images, file attachments, and cross-tool integrations with <a
-                href="/eisenhower">Eisenhower Matrix</a>, <a href="/estimation-room">Estimation Room</a> and <a
+                href="/eisenhower">Eisenhower Matrix</a> (with automatic priority back-sync), <a href="/estimation-room">Estimation Room</a> and <a
                 href="/agile-process">Agile Process</a>.</div>
           </details>
           <details class="faq-item">
@@ -578,7 +579,7 @@
           <details class="faq-item">
             <summary class="faq-question">What cross-tool integrations are available?</summary>
             <div class="faq-answer">Smart Todo integrates with 3 other Keisen tools: export tasks to the <a
-                href="/eisenhower">Eisenhower Matrix</a> for urgency/importance prioritization, send tasks to the <a
+                href="/eisenhower">Eisenhower Matrix</a> for urgency/importance prioritization — when votes are revealed, priorities automatically sync back to your Smart Todo tasks (Q1→High, Q2→Medium, Q3/Q4→Low). Send tasks to the <a
                 href="/estimation-room">Estimation Room</a> for team estimation sessions (Fibonacci, T-Shirt, PERT,
               etc.), or convert tasks into User Stories for the <a href="/agile-process">Agile Process Manager</a>. You
               can also export to CSV and Google Sheets for external reporting.</div>

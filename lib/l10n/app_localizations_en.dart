@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get smartTodoMyProjects => 'MY PROJECTS';
+
+  @override
   String get smartTodoListOrigin => 'List origin';
 
   @override
@@ -1422,7 +1425,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kanbanPolicyRule4Desc =>
-      'Blocks moving to \'Done\' unless all acceptance criteria are checked. Enforces Definition of Done.';
+      'Blocca il passaggio a \'Done\' se non tutti i criteri di accettazione sono spuntati. Garantisce la Definition of Done.';
 
   @override
   String get retroOpenInteractiveBoard => 'Open Interactive Board';
@@ -1514,6 +1517,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agileNewProject => 'New Project';
+
+  @override
+  String get agileEmptyStateTitle => 'No Agile Projects';
+
+  @override
+  String get agileEmptyStateDesc =>
+      'Create your first project to start\nmanaging sprints, backlog and team.';
+
+  @override
+  String get agileEmptyStateButton => 'Create Project';
+
+  @override
+  String get agileEmptyStateGuideTitle =>
+      'Not sure which methodology to choose?';
+
+  @override
+  String get agileEmptyStateGuideDesc =>
+      'Discover the differences between Scrum, Kanban and Hybrid. The guide will help you choose the methodology that best fits your team.';
+
+  @override
+  String get agileEmptyStateGuideButton => 'Read the Guide';
 
   @override
   String get agileRoles => 'ROLES';

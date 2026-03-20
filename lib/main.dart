@@ -22,6 +22,7 @@ import 'screens/smart_todo/smart_todo_detail_loader.dart';
 import 'screens/profile_screen.dart';
 import 'screens/feedback/feedback_dashboard_screen.dart';
 import 'screens/feedback/feedback_form_screen.dart';
+import 'screens/admin/admin_dashboard_screen.dart';
 import 'models/feedback_model.dart';
 import 'themes/app_theme.dart';
 import 'controllers/locale_controller.dart';
@@ -212,9 +213,11 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 // '/agile-process' e '/agile-process/{projectId}' gestiti in onGenerateRoute
                 // '/agile-project' gestito in onGenerateRoute per supportare URL path con projectId
                 '/retrospective-list': (context) => const _AuthGuard(child: RetroGlobalDashboard()),
+                '/retrospective-list/app': (context) => const _AuthGuard(child: RetroGlobalDashboard()),
                 // '/retrospective-board' gestito in onGenerateRoute per supportare URL path con retroId
                 // '/smart-todo' e '/smart-todo/{listId}' gestiti in onGenerateRoute
                 '/feedback-dashboard': (context) => const _AuthGuard(child: FeedbackDashboardScreen()),
+                '/admin-dashboard': (context) => const _AuthGuard(child: AdminDashboardScreen()),
                 '/privacy': (context) => const PrivacyPolicyScreen(),
                 '/terms': (context) => const TermsOfServiceScreen(),
                 '/cookies': (context) => const CookiePolicyScreen(),
@@ -237,7 +240,8 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 }
 
                 // Route /eisenhower o /eisenhower/{matrixId}
-                if (settings.name == '/eisenhower') {
+                // /eisenhower/app is used by SEO redirect for logged-in users
+                if (settings.name == '/eisenhower' || settings.name == '/eisenhower/app') {
                   // Senza matrixId specifico (dashboard)
                   final matrixId = args?['matrixId'] as String?;
                   return MaterialPageRoute(
@@ -263,7 +267,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 }
 
                 // Route /estimation-room o /estimation-room/{sessionId}
-                if (settings.name == '/estimation-room') {
+                if (settings.name == '/estimation-room' || settings.name == '/estimation-room/app') {
                   final sessionId = args?['sessionId'] as String?;
                   return MaterialPageRoute(
                     builder: (context) => _AuthGuard(
@@ -315,7 +319,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 }
 
                 // Route /agile-process o /agile-process/{projectId}
-                if (settings.name == '/agile-process') {
+                if (settings.name == '/agile-process' || settings.name == '/agile-process/app') {
                   return MaterialPageRoute(
                     builder: (context) => const _AuthGuard(
                       redirectSection: 'agile-process',
@@ -366,7 +370,8 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                 }
 
                 // Route /smart-todo (dashboard) o /smart-todo/{listId} (dettaglio)
-                if (settings.name == '/smart-todo') {
+                // /smart-todo/app is used by SEO redirect for logged-in users
+                if (settings.name == '/smart-todo' || settings.name == '/smart-todo/app') {
                   return MaterialPageRoute(
                     builder: (context) => const _AuthGuard(
                       redirectSection: 'smart-todo',
@@ -383,7 +388,7 @@ class _AgileToolsAppState extends State<AgileToolsApp> {
                     return MaterialPageRoute(
                       builder: (context) => _AuthGuard(
                         redirectSection: 'smart-todo',
-                        child: SmartTodoDetailLoader(listId: listId),
+                        child: SmartTodoDashboard(initialListId: listId),
                       ),
                       settings: settings,
                     );

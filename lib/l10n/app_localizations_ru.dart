@@ -9,6 +9,9 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get smartTodoMyProjects => 'I MIEI PROGETTI';
+
+  @override
   String get smartTodoListOrigin => 'List origin';
 
   @override
@@ -1520,6 +1523,27 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get agileNewProject => 'Новый проект';
+
+  @override
+  String get agileEmptyStateTitle => 'Нет Agile-проектов';
+
+  @override
+  String get agileEmptyStateDesc =>
+      'Создайте свой первый проект, чтобы начать\nуправлять спринтами, бэклогом и командой.';
+
+  @override
+  String get agileEmptyStateButton => 'Создать проект';
+
+  @override
+  String get agileEmptyStateGuideTitle =>
+      'Не знаете, какую методологию выбрать?';
+
+  @override
+  String get agileEmptyStateGuideDesc =>
+      'Узнайте различия между Scrum, Kanban и Hybrid. Руководство поможет выбрать методологию, наиболее подходящую вашей команде.';
+
+  @override
+  String get agileEmptyStateGuideButton => 'Читать руководство';
 
   @override
   String get agileRoles => 'РОЛИ';

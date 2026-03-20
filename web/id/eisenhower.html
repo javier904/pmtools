@@ -67,7 +67,7 @@
       "Tiga mode tampilan",
       "Pengeditan kolaboratif real-time",
       "Impor/ekspor CSV",
-      "Ekspor antar alat ke Smart Todo dan Agile Sprint"
+      "Ekspor antar alat ke Smart Todo dan Agile Sprint dengan sinkronisasi prioritas otomatis"
     ],
     "offers": {
       "@type": "Offer",
@@ -133,7 +133,7 @@
         "name": "Apa perbedaan Keisen dengan alat prioritas lainnya?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen menggabungkan Matriks Eisenhower dengan fitur unik: voting tim dengan pengungkapan (reveal), grafik scatter interaktif, matriks RACI terintegrasi, penilaian otomatis, dan ekspor antar alat ke Smart Todo, Ruang Estimasi, dan Sprint Agile. Ini bukan sekadar matriks statis, melainkan sistem prioritas kolaboratif yang lengkap."
+          "text": "Keisen menggabungkan Matriks Eisenhower dengan fitur unik: voting tim dengan pengungkapan (reveal), grafik scatter interaktif, matriks RACI terintegrasi, penilaian otomatis, dan ekspor antar alat dengan sinkronisasi prioritas otomatis ke Smart Todo, Ruang Estimasi, dan Sprint Agile. Saat Anda mengungkapkan suara, prioritas tugas diperbarui secara otomatis di Smart Todo. Ini bukan sekadar matriks statis, melainkan sistem prioritas kolaboratif yang lengkap."
         }
       },
       {
@@ -141,7 +141,7 @@
         "name": "Dapatkah saya mengekspor tugas yang sudah diprioritaskan?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ya, Anda dapat mengekspor ke CSV untuk analisis eksternal atau mentransfer langsung tugas yang diprioritaskan ke Smart Todo untuk manajemen operasional, Ruang Estimasi untuk estimasi kolaboratif, atau Proses Agile untuk integrasi ke dalam sprint. Ekspor antar alat mempertahankan semua informasi prioritas."
+          "text": "Ya, Anda dapat mengekspor ke CSV untuk analisis eksternal atau mentransfer langsung tugas yang diprioritaskan ke Smart Todo untuk manajemen operasional, Ruang Estimasi untuk estimasi kolaboratif, atau Proses Agile untuk integrasi ke dalam sprint. Ekspor antar alat mempertahankan semua informasi prioritas. Ketika tugas diimpor dari Smart Todo, pengungkapan suara secara otomatis memperbarui prioritasnya (Q1→Tinggi, Q2→Sedang, Q3/Q4→Rendah)."
         }
       },
       {
@@ -249,12 +249,36 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Bertindak berdasarkan prioritas",
-        "text": "Fokus pada tugas \"Lakukan Sekarang\", jadwalkan yang penting, delegasikan yang mendesak, dan hilangkan gangguan. Ekspor hasil ke Smart Todo atau Agile Sprint.",
+        "text": "Fokus pada tugas \"Lakukan Sekarang\", jadwalkan yang penting, delegasikan yang mendesak, dan hilangkan gangguan. Ekspor hasil ke Smart Todo atau Agile Sprint. Prioritas disinkronkan secara otomatis.",
         "image": "https://keisenapp.com/screenshots/howto-step3-act.webp",
         "url": "https://keisenapp.com/id/eisenhower#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                window.location.href = '/eisenhower/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -473,9 +497,7 @@
             Termasuk kotak 4 kuadran, grafik scatter dengan data konsensus, dan matriks RACI untuk penyelarasan tim dan
             presentasi perusahaan. <strong>Sepenuhnya kompatibel dengan perangkat seluler dan tablet</strong>,
             memungkinkan Anda berbagi dan mencetak laporan profesional di mana pun Anda berada.</li>
-          <li>Ekspor langsung ke <a href="/id/smart-todo">Smart Todo</a> untuk eksekusi atau ke <a
-              href="/id/agile-process">Proses Agile</a> untuk perencanaan sprint — skor prioritas akan dibawa secara
-            otomatis</li>
+          <li>Sinkronisasi dua arah dengan <a href="/id/smart-todo">Smart Todo</a> — ekspor tugas untuk voting, lalu prioritas disinkronkan secara otomatis (Q1→Tinggi, Q2→Sedang, Q3/Q4→Rendah). Juga ekspor ke <a href="/id/agile-process">Proses Agile</a> untuk perencanaan sprint</li>
           <li>Finalisasi dan pengarsipan — tandai tugas sebagai selesai, arsipkan sesi sebelumnya, dan simpan riwayat
             keputusan prioritas Anda</li>
           <li>Tag, deskripsi, dan catatan untuk setiap tugas guna memberikan konteks prioritas yang kaya</li>

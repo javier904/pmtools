@@ -38,12 +38,17 @@ import 'package:intl/intl.dart';
 import '../../core/config/feature_flags.dart';
 import '../../services/google_calendar_service.dart';
 
-enum TodoViewMode { kanban, list, resource, calendar }
+enum TodoViewMode { kanban, list, resource, calendar, audit, cfd }
 
 class SmartTodoDetailScreen extends StatefulWidget {
   final TodoListModel list;
+  final VoidCallback? onMenuPressed;
 
-  const SmartTodoDetailScreen({super.key, required this.list});
+  const SmartTodoDetailScreen({
+    super.key, 
+    required this.list,
+    this.onMenuPressed,
+  });
 
   @override
   State<SmartTodoDetailScreen> createState() => _SmartTodoDetailScreenState();
@@ -120,15 +125,20 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           },
           child: Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  setState(() => _allowPop = true);
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.maybePop(context);
-                  });
-                },
-              ),
+              leading: widget.onMenuPressed != null
+                  ? IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: widget.onMenuPressed,
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        setState(() => _allowPop = true);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.maybePop(context);
+                        });
+                      },
+                    ),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -248,6 +258,12 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
                       onQuickAddInline: (statusId, title) => _createInlineTask(title, statusId, currentList, tasks),
                       onColumnReorder: (oldIndex, newIndex) => _handleColumnReorder(oldIndex, newIndex, currentList),
                     );
+                    break;
+                  case TodoViewMode.audit:
+                    content = SmartTodoAuditLogScreen(list: currentList);
+                    break;
+                  case TodoViewMode.cfd:
+                    content = SmartTodoCfdScreen(list: currentList);
                     break;
                 }
                 
@@ -2061,12 +2077,15 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
 
       // Create activities for each selected task
       // Note: Activities in Eisenhower are voted on for urgency/importance
+      // Linking: sourceListId/sourceTaskId enable back-sync of priority after reveal
       int createdCount = 0;
       for (final task in result.selectedTasks) {
         await _eisenhowerService.createActivity(
           matrixId: matrixId,
           title: task.title,
           description: task.description,
+          sourceListId: list.id,
+          sourceTaskId: task.id,
         );
         createdCount++;
       }
@@ -2367,6 +2386,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
         case TodoViewMode.list: currentIconIcon = Icons.list; break;
         case TodoViewMode.resource: currentIconIcon = Icons.people_outline; break;
         case TodoViewMode.calendar: currentIconIcon = Icons.calendar_month; break;
+        case TodoViewMode.audit: currentIconIcon = Icons.history; break;
+        case TodoViewMode.cfd: currentIconIcon = Icons.stacked_line_chart; break;
       }
 
       return [
@@ -2380,6 +2401,8 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
             PopupMenuItem(value: TodoViewMode.list, child: Row(children: [Icon(Icons.list, color: currentMode == TodoViewMode.list ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewList)])),
             PopupMenuItem(value: TodoViewMode.resource, child: Row(children: [Icon(Icons.people_outline, color: currentMode == TodoViewMode.resource ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewResource)])),
             PopupMenuItem(value: TodoViewMode.calendar, child: Row(children: [Icon(Icons.calendar_month, color: currentMode == TodoViewMode.calendar ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoViewCalendar)])),
+            PopupMenuItem(value: TodoViewMode.audit, child: Row(children: [Icon(Icons.history, color: currentMode == TodoViewMode.audit ? Colors.blue : null), const SizedBox(width: 8), const Text('Audit Log')])),
+            PopupMenuItem(value: TodoViewMode.cfd, child: Row(children: [Icon(Icons.stacked_line_chart, color: currentMode == TodoViewMode.cfd ? Colors.blue : null), const SizedBox(width: 8), Text(l10n.smartTodoCfdTooltip)])),
           ],
         ),
         
@@ -2390,9 +2413,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
              if (value == 'invite') {
                 _showInviteDialog(currentList);
              } else if (value == 'cfd' && currentList.isOwner(_currentUserEmail)) {
-                _showCfdChart(currentList);
+                setState(() => _viewMode = TodoViewMode.cfd);
              } else if (value == 'history' && currentList.isOwner(_currentUserEmail)) {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)));
+                setState(() => _viewMode = TodoViewMode.audit);
              } else if (value == 'settings') {
                 _showListSettings(currentList);
              } else if (value == 'import') {
@@ -2449,6 +2472,10 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
             _buildViewIcon(TodoViewMode.list, Icons.list, l10n.smartTodoViewList),
             _buildViewIcon(TodoViewMode.resource, Icons.people_outline, l10n.smartTodoViewResource),
             _buildViewIcon(TodoViewMode.calendar, Icons.calendar_month, l10n.smartTodoViewCalendar),
+            if (currentList.isOwner(_currentUserEmail)) ...[
+              _buildViewIcon(TodoViewMode.audit, Icons.history, 'Audit Log'),
+              _buildViewIcon(TodoViewMode.cfd, Icons.stacked_line_chart, l10n.smartTodoCfdTooltip),
+            ],
           ],
         ),
         // Invite button
@@ -2462,9 +2489,9 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           icon: const Icon(Icons.more_vert),
           onSelected: (value) async {
             if (value == 'cfd' && currentList.isOwner(_currentUserEmail)) {
-              _showCfdChart(currentList);
+              setState(() => _viewMode = TodoViewMode.cfd);
             } else if (value == 'history' && currentList.isOwner(_currentUserEmail)) {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)));
+              setState(() => _viewMode = TodoViewMode.audit);
             } else if (value == 'settings') {
               _showListSettings(currentList);
             } else if (value == 'import') {
@@ -2562,16 +2589,13 @@ class _SmartTodoDetailScreenState extends State<SmartTodoDetailScreen> {
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: 'Audit Log',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => SmartTodoAuditLogScreen(list: currentList)),
-            ),
+            onPressed: () => setState(() => _viewMode = TodoViewMode.audit),
           ),
         if (currentList.isOwner(_currentUserEmail))
           IconButton(
             icon: const Icon(Icons.stacked_line_chart),
             tooltip: l10n.smartTodoCfdTooltip,
-            onPressed: () => _showCfdChart(currentList),
+            onPressed: () => setState(() => _viewMode = TodoViewMode.cfd),
           ),
         IconButton(
           icon: const Icon(Icons.person_add),

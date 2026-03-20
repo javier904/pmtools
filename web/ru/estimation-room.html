@@ -51,7 +51,7 @@
     "name": "Keisen - Planning Poker и Estimation Room",
     "url": "https://keisenapp.com/ru/estimation-room",
     "applicationCategory": "BusinessApplication",
-    "applicationSubCategory": "Agile Estimation Tool",
+    "applicationSubCategory": "Инструмент оценки Agile",
     "operatingSystem": "Web",
     "inLanguage": "ru",
     "softwareVersion": "1.0.0",
@@ -261,6 +261,30 @@
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                window.location.href = '/estimation-room/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 

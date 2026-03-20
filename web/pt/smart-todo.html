@@ -71,7 +71,7 @@
       "Monitoramento WIP com deteccao de envelhecimento e limites configuraveis",
       "Analise de equilibrio de carga de trabalho da equipe",
       "Trilha de auditoria com 12 acoes rastreadas em 6 tipos de entidade",
-      "Exportacao para Matriz Eisenhower, Estimation Room e Agile Process",
+      "Sincronização bidirecional com a Matriz Eisenhower (sincronização automática de prioridades), exportação para Estimation Room e Agile Process",
       "Importacao em lote de tarefas e exportacao CSV",
       "Exportacao Google Sheets",
       "Suporte modo escuro e modo claro",
@@ -101,7 +101,7 @@
         "name": "O que e o Keisen Smart Todo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen Smart Todo e um quadro Kanban colaborativo gratuito e ferramenta de gestao de tarefas. Oferece colunas totalmente personalizaveis, gestao de tarefas com arrastar e soltar, colaboracao em equipe com 3 funcoes (Owner, Editor, Viewer), analiticas CFD com deteccao de gargalos, subtarefas, comentarios com imagens, anexos e integracoes cross-tool com Matriz Eisenhower, Estimation Room e Agile Process."
+          "text": "Keisen Smart Todo e um quadro Kanban colaborativo gratuito e ferramenta de gestao de tarefas. Oferece colunas totalmente personalizaveis, gestao de tarefas com arrastar e soltar, colaboracao em equipe com 3 funcoes (Owner, Editor, Viewer), analiticas CFD com deteccao de gargalos, subtarefas, comentarios com imagens, anexos e integracoes cross-tool com Matriz Eisenhower (com sincronização automática de prioridades), Estimation Room e Agile Process."
         }
       },
       {
@@ -141,7 +141,7 @@
         "name": "Quais integracoes cross-tool estao disponiveis?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "O Smart Todo se integra com 3 outras ferramentas Keisen: exporte tarefas para a Matriz Eisenhower para priorizacao urgencia/importancia, envie tarefas para a Estimation Room para sessoes de estimativa em equipe, ou converta tarefas em User Stories para o Agile Process Manager. Voce tambem pode exportar para CSV e Google Sheets."
+          "text": "O Smart Todo se integra com 3 outras ferramentas Keisen: exporte tarefas para a Matriz Eisenhower para priorizacao urgencia/importancia — ao revelar os votos, as prioridades sincronizam automaticamente (Q1→Alta, Q2→Média, Q3/Q4→Baixa). Envie tarefas para a Estimation Room para sessoes de estimativa em equipe, ou converta tarefas em User Stories para o Agile Process Manager. Voce tambem pode exportar para CSV e Google Sheets."
         }
       },
       {
@@ -221,11 +221,37 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Monitore o Progresso e Otimize com Análises CFD",
-        "text": "Mova tarefas entre colunas com arrastar e soltar. Monitore a saúde do fluxo de trabalho com análises CFD: lead time, cycle time, throughput, envelhecimento WIP e detecção de gargalos. Exporte tarefas para a Matriz Eisenhower para priorização, Estimation Room para estimativa em equipe, ou Agile Process Manager para planejamento de sprints.",
+        "text": "Mova tarefas entre colunas com arrastar e soltar. Monitore a saúde do fluxo de trabalho com análises CFD: lead time, cycle time, throughput, envelhecimento WIP e detecção de gargalos. Exporte tarefas para a Matriz Eisenhower para priorização — ao revelar os votos, as prioridades sincronizam automaticamente (Q1→Alta, Q2→Média, Q3/Q4→Baixa). Envie tarefas para a Estimation Room para estimativa em equipe, ou Agile Process Manager para planejamento de sprints.",
         "url": "https://keisenapp.com/pt/smart-todo#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated — redirect to /smart-todo/app
+                // /smart-todo/** → index.html bypasses the exact /smart-todo → .html rewrite
+                window.location.href = '/smart-todo/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -473,8 +499,8 @@
           <li><strong>Trilha de Auditoria</strong> — Historico completo de alteracoes rastreando 12 acoes (criar,
             modificar, excluir, arquivar, restaurar, mover, atribuir, convidar, ingressar, revogar, reordenar, criacao
             em lote) em 6 tipos de entidade com detalhe em nivel de campo</li>
-          <li><strong>Exportacao Cross-Tool</strong> — Envie tarefas para a <a href="/pt/eisenhower">Matriz
-              Eisenhower</a> para priorizacao, para a <a href="/pt/estimation-room">Estimation Room</a> para estimativa
+          <li><strong>Sincronização Cross-Tool</strong> — Envie tarefas para a <a href="/pt/eisenhower">Matriz
+              Eisenhower</a> para priorizacao com <strong>sincronização automática de prioridades</strong> (Q1→Alta, Q2→Média, Q3/Q4→Baixa), para a <a href="/pt/estimation-room">Estimation Room</a> para estimativa
             em equipe, ou converta em User Stories para o <a href="/pt/agile-process">Agile Process Manager</a>. Tambem
             exporte para CSV e Google Sheets</li>
         </ul>
@@ -514,7 +540,7 @@
               tarefas. Oferece colunas totalmente personalizaveis com cores e ordenacao, gestao de tarefas com arrastar
               e soltar, colaboracao em equipe com 3 funcoes (Owner, Editor, Viewer), analiticas CFD com deteccao de
               gargalos, subtarefas com acompanhamento de progresso, comentarios com imagens, anexos e integracoes
-              cross-tool com <a href="/pt/eisenhower">Matriz Eisenhower</a>, <a href="/pt/estimation-room">Estimation
+              cross-tool com <a href="/pt/eisenhower">Matriz Eisenhower</a> (com sincronização automática de prioridades), <a href="/pt/estimation-room">Estimation
                 Room</a> e <a href="/pt/agile-process">Agile Process</a>.</div>
           </details>
           <details class="faq-item">
@@ -551,7 +577,7 @@
           <details class="faq-item">
             <summary class="faq-question">Quais integracoes cross-tool estao disponiveis?</summary>
             <div class="faq-answer">O Smart Todo se integra com 3 outras ferramentas Keisen: exporte tarefas para a <a
-                href="/pt/eisenhower">Matriz Eisenhower</a> para priorizacao urgencia/importancia, envie tarefas para a
+                href="/pt/eisenhower">Matriz Eisenhower</a> para priorizacao urgencia/importancia — ao revelar os votos, as prioridades sincronizam automaticamente (Q1→Alta, Q2→Média, Q3/Q4→Baixa). Envie tarefas para a
               <a href="/pt/estimation-room">Estimation Room</a> para sessoes de estimativa em equipe (Fibonacci,
               T-Shirt, PERT, etc.), ou converta tarefas em User Stories para o <a href="/pt/agile-process">Agile Process
                 Manager</a>. Voce tambem pode exportar para CSV e Google Sheets para relatorios externos.</div>

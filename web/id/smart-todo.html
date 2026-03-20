@@ -72,7 +72,7 @@
       "Pemantauan WIP dengan deteksi aging dan batas yang dapat dikonfigurasi",
       "Analisis keseimbangan beban kerja tim",
       "Audit trail dengan 12 tindakan yang dilacak pada 6 jenis entitas",
-      "Ekspor ke Matriks Eisenhower, Ruang Estimasi, dan Proses Agile",
+      "Sinkronisasi dua arah dengan Matriks Eisenhower (sinkronisasi prioritas otomatis), ekspor ke Ruang Estimasi dan Proses Agile",
       "Impor tugas batch dan ekspor CSV",
       "Ekspor Google Sheets",
       "Dukungan mode gelap dan mode terang",
@@ -102,7 +102,7 @@
         "name": "Apa itu Keisen Smart Todo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen Smart Todo adalah papan Kanban kolaboratif gratis dan alat manajemen tugas. Ini mencakup kolom yang dapat disesuaikan sepenuhnya, manajemen tugas dengan drag-and-drop, kolaborasi tim dengan 3 peran (Owner, Editor, Viewer), analitik CFD dengan deteksi bottleneck, sub-tugas, komentar dengan gambar, lampiran, dan integrasi lintas alat dengan Matriks Eisenhower, Ruang Estimasi, dan Proses Agile."
+          "text": "Keisen Smart Todo adalah papan Kanban kolaboratif gratis dan alat manajemen tugas. Ini mencakup kolom yang dapat disesuaikan sepenuhnya, manajemen tugas dengan drag-and-drop, kolaborasi tim dengan 3 peran (Owner, Editor, Viewer), analitik CFD dengan deteksi bottleneck, sub-tugas, komentar dengan gambar, lampiran, dan integrasi lintas alat dengan Matriks Eisenhower (dengan sinkronisasi prioritas otomatis), Ruang Estimasi, dan Proses Agile."
         }
       },
       {
@@ -142,7 +142,7 @@
         "name": "Integrasi lintas alat apa saja yang tersedia?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Smart Todo terintegrasi dengan 3 alat Keisen lainnya: ekspor tugas ke Matriks Eisenhower untuk prioritas urgensi/kepentingan, kirim tugas ke Ruang Estimasi untuk sesi estimasi tim, atau konversi tugas menjadi User Story untuk Manajer Proses Agile. Anda juga dapat mengekspor ke CSV dan Google Sheets."
+          "text": "Smart Todo terintegrasi dengan 3 alat Keisen lainnya: ekspor tugas ke Matriks Eisenhower untuk prioritas urgensi/kepentingan — saat suara diungkap, prioritas secara otomatis disinkronkan (Q1→Tinggi, Q2→Sedang, Q3/Q4→Rendah). Kirim tugas ke Ruang Estimasi untuk sesi estimasi tim, atau konversi tugas menjadi User Story untuk Manajer Proses Agile. Anda juga dapat mengekspor ke CSV dan Google Sheets."
         }
       },
       {
@@ -222,11 +222,37 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Pantau Progres dan Optimalkan dengan Analitik CFD",
-        "text": "Pindahkan tugas antar kolom dengan drag and drop. Pantau kesehatan alur kerja dengan analitik CFD: lead time, cycle time, throughput, aging WIP, dan deteksi bottleneck. Ekspor tugas ke Matriks Eisenhower untuk prioritas, Ruang Estimasi untuk estimasi tim, atau Manajer Proses Agile untuk perencanaan sprint.",
+        "text": "Pindahkan tugas antar kolom dengan drag and drop. Pantau kesehatan alur kerja dengan analitik CFD: lead time, cycle time, throughput, aging WIP, dan deteksi bottleneck. Ekspor tugas ke Matriks Eisenhower untuk prioritas — saat suara diungkap, prioritas secara otomatis disinkronkan (Q1→Tinggi, Q2→Sedang, Q3/Q4→Rendah). Kirim tugas ke Ruang Estimasi untuk estimasi tim, atau Manajer Proses Agile untuk perencanaan sprint.",
         "url": "https://keisenapp.com/id/smart-todo#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated — redirect to /smart-todo/app
+                // /smart-todo/** → index.html bypasses the exact /smart-todo → .html rewrite
+                window.location.href = '/smart-todo/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -480,8 +506,8 @@
                     <li><strong>Audit Trail</strong> — Riwayat perubahan lengkap yang melacak 12 tindakan (buat, edit,
                         hapus, arsip, pulihkan, pindahkan, tugaskan, undang, gabung, cabut, urutkan ulang, pembuatan
                         batch) pada 6 jenis entitas</li>
-                    <li><strong>Ekspor Lintas Alat</strong> — Kirim tugas ke <a href="/id/eisenhower">Matriks
-                            Eisenhower</a> untuk prioritas, ke <a href="/id/estimation-room">Ruang Estimasi</a> untuk
+                    <li><strong>Sinkronisasi Lintas Alat</strong> — Kirim tugas ke <a href="/id/eisenhower">Matriks
+                            Eisenhower</a> untuk prioritas dengan <strong>sinkronisasi prioritas otomatis</strong> (Q1→Tinggi, Q2→Sedang, Q3/Q4→Rendah), ke <a href="/id/estimation-room">Ruang Estimasi</a> untuk
                         estimasi tim, atau konversi ke User Story untuk <a href="/id/agile-process">Manajer Proses
                             Agile</a>. Ekspor juga ke CSV dan Google Sheets</li>
                 </ul>
@@ -524,7 +550,7 @@
                             pengurutan, manajemen tugas dengan drag-and-drop, kolaborasi tim dengan 3 peran (Owner,
                             Editor, Viewer), analitik CFD dengan deteksi bottleneck, sub-tugas dengan pelacakan progres,
                             komentar dengan gambar, lampiran, dan integrasi lintas alat dengan <a
-                                href="/id/eisenhower">Matriks Eisenhower</a>, <a href="/id/estimation-room">Ruang
+                                href="/id/eisenhower">Matriks Eisenhower</a> (dengan sinkronisasi prioritas otomatis), <a href="/id/estimation-room">Ruang
                                 Estimasi</a>, dan <a href="/id/agile-process">Proses Agile</a>.</div>
                     </details>
                     <details class="faq-item">
@@ -563,7 +589,7 @@
                     <details class="faq-item">
                         <summary class="faq-question">Integrasi lintas alat apa saja yang tersedia?</summary>
                         <div class="faq-answer">Smart Todo terintegrasi dengan 3 alat Keisen lainnya: ekspor tugas ke <a
-                                href="/id/eisenhower">Matriks Eisenhower</a> untuk prioritas urgensi/kepentingan, kirim
+                                href="/id/eisenhower">Matriks Eisenhower</a> untuk prioritas urgensi/kepentingan — saat suara diungkap, prioritas secara otomatis disinkronkan (Q1→Tinggi, Q2→Sedang, Q3/Q4→Rendah). Kirim
                             tugas ke <a href="/id/estimation-room">Ruang Estimasi</a> untuk sesi estimasi tim
                             (Fibonacci, T-Shirt, PERT, dll.), atau konversi tugas menjadi User Story untuk <a
                                 href="/id/agile-process">Manajer Proses Agile</a>. Anda juga dapat mengekspor ke CSV dan

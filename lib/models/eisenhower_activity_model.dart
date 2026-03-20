@@ -63,6 +63,10 @@ class EisenhowerActivityModel {
   final DateTime? completedAt;
   final DateTime? archivedAt;
 
+  // Campi linking Smart Todo (per back-sync priorità dopo reveal)
+  final String? sourceListId;
+  final String? sourceTaskId;
+
   // Valori calcolati (cached)
   double? _cachedUrgency;
   double? _cachedImportance;
@@ -86,6 +90,8 @@ class EisenhowerActivityModel {
     this.isArchived = false,
     this.completedAt,
     this.archivedAt,
+    this.sourceListId,
+    this.sourceTaskId,
   });
 
   /// Crea un'istanza da documento Firestore
@@ -131,6 +137,8 @@ class EisenhowerActivityModel {
       isArchived: data['isArchived'] ?? false,
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
       archivedAt: (data['archivedAt'] as Timestamp?)?.toDate(),
+      sourceListId: data['sourceListId'] as String?,
+      sourceTaskId: data['sourceTaskId'] as String?,
     );
   }
 
@@ -171,6 +179,9 @@ class EisenhowerActivityModel {
       'isArchived': isArchived,
       if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt!),
       if (archivedAt != null) 'archivedAt': Timestamp.fromDate(archivedAt!),
+      // Linking Smart Todo
+      if (sourceListId != null) 'sourceListId': sourceListId,
+      if (sourceTaskId != null) 'sourceTaskId': sourceTaskId,
     };
   }
 
@@ -252,6 +263,8 @@ class EisenhowerActivityModel {
     bool? isArchived,
     DateTime? completedAt,
     DateTime? archivedAt,
+    String? sourceListId,
+    String? sourceTaskId,
   }) {
     return EisenhowerActivityModel(
       id: id ?? this.id,
@@ -271,6 +284,8 @@ class EisenhowerActivityModel {
       isArchived: isArchived ?? this.isArchived,
       completedAt: completedAt ?? this.completedAt,
       archivedAt: archivedAt ?? this.archivedAt,
+      sourceListId: sourceListId ?? this.sourceListId,
+      sourceTaskId: sourceTaskId ?? this.sourceTaskId,
     );
   }
 

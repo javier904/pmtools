@@ -72,7 +72,7 @@
       "Мониторинг WIP и времени нахождения задач в статусе",
       "Анализ распределения нагрузки на команду",
       "Аудит действий для 12 типов операций",
-      "Экспорт в Матрицу Эйзенхауэра и Agile Process",
+      "Двусторонняя синхронизация с матрицей Эйзенхауэра (автоматическая синхронизация приоритетов), экспорт в Agile Process",
       "Импорт и экспорт в CSV и Google Sheets",
       "Темная и светлая темы",
       "Полностью адаптивный — работает на смартфонах, планшетах и настольных браузерах"
@@ -101,7 +101,7 @@
         "name": "Что такое Keisen Smart Todo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen Smart Todo — это бесплатная совместная Kanban-доска и инструмент управления задачами. Она включает полностью настраиваемые колонки, управление задачами перетаскиванием, совместную работу с 3 ролями (Владелец, Редактор, Читатель), аналитику CFD с обнаружением узких мест, подзадачи, комментарии с изображениями, вложения файлов и кросс-интеграции с Матрицей Эйзенхауэра, Estimation Room и Agile Process."
+          "text": "Keisen Smart Todo — это бесплатная совместная Kanban-доска и инструмент управления задачами. Она включает полностью настраиваемые колонки, управление задачами перетаскиванием, совместную работу с 3 ролями (Владелец, Редактор, Читатель), аналитику CFD с обнаружением узких мест, подзадачи, комментарии с изображениями, вложения файлов и кросс-интеграции с Матрицей Эйзенхауэра (с автоматической синхронизацией приоритетов), Estimation Room и Agile Process."
         }
       },
       {
@@ -141,7 +141,7 @@
         "name": "Какие кросс-интеграции доступны?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Smart Todo интегрируется с 3 другими инструментами Keisen: экспортируйте задачи в Матрицу Эйзенхауэра для приоритизации по срочности/важности, отправляйте задачи в Estimation Room для командных сессий оценки или конвертируйте задачи в User Story для Agile Process Manager. Также доступен экспорт в CSV и Google Sheets."
+          "text": "Smart Todo интегрируется с 3 другими инструментами Keisen: экспортируйте задачи в Матрицу Эйзенхауэра для приоритизации по срочности/важности — при раскрытии голосов приоритеты автоматически синхронизируются (Q1→Высокий, Q2→Средний, Q3/Q4→Низкий). Отправляйте задачи в Estimation Room для командных сессий оценки или конвертируйте задачи в User Story для Agile Process Manager. Также доступен экспорт в CSV и Google Sheets."
         }
       },
       {
@@ -221,11 +221,37 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Отслеживайте прогресс и оптимизируйте с CFD-аналитикой",
-        "text": "Перемещайте задачи между колонками перетаскиванием. Следите за здоровьем процесса с помощью аналитики CFD: lead time, cycle time, throughput, старение WIP и обнаружение узких мест. Экспортируйте задачи в Матрицу Эйзенхауэра для приоритизации, в Estimation Room для командной оценки или в Agile Process Manager для планирования спринтов.",
+        "text": "Перемещайте задачи между колонками перетаскиванием. Следите за здоровьем процесса с помощью аналитики CFD: lead time, cycle time, throughput, старение WIP и обнаружение узких мест. Экспортируйте задачи в Матрицу Эйзенхауэра для приоритизации — при раскрытии голосов приоритеты автоматически синхронизируются (Q1→Высокий, Q2→Средний, Q3/Q4→Низкий). Отправляйте в Estimation Room для командной оценки или в Agile Process Manager для планирования спринтов.",
         "url": "https://keisenapp.com/ru/smart-todo#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated — redirect to /smart-todo/app
+                // /smart-todo/** → index.html bypasses the exact /smart-todo → .html rewrite
+                window.location.href = '/smart-todo/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -464,8 +490,8 @@
                         предотвращения перегрузок</li>
                     <li><strong>Audit Trail</strong> — полная история всех 12 типов действий (создание, перенос,
                         назначение и т.д.) для аудита</li>
-                    <li><strong>Экспорт</strong> — передавайте задачи в <a href="/ru/eisenhower">Матрицу
-                            Эйзенхауэра</a>, на оценку или в <a href="/ru/agile-process">Scrum-менеджер</a></li>
+                    <li><strong>Кросс-инструментальная синхронизация</strong> — передавайте задачи в <a href="/ru/eisenhower">Матрицу
+                            Эйзенхауэра</a> с <strong>автоматической синхронизацией приоритетов</strong> (Q1→Высокий, Q2→Средний, Q3/Q4→Низкий), на оценку или в <a href="/ru/agile-process">Scrum-менеджер</a></li>
                 </ul>
                 <div class="features-tip">
                     <strong>Интегрированный воркфлоу:</strong> Создавайте задачи в Smart Todo, приоритизируйте в
@@ -503,7 +529,7 @@
                             управление задачами перетаскиванием, совместную работу с 3 ролями (Владелец, Редактор,
                             Читатель), аналитику CFD с обнаружением узких мест, подзадачи с отслеживанием прогресса,
                             комментарии с изображениями, вложения файлов и кросс-интеграции с <a
-                                href="/ru/eisenhower">Матрицей Эйзенхауэра</a>, <a
+                                href="/ru/eisenhower">Матрицей Эйзенхауэра</a> (с автоматической синхронизацией приоритетов), <a
                                 href="/ru/estimation-room">Estimation Room</a> и <a href="/ru/agile-process">Agile
                                 Process</a>.</div>
                     </details>
@@ -545,7 +571,7 @@
                         <summary class="faq-question">Какие кросс-интеграции доступны?</summary>
                         <div class="faq-answer">Smart Todo интегрируется с 3 другими инструментами Keisen: экспортируйте
                             задачи в <a href="/ru/eisenhower">Матрицу Эйзенхауэра</a> для приоритизации по
-                            срочности/важности, отправляйте задачи в <a href="/ru/estimation-room">Estimation Room</a>
+                            срочности/важности — при раскрытии голосов приоритеты автоматически синхронизируются (Q1→Высокий, Q2→Средний, Q3/Q4→Низкий). Отправляйте задачи в <a href="/ru/estimation-room">Estimation Room</a>
                             для командных сессий оценки (Фибоначчи, T-Shirt, PERT и др.) или конвертируйте задачи в
                             User Story для <a href="/ru/agile-process">Agile Process Manager</a>. Также доступен
                             экспорт в CSV и Google Sheets для внешней отчётности.</div>

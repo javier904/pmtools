@@ -74,7 +74,7 @@
       "WIP-Überwachung mit Alterserkennung und konfigurierbaren Limits",
       "Analyse der Team-Arbeitslastverteilung",
       "Audit Trail mit 12 verfolgten Aktionen auf 6 Entitätstypen",
-      "Export zu Eisenhower-Matrix, Estimation Room und Agile Process",
+      "Bidirektionale Synchronisierung mit der Eisenhower-Matrix (automatische Prioritätssynchronisierung), Export zu Estimation Room und Agile Process",
       "Batch-Aufgaben-Import und CSV-Export",
       "Google Sheets Export",
       "Unterstützung für Dark Mode und Light Mode",
@@ -104,7 +104,7 @@
         "name": "Was ist Keisen Smart Todo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen Smart Todo ist ein kostenloses kollaboratives Kanban-Board und Aufgabenmanagement-Tool. Es enthält vollständig anpassbare Spalten, Aufgabenverwaltung per Drag-and-Drop, Team-Zusammenarbeit mit 3 Rollen (Eigentümer, Bearbeiter, Betrachter), CFD-Analysen mit Engpasserkennung, Unteraufgaben, Kommentare mit Bildern, Anhänge und Cross-Tool-Integrationen mit der Eisenhower-Matrix, dem Estimation Room und dem Agile Process."
+          "text": "Keisen Smart Todo ist ein kostenloses kollaboratives Kanban-Board und Aufgabenmanagement-Tool. Es enthält vollständig anpassbare Spalten, Aufgabenverwaltung per Drag-and-Drop, Team-Zusammenarbeit mit 3 Rollen (Eigentümer, Bearbeiter, Betrachter), CFD-Analysen mit Engpasserkennung, Unteraufgaben, Kommentare mit Bildern, Anhänge und Cross-Tool-Integrationen mit der Eisenhower-Matrix (mit automatischer Prioritätssynchronisierung), dem Estimation Room und dem Agile Process."
         }
       },
       {
@@ -144,7 +144,7 @@
         "name": "Welche Cross-Tool-Integrationen sind verfügbar?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Smart Todo lässt sich in 3 andere Keisen-Tools integrieren: Exportieren Sie Aufgaben zur Eisenhower-Matrix für die Priorisierung nach Dringlichkeit/Wichtigkeit, senden Sie Aufgaben zum Estimation Room für Team-Schätzsitzungen oder konvertieren Sie Aufgaben in User Stories für den Agile Process Manager. Sie können auch als CSV und in Google Sheets exportieren."
+          "text": "Smart Todo lässt sich in 3 andere Keisen-Tools integrieren: Exportieren Sie Aufgaben zur Eisenhower-Matrix für die Priorisierung nach Dringlichkeit/Wichtigkeit — nach der Abstimmung synchronisieren sich die Prioritäten automatisch zurück (Q1→Hoch, Q2→Mittel, Q3/Q4→Niedrig). Senden Sie Aufgaben zum Estimation Room für Team-Schätzsitzungen oder konvertieren Sie Aufgaben in User Stories für den Agile Process Manager. Sie können auch als CSV und in Google Sheets exportieren."
         }
       },
       {
@@ -224,11 +224,37 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Fortschritt verfolgen und mit CFD-Analysen optimieren",
-        "text": "Verschieben Sie Aufgaben per Drag-and-Drop zwischen Spalten. Überwachen Sie die Workflow-Gesundheit mit CFD-Analysen: Lead Time, Cycle Time, Throughput, WIP-Alterung und Engpasserkennung. Exportieren Sie Aufgaben zur Eisenhower-Matrix zur Priorisierung, zum Estimation Room für Team-Schätzungen oder zum Agile Process Manager für Sprint-Planung.",
+        "text": "Verschieben Sie Aufgaben per Drag-and-Drop zwischen Spalten. Überwachen Sie die Workflow-Gesundheit mit CFD-Analysen: Lead Time, Cycle Time, Throughput, WIP-Alterung und Engpasserkennung. Exportieren Sie Aufgaben zur Eisenhower-Matrix zur Priorisierung — nach der Abstimmung synchronisieren sich die Prioritäten automatisch zurück (Q1→Hoch, Q2→Mittel, Q3/Q4→Niedrig). Senden Sie Aufgaben zum Estimation Room für Team-Schätzungen oder zum Agile Process Manager für Sprint-Planung.",
         "url": "https://keisenapp.com/de/smart-todo#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                // User is authenticated — redirect to /smart-todo/app
+                // /smart-todo/** → index.html bypasses the exact /smart-todo → .html rewrite
+                window.location.href = '/smart-todo/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -489,8 +515,8 @@
                         Bearbeiten, Löschen, Archivieren, Wiederherstellen, Verschieben, Zuweisen, Einladen, Beitreten,
                         Widerrufen, Neuordnen, Batch-Erstellung) auf 6 Entitätstypen mit Details auf Feldebene verfolgt
                     </li>
-                    <li><strong>Cross-Tool-Export</strong> — Senden Sie Aufgaben zur <a
-                            href="/de/eisenhower">Eisenhower-Matrix</a> zur Priorisierung, zum <a
+                    <li><strong>Cross-Tool-Sync</strong> — Senden Sie Aufgaben zur <a
+                            href="/de/eisenhower">Eisenhower-Matrix</a> zur Priorisierung mit <strong>automatischer Prioritätssynchronisierung</strong> (Q1→Hoch, Q2→Mittel, Q3/Q4→Niedrig), zum <a
                             href="/de/estimation-room">Estimation Room</a> zur Team-Schätzung oder konvertieren Sie in
                         User Stories für den <a href="/de/agile-process">Agile Process Manager</a>. Exportieren Sie auch
                         als CSV und in Google Sheets</li>
@@ -532,7 +558,7 @@
                             Sortierung, Aufgabenverwaltung per Drag-and-Drop, Team-Zusammenarbeit mit 3 Rollen
                             (Eigentümer, Bearbeiter, Betrachter), CFD-Analysen mit Engpasserkennung, Unteraufgaben mit
                             Fortschrittsverfolgung, Kommentare mit Bildern, Anhänge und Cross-Tool-Integrationen mit der
-                            <a href="/de/eisenhower">Eisenhower-Matrix</a>, dem <a href="/de/estimation-room">Estimation
+                            <a href="/de/eisenhower">Eisenhower-Matrix</a> (mit automatischer Prioritätssynchronisierung), dem <a href="/de/estimation-room">Estimation
                                 Room</a> und dem <a href="/de/agile-process">Agile Process</a>.</div>
                     </details>
                     <details class="faq-item">
@@ -575,7 +601,7 @@
                         <summary class="faq-question">Welche Cross-Tool-Integrationen sind verfügbar?</summary>
                         <div class="faq-answer">Smart Todo lässt sich in 3 andere Keisen-Tools integrieren: Exportieren
                             Sie Aufgaben zur <a href="/de/eisenhower">Eisenhower-Matrix</a> zur Priorisierung nach
-                            Dringlichkeit/Wichtigkeit, senden Sie Aufgaben zum <a href="/de/estimation-room">Estimation
+                            Dringlichkeit/Wichtigkeit — nach der Abstimmung synchronisieren sich die Prioritäten automatisch zurück (Q1→Hoch, Q2→Mittel, Q3/Q4→Niedrig). Senden Sie Aufgaben zum <a href="/de/estimation-room">Estimation
                                 Room</a> für Team-Schätzsitzungen (Fibonacci, T-Shirt, PERT usw.) oder konvertieren Sie
                             Aufgaben in User Stories für den <a href="/de/agile-process">Agile Process Manager</a>. Sie
                             können auch als CSV und in Google Sheets für externe Berichte exportieren.</div>

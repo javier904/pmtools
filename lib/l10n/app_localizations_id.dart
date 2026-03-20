@@ -9,6 +9,9 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get smartTodoMyProjects => 'I MIEI PROGETTI';
+
+  @override
   String get smartTodoListOrigin => 'Daftar Keanggotaan';
 
   @override
@@ -1522,6 +1525,27 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get agileNewProject => 'Proyek Baru';
+
+  @override
+  String get agileEmptyStateTitle => 'Tidak Ada Proyek Agile';
+
+  @override
+  String get agileEmptyStateDesc =>
+      'Buat proyek pertama Anda untuk mulai\nmengelola sprint, backlog, dan tim.';
+
+  @override
+  String get agileEmptyStateButton => 'Buat Proyek';
+
+  @override
+  String get agileEmptyStateGuideTitle =>
+      'Tidak yakin metodologi mana yang harus dipilih?';
+
+  @override
+  String get agileEmptyStateGuideDesc =>
+      'Temukan perbedaan antara Scrum, Kanban, dan Hybrid. Panduan ini akan membantu Anda memilih metodologi yang paling cocok untuk tim Anda.';
+
+  @override
+  String get agileEmptyStateGuideButton => 'Baca Panduan';
 
   @override
   String get agileRoles => 'PERAN';

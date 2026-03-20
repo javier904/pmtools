@@ -68,7 +68,7 @@
       "Три режима визуализации",
       "Совместное редактирование в реальном времени",
       "Импорт/экспорт CSV",
-      "Экспорт в Smart Todo и Agile Sprint"
+      "Экспорт в Smart Todo и Agile Sprint с автоматической синхронизацией приоритетов"
     ],
     "offers": {
       "@type": "Offer",
@@ -126,7 +126,7 @@
         "name": "Можно ли экспортировать задачи?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Да, вы можете скачать данные в CSV или отправить задачи напрямую в Smart Todo для исполнения или в Agile Process для планирования спринта."
+          "text": "Да, вы можете скачать данные в CSV или отправить задачи напрямую в Smart Todo для исполнения или в Agile Process для планирования спринта. Когда задачи были импортированы из Smart Todo, раскрытие голосов автоматически обновляет их приоритет (Q1→Высокий, Q2→Средний, Q3/Q4→Низкий)."
         }
       },
       {
@@ -142,7 +142,7 @@
         "name": "Чем Keisen отличается от других инструментов приоритизации?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen объединяет Матрицу Эйзенхауэра с уникальными функциями: командное голосование с раскрытием, интерактивная точечная диаграмма, встроенная матрица RACI, автоматический подсчёт баллов и кросс-инструментальный экспорт в Smart Todo, Estimation Room и Agile Sprint. Это не просто статическая матрица, а полноценная система совместной приоритизации."
+          "text": "Keisen объединяет Матрицу Эйзенхауэра с уникальными функциями: командное голосование с раскрытием, интерактивная точечная диаграмма, встроенная матрица RACI, автоматический подсчёт баллов и кросс-инструментальный экспорт с автоматической синхронизацией приоритетов в Smart Todo, Estimation Room и Agile Sprint. При раскрытии голосов приоритеты задач автоматически обновляются в Smart Todo. Это не просто статическая матрица, а полноценная система совместной приоритизации."
         }
       },
       {
@@ -240,12 +240,36 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Действуйте по приоритетам",
-        "text": "Сосредоточьтесь на задачах \"Сделать сейчас\", планируйте важные, делегируйте срочные и устраняйте отвлекающие факторы. Экспортируйте результаты в Smart Todo или Agile Sprint.",
+        "text": "Сосредоточьтесь на задачах \"Сделать сейчас\", планируйте важные, делегируйте срочные и устраняйте отвлекающие факторы. Экспортируйте результаты в Smart Todo или Agile Sprint. Приоритеты синхронизируются автоматически.",
         "image": "https://keisenapp.com/screenshots/howto-step3-act.webp",
         "url": "https://keisenapp.com/ru/eisenhower#how-it-works"
       }
     ]
   }
+  </script>
+  <!-- Auto-login redirect for Keisen App -->
+  <script type="module">
+    try {
+      if (!window.location.search.includes('noredirect=true')) {
+        const dbName = 'firebaseLocalStorageDb';
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = function (event) {
+          const db = event.target.result;
+          if (db.objectStoreNames.contains('firebaseLocalStorage')) {
+            const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
+            const store = transaction.objectStore('firebaseLocalStorage');
+            const countRequest = store.count();
+            countRequest.onsuccess = function () {
+              if (countRequest.result > 0) {
+                window.location.href = '/eisenhower/app';
+              }
+            };
+          }
+        };
+      }
+    } catch (e) {
+      console.error('Auto-redirect check failed', e);
+    }
   </script>
 </head>
 
@@ -468,9 +492,7 @@
                         консенсусе и матрицу RACI для согласования действий команды и корпоративных презентаций.
                         <strong>Полная совместимость с мобильными устройствами и планшетами</strong> позволяет делиться
                         и распечатывать профессиональные отчеты, где бы вы ни находились.</li>
-                    <li>Перекрестный экспорт в <a href="/ru/smart-todo">Smart Todo</a> для управления задачами или в <a
-                            href="/ru/agile-process">Agile Process</a> для планирования спринтов — баллы приоритета
-                        переносятся автоматически</li>
+                    <li>Двусторонняя синхронизация с <a href="/ru/smart-todo">Smart Todo</a> — экспортируйте задачи для голосования, затем приоритеты синхронизируются автоматически (Q1→Высокий, Q2→Средний, Q3/Q4→Низкий). Также экспорт в <a href="/ru/agile-process">Agile Process</a> для планирования спринтов</li>
                     <li>Финализация и архивация — отмечайте задачи как выполненные, архивируйте прошлые сессии и
                         сохраняйте историю принятых решений</li>
                     <li>Теги, описания и заметки для каждой задачи для максимального контекста</li>

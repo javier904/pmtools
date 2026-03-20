@@ -216,28 +216,7 @@ class TodoTaskCard extends StatelessWidget {
                   ),
                 ),
 
-                // 2.5 Description (New)
-                if (task.description.isNotEmpty) ...[
-                  Tooltip(
-                    message: task.description,
-                    padding: const EdgeInsets.all(8),
-                    margin: EdgeInsets.zero,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF333333), // Readable dark bg
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    textStyle: const TextStyle(color: Colors.white, fontSize: 13), // Readable text
-                    child: SelectableText(
-                      task.description,
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        height: 1.0,
-                      ),
-                    ),
-                  ),
-                ],
+                // Description visibile solo nel dialog di dettaglio task
 
                 // 3. Images Preview
                 Builder(
@@ -302,6 +281,19 @@ class TodoTaskCard extends StatelessWidget {
                   spacing: 6,
                   runSpacing: 4,
                   children: [
+                    // Description indicator
+                    if (task.description.isNotEmpty)
+                      Tooltip(
+                        message: task.description,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF333333),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+                        child: Icon(Icons.notes_rounded, size: 14, color: isDark ? Colors.grey[500] : Colors.grey[500]),
+                      ),
+
                     // Due Date
                     if (task.dueDate != null)
                        _buildMetaIcon(

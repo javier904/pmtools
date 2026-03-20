@@ -59,7 +59,7 @@
             countRequest.onsuccess = function () {
               if (countRequest.result > 0) {
                 // User is authenticated in Firebase
-                window.location.href = '/?redirect=/eisenhower';
+                window.location.href = '/eisenhower/app';
               }
             };
           }
@@ -93,7 +93,7 @@
       "Three visualization modes",
       "Real-time collaborative editing",
       "CSV import/export",
-      "Cross-tool export to Smart Todo and Agile Sprint"
+      "Cross-tool export to Smart Todo and Agile Sprint with automatic priority back-sync"
     ],
     "offers": {
       "@type": "Offer",
@@ -159,7 +159,7 @@
         "name": "How is Keisen different from other prioritization tools?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Keisen combines the Eisenhower Matrix with unique features: team voting with reveal, interactive scatter chart, integrated RACI matrix, automatic scoring, and cross-tool export to Smart Todo, Estimation Room, and Agile Sprint. It is not just a static matrix but a complete collaborative prioritization system."
+          "text": "Keisen combines the Eisenhower Matrix with unique features: team voting with reveal, interactive scatter chart, integrated RACI matrix, automatic scoring, and cross-tool export with automatic priority back-sync to Smart Todo, Estimation Room, and Agile Sprint. When you reveal votes, task priorities update automatically in Smart Todo. It is not just a static matrix but a complete collaborative prioritization system."
         }
       },
       {
@@ -167,7 +167,7 @@
         "name": "Can I export prioritized tasks?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, you can export to CSV for external analysis or directly transfer prioritized tasks to Smart Todo for task management, Estimation Room for collaborative estimation, or Agile Process for sprint integration. Cross-tool export preserves all priority information."
+          "text": "Yes, you can export to CSV for external analysis or directly transfer prioritized tasks to Smart Todo for task management, Estimation Room for collaborative estimation, or Agile Process for sprint integration. Cross-tool export preserves all priority information. When tasks were imported from Smart Todo, revealing votes automatically updates their priority (Q1→High, Q2→Medium, Q3/Q4→Low)."
         }
       },
       {
@@ -275,7 +275,7 @@
         "@type": "HowToStep",
         "position": 3,
         "name": "Act on Priorities",
-        "text": "Focus on Do First tasks, schedule the important ones, delegate urgent tasks, and eliminate distractions. Export results to Smart Todo or Agile Sprint.",
+        "text": "Focus on Do First tasks, schedule the important ones, delegate urgent tasks, and eliminate distractions. Export results to Smart Todo or Agile Sprint. Priorities sync back automatically.",
         "image": "https://keisenapp.com/screenshots/howto-step3-act.webp",
         "url": "https://keisenapp.com/eisenhower#how-it-works"
       }
@@ -493,8 +493,7 @@
             board presentations. <strong>Fully compatible with mobile devices and tablets</strong>, it allows you to
             share
             and print professional reports wherever you are.</li>
-          <li>Cross-tool export to <a href="/smart-todo">Smart Todo</a> for task management or <a
-              href="/agile-process">Agile Process</a> for sprint planning — priority scores carry over automatically
+          <li>Bidirectional sync with <a href="/smart-todo">Smart Todo</a> — export tasks for voting, then priorities sync back automatically (Q1→High, Q2→Medium, Q3/Q4→Low). Also export to <a href="/agile-process">Agile Process</a> for sprint planning
           </li>
           <li>Task completion and archival — mark tasks as done, archive past sessions, and keep a history of
             prioritization decisions</li>

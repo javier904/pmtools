@@ -276,20 +276,40 @@
         "destination": "/smart-todo.html"
       },
       {
+        "source": "/smart-todo/**",
+        "destination": "/index.html"
+      },
+      {
         "source": "/eisenhower",
         "destination": "/eisenhower.html"
+      },
+      {
+        "source": "/eisenhower/**",
+        "destination": "/index.html"
       },
       {
         "source": "/estimation-room",
         "destination": "/estimation-room.html"
       },
       {
+        "source": "/estimation-room/**",
+        "destination": "/index.html"
+      },
+      {
         "source": "/agile-process",
         "destination": "/agile-process.html"
       },
       {
+        "source": "/agile-process/**",
+        "destination": "/index.html"
+      },
+      {
         "source": "/retrospective-list",
         "destination": "/retrospective.html"
+      },
+      {
+        "source": "/retrospective-list/**",
+        "destination": "/index.html"
       },
       {
         "source": "/it",

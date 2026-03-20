@@ -11,12 +11,16 @@ class SmartTodoGlobalView extends StatefulWidget {
   final List<TodoListModel> userLists;
   final SmartTodoService todoService;
   final String filterMode;
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onToggleLayout;
 
   const SmartTodoGlobalView({
     super.key,
     required this.userLists,
     required this.todoService,
     required this.filterMode,
+    this.onMenuPressed,
+    this.onToggleLayout,
   });
 
   @override
@@ -32,7 +36,93 @@ class _SmartTodoGlobalViewState extends State<SmartTodoGlobalView> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody();
+    final l10n = AppLocalizations.of(context);
+    String title = 'To-Do';
+    if (widget.filterMode == 'today') title = l10n?.smartTodoFilterToday ?? 'Today';
+    if (widget.filterMode == 'all_my') title = l10n?.smartTodoFilterMyTasks ?? 'My Tasks';
+    if (widget.filterMode == 'owner') title = l10n?.smartTodoFilterOwner ?? 'Owner';
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: widget.onMenuPressed != null
+            ? IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: widget.onMenuPressed,
+              )
+            : null,
+        title: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.blue),
+            const SizedBox(width: 8),
+            Text(title, style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 280),
+                  child: SizedBox(
+                    height: 34,
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Cerca task...',
+                        hintStyle: TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodySmall?.color),
+                        prefixIcon: const Icon(Icons.search, size: 18),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, size: 16),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {});
+                                },
+                              )
+                            : null,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(color: Colors.blue),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white.withOpacity(0.05)
+                            : Colors.grey.shade50,
+                      ),
+                      style: const TextStyle(fontSize: 13),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          if (widget.onToggleLayout != null)
+            IconButton(
+              icon: const Icon(Icons.grid_view),
+              tooltip: 'Vista Griglia',
+              onPressed: widget.onToggleLayout,
+            ),
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
+            tooltip: 'Home',
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: _buildBody(),
+    );
   }
 
   // _buildFilterBar removed
@@ -74,6 +164,15 @@ class _SmartTodoGlobalViewState extends State<SmartTodoGlobalView> {
             }
 
             var tasks = snapshot.data ?? [];
+
+            // Apply Search Filter
+            if (_searchController.text.isNotEmpty) {
+              final query = _searchController.text.toLowerCase();
+              tasks = tasks.where((t) => 
+                t.title.toLowerCase().contains(query) || 
+                t.description.toLowerCase().contains(query)
+              ).toList();
+            }
 
             // Apply "Today" filter client-side
             // Apply "Today" filter client-side

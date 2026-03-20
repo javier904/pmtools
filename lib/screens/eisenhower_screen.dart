@@ -3467,6 +3467,12 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       // Ricarica le attività per trovare la prossima da votare
       await _loadActivities(_selectedMatrix!.id);
 
+      // Back-sync priorità su Smart Todo se l'activity ha un source task linkato
+      final revealed = await _firestoreService.getActivity(_selectedMatrix!.id, activity.id);
+      if (revealed != null) {
+        await _backSyncPriorityToSmartTodo(revealed);
+      }
+
       // Se non vogliamo mostrare il dialog, abbiamo finito
       if (!showResultsDialog) return;
 
@@ -3477,12 +3483,11 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
         a.hasVotes
       ).firstOrNull;
 
-      // Ricarica e mostra il dialog con i risultati
-      final updated = await _firestoreService.getActivity(_selectedMatrix!.id, activity.id);
-      if (updated != null && mounted) {
+      // Mostra il dialog con i risultati
+      if (revealed != null && mounted) {
         await VoteRevealDialog.show(
           context: context,
-          activity: updated,
+          activity: revealed,
           participants: _selectedMatrix!.participants,
           hasNextActivity: nextActivity != null,
           onNextActivity: nextActivity != null ? () {
@@ -3493,6 +3498,42 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> with WidgetsBinding
       }
     } catch (e) {
       _showError('Errore reveal voti: $e');
+    }
+  }
+
+  /// Back-sync: aggiorna la priorità del task Smart Todo in base al quadrante Eisenhower
+  Future<void> _backSyncPriorityToSmartTodo(EisenhowerActivityModel activity) async {
+    if (activity.sourceListId == null || activity.sourceTaskId == null) return;
+    if (activity.quadrant == null) return;
+
+    try {
+      final task = await _todoService.getTask(activity.sourceListId!, activity.sourceTaskId!);
+      if (task == null) {
+        print('⚠️ Back-sync: task ${activity.sourceTaskId} non trovata in lista ${activity.sourceListId}, skip');
+        return;
+      }
+
+      final newPriority = _mapQuadrantToTodoPriority(activity.quadrant!);
+      if (task.priority == newPriority) return; // Già allineata
+
+      final updated = task.copyWith(priority: newPriority);
+      await _todoService.updateTask(activity.sourceListId!, updated);
+      print('🔄 Back-sync: task "${task.title}" priorità aggiornata a ${newPriority.name} (${activity.quadrant!.name})');
+    } catch (e) {
+      print('⚠️ Back-sync priorità fallito per task ${activity.sourceTaskId}: $e');
+    }
+  }
+
+  /// Mappa quadrante Eisenhower → priorità Smart Todo
+  TodoTaskPriority _mapQuadrantToTodoPriority(EisenhowerQuadrant quadrant) {
+    switch (quadrant) {
+      case EisenhowerQuadrant.q1: // Urgente & Importante → Do
+        return TodoTaskPriority.high;
+      case EisenhowerQuadrant.q2: // Importante, non urgente → Schedule
+        return TodoTaskPriority.medium;
+      case EisenhowerQuadrant.q3: // Urgente, non importante → Delegate
+      case EisenhowerQuadrant.q4: // Né urgente né importante → Delete
+        return TodoTaskPriority.low;
     }
   }
 

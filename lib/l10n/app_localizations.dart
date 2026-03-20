@@ -110,6 +110,12 @@ abstract class AppLocalizations {
     Locale('ru'),
   ];
 
+  /// No description provided for @smartTodoMyProjects.
+  ///
+  /// In it, this message translates to:
+  /// **'I MIEI PROGETTI'**
+  String get smartTodoMyProjects;
+
   /// No description provided for @smartTodoListOrigin.
   ///
   /// In it, this message translates to:
@@ -2911,6 +2917,42 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Nuovo Progetto'**
   String get agileNewProject;
+
+  /// No description provided for @agileEmptyStateTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun Progetto Agile'**
+  String get agileEmptyStateTitle;
+
+  /// No description provided for @agileEmptyStateDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea il tuo primo progetto per iniziare\na gestire sprint, backlog e team.'**
+  String get agileEmptyStateDesc;
+
+  /// No description provided for @agileEmptyStateButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea Progetto'**
+  String get agileEmptyStateButton;
+
+  /// No description provided for @agileEmptyStateGuideTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Non sai quale metodologia scegliere?'**
+  String get agileEmptyStateGuideTitle;
+
+  /// No description provided for @agileEmptyStateGuideDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Scopri le differenze tra Scrum, Kanban e Hybrid. La guida ti aiuterà a scegliere la metodologia più adatta al tuo team.'**
+  String get agileEmptyStateGuideDesc;
+
+  /// No description provided for @agileEmptyStateGuideButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Leggi la Guida'**
+  String get agileEmptyStateGuideButton;
 
   /// No description provided for @agileRoles.
   ///

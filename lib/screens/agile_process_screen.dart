@@ -924,7 +924,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           const Icon(Icons.rocket_launch_rounded, size: 60, color: Colors.white),
           const SizedBox(height: 32),
           Text(
-            'Nessun Progetto Agile',
+            AppLocalizations.of(context)!.agileEmptyStateTitle,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -933,7 +933,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Crea il tuo primo progetto per iniziare\na gestire sprint, backlog e team.',
+            AppLocalizations.of(context)!.agileEmptyStateDesc,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 15, color: context.textSecondaryColor, height: 1.5),
           ),
@@ -941,7 +941,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
           ElevatedButton.icon(
             onPressed: _showCreateProjectDialog,
             icon: const Icon(Icons.add),
-            label: const Text('Crea Progetto'),
+            label: Text(AppLocalizations.of(context)!.agileEmptyStateButton),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple.shade600,
               foregroundColor: Colors.white,
@@ -983,10 +983,10 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                       child: const Icon(Icons.menu_book_rounded, color: Colors.white, size: 24),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Non sai quale metodologia scegliere?',
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.agileEmptyStateGuideTitle,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -997,7 +997,7 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Scopri le differenze tra Scrum, Kanban e Hybrid. La guida ti aiutera a scegliere la metodologia piu adatta al tuo team.',
+                  AppLocalizations.of(context)!.agileEmptyStateGuideDesc,
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.white.withValues(alpha: 0.9),
@@ -1013,12 +1013,12 @@ class _AgileProcessScreenState extends State<AgileProcessScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Leggi la Guida', style: TextStyle(fontWeight: FontWeight.w600)),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, size: 18),
+                      Text(AppLocalizations.of(context)!.agileEmptyStateGuideButton, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward, size: 18),
                     ],
                   ),
                 ),

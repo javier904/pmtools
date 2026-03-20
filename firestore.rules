@@ -658,9 +658,11 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && request.auth.uid == userId;
       
-      // Accesso a tutte le subcollection dell'utente (subscription, settings, history) rimane strettamente privato
+      // Accesso a tutte le subcollection dell'utente (subscription, settings, history) rimane strettamente privato,
+      // tranne per l'amministratore che può leggerle (es. per pagina Admin).
       match /{document=**} {
-        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAuthenticated() && (request.auth.uid == userId || userEmail() == 'leonardotorella4@gmail.com');
+        allow write: if isAuthenticated() && request.auth.uid == userId;
       }
     }
 
